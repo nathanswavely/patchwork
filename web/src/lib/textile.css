@@ -1,0 +1,167 @@
+/*
+ * Textile surface utilities — the subset of Liquid Textile that Patchwork
+ * actually uses (quilt canvas ground, vellum labels, resin chips).
+ *
+ * Liquid Textile is developed as its own library; class and variable names
+ * here match it exactly so adopting the published package later is a
+ * drop-in swap. Keep the names stable: e2e specs assert on
+ * lt-fill-canvas and lt-texture-grain.
+ */
+
+/* ---- Tokens ---- */
+
+[data-theme="light"] {
+  --lt-canvas: #f4f0e8;        /* raw cotton */
+  --lt-thread: #c8c0b0;        /* unbleached thread */
+  --lt-thread-heavy: #7a746a;  /* hemp twine */
+
+  --lt-shadow-x: 3px;
+  --lt-shadow-y: 3px;
+  --lt-shadow-color: rgba(42, 37, 32, 0.15);
+}
+
+[data-theme="dark"] {
+  --lt-canvas: #151820;        /* raw denim */
+  --lt-thread: #2e3240;        /* indigo thread */
+  --lt-thread-heavy: #4a5060;  /* faded denim stitch */
+
+  --lt-shadow-x: 3px;
+  --lt-shadow-y: 3px;
+  --lt-shadow-color: rgba(224, 219, 212, 0.08);
+}
+
+/* ---- Vellum: semi-opaque layer with soft blur, like tracing paper ---- */
+
+[data-theme="light"] .lt-vellum {
+  background: rgba(244, 240, 232, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+[data-theme="dark"] .lt-vellum {
+  background: rgba(21, 24, 32, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ---- Resin: translucent pill chips with a dome highlight ---- */
+
+.lt-resin {
+  border-radius: 999px;
+  position: relative;
+  border: 1px solid var(--lt-thread);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.2),
+    inset 0 -1px 1px rgba(0,0,0,0.1),
+    0 1px 2px var(--lt-shadow-color);
+  transition: background 150ms ease, box-shadow 150ms ease;
+  font-family: 'Space Grotesk Variable', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Frosted resin — milky, like a vintage button */
+[data-theme="light"] .lt-resin-frosted {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(0,0,0,0.08);
+  box-shadow:
+    inset 0 1px 3px rgba(255,255,255,0.5),
+    inset 0 -1px 2px rgba(0,0,0,0.05),
+    0 1px 3px rgba(0,0,0,0.1);
+}
+[data-theme="dark"] .lt-resin-frosted {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(255,255,255,0.06);
+  box-shadow:
+    inset 0 1px 3px rgba(255,255,255,0.12),
+    inset 0 -1px 2px rgba(0,0,0,0.3),
+    0 1px 3px rgba(255,255,255,0.03);
+}
+
+/* Tinted resin — colored translucent (set background color on the element) */
+.lt-resin-tinted {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-color: transparent;
+  box-shadow:
+    inset 0 1px 3px rgba(255,255,255,0.25),
+    inset 0 -1px 2px rgba(0,0,0,0.15),
+    0 1px 2px var(--lt-shadow-color);
+}
+
+.lt-resin:hover,
+.lt-resin-frosted:hover,
+.lt-resin-tinted:hover {
+  box-shadow:
+    inset 0 1px 3px rgba(255,255,255,0.3),
+    inset 0 -1px 2px rgba(0,0,0,0.12),
+    0 2px 4px var(--lt-shadow-color);
+}
+
+/* Resin color blending — set --lt-resin-color on the element */
+.lt-resin[style*="--lt-resin-color"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--lt-resin-color);
+  opacity: 0.35;
+  pointer-events: none;
+}
+[data-theme="light"] .lt-resin[style*="--lt-resin-color"]::before {
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] .lt-resin[style*="--lt-resin-color"]::before {
+  mix-blend-mode: screen;
+  opacity: 0.25;
+}
+
+/* ---- Canvas fill: fine woven cross-grid, tiling SVG ---- */
+
+[data-theme="light"] .lt-fill-canvas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0 3h6M3 0v6' stroke='%232d2a26' stroke-width='0.4' opacity='0.08'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .lt-fill-canvas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0 3h6M3 0v6' stroke='%23e8e6e3' stroke-width='0.4' opacity='0.06'/%3E%3C/svg%3E");
+}
+
+/* ---- Grain texture: directional weave, like raw canvas or linen ---- */
+
+[data-theme="light"] .lt-texture-grain {
+  background-image:
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px,
+      rgba(0,0,0,0.012) 1px,
+      transparent 2px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      2deg,
+      transparent 0px,
+      rgba(0,0,0,0.008) 1px,
+      transparent 2px,
+      transparent 5px
+    );
+}
+
+[data-theme="dark"] .lt-texture-grain {
+  background-image:
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px,
+      rgba(255,255,255,0.01) 1px,
+      transparent 2px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      2deg,
+      transparent 0px,
+      rgba(255,255,255,0.006) 1px,
+      transparent 2px,
+      transparent 5px
+    );
+}

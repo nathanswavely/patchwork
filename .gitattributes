@@ -1,0 +1,4 @@
+# Shell scripts must stay LF even on Windows checkouts (core.autocrlf=true
+# would give them CRLF, which breaks bash — including running the smoke test
+# through WSL).
+*.sh text eol=lf

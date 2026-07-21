@@ -1,0 +1,60 @@
+# Go
+/cmd/patchwork/patchwork
+/patchwork
+/seed
+/export
+/import
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# SQLite
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+data/
+
+# Generated per-patch governance test repos (real repos live under data/)
+internal/handler/governance/
+
+# Node / Svelte
+web/node_modules/
+web/dist/
+web/.svelte-kit/
+
+# Config (contains secrets)
+patchwork.yaml
+
+# Local dev tooling and maintainer notes — not part of the public tree
+.agents/
+.claude/
+skills-lock.json
+.impeccable.md
+notes/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+.env
+# Per-deployment compose overrides (e.g. pinning a ghcr image).
+# Start from docker-compose.override.yml.example.
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Playwright artifacts (screenshots, traces, .last-run.json)
+test-results/
+web/test-results/
+web/playwright-report/
+web/e2e-empty/.session.json

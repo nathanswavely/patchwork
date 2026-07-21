@@ -1,0 +1,9 @@
+{$DOMAIN:localhost} {
+	reverse_proxy patchwork:8080 {
+		# Overwrite rather than append. Caddy's default is to append the peer
+		# address to any client-supplied X-Forwarded-For, which would let a
+		# client inject arbitrary text into the header the app reads for
+		# rate-limit keys, session rows, and the audit log.
+		header_up X-Forwarded-For {remote_host}
+	}
+}

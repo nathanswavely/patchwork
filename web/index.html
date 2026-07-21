@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patchwork</title>
+    <script>
+      // Resolve the theme before first paint to avoid a flash of the wrong
+      // mode. Mirrors stores/theme.svelte.js: stored preference, else system.
+      (function () {
+        try {
+          var pref = localStorage.getItem('patchwork-theme') || 'system';
+          var theme = pref === 'system'
+            ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            : pref;
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
+    <!-- The tab icon is the quilt's own icon, not a build-time asset: whatever
+         an admin uploads at Quilt Settings -> Icon shows up here, and a fresh
+         instance falls back to a generated default block. No type attribute --
+         uploads may be PNG or SVG. -->
+    <link rel="icon" href="/api/v1/instance/icon" />
+    <!-- Fonts are self-hosted (bundled via @fontsource in src/main.js) so
+         visitors never contact Google. -->
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

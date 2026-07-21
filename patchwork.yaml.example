@@ -1,0 +1,104 @@
+# Patchwork configuration
+# Copy this to patchwork.yaml and edit for your community.
+
+# Required. Your community's identity. Name and description here are the
+# bootstrap defaults — the instance admin can override both from the admin
+# panel (Quilt settings), and the override wins. The domain is deployment
+# configuration and can only be changed here.
+instance:
+  name: "Lancaster Arts Patchwork"
+  domain: "patchwork.example.com"
+  description: "A community organizing platform for the Lancaster arts scene."
+
+# SMTP configuration for magic link authentication.
+# Optional — without SMTP, magic links print to the server log instead,
+# and invite links + passkeys work normally.
+# The password can be kept out of this file by setting the
+# PATCHWORK_SMTP_PASS environment variable instead of `pass`.
+# Port 587 (or anything else) uses STARTTLS; 465 uses implicit TLS.
+# smtp:
+#   host: "smtp.example.com"
+#   port: 587
+#   user: "patchwork@example.com"
+#   pass: "your-smtp-password"
+#   from: "noreply@example.com"
+
+# Geographic center and radius (km) for the community map.
+geographic:
+  latitude: 40.0379
+  longitude: -76.3055
+  radius: 25
+
+# Feature modules. Hints for the web app about which views to offer
+# (exposed via GET /api/v1/instance); data endpoints remain available.
+modules:
+  map: true
+  governance: true
+  ledger: false
+
+# Branding for this instance.
+# branding:
+#   color: "#4a90d9"
+#   logo_url: "/logo.svg"
+
+# Enable multi-quilt support. When true, public GET endpoints return CORS
+# headers so other Patchwork SPAs can query this instance cross-origin.
+# multi_quilt: true
+multi_quilt: false
+
+# Community submissions — allow members to add places/orgs to the quilt
+# that haven't been claimed by their real owners yet.
+submissions:
+  enabled: true
+  auto_approve: false  # set true to skip admin review for community submissions
+
+# Federation (ActivityPub)
+# When enabled, mounts the ActivityPub endpoints (/ap/*), WebFinger, and
+# the governance git transport, and starts the delivery worker. When
+# disabled, none of those are reachable.
+federation:
+  enabled: false
+
+# Server settings.
+server:
+  port: "8080"
+
+  # Peers whose X-Forwarded-For header is trusted, as CIDR blocks or bare
+  # addresses. Requests from anywhere else have the header ignored and are
+  # attributed to the connecting address, so client IPs used for rate
+  # limiting, session records, and the audit log cannot be spoofed.
+  #
+  # Commented out means the default: loopback plus the private ranges, which
+  # covers the bundled Docker Compose setup where Caddy reaches the app over a
+  # private bridge network. Set this explicitly if your proxy sits elsewhere.
+  # trusted_proxies:
+  #   - "10.0.0.0/8"
+
+# Database path. Relative to the working directory. In the Docker image the
+# working directory is /data — the compose-mounted volume — so this default
+# resolves to /data/data/patchwork.db and survives container recreation.
+# In a container, startup fails if this path is not on a mounted volume
+# (set PATCHWORK_ALLOW_EPHEMERAL=1 to run a throwaway instance anyway).
+database:
+  path: "data/patchwork.db"
+
+# How long a signed-in session lasts (docs/adr/017).
+#
+# Sessions are deliberately long. Volunteer organizers check in from a phone
+# every few weeks, and on an instance without SMTP, signing back in can mean
+# tracking down a fresh invite link — so a short session mostly punishes the
+# people this is built for. The safety comes from the idle timeout below and
+# from the passkey confirmation required for instance wipe, instance export,
+# and promoting someone to instance admin.
+#
+# Durations accept a "d" (days) suffix as well as Go syntax: "30d", "12h",
+# "90m". Both keys may be omitted; the values shown are the defaults.
+session:
+  # Absolute ceiling. A session ends this long after sign-in no matter how
+  # active it is, so every session eventually ends.
+  max_lifetime: "30d"
+
+  # A session that goes unused this long closes itself — the phone left in a
+  # taxi logs itself out. An active person is never signed out by this.
+  # It must not exceed max_lifetime, or it could never take effect.
+  idle_timeout: "14d"
