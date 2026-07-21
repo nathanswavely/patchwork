@@ -61,7 +61,9 @@ test.describe('Patch Appearance — Picker', () => {
 
     // Reset clears appearance entirely (back to hash-assigned).
     await page.getByRole('button', { name: 'Reset appearance' }).click();
-    await expect(page.getByText('Appearance reset')).toBeVisible();
+    // exact: the substring would also match the "Save appearance / Reset"
+    // button row and trip strict mode (first CI e2e run caught this).
+    await expect(page.getByText('Appearance reset', { exact: true })).toBeVisible();
     const cleared = await page.request.get(`/api/v1/nodes/${PATCH}`).then(r => r.json());
     expect(cleared.node.appearance ?? null).toBeNull();
   });
@@ -101,7 +103,9 @@ test.describe('Patch Appearance — Picker', () => {
 
     // Cleanup: back to hash-assigned (this spec owns the column).
     await page.getByRole('button', { name: 'Reset appearance' }).click();
-    await expect(page.getByText('Appearance reset')).toBeVisible();
+    // exact: the substring would also match the "Save appearance / Reset"
+    // button row and trip strict mode (first CI e2e run caught this).
+    await expect(page.getByText('Appearance reset', { exact: true })).toBeVisible();
     const cleared = await page.request.get(`/api/v1/nodes/${PATCH}`).then(r => r.json());
     expect(cleared.node.appearance ?? null).toBeNull();
   });
