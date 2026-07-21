@@ -33,6 +33,7 @@ several branches are in flight.
 | [028](028-legal-documents-ship-with-defaults.md) | Legal documents ship with defaults, live in instance settings |
 | [029](029-drafted-blocks-are-inline-appearance-data.md) | Drafted blocks are inline appearance data, not entities |
 | [030](030-claims-are-assertions-not-reservations.md) | Claims are assertions, not reservations |
+| [031](031-event-sources-vouch-for-the-feed.md) | Event sources: vouch for the feed, not each event |
 
 ## Adopted as design boundaries — implementation is backlog
 
