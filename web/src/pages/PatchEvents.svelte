@@ -82,6 +82,21 @@
     }
   }
 
+  // Subscribable feeds exist only for public patches (docs/adr/031).
+  let showSubscribe = $state(false);
+  let feedAvailable = $derived(node?.visibility === 'public');
+  let icsUrl = $derived(`${location.origin}/api/v1/nodes/${slug}/events.ics`);
+  let rssUrl = $derived(`${location.origin}/api/v1/nodes/${slug}/events.rss`);
+
+  async function copyUrl(url) {
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Copied');
+    } catch {
+      showToast('Copy failed — select the address instead', 'error');
+    }
+  }
+
   function formatDate(iso) {
     if (!iso) return '';
     return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -106,6 +121,9 @@
       {#if isUnclaimed}
         <span class="badge">Community-submitted</span>
       {/if}
+      {#if feedAvailable}
+        <button class="subscribe-toggle" onclick={() => (showSubscribe = !showSubscribe)}>Subscribe</button>
+      {/if}
     </span>
     {#if isMember && membershipRole !== 'follower'}
       <a
@@ -125,6 +143,22 @@
       <span class="role-prompt muted">Join this patch to create events.</span>
     {/if}
   </div>
+
+  {#if showSubscribe && feedAvailable}
+    <div class="subscribe-panel">
+      <div class="feed-row">
+        <span class="feed-label">Calendar (ICS)</span>
+        <code class="feed-url">{icsUrl}</code>
+        <button class="btn btn-secondary btn-sm" onclick={() => copyUrl(icsUrl)}>Copy</button>
+      </div>
+      <div class="feed-row">
+        <span class="feed-label">RSS</span>
+        <code class="feed-url">{rssUrl}</code>
+        <button class="btn btn-secondary btn-sm" onclick={() => copyUrl(rssUrl)}>Copy</button>
+      </div>
+      <p class="muted feed-hint">Paste the calendar address into your calendar app to follow this patch's events.</p>
+    </div>
+  {/if}
 
   {#if canReview && submissions.length > 0}
     <section class="suggested-section">
@@ -217,6 +251,59 @@
     align-items: center;
     margin-bottom: 1rem;
     font-size: 0.85rem;
+  }
+
+  .subscribe-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  .subscribe-toggle:hover {
+    text-decoration: underline;
+  }
+
+  .subscribe-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  .feed-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .feed-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    width: 96px;
+    flex-shrink: 0;
+  }
+
+  .feed-url {
+    font-size: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .feed-hint {
+    font-size: 0.75rem;
+    margin: 0;
   }
 
   .role-prompt {

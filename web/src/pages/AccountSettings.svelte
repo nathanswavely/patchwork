@@ -74,6 +74,53 @@
     links = links.filter((_, idx) => idx !== i);
   }
 
+  // Personal feed (docs/adr/031): one calendar of everything on My
+  // Quilt, subscribed by secret URL. The URL is shown once — only its
+  // hash is stored — and regenerating revokes the old one.
+  let feedEnabled = $state(false);
+  let feedUrl = $state('');
+  let feedBusy = $state(false);
+
+  $effect(() => {
+    api('users/me/feed-secret')
+      .then((s) => { feedEnabled = !!s.enabled; })
+      .catch(() => { feedEnabled = false; });
+  });
+
+  async function generateFeed() {
+    feedBusy = true;
+    try {
+      const res = await api('users/me/feed-secret', { method: 'POST' });
+      feedUrl = res.url;
+      feedEnabled = true;
+    } catch (e) {
+      showToast(e.message || 'Failed to create feed', 'error');
+    }
+    feedBusy = false;
+  }
+
+  async function disableFeed() {
+    feedBusy = true;
+    try {
+      await api('users/me/feed-secret', { method: 'DELETE' });
+      feedEnabled = false;
+      feedUrl = '';
+      showToast('Personal feed disabled', 'info');
+    } catch (e) {
+      showToast(e.message || 'Failed to disable feed', 'error');
+    }
+    feedBusy = false;
+  }
+
+  async function copyFeedUrl() {
+    try {
+      await navigator.clipboard.writeText(feedUrl);
+      showToast('Copied');
+    } catch {
+      showToast('Copy failed — select the address instead', 'error');
+    }
+  }
+
   async function saveProfile() {
     saving = true;
     saveMessage = '';
@@ -149,6 +196,38 @@
       </form>
     </section>
 
+    <section class="card">
+      <h2>Personal feed</h2>
+      <p class="muted profile-hint">
+        A calendar feed of every event on your My Quilt, for your calendar
+        app. The address is a secret — anyone who has it can read your feed.
+      </p>
+      {#if feedUrl}
+        <div class="feed-url-row">
+          <code class="feed-url">{feedUrl}</code>
+          <button class="btn btn-secondary" onclick={copyFeedUrl}>Copy</button>
+        </div>
+        <p class="muted profile-hint">
+          Copy it now — this address won't be shown again. Regenerating
+          replaces it.
+        </p>
+      {/if}
+      <div class="field-actions">
+        {#if feedEnabled}
+          <button class="btn btn-secondary" onclick={generateFeed} disabled={feedBusy}>
+            Regenerate address
+          </button>
+          <button class="btn btn-secondary" onclick={disableFeed} disabled={feedBusy}>
+            Disable
+          </button>
+        {:else}
+          <button class="btn btn-primary" onclick={generateFeed} disabled={feedBusy}>
+            Create feed
+          </button>
+        {/if}
+      </div>
+    </section>
+
     {#if steward?.steward}
       <section class="card">
         <h2>Steward listing</h2>
@@ -203,6 +282,23 @@
   .profile-hint {
     font-size: 0.85rem;
     margin-bottom: 1rem;
+  }
+
+  .feed-url-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    min-width: 0;
+  }
+
+  .feed-url {
+    font-size: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
   }
 
   form {

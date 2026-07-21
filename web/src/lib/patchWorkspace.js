@@ -64,6 +64,7 @@ export function patchSettingsSections({ isUnclaimed = false } = {}) {
     return [
       { id: 'info', label: 'Patch Info' },
       { id: 'appearance', label: 'Appearance' },
+      { id: 'sources', label: 'Event Sources' },
       { id: 'verification', label: 'Verification' },
       { id: 'danger', label: 'Danger Zone' },
     ];
@@ -73,6 +74,7 @@ export function patchSettingsSections({ isUnclaimed = false } = {}) {
     { id: 'info', label: 'Patch Info' },
     { id: 'appearance', label: 'Appearance' },
     { id: 'members', label: 'Members' },
+    { id: 'sources', label: 'Event Sources' },
     { id: 'notifications', label: 'Notifications' },
     { id: 'danger', label: 'Danger Zone' },
   ];

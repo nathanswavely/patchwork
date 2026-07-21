@@ -8,6 +8,7 @@
   import PatchSettingsMembers from './PatchSettingsMembers.svelte';
   import PatchSettingsDanger from './PatchSettingsDanger.svelte';
   import PatchSettingsNotifications from './PatchSettingsNotifications.svelte';
+  import PatchSettingsSources from './PatchSettingsSources.svelte';
   import PatchSettingsVerification from './PatchSettingsVerification.svelte';
 
   const patch = getContext('patch');
@@ -28,6 +29,7 @@
   let activePage = $derived.by(() => {
     if (currentPath.endsWith('/appearance')) return 'appearance';
     if (currentPath.endsWith('/members')) return 'members';
+    if (currentPath.endsWith('/sources')) return 'sources';
     if (currentPath.endsWith('/notifications')) return 'notifications';
     if (currentPath.endsWith('/verification')) return 'verification';
     if (currentPath.endsWith('/danger')) return 'danger';
@@ -62,6 +64,8 @@
       <PatchSettingsAppearance />
     {:else if activePage === 'members'}
       <PatchSettingsMembers />
+    {:else if activePage === 'sources'}
+      <PatchSettingsSources />
     {:else if activePage === 'notifications'}
       <PatchSettingsNotifications />
     {:else if activePage === 'verification'}
