@@ -296,6 +296,34 @@ func scanGovernanceConfig(gcJSON string, n *model.Node) {
 	n.GovernanceConfig = gc
 }
 
+// validateCoordinate checks a latitude or longitude value taken from a JSON
+// request. A nil value is an explicit null — clearing the position — and is
+// always allowed; a present value must be a number within its geographic
+// range (lat −90..90, lng −180..180). Placement is map-drag only, so the
+// numbers a client can send are already bounded, but a stored out-of-range
+// coordinate would put a marker nowhere or throw off the map's fit, so it is
+// rejected rather than clamped.
+func validateCoordinate(field string, val interface{}) (interface{}, error) {
+	if val == nil {
+		return nil, nil
+	}
+	f, ok := val.(float64)
+	if !ok {
+		return nil, fmt.Errorf("%s must be a number or null", field)
+	}
+	switch field {
+	case "latitude":
+		if f < -90 || f > 90 {
+			return nil, fmt.Errorf("latitude must be between -90 and 90")
+		}
+	case "longitude":
+		if f < -180 || f > 180 {
+			return nil, fmt.Errorf("longitude must be between -180 and 180")
+		}
+	}
+	return f, nil
+}
+
 func generateSlug(name string) string {
 	s := strings.ToLower(strings.TrimSpace(name))
 	s = slugRe.ReplaceAllString(s, "-")
@@ -616,6 +644,19 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			req.MembershipPolicy = "open"
 		}
 
+		if req.Latitude != nil {
+			if _, err := validateCoordinate("latitude", *req.Latitude); err != nil {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+				return
+			}
+		}
+		if req.Longitude != nil {
+			if _, err := validateCoordinate("longitude", *req.Longitude); err != nil {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+				return
+			}
+		}
+
 		id := auth.NewUUIDv7()
 		slug := uniqueSlug(db, generateSlug(req.Name))
 
@@ -780,8 +821,22 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 				args = append(args, string(linksBytes))
 				continue
 			}
+			// latitude/longitude drive the map marker. A number in range sets
+			// the position; an explicit null clears it (unset position = off
+			// the map — there is no show_on_map flag). Out-of-range or
+			// non-numeric values are rejected, not stored.
+			if field == "latitude" || field == "longitude" {
+				coord, err := validateCoordinate(field, val)
+				if err != nil {
+					http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+					return
+				}
+				setClauses = append(setClauses, field+" = ?")
+				args = append(args, coord)
+				continue
+			}
 			// appearance is shape-validated and stored as canonical JSON
-			// (or NULL when cleared back to "let the quilt decide").
+			// (or NULL when cleared back to unset).
 			if field == "appearance" {
 				apStr, err := normalizeAppearance(val)
 				if err != nil {
