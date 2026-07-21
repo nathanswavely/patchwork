@@ -348,11 +348,6 @@
     gap: 0.4rem;
   }
 
-  .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.78rem;
-  }
-
   .toggle-row {
     display: flex;
     align-items: center;

@@ -231,11 +231,6 @@
     flex: 1;
   }
 
-  .btn-sm {
-    padding: 0.3rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
   .quilt-list {
     display: flex;
     flex-direction: column;

@@ -554,11 +554,6 @@
     line-height: 1.2;
   }
 
-  .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.78rem;
-  }
-
   @media (max-width: 600px) {
     .preview-row {
       flex-direction: column;

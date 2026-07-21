@@ -347,8 +347,4 @@
     margin-left: 0.25rem;
   }
 
-  .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.78rem;
-  }
 </style>

@@ -414,11 +414,6 @@
     background: var(--color-surface);
   }
 
-  .btn-sm {
-    padding: 0.3rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
   .badge-trusted {
     color: var(--color-primary);
     border-color: var(--color-primary);
