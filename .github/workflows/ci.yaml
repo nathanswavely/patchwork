@@ -147,7 +147,14 @@ jobs:
     # multi-arch (amd64 + arm64 for Raspberry Pi); main pushes are amd64 only,
     # so :latest is amd64 — pull a version tag for arm64, or build from source
     # (docker-compose.yaml does, which is the documented Pi path).
-    needs: test
+    #
+    # Hard-gated on the whole pipeline: nothing publishes — release tag or
+    # :latest — unless unit suites, the recreate-survival smoke test, AND the
+    # full e2e suites are green. Production pulls these images; a red suite
+    # must mean no artifact. The cost is publish latency (e2e is the long
+    # pole); a genuinely flaky e2e test blocks releases and should be treated
+    # as a release blocker itself, not routed around.
+    needs: [test, smoke, e2e]
     # Publishes on pushes and on manual runs (workflow_dispatch only fires
     # from main, so a manual run republishes :latest).
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
