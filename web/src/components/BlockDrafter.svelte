@@ -1,5 +1,6 @@
 <script>
   import {
+    addSeam,
     anchorsFor,
     facesForCell,
     facesForDraft,
@@ -67,9 +68,16 @@
       pendingAnchor = null; // clicked the same anchor: cancel
       return;
     }
-    if (draft.seams.length >= SEAM_BUDGET) return;
     const seam = [pendingAnchor[0], pendingAnchor[1], a[0], a[1]];
-    const newSeams = [...draft.seams, seam];
+    // Merge with any collinear seam this one touches or overlaps (a
+    // continued line is one seam, not two) before charging the budget —
+    // a continuation shouldn't be blocked just because the count was
+    // already at 24.
+    const newSeams = addSeam(draft.seams, seam);
+    if (newSeams.length > SEAM_BUDGET) {
+      pendingAnchor = null;
+      return;
+    }
     draft.colors = reassignColors(newSeams);
     draft.seams = newSeams;
     pendingAnchor = null;

@@ -174,6 +174,67 @@ export function clipSeamToCell(seam, xmin, ymin, xmax, ymax) {
   return [ax, ay, bx, by];
 }
 
+// --- SEAM MERGING ---
+
+/** Signed area x2 of triangle (ox,oy)-(ax,ay)-(bx,by); 0 when collinear. */
+function cross3(ox, oy, ax, ay, bx, by) {
+  return (ax - ox) * (by - oy) - (ay - oy) * (bx - ox);
+}
+
+/**
+ * Union of two seams if they're collinear and touch or overlap, else
+ * null. Anchors are small integers (docs/adr/029), so this is exact —
+ * no epsilon, unlike the float geometry above.
+ */
+function unionIfMergeable(a, b) {
+  const [ax1, ay1, ax2, ay2] = a;
+  const [bx1, by1, bx2, by2] = b;
+  if (cross3(ax1, ay1, ax2, ay2, bx1, by1) !== 0) return null;
+  if (cross3(ax1, ay1, ax2, ay2, bx2, by2) !== 0) return null;
+
+  // Parametrize points on the shared line by whichever axis `a` varies
+  // more along — injective over the whole line since `a` isn't a point.
+  const dx = ax2 - ax1, dy = ay2 - ay1;
+  const useX = Math.abs(dx) >= Math.abs(dy);
+  const pts = [[ax1, ay1], [ax2, ay2], [bx1, by1], [bx2, by2]];
+  const ts = pts.map(([x, y]) => (useX ? x : y));
+  const aLo = Math.min(ts[0], ts[1]), aHi = Math.max(ts[0], ts[1]);
+  const bLo = Math.min(ts[2], ts[3]), bHi = Math.max(ts[2], ts[3]);
+  if (aHi < bLo || bHi < aLo) return null; // collinear but not touching
+
+  let lo = 0, hi = 0;
+  for (let i = 1; i < 4; i++) {
+    if (ts[i] < ts[lo]) lo = i;
+    if (ts[i] > ts[hi]) hi = i;
+  }
+  return [pts[lo][0], pts[lo][1], pts[hi][0], pts[hi][1]];
+}
+
+/**
+ * Add a seam to a seam list, merging it with any collinear seam it
+ * touches or overlaps into their union segment: a continued line is one
+ * seam, not two — visually, and against the seam budget (docs/adr/029).
+ * Merging chains (the union may in turn touch another seam, normalized
+ * until stable) and absorbs a seam fully contained in an existing
+ * collinear one — the result is unchanged, so nothing new is added.
+ */
+export function addSeam(seams, seam) {
+  let merged = seam;
+  const remaining = [...seams];
+  let i = 0;
+  while (i < remaining.length) {
+    const union = unionIfMergeable(remaining[i], merged);
+    if (union) {
+      merged = union;
+      remaining.splice(i, 1);
+      i = 0; // the union may now touch a seam already scanned past
+    } else {
+      i++;
+    }
+  }
+  return [...remaining, merged];
+}
+
 // --- CHORD SPLITTING ---
 
 /**
