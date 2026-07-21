@@ -87,3 +87,38 @@ describe('#5: the suggest-a-patch form carries tags', () => {
     expect(src).toMatch(/sub\.tags/);
   });
 });
+
+describe('#5: the reviewer can correct tags before approval', () => {
+  it('posts the corrected tags with the approve action', async () => {
+    const spy = mockFetch({ status: 'ok' });
+
+    await api('admin/submissions/sub1', {
+      method: 'PATCH',
+      body: { action: 'approve', verification_domain: '', tags: ['theater', 'craft'] },
+    });
+
+    const [url, opts] = spy.mock.calls[0];
+    expect(url).toBe('/api/v1/admin/submissions/sub1');
+    const body = JSON.parse(opts.body);
+    expect(body.action).toBe('approve');
+    expect(body.tags).toEqual(['theater', 'craft']);
+  });
+
+  it('AdminSubmissions.svelte edits tags with the shared curated-vocabulary TagPicker', () => {
+    const src = source('pages/AdminSubmissions.svelte');
+    expect(src).toContain("import TagPicker from '../components/TagPicker.svelte'");
+    expect(src).toMatch(/<TagPicker\s+bind:selected=\{tagInputs\[sub\.id\]\}/);
+  });
+
+  it('AdminSubmissions.svelte seeds the picker from the submitted tags', () => {
+    const src = source('pages/AdminSubmissions.svelte');
+    expect(src).toMatch(/tags\[sub\.id\]\s*=\s*sub\.tags \|\| \[\]/);
+  });
+
+  it('AdminSubmissions.svelte sends the picker state only on approve', () => {
+    const src = source('pages/AdminSubmissions.svelte');
+    // tags ride the same approve-only branch as the verification domain.
+    const approveBranch = src.match(/if \(action === 'approve'\) \{[^}]*\}/s)?.[0] || '';
+    expect(approveBranch).toContain("body.tags = tagInputs[id] || []");
+  });
+});

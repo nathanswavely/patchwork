@@ -3,6 +3,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
+  import TagPicker from '../components/TagPicker.svelte';
 
   let submissions = $state([]);
   let loading = $state(true);
@@ -12,6 +13,9 @@
   // Trust anchor for self-service claims (docs/adr/030): suggested from the
   // submitter's website, but only applied because the reviewing admin says so.
   let domainInputs = $state({});
+  // Tags start as what the submitter picked; the reviewer can correct them
+  // before approving, and whatever is here is what the patch gets.
+  let tagInputs = $state({});
 
   async function loadSubmissions() {
     loading = true;
@@ -19,10 +23,13 @@
       const data = await api('admin/submissions');
       submissions = data.items || [];
       const inputs = {};
+      const tags = {};
       for (const sub of submissions) {
         inputs[sub.id] = sub.suggested_verification_domain || '';
+        tags[sub.id] = sub.tags || [];
       }
       domainInputs = inputs;
+      tagInputs = tags;
     } catch {
       submissions = [];
     } finally {
@@ -35,6 +42,7 @@
       const body = { action };
       if (action === 'approve') {
         body.verification_domain = (domainInputs[id] || '').trim();
+        body.tags = tagInputs[id] || [];
       }
       await api(`admin/submissions/${id}`, { method: 'PATCH', body });
       showToast(action === 'approve' ? 'Submission approved' : 'Submission rejected', 'success');
@@ -52,7 +60,7 @@
 
 <div class="page-fade">
   <h1>Patch Submissions</h1>
-  <p class="muted" style="margin-bottom: 1.5rem;">Community-submitted patches awaiting review.</p>
+  <p class="muted" style="margin-bottom: 1.5rem;">Patches people have suggested.</p>
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
@@ -72,13 +80,11 @@
           {#if sub.website}
             <p class="sub-website"><a href={sub.website} target="_blank" rel="noopener">{sub.website}</a></p>
           {/if}
-          {#if sub.tags && sub.tags.length > 0}
-            <div class="sub-tags" role="list" aria-label="Submitted tags">
-              {#each sub.tags as tag}
-                <span class="tag-chip" role="listitem">{tag}</span>
-              {/each}
-            </div>
-          {/if}
+          <div class="sub-tags">
+            <span class="field-label">Tags</span>
+            <TagPicker bind:selected={tagInputs[sub.id]} />
+            <span class="muted">The submitter's picks.</span>
+          </div>
           <div class="sub-meta muted">
             Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}
           </div>
@@ -87,10 +93,10 @@
             <input
               id="vd-{sub.id}"
               type="text"
-              placeholder="none — admin review only"
+              placeholder="none (admin review only)"
               bind:value={domainInputs[sub.id]}
             />
-            <span class="muted">Owners prove control of this domain (DNS, meta tag, or email) to claim the patch. Leave empty if you can't vouch for the website.</span>
+            <span class="muted">Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.</span>
           </div>
           <div class="sub-actions">
             <button class="btn btn-primary btn-sm" onclick={() => handleAction(sub.id, 'approve')}>Approve</button>
@@ -138,20 +144,18 @@
 
   .sub-tags {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
+    flex-direction: column;
+    gap: 0.3rem;
     margin-bottom: 0.5rem;
   }
 
-  .tag-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.18rem 0.55rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
+  .sub-tags .field-label {
+    font-size: 0.78rem;
     font-weight: 500;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
+  }
+
+  .sub-tags .muted {
+    font-size: 0.72rem;
   }
 
   .sub-meta {

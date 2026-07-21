@@ -62,7 +62,7 @@
 
 <div class="submit-page page-fade">
   <h1>Add a patch to the quilt</h1>
-  <p class="muted">Know a place, group, or organization that should be on the map? Add it here. The real owner can claim it later.</p>
+  <p class="muted">Know a place or group that should be on the map? The real owner can claim it later.</p>
 
   <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
     <div class="field">
@@ -101,7 +101,6 @@
 
     <div class="field">
       <label>Tags <span class="muted">(optional)</span></label>
-      <p class="field-hint muted">What kind of patch is this? Helps people find it once it's added.</p>
       <TagPicker bind:selected={tags} disabled={submitting} />
     </div>
 
@@ -148,11 +147,6 @@
   .field label {
     font-size: 0.85rem;
     font-weight: 500;
-  }
-
-  .field-hint {
-    font-size: 0.8rem;
-    margin-bottom: 0.35rem;
   }
 
   .required {
