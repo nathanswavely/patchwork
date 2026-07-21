@@ -5,10 +5,70 @@
   import InlineEdit from '../components/InlineEdit.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import TagPicker from '../components/TagPicker.svelte';
+  import MapLocationPicker from '../components/MapLocationPicker.svelte';
+  import { hasMapLocation, formatCoord } from '../lib/mapLocation.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let node = $derived(patch.value.node);
+
+  // Map location (issue #4): a placed marker, independent of the address
+  // prose above. Placement is a deliberate, explicit-save flow — the picker
+  // opens, the admin drops/drags a marker, and only then does it save.
+  let placingLocation = $state(false);
+  let savingLocation = $state(false);
+  let mapCenter = $state(null);
+  let onMap = $derived(hasMapLocation(node?.latitude, node?.longitude));
+  let locationReadout = $derived(
+    onMap ? formatCoord(node.latitude, node.longitude) : ''
+  );
+
+  // Center the empty picker on the instance's configured area, the same
+  // origin the discovery map uses.
+  $effect(() => {
+    if (mapCenter) return;
+    api('instance')
+      .then((inst) => {
+        if (inst?.geography) {
+          mapCenter = { lat: inst.geography.latitude, lng: inst.geography.longitude };
+        }
+      })
+      .catch(() => {});
+  });
+
+  async function saveLocation(lat, lng) {
+    savingLocation = true;
+    try {
+      await api(`nodes/${slug}`, {
+        method: 'PATCH',
+        body: { latitude: lat, longitude: lng },
+      });
+      showToast('Map location saved', 'success');
+      placingLocation = false;
+      patch.value.reload();
+    } catch (e) {
+      showToast(e.message || 'Failed to save map location', 'error');
+    } finally {
+      savingLocation = false;
+    }
+  }
+
+  async function removeLocation() {
+    savingLocation = true;
+    try {
+      await api(`nodes/${slug}`, {
+        method: 'PATCH',
+        body: { latitude: null, longitude: null },
+      });
+      showToast('Removed from map', 'success');
+      placingLocation = false;
+      patch.value.reload();
+    } catch (e) {
+      showToast(e.message || 'Failed to remove from map', 'error');
+    } finally {
+      savingLocation = false;
+    }
+  }
 
   // Links state (managed separately since InlineEdit doesn't handle arrays)
   let links = $state([]);
@@ -140,6 +200,51 @@
     onSave={(v) => saveField('address', v)}
     placeholder="e.g. Lancaster, PA"
   />
+
+  <!-- Map location section (issue #4). Separate from the address prose
+       above: an address never implies a map position. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Map location</span>
+    </div>
+    {#if onMap}
+      <p class="location-state">
+        On the map at <span class="location-coords">{locationReadout}</span>
+      </p>
+    {:else}
+      <p class="muted">Not on the map.</p>
+    {/if}
+    <p class="muted tags-hint">
+      Placing a marker adds this patch to the map. The marker can be set
+      approximately — it is separate from the address above.
+    </p>
+
+    {#if placingLocation}
+      <MapLocationPicker
+        lat={node?.latitude ?? null}
+        lng={node?.longitude ?? null}
+        center={mapCenter}
+        saving={savingLocation}
+        onSave={saveLocation}
+        onCancel={() => (placingLocation = false)}
+      />
+    {:else}
+      <div class="location-actions">
+        <button class="btn btn-secondary btn-sm" onclick={() => (placingLocation = true)}>
+          {onMap ? 'Adjust map location' : 'Set map location'}
+        </button>
+        {#if onMap}
+          <ConfirmAction
+            label="Remove from map"
+            confirmLabel="Remove"
+            variant="danger"
+            disabled={savingLocation}
+            onConfirm={removeLocation}
+          />
+        {/if}
+      </div>
+    {/if}
+  </div>
 
   <InlineEdit
     label="Website"
@@ -373,6 +478,23 @@
   .tags-actions {
     display: flex;
     gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .location-state {
+    font-size: 0.88rem;
+    margin: 0 0 0.15rem;
+  }
+
+  .location-coords {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+
+  .location-actions {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
     margin-top: 0.5rem;
   }
 

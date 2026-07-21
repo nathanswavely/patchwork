@@ -462,6 +462,20 @@ an event's venue text (`events.location`) and never names this field.
 _Avoid_: location (it means the event field), place, venue (events have
 those), where
 
+**Map location**:
+A patch's placed marker on the map — a numeric latitude/longitude pair a
+patch admin sets by dragging a marker on the Leaflet map the app already
+ships, never geocoded from any text. Deliberately plain, no textile
+coinage: it is a coordinate, not a woven thing. Independent of the address
+above it — an address is prose, a map location is a placed point, and
+naming one never sets the other. Unset position means the patch is simply
+off the map; there is no separate on/off flag. Placement is manual and
+explicit (open the picker, drop or drag the marker, save), so its
+coarseness is the admin's to choose — a marker can sit at neighbourhood
+level on purpose. Backend columns: `nodes.latitude`, `nodes.longitude`.
+_Avoid_: pin (retired — docs/adr/027), geocode, coordinates (as the UI
+label), address (that is the prose field, not the marker)
+
 ## Tile appearance
 
 **Tile**:
