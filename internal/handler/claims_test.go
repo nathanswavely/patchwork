@@ -620,3 +620,112 @@ func TestReviewSubmissionSetsAnchor(t *testing.T) {
 		t.Fatalf("after approve: status=%s vd=%q", status, vd)
 	}
 }
+
+// --- Community submission tags (docs/adr/021) ---
+
+func TestSubmitPatchWithValidTagsPersists(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{Submissions: config.Submissions{Enabled: true}}
+	_, memberToken := createTestUser(t, db, "tagsubmitter", "member")
+	createTestTag(t, db, "music")
+	createTestTag(t, db, "craft")
+
+	r := authedRequest("POST", "/api/v1/submissions", map[string]interface{}{
+		"name": "Tagged Venue",
+		"tags": []string{"craft", "music"},
+	}, memberToken)
+	w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("submit: got %d %s", w.Code, w.Body.String())
+	}
+
+	var nodeID string
+	if err := db.QueryRow("SELECT id FROM nodes WHERE slug = 'tagged-venue'").Scan(&nodeID); err != nil {
+		t.Fatalf("find node: %v", err)
+	}
+	rows, err := db.Query(
+		`SELECT t.name FROM node_tags nt JOIN tags t ON nt.tag_id = t.id
+		 WHERE nt.node_id = ? ORDER BY nt.position`, nodeID,
+	)
+	if err != nil {
+		t.Fatalf("query tags: %v", err)
+	}
+	defer rows.Close()
+	var got []string
+	for rows.Next() {
+		var name string
+		rows.Scan(&name)
+		got = append(got, name)
+	}
+	if len(got) != 2 || got[0] != "craft" || got[1] != "music" {
+		t.Fatalf("stored tags = %v, want [craft music] in submitted priority order", got)
+	}
+}
+
+func TestSubmitPatchUnknownTagRejected(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{Submissions: config.Submissions{Enabled: true}}
+	_, memberToken := createTestUser(t, db, "badtagsubmitter", "member")
+	createTestTag(t, db, "music")
+
+	r := authedRequest("POST", "/api/v1/submissions", map[string]interface{}{
+		"name": "Bad Tag Venue",
+		"tags": []string{"music", "not-a-real-tag"},
+	}, memberToken)
+	w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("submit with unknown tag: got %d, want 400: %s", w.Code, w.Body.String())
+	}
+	if !bodyContains(w.Body.Bytes(), `"error":"unknown tag: not-a-real-tag"`) {
+		t.Fatalf("unexpected error body: %s", w.Body.String())
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM nodes WHERE slug = 'bad-tag-venue'").Scan(&count)
+	if count != 0 {
+		t.Fatalf("node was created despite rejected tag")
+	}
+}
+
+func TestSubmitPatchWithoutTagsSucceeds(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{Submissions: config.Submissions{Enabled: true}}
+	_, memberToken := createTestUser(t, db, "notagsubmitter", "member")
+
+	// Tags omitted entirely.
+	r := authedRequest("POST", "/api/v1/submissions", map[string]interface{}{"name": "No Tags Venue"}, memberToken)
+	w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("submit without tags: got %d %s", w.Code, w.Body.String())
+	}
+
+	// Tags present but empty.
+	r = authedRequest("POST", "/api/v1/submissions", map[string]interface{}{"name": "Empty Tags Venue", "tags": []string{}}, memberToken)
+	w = serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("submit with empty tags: got %d %s", w.Code, w.Body.String())
+	}
+}
+
+func TestListSubmissionsIncludesTags(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{Submissions: config.Submissions{Enabled: true}}
+	_, memberToken := createTestUser(t, db, "queuetagsubmitter", "member")
+	_, adminToken := createTestUser(t, db, "queuetagadmin", "admin")
+	createTestTag(t, db, "music")
+
+	r := authedRequest("POST", "/api/v1/submissions", map[string]interface{}{
+		"name": "Queue Tag Venue",
+		"tags": []string{"music"},
+	}, memberToken)
+	w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("submit: got %d %s", w.Code, w.Body.String())
+	}
+
+	r = authedRequest("GET", "/api/v1/admin/submissions", nil, adminToken)
+	w = serveAdminMux(t, db, "GET", "/api/v1/admin/submissions", handler.ListSubmissions(db), r)
+	if !bodyContains(w.Body.Bytes(), `"tags":["music"]`) {
+		t.Fatalf("submitted tags missing from review queue: %s", w.Body.String())
+	}
+}

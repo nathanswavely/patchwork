@@ -72,6 +72,13 @@
           {#if sub.website}
             <p class="sub-website"><a href={sub.website} target="_blank" rel="noopener">{sub.website}</a></p>
           {/if}
+          {#if sub.tags && sub.tags.length > 0}
+            <div class="sub-tags" role="list" aria-label="Submitted tags">
+              {#each sub.tags as tag}
+                <span class="tag-chip" role="listitem">{tag}</span>
+              {/each}
+            </div>
+          {/if}
           <div class="sub-meta muted">
             Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}
           </div>
@@ -127,6 +134,24 @@
   .sub-website {
     font-size: 0.82rem;
     margin-bottom: 0.5rem;
+  }
+
+  .sub-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
   }
 
   .sub-meta {
