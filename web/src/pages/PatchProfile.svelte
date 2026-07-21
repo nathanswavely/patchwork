@@ -227,9 +227,17 @@
         >Suggest an event</a>
       {/if}
       {#if isAdmin}
-        <a href="/patches/{slug}/governance" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance`); }}>
-          Manage
-        </a>
+        <!-- Unclaimed patches have no governance workspace; Manage lands on
+             the events calendar, which is the live surface (docs/adr/026, #6). -->
+        {#if isUnclaimed}
+          <a href="/patches/{slug}/events" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/events`); }}>
+            Manage
+          </a>
+        {:else}
+          <a href="/patches/{slug}/governance" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance`); }}>
+            Manage
+          </a>
+        {/if}
       {:else if isMember && !isBanned && !isUnclaimed}
         <a href="/patches/{slug}/governance" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance`); }}>
           Governance
