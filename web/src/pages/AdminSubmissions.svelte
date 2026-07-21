@@ -188,8 +188,4 @@
     gap: 0.5rem;
   }
 
-  .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.75rem;
-  }
 </style>

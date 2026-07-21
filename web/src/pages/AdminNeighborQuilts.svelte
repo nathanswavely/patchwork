@@ -176,11 +176,6 @@
     word-break: break-all;
   }
 
-  .btn-sm {
-    padding: 0.3rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
   .empty-state {
     text-align: center;
     padding: 2rem 1rem;

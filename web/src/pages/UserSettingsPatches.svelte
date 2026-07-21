@@ -225,11 +225,6 @@
     flex-shrink: 0;
   }
 
-  .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.78rem;
-  }
-
   .vis-toggle {
     border: 1px solid var(--color-border);
     background: var(--color-surface);

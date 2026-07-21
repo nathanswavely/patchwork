@@ -285,11 +285,6 @@
     font-size: 0.85rem;
   }
 
-  .btn-sm {
-    padding: 0.3rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
   .empty-state {
     text-align: center;
     padding: 2rem 0;
