@@ -59,8 +59,8 @@
       myNodes = nodesData.items || nodesData || [];
       // Creators can edit events on patches they don't belong to; keep
       // the (disabled) select able to show the hosting patch's name.
-      if (nodeId && !myNodes.some((n) => n.id === nodeId) && event.node_name) {
-        myNodes = [...myNodes, { id: nodeId, name: event.node_name }];
+      if (nodeId && !myNodes.some((n) => n.node_id === nodeId) && event.node_name) {
+        myNodes = [...myNodes, { node_id: nodeId, node_name: event.node_name }];
       }
     } catch (e) {
       error = e.message || 'Failed to load event';
@@ -216,8 +216,8 @@
           {:else}
             <select id="node" bind:value={nodeId} disabled={submitting || isEdit || !!lockSlug}>
               <option value="">Select a patch</option>
-              {#each myNodes as node (node.id)}
-                <option value={node.id}>{node.name}</option>
+              {#each myNodes as node (node.node_id)}
+                <option value={node.node_id}>{node.node_name}</option>
               {/each}
             </select>
           {/if}

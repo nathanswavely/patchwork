@@ -35,6 +35,9 @@
  *   claims.spec.js           creates its own uniquely-named unclaimed patch
  *                            and claims it as `active` (claim never completes,
  *                            so no membership changes) — owns only that patch
+ *   event-form.spec.js       creates its own uniquely-named patch as `admin`
+ *                            (auto-admin membership) and posts one event to
+ *                            it — owns only that patch and event
  *
  * Everything else must treat seed data as read-only, and assertions on shared
  * entities (e.g. lancaster-arts-district lists) must be keyed to specific
