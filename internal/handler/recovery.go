@@ -80,7 +80,7 @@ func RedeemRecoveryCode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		sessionToken, err := auth.CreateSession(db, user.ID, ip)
+		sessionToken, err := auth.CreateSession(db, user.ID, ip, r.UserAgent())
 		if err != nil {
 			http.Error(w, `{"error":"failed to create session"}`, http.StatusInternalServerError)
 			return

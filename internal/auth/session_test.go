@@ -19,7 +19,7 @@ func TestSessionTokenIsHashedAtRest(t *testing.T) {
 		t.Fatalf("create user: %v", err)
 	}
 
-	rawToken, err := CreateSession(db, userID, "127.0.0.1")
+	rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 	if err != nil {
 		t.Fatalf("create session: %v", err)
 	}
@@ -61,8 +61,8 @@ func TestDestroyUserSessionsRevokesAll(t *testing.T) {
 		userID, "revoke-test", "Revoke Test", now, now,
 	)
 
-	first, _ := CreateSession(db, userID, "127.0.0.1")
-	second, _ := CreateSession(db, userID, "127.0.0.2")
+	first, _ := CreateSession(db, userID, "127.0.0.1", "test-agent")
+	second, _ := CreateSession(db, userID, "127.0.0.2", "test-agent")
 
 	if err := DestroyUserSessions(db, userID); err != nil {
 		t.Fatalf("destroy: %v", err)
@@ -86,8 +86,8 @@ func TestDestroyOtherUserSessionsKeepsCurrent(t *testing.T) {
 		userID, "keep-test", "Keep Test", now, now,
 	)
 
-	current, _ := CreateSession(db, userID, "127.0.0.1")
-	other, _ := CreateSession(db, userID, "127.0.0.2")
+	current, _ := CreateSession(db, userID, "127.0.0.1", "test-agent")
+	other, _ := CreateSession(db, userID, "127.0.0.2", "test-agent")
 
 	if err := DestroyOtherUserSessions(db, userID, current); err != nil {
 		t.Fatalf("destroy others: %v", err)

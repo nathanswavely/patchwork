@@ -226,6 +226,11 @@ func main() {
 	mux.HandleFunc("POST /api/v1/auth/recovery-codes", middleware.AuthRequired(db, handler.GenerateRecoveryCodes(db)))
 	mux.HandleFunc("PATCH /api/v1/auth/credentials/{id}", middleware.AuthRequired(db, handler.RenameCredential(db)))
 	mux.HandleFunc("DELETE /api/v1/auth/credentials/{id}", middleware.AuthRequired(db, handler.DeleteCredential(db)))
+	// Session manager: a person sees and revokes only their own sessions
+	// (issue #3, follow-up to docs/adr/017).
+	mux.HandleFunc("GET /api/v1/auth/sessions", middleware.AuthRequired(db, handler.ListSessions(db)))
+	mux.HandleFunc("POST /api/v1/auth/sessions/revoke-others", middleware.AuthRequired(db, handler.RevokeOtherSessions(db)))
+	mux.HandleFunc("DELETE /api/v1/auth/sessions/{id}", middleware.AuthRequired(db, handler.RevokeSession(db)))
 	// Step-up: a fresh assertion from an already-signed-in person, opening a
 	// short window for the three irreversible instance actions.
 	mux.HandleFunc("GET /api/v1/auth/step-up", middleware.AuthRequired(db, handler.StepUpStatus(db)))

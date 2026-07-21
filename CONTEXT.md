@@ -239,6 +239,19 @@ and approved by its admins is simply an event: adoption erases provenance.
 _Avoid_: unverified (doubts the event, not the source), unofficial
 (apologizes for it), community-recorded
 
+**Session**:
+A person's signed-in presence in one browser or device — the thing a
+cookie holds. Deliberately has no textile coinage: the UI says plain
+"session" and "active sessions", because a security surface where someone
+decides which of their devices to sign out has to be read literally, and a
+quilt metaphor would only fog it. A person sees and revokes only their own
+sessions; no one, not even an instance admin, sees another's. Each carries
+a coarse device label ("Chrome on Windows") derived from the stored
+User-Agent — recognition, not fingerprinting. Signing out the current
+session is logout; "sign out everywhere else" keeps it and cuts the rest.
+_Avoid_: any textile term, login (the act, not the standing state),
+device (a session is per-browser, not per-machine)
+
 ## Governance
 
 **Charter**:
