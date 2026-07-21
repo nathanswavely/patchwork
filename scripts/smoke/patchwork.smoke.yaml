@@ -1,0 +1,10 @@
+# Config for scripts/smoke-recreate.sh. Deliberately example-style: the
+# database path is RELATIVE, exactly as patchwork.yaml.example ships it.
+# The test proves that an untouched default config keeps its data across
+# container recreation.
+instance:
+  name: "Smoke Test Patchwork"
+  domain: "localhost"
+
+database:
+  path: "data/patchwork.db"

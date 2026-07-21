@@ -1,0 +1,75 @@
+version: 2
+
+# Pinning actions to commit SHAs (see .github/workflows/ci.yaml) freezes them at
+# a known-good commit — including its known-bad bugs. These updaters keep the
+# pins moving so "immutable" doesn't quietly become "unpatched".
+#
+# Cooldowns below are the quarantine window. A compromised package release is
+# usually yanked within hours to a couple of days of publication; without a
+# cooldown, the next weekly run opens a PR for it and the only thing standing
+# between that and main is someone reading a lockfile diff. Waiting lets the
+# ecosystem find the bad release for us. The cost is running a week behind on
+# non-security updates — govulncheck and `npm audit` in CI still fail the build
+# on a known CVE, so a real advisory surfaces immediately and is merged by hand.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "ci"
+    # Shorter than the package ecosystems: actions are pinned to full commit
+    # SHAs, so a moved tag can't reach us and the attack needs a compromised
+    # commit in the upstream repo — a louder, better-watched event than an
+    # npm publish. Still non-zero; a fresh action release is still fresh code.
+    cooldown:
+      default-days: 3
+    groups:
+      docker-actions:
+        patterns:
+          - "docker/*"
+      github-actions:
+        patterns:
+          - "actions/*"
+
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    groups:
+      # One PR per module meant five separate reviews of near-identical
+      # lockfile diffs, which is how a queue gets rubber-stamped. Batching
+      # the routine ones leaves majors — the updates that actually need
+      # reading — arriving alone and visible.
+      go-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    groups:
+      # Frontend dev tooling churns fast and is not in the shipped bundle;
+      # batching it keeps the PR queue readable.
+      dev-dependencies:
+        dependency-type: development
+      # Production deps ship in the bundle users execute, so they are grouped
+      # separately from dev tooling and only for minor/patch — a major bump to
+      # something like dompurify gets its own PR and its own read.
+      production-dependencies:
+        dependency-type: production
+        update-types:
+          - minor
+          - patch

@@ -1,0 +1,16 @@
+# Compose file for scripts/smoke-recreate.sh. Mirrors the production
+# docker-compose.yaml data-volume setup, minus Caddy (the app port is
+# published directly so the script can hit the API).
+services:
+  patchwork:
+    build:
+      context: ../..
+    restart: unless-stopped
+    volumes:
+      - smoke_data:/data
+      - ./patchwork.smoke.yaml:/patchwork.yaml:ro
+    ports:
+      - "127.0.0.1:18080:8080"
+
+volumes:
+  smoke_data:
