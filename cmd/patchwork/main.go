@@ -19,6 +19,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/web"
 )
@@ -158,6 +159,12 @@ func main() {
 	defer reminderCancel()
 	notifications.StartReminderWorker(reminderCtx, notifier)
 
+	// Start the event source worker: hourly re-sync of every attached
+	// calendar feed (docs/adr/031).
+	sourceCtx, sourceCancel := context.WithCancel(context.Background())
+	defer sourceCancel()
+	eventsource.StartWorker(sourceCtx, db, notifier)
+
 	// First-run bootstrap notice: until an account exists there is no admin,
 	// so tell the operator how to claim the instance.
 	if auth.NoUsersExist(db) {
@@ -259,6 +266,22 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.DeleteNode(db))))
 
 	// Membership routes — auth required.
+	// Outbound calendar feeds (docs/adr/031): every public patch is
+	// subscribable; the personal feed's URL secret is its credential.
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/events.ics", handler.NodeICSFeed(db, cfg))
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/events.rss", handler.NodeRSSFeed(db, cfg))
+	mux.HandleFunc("GET /api/v1/feeds/{secret}/events.ics", rl(handler.PersonalICSFeed(db, cfg)))
+	mux.HandleFunc("GET /api/v1/users/me/feed-secret", middleware.AuthRequired(db, handler.FeedSecretStatus(db)))
+	mux.HandleFunc("POST /api/v1/users/me/feed-secret", middleware.AuthRequired(db, handler.GenerateFeedSecret(db, cfg)))
+	mux.HandleFunc("DELETE /api/v1/users/me/feed-secret", middleware.AuthRequired(db, handler.DeleteFeedSecret(db)))
+
+	// Event sources (docs/adr/031): owner-attached calendar feeds.
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/event-sources", middleware.AuthRequired(db, handler.ListEventSources(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources", middleware.AuthRequired(db, handler.CreateEventSource(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/event-sources/{id}", middleware.AuthRequired(db, handler.DeleteEventSource(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources/{id}/sync", middleware.AuthRequired(db, handler.SyncEventSource(db)))
+	mux.HandleFunc("POST /api/v1/events/{id}/detach", middleware.AuthRequired(db, handler.DetachEvent(db)))
+
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/leave", middleware.AuthRequired(db, handler.LeaveNode(db)))
 	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembershipVisibility(db)))

@@ -193,9 +193,30 @@ type Event struct {
 	// Status is 'active' or 'pending_review' (docs/adr/026). Pending
 	// events are submissions awaiting whoever owns the calendar; they
 	// never appear in public listings and never federate.
-	Status    string `json:"status,omitempty"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	Status string `json:"status,omitempty"`
+	// SourceID marks an imported event (docs/adr/031): the source is
+	// authoritative and the event is read-only until detached.
+	SourceID  *string `json:"source_id,omitempty"`
+	CreatedAt string  `json:"created_at"`
+	UpdatedAt string  `json:"updated_at"`
+}
+
+// EventSource is a standing feed a patch pulls events from
+// (docs/adr/031). Attached by whoever owns the calendar; attaching is
+// vouching for the feed once.
+type EventSource struct {
+	ID            string  `json:"id"`
+	NodeID        string  `json:"node_id"`
+	Type          string  `json:"type"`
+	URL           string  `json:"url"`
+	AddedBy       string  `json:"added_by"`
+	Status        string  `json:"status"`
+	LastFetchAt   *string `json:"last_fetch_at,omitempty"`
+	LastSuccessAt *string `json:"last_success_at,omitempty"`
+	LastError     *string `json:"last_error,omitempty"`
+	EventCount    int     `json:"event_count"`
+	CreatedAt     string  `json:"created_at"`
+	UpdatedAt     string  `json:"updated_at"`
 }
 
 type Membership struct {

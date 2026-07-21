@@ -126,9 +126,9 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 			NodeStatus string `json:"node_status"`
 		}
 		err := db.QueryRow(
-			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.status, e.created_at, e.updated_at, COALESCE(n.name, '') AS node_name, COALESCE(n.slug, '') AS node_slug, COALESCE(n.status, '') AS node_status
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.status, e.source_id, e.created_at, e.updated_at, COALESCE(n.name, '') AS node_name, COALESCE(n.slug, '') AS node_slug, COALESCE(n.status, '') AS node_status
 			 FROM events e LEFT JOIN nodes n ON e.node_id = n.id WHERE e.id = ? AND e.removed_at IS NULL`, eventID,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.Status, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus)
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.Status, &e.SourceID, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -316,9 +316,18 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 
 		// Get event to check permissions.
 		var nodeID, createdBy, eventStatus string
-		err := db.QueryRow("SELECT node_id, created_by, status FROM events WHERE id = ?", eventID).Scan(&nodeID, &createdBy, &eventStatus)
+		var sourceID *string
+		err := db.QueryRow("SELECT node_id, created_by, status, source_id FROM events WHERE id = ?", eventID).Scan(&nodeID, &createdBy, &eventStatus, &sourceID)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// The source is authoritative for imported events (docs/adr/031):
+		// they are read-only here — change them in the source calendar,
+		// or detach this one to make it an ordinary local event.
+		if sourceID != nil {
+			http.Error(w, `{"error":"this event comes from an event source — edit it in the source calendar, or detach it first"}`, http.StatusForbidden)
 			return
 		}
 		var nodeStatus string
@@ -442,7 +451,10 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 
 		// Get event to check permissions and capture info for notification.
 		var nodeID, eventTitle, createdBy, eventStatus string
-		err := db.QueryRow("SELECT node_id, title, created_by, status FROM events WHERE id = ?", eventID).Scan(&nodeID, &eventTitle, &createdBy, &eventStatus)
+		var sourceID, sourceUID *string
+		var sourceOccurrence string
+		err := db.QueryRow("SELECT node_id, title, created_by, status, source_id, source_uid, source_occurrence FROM events WHERE id = ?", eventID).
+			Scan(&nodeID, &eventTitle, &createdBy, &eventStatus, &sourceID, &sourceUID, &sourceOccurrence)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -454,6 +466,18 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "admin") && user.ID != createdBy {
 			http.Error(w, `{"error":"insufficient permissions"}`, http.StatusForbidden)
 			return
+		}
+
+		// Deleting an imported event skip-lists its feed item first, so
+		// the next sync doesn't resurrect it (docs/adr/031).
+		if sourceID != nil && sourceUID != nil {
+			if _, err := db.Exec(
+				`INSERT OR IGNORE INTO event_source_skips (source_id, uid, occurrence) VALUES (?, ?, ?)`,
+				*sourceID, *sourceUID, sourceOccurrence,
+			); err != nil {
+				http.Error(w, `{"error":"failed to delete event"}`, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		result, err := db.Exec("DELETE FROM events WHERE id = ?", eventID)
