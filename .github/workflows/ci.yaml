@@ -107,6 +107,41 @@ jobs:
       - name: Recreate-survival smoke test
         run: scripts/smoke-recreate.sh
 
+  e2e:
+    # The full Playwright suites — seeded instance and empty instance — against
+    # a real backend (`go run`, cgo/sqlite) plus Vite. The suites boot their own
+    # isolated stacks on checkout-derived ports (web/e2e/ports.js) and fall back
+    # to patchwork.yaml.example, so the job needs no services and no setup
+    # beyond toolchains and a Chromium.
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+
+      - name: Install frontend deps
+        run: cd web && npm ci
+
+      - name: Install Playwright Chromium
+        run: cd web && npx playwright install --with-deps chromium
+
+      - name: e2e (seeded instance)
+        run: cd web && npx playwright test
+
+      - name: e2e (empty instance)
+        run: cd web && npx playwright test --config playwright.empty.config.js
+
   image:
     # Publish to ghcr.io on pushes to main and version tags. Version tags are
     # multi-arch (amd64 + arm64 for Raspberry Pi); main pushes are amd64 only,
