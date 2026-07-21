@@ -2,12 +2,16 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import TagPicker from '../components/TagPicker.svelte';
 
   let name = $state('');
   let description = $state('');
   let website = $state('');
   let links = $state([{ url: '', label: '' }]);
   let address = $state('');
+  // Tags are optional on a community suggestion — an admin can add them at
+  // review time if the submitter skips this (docs/adr/021).
+  let tags = $state([]);
   let submitting = $state(false);
   let error = $state('');
 
@@ -34,6 +38,7 @@
         website: website.trim() || undefined,
         links: cleanLinks.length > 0 ? cleanLinks : undefined,
         address: address.trim() || undefined,
+        tags: tags.length > 0 ? tags : undefined,
       };
       const result = await api('submissions', { method: 'POST', body });
       if (result.node) {
@@ -94,6 +99,12 @@
       <input id="address" type="text" bind:value={address} placeholder="123 Main St, Lancaster, PA" disabled={submitting} />
     </div>
 
+    <div class="field">
+      <label>Tags <span class="muted">(optional)</span></label>
+      <p class="field-hint muted">What kind of patch is this? Helps people find it once it's added.</p>
+      <TagPicker bind:selected={tags} disabled={submitting} />
+    </div>
+
     {#if error}
       <p class="error-text">{error}</p>
     {/if}
@@ -137,6 +148,11 @@
   .field label {
     font-size: 0.85rem;
     font-weight: 500;
+  }
+
+  .field-hint {
+    font-size: 0.8rem;
+    margin-bottom: 0.35rem;
   }
 
   .required {

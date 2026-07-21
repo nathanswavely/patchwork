@@ -33,6 +33,7 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Address     string           `json:"address"`
 			Latitude    *float64         `json:"latitude"`
 			Longitude   *float64         `json:"longitude"`
+			Tags        []string         `json:"tags"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -40,6 +41,17 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		if req.Name == "" {
 			http.Error(w, `{"error":"name is required"}`, http.StatusBadRequest)
+			return
+		}
+
+		// Tags are optional, but any offered must come from the curated
+		// vocabulary — validated the same way the admin create path does
+		// (docs/adr/021); unknown tags are rejected rather than dropped, so
+		// a submitter finds out immediately instead of the tag silently
+		// vanishing.
+		tagIDs, unknownTag := resolveTagIDs(db, req.Tags)
+		if unknownTag != "" {
+			http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
 			return
 		}
 
@@ -84,6 +96,12 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		if err != nil {
 			http.Error(w, `{"error":"failed to create submission"}`, http.StatusInternalServerError)
 			return
+		}
+
+		// Array order is the stored (priority) order — same as every other
+		// tag-writing path (docs/adr/021).
+		if len(tagIDs) > 0 {
+			setNodeTags(db, id, tagIDs)
 		}
 
 		auth.LogAuditEvent(db, user.ID, "node.submit", "node", id, r.RemoteAddr, fmt.Sprintf(`{"status":"%s"}`, status))
@@ -314,6 +332,11 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 			CreatedAt       string `json:"created_at"`
 			SubmitterName   string `json:"submitter_username"`
 			SubmitterDisplay string `json:"submitter_display_name"`
+			// Tags the submitter picked, in priority order — shown so the
+			// reviewer can see what the community suggested before approving
+			// (docs/adr/021). Corrections happen after approval, once the
+			// patch exists as a normal node with the usual tag editor.
+			Tags []string `json:"tags"`
 		}
 
 		var items []submission
@@ -325,6 +348,7 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 			}
 			s.Links = json.RawMessage(linksStr)
 			s.SuggestedVerificationDomain = deriveVerificationDomain(s.Website)
+			s.Tags = nodeTagNames(db, s.ID)
 			items = append(items, s)
 		}
 
