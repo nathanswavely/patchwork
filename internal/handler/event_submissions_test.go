@@ -100,7 +100,7 @@ func TestCreateEventSubmissionLadder(t *testing.T) {
 // mustToken creates a fresh session for an existing user.
 func mustToken(t *testing.T, db *database.DB, userID string) string {
 	t.Helper()
-	token, err := auth.CreateSession(db, userID, "127.0.0.1")
+	token, err := auth.CreateSession(db, userID, "127.0.0.1", "test-agent")
 	if err != nil {
 		t.Fatalf("session: %v", err)
 	}

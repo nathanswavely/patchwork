@@ -32,6 +32,24 @@ test.describe('User Settings — Navigation', () => {
   });
 });
 
+test.describe('User Settings — Security', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsAdmin(page);
+  });
+
+  // Read-only: asserts the session manager renders and flags the current
+  // session. Deliberately does NOT revoke anything — the dev session tokens
+  // are the shared login mechanism for every spec and worker (see the data
+  // ownership note in setup.js), so revoking one here would sign the whole
+  // suite out. Mutation paths are covered by the Go handler tests.
+  test('security page lists active sessions and marks the current one', async ({ page }) => {
+    await goto(page, '/settings/security');
+    await expectNoError(page);
+    await expect(page.getByRole('heading', { name: 'Active sessions' })).toBeVisible();
+    await expect(page.getByText('This session').first()).toBeVisible();
+  });
+});
+
 test.describe('User Settings — Profile', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);

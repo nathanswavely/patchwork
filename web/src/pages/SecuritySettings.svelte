@@ -40,12 +40,69 @@
   let generatingCodes = $state(false);
   let codesCopied = $state(false);
 
+  let sessions = $state([]);
+  let loadingSessions = $state(false);
+  let signingOutOthers = $state(false);
+
   $effect(() => {
     if (user) {
       loadCredentials();
       loadRecoveryStatus();
+      loadSessions();
     }
   });
+
+  async function loadSessions() {
+    loadingSessions = true;
+    try {
+      const data = await api('auth/sessions');
+      sessions = Array.isArray(data) ? data : [];
+    } catch {
+      sessions = [];
+    } finally {
+      loadingSessions = false;
+    }
+  }
+
+  async function revokeSession(id) {
+    try {
+      await api(`auth/sessions/${id}`, { method: 'DELETE' });
+      sessions = sessions.filter((s) => s.id !== id);
+      showToast('Session signed out', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to sign out session', 'error');
+    }
+  }
+
+  async function signOutOthers() {
+    signingOutOthers = true;
+    try {
+      await api('auth/sessions/revoke-others', { method: 'POST' });
+      sessions = sessions.filter((s) => s.current);
+      showToast('Signed out everywhere else', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to sign out other sessions', 'error');
+    } finally {
+      signingOutOthers = false;
+    }
+  }
+
+  // Relative time, same shape the comment thread uses.
+  function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    const now = Date.now();
+    const then = new Date(dateStr).getTime();
+    if (Number.isNaN(then)) return '';
+    const mins = Math.floor((now - then) / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins} minute${mins > 1 ? 's' : ''} ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`;
+    const months = Math.floor(days / 30);
+    return `${months} month${months > 1 ? 's' : ''} ago`;
+  }
 
   async function loadRecoveryStatus() {
     try {
@@ -304,6 +361,57 @@
   </section>
 
   <section class="card">
+    <h2>Active sessions</h2>
+    <p class="muted" style="margin-bottom: 1rem;">
+      Where you're signed in. Sign out any session you don't recognize.
+    </p>
+
+    {#if loadingSessions}
+      <Skeleton lines={2} height="0.9rem" />
+    {:else if sessions.length === 0}
+      <p class="muted">No active sessions.</p>
+    {:else}
+      <ul class="session-list">
+        {#each sessions as s (s.id)}
+          <li>
+            <div class="session-info">
+              <span class="session-name">
+                {s.label}
+                {#if s.current}<span class="session-current">This session</span>{/if}
+              </span>
+              <small class="muted">
+                {#if s.last_used_at}Last active {timeAgo(s.last_used_at)}{/if}
+                {#if s.created_at}
+                  · Signed in {new Date(s.created_at).toLocaleDateString()}
+                {/if}
+              </small>
+            </div>
+            {#if !s.current}
+              <ConfirmAction
+                label="Sign out"
+                confirmLabel="Yes, sign out"
+                variant="danger"
+                onConfirm={() => revokeSession(s.id)}
+              />
+            {/if}
+          </li>
+        {/each}
+      </ul>
+
+      {#if sessions.some((s) => !s.current)}
+        <div class="sign-out-others">
+          <ConfirmAction
+            label={signingOutOthers ? 'Signing out...' : 'Sign out everywhere else'}
+            confirmLabel="Yes, sign out other sessions"
+            variant="danger"
+            onConfirm={signOutOthers}
+          />
+        </div>
+      {/if}
+    {/if}
+  </section>
+
+  <section class="card">
     <h2>Recovery codes</h2>
     <p class="muted" style="margin-bottom: 1rem;">
       If you lose your passkey, a recovery code signs you in. Each code works
@@ -430,6 +538,55 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .session-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .session-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .session-list li:last-child {
+    border-bottom: none;
+  }
+
+  .session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .session-name {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .session-current {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    color: var(--color-primary);
+    background: var(--color-bg-subtle, rgba(0, 0, 0, 0.05));
+  }
+
+  .sign-out-others {
+    margin-top: 1rem;
   }
 
   .rename-form {

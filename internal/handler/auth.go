@@ -122,7 +122,7 @@ func RedeemInviteLink(db *database.DB) http.HandlerFunc {
 		ip := clientIP(r)
 
 		// Create session.
-		token, err := auth.CreateSession(db, user.ID, ip)
+		token, err := auth.CreateSession(db, user.ID, ip, r.UserAgent())
 		if err != nil {
 			http.Error(w, `{"error":"failed to create session"}`, http.StatusInternalServerError)
 			return
@@ -243,7 +243,7 @@ func VerifyMagicLink(db *database.DB) http.HandlerFunc {
 
 		ip := clientIP(r)
 
-		sessionToken, err := auth.CreateSession(db, user.ID, ip)
+		sessionToken, err := auth.CreateSession(db, user.ID, ip, r.UserAgent())
 		if err != nil {
 			http.Error(w, `{"error":"failed to create session"}`, http.StatusInternalServerError)
 			return
@@ -323,7 +323,7 @@ func CompleteSignup(db *database.DB) http.HandlerFunc {
 
 		ip := clientIP(r)
 
-		token, err := auth.CreateSession(db, user.ID, ip)
+		token, err := auth.CreateSession(db, user.ID, ip, r.UserAgent())
 		if err != nil {
 			http.Error(w, `{"error":"failed to create session"}`, http.StatusInternalServerError)
 			return
@@ -518,7 +518,7 @@ func WebAuthnLoginFinish(db *database.DB, wa *auth.WebAuthnService) http.Handler
 
 		ip := clientIP(r)
 
-		sessionToken, err := auth.CreateSession(db, user.ID, ip)
+		sessionToken, err := auth.CreateSession(db, user.ID, ip, r.UserAgent())
 		if err != nil {
 			http.Error(w, `{"error":"failed to create session"}`, http.StatusInternalServerError)
 			return

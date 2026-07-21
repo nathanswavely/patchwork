@@ -50,7 +50,7 @@ func createTestUser(t *testing.T, db *database.DB, username, role string) (*mode
 	if err != nil {
 		t.Fatalf("create user %s: %v", username, err)
 	}
-	token, err := auth.CreateSession(db, id, "127.0.0.1")
+	token, err := auth.CreateSession(db, id, "127.0.0.1", "test-agent")
 	if err != nil {
 		t.Fatalf("create session for %s: %v", username, err)
 	}

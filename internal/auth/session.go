@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
@@ -76,7 +77,11 @@ func HashToken(rawToken string) string {
 
 // CreateSession inserts a new session and returns the raw token.
 // Only the hash is persisted; the raw token exists solely in the cookie.
-func CreateSession(db *database.DB, userID, ip string) (string, error) {
+//
+// The raw userAgent is stored so the session manager (issue #3) can render a
+// coarse device label; see DeviceLabel. Callers pass r.UserAgent() from the
+// login handler; "" is fine and renders as an unknown device.
+func CreateSession(db *database.DB, userID, ip, userAgent string) (string, error) {
 	rawToken, err := generateToken()
 	if err != nil {
 		return "", err
@@ -87,8 +92,8 @@ func CreateSession(db *database.DB, userID, ip string) (string, error) {
 	expiresAt := now.Add(sessionMaxLifetime).Format(time.RFC3339)
 
 	_, err = db.Exec(
-		`INSERT INTO sessions (id, user_id, token, expires_at, ip_address, last_used_at) VALUES (?, ?, ?, ?, ?, ?)`,
-		id, userID, HashToken(rawToken), expiresAt, ip, now.Format(time.RFC3339),
+		`INSERT INTO sessions (id, user_id, token, expires_at, ip_address, user_agent, last_used_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		id, userID, HashToken(rawToken), expiresAt, ip, userAgent, now.Format(time.RFC3339),
 	)
 	if err != nil {
 		return "", fmt.Errorf("insert session: %w", err)
@@ -250,6 +255,97 @@ func DestroyOtherUserSessions(db *database.DB, userID, keepRawToken string) erro
 		userID, HashToken(keepRawToken),
 	)
 	return err
+}
+
+// SessionInfo is a single active session as shown in the session manager
+// (issue #3). It carries no token or token-hash material — only what a person
+// needs to recognize and decide about their own sessions.
+type SessionInfo struct {
+	ID         string `json:"id"`
+	Label      string `json:"label"`
+	CreatedAt  string `json:"created_at"`
+	LastUsedAt string `json:"last_used_at"`
+	Current    bool   `json:"current"`
+}
+
+// ListUserSessions returns the non-expired sessions belonging to userID, newest
+// activity first, with the one presenting currentRawToken flagged Current.
+//
+// Expiry is evaluated the same two ways ValidateSession uses (docs/adr/017):
+// a session is dropped from the list once it passes its absolute expires_at or
+// its last_used_at plus the idle timeout, so the manager never offers to revoke
+// something already dead. Filtering happens in Go because the idle timeout is a
+// runtime config value, not a column. The token hash never leaves this function.
+func ListUserSessions(db *database.DB, userID, currentRawToken string) ([]SessionInfo, error) {
+	rows, err := db.Query(
+		`SELECT id, COALESCE(user_agent,''), expires_at, COALESCE(last_used_at,''), COALESCE(created_at,''), token
+		 FROM sessions WHERE user_id = ?`,
+		userID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("list sessions: %w", err)
+	}
+	defer rows.Close()
+
+	currentHash := HashToken(currentRawToken)
+	now := time.Now()
+
+	sessions := []SessionInfo{}
+	for rows.Next() {
+		var id, userAgent, expiresAt, lastUsedAt, createdAt, tokenHash string
+		if err := rows.Scan(&id, &userAgent, &expiresAt, &lastUsedAt, &createdAt, &tokenHash); err != nil {
+			continue
+		}
+
+		if exp, err := time.Parse(time.RFC3339, expiresAt); err == nil && now.After(exp) {
+			continue
+		}
+		if lastUsed, ok := parseTimestamp(lastUsedAt); ok && now.After(lastUsed.Add(sessionIdleTimeout)) {
+			continue
+		}
+
+		sessions = append(sessions, SessionInfo{
+			ID:         id,
+			Label:      DeviceLabel(userAgent),
+			CreatedAt:  createdAt,
+			LastUsedAt: lastUsedAt,
+			Current:    tokenHash == currentHash,
+		})
+	}
+
+	// Newest activity first; the current session tends to sort to the top,
+	// which is where a person looks for it.
+	sort.Slice(sessions, func(i, j int) bool {
+		return sessions[i].LastUsedAt > sessions[j].LastUsedAt
+	})
+
+	return sessions, nil
+}
+
+// DestroyUserSession deletes one session, but only if it belongs to userID. It
+// reports whether a row was actually deleted, so the handler can answer a
+// non-owned or unknown id with 404 — a session id is not a capability to
+// revoke someone else's session, and 404 (not 403) keeps another user's id
+// indistinguishable from a nonexistent one.
+func DestroyUserSession(db *database.DB, userID, sessionID string) (bool, error) {
+	res, err := db.Exec(
+		"DELETE FROM sessions WHERE id = ? AND user_id = ?",
+		sessionID, userID,
+	)
+	if err != nil {
+		return false, fmt.Errorf("destroy session: %w", err)
+	}
+	n, _ := res.RowsAffected()
+	return n > 0, nil
+}
+
+// SessionIDForToken returns the id of the session presenting rawToken, or ""
+// if none matches. Used to tell whether a revoke targets the current session
+// (which then behaves as logout).
+func SessionIDForToken(db *database.DB, rawToken string) string {
+	var id string
+	db.QueryRow("SELECT id FROM sessions WHERE token = ?", HashToken(rawToken)).Scan(&id)
+	return id
 }
 
 // SetSessionCookie writes the session cookie to the response.

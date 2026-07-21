@@ -60,7 +60,7 @@ func TestCreateSessionUsesConfiguredLifetime(t *testing.T) {
 	userID := newSessionUser(t, db, "lifetime-user")
 
 	withLifetimes(t, 2*time.Hour, time.Hour, func() {
-		rawToken, err := CreateSession(db, userID, "127.0.0.1")
+		rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 		if err != nil {
 			t.Fatalf("create session: %v", err)
 		}
@@ -99,7 +99,7 @@ func TestIdleSessionExpires(t *testing.T) {
 	userID := newSessionUser(t, db, "idle-user")
 
 	withLifetimes(t, 30*24*time.Hour, time.Hour, func() {
-		rawToken, err := CreateSession(db, userID, "127.0.0.1")
+		rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 		if err != nil {
 			t.Fatalf("create session: %v", err)
 		}
@@ -129,7 +129,7 @@ func TestActiveSessionSurvivesIdleWindow(t *testing.T) {
 	userID := newSessionUser(t, db, "active-user")
 
 	withLifetimes(t, 30*24*time.Hour, time.Hour, func() {
-		rawToken, err := CreateSession(db, userID, "127.0.0.1")
+		rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 		if err != nil {
 			t.Fatalf("create session: %v", err)
 		}
@@ -152,7 +152,7 @@ func TestAbsoluteExpiryEndsAnActiveSession(t *testing.T) {
 	userID := newSessionUser(t, db, "absolute-user")
 
 	withLifetimes(t, 30*24*time.Hour, 14*24*time.Hour, func() {
-		rawToken, err := CreateSession(db, userID, "127.0.0.1")
+		rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 		if err != nil {
 			t.Fatalf("create session: %v", err)
 		}
@@ -184,7 +184,7 @@ func TestLastUsedStampIsThrottled(t *testing.T) {
 	userID := newSessionUser(t, db, "throttle-user")
 
 	withLifetimes(t, 30*24*time.Hour, 14*24*time.Hour, func() {
-		rawToken, err := CreateSession(db, userID, "127.0.0.1")
+		rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 		if err != nil {
 			t.Fatalf("create session: %v", err)
 		}
@@ -220,7 +220,7 @@ func TestStampingKeepsARegularlyUsedSessionAlive(t *testing.T) {
 	userID := newSessionUser(t, db, "regular-user")
 
 	withLifetimes(t, 30*24*time.Hour, 3*time.Hour, func() {
-		rawToken, err := CreateSession(db, userID, "127.0.0.1")
+		rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 		if err != nil {
 			t.Fatalf("create session: %v", err)
 		}
@@ -247,7 +247,7 @@ func TestUnstampedSessionIsNotTreatedAsInfinitelyIdle(t *testing.T) {
 	userID := newSessionUser(t, db, "legacy-user")
 
 	withLifetimes(t, 30*24*time.Hour, time.Hour, func() {
-		rawToken, err := CreateSession(db, userID, "127.0.0.1")
+		rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 		if err != nil {
 			t.Fatalf("create session: %v", err)
 		}
@@ -274,7 +274,7 @@ func TestSudoWindowGrantAndExpiry(t *testing.T) {
 	db := setupTestDB(t)
 	userID := newSessionUser(t, db, "sudo-user")
 
-	rawToken, err := CreateSession(db, userID, "127.0.0.1")
+	rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 	if err != nil {
 		t.Fatalf("create session: %v", err)
 	}
@@ -314,11 +314,11 @@ func TestSudoWindowIsPerSession(t *testing.T) {
 	db := setupTestDB(t)
 	userID := newSessionUser(t, db, "two-device-user")
 
-	tokenA, err := CreateSession(db, userID, "127.0.0.1")
+	tokenA, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 	if err != nil {
 		t.Fatalf("create session A: %v", err)
 	}
-	tokenB, err := CreateSession(db, userID, "127.0.0.2")
+	tokenB, err := CreateSession(db, userID, "127.0.0.2", "test-agent")
 	if err != nil {
 		t.Fatalf("create session B: %v", err)
 	}
@@ -339,7 +339,7 @@ func TestSudoWindowDoesNotSurviveLogout(t *testing.T) {
 	db := setupTestDB(t)
 	userID := newSessionUser(t, db, "logout-user")
 
-	rawToken, err := CreateSession(db, userID, "127.0.0.1")
+	rawToken, err := CreateSession(db, userID, "127.0.0.1", "test-agent")
 	if err != nil {
 		t.Fatalf("create session: %v", err)
 	}
