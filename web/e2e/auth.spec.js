@@ -53,6 +53,41 @@ test.describe('Auth — Login Page', () => {
   });
 });
 
+test.describe('Auth — /login Redirects an Already-Authenticated Session', () => {
+  // Issue #9: navigating directly to /login while a session is already
+  // active used to render the login form unconditionally. Pure navigation
+  // against the seeded admin — read-only, no shared state touched.
+
+  test('logged-in visitor to /login is bounced to home without seeing the form', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/login');
+    await page.waitForURL((url) => url.pathname === '/');
+    await expect(page.locator('.login-page')).not.toBeVisible();
+  });
+
+  test('logged-in visitor to /login?redirect=... lands on that destination', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/login?redirect=%2Fdashboard');
+    await page.waitForURL((url) => url.pathname === '/dashboard');
+    await expect(page.locator('h1')).toContainText('Dashboard');
+  });
+
+  test('logged-in visitor to /login with an off-site redirect target falls back to home', async ({ page }) => {
+    await loginAsAdmin(page);
+    // Open-redirect guard: an absolute/off-origin ?redirect= must never be
+    // honored — only same-origin relative paths are safe to hand to the
+    // client router.
+    await page.goto(`/login?redirect=${encodeURIComponent('https://evil.example/phish')}`);
+    await page.waitForURL((url) => url.pathname === '/');
+    expect(page.url()).not.toContain('evil.example');
+  });
+
+  test('logged-out visitor still sees the login form (no regression)', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.locator('.login-page')).toBeVisible();
+  });
+});
+
 test.describe('Auth — Session', () => {
   test('authenticated user sees dashboard', async ({ page }) => {
     await loginAsAdmin(page);

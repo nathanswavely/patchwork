@@ -22,6 +22,23 @@ export function getQuery() {
 }
 
 /**
+ * Whether a redirect target (typically from a `?redirect=` query param) is
+ * safe to hand to navigate()/replaceRoute(). Only same-origin relative
+ * paths are allowed — an absolute URL (`https://evil.example`) or a
+ * protocol-relative one (`//evil.example`, or the backslash variant
+ * browsers normalize the same way) would send the user off-site, which is
+ * exactly what an open-redirect check exists to prevent.
+ */
+export function isSafeRedirectPath(path) {
+  return (
+    typeof path === 'string'
+    && path.startsWith('/')
+    && !path.startsWith('//')
+    && !path.startsWith('/\\')
+  );
+}
+
+/**
  * Register a route pattern. Call once at startup.
  *
  * Params are recomputed after every registration: this module initializes

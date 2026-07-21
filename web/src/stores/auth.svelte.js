@@ -2,6 +2,12 @@ import { api } from '../lib/api.js';
 import { loadMemberships, clearMemberships } from './memberships.svelte.js';
 
 let user = $state(null);
+// Whether the initial checkAuth() round-trip has resolved (success or
+// failure). Routes that behave differently for logged-in vs logged-out
+// visitors (e.g. /login) should wait on this before deciding what to
+// render, so a session cookie that hasn't been validated yet doesn't
+// cause a flash of the wrong content.
+let authChecked = $state(false);
 
 /**
  * Get the current user (reactive).
@@ -15,6 +21,13 @@ export function getUser() {
  */
 export function isLoggedIn() {
   return user !== null;
+}
+
+/**
+ * Whether the initial auth check has completed.
+ */
+export function isAuthChecked() {
+  return authChecked;
 }
 
 /**
@@ -33,6 +46,8 @@ export async function login() {
     loadMemberships();
   } catch {
     user = null;
+  } finally {
+    authChecked = true;
   }
 }
 
@@ -58,5 +73,7 @@ export async function checkAuth() {
     loadMemberships();
   } catch {
     user = null;
+  } finally {
+    authChecked = true;
   }
 }
