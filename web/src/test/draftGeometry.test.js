@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  addSeam,
   anchorsFor,
   isLegalAnchor,
   isValidDraft,
@@ -156,6 +157,86 @@ describe('recreating curated blocks', () => {
     const faces = facesForCell([[0, 4, 2, 0], [2, 0, 4, 4]], 0, 0);
     expect(faces).toHaveLength(3); // goose triangle + two sky corners
     expect(totalArea(faces)).toBeCloseTo(16, 9);
+  });
+});
+
+describe('seam merging', () => {
+  it('a seam continuing an existing one merges into their union', () => {
+    // (0,0)-(4,4) then (4,4)-(8,8): shares an endpoint, same line.
+    const seams = addSeam([[0, 0, 4, 4]], [4, 4, 8, 8]);
+    expect(seams).toEqual([[0, 0, 8, 8]]);
+  });
+
+  it('merges regardless of endpoint order (shared endpoint, reversed direction)', () => {
+    const seams = addSeam([[4, 4, 0, 0]], [8, 8, 4, 4]);
+    expect(seams).toEqual([[0, 0, 8, 8]]);
+  });
+
+  it('overlapping collinear seams merge into their union span', () => {
+    const seams = addSeam([[0, 0, 4, 4]], [2, 2, 8, 8]);
+    expect(seams).toEqual([[0, 0, 8, 8]]);
+  });
+
+  it('a seam fully contained in an existing collinear seam is a no-op', () => {
+    const seams = addSeam([[0, 0, 8, 8]], [2, 2, 4, 4]);
+    expect(seams).toEqual([[0, 0, 8, 8]]);
+  });
+
+  it('an existing seam fully contained in the new one is absorbed', () => {
+    const seams = addSeam([[2, 2, 4, 4]], [0, 0, 8, 8]);
+    expect(seams).toEqual([[0, 0, 8, 8]]);
+  });
+
+  it('chains: a seam bridging two others merges all three into one', () => {
+    const existing = [[0, 0, 2, 2], [6, 6, 8, 8]];
+    const seams = addSeam(existing, [2, 2, 6, 6]);
+    expect(seams).toEqual([[0, 0, 8, 8]]);
+  });
+
+  it('chains regardless of the order seams were drawn in', () => {
+    const existing = [[6, 6, 8, 8], [0, 0, 2, 2]];
+    const seams = addSeam(existing, [2, 2, 6, 6]);
+    expect(seams).toEqual([[0, 0, 8, 8]]);
+  });
+
+  it('touching but non-collinear seams do not merge', () => {
+    // Both start at (0,0) but go different directions.
+    const seams = addSeam([[0, 0, 4, 4]], [0, 0, 4, 0]);
+    expect(seams).toHaveLength(2);
+    expect(seams).toEqual(expect.arrayContaining([[0, 0, 4, 4], [0, 0, 4, 0]]));
+  });
+
+  it('parallel collinear seams that do not touch stay separate', () => {
+    const seams = addSeam([[0, 0, 2, 2]], [4, 4, 8, 8]);
+    expect(seams).toHaveLength(2);
+    expect(seams).toEqual(expect.arrayContaining([[0, 0, 2, 2], [4, 4, 8, 8]]));
+  });
+
+  it('leaves unrelated seams untouched', () => {
+    const seams = addSeam([[0, 4, 4, 0]], [4, 4, 8, 8]);
+    expect(seams).toEqual(expect.arrayContaining([[0, 4, 4, 0], [4, 4, 8, 8]]));
+    expect(seams).toHaveLength(2);
+  });
+
+  it('a merge keeps the seam budget from being charged twice', () => {
+    // 24 independent parallel seams (a full budget), then a seam that
+    // continues one of them: the union replaces it, net count unchanged.
+    const full = Array.from({ length: SEAM_BUDGET }, (_, i) => [0, i, 1, i]);
+    const seams = addSeam(full, [1, 0, 2, 0]); // continues [0,0,1,0]
+    expect(seams).toHaveLength(SEAM_BUDGET);
+    expect(seams).toEqual(expect.arrayContaining([[0, 0, 2, 0]]));
+  });
+
+  it('merging can reduce the seam count below budget even when starting at budget', () => {
+    // 22 unrelated row seams, plus two collinear-but-gapped seams on the
+    // same line (y=0, x:0-2 and x:6-8) — 24 seams total, at budget.
+    const rows = Array.from({ length: 22 }, (_, i) => [0, i + 1, 1, i + 1]);
+    const full = [...rows, [0, 0, 2, 0], [6, 0, 8, 0]];
+    expect(full).toHaveLength(SEAM_BUDGET);
+    // Bridging the gap merges the two collinear seams into one: net -1.
+    const seams = addSeam(full, [2, 0, 6, 0]);
+    expect(seams.length).toBe(SEAM_BUDGET - 1);
+    expect(seams).toEqual(expect.arrayContaining([[0, 0, 8, 0]]));
   });
 });
 
