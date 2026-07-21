@@ -538,6 +538,14 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			"node":         n,
 			"is_unclaimed": isUnclaimed,
 		}
+		// The verification domain is the trust anchor for claims (docs/adr/030);
+		// surface it for unclaimed patches so the admin's Verification settings
+		// can show and edit it. It is already public via the claim endpoints.
+		if isUnclaimed {
+			var vd string
+			db.QueryRow("SELECT COALESCE(verification_domain,'') FROM nodes WHERE id = ?", n.ID).Scan(&vd)
+			resp["verification_domain"] = vd
+		}
 		if !isUnclaimed {
 			var owner model.User
 			db.QueryRow(

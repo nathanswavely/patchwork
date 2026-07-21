@@ -14,6 +14,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { setPatchName } from '../stores/patchName.svelte.js';
   import { workspaceFinderProvider } from '../lib/finderProviders.js';
+  import { workspaceTabs } from '../lib/patchWorkspace.js';
   import GlobalBar from './GlobalBar.svelte';
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
@@ -36,6 +37,8 @@
   let isBanned = $state(false);
   let breadcrumbExtra = $state([]);
 
+  let verificationDomain = $state('');
+
   // Expose to child pages via context
   const patchContext = $derived({
     node,
@@ -46,6 +49,7 @@
     isBanned,
     membershipRole,
     followerPermissions,
+    verificationDomain,
     loading,
     error,
     reload: loadNode,
@@ -77,6 +81,7 @@
       followerPermissions = (data.node || data).follower_permissions || null;
       isUnclaimed = data.is_unclaimed || false;
       isBanned = data.is_banned || false;
+      verificationDomain = data.verification_domain || '';
       setPatchName(node?.name || slug);
     } catch (e) {
       error = e.message || 'Failed to load patch';
@@ -134,29 +139,26 @@
   }
 
   // --- Tabs (one URL scheme per screen — ADR 003) ---
-  // The workspace is for everyone; role decides what shows. Admins get the
-  // Settings tab, followers get permission-gated tabs.
+  // The workspace is for everyone; role and claim state decide what shows.
+  // Admins get the Settings tab, followers get permission-gated tabs, and
+  // unclaimed patches get a pared-down subset (workspaceTabs owns that logic
+  // so it can be tested on its own).
   let basePath = $derived(`/patches/${slug}`);
 
-  const tabs = $derived.by(() => {
-    if (isUnclaimed) return [];
+  const TAB_ICONS = {
+    governance: Scales,
+    members: UsersThree,
+    events: CalendarBlank,
+    settings: GearSix,
+  };
 
-    const t = [
-      { id: 'governance', label: 'Governance', href: `${basePath}/governance`, icon: Scales },
-    ];
-
-    const fp = followerPermissions;
-    const isFollower = membershipRole === 'follower';
-
-    if (!isFollower || fp?.members !== false)
-      t.push({ id: 'members', label: 'Members', href: `${basePath}/members`, icon: UsersThree });
-    if (!isFollower || fp?.events !== false)
-      t.push({ id: 'events', label: 'Events', href: `${basePath}/events`, icon: CalendarBlank });
-    if (isAdmin)
-      t.push({ id: 'settings', label: 'Settings', href: `${basePath}/settings`, icon: GearSix });
-
-    return t;
-  });
+  const tabs = $derived.by(() =>
+    workspaceTabs({ isUnclaimed, isAdmin, membershipRole, followerPermissions }).map((t) => ({
+      ...t,
+      href: `${basePath}/${t.id}`,
+      icon: TAB_ICONS[t.id],
+    }))
+  );
 
   let finderProvider = $derived(workspaceFinderProvider(slug));
 
