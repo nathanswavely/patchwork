@@ -1,15 +1,21 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate
 
+# Where `make build` writes the server binary. Override via the environment to
+# build every worktree to one stable path — on Windows the firewall keys its
+# allow/block rule to the executable's full path, so per-worktree binaries
+# each prompt as a brand-new program. One path, one prompt.
+PATCHWORK_BIN ?= ./patchwork
+
 build:
-	go build -o patchwork ./cmd/patchwork/
+	go build -o $(PATCHWORK_BIN) ./cmd/patchwork/
 
 run: build
-	./patchwork
+	$(PATCHWORK_BIN)
 
 dev: build
 	@echo "Starting Go backend (server.port from patchwork.yaml; the Vite proxy expects 8090) and Vite dev server on :5173..."
 	@trap 'kill 0' EXIT; \
-	./patchwork & \
+	$(PATCHWORK_BIN) & \
 	cd web && npm run dev & \
 	wait
 

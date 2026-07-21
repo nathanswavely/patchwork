@@ -15,6 +15,13 @@ make dev        # Go backend + Vite dev server with hot reload
 make seed       # optional demo data (fictional; see docs/adr/009)
 ```
 
+`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`
+to an absolute path to send it somewhere else — useful on Windows, where
+the firewall keys its rule to the executable's full path, so a per-worktree
+binary prompts as a new program every time. Pointing every worktree at one
+path means approving once. The tradeoff: worktrees then share a binary and
+can't run servers simultaneously.
+
 Before opening a PR:
 
 ```sh
