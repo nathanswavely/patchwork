@@ -729,3 +729,151 @@ func TestListSubmissionsIncludesTags(t *testing.T) {
 		t.Fatalf("submitted tags missing from review queue: %s", w.Body.String())
 	}
 }
+
+// --- Reviewer tag correction at approval time (issue #5) ---
+
+// storedTagNames reads a node's tags in stored priority order.
+func storedTagNames(t *testing.T, db *database.DB, nodeID string) []string {
+	t.Helper()
+	rows, err := db.Query(
+		`SELECT t.name FROM node_tags nt JOIN tags t ON nt.tag_id = t.id
+		 WHERE nt.node_id = ? ORDER BY nt.position`, nodeID,
+	)
+	if err != nil {
+		t.Fatalf("query tags: %v", err)
+	}
+	defer rows.Close()
+	var got []string
+	for rows.Next() {
+		var name string
+		rows.Scan(&name)
+		got = append(got, name)
+	}
+	return got
+}
+
+// submitPendingWithTags creates a pending_review submission carrying tags and
+// returns its node ID.
+func submitPendingWithTags(t *testing.T, db *database.DB, token string, name string, tags []string) string {
+	t.Helper()
+	cfg := &config.Config{Submissions: config.Submissions{Enabled: true}}
+	body := map[string]interface{}{"name": name}
+	if tags != nil {
+		body["tags"] = tags
+	}
+	r := authedRequest("POST", "/api/v1/submissions", body, token)
+	w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("submit: got %d %s", w.Code, w.Body.String())
+	}
+	var sub map[string]interface{}
+	json.Unmarshal(w.Body.Bytes(), &sub)
+	return sub["id"].(string)
+}
+
+func TestReviewSubmissionTagOverridePersists(t *testing.T) {
+	db := setupTestDB(t)
+	_, memberToken := createTestUser(t, db, "overridesubmitter", "member")
+	_, adminToken := createTestUser(t, db, "overrideadmin", "admin")
+	createTestTag(t, db, "music")
+	createTestTag(t, db, "craft")
+	createTestTag(t, db, "theater")
+
+	nodeID := submitPendingWithTags(t, db, memberToken, "Override Venue", []string{"music"})
+
+	// The reviewer corrects the tags on approval — the override wins, in the
+	// reviewer's priority order.
+	r := authedRequest("PATCH", "/api/v1/admin/submissions/"+nodeID, map[string]interface{}{
+		"action": "approve",
+		"tags":   []string{"theater", "craft"},
+	}, adminToken)
+	w := serveAdminMux(t, db, "PATCH", "/api/v1/admin/submissions/{id}", handler.ReviewSubmission(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("approve: got %d %s", w.Code, w.Body.String())
+	}
+
+	var status string
+	db.QueryRow("SELECT status FROM nodes WHERE id = ?", nodeID).Scan(&status)
+	if status != "unclaimed" {
+		t.Fatalf("after approve: status=%s, want unclaimed", status)
+	}
+	got := storedTagNames(t, db, nodeID)
+	if len(got) != 2 || got[0] != "theater" || got[1] != "craft" {
+		t.Fatalf("stored tags = %v, want [theater craft] in reviewer's order", got)
+	}
+}
+
+func TestReviewSubmissionUnknownTagRejected(t *testing.T) {
+	db := setupTestDB(t)
+	_, memberToken := createTestUser(t, db, "unknowntagsubmitter", "member")
+	_, adminToken := createTestUser(t, db, "unknowntagadmin", "admin")
+	createTestTag(t, db, "music")
+
+	nodeID := submitPendingWithTags(t, db, memberToken, "Unknown Tag Venue", []string{"music"})
+
+	r := authedRequest("PATCH", "/api/v1/admin/submissions/"+nodeID, map[string]interface{}{
+		"action": "approve",
+		"tags":   []string{"music", "not-a-real-tag"},
+	}, adminToken)
+	w := serveAdminMux(t, db, "PATCH", "/api/v1/admin/submissions/{id}", handler.ReviewSubmission(db), r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("approve with unknown tag: got %d, want 400: %s", w.Code, w.Body.String())
+	}
+	if !bodyContains(w.Body.Bytes(), `"error":"unknown tag: not-a-real-tag"`) {
+		t.Fatalf("unexpected error body: %s", w.Body.String())
+	}
+
+	// The bad override must not half-approve: still pending, submitted tags intact.
+	var status string
+	db.QueryRow("SELECT status FROM nodes WHERE id = ?", nodeID).Scan(&status)
+	if status != "pending_review" {
+		t.Fatalf("after rejected override: status=%s, want pending_review", status)
+	}
+	got := storedTagNames(t, db, nodeID)
+	if len(got) != 1 || got[0] != "music" {
+		t.Fatalf("submitted tags disturbed by rejected override: %v", got)
+	}
+}
+
+func TestReviewSubmissionWithoutTagsKeepsSubmitted(t *testing.T) {
+	db := setupTestDB(t)
+	_, memberToken := createTestUser(t, db, "keeptagsubmitter", "member")
+	_, adminToken := createTestUser(t, db, "keeptagadmin", "admin")
+	createTestTag(t, db, "music")
+	createTestTag(t, db, "craft")
+
+	nodeID := submitPendingWithTags(t, db, memberToken, "Keep Tags Venue", []string{"craft", "music"})
+
+	// No tags field at all — the submitter's picks survive approval.
+	r := authedRequest("PATCH", "/api/v1/admin/submissions/"+nodeID, map[string]interface{}{"action": "approve"}, adminToken)
+	w := serveAdminMux(t, db, "PATCH", "/api/v1/admin/submissions/{id}", handler.ReviewSubmission(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("approve: got %d %s", w.Code, w.Body.String())
+	}
+	got := storedTagNames(t, db, nodeID)
+	if len(got) != 2 || got[0] != "craft" || got[1] != "music" {
+		t.Fatalf("stored tags = %v, want submitted [craft music] kept", got)
+	}
+}
+
+func TestReviewSubmissionEmptyTagsClears(t *testing.T) {
+	db := setupTestDB(t)
+	_, memberToken := createTestUser(t, db, "cleartagsubmitter", "member")
+	_, adminToken := createTestUser(t, db, "cleartagadmin", "admin")
+	createTestTag(t, db, "music")
+
+	nodeID := submitPendingWithTags(t, db, memberToken, "Clear Tags Venue", []string{"music"})
+
+	// An explicit empty array is a correction too: the reviewer removed them all.
+	r := authedRequest("PATCH", "/api/v1/admin/submissions/"+nodeID, map[string]interface{}{
+		"action": "approve",
+		"tags":   []string{},
+	}, adminToken)
+	w := serveAdminMux(t, db, "PATCH", "/api/v1/admin/submissions/{id}", handler.ReviewSubmission(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("approve: got %d %s", w.Code, w.Body.String())
+	}
+	if got := storedTagNames(t, db, nodeID); len(got) != 0 {
+		t.Fatalf("stored tags = %v, want none after empty override", got)
+	}
+}

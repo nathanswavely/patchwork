@@ -384,6 +384,11 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 			// reviewing admin (docs/adr/030). The submitter's website never
 			// becomes one on its own.
 			VerificationDomain string `json:"verification_domain"`
+			// Reviewer's correction of the submitted tags: when present,
+			// replaces them wholesale on approval (empty array clears);
+			// absent keeps what the submitter picked. Same curated
+			// vocabulary as every other tag-writing path (docs/adr/021).
+			Tags []string `json:"tags"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -407,7 +412,17 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 				http.Error(w, fmt.Sprintf(`{"error":"%s"}`, derr.Error()), http.StatusBadRequest)
 				return
 			}
+			// Validate the tag override before touching the node, so a typo
+			// rejects the request instead of half-approving.
+			tagIDs, unknownTag := resolveTagIDs(db, req.Tags)
+			if unknownTag != "" {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
+				return
+			}
 			db.Exec("UPDATE nodes SET status = 'unclaimed', verification_domain = ?, updated_at = ? WHERE id = ?", verificationDomain, now, nodeID)
+			if req.Tags != nil {
+				setNodeTags(db, nodeID, tagIDs)
+			}
 			auth.LogAuditEvent(db, user.ID, "node.submission_approved", "node", nodeID, r.RemoteAddr, "")
 		case "reject":
 			db.Exec("UPDATE nodes SET status = 'archived', removed_at = ?, updated_at = ? WHERE id = ?", now, now, nodeID)
