@@ -6,8 +6,9 @@
     replaceRoute,
     getPath,
     getQuery,
+    isSafeRedirectPath,
   } from './stores/router.svelte.js';
-  import { checkAuth, isLoggedIn, isAdmin, getUser, logout } from './stores/auth.svelte.js';
+  import { checkAuth, isLoggedIn, isAuthChecked, isAdmin, getUser, logout } from './stores/auth.svelte.js';
   import { isMembershipsLoaded, getMemberships } from './stores/memberships.svelte.js';
   import { getPatchName } from './stores/patchName.svelte.js';
   import {
@@ -273,6 +274,20 @@
     if (target) replaceRoute(target);
   });
 
+  // /login should never render the form for an already-authenticated
+  // visitor — bounce immediately, honoring ?redirect= the same way
+  // Login.svelte does post-auth (docs: issue #9). Gated on isAuthChecked()
+  // so this fires once session state is actually known, rather than
+  // racing the initial checkAuth() call — otherwise a logged-out visitor
+  // could get bounced on stale state, or a logged-in one would see the
+  // form flash before the redirect lands.
+  $effect(() => {
+    if (routeName === 'login' && isAuthChecked() && isLoggedIn()) {
+      const requested = getQuery().get('redirect');
+      replaceRoute(isSafeRedirectPath(requested) ? requested : '/');
+    }
+  });
+
   function handleNav(e, target) {
     e.preventDefault();
     navigate(target);
@@ -342,7 +357,9 @@
     {#if routeName === 'welcome'}
       <Welcome />
     {:else if routeName === 'login'}
-      <Login />
+      {#if isAuthChecked() && !isLoggedIn()}
+        <Login />
+      {/if}
     {:else if routeName === 'invite'}
       <InviteLanding />
     {:else if routeName === 'signupComplete'}

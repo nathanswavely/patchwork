@@ -1,7 +1,7 @@
 <script>
   import { api } from '../lib/api.js';
   import { login } from '../stores/auth.svelte.js';
-  import { navigate, getQuery } from '../stores/router.svelte.js';
+  import { navigate, getQuery, isSafeRedirectPath } from '../stores/router.svelte.js';
   import { getInstanceName } from '../stores/quilt.svelte.js';
   import {
     prepareRequestOptions,
@@ -10,9 +10,12 @@
 
   let instanceName = $derived(getInstanceName());
 
-  // Support redirect after auth and owner-specific context.
+  // Support redirect after auth and owner-specific context. Only accept a
+  // same-origin relative path — anything else falls back to '/' rather
+  // than sending the user off-site (open-redirect guard).
   let query = $derived(getQuery());
-  let redirectTo = $derived(query.get('redirect') || '/');
+  let requestedRedirect = $derived(query.get('redirect'));
+  let redirectTo = $derived(isSafeRedirectPath(requestedRedirect) ? requestedRedirect : '/');
   let isOwnerContext = $derived(query.get('context') === 'owner');
 
   let email = $state('');
