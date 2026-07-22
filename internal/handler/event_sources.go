@@ -186,19 +186,10 @@ func DeleteEventSource(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		now := time.Now().UTC().Format(time.RFC3339)
-		if _, err := db.Exec(`DELETE FROM events WHERE source_id = ? AND starts_at > ?`, sourceID, now); err != nil {
-			http.Error(w, `{"error":"failed to remove event source"}`, http.StatusInternalServerError)
-			return
-		}
-		if _, err := db.Exec(
-			`UPDATE events SET source_id = NULL, source_uid = NULL, source_occurrence = '' WHERE source_id = ?`,
-			sourceID,
-		); err != nil {
-			http.Error(w, `{"error":"failed to remove event source"}`, http.StatusInternalServerError)
-			return
-		}
-		if _, err := db.Exec(`DELETE FROM event_sources WHERE id = ?`, sourceID); err != nil {
+		// Removal takes the same per-source lock the sync worker holds
+		// and runs as one transaction (eventsource.Remove), so it can't
+		// race a mid-reconcile insert or half-apply.
+		if err := eventsource.Remove(db, sourceID); err != nil {
 			http.Error(w, `{"error":"failed to remove event source"}`, http.StatusInternalServerError)
 			return
 		}

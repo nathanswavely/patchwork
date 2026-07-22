@@ -122,6 +122,10 @@ type existingEvent struct {
 	Longitude   *float64
 	StartsAt    string
 	EndsAt      *string
+	// Removed marks a soft-removed (moderated) row. It still occupies
+	// the source-identity unique index, so the reconciler must see it —
+	// and must leave it alone: moderation outranks the feed.
+	Removed bool
 }
 
 // reconcile makes the source's local events match the desired set.
@@ -144,11 +148,14 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		return err
 	}
 
+	// Removed rows are included on purpose: they still hold their slot in
+	// the source-identity unique index, and a reconciler blind to them
+	// would re-INSERT the same key and wedge the source in 'error'.
 	existing := map[string]existingEvent{}
 	rows, err = db.Query(
 		`SELECT source_uid, source_occurrence, id, title, description, location,
-		 latitude, longitude, starts_at, ends_at
-		 FROM events WHERE source_id = ? AND removed_at IS NULL`, src.ID)
+		 latitude, longitude, starts_at, ends_at, removed_at IS NOT NULL
+		 FROM events WHERE source_id = ?`, src.ID)
 	if err != nil {
 		return fmt.Errorf("load existing: %w", err)
 	}
@@ -156,7 +163,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		var uid, occ string
 		var e existingEvent
 		if err := rows.Scan(&uid, &occ, &e.ID, &e.Title, &e.Description, &e.Location,
-			&e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt); err != nil {
+			&e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Removed); err != nil {
 			rows.Close()
 			return err
 		}
@@ -187,12 +194,27 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 	announce := src.LastSuccessAt.Valid
 	now := time.Now().UTC().Format(time.RFC3339)
 
+	// One transaction for the whole reconcile: a mid-sync failure must
+	// not leave half a calendar applied, and one fsync beats hundreds on
+	// the Pi-class hardware this targets. Announcements wait for commit —
+	// nobody gets notified about an event a rollback then erases.
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("begin reconcile: %w", err)
+	}
+	defer tx.Rollback()
+
+	var announcements []model.Event
+
 	for k, it := range desired {
 		if prev, ok := existing[k]; ok {
-			if !changed(prev, it) {
+			// Moderation outranks the feed: a soft-removed row is
+			// matched (so it can't be re-inserted) but never revived
+			// or edited by a sync.
+			if prev.Removed || !changed(prev, it) {
 				continue
 			}
-			_, err := db.Exec(
+			_, err := tx.Exec(
 				`UPDATE events SET title = ?, description = ?, location = ?, latitude = ?,
 				 longitude = ?, starts_at = ?, ends_at = ?, updated_at = ? WHERE id = ?`,
 				it.Title, it.Description, it.Location, it.Latitude, it.Longitude,
@@ -206,7 +228,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 
 		id := auth.NewUUIDv7()
 		apID := ap.EventAPID(ap.GetDomain(), id)
-		_, err := db.Exec(
+		_, err := tx.Exec(
 			`INSERT INTO events (id, node_id, created_by, title, description, location,
 			 latitude, longitude, starts_at, ends_at, recurrence, visibility, status,
 			 ap_id, source_id, source_uid, source_occurrence)
@@ -220,40 +242,89 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		}
 
 		if announce {
-			if notifier != nil {
-				go notifier.Notify(notifications.Event{
-					Type:     notifications.EventCreated,
-					NodeID:   src.NodeID,
-					NodeSlug: nodeSlug,
-					NodeName: nodeName,
-					ActorID:  src.AddedBy,
-					EntityID: id,
-					Title:    "New event: " + it.Title,
-					Link:     "/patches/" + nodeSlug + "/events/" + id,
-				})
-			}
-			broadcastCreate(db, model.Event{
+			announcements = append(announcements, model.Event{
 				ID: id, NodeID: src.NodeID, CreatedBy: src.AddedBy,
 				Title: it.Title, Description: it.Description, Location: it.Location,
 				Latitude: it.Latitude, Longitude: it.Longitude,
 				StartsAt: it.StartsAt, EndsAt: it.EndsAt, Visibility: "public",
-			}, src.NodeID)
+			})
 		}
 	}
 
 	// Future events the feed no longer carries are promises withdrawn;
-	// the past belongs to the patch and stays (docs/adr/031).
+	// the past belongs to the patch and stays, and moderated rows stay
+	// moderated (docs/adr/031).
 	for k, prev := range existing {
 		if _, ok := desired[k]; ok {
 			continue
 		}
-		if prev.StartsAt <= now {
+		if prev.Removed || prev.StartsAt <= now {
 			continue
 		}
-		if _, err := db.Exec(`DELETE FROM events WHERE id = ?`, prev.ID); err != nil {
+		if _, err := tx.Exec(`DELETE FROM events WHERE id = ?`, prev.ID); err != nil {
 			return fmt.Errorf("delete event %s: %w", prev.ID, err)
 		}
 	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit reconcile: %w", err)
+	}
+
+	for _, e := range announcements {
+		if notifier != nil {
+			go notifier.Notify(notifications.Event{
+				Type:     notifications.EventCreated,
+				NodeID:   src.NodeID,
+				NodeSlug: nodeSlug,
+				NodeName: nodeName,
+				ActorID:  src.AddedBy,
+				EntityID: e.ID,
+				Title:    "New event: " + e.Title,
+				Link:     "/patches/" + nodeSlug + "/events/" + e.ID,
+			})
+		}
+		broadcastCreate(db, e, src.NodeID)
+	}
+	return nil
+}
+
+// Remove deletes a source under the same per-source lock Sync holds, so
+// a mid-reconcile insert can't slip between its steps, and in one
+// transaction, so it can't half-apply. Past events stay with the patch
+// as detached history (moderated rows stay moderated, just detached);
+// future imported events were the feed's promises and go with it
+// (docs/adr/031).
+func Remove(db *database.DB, sourceID string) error {
+	mu, _ := sourceLocks.LoadOrStore(sourceID, &sync.Mutex{})
+	mu.(*sync.Mutex).Lock()
+	defer mu.(*sync.Mutex).Unlock()
+
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("begin remove: %w", err)
+	}
+	defer tx.Rollback()
+
+	now := time.Now().UTC().Format(time.RFC3339)
+	if _, err := tx.Exec(
+		`DELETE FROM events WHERE source_id = ? AND removed_at IS NULL AND starts_at > ?`,
+		sourceID, now,
+	); err != nil {
+		return fmt.Errorf("remove future events: %w", err)
+	}
+	if _, err := tx.Exec(
+		`UPDATE events SET source_id = NULL, source_uid = NULL, source_occurrence = '' WHERE source_id = ?`,
+		sourceID,
+	); err != nil {
+		return fmt.Errorf("detach past events: %w", err)
+	}
+	if _, err := tx.Exec(`DELETE FROM event_sources WHERE id = ?`, sourceID); err != nil {
+		return fmt.Errorf("delete source: %w", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit remove: %w", err)
+	}
+	sourceLocks.Delete(sourceID)
 	return nil
 }
 

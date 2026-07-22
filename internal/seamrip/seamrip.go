@@ -28,9 +28,13 @@ import (
 // Column describes one exported field. Remap marks ID columns whose values
 // must be rewritten through the old→new ID map on import. Nullable remap
 // columns (parent_id, reviewed_by, ...) import as NULL when absent.
+// Default fills the value when an archive row lacks the key entirely —
+// how columns added after an archive was written stay importable (the
+// INSERT names every column, so the table's own DEFAULT never applies).
 type Column struct {
-	Name  string
-	Remap bool
+	Name    string
+	Remap   bool
+	Default any
 }
 
 // Table binds an export file to the query that fills it and the insert that
@@ -46,6 +50,11 @@ type Table struct {
 func cols(spec ...Column) []Column { return spec }
 func c(name string) Column         { return Column{Name: name} }
 func id(name string) Column        { return Column{Name: name, Remap: true} }
+
+// def is c() with a fallback for rows from archives older than the column.
+func def(name string, fallback any) Column {
+	return Column{Name: name, Default: fallback}
+}
 
 // Tables returns the full export/import specification in dependency order.
 func Tables() []Table {
@@ -126,7 +135,7 @@ func Tables() []Table {
 			Columns: cols(id("id"), id("node_id"), id("created_by"), c("title"),
 				c("description"), c("location"), c("latitude"), c("longitude"),
 				c("starts_at"), c("ends_at"), c("recurrence"), c("visibility"),
-				id("source_id"), c("source_uid"), c("source_occurrence"),
+				id("source_id"), c("source_uid"), def("source_occurrence", ""),
 				c("created_at"), c("updated_at")),
 		},
 		{

@@ -266,6 +266,95 @@ func TestSync_PastEventsSurviveVanishing(t *testing.T) {
 	}
 }
 
+// Moderation outranks the feed: a soft-removed imported event still
+// occupies the source-identity unique index, and a reconciler blind to
+// it would re-INSERT the key, wedging the source in 'error' forever.
+// The reconciler must match it, leave it alone, and stay healthy.
+func TestSync_ModeratedEventNeverWedgesSource(t *testing.T) {
+	db := setupTestDB(t)
+	feed := newFeedServer(t, wrap(vevent("mod@test", "Reported Show", future(48*time.Hour))))
+	sourceID := seedSource(t, db, feed.srv.URL)
+
+	if err := Sync(context.Background(), db, nil, sourceID); err != nil {
+		t.Fatalf("first sync: %v", err)
+	}
+
+	// Moderation soft-removes the imported event (reports.go leaves
+	// provenance intact and writes no skip row).
+	var eventID string
+	db.QueryRow(`SELECT id FROM events WHERE source_id = ?`, sourceID).Scan(&eventID)
+	if _, err := db.Exec(`UPDATE events SET removed_at = ? WHERE id = ?`,
+		time.Now().UTC().Format(time.RFC3339), eventID); err != nil {
+		t.Fatalf("soft-remove: %v", err)
+	}
+
+	// Feed unchanged and still carrying the item; the retitle exercises
+	// the update path too. Sync must succeed and not touch the row.
+	feed.set(wrap(vevent("mod@test", "Reported Show (renamed)", future(48*time.Hour))), http.StatusOK)
+	if err := Sync(context.Background(), db, nil, sourceID); err != nil {
+		t.Fatalf("sync after moderation must not fail: %v", err)
+	}
+
+	status, lastError := sourceState(t, db, sourceID)
+	if status != "ok" || lastError != nil {
+		t.Errorf("source wedged after moderation: %s / %v", status, lastError)
+	}
+	var n int
+	db.QueryRow(`SELECT COUNT(*) FROM events WHERE source_id = ?`, sourceID).Scan(&n)
+	if n != 1 {
+		t.Errorf("moderated event duplicated or deleted: %d rows", n)
+	}
+	var title string
+	var removedAt *string
+	db.QueryRow(`SELECT title, removed_at FROM events WHERE id = ?`, eventID).Scan(&title, &removedAt)
+	if title != "Reported Show" || removedAt == nil {
+		t.Errorf("sync must not revive or edit a moderated row: title=%q removed=%v", title, removedAt)
+	}
+}
+
+// Remove holds the source lock and keeps the past / drops the future;
+// moderated rows survive as detached history rather than being erased.
+func TestRemove_ModeratedRowsSurviveDetached(t *testing.T) {
+	db := setupTestDB(t)
+	feed := newFeedServer(t, wrap(
+		vevent("keep@test", "Future Show", future(48*time.Hour))+
+			vevent("mod@test", "Moderated Future Show", future(72*time.Hour))))
+	sourceID := seedSource(t, db, feed.srv.URL)
+	if err := Sync(context.Background(), db, nil, sourceID); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+
+	var modID string
+	db.QueryRow(`SELECT id FROM events WHERE source_uid = 'mod@test'`).Scan(&modID)
+	if _, err := db.Exec(`UPDATE events SET removed_at = ? WHERE id = ?`,
+		time.Now().UTC().Format(time.RFC3339), modID); err != nil {
+		t.Fatalf("soft-remove: %v", err)
+	}
+
+	if err := Remove(db, sourceID); err != nil {
+		t.Fatalf("remove: %v", err)
+	}
+
+	var sources, futureKept, modKept int
+	db.QueryRow(`SELECT COUNT(*) FROM event_sources WHERE id = ?`, sourceID).Scan(&sources)
+	db.QueryRow(`SELECT COUNT(*) FROM events WHERE source_uid = 'keep@test'`).Scan(&futureKept)
+	db.QueryRow(`SELECT COUNT(*) FROM events WHERE id = ?`, modID).Scan(&modKept)
+	if sources != 0 {
+		t.Error("source row survived Remove")
+	}
+	if futureKept != 0 {
+		t.Error("future imported event survived source removal")
+	}
+	if modKept != 1 {
+		t.Error("moderated row was erased by source removal — moderation history lost")
+	}
+	var modSourceID *string
+	db.QueryRow(`SELECT source_id FROM events WHERE id = ?`, modID).Scan(&modSourceID)
+	if modSourceID != nil {
+		t.Error("moderated row still points at the deleted source")
+	}
+}
+
 // Detached / deleted items are on the skip list and never resurrected.
 func TestSync_SkipListRespected(t *testing.T) {
 	db := setupTestDB(t)

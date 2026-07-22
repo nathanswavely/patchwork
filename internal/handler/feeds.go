@@ -267,6 +267,7 @@ func PersonalICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			 JOIN nodes n ON e.node_id = n.id
 			 JOIN memberships m ON m.node_id = e.node_id AND m.user_id = ? AND m.status = 'active'
 			 WHERE e.status = 'active' AND e.removed_at IS NULL AND n.removed_at IS NULL
+			 AND n.status IN ('active','unclaimed')
 			 AND (e.visibility = 'public' OR m.role IN ('member','admin'))
 			 AND e.starts_at >= ?
 			 ORDER BY e.starts_at LIMIT ?`, userID, since, feedMaxEvents)

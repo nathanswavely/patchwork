@@ -99,6 +99,40 @@ func TestNodeRSSFeed(t *testing.T) {
 	}
 }
 
+// Archiving sets nodes.status='archived' but leaves removed_at NULL and
+// memberships/events active; the personal feed must gate on node status
+// like the public feeds do, or archived patches keep haunting calendars.
+func TestPersonalFeed_ArchivedPatchExcluded(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := feedTestConfig()
+	admin, _ := createTestUser(t, db, "archadmin", "member")
+	person, personToken := createTestUser(t, db, "archperson", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Archived Band", "archived-band", "open")
+	createTestMembership(t, db, person.ID, nodeID, "member", "active")
+	seedEvent(t, db, nodeID, admin.ID, "Ghost Show", time.Now().Add(48*time.Hour).UTC().Format(time.RFC3339))
+
+	if _, err := db.Exec(`UPDATE nodes SET status = 'archived' WHERE id = ?`, nodeID); err != nil {
+		t.Fatal(err)
+	}
+
+	r := authedRequest("POST", "/api/v1/users/me/feed-secret", nil, personToken)
+	w := serveMux(t, db, "POST", "/api/v1/users/me/feed-secret", handler.GenerateFeedSecret(db, cfg), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("generate: %d", w.Code)
+	}
+	feedURL, _ := decodeJSON(t, w)["url"].(string)
+	secret := strings.TrimSuffix(strings.TrimPrefix(feedURL, "https://quilt.test/api/v1/feeds/"), "/events.ics")
+
+	r = authedRequest("GET", "/api/v1/feeds/"+secret+"/events.ics", nil, "")
+	w = servePublicMux(t, "GET", "/api/v1/feeds/{secret}/events.ics", handler.PersonalICSFeed(db, cfg), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("personal feed: %d", w.Code)
+	}
+	if strings.Contains(w.Body.String(), "Ghost Show") {
+		t.Error("archived patch's event leaked into the personal feed")
+	}
+}
+
 func TestPersonalFeed_Lifecycle(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := feedTestConfig()
