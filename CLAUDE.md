@@ -36,6 +36,8 @@ patchwork/
 │   ├── middleware/          # auth, rate limiting, CSRF, CORS, logging
 │   ├── model/              # Go structs for all entities
 │   ├── ap/                 # ActivityPub: actors, HTTP signatures, keypairs, delivery worker
+│   ├── eventsource/        # event sources: ICS fetch/parse/expand, sync reconciler, worker (docs/adr/031)
+│   ├── safehttp/           # SSRF-guarded HTTP client shared by ap and eventsource
 │   ├── governance/         # git-backed charter repos, templates, rules, defaults
 │   ├── notifications/      # notification channels, email, reminder worker
 │   └── seamrip/            # export/import portability boundary (docs/adr/002)
@@ -177,6 +179,8 @@ Key endpoints:
 - `PATCH /api/v1/events/{id}/review` — approve/reject an event submission (instance admin for unclaimed patches, patch admins for active)
 - `GET /api/v1/admin/event-submissions`, `GET /api/v1/nodes/{slug}/event-submissions` — the two review queues
 - `POST /api/v1/nodes/{slug}/claim`, `GET /api/v1/nodes/{slug}/claims/mine`, `POST /api/v1/claims/{id}/{verify|withdraw|resend-email}`, `GET|POST /api/v1/claims/verify-email` — claiming an unclaimed patch (docs/adr/030): concurrent claims (one open per user per patch), self-verification (DNS / meta tag / email) anchored on the vetted `nodes.verification_domain`, admin review via `GET/PATCH /api/v1/admin/claims`
+- `GET|POST /api/v1/nodes/{slug}/event-sources`, `DELETE|POST .../{id}[/sync]`, `POST /api/v1/events/{id}/detach` — event sources (docs/adr/031): owner-attached ICS feeds, synced hourly; imported events publish directly, are read-only until detached
+- `GET /api/v1/nodes/{slug}/events.{ics|rss}` — public subscribable feeds per patch; `GET /api/v1/feeds/{secret}/events.ics` + `GET|POST|DELETE /api/v1/users/me/feed-secret` — the personal My Quilt calendar behind a regenerable URL secret
 - `GET /api/v1/admin/export` — zip download of all instance data (admin only)
 - `GET /api/v1/instance/icon` — the public quilt icon: uploaded image or a generated default block SVG (`?block=<key>` previews a default)
 - `GET|PATCH /api/v1/admin/settings`, `PUT|DELETE /api/v1/admin/settings/icon`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, icon, danger-zone wipe (docs/adr/014)

@@ -30,16 +30,32 @@
     }
   }
 
+  // An imported event's source is authoritative (docs/adr/031): no
+  // Edit — the admins who manage the feed get Detach instead.
+  let imported = $derived(!!event?.source_id);
+  let canManage = $derived(
+    !!event && (isAdmin() || getMembershipRoles().get(event.node_slug) === 'admin')
+  );
+
   // Editing is allowed for admins of the hosting patch, instance admins,
   // and the event's own creator, mirroring the backend check in UpdateEvent
   // (docs/adr/026: creators may always edit their own event).
   let canEdit = $derived(
-    !!event && (
-      isAdmin()
-      || getMembershipRoles().get(event.node_slug) === 'admin'
+    !!event && !imported && (
+      canManage
       || (!!getUser() && event.created_by === getUser().id)
     )
   );
+
+  async function detachEvent() {
+    try {
+      await api(`events/${event.id}/detach`, { method: 'POST' });
+      showToast('Detached — this is an ordinary event now');
+      await loadEvent(event.id);
+    } catch (e) {
+      showToast(e.message || 'Failed to detach event', 'error');
+    }
+  }
 
   // Deleting mirrors the backend's DeleteEvent check: patch admins,
   // instance admins, and the event's own creator — removing your own
@@ -111,16 +127,25 @@
 
     <div class="detail-header">
       <h1>{event.title}</h1>
-      {#if canEdit}
+      {#if canEdit || (imported && canManage)}
         <div class="header-actions">
-          <a
-            href="/events/{event.id}/edit"
-            class="btn btn-sm btn-secondary edit-btn"
-            onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}/edit`); }}
-          >
-            <PencilSimple size={13} weight="duotone" />
-            Edit
-          </a>
+          {#if canEdit}
+            <a
+              href="/events/{event.id}/edit"
+              class="btn btn-sm btn-secondary edit-btn"
+              onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}/edit`); }}
+            >
+              <PencilSimple size={13} weight="duotone" />
+              Edit
+            </a>
+          {/if}
+          {#if imported && canManage}
+            <ConfirmAction
+              label="Detach"
+              confirmLabel="Detach — the feed lets go of this event"
+              onConfirm={detachEvent}
+            />
+          {/if}
           <ConfirmAction
             label={event.status === 'pending_review' ? 'Withdraw' : 'Delete'}
             confirmLabel={event.status === 'pending_review' ? 'Withdraw' : 'Delete'}
@@ -130,6 +155,19 @@
         </div>
       {/if}
     </div>
+
+    {#if imported && canManage}
+      <p class="imported-note muted">
+        This event comes from one of
+        {#if event.node_slug}
+          <a
+            href="/patches/{event.node_slug}/settings/sources"
+            onclick={(e) => { e.preventDefault(); navigate(`/patches/${event.node_slug}/settings/sources`); }}
+          >this patch's event sources</a>{:else}this patch's event sources{/if}
+        and updates with it. To change it, edit the source calendar — or
+        detach it to make it an ordinary event.
+      </p>
+    {/if}
 
     {#if event.node_name}
       <div class="host-row">
@@ -223,6 +261,11 @@
 
   .edit-btn {
     flex-shrink: 0;
+  }
+
+  .imported-note {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
   }
 
   .review-banner {

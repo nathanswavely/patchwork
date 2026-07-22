@@ -136,6 +136,7 @@
   addRoute('/patches/:slug/settings/info', 'patchSettingsInfo');
   addRoute('/patches/:slug/settings/appearance', 'patchSettingsAppearance');
   addRoute('/patches/:slug/settings/members', 'patchSettingsMembers');
+  addRoute('/patches/:slug/settings/sources', 'patchSettingsSources');
   addRoute('/patches/:slug/settings/notifications', 'patchSettingsNotifications');
   addRoute('/patches/:slug/settings/verification', 'patchSettingsVerification');
   addRoute('/patches/:slug/settings/danger', 'patchSettingsDanger');
@@ -201,7 +202,7 @@
     'governanceHub', 'governanceProposals', 'governanceProposalNew', 'governanceProposal',
     'governanceDocs', 'governanceDocNew', 'governanceDocDetail', 'governanceDocHistory', 'governanceDocPropose', 'governanceRulesPropose',
     'patchMembers', 'patchEvents',
-    'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsNotifications', 'patchSettingsVerification', 'patchSettingsDanger',
+    'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsSources', 'patchSettingsNotifications', 'patchSettingsVerification', 'patchSettingsDanger',
   ]);
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 

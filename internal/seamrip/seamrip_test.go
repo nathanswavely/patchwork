@@ -265,3 +265,49 @@ func TestImportUnclaimedSentinelOwner(t *testing.T) {
 		t.Errorf("unclaimed node lost its sentinel owner: %d", n)
 	}
 }
+
+// An archive written before migration 033 has no provenance keys on its
+// event rows. The INSERT names every column, so the table DEFAULT can't
+// apply — the Column.Default fallback must, or every event is skipped
+// and "older exports stay importable" is broken (docs/adr/031).
+func TestImportPre033Archive(t *testing.T) {
+	src := testDB(t)
+	seedSource(t, src)
+
+	files := map[string][]map[string]any{}
+	if err := Export(src, func(tab Table, items []map[string]any) error {
+		files[tab.File] = items
+		return nil
+	}); err != nil {
+		t.Fatalf("export: %v", err)
+	}
+
+	// Rewind the archive to its pre-033 shape: no provenance keys on
+	// events, and no event-source files at all.
+	for _, e := range files["events.json"] {
+		delete(e, "source_id")
+		delete(e, "source_uid")
+		delete(e, "source_occurrence")
+	}
+	delete(files, "event_sources.json")
+	delete(files, "event_source_skips.json")
+
+	dst := testDB(t)
+	_, results, err := Import(dst,
+		func(file string) ([]map[string]any, error) { return files[file], nil },
+		nextID)
+	if err != nil {
+		t.Fatalf("import: %v", err)
+	}
+	for _, r := range results {
+		if r.Skipped > 0 {
+			t.Errorf("table %s skipped %d rows importing an old archive", r.Table, r.Skipped)
+		}
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM events`); n == 0 {
+		t.Fatal("old archive imported zero events")
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM events WHERE source_occurrence != ''`); n != 0 {
+		t.Errorf("defaulted source_occurrence rows should be '': %d weren't", n)
+	}
+}

@@ -280,6 +280,38 @@ document templates. A term nobody reaches for when building the thing
 isn't the thing's name.
 _Avoid_: baste request (retired), motion, petition
 
+## Event sources
+
+**Event source**:
+A standing feed a patch pulls events from — an ICS calendar URL (a Google
+Calendar's secret address, a venue tool's calendar export). Attached by a
+patch admin to their own patch, or by an instance admin to an unclaimed
+patch, never by anyone else: attaching is vouching for the feed once, so
+imported events publish without per-event review (docs/adr/031). The
+source stays authoritative — its events are read-only and follow the feed
+until detached. An unreachable feed never removes anything; only a
+successful fetch that no longer carries an event cancels it. The UI may
+say "feed" informally.
+_Avoid_: calendar sync (implies two-way), import (a one-time act; a
+source is standing), integration (vague), crawler
+
+**Detach**:
+The explicit act of cutting one imported event loose from its event
+source: it becomes an ordinary local event — editable, deletable, no
+longer synced — and the source ignores it from then on. The escape hatch
+that lets imported events stay read-only without trapping admins.
+_Avoid_: unlink, unsync, override
+
+**Personal feed**:
+A person's private calendar feed of every event on their My Quilt,
+subscribed from their own calendar app via a secret URL they can
+regenerate at any time — read-only, and never shown to anyone else.
+Distinct from a patch's public calendar feed, which is anonymous and
+carries only public events.
+_Avoid_: my calendar (that is the person's own app), export (a download,
+not a subscription), feed token (the secret is part of the URL, not a
+credential the person handles)
+
 ## Quilt identity
 
 **Quilt settings**:

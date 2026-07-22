@@ -7,11 +7,14 @@
 //
 //   - Included: user profiles (with email and instance role, so a fork can
 //     re-authenticate its people), patches, memberships (the shared-member
-//     overlap that threads and the quilt are inferred from), tags, events,
-//     proposals with raw votes, governance docs, proposal comments /
-//     reactions / revisions, claim requests, and notification preferences.
-//   - Excluded: credentials, sessions, recovery codes, magic/invite/signup
-//     links, ActivityPub
+//     overlap that threads and the quilt are inferred from), tags, events
+//     with their provenance, event sources and their skip lists (feed URLs
+//     are quasi-secrets, but the admin seamrip is already a custody
+//     transfer), proposals with raw votes, governance docs, proposal
+//     comments / reactions / revisions, claim requests, and notification
+//     preferences.
+//   - Excluded: credentials, sessions, recovery codes, personal feed
+//     secrets, magic/invite/signup links, ActivityPub
 //     keypairs and ap_ids, remote followers and the delivery queue, audit
 //     log, content reports, in-app notification rows, and reminder-dedup
 //     state. A fresh instance regenerates its federation identity on first
@@ -25,9 +28,13 @@ import (
 // Column describes one exported field. Remap marks ID columns whose values
 // must be rewritten through the old→new ID map on import. Nullable remap
 // columns (parent_id, reviewed_by, ...) import as NULL when absent.
+// Default fills the value when an archive row lacks the key entirely —
+// how columns added after an archive was written stay importable (the
+// INSERT names every column, so the table's own DEFAULT never applies).
 type Column struct {
-	Name  string
-	Remap bool
+	Name    string
+	Remap   bool
+	Default any
 }
 
 // Table binds an export file to the query that fills it and the insert that
@@ -43,6 +50,11 @@ type Table struct {
 func cols(spec ...Column) []Column { return spec }
 func c(name string) Column         { return Column{Name: name} }
 func id(name string) Column        { return Column{Name: name, Remap: true} }
+
+// def is c() with a fallback for rows from archives older than the column.
+func def(name string, fallback any) Column {
+	return Column{Name: name, Default: fallback}
+}
 
 // Tables returns the full export/import specification in dependency order.
 func Tables() []Table {
@@ -93,15 +105,37 @@ func Tables() []Table {
 				c("status"), c("joined_at")),
 		},
 		{
+			File: "event_sources.json",
+			Name: "event_sources",
+			// Feed URLs (a Google Calendar secret address is one) are
+			// quasi-secrets; the admin seamrip is already a custody
+			// transfer (docs/adr/012), so they travel. Fetch state stays
+			// behind — the fork re-syncs from scratch.
+			Query: `SELECT id, node_id, type, url, added_by, created_at,
+				updated_at FROM event_sources`,
+			Columns: cols(id("id"), id("node_id"), c("type"), c("url"),
+				id("added_by"), c("created_at"), c("updated_at")),
+		},
+		{
+			File: "event_source_skips.json",
+			Name: "event_source_skips",
+			Query: `SELECT source_id, uid, occurrence, created_at
+				FROM event_source_skips`,
+			Columns: cols(id("source_id"), c("uid"), c("occurrence"),
+				c("created_at")),
+		},
+		{
 			File: "events.json",
 			Name: "events",
 			Query: `SELECT id, node_id, created_by, title, description, location,
 				latitude, longitude, starts_at, ends_at, recurrence, visibility,
+				source_id, source_uid, source_occurrence,
 				created_at, updated_at FROM events
 				WHERE removed_at IS NULL AND status = 'active'`,
 			Columns: cols(id("id"), id("node_id"), id("created_by"), c("title"),
 				c("description"), c("location"), c("latitude"), c("longitude"),
 				c("starts_at"), c("ends_at"), c("recurrence"), c("visibility"),
+				id("source_id"), c("source_uid"), def("source_occurrence", ""),
 				c("created_at"), c("updated_at")),
 		},
 		{
@@ -238,8 +272,9 @@ const ReadmeText = `Patchwork Data Export (Seamrip)
 ===============================
 
 This archive contains the portable data of a Patchwork instance: patches,
-people, memberships, events, proposals with votes, governance documents and
-discussion, claims, and notification preferences.
+people, memberships, events, event sources (the calendar feeds patches
+pull from), proposals with votes, governance documents and discussion,
+claims, and notification preferences.
 
 Deliberately NOT included: credentials, sessions, recovery codes,
 invite/magic/signup links, ActivityPub keys and identifiers, remote

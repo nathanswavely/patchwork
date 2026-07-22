@@ -70,10 +70,17 @@ func Import(db *database.DB, read func(file string) ([]map[string]any, error), n
 			for _, item := range pending {
 				args := make([]any, len(t.Columns))
 				for i, col := range t.Columns {
+					v, present := item[col.Name]
+					if !present && col.Default != nil {
+						// Archive predates this column (docs/adr/031 added
+						// provenance to events): apply the schema default
+						// rather than binding NULL into a NOT NULL column.
+						v = col.Default
+					}
 					if col.Remap {
-						args[i] = remap(item[col.Name])
+						args[i] = remap(v)
 					} else {
-						args[i] = item[col.Name]
+						args[i] = v
 					}
 				}
 				if _, err := db.Exec(insert, args...); err != nil {
