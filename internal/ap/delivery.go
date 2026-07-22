@@ -12,7 +12,13 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/safehttp"
 )
+
+// deliveryClient is the SSRF-guarded HTTP client for inbox POSTs. Inbox
+// URLs come from remote actor documents, which are attacker-influenced —
+// delivery must never become a probe of the host's own network.
+var deliveryClient = safehttp.NewClient(10 * time.Second)
 
 // StartDeliveryWorker starts a background goroutine that delivers queued activities.
 // It polls the outbox queue and delivers pending activities with exponential backoff.
@@ -116,8 +122,7 @@ func deliverActivity(ctx context.Context, db *database.DB, activityJSON, targetI
 		return fmt.Errorf("sign: %w", err)
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := deliveryClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("http: %w", err)
 	}
