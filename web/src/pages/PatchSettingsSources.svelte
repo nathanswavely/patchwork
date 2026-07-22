@@ -116,8 +116,9 @@
   <h2>Event Sources</h2>
   <p class="muted subtitle">
     Calendar feeds this patch pulls events from. Paste an ICS address — a
-    Google Calendar's secret address, or the calendar feed from your website.
-    Imported events publish directly and stay in step with the feed.
+    Google Calendar's secret address, the calendar feed from your website —
+    or a Squarespace events page. Imported events publish directly and stay
+    in step with the feed.
   </p>
 
   {#if loading}
