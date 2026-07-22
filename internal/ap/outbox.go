@@ -2,6 +2,7 @@ package ap
 
 import (
 	"crypto/rand"
+	"database/sql"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
@@ -47,7 +48,26 @@ func QueueActivity(db *database.DB, activity map[string]interface{}, targetInbox
 }
 
 // BroadcastToFollowers queues an activity for delivery to all followers of a local actor.
+//
+// Federation is public-only (docs/adr/024), and this is the push side of that
+// rule: a node that is not live and public broadcasts nothing, even to
+// followers acquired while it was public. Going private silences delivery the
+// same way it 404s the actor — indistinguishable from deletion from outside —
+// but the follower rows stay, so flipping back to public resumes delivery.
 func BroadcastToFollowers(db *database.DB, localActorType, localActorID string, activity map[string]interface{}) error {
+	if localActorType == "node" {
+		var exists int
+		err := db.QueryRow(
+			`SELECT 1 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'`,
+			localActorID,
+		).Scan(&exists)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+	}
 	rows, err := db.Query(
 		`SELECT remote_inbox FROM ap_followers WHERE local_actor_type = ? AND local_actor_id = ? AND accepted = 1 AND remote_inbox IS NOT NULL AND remote_inbox != ''`,
 		localActorType, localActorID,

@@ -316,6 +316,54 @@ func TestAPNodeFollowers_NotFound(t *testing.T) {
 	}
 }
 
+// TestAPNode_PrivatePatch404: federation is public-only (docs/adr/024) — a
+// private patch has no actor document, so it can't be discovered or followed
+// from the fediverse. Both the AP branch and the browser redirect branch 404.
+func TestAPNode_PrivatePatch404(t *testing.T) {
+	db := setupTestDB(t)
+	ap.SetDomain("test.example.com")
+	defer ap.SetDomain("")
+
+	owner, _ := createTestUser(t, db, "apprivactor", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Private Actor Patch", "private-actor-patch", "open")
+	if _, err := db.Exec("UPDATE nodes SET visibility = 'private' WHERE id = ?", nodeID); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+
+	r := apRequest("GET", "/ap/nodes/"+nodeID)
+	w := servePublicMux(t, "GET", "/ap/nodes/{id}", handler.APNode(db), r)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 for private patch's actor, got %d: %s", w.Code, w.Body.String())
+	}
+
+	r = httptest.NewRequest("GET", "/ap/nodes/"+nodeID, nil) // no AP Accept header
+	w = servePublicMux(t, "GET", "/ap/nodes/{id}", handler.APNode(db), r)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 for private patch's actor redirect, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// TestAPNodeFollowers_PrivatePatch404: like the outbox, the followers
+// collection is a fully public surface — a private patch doesn't serve one.
+func TestAPNodeFollowers_PrivatePatch404(t *testing.T) {
+	db := setupTestDB(t)
+	ap.SetDomain("test.example.com")
+	defer ap.SetDomain("")
+
+	owner, _ := createTestUser(t, db, "apprivfollow", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Private Followers Patch", "private-followers-patch", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+	if _, err := db.Exec("UPDATE nodes SET visibility = 'private' WHERE id = ?", nodeID); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+
+	r := apRequest("GET", "/ap/nodes/"+nodeID+"/followers")
+	w := servePublicMux(t, "GET", "/ap/nodes/{id}/followers", handler.APNodeFollowers(db), r)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 for private patch's followers, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 // TestAPEvent_PrivatePatch404: federation is public-only (docs/adr/024) — an
 // event hosted by a private patch has no addressable AP object.
 func TestAPEvent_PrivatePatch404(t *testing.T) {

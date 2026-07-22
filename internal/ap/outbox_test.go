@@ -65,10 +65,30 @@ func TestQueueActivity(t *testing.T) {
 	}
 }
 
+// insertBroadcastNode inserts a live node (and its owner) so the broadcast
+// gate in BroadcastToFollowers has a real row to check.
+func insertBroadcastNode(t *testing.T, db *database.DB, nodeID, visibility string) {
+	t.Helper()
+	ownerID := nodeID + "-owner"
+	if _, err := db.Exec(
+		`INSERT INTO users (id, username, display_name, role) VALUES (?, ?, ?, 'member')`,
+		ownerID, ownerID, ownerID,
+	); err != nil {
+		t.Fatalf("insert owner: %v", err)
+	}
+	if _, err := db.Exec(
+		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status) VALUES (?, ?, ?, ?, '', 'leaf', ?, 'open', 'active')`,
+		nodeID, ownerID, nodeID, nodeID, visibility,
+	); err != nil {
+		t.Fatalf("insert node: %v", err)
+	}
+}
+
 func TestBroadcastToFollowers(t *testing.T) {
 	db := setupTestDB(t)
 
 	nodeID := "test-node-broadcast"
+	insertBroadcastNode(t, db, nodeID, "public")
 
 	// Insert 2 ap_followers records with inboxes.
 	for i, remote := range []string{"https://remote1.example/ap/users/u1", "https://remote2.example/ap/users/u2"} {
@@ -105,6 +125,8 @@ func TestBroadcastToFollowers(t *testing.T) {
 func TestBroadcastToFollowers_NoFollowers(t *testing.T) {
 	db := setupTestDB(t)
 
+	insertBroadcastNode(t, db, "empty-node", "public")
+
 	activity := map[string]interface{}{
 		"@context": "https://www.w3.org/ns/activitystreams",
 		"type":     "Create",
@@ -123,6 +145,56 @@ func TestBroadcastToFollowers_NoFollowers(t *testing.T) {
 	}
 	if count != 0 {
 		t.Errorf("expected 0 queue entries, got %d", count)
+	}
+}
+
+// TestBroadcastToFollowers_NonPublicNodeSkips: federation is public-only
+// (docs/adr/024). A node that went private keeps its follower rows — flipping
+// back to public resumes delivery — but broadcasts nothing while private.
+func TestBroadcastToFollowers_NonPublicNodeSkips(t *testing.T) {
+	db := setupTestDB(t)
+
+	nodeID := "private-node-broadcast"
+	insertBroadcastNode(t, db, nodeID, "private")
+
+	// A follower acquired while the node was still public.
+	if _, err := db.Exec(
+		`INSERT INTO ap_followers (id, local_actor_type, local_actor_id, remote_actor_id, remote_inbox, accepted) VALUES ('stale-follower', 'node', ?, 'https://remote1.example/ap/users/u1', 'https://remote1.example/ap/users/u1/inbox', 1)`,
+		nodeID,
+	); err != nil {
+		t.Fatalf("insert follower: %v", err)
+	}
+
+	activity := map[string]interface{}{
+		"@context": "https://www.w3.org/ns/activitystreams",
+		"type":     "Create",
+		"actor":    "https://example.com/ap/nodes/" + nodeID,
+	}
+
+	if err := ap.BroadcastToFollowers(db, "node", nodeID, activity); err != nil {
+		t.Fatalf("BroadcastToFollowers: %v", err)
+	}
+
+	var count int
+	if err := db.QueryRow("SELECT COUNT(*) FROM ap_outbox_queue").Scan(&count); err != nil {
+		t.Fatalf("query count: %v", err)
+	}
+	if count != 0 {
+		t.Errorf("expected no deliveries queued for a private node, got %d", count)
+	}
+
+	// Back to public: the surviving follower rows deliver again.
+	if _, err := db.Exec(`UPDATE nodes SET visibility = 'public' WHERE id = ?`, nodeID); err != nil {
+		t.Fatalf("set public: %v", err)
+	}
+	if err := ap.BroadcastToFollowers(db, "node", nodeID, activity); err != nil {
+		t.Fatalf("BroadcastToFollowers after flip back: %v", err)
+	}
+	if err := db.QueryRow("SELECT COUNT(*) FROM ap_outbox_queue").Scan(&count); err != nil {
+		t.Fatalf("query count: %v", err)
+	}
+	if count != 1 {
+		t.Errorf("expected delivery to resume after flipping back to public, got %d queued", count)
 	}
 }
 

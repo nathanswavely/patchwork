@@ -119,6 +119,27 @@ func TestWebFinger_UserTakesPrecedenceOverNode(t *testing.T) {
 	}
 }
 
+// Webfinger is the fediverse's front door: a private patch must not resolve
+// by handle (docs/adr/024 — federation is public-only).
+func TestWebFinger_PrivateNode404(t *testing.T) {
+	db := setupTestDB(t)
+	ap.SetDomain("test.example.com")
+	defer ap.SetDomain("")
+
+	owner, _ := createTestUser(t, db, "wfprivowner", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Private WF Patch", "private-wf-patch", "open")
+	if _, err := db.Exec("UPDATE nodes SET visibility = 'private' WHERE id = ?", nodeID); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+
+	r := httptest.NewRequest("GET", "/.well-known/webfinger?resource=acct:private-wf-patch@test.example.com", nil)
+	w := servePublicMux(t, "GET", "/.well-known/webfinger", handler.WebFinger(db), r)
+
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 for private patch handle, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 func TestWebFinger_UserNotFound(t *testing.T) {
 	db := setupTestDB(t)
 	ap.SetDomain("test.example.com")
