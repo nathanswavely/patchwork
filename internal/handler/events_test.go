@@ -161,6 +161,110 @@ func TestListEvents_PaginationHandlesStartsAtTies(t *testing.T) {
 	}
 }
 
+// listEventTitles fetches one page of the list endpoint with the given query
+// string and returns the served titles.
+func listEventTitles(t *testing.T, db *database.DB, query string) []string {
+	t.Helper()
+	path := "/api/v1/events"
+	if query != "" {
+		path += "?" + query
+	}
+	r := authedRequest("GET", path, nil, "")
+	w := servePublicMux(t, "GET", "/api/v1/events", handler.ListEvents(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	items, ok := decodeJSON(t, w)["items"].([]interface{})
+	if !ok {
+		t.Fatalf("expected items array")
+	}
+	var titles []string
+	for _, it := range items {
+		titles = append(titles, it.(map[string]interface{})["title"].(string))
+	}
+	return titles
+}
+
+// TestListEvents_PrivatePatchHiddenFromGlobalList: a private patch is unlisted,
+// not locked — its public events stay off the instance-wide feed (and the map,
+// which reads the same endpoint) but still serve on the patch's own page via
+// the node_slug filter.
+func TestListEvents_PrivatePatchHiddenFromGlobalList(t *testing.T) {
+	db := setupTestDB(t)
+	user, _ := createTestUser(t, db, "events-private", "member")
+	publicNode := createTestNode(t, db, user.ID, "Public Patch", "public-patch", "open")
+	privateNode := createTestNode(t, db, user.ID, "Private Patch", "private-patch", "open")
+	if _, err := db.Exec("UPDATE nodes SET visibility = 'private' WHERE id = ?", privateNode); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+
+	seedEvent(t, db, publicNode, user.ID, "public-event", "2026-09-01T18:00:00Z")
+	seedEvent(t, db, privateNode, user.ID, "private-patch-event", "2026-09-02T18:00:00Z")
+
+	got := listEventTitles(t, db, "")
+	if len(got) != 1 || got[0] != "public-event" {
+		t.Fatalf("global list should carry only the public patch's event, got %v", got)
+	}
+
+	got = listEventTitles(t, db, "node_slug=private-patch")
+	if len(got) != 1 || got[0] != "private-patch-event" {
+		t.Fatalf("private patch's own page should still list its events, got %v", got)
+	}
+}
+
+// TestListEvents_ArchivedPatchEventsGone: archiving a patch sets
+// status='archived' but leaves its events active — the node-status gate is
+// what keeps them out of every listing, global or node-filtered.
+func TestListEvents_ArchivedPatchEventsGone(t *testing.T) {
+	db := setupTestDB(t)
+	user, _ := createTestUser(t, db, "events-archived", "member")
+	liveNode := createTestNode(t, db, user.ID, "Live Patch", "live-patch", "open")
+	deadNode := createTestNode(t, db, user.ID, "Dead Patch", "dead-patch", "open")
+
+	seedEvent(t, db, liveNode, user.ID, "live-event", "2026-09-01T18:00:00Z")
+	seedEvent(t, db, deadNode, user.ID, "dead-event", "2026-09-02T18:00:00Z")
+
+	if _, err := db.Exec("UPDATE nodes SET status = 'archived' WHERE id = ?", deadNode); err != nil {
+		t.Fatalf("archive node: %v", err)
+	}
+
+	got := listEventTitles(t, db, "")
+	if len(got) != 1 || got[0] != "live-event" {
+		t.Fatalf("archived patch's event should vanish from the global list, got %v", got)
+	}
+	if got := listEventTitles(t, db, "node_id="+deadNode); len(got) != 0 {
+		t.Fatalf("archived patch's event should vanish from the node-filtered list, got %v", got)
+	}
+	if got := listEventTitles(t, db, "node_slug=dead-patch"); len(got) != 0 {
+		t.Fatalf("archived patch's slug should resolve to no events, got %v", got)
+	}
+}
+
+// TestGetEvent_GoneWithArchivedPatch: an event link must not outlive its
+// patch — GetNode 404s an archived patch, and the event detail agrees.
+func TestGetEvent_GoneWithArchivedPatch(t *testing.T) {
+	db := setupTestDB(t)
+	user, _ := createTestUser(t, db, "events-detail", "member")
+	nodeID := createTestNode(t, db, user.ID, "Detail Patch", "detail-patch", "open")
+	eventID := seedEvent(t, db, nodeID, user.ID, "detail-event", "2026-09-01T18:00:00Z")
+
+	r := authedRequest("GET", "/api/v1/events/"+eventID, nil, "")
+	w := servePublicMux(t, "GET", "/api/v1/events/{id}", handler.GetEvent(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 before archive, got %d: %s", w.Code, w.Body.String())
+	}
+
+	if _, err := db.Exec("UPDATE nodes SET status = 'archived' WHERE id = ?", nodeID); err != nil {
+		t.Fatalf("archive node: %v", err)
+	}
+
+	r = authedRequest("GET", "/api/v1/events/"+eventID, nil, "")
+	w = servePublicMux(t, "GET", "/api/v1/events/{id}", handler.GetEvent(db), r)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 after archive, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 // TestListEvents_MalformedCursor ensures a garbage cursor degrades to the first
 // page instead of binding junk into the keyset predicate.
 func TestListEvents_MalformedCursor(t *testing.T) {

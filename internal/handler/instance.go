@@ -57,9 +57,16 @@ type InstanceStats struct {
 // Instance returns a handler that serves full instance metadata.
 func Instance(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Public counts describe what a visitor can actually discover: the
+		// same set the quilt (tree handler) renders — live public patches
+		// and their live public events.
 		var stats InstanceStats
-		db.QueryRow("SELECT COUNT(*) FROM nodes").Scan(&stats.NodeCount)
-		db.QueryRow("SELECT COUNT(*) FROM events WHERE status = 'active'").Scan(&stats.EventCount)
+		db.QueryRow("SELECT COUNT(*) FROM nodes WHERE status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'").Scan(&stats.NodeCount)
+		db.QueryRow(
+			`SELECT COUNT(*) FROM events e JOIN nodes n ON n.id = e.node_id
+			 WHERE e.status = 'active' AND e.removed_at IS NULL AND e.visibility = 'public'
+			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL AND n.visibility = 'public'`,
+		).Scan(&stats.EventCount)
 		db.QueryRow("SELECT COUNT(*) FROM users").Scan(&stats.MemberCount)
 
 		// Aggregate unique tags across all nodes.
