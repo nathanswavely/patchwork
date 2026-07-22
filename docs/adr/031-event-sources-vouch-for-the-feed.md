@@ -68,6 +68,13 @@ The decisions:
   is anticipated as a second `event_sources` type, not built now. For
   sites with neither feed nor markup, ADR 026's submission ladder is the
   crawler: humans, on-mission.
+
+**Amended 2026-07-22:** the first non-ICS type shipped is `squarespace`,
+not JSON-LD — Squarespace exposes no whole-calendar ICS, but every
+events collection serves structured JSON at `?format=json` (one fetch,
+stable ids), and small venues live there. The type is auto-detected: a
+pasted address that isn't ICS gets one probe of its JSON view, and a
+successful detection is persisted. JSON-LD remains future work.
 - **Vendor APIs (Google Calendar API, Eventbrite API).** OAuth apps, API
   keys, per-vendor adapters, and terms-of-service exposure — for data the
   same vendors already publish as ICS.

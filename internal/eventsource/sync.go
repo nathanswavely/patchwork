@@ -52,7 +52,7 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 		return fmt.Errorf("load source: %w", err)
 	}
 
-	result, err := fetchFeed(ctx, src.URL, src.Etag.String, src.LastModified.String)
+	items, result, err := loadItems(ctx, db, &src)
 	if err != nil {
 		recordFailure(db, src.ID, err)
 		return err
@@ -62,18 +62,70 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 		return nil
 	}
 
-	items, err := ParseICS(result.Body, time.Now().UTC())
-	if err != nil {
-		recordFailure(db, src.ID, err)
-		return err
-	}
-
 	if err := reconcile(db, notifier, &src, items); err != nil {
 		recordFailure(db, src.ID, err)
 		return err
 	}
 	recordSuccess(db, src.ID, result.Etag, result.LastModified)
 	return nil
+}
+
+// loadItems fetches and parses a source according to its type. An 'ics'
+// source whose document doesn't parse gets one shot at being read as a
+// Squarespace events page — "paste the calendar's address" shouldn't
+// require knowing which kind of address it is. A successful detection
+// is persisted, so later syncs go straight to the JSON view.
+func loadItems(ctx context.Context, db *database.DB, src *Source) ([]Item, *fetchResult, error) {
+	now := time.Now().UTC()
+
+	if src.Type == "squarespace" {
+		jsonURL, err := squarespaceJSONURL(src.URL)
+		if err != nil {
+			return nil, nil, err
+		}
+		result, err := fetchFeed(ctx, jsonURL, src.Etag.String, src.LastModified.String)
+		if err != nil || result.NotModified {
+			return nil, result, err
+		}
+		items, err := ParseSquarespace(result.Body, now)
+		if err != nil {
+			return nil, nil, err
+		}
+		return items, result, nil
+	}
+
+	result, err := fetchFeed(ctx, src.URL, src.Etag.String, src.LastModified.String)
+	if err != nil || result.NotModified {
+		return nil, result, err
+	}
+	items, icsErr := ParseICS(result.Body, now)
+	if icsErr == nil {
+		return items, result, nil
+	}
+
+	// Not ICS — probe the Squarespace JSON view once. Any failure here
+	// reports the ORIGINAL ICS error: the admin pasted something that
+	// claimed to be a calendar, and that's the story they need.
+	jsonURL, err := squarespaceJSONURL(src.URL)
+	if err != nil {
+		return nil, nil, icsErr
+	}
+	ssResult, err := fetchFeed(ctx, jsonURL, "", "")
+	if err != nil || ssResult.NotModified {
+		return nil, nil, icsErr
+	}
+	ssItems, err := ParseSquarespace(ssResult.Body, now)
+	if err != nil {
+		return nil, nil, icsErr
+	}
+	if _, err := db.Exec(
+		`UPDATE event_sources SET type = 'squarespace', updated_at = ? WHERE id = ?`,
+		nowStamp(), src.ID,
+	); err != nil {
+		return nil, nil, fmt.Errorf("persist detected type: %w", err)
+	}
+	src.Type = "squarespace"
+	return ssItems, ssResult, nil
 }
 
 func nowStamp() string {
