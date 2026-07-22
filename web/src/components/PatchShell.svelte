@@ -400,11 +400,6 @@
     text-decoration: none;
   }
 
-  .btn-sm {
-    padding: 0.3rem 0.7rem;
-    font-size: 0.8rem;
-  }
-
   @media (max-width: 768px) {
     .view-profile span {
       display: none;

@@ -200,11 +200,6 @@
     opacity: 0.8;
   }
 
-  .btn-sm {
-    padding: 0.3rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
   @media (max-width: 640px) {
     .page-header {
       flex-direction: column;

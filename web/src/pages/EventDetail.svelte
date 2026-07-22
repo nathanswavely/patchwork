@@ -132,10 +132,10 @@
           {#if canEdit}
             <a
               href="/events/{event.id}/edit"
-              class="btn btn-secondary edit-btn"
+              class="btn btn-sm btn-secondary edit-btn"
               onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}/edit`); }}
             >
-              <PencilSimple size={14} weight="duotone" />
+              <PencilSimple size={13} weight="duotone" />
               Edit
             </a>
           {/if}
@@ -260,9 +260,6 @@
   }
 
   .edit-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
     flex-shrink: 0;
   }
 

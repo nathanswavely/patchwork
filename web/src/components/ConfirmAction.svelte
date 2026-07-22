@@ -78,11 +78,6 @@
     font-weight: 500;
   }
 
-  .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.78rem;
-  }
-
   .confirm-yes {
     font-weight: 600;
   }

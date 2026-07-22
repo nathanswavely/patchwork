@@ -280,8 +280,6 @@
   }
 
   .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.78rem;
     align-self: flex-start;
   }
 </style>

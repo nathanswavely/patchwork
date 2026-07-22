@@ -9,7 +9,7 @@
   import { getTagVocabulary, loadTags } from '../stores/quilt.svelte.js';
   import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
   import { MOTIFS } from '../lib/patchIcons.js';
-  import { CaretLeft, X } from 'phosphor-svelte';
+  import { X } from 'phosphor-svelte';
 
   let { selected = $bindable([]), disabled = false } = $props();
 
@@ -30,13 +30,6 @@
     selected = selected.filter(t => t !== name);
   }
 
-  function moveEarlier(index) {
-    if (disabled || index === 0) return;
-    const next = [...selected];
-    [next[index - 1], next[index]] = [next[index], next[index - 1]];
-    selected = next;
-  }
-
   function motifFor(name) {
     const tag = vocabulary.find(t => t.name === name);
     return tag?.motif && MOTIFS[tag.motif] ? MOTIFS[tag.motif] : null;
@@ -46,20 +39,10 @@
 <div class="tag-picker">
   {#if selected.length > 0}
     <div class="chips selected-chips" role="list" aria-label="Selected tags, in priority order">
-      {#each selected as name, i (name)}
+      {#each selected as name (name)}
         {@const color = colorForTag(name)}
         {@const motif = motifFor(name)}
         <span class="chip" role="listitem" style="background: {color}; color: {textOnColor(color)};">
-          {#if i > 0}
-            <button
-              type="button"
-              class="chip-btn"
-              onclick={() => moveEarlier(i)}
-              {disabled}
-              title="Move earlier"
-              aria-label="Move {name} earlier"
-            ><CaretLeft size={12} weight="bold" /></button>
-          {/if}
           {#if motif}
             {@const MotifIcon = motif.component}
             <MotifIcon size={12} weight="fill" />
@@ -93,7 +76,7 @@
       {/each}
     </div>
   {:else if vocabulary.length === 0}
-    <p class="muted empty-hint">No tags yet — the instance admin curates the tag list.</p>
+    <p class="muted empty-hint">No tags yet. The instance admin curates the list.</p>
   {/if}
 </div>
 
