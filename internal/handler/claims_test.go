@@ -12,6 +12,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -231,6 +232,26 @@ func TestClaimMetaTagVerify(t *testing.T) {
 	status, ownerID := nodeState(t, db, nodeID)
 	if status != "active" || ownerID != alice.ID {
 		t.Fatalf("node after claim: status=%s owner=%s", status, ownerID)
+	}
+}
+
+// The default meta_tag fetch client must refuse non-public addresses: it
+// fetches a page on the claimed domain, a URL someone outside the
+// instance influences (SSRF).
+func TestClaimHTTPClientRefusesPrivateAddresses(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("ok"))
+	}))
+	t.Cleanup(srv.Close)
+
+	// srv listens on 127.0.0.1 — the guard must refuse it.
+	resp, err := handler.ClaimHTTPClient.Get(srv.URL)
+	if err == nil {
+		resp.Body.Close()
+		t.Fatal("expected ssrf guard refusal for loopback fetch, got success")
+	}
+	if !strings.Contains(err.Error(), "ssrf guard") {
+		t.Fatalf("expected ssrf guard error, got %v", err)
 	}
 }
 

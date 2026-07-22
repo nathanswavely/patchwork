@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"net/url"
 	"sync"
-	"syscall"
 	"time"
+
+	"github.com/patchwork-toolkit/patchwork/internal/safehttp"
 )
 
 // RemoteActor holds the fields we care about from a fetched remote actor document.
@@ -84,58 +84,17 @@ func SetActorFetcher(f func(ctx context.Context, actorID string) (*RemoteActor, 
 // timeNow is a clock seam so tests can control cache expiry.
 var timeNow = time.Now
 
-// allowPrivateAddresses disables the SSRF guard below. Off in production;
-// a seam for tests and for deliberately federating loopback dev instances.
-var allowPrivateAddresses = false
-
-// SetAllowPrivateAddresses toggles the private-address guard and returns
-// the previous value so callers can restore it.
+// SetAllowPrivateAddresses toggles the shared private-address guard
+// (internal/safehttp) and returns the previous value so callers can
+// restore it. Kept here so existing callers and tests need no rewiring.
 func SetAllowPrivateAddresses(v bool) bool {
-	prev := allowPrivateAddresses
-	allowPrivateAddresses = v
-	return prev
+	return safehttp.SetAllowPrivateAddresses(v)
 }
 
-// isPublicIP reports whether ip is a plausible public unicast address.
-// Loopback, RFC1918/ULA, link-local, multicast, and unspecified addresses
-// are all refused: actor URLs are attacker-influenced (inbound keyIds,
-// user-supplied remote follows), and fetching them must never become a
-// probe of the host's own network (SSRF).
-func isPublicIP(ip net.IP) bool {
-	return !(ip.IsLoopback() || ip.IsPrivate() || ip.IsLinkLocalUnicast() ||
-		ip.IsLinkLocalMulticast() || ip.IsMulticast() || ip.IsUnspecified())
-}
-
-// guardedDialContext dials like net.Dialer but refuses non-public
-// addresses at connect time — after DNS resolution, so DNS-rebinding to a
-// private IP is caught, and inside the transport, so redirects are
-// covered by the same check.
-func guardedDialContext(ctx context.Context, network, addr string) (net.Conn, error) {
-	d := &net.Dialer{
-		Timeout: 10 * time.Second,
-		Control: func(_, address string, _ syscall.RawConn) error {
-			host, _, err := net.SplitHostPort(address)
-			if err != nil {
-				return fmt.Errorf("ssrf guard: %w", err)
-			}
-			ip := net.ParseIP(host)
-			if ip == nil {
-				return fmt.Errorf("ssrf guard: unparseable address %q", host)
-			}
-			if !allowPrivateAddresses && !isPublicIP(ip) {
-				return fmt.Errorf("ssrf guard: refusing non-public address %s", ip)
-			}
-			return nil
-		},
-	}
-	return d.DialContext(ctx, network, addr)
-}
-
-// fetchClient is the HTTP client for all remote actor fetches.
-var fetchClient = &http.Client{
-	Timeout:   10 * time.Second,
-	Transport: &http.Transport{DialContext: guardedDialContext},
-}
+// fetchClient is the SSRF-guarded HTTP client for all remote actor
+// fetches: actor URLs are attacker-influenced (inbound keyIds,
+// user-supplied remote follows).
+var fetchClient = safehttp.NewClient(10 * time.Second)
 
 func httpFetchActor(ctx context.Context, actorID string) (*RemoteActor, error) {
 	if actorID == "" {
