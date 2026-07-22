@@ -284,9 +284,10 @@ _Avoid_: baste request (retired), motion, petition
 
 **Event source**:
 A standing feed a patch pulls events from — an ICS calendar URL (a Google
-Calendar's secret address, a venue tool's calendar export) or a
-Squarespace events page, read via its JSON view and auto-detected from a
-pasted address. Attached by a
+Calendar's secret address, a venue tool's calendar export), a Squarespace
+events page, or any page carrying schema.org Event markup (Humanitix host
+pages among them) — the kind is auto-detected from a pasted address.
+Attached by a
 patch admin to their own patch, or by an instance admin to an unclaimed
 patch, never by anyone else: attaching is vouching for the feed once, so
 imported events publish without per-event review (docs/adr/031). The

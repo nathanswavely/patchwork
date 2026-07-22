@@ -94,6 +94,18 @@ func loadItems(ctx context.Context, db *database.DB, src *Source) ([]Item, *fetc
 		return items, result, nil
 	}
 
+	if src.Type == "jsonld" {
+		result, err := fetchFeed(ctx, src.URL, src.Etag.String, src.LastModified.String)
+		if err != nil || result.NotModified {
+			return nil, result, err
+		}
+		items, err := ParseJSONLD(result.Body, now)
+		if err != nil {
+			return nil, nil, err
+		}
+		return items, result, nil
+	}
+
 	result, err := fetchFeed(ctx, src.URL, src.Etag.String, src.LastModified.String)
 	if err != nil || result.NotModified {
 		return nil, result, err
@@ -103,9 +115,23 @@ func loadItems(ctx context.Context, db *database.DB, src *Source) ([]Item, *fetc
 		return items, result, nil
 	}
 
-	// Not ICS — probe the Squarespace JSON view once. Any failure here
-	// reports the ORIGINAL ICS error: the admin pasted something that
-	// claimed to be a calendar, and that's the story they need.
+	// Not ICS. The page is already in hand, so the JSON-LD probe is
+	// free: any schema.org Event markup makes this a jsonld source.
+	if ldItems, ldErr := ParseJSONLD(result.Body, now); ldErr == nil {
+		if _, err := db.Exec(
+			`UPDATE event_sources SET type = 'jsonld', updated_at = ? WHERE id = ?`,
+			nowStamp(), src.ID,
+		); err != nil {
+			return nil, nil, fmt.Errorf("persist detected type: %w", err)
+		}
+		src.Type = "jsonld"
+		return ldItems, result, nil
+	}
+
+	// Still unknown — probe the Squarespace JSON view once. Any failure
+	// from here reports the ORIGINAL ICS error: the admin pasted
+	// something that claimed to be a calendar, and that's the story
+	// they need.
 	jsonURL, err := squarespaceJSONURL(src.URL)
 	if err != nil {
 		return nil, nil, icsErr
