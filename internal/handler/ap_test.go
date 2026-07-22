@@ -315,3 +315,74 @@ func TestAPNodeFollowers_NotFound(t *testing.T) {
 		t.Fatalf("expected 404, got %d: %s", w.Code, w.Body.String())
 	}
 }
+
+// TestAPEvent_PrivatePatch404: federation is public-only (docs/adr/024) — an
+// event hosted by a private patch has no addressable AP object.
+func TestAPEvent_PrivatePatch404(t *testing.T) {
+	db := setupTestDB(t)
+	ap.SetDomain("test.example.com")
+	defer ap.SetDomain("")
+
+	owner, _ := createTestUser(t, db, "apprivowner", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Private AP Patch", "private-ap-patch", "open")
+	eventID := createTestEvent(t, db, nodeID, owner.ID, "Hidden Concert")
+	if _, err := db.Exec("UPDATE nodes SET visibility = 'private' WHERE id = ?", nodeID); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+
+	r := apRequest("GET", "/ap/events/"+eventID)
+	w := servePublicMux(t, "GET", "/ap/events/{id}", handler.APEvent(db), r)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 for private patch's event, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// TestAPNodeOutbox_PrivatePatch404: a private patch serves no public outbox.
+func TestAPNodeOutbox_PrivatePatch404(t *testing.T) {
+	db := setupTestDB(t)
+	ap.SetDomain("test.example.com")
+	defer ap.SetDomain("")
+
+	owner, _ := createTestUser(t, db, "apprivoutbox", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Private Outbox Patch", "private-outbox-patch", "open")
+	createTestEvent(t, db, nodeID, owner.ID, "Hidden Event")
+	if _, err := db.Exec("UPDATE nodes SET visibility = 'private' WHERE id = ?", nodeID); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+
+	r := apRequest("GET", "/ap/nodes/"+nodeID+"/outbox")
+	w := servePublicMux(t, "GET", "/ap/nodes/{id}/outbox", handler.APNodeOutbox(db), r)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 for private patch's outbox, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// TestAPNodeOutbox_OmitsNonPublicEvents: only public events federate — the
+// outbox applies the same visibility rule broadcastEventCreate does.
+func TestAPNodeOutbox_OmitsNonPublicEvents(t *testing.T) {
+	db := setupTestDB(t)
+	ap.SetDomain("test.example.com")
+	defer ap.SetDomain("")
+
+	owner, _ := createTestUser(t, db, "apmixedoutbox", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Mixed Outbox Patch", "mixed-outbox-patch", "open")
+	createTestEvent(t, db, nodeID, owner.ID, "Public Show")
+	unlistedID := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO events (id, node_id, created_by, title, description, location, starts_at, recurrence, visibility)
+		 VALUES (?, ?, ?, 'Members Only', '', '', '2025-06-01T12:00:00Z', '', 'unlisted')`,
+		unlistedID, nodeID, owner.ID,
+	); err != nil {
+		t.Fatalf("insert unlisted event: %v", err)
+	}
+
+	r := apRequest("GET", "/ap/nodes/"+nodeID+"/outbox")
+	w := servePublicMux(t, "GET", "/ap/nodes/{id}/outbox", handler.APNodeOutbox(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	result := decodeJSON(t, w)
+	if total, _ := result["totalItems"].(float64); int(total) != 1 {
+		t.Fatalf("expected only the public event in the outbox, got totalItems=%v", result["totalItems"])
+	}
+}

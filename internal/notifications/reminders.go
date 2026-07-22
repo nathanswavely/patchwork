@@ -69,6 +69,7 @@ func checkProposalDeadlines(n *Notifier) {
 		`SELECT p.id, p.title, p.node_id, n.slug, n.name
 		 FROM proposals p
 		 JOIN nodes n ON n.id = p.node_id
+			AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 		 WHERE p.status = 'open'
 		   AND p.voting_ends_at > ?
 		   AND p.voting_ends_at <= ?
@@ -120,6 +121,7 @@ func checkEventReminders(n *Notifier) {
 		`SELECT e.id, e.title, e.node_id, n.slug, n.name
 		 FROM events e
 		 JOIN nodes n ON n.id = e.node_id
+			AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 		 WHERE e.starts_at > ?
 		   AND e.starts_at <= ?
 		   AND e.removed_at IS NULL

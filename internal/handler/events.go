@@ -38,13 +38,24 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		query := `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.created_at, e.updated_at, COALESCE(n.name, '') AS node_name, COALESCE(n.slug, '') AS node_slug, COALESCE(n.status, '') AS node_status FROM events e LEFT JOIN nodes n ON e.node_id = n.id`
+		query := `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status FROM events e JOIN nodes n ON e.node_id = n.id`
 		var conditions []string
 		var args []interface{}
 
 		conditions = append(conditions, "e.visibility = 'public'")
 		conditions = append(conditions, "e.removed_at IS NULL")
 		conditions = append(conditions, "e.status = 'active'")
+
+		// The hosting patch gates its events: an archived or removed patch's
+		// calendar is gone from every listing. Visibility gates discovery
+		// only — a private patch is unlisted, not locked, so its own page
+		// (reached by slug, matching GetNode) still lists its events, but
+		// the instance-wide feed and map never surface them.
+		conditions = append(conditions, "n.status IN ('active','unclaimed')")
+		conditions = append(conditions, "n.removed_at IS NULL")
+		if nodeID == "" {
+			conditions = append(conditions, "n.visibility = 'public'")
+		}
 
 		if nodeID != "" {
 			conditions = append(conditions, "e.node_id = ?")
@@ -125,9 +136,13 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 			NodeSlug   string `json:"node_slug"`
 			NodeStatus string `json:"node_status"`
 		}
+		// An archived or removed patch takes its events with it — same gate
+		// as GetNode, so an event link doesn't outlive its patch page.
 		err := db.QueryRow(
-			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.status, e.created_at, e.updated_at, COALESCE(n.name, '') AS node_name, COALESCE(n.slug, '') AS node_slug, COALESCE(n.status, '') AS node_status
-			 FROM events e LEFT JOIN nodes n ON e.node_id = n.id WHERE e.id = ? AND e.removed_at IS NULL`, eventID,
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.status, e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status
+			 FROM events e JOIN nodes n ON e.node_id = n.id
+			 WHERE e.id = ? AND e.removed_at IS NULL
+			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`, eventID,
 		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.Status, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
