@@ -215,9 +215,13 @@
     }
   }
 
+  // Picking a quilt in the switcher goes to that quilt's view — including
+  // the one already selected. The switcher names places, so it should land
+  // you in one, not just re-lens whatever page you happen to be on.
   function selectScope(scope) {
     onScopeChange(scope);
     scopeMenuOpen = false;
+    navigate('/');
   }
 </script>
 
