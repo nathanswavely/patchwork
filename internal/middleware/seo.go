@@ -64,8 +64,14 @@ func SEO(db *database.DB, cfg *config.Config, spaHTML []byte) func(http.Handler)
 			} else if len(segments) >= 2 && segments[0] == "events" {
 				id := segments[1]
 				var title, desc string
+				// Same gate as the public event endpoints: no OG preview for
+				// pending, removed, or non-public events, nor for events
+				// whose patch is archived or removed.
 				err := db.QueryRow(
-					"SELECT title, COALESCE(description, '') FROM events WHERE id = ?",
+					`SELECT e.title, COALESCE(e.description, '') FROM events e
+					 JOIN nodes n ON n.id = e.node_id
+					 WHERE e.id = ? AND e.removed_at IS NULL AND e.status = 'active'
+					   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`,
 					id,
 				).Scan(&title, &desc)
 				if err == nil && title != "" {

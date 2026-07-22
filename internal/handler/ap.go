@@ -166,10 +166,15 @@ func APEvent(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Federation is public-only (docs/adr/024): only a public event on a
+		// live public patch has an addressable AP object. broadcastEventCreate
+		// applies the same visibility rule on the way out.
 		var e model.Event
 		err := db.QueryRow(
-			`SELECT id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, recurrence, visibility, created_at, updated_at
-			 FROM events WHERE id = ? AND removed_at IS NULL AND status = 'active'`, eventID,
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.created_at, e.updated_at
+			 FROM events e JOIN nodes n ON n.id = e.node_id
+			 WHERE e.id = ? AND e.removed_at IS NULL AND e.status = 'active' AND e.visibility = 'public'
+			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL AND n.visibility = 'public'`, eventID,
 		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.CreatedAt, &e.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
@@ -299,9 +304,10 @@ func APNodeOutbox(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Verify node exists.
+		// Verify node exists and federates: the outbox is a fully public
+		// surface, so a private patch doesn't serve one (docs/adr/024).
 		var exists int
-		if err := db.QueryRow("SELECT 1 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL", nodeID).Scan(&exists); err != nil {
+		if err := db.QueryRow("SELECT 1 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'", nodeID).Scan(&exists); err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
 		}
@@ -310,10 +316,11 @@ func APNodeOutbox(db *database.DB) http.HandlerFunc {
 		baseURL := fmt.Sprintf("https://%s", domain)
 		outboxID := fmt.Sprintf("%s/ap/nodes/%s/outbox", baseURL, nodeID)
 
-		// Collect recent events as Create activities.
+		// Collect recent public events as Create activities — non-public
+		// events never federate (broadcastEventCreate applies the same rule).
 		rows, err := db.Query(
 			`SELECT id, title, description, location, latitude, longitude, starts_at, ends_at, recurrence, visibility, created_at, updated_at
-			 FROM events WHERE node_id = ? AND removed_at IS NULL AND status = 'active' ORDER BY created_at DESC LIMIT 50`, nodeID,
+			 FROM events WHERE node_id = ? AND removed_at IS NULL AND status = 'active' AND visibility = 'public' ORDER BY created_at DESC LIMIT 50`, nodeID,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"database error"}`, http.StatusInternalServerError)
