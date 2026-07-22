@@ -58,9 +58,11 @@ describe('#6: workspace tabs for claimed patches are unchanged', () => {
 });
 
 describe('#6: settings sections filter on claim state', () => {
-  it('unclaimed patches show Info, Appearance, Verification, Danger', () => {
+  it('unclaimed patches show Info, Appearance, Sources, Verification, Danger', () => {
     const secs = patchSettingsSections({ isUnclaimed: true });
-    expect(secs.map((s) => s.id)).toEqual(['info', 'appearance', 'verification', 'danger']);
+    // Event sources appear here too: the instance admin holds unclaimed
+    // calendars in trust and may attach feeds (docs/adr/031).
+    expect(secs.map((s) => s.id)).toEqual(['info', 'appearance', 'sources', 'verification', 'danger']);
   });
 
   it('unclaimed patches drop Members and Notifications', () => {
@@ -71,7 +73,7 @@ describe('#6: settings sections filter on claim state', () => {
 
   it('claimed patches keep the full section list without Verification', () => {
     const secs = patchSettingsSections({ isUnclaimed: false }).map((s) => s.id);
-    expect(secs).toEqual(['info', 'appearance', 'members', 'notifications', 'danger']);
+    expect(secs).toEqual(['info', 'appearance', 'members', 'sources', 'notifications', 'danger']);
     expect(secs).not.toContain('verification');
   });
 });
