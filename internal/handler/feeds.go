@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/emersion/go-ical"
@@ -66,10 +67,30 @@ func feedEtag(events []feedEvent) string {
 	return `"` + hex.EncodeToString(h.Sum(nil))[:32] + `"`
 }
 
+// escapeICSText escapes an iCalendar TEXT value (RFC 5545 §3.3.11).
+func escapeICSText(s string) string {
+	r := strings.NewReplacer("\\", "\\\\", ";", "\\;", ",", "\\,", "\n", "\\n", "\r", "")
+	return r.Replace(s)
+}
+
 func writeICS(w http.ResponseWriter, r *http.Request, cfg *config.Config, calName string, events []feedEvent) {
 	etag := feedEtag(events)
 	if r.Header.Get("If-None-Match") == etag {
 		w.WriteHeader(http.StatusNotModified)
+		return
+	}
+
+	// go-ical refuses to encode a componentless VCALENDAR (RFC 5545 wants
+	// ≥1 component), which would turn a quiet venue's feed into a
+	// zero-byte 200 that calendar apps reject. Serve the minimal empty
+	// calendar by hand — clients accept it, and the subscription stays
+	// valid until the first event arrives.
+	if len(events) == 0 {
+		w.Header().Set("Content-Type", "text/calendar; charset=utf-8")
+		w.Header().Set("ETag", etag)
+		w.Header().Set("Cache-Control", "public, max-age=300")
+		fmt.Fprintf(w, "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Patchwork//%s//EN\r\nX-WR-CALNAME:%s\r\nEND:VCALENDAR\r\n",
+			escapeICSText(cfg.Instance.Domain), escapeICSText(calName))
 		return
 	}
 
