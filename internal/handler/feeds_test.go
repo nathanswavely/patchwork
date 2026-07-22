@@ -64,6 +64,29 @@ func TestNodeICSFeed_PublicEventsOnly(t *testing.T) {
 	}
 }
 
+// A patch with no events must still serve a valid (empty) calendar —
+// go-ical refuses componentless VCALENDARs, and the silent error path
+// produced a zero-byte 200 that calendar apps treat as a broken feed.
+func TestNodeICSFeed_EmptyCalendarIsValid(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := feedTestConfig()
+	admin, _ := createTestUser(t, db, "emptyadmin", "member")
+	createTestNode(t, db, admin.ID, "Quiet Venue", "quiet-venue", "open")
+
+	r := authedRequest("GET", "/api/v1/nodes/quiet-venue/events.ics", nil, "")
+	w := servePublicMux(t, "GET", "/api/v1/nodes/{slug}/events.ics", handler.NodeICSFeed(db, cfg), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	body := w.Body.String()
+	if !strings.Contains(body, "BEGIN:VCALENDAR") || !strings.Contains(body, "END:VCALENDAR") {
+		t.Errorf("empty feed must still be a calendar, got %d bytes: %q", len(body), body)
+	}
+	if w.Header().Get("ETag") == "" {
+		t.Error("empty feed lost its ETag")
+	}
+}
+
 func TestNodeICSFeed_PrivateNodeInvisible(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := feedTestConfig()
