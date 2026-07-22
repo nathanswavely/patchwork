@@ -470,6 +470,10 @@ func main() {
 		log.Println("federation: disabled (federation.enabled=false) — AP, WebFinger, and git transport not mounted")
 	}
 
+	// robots.txt: opt out of AI training/scraping crawlers by name. Paired
+	// with the BlockAICrawlers middleware below for the ones that ignore it.
+	mux.HandleFunc("GET /robots.txt", middleware.RobotsTxt())
+
 	// Legacy /pins/{id} URLs (the retired UI word for events — docs/adr/027)
 	// were federated into other instances' timelines; redirect them forever.
 	mux.HandleFunc("GET /pins/{id}", func(w http.ResponseWriter, r *http.Request) {
@@ -492,10 +496,13 @@ func main() {
 	seoWrapped := middleware.SEO(db, cfg, spaHTML)(spa)
 	mux.Handle("/", seoWrapped)
 
-	// Middleware stack: CORS → CSRF → routes.
+	// Middleware stack: BlockAICrawlers → CORS → CSRF → routes.
+	// BlockAICrawlers is outermost so matching crawlers are rejected before
+	// any other work; federation, preview, and search agents pass through.
 	var root http.Handler = mux
 	root = middleware.CSRF(root)
 	root = middleware.CORS(cfg, root)
+	root = middleware.BlockAICrawlers(root)
 
 	// Start server.
 	addr := ":" + cfg.Server.Port
