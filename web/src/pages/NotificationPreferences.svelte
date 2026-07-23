@@ -2,6 +2,7 @@
   import { api } from '../lib/api.js';
   import { showToast } from '../stores/toast.svelte.js';
   import UserSettingsShell from '../components/UserSettingsShell.svelte';
+  import ToggleSwitch from '../components/ToggleSwitch.svelte';
 
   let categories = $state([]);
   let channels = $state([]);
@@ -92,16 +93,13 @@
               <div class="prefs-row">
                 <span class="prefs-type-label">{t.label}</span>
                 {#each channels as ch}
-                  <label class="prefs-toggle">
-                    <input
-                      type="checkbox"
+                  <span class="prefs-toggle">
+                    <ToggleSwitch
                       checked={t.channels[ch]}
+                      label="{t.label} — {channelLabel(ch)}"
                       onchange={() => toggle(t.type, ch)}
                     />
-                    <span class="toggle-track">
-                      <span class="toggle-thumb"></span>
-                    </span>
-                  </label>
+                  </span>
                 {/each}
               </div>
             {/each}
@@ -190,39 +188,6 @@
     display: flex;
     justify-content: center;
     flex-shrink: 0;
-    cursor: pointer;
-  }
-
-  .prefs-toggle input {
-    display: none;
-  }
-
-  .toggle-track {
-    width: 32px;
-    height: 18px;
-    border-radius: 9px;
-    background: var(--color-text-muted);
-    position: relative;
-    transition: background 150ms ease;
-  }
-
-  .prefs-toggle input:checked + .toggle-track {
-    background: var(--color-primary);
-  }
-
-  .toggle-thumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--color-surface);
-    transition: transform 150ms ease;
-  }
-
-  .prefs-toggle input:checked + .toggle-track .toggle-thumb {
-    transform: translateX(14px);
   }
 
   @media (max-width: 640px) {
