@@ -155,13 +155,21 @@ func publicNodeFeedEvents(db *database.DB, slug string) (nodeName string, events
 		return "", nil, false
 	}
 	since := time.Now().Add(-feedWindowBack).UTC().Format(time.RFC3339)
+	// Own events plus confirmed event links (docs/adr/032) — a linked
+	// gig belongs on the patch's public calendar. The owner patch must
+	// itself be public and alive for its events to blend here.
 	events, err = scanFeedEvents(db,
 		`SELECT e.id, e.title, e.description, e.location, e.latitude, e.longitude,
 		 e.starts_at, e.ends_at, n.slug, n.name, e.created_at, e.updated_at
 		 FROM events e JOIN nodes n ON e.node_id = n.id
-		 WHERE e.node_id = ? AND e.status = 'active' AND e.visibility = 'public'
+		 WHERE (e.node_id = ? OR EXISTS (
+		    SELECT 1 FROM event_links el WHERE el.event_id = e.id
+		    AND el.node_id = ? AND el.status = 'confirmed'))
+		 AND (n.visibility = 'public' OR n.id = ?)
+		 AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
+		 AND e.status = 'active' AND e.visibility = 'public'
 		 AND e.removed_at IS NULL AND e.starts_at >= ?
-		 ORDER BY e.starts_at LIMIT ?`, nodeID, since, feedMaxEvents)
+		 ORDER BY e.starts_at LIMIT ?`, nodeID, nodeID, nodeID, since, feedMaxEvents)
 	if err != nil {
 		return "", nil, false
 	}
@@ -280,16 +288,22 @@ func PersonalICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		since := time.Now().Add(-feedWindowBack).UTC().Format(time.RFC3339)
 		// Public events from every patch the person has a relationship
-		// with; members-only (private/unlisted) events where they belong.
+		// with — including confirmed event links (docs/adr/032), so a
+		// followed band's linked gig lands here too. Members-only
+		// (private/unlisted) events only where the person belongs to the
+		// event's own patch; a link never widens visibility.
 		events, err := scanFeedEvents(db,
 			`SELECT DISTINCT e.id, e.title, e.description, e.location, e.latitude, e.longitude,
 			 e.starts_at, e.ends_at, n.slug, n.name, e.created_at, e.updated_at
 			 FROM events e
 			 JOIN nodes n ON e.node_id = n.id
-			 JOIN memberships m ON m.node_id = e.node_id AND m.user_id = ? AND m.status = 'active'
+			 JOIN memberships m ON m.user_id = ? AND m.status = 'active'
+			   AND (m.node_id = e.node_id OR EXISTS (
+			      SELECT 1 FROM event_links el WHERE el.event_id = e.id
+			      AND el.node_id = m.node_id AND el.status = 'confirmed'))
 			 WHERE e.status = 'active' AND e.removed_at IS NULL AND n.removed_at IS NULL
 			 AND n.status IN ('active','unclaimed')
-			 AND (e.visibility = 'public' OR m.role IN ('member','admin'))
+			 AND (e.visibility = 'public' OR (m.node_id = e.node_id AND m.role IN ('member','admin')))
 			 AND e.starts_at >= ?
 			 ORDER BY e.starts_at LIMIT ?`, userID, since, feedMaxEvents)
 		if err != nil {

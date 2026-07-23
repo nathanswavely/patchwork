@@ -201,6 +201,34 @@ type Event struct {
 	UpdatedAt string  `json:"updated_at"`
 }
 
+// EventLink associates an event with a patch beyond its owner
+// (docs/adr/032): one side's admins propose, the other side's confirm.
+// Pending links are invisible everywhere; a confirmed link is presence,
+// not control — the event stays the owner's to edit.
+type EventLink struct {
+	ID          string `json:"id"`
+	EventID     string `json:"event_id"`
+	NodeID      string `json:"node_id"`
+	Status      string `json:"status"`
+	InitiatedBy string `json:"initiated_by"`
+	RequestedBy string `json:"requested_by,omitempty"`
+	CreatedAt   string `json:"created_at"`
+	// Display fields joined from nodes for rendering "with X".
+	NodeName string `json:"node_name,omitempty"`
+	NodeSlug string `json:"node_slug,omitempty"`
+}
+
+// EventMention is a display-only doorway on an event page to a patch on
+// another quilt (docs/adr/032). No handshake, no surfaces — the standing
+// of naming the band in the description.
+type EventMention struct {
+	ID      string `json:"id"`
+	EventID string `json:"event_id"`
+	Host    string `json:"host"`
+	Slug    string `json:"slug"`
+	Name    string `json:"name"`
+}
+
 // EventSource is a standing feed a patch pulls events from
 // (docs/adr/031). Attached by whoever owns the calendar; attaching is
 // vouching for the feed once.

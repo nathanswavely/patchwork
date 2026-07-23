@@ -63,9 +63,17 @@ const (
 	EventSubmissionApproved NotificationType = "event.submission_approved"
 	EventSubmissionRejected NotificationType = "event.submission_rejected"
 
-	AdminClaimRequest    NotificationType = "admin.claim_request"
-	AdminSubmission      NotificationType = "admin.submission"
-	AdminEventSubmission NotificationType = "admin.event_submission"
+	// Event links (docs/adr/032): the confirming side's admins get the
+	// request; the linked patch's admins hear when it lands. Requests to
+	// an unclaimed confirming side go to site admins, who hold those
+	// calendars in trust.
+	EventLinkRequested NotificationType = "event.link_request"
+	EventLinkConfirmed NotificationType = "event.link_confirmed"
+
+	AdminClaimRequest     NotificationType = "admin.claim_request"
+	AdminSubmission       NotificationType = "admin.submission"
+	AdminEventSubmission  NotificationType = "admin.event_submission"
+	AdminEventLinkRequest NotificationType = "admin.event_link_request"
 )
 
 // Priority determines default channel behavior.
@@ -126,9 +134,13 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	EventSubmissionApproved: {CategoryEvents, "Your event was approved", AudienceSpecificUser, PriorityHigh},
 	EventSubmissionRejected: {CategoryEvents, "Your event was declined", AudienceSpecificUser, PriorityNormal},
 
-	AdminClaimRequest:    {CategoryAdmin, "New patch claim request", AudienceSiteAdmins, PriorityHigh},
-	AdminSubmission:      {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
-	AdminEventSubmission: {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
+	EventLinkRequested: {CategoryEvents, "Event link request for your patch", AudienceAdminsOnly, PriorityHigh},
+	EventLinkConfirmed: {CategoryEvents, "Event link confirmed", AudienceAdminsOnly, PriorityNormal},
+
+	AdminClaimRequest:     {CategoryAdmin, "New patch claim request", AudienceSiteAdmins, PriorityHigh},
+	AdminSubmission:       {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
+	AdminEventSubmission:  {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
+	AdminEventLinkRequest: {CategoryAdmin, "Event link request (unclaimed patch)", AudienceSiteAdmins, PriorityNormal},
 }
 
 // DefaultEnabled returns whether a channel should be on by default for a given type.
@@ -158,7 +170,8 @@ func TypesForCategory(cat Category) []NotificationType {
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		EventCreated, EventReminder, EventUpdated, EventCancelled,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
-		AdminClaimRequest, AdminSubmission, AdminEventSubmission,
+		EventLinkRequested, EventLinkConfirmed,
+		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
 	}
 	for _, t := range allTypes {
 		if TypeRegistry[t].Category == cat {

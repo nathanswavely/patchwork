@@ -6,6 +6,7 @@
   import { getMembershipRoles } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import EventLinks from '../components/EventLinks.svelte';
 
   let { eventId = '' } = $props();
 
@@ -181,6 +182,8 @@
         {/if}
       </div>
     {/if}
+
+    <EventLinks {event} onChanged={() => loadEvent(event.id)} />
 
     <div class="meta">
       <div class="meta-row">

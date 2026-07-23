@@ -58,7 +58,14 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		}
 
 		if nodeID != "" {
-			conditions = append(conditions, "e.node_id = ?")
+			// A patch's calendar carries its own events plus confirmed
+			// event links (docs/adr/032). A private patch's events never
+			// blend onto another patch's page — its calendar stays its own.
+			conditions = append(conditions, `(e.node_id = ? OR EXISTS (
+				SELECT 1 FROM event_links el WHERE el.event_id = e.id
+				AND el.node_id = ? AND el.status = 'confirmed'))`)
+			args = append(args, nodeID, nodeID)
+			conditions = append(conditions, "(n.visibility = 'public' OR e.node_id = ?)")
 			args = append(args, nodeID)
 		}
 		if from != "" {
@@ -132,9 +139,11 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 
 		var e struct {
 			model.Event
-			NodeName   string `json:"node_name"`
-			NodeSlug   string `json:"node_slug"`
-			NodeStatus string `json:"node_status"`
+			NodeName   string               `json:"node_name"`
+			NodeSlug   string               `json:"node_slug"`
+			NodeStatus string               `json:"node_status"`
+			Links      []model.EventLink    `json:"links"`
+			Mentions   []model.EventMention `json:"mentions"`
 		}
 		// An archived or removed patch takes its events with it — same gate
 		// as GetNode, so an event link doesn't outlive its patch page.
@@ -151,13 +160,19 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 
 		// A pending submission is visible only to its submitter and its
 		// reviewers (docs/adr/026) — to everyone else it doesn't exist yet.
+		user := middleware.UserFromContext(r.Context())
 		if e.Status == "pending_review" {
-			user := middleware.UserFromContext(r.Context())
 			if user == nil || (user.ID != e.CreatedBy && user.Role != "admin" && !userHasNodeRole(db, user.ID, e.NodeID, "admin")) {
 				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 				return
 			}
 		}
+
+		// Event links and cross-quilt mentions (docs/adr/032): confirmed
+		// links and mentions are public; pending links only reach the
+		// admins who could act on them.
+		e.Links = eventLinksForViewer(db, user, e.ID, e.NodeID)
+		e.Mentions = eventMentions(db, e.ID)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
