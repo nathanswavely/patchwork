@@ -1097,17 +1097,28 @@
 
   onMount(() => {
     loadData();
-    // Portal the tooltip to <body>: .quilt-pane is a stacking context
-    // (z-index: 0), so no z-index inside it can clear the shell UI — the
-    // tooltip must live outside the pane to float over the patch list.
-    if (tooltip) document.body.appendChild(tooltip);
+    // The tooltip lives on <body>, not in this component's markup:
+    // .quilt-pane is a stacking context (z-index: 0), so no z-index inside
+    // it can clear the shell UI — the tooltip has to be outside the pane to
+    // float over the patch list. It's built here rather than declared in
+    // the template and moved, because moving a component's *last* node out
+    // of its own fragment breaks Svelte's teardown: destroying the canvas
+    // then sweeps every following sibling, including the {#if} anchor its
+    // parent needs to render the next branch (quilt → map left the pane
+    // permanently empty). Its styles are already :global.
+    tooltip = document.createElement('div');
+    tooltip.className = 'canvas-tooltip';
+    document.body.appendChild(tooltip);
     // Text measured before the display font loads used the fallback font's
     // metrics — remeasure once real metrics exist.
     document.fonts?.ready?.then(() => {
       measureCache.clear();
       updateLabels();
     });
-    return () => tooltip?.remove();
+    return () => {
+      tooltip?.remove();
+      tooltip = null;
+    };
   });
 
   // A pinch on the quilt is a quilt zoom, never a page zoom — including over
@@ -1187,8 +1198,6 @@
     </div>
   {/if}
 {/if}
-
-<div class="canvas-tooltip" bind:this={tooltip}></div>
 
 <style>
   .my-patch-star,
