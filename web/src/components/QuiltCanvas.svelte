@@ -920,6 +920,138 @@
       </div>`;
   }
 
+  // --- LABEL DRAG GESTURES ---
+  // Name badges are DOM elements stacked above the svg, so d3's zoom never
+  // sees a press that lands on one — every badge was a dead spot: on a phone
+  // the finger, and on a desktop the cursor, had to find bare fabric to pan.
+  // Drive the zoom behavior by hand instead, and only count the sequence as a
+  // tap/click if the pointer stayed put. (Mid-gesture the badge is rebuilt and
+  // detached by updateLabels, so the move/end listeners live on window, not on
+  // the element.)
+  const TAP_SLOP = 10; // px of travel still forgiven as a tap
+  const DRAG_SLOP = 4; // a mouse is steadier than a finger — commit sooner
+  let labelGesture = null;
+  let labelGestureMoved = false;
+
+  function touchById(list, id) {
+    for (const t of list) if (t.identifier === id) return t;
+    return null;
+  }
+
+  function touchDistance(a, b) {
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  }
+
+  function panQuiltBy(dxScreen, dyScreen) {
+    if (!svgSelection || !zoomBehavior) return;
+    const k = currentTransform.k || 1;
+    svgSelection.interrupt('zoomFit');
+    zoomBehavior.translateBy(svgSelection, dxScreen / k, dyScreen / k);
+  }
+
+  function zoomQuiltBy(ratio, clientX, clientY) {
+    if (!svgSelection || !zoomBehavior) return;
+    const node = svgSelection.node();
+    if (!node) return;
+    const rect = node.getBoundingClientRect();
+    svgSelection.interrupt('zoomFit');
+    zoomBehavior.scaleBy(svgSelection, ratio, [clientX - rect.left, clientY - rect.top]);
+  }
+
+  function onLabelTouchMove(event) {
+    if (!labelGesture) return;
+    if (labelGesture.mode === 'pan') {
+      const t = touchById(event.touches, labelGesture.id);
+      if (!t) return;
+      const dx = t.clientX - labelGesture.x;
+      const dy = t.clientY - labelGesture.y;
+      // Under the slop the finger is still resolving into a tap — holding the
+      // anchor here keeps a shaky tap from nudging the quilt.
+      if (!labelGestureMoved && Math.hypot(dx, dy) < TAP_SLOP) return;
+      labelGestureMoved = true;
+      labelGesture.x = t.clientX;
+      labelGesture.y = t.clientY;
+      panQuiltBy(dx, dy);
+    } else {
+      const a = touchById(event.touches, labelGesture.ids[0]);
+      const b = touchById(event.touches, labelGesture.ids[1]);
+      if (!a || !b) return;
+      const dist = touchDistance(a, b);
+      if (labelGesture.dist > 0 && dist > 0) {
+        zoomQuiltBy(dist / labelGesture.dist, (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2);
+      }
+      labelGesture.dist = dist;
+    }
+  }
+
+  function onLabelMouseMove(event) {
+    if (!labelGesture || labelGesture.mode !== 'drag') return;
+    // The button went up somewhere we couldn't hear it (outside the window,
+    // over a native menu) — don't keep dragging the quilt around.
+    if (!(event.buttons & 1)) {
+      endLabelGesture();
+      return;
+    }
+    const dx = event.clientX - labelGesture.x;
+    const dy = event.clientY - labelGesture.y;
+    if (!labelGestureMoved && Math.hypot(dx, dy) < DRAG_SLOP) return;
+    labelGestureMoved = true;
+    labelGesture.x = event.clientX;
+    labelGesture.y = event.clientY;
+    if (tooltip) tooltip.style.display = 'none'; // a drag isn't a hover
+    panQuiltBy(dx, dy);
+  }
+
+  function endLabelGesture() {
+    labelGesture = null;
+    window.removeEventListener('touchmove', onLabelTouchMove);
+    window.removeEventListener('touchend', endLabelGesture);
+    window.removeEventListener('touchcancel', endLabelGesture);
+    window.removeEventListener('mousemove', onLabelMouseMove);
+    window.removeEventListener('mouseup', endLabelGesture);
+  }
+
+  function attachLabelGestures(el) {
+    el.addEventListener('touchstart', (event) => {
+      endLabelGesture();
+      const touches = event.touches;
+      if (touches.length === 1) {
+        labelGesture = {
+          mode: 'pan',
+          id: touches[0].identifier,
+          x: touches[0].clientX,
+          y: touches[0].clientY,
+        };
+        labelGestureMoved = false;
+      } else if (touches.length === 2) {
+        labelGesture = {
+          mode: 'pinch',
+          ids: [touches[0].identifier, touches[1].identifier],
+          dist: touchDistance(touches[0], touches[1]),
+        };
+        labelGestureMoved = true; // a pinch is never a tap
+      } else {
+        return;
+      }
+      window.addEventListener('touchmove', onLabelTouchMove, { passive: true });
+      window.addEventListener('touchend', endLabelGesture, { passive: true });
+      window.addEventListener('touchcancel', endLabelGesture, { passive: true });
+    }, { passive: true });
+
+    el.addEventListener('mousedown', (event) => {
+      if (event.button !== 0) return; // left button only, as d3's zoom does
+      endLabelGesture();
+      labelGesture = { mode: 'drag', x: event.clientX, y: event.clientY };
+      labelGestureMoved = false;
+      // Keeps the drag from turning into a text selection of the patch name.
+      // The click still fires on mouseup, which is where the tap/drag split
+      // gets settled.
+      event.preventDefault();
+      window.addEventListener('mousemove', onLabelMouseMove);
+      window.addEventListener('mouseup', endLabelGesture);
+    });
+  }
+
   function updateLabels() {
     if (!labelsEl) return;
 
@@ -1066,8 +1198,17 @@
         if (tooltip) tooltip.style.display = 'none';
       });
       label.addEventListener('click', () => {
+        // A pan that started on this badge still ends in a click (synthesized
+        // on touch, native on mouseup) — dragging the quilt shouldn't open
+        // whatever happened to be under the pointer.
+        if (labelGestureMoved) {
+          labelGestureMoved = false;
+          return;
+        }
         if (tileData.slug) onPatchClick(tileData.slug, tileData._source || null);
       });
+      // Touch: pan and pinch the quilt even when the finger lands on a badge.
+      attachLabelGestures(label);
       // Forward wheel events to the SVG so zoom works while hovering labels.
       label.addEventListener('wheel', (event) => {
         const svg = containerEl?.querySelector('svg');
@@ -1137,6 +1278,7 @@
     return () => {
       tooltip?.remove();
       tooltip = null;
+      endLabelGesture(); // a gesture in flight when the canvas leaves
     };
   });
 
@@ -1293,6 +1435,12 @@
     border: 2px solid var(--lt-thread);
     font-family: 'Space Grotesk Variable', system-ui, sans-serif;
     color: var(--color-text);
+  }
+
+  /* A badge drags the quilt like bare fabric does, so it borrows the svg's
+     grabbing cursor while the button is down. */
+  :global(.patch-label:active) {
+    cursor: grabbing;
   }
 
   :global(.patch-label.selected) {
