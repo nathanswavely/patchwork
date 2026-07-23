@@ -38,7 +38,13 @@ func StartWorker(ctx context.Context, db *database.DB, notifier *notifications.N
 }
 
 func syncAll(ctx context.Context, db *database.DB, notifier *notifications.Notifier) {
-	rows, err := db.Query(`SELECT id FROM event_sources`)
+	// Sources on archived or removed patches lie dormant: no fetch, no
+	// imports. The row survives, so a patch restored to 'active' resumes
+	// syncing on the next tick with no extra bookkeeping.
+	rows, err := db.Query(
+		`SELECT es.id FROM event_sources es
+		 JOIN nodes n ON n.id = es.node_id
+			AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`)
 	if err != nil {
 		log.Printf("eventsource: list sources: %v", err)
 		return

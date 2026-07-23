@@ -355,6 +355,66 @@ func TestRemove_ModeratedRowsSurviveDetached(t *testing.T) {
 	}
 }
 
+// The hourly worker skips sources whose patch is archived or removed —
+// the feed is never fetched while the patch is down. The source row
+// survives, so restoring the patch to 'active' resumes syncing with no
+// extra state.
+func TestSyncAll_ArchivedPatchSourcesDormant(t *testing.T) {
+	db := setupTestDB(t)
+	feed := newFeedServer(t, wrap(vevent("a@test", "Show A", future(48*time.Hour))))
+	liveSource := seedSource(t, db, feed.srv.URL)
+
+	var userID string
+	if err := db.QueryRow(`SELECT added_by FROM event_sources WHERE id = ?`, liveSource).Scan(&userID); err != nil {
+		t.Fatalf("look up user: %v", err)
+	}
+	seedExtra := func(slug, status string, removedAt *string) string {
+		t.Helper()
+		nodeID := auth.NewUUIDv7()
+		if _, err := db.Exec(
+			`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status, removed_at)
+			 VALUES (?, ?, ?, ?, '', 'leaf', 'public', 'open', ?, ?)`,
+			nodeID, userID, slug, slug, status, removedAt,
+		); err != nil {
+			t.Fatalf("seed node %s: %v", slug, err)
+		}
+		sourceID := auth.NewUUIDv7()
+		if _, err := db.Exec(
+			`INSERT INTO event_sources (id, node_id, type, url, added_by) VALUES (?, ?, 'ics', ?, ?)`,
+			sourceID, nodeID, feed.srv.URL, userID,
+		); err != nil {
+			t.Fatalf("seed source for %s: %v", slug, err)
+		}
+		return sourceID
+	}
+	now := time.Now().UTC().Format(time.RFC3339)
+	archivedSource := seedExtra("archived-patch", "archived", nil)
+	removedSource := seedExtra("removed-patch", "active", &now)
+
+	syncAll(context.Background(), db, nil)
+
+	if n := countEvents(t, db, liveSource); n != 1 {
+		t.Errorf("active patch's source should sync, got %d events", n)
+	}
+	for name, id := range map[string]string{"archived": archivedSource, "removed": removedSource} {
+		if n := countEvents(t, db, id); n != 0 {
+			t.Errorf("%s patch's source imported %d events; should lie dormant", name, n)
+		}
+		if status, _ := sourceState(t, db, id); status != "pending" {
+			t.Errorf("%s patch's source was fetched (status %s); should never be touched", name, status)
+		}
+	}
+
+	// Restore: flipping the patch back to active is all it takes.
+	if _, err := db.Exec(`UPDATE nodes SET status = 'active' WHERE slug = 'archived-patch'`); err != nil {
+		t.Fatalf("restore node: %v", err)
+	}
+	syncAll(context.Background(), db, nil)
+	if n := countEvents(t, db, archivedSource); n != 1 {
+		t.Errorf("restored patch's source should resume syncing, got %d events", n)
+	}
+}
+
 // Detached / deleted items are on the skip list and never resurrected.
 func TestSync_SkipListRespected(t *testing.T) {
 	db := setupTestDB(t)
