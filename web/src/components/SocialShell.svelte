@@ -590,7 +590,10 @@
   }
 
   .quilt-chips.rail-collapsed {
-    left: 68px; /* clear the collapsed rail's floating chips */
+    /* The collapsed rail hugs at left 12px, 56px wide (its right edge is
+       68px) since the hover-flicker fix — keep the same 12px gap the
+       expanded offset has. */
+    left: 80px;
   }
 
   /* The FAB and sheet are the mobile canvas home — hidden on desktop. */
