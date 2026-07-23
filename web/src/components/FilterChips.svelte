@@ -164,7 +164,9 @@
     width: 36px;
     height: 36px;
     padding: 0;
-    border: 1px solid var(--color-border);
+    /* Matches the mobile filter FAB: text-muted-derived border so the
+       circle keeps a visible edge in the dark theme too. */
+    border: 1px solid color-mix(in srgb, var(--color-text-muted) 45%, transparent);
     border-radius: 999px;
     background: var(--color-surface);
     color: var(--color-text-muted);
