@@ -842,6 +842,8 @@
 
     /* Filter FAB: opposite the info button, same floating row as the view
        pill — canvas chrome, right where the thumb lives. */
+    /* Styled like the desktop chips-toggle — an outlined circle, not the
+       glass-highlight treatment the info button wears. */
     .filter-fab {
       display: flex;
       align-items: center;
@@ -853,20 +855,18 @@
       width: 36px;
       height: 36px;
       padding: 0;
-      border: none;
+      border: 1px solid var(--color-border);
       border-radius: 999px;
-      background: var(--color-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 2px 12px var(--color-shadow);
-      color: var(--color-text);
-      opacity: 0.85;
+      background: var(--color-surface);
+      color: var(--color-text-muted);
       cursor: pointer;
+      transition: border-color 150ms ease, color 150ms ease;
     }
 
     .filter-fab.active,
     .filter-fab:hover {
-      opacity: 1;
+      border-color: var(--color-primary);
+      color: var(--color-text);
     }
 
     .filter-fab-badge {
