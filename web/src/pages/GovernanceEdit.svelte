@@ -4,6 +4,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
+  import SegmentedControl from '../components/SegmentedControl.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -134,14 +135,12 @@ Violations may result in a warning, temporary suspension, or removal from the co
           <div class="editor-section">
             <div class="editor-header">
               <label>Content</label>
-              <div class="view-toggle">
-                <button type="button" class:active={!previewMode} onclick={() => previewMode = false}>
-                  Write
-                </button>
-                <button type="button" class:active={previewMode} onclick={() => previewMode = true}>
-                  Preview
-                </button>
-              </div>
+              <SegmentedControl
+                label="Editor view"
+                options={[{ value: 'write', label: 'Write' }, { value: 'preview', label: 'Preview' }]}
+                value={previewMode ? 'preview' : 'write'}
+                onchange={(v) => { previewMode = v === 'preview'; }}
+              />
             </div>
 
             <div class="editor-panels">
@@ -253,28 +252,6 @@ Violations may result in a warning, temporary suspension, or removal from the co
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--color-text-muted);
-  }
-
-  .view-toggle {
-    display: flex;
-    gap: 0;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .view-toggle button {
-    padding: 0.25rem 0.75rem;
-    border: none;
-    background: var(--color-surface);
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    cursor: pointer;
-  }
-
-  .view-toggle button.active {
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
   }
 
   .editor-panels {

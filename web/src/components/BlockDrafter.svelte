@@ -10,6 +10,7 @@
     MAX_GRID,
   } from '../lib/draftGeometry.js';
   import BundlePicker from './BundlePicker.svelte';
+  import SegmentedControl from './SegmentedControl.svelte';
 
   // draft: {grid, seams, colors} in quarter-cell units (docs/adr/029).
   // bundle: 1-6 hex fabrics off the wall; slot 0 is the identity color.
@@ -158,17 +159,16 @@
         {/each}
       </select>
     </label>
-    <div class="tools" role="group" aria-label="Drafting tool">
-      <button class:active={tool === 'sew'} onclick={() => { tool = 'sew'; }} title="Sew a seam between two anchors">
-        Sew
-      </button>
-      <button class:active={tool === 'color'} onclick={() => { tool = 'color'; pendingAnchor = null; }} title="Color pieces with the selected fabric">
-        Color
-      </button>
-      <button class:active={tool === 'unpick'} onclick={() => { tool = 'unpick'; pendingAnchor = null; }} title="Remove a seam">
-        Unpick
-      </button>
-    </div>
+    <SegmentedControl
+      label="Drafting tool"
+      options={[
+        { value: 'sew', label: 'Sew', title: 'Sew a seam between two anchors' },
+        { value: 'color', label: 'Color', title: 'Color pieces with the selected fabric' },
+        { value: 'unpick', label: 'Unpick', title: 'Remove a seam' },
+      ]}
+      value={tool}
+      onchange={(v) => { tool = v; if (v !== 'sew') pendingAnchor = null; }}
+    />
     <span class="seam-budget" class:spent={seamsLeft === 0}>
       {draft.seams.length} of {SEAM_BUDGET} seams
     </span>
@@ -277,32 +277,6 @@
     border-radius: var(--radius);
     background: var(--color-surface);
     color: var(--color-text);
-  }
-
-  .tools {
-    display: flex;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .tools button {
-    padding: 0.3rem 0.7rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    background: var(--color-surface);
-    color: var(--color-text-muted);
-    border: none;
-    cursor: pointer;
-  }
-
-  .tools button + button {
-    border-left: 1px solid var(--color-border);
-  }
-
-  .tools button.active {
-    background: var(--color-primary);
-    color: #fff;
   }
 
   .seam-budget {
