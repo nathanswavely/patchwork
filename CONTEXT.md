@@ -148,22 +148,45 @@ ever hold follows, since membership doesn't cross quilts.
 _Avoid_: my patches (implies membership only), my memberships, joined
 
 **Filter**:
-The standing tag selection that narrows every discovery surface at once —
-treemap, cards, map, and events. A filter is independent of the search
-query and of scope: it stays on until the person clears it, so it must
-never be silently active — wherever the full selection can't be shown,
-a count stands in for it, and clearing is always one step. Toggled in the
-filter card, the surface anchored beneath the discovery search. Filtering
-is a discovery concept, like scope.
+The standing narrowing state — the tag selection plus the search chip —
+that narrows every discovery surface at once: treemap, cards, map, and
+events. Independent of scope: it stays on until the person clears it, so
+it must never be silently active — its home is the filter chips, and
+clearing is always one step. Session-ephemeral: reload clears it; nothing
+else does. Filtering is a discovery concept, like scope.
 _Avoid_: facet, refinement, tag search, category filter
 
-**Scoped finder**:
-The global bar's contextual search inside a workspace or the admin panel.
-It finds entities of that context only, never instance-wide. People appear
-in finders only where a profile gives the result somewhere to land: a
-workspace's members, the admin panel's users. There is no instance-wide
-people search — people are discovered through patches.
-_Avoid_: search index, command palette, global search
+**Filter chips**:
+The filter's control and indicator, one thing: the full tag vocabulary
+as toggleable chips, the search chip among them, living on every
+discovery surface — over a canvas's top edge (quilt, map), at the top of
+the page flow elsewhere. Wherever narrowing bites, the chips stand on
+it; non-discovery pages carry nothing, since nothing on them is
+narrowed. Collapsible to a single badged button — one shared preference,
+open by default on desktop, closed on mobile; on mobile canvases the
+chips open as a sheet, which is open-while-using, never a preference.
+_Avoid_: filter card (retired), filter bar, chip row, tag toggles
+
+**Search chip**:
+The search query's standing form: a chip among the filter chips, set
+only by the search dropdown's "Show matches on the quilt" row, cleared
+like any tag chip. Typing alone never sets it — narrowing is always an
+explicit act.
+_Avoid_: saved search, active query, query lens (internal shorthand only)
+
+**Search**:
+The global bar's contextual search: an autocomplete dropdown over the
+entities of the current context, opened by typing, resolved by picking a
+result. Context decides the corpus — discovery: all public patches and
+upcoming events, plus the one action row that sets the search chip;
+workspace: that patch's members, proposals, documents, events; admin
+panel: users, reports, submissions. Never instance-wide people: people
+appear only where a context legitimizes the result (a workspace's
+members, the admin panel's users) — people are discovered through
+patches. Code artifacts keep the older "finder" naming (WorkspaceSearch,
+finderProviders); prose does not.
+_Avoid_: finder, scoped finder (renamed), search index, command palette,
+global search
 
 **Admin panel**:
 The instance admin surface at /admin. Gets the same full-screen takeover
@@ -419,7 +442,7 @@ sashing color, always naming where it lives. A card about the patch,
 never that quilt's site embedded. Follow lives here (and posts home);
 everything deeper is a doorway. Reached from My Quilt tiles,
 notifications, and pasted patch links — pasting a patch's URL into the
-discovery search opens its card.
+search opens its card.
 _Avoid_: remote profile, embedded view, preview (it is the full public
 face)
 
