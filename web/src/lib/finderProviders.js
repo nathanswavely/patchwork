@@ -116,3 +116,41 @@ export function adminFinderProvider() {
     return items;
   };
 }
+
+/**
+ * The discovery corpus (docs/adr/033): every public patch plus upcoming
+ * events. Deliberately not the deep past — the events page's date controls
+ * are the tool for archaeology — and deliberately no people (no
+ * instance-wide people search; people are discovered through patches).
+ */
+export function discoveryFinderProvider() {
+  return async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const [treeResp, events] = await Promise.all([
+      api('nodes/tree').catch(() => null),
+      api(`events?from=${today}&limit=100`).catch(() => null),
+    ]);
+
+    const items = [];
+    const tree = treeResp?.tree || treeResp;
+    for (const p of tree?.children || []) {
+      items.push({
+        type: 'Patches',
+        label: p.name,
+        sublabel: (p.tags || []).slice(0, 2).join(', '),
+        href: `/patches/${p.slug}`,
+      });
+    }
+    for (const e of events?.items || []) {
+      items.push({
+        type: 'Events',
+        label: e.title,
+        sublabel: e.starts_at
+          ? new Date(e.starts_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          : '',
+        href: `/events/${e.id}`,
+      });
+    }
+    return items;
+  };
+}

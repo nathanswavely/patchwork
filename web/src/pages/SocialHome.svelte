@@ -12,7 +12,7 @@
     getSearchQuery,
     getInstanceModules,
     getSubmissionsEnabled,
-    clearTags,
+    resetFilters,
   } from '../stores/quilt.svelte.js';
   import {
     getRemoteFollows, findRemoteFollow,
@@ -278,7 +278,7 @@
         myPatchRoles={roles}
         {quiltScope}
         insetRight={quiltInset}
-        onClearFilter={clearTags}
+        onClearFilter={resetFilters}
       />
     {/if}
   </div>
@@ -310,17 +310,13 @@
       {:else if filtered.length === 0}
         <div class="cards-empty">
           {#if getSelectedTags().length > 0 || getSearchQuery().trim()}
-            <!-- Name the active lenses (docs/adr/022): composed narrowing
+            <!-- Name the active lenses (docs/adr/033): composed narrowing
                  must explain itself where it produces nothing. -->
             <p class="muted">
-              No patches match your
-              {getSelectedTags().length > 0 && getSearchQuery().trim() ? 'search and filter'
-                : getSelectedTags().length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.
+              No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.
             </p>
             <div class="empty-actions">
-              {#if getSelectedTags().length > 0}
-                <button class="btn btn-secondary" onclick={clearTags}>Clear filter</button>
-              {/if}
+              <button class="btn btn-secondary" onclick={resetFilters}>Clear filter</button>
               {#if quiltScope === 'my'}
                 <button class="btn btn-secondary" onclick={() => onScopeChange('local')}>Search the whole quilt</button>
               {/if}
