@@ -138,6 +138,12 @@
   // Map of patch ID → { g, shadowDiv, tile, dist, visible } for per-tile animation.
   let tileMap = new Map();
   let layoutBuilt = false;
+  // The staggered pop-in is an *entrance* — it belongs to the quilt arriving,
+  // not to every layout pass. A rebuild (resize, a pane settling after the
+  // first build) would otherwise tear down a half-finished entrance and
+  // restart it from scale 0, which reads as the tiles spawning twice. Reset
+  // in loadData, where the canvas really does leave and re-enter.
+  let firstBuild = true;
   // Stored references for relayout animation.
   let contentG_ref = null;
   let shadowContainer_ref = null;
@@ -217,6 +223,7 @@
     loading = true;
     error = '';
     groupsMeta = null;
+    firstBuild = true;
     try {
       const resp = await api(`nodes/tree${quiltScope === 'my' ? '?scope=my' : ''}`);
       if (resp.tree) {
@@ -365,8 +372,15 @@
         const s = item.tile.pxSize;
         const newCx = newPos.px + s / 2;
         const newCy = newPos.py + s / 2;
+        // Opacity travels with the slide even though a visible tile should
+        // already be opaque: relayout can run at the tail of buildLayout (a
+        // standing filter), where it cancels the still-pending pop-in — the
+        // only transition that was going to raise opacity off its initial 0.
+        // Without this the tile keeps its block invisible forever while its
+        // label and shadow, both setTimeout-driven, show up as normal.
         item.g.transition().duration(dur).ease(d3.easeCubicInOut)
-          .attr('transform', `translate(${newCx},${newCy}) scale(1)`);
+          .attr('transform', `translate(${newCx},${newCy}) scale(1)`)
+          .style('opacity', 1);
         item.tile.px = newPos.px;
         item.tile.py = newPos.py;
       } else if (newPos && !item.visible) {
@@ -514,6 +528,8 @@
     buildRetries = 0;
 
     layoutBuilt = true;
+    const animate = firstBuild;
+    firstBuild = false;
     lastBuiltW = vw;
     lastBuiltH = vh;
     currentTransform = d3.zoomIdentity;
@@ -621,12 +637,13 @@
       const tileCx = tile.px + s / 2;
       const tileCy = tile.py + s / 2;
 
-      // Create group at tile center, scaled to 0 for pop-in.
+      // Create group at tile center — scaled to 0 for the pop-in, or already
+      // placed when this build is a rebuild that shouldn't re-animate.
       const g = contentG.append('g')
         .attr('class', tile.isFiller ? 'filler' : 'tile')
-        .attr('transform', `translate(${tileCx},${tileCy}) scale(0)`)
+        .attr('transform', `translate(${tileCx},${tileCy}) scale(${animate ? 0 : 1})`)
         .style('cursor', tile.isFiller ? 'default' : 'pointer')
-        .style('opacity', 0);
+        .style('opacity', animate ? 0 : 1);
 
       // Inner group offset so content draws from top-left.
       const inner = g.append('g').attr('transform', `translate(${-s/2},${-s/2})`);
@@ -697,7 +714,7 @@
         shadowDiv.style.width = s + 'px';
         shadowDiv.style.height = s + 'px';
         shadowDiv.style.pointerEvents = 'none';
-        shadowDiv.style.opacity = '0';
+        shadowDiv.style.opacity = animate ? '0' : '1';
         shadowDiv.style.transition = 'opacity 200ms ease';
         shadowDiv.style.clipPath = rawEdgeClipPath(rawVariant);
 
@@ -782,25 +799,27 @@
     const totalAnimDuration = 600; // Total stagger window in ms.
     const tileAnimDuration = 350; // Each tile's pop duration.
 
-    tileGroups.forEach((item, i) => {
-      const delay = (item.dist / (maxDist || 1)) * totalAnimDuration;
-      const s = item.tile.pxSize;
-      const cx = item.tile.px + s / 2;
-      const cy = item.tile.py + s / 2;
+    if (animate) {
+      tileGroups.forEach((item, i) => {
+        const delay = (item.dist / (maxDist || 1)) * totalAnimDuration;
+        const s = item.tile.pxSize;
+        const cx = item.tile.px + s / 2;
+        const cy = item.tile.py + s / 2;
 
-      item.g
-        .transition()
-        .delay(delay)
-        .duration(tileAnimDuration)
-        .ease(d3.easeBackOut.overshoot(0.6))
-        .attr('transform', `translate(${cx},${cy}) scale(1)`)
-        .style('opacity', 1);
+        item.g
+          .transition()
+          .delay(delay)
+          .duration(tileAnimDuration)
+          .ease(d3.easeBackOut.overshoot(0.6))
+          .attr('transform', `translate(${cx},${cy}) scale(1)`)
+          .style('opacity', 1);
 
-      // Pop in shadow div too.
-      if (item.shadowDiv) {
-        setTimeout(() => { item.shadowDiv.style.opacity = '1'; }, delay);
-      }
-    });
+        // Pop in shadow div too.
+        if (item.shadowDiv) {
+          setTimeout(() => { item.shadowDiv.style.opacity = '1'; }, delay);
+        }
+      });
+    }
 
     // Store in tileMap keyed by patch ID (or filler ID).
     for (const item of tileGroups) {
@@ -813,7 +832,7 @@
     // visibility flags, not pixelTiles: a standing filter (applied by the
     // relayout call at the end of this function) may have hidden tiles by
     // the time this fires, and labeling hidden tiles would undo it.
-    const labelsDelay = totalAnimDuration + tileAnimDuration;
+    const labelsDelay = animate ? totalAnimDuration + tileAnimDuration : 0;
     setTimeout(() => {
       placedTiles = [...tileMap.values()]
         .filter(item => !item.tile.isFiller && item.visible)
