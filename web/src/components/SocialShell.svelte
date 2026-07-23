@@ -830,10 +830,17 @@
     box-shadow: 0 2px 12px var(--color-shadow);
   }
 
+  /* Collapsed over the quilt the panel dissolves, but the geometry stays
+     the hugged card's (left inset, bottom: auto) — NOT full height. The
+     hover peek below must only change width; if hovering also moved or
+     shrank the box, the cursor could land outside the new bounds, ending
+     :hover and snapping the box back under the cursor — an open/close
+     flicker loop. Height-hugging also keeps the quilt clickable below
+     the chips. */
   .sidebar-rail.quilt-mode.collapsed {
     top: 56px;
-    left: 0;
-    bottom: 0;
+    left: 12px;
+    bottom: auto;
     background: transparent;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -882,11 +889,9 @@
   }
 
   /* Over the quilt the peek brings the glass panel with it, and the
-     individual chip backdrops give way to the panel's. */
+     individual chip backdrops give way to the panel's. Width is the ONLY
+     geometry hover may change (see the collapsed rule above). */
   .sidebar-rail.quilt-mode.collapsed:hover {
-    top: 56px;
-    left: 12px;
-    bottom: auto;
     background: var(--color-glass);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
