@@ -58,6 +58,7 @@
   import AdminSubmissions from './pages/AdminSubmissions.svelte';
   import AdminEventSubmissions from './pages/AdminEventSubmissions.svelte';
   import AdminClaims from './pages/AdminClaims.svelte';
+  import AdminArchivedPatches from './pages/AdminArchivedPatches.svelte';
   import AdminQuiltSettings from './pages/AdminQuiltSettings.svelte';
   import AdminNeighborQuilts from './pages/AdminNeighborQuilts.svelte';
   import AdminLabel from './pages/AdminLabel.svelte';
@@ -177,6 +178,7 @@
   addRoute('/admin/submissions', 'adminSubmissions');
   addRoute('/admin/event-submissions', 'adminEventSubmissions');
   addRoute('/admin/claims', 'adminClaims');
+  addRoute('/admin/archived', 'adminArchived');
   addRoute('/admin/quilt', 'adminQuilt');
   addRoute('/admin/neighbors', 'adminNeighbors');
   addRoute('/admin/label', 'adminLabel');
@@ -207,7 +209,7 @@
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 
   const settingsRoutes = new Set(['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'quilts']);
-  const adminRoutes = new Set(['adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminLabel', 'adminLegal']);
+  const adminRoutes = new Set(['adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminLabel', 'adminLegal']);
   let isSettingsRoute = $derived(settingsRoutes.has(routeName));
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
@@ -398,6 +400,8 @@
           <AdminEventSubmissions />
         {:else if routeName === 'adminClaims'}
           <AdminClaims />
+        {:else if routeName === 'adminArchived'}
+          <AdminArchivedPatches />
         {:else if routeName === 'adminLabel'}
           <AdminLabel />
         {:else if routeName === 'adminLegal'}

@@ -23,7 +23,7 @@
   <h3 class="danger-heading">Danger Zone</h3>
   <div class="danger-card">
     <p class="danger-warning">
-      Archiving this patch will hide it from the quilt and make it inaccessible to members. This action cannot be undone.
+      Archiving hides this patch from the quilt and closes its workspace. Nothing is deleted, but only an instance admin can restore it.
     </p>
     <ConfirmAction
       label="Archive Patch"

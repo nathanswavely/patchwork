@@ -390,6 +390,9 @@ func main() {
 	mux.HandleFunc("GET /api/v1/admin/users", middleware.AdminRequired(db, handler.ListUsers(db)))
 	mux.HandleFunc("PATCH /api/v1/admin/users/{id}", middleware.AdminRequired(db, handler.UpdateUser(db)))
 	mux.HandleFunc("GET /api/v1/admin/audit-log", middleware.AdminRequired(db, handler.AuditLog(db)))
+	// Archived patches: list + the only way back from archived (docs/adr/034).
+	mux.HandleFunc("GET /api/v1/admin/nodes", middleware.AdminRequired(db, handler.AdminListNodes(db)))
+	mux.HandleFunc("POST /api/v1/admin/nodes/{id}/restore", middleware.AdminRequired(db, handler.AdminRestoreNode(db)))
 	mux.HandleFunc("GET /api/v1/admin/stats", middleware.AdminRequired(db, handler.AdminStats(db)))
 
 	// Quilt settings (docs/adr/014): community identity + danger zone.

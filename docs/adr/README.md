@@ -36,6 +36,7 @@ several branches are in flight.
 | [031](031-event-sources-vouch-for-the-feed.md) | Event sources: vouch for the feed, not each event |
 | [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents |
 | [033](033-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit |
+| [034](034-archive-keeps-its-gravity.md) | Archive keeps its gravity — restore is an instance-admin action |
 
 ## Adopted as design boundaries — implementation is backlog
 
