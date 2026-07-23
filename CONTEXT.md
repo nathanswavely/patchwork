@@ -36,6 +36,23 @@ domain; without one, the only path to claiming is admin review. Distinct
 from the website field, which is cosmetic and carries no trust.
 _Avoid_: website (as a trust anchor), domain (unqualified)
 
+**Archive**:
+The end of a patch's public life, done from its danger zone by a patch
+admin (or an instance admin, who is also the only one who can archive an
+unclaimed patch). An archived patch vanishes from the quilt and every
+route refuses it, but nothing is erased — memberships, events, and
+history stay frozen in place. Not deletion: wipe erases, archive
+preserves. The seamrip export zip is never called an archive in the UI.
+_Avoid_: delete (as the UI word for this), remove, hide
+
+**Restore**:
+The instance-admin-only action that returns an archived patch to the
+status it held before archiving, everything intact. Deliberately not
+self-service — archive keeps its gravity because undoing it takes a
+human with site-wide responsibility (docs/adr/034). Restore is silent:
+the patch reappearing is the announcement.
+_Avoid_: unarchive, undelete, reactivate
+
 **Event**:
 Something a patch hosts at a time and, optionally, a place — a show, a
 meeting, a workday. Deliberately the same word in the UI and the backend;

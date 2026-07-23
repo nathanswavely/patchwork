@@ -425,7 +425,7 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 			}
 			auth.LogAuditEvent(db, user.ID, "node.submission_approved", "node", nodeID, r.RemoteAddr, "")
 		case "reject":
-			db.Exec("UPDATE nodes SET status = 'archived', removed_at = ?, updated_at = ? WHERE id = ?", now, now, nodeID)
+			db.Exec("UPDATE nodes SET archived_from = status, status = 'archived', removed_at = ?, updated_at = ? WHERE id = ?", now, now, nodeID)
 			auth.LogAuditEvent(db, user.ID, "node.submission_rejected", "node", nodeID, r.RemoteAddr, fmt.Sprintf(`{"note":"%s"}`, req.Note))
 		default:
 			http.Error(w, `{"error":"action must be 'approve' or 'reject'"}`, http.StatusBadRequest)

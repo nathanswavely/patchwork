@@ -10,7 +10,7 @@
   import GlobalBar from './GlobalBar.svelte';
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
-  import { Gauge, Users, Flag, Tray, HandPalm, ListMagnifyingGlass, SquaresFour, Tag, Graph, IdentificationCard, Scales, CalendarBlank } from 'phosphor-svelte';
+  import { Gauge, Users, Flag, Tray, HandPalm, ListMagnifyingGlass, SquaresFour, Tag, Graph, IdentificationCard, Scales, CalendarBlank, Archive } from 'phosphor-svelte';
 
   let { children } = $props();
 
@@ -26,6 +26,7 @@
     { label: 'Submissions', href: '/admin/submissions', icon: Tray },
     { label: 'Event submissions', href: '/admin/event-submissions', icon: CalendarBlank },
     { label: 'Claims', href: '/admin/claims', icon: HandPalm },
+    { label: 'Archived', href: '/admin/archived', icon: Archive },
     { label: 'Audit Log', href: '/admin/audit', icon: ListMagnifyingGlass },
   ];
 

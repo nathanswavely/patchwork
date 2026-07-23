@@ -905,7 +905,9 @@ func DeleteNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		_, err := db.Exec("UPDATE nodes SET status = 'archived', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", nodeID)
+		// archived_from remembers what restore returns the patch to
+		// (docs/adr/034); the RHS status reads the pre-update row.
+		_, err := db.Exec("UPDATE nodes SET archived_from = status, status = 'archived', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", nodeID)
 		if err != nil {
 			http.Error(w, `{"error":"failed to archive node"}`, http.StatusInternalServerError)
 			return
