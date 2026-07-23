@@ -20,7 +20,7 @@
   import FilterChips from './FilterChips.svelte';
   import { discoveryFinderProvider } from '../lib/finderProviders.js';
   import { getUnread } from '../stores/notifications.svelte.js';
-  import { ArrowLeft, ArrowSquareOut, Bell, CaretDown, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
+  import { ArrowSquareOut, Bell, CaretDown, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
   import LabelFooter from './LabelFooter.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
@@ -161,6 +161,9 @@
     if (filterSheetOpen && !e.target.closest('.filter-sheet') && !e.target.closest('.filter-fab')) {
       filterSheetOpen = false;
     }
+    if (mobileSearchOpen && !e.target.closest('.mobile-search-bar') && !e.target.closest('.rail-search')) {
+      mobileSearchOpen = false;
+    }
   }
 
   // Picking a quilt in the switcher goes to that quilt's view — including
@@ -259,12 +262,11 @@
     {/snippet}
   </GlobalBar>
 
-  <!-- Mobile search takeover: covers the global bar while open. -->
+  <!-- Mobile search takeover: covers the global bar while open. Full
+       width, no back button — the shelf's search button toggles it, and
+       tapping away or navigating dismisses it. -->
   {#if mobileSearchOpen}
     <div class="mobile-search-bar">
-      <button class="search-back" onclick={() => { mobileSearchOpen = false; }} aria-label="Back">
-        <ArrowLeft size={20} weight="bold" />
-      </button>
       <WorkspaceSearch
         variant="takeover"
         autofocus
@@ -308,7 +310,7 @@
       <button
         class="rail-item rail-search"
         class:active={mobileSearchOpen}
-        onclick={() => { mobileSearchOpen = true; }}
+        onclick={() => { mobileSearchOpen = !mobileSearchOpen; }}
         title="Search"
       >
         <span class="rail-icon">
@@ -786,24 +788,6 @@
     display: none;
   }
 
-  .search-back {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-    border: none;
-    background: none;
-    color: var(--color-text);
-    border-radius: var(--radius);
-    cursor: pointer;
-  }
-
-  .search-back:hover {
-    background: var(--color-overlay);
-  }
-
   .rail-badge {
     position: absolute;
     top: -4px;
@@ -1039,8 +1023,7 @@
       z-index: 70; /* above the global bar (60) */
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 0 12px 0 8px;
+      padding: 0 12px;
       background: var(--color-surface);
     }
 

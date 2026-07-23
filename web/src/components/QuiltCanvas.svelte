@@ -8,6 +8,7 @@
   import { createMotifElement, createMyPatchStar, createFollowedHeart } from '../lib/patchIcons.js';
   import { buildRemoteGroups, composeGroupLayouts } from '../lib/quiltRegions.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
+  import { textMatches } from '../lib/textMatch.js';
   import {
     getRemoteFollows, fetchQuiltInfo, colorForQuilt, refreshFollowSnapshot,
   } from '../stores/multiQuilt.svelte.js';
@@ -171,9 +172,8 @@
       children = children.filter(n => (n.tags || []).some(t => filterTags.includes(t)));
     }
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
       children = children.filter(n =>
-        n.name?.toLowerCase().includes(q) || n.description?.toLowerCase().includes(q)
+        textMatches(n.name, searchQuery) || textMatches(n.description, searchQuery)
       );
     }
     return new Set(children.map(c => c.id));

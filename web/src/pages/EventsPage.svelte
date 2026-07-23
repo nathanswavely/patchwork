@@ -6,6 +6,7 @@
   import FilterChips from '../components/FilterChips.svelte';
   import { getRemoteFollows } from '../stores/multiQuilt.svelte.js';
   import { sortByDate } from '../lib/multiQuilt.js';
+  import { textMatches } from '../lib/textMatch.js';
 
   let { quiltScope = 'local' } = $props();
 
@@ -194,8 +195,7 @@
         matches = (patch.tags || []).some(t => tags.includes(t));
       }
       if (matches && query.trim()) {
-        const q = query.toLowerCase();
-        matches = patch.name?.toLowerCase().includes(q) || patch.description?.toLowerCase().includes(q);
+        matches = textMatches(patch.name, query) || textMatches(patch.description, query);
       }
       if (matches) visiblePatchIds.add(id);
     }
@@ -206,8 +206,7 @@
         let matches = true;
         if (tags.length > 0) matches = (e._tags || []).some(t => tags.includes(t));
         if (matches && query.trim()) {
-          const q = query.toLowerCase();
-          matches = e.title?.toLowerCase().includes(q) || e.node_name?.toLowerCase().includes(q);
+          matches = textMatches(e.title, query) || textMatches(e.node_name, query);
         }
         return matches;
       }

@@ -16,6 +16,7 @@
    *    the default desktop-only media hide must not apply.
    */
   import { navigate } from '../stores/router.svelte.js';
+  import { fold } from '../lib/textMatch.js';
   import { MagnifyingGlass } from 'phosphor-svelte';
 
   let {
@@ -48,9 +49,10 @@
 
   let results = $derived.by(() => {
     if (!items || !query.trim()) return [];
-    const q = query.toLowerCase();
+    // Diacritic-folded match: "tornado" finds Tornādo Tornädo.
+    const q = fold(query);
     return items.filter(i =>
-      i.label?.toLowerCase().includes(q) || i.sublabel?.toLowerCase().includes(q)
+      fold(i.label).includes(q) || fold(i.sublabel).includes(q)
     ).slice(0, 12);
   });
 

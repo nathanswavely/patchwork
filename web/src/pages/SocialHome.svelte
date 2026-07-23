@@ -3,6 +3,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
+  import { textMatches } from '../lib/textMatch.js';
   import { motifComponentForPatch } from '../lib/patchIcons.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
@@ -79,9 +80,8 @@
   let mapNodesFiltered = $derived.by(() => {
     const query = getSearchQuery();
     if (!query.trim()) return mapNodes;
-    const q = query.toLowerCase();
     return mapNodes.filter(n =>
-      n.name?.toLowerCase().includes(q) || n.description?.toLowerCase().includes(q)
+      textMatches(n.name, query) || textMatches(n.description, query)
     );
   });
 
@@ -148,9 +148,8 @@
       list = list.filter(p => (p.tags || []).some(t => tags.includes(t)));
     }
     if (query.trim()) {
-      const q = query.toLowerCase();
       list = list.filter(p =>
-        p.name?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
+        textMatches(p.name, query) || textMatches(p.description, query)
       );
     }
     return list;
