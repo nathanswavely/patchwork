@@ -369,7 +369,7 @@
       aria-label="Filter by tag{getActiveFilterCount() > 0 ? ` — ${getActiveFilterCount()} active` : ''}"
       aria-expanded={filterSheetOpen}
     >
-      <FunnelSimple size={20} weight="duotone" />
+      <FunnelSimple size={16} weight="bold" />
       {#if getActiveFilterCount() > 0}
         <span class="filter-fab-badge">{getActiveFilterCount()}</span>
       {/if}
