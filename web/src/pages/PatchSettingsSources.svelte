@@ -146,7 +146,7 @@
             </div>
             <div class="source-actions">
               <button
-                class="btn-small"
+                class="btn btn-secondary btn-sm"
                 disabled={syncing[source.id] || source.status === 'pending'}
                 onclick={() => syncNow(source.id)}
               >{syncing[source.id] ? 'Syncing…' : 'Sync now'}</button>
@@ -171,7 +171,7 @@
         bind:value={newUrl}
         disabled={adding}
       />
-      <button class="btn-primary" type="submit" disabled={adding || !newUrl.trim()}>
+      <button class="btn btn-primary" type="submit" disabled={adding || !newUrl.trim()}>
         {adding ? 'Attaching…' : 'Attach feed'}
       </button>
     </form>
@@ -240,11 +240,6 @@
     align-items: center;
     gap: 0.5rem;
     flex-shrink: 0;
-  }
-
-  .btn-small {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.6rem;
   }
 
   .add-form {

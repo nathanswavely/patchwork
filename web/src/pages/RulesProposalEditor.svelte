@@ -269,17 +269,6 @@
     font-size: 0.82rem;
   }
 
-  .btn-link {
-    border: none;
-    background: none;
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .btn-link.danger { color: var(--color-error); }
-  .btn-link.danger:hover { text-decoration: underline; }
-
   .editor-header h1 {
     font-size: 1.3rem;
     margin: 0.15rem 0;

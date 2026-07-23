@@ -412,19 +412,6 @@
     flex-wrap: wrap;
   }
 
-  .btn-link {
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 0.8rem;
-    color: var(--color-primary);
-    cursor: pointer;
-  }
-
-  .btn-link:hover {
-    text-decoration: underline;
-  }
-
   .upload-errors {
     margin: 0;
     padding-left: 1.1rem;

@@ -305,18 +305,6 @@
     gap: 0.75rem;
   }
 
-  .btn-link {
-    border: none;
-    background: none;
-    color: var(--color-primary);
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .btn-link:hover { text-decoration: underline; }
-  .btn-link.danger { color: var(--color-error); }
-
   /* Editor card: wraps textarea + action buttons together */
   .editor-card {
     border: 1px solid var(--color-border);

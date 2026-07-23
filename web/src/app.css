@@ -155,6 +155,7 @@ input, textarea, select, button {
 input[type="text"],
 input[type="email"],
 input[type="url"],
+input[type="number"],
 input[type="search"],
 input[type="datetime-local"],
 input[type="date"],
@@ -238,6 +239,35 @@ button:disabled {
   background: var(--color-danger-bg);
 }
 
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+  border-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-overlay);
+  color: var(--color-text);
+}
+
+/* Text-shaped button — used alone, without .btn. */
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.btn-link.danger {
+  color: var(--color-error);
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -318,6 +348,7 @@ button:disabled {
   input[type="text"],
   input[type="email"],
   input[type="url"],
+  input[type="number"],
   input[type="search"],
   input[type="datetime-local"],
   input[type="date"],

@@ -300,20 +300,6 @@
     font-size: 0.88rem;
   }
 
-  .btn-link {
-    border: none;
-    background: none;
-    color: var(--color-primary);
-    font-size: inherit;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .btn-link:hover {
-    text-decoration: underline;
-  }
-
   /* Sign-in options */
   .signin-options {
     display: flex;

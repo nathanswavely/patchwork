@@ -636,20 +636,6 @@
     gap: 1rem;
   }
 
-  .btn-link {
-    border: none;
-    background: none;
-    color: var(--color-primary);
-    font-size: 0.88rem;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .btn-link:hover {
-    text-decoration: underline;
-  }
-
   .add-passkey {
     margin-top: 1rem;
     display: flex;

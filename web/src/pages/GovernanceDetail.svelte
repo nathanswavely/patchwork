@@ -69,7 +69,7 @@
           <div class="doc-actions">
             <a
               href="/patches/{slug}/governance/docs/{doc.id}/history"
-              class="btn btn-link"
+              class="btn-link"
               onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs/${doc.id}/history`); }}
             >
               History ({doc.version} versions)
@@ -145,20 +145,6 @@
     flex-shrink: 0;
   }
 
-  .btn-link {
-    background: none;
-    border: none;
-    color: var(--color-primary);
-    font-size: 0.85rem;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .btn-link:hover {
-    color: var(--color-primary);
-    opacity: 0.8;
-  }
 
   @media (max-width: 640px) {
     .doc-header {

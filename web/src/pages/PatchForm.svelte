@@ -169,7 +169,7 @@
               ></svg>
               <button
                 type="button"
-                class="btn btn-secondary btn-xs"
+                class="btn btn-secondary btn-sm"
                 onclick={() => { rotation = (rotation + 90) % 360; }}
                 disabled={submitting}
                 title="Rotate 90°"
@@ -357,11 +357,6 @@
     border-radius: 4px;
     border: 2px solid var(--lt-thread, var(--color-border));
     display: block;
-  }
-
-  .btn-xs {
-    padding: 0.2rem 0.55rem;
-    font-size: 0.72rem;
   }
 
   .tile-choices {
