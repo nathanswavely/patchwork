@@ -12,24 +12,32 @@
     getInstanceIconUrl,
     getNeighborQuilts,
     setSearchQuery,
-    getAllTags,
-    getSelectedTags,
-    toggleTag,
-    clearTags,
+    getActiveFilterCount,
   } from '../stores/quilt.svelte.js';
   import { switcherQuilts, fetchQuiltInfo } from '../stores/multiQuilt.svelte.js';
-  import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
   import GlobalBar from './GlobalBar.svelte';
+  import WorkspaceSearch from './WorkspaceSearch.svelte';
+  import FilterChips from './FilterChips.svelte';
+  import { discoveryFinderProvider } from '../lib/finderProviders.js';
   import { getUnread } from '../stores/notifications.svelte.js';
-  import { ArrowLeft, ArrowSquareOut, Bell, CaretDown, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
+  import { ArrowSquareOut, Bell, CaretDown, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
   import LabelFooter from './LabelFooter.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
   let { children, routeName = 'home', quiltScope = 'local', onScopeChange = () => {} } = $props();
 
   let scopeMenuOpen = $state(false);
-  let searchInput = $state('');
-  let searchTimeout;
+
+  // The search (docs/adr/033): one autocomplete posture on every social
+  // page. The discovery corpus is fetched once per shell mount, on first
+  // focus. The action row is the only path from typed text to standing
+  // narrowing state.
+  const discoveryProvider = discoveryFinderProvider();
+
+  function showMatchesOnQuilt(q) {
+    setSearchQuery(q);
+    navigate('/');
+  }
 
   let activeScopeLabel = $derived(quiltScope === 'my' ? 'My Quilt' : getInstanceName());
 
@@ -61,7 +69,8 @@
   }
 
   // Paste-a-link follow path (docs/adr/024): a patch URL pasted into the
-  // discovery search opens that patch's remote card, where Follow lives.
+  // search opens that patch's remote card, where Follow lives. Wired as the
+  // search's intercept — returning true consumes the input.
   function recognizePatchLink(value) {
     const m = value.trim().match(/^https?:\/\/([^/]+)\/patches\/([a-z0-9-]+)\/?$/);
     if (!m) return false;
@@ -71,8 +80,7 @@
     } else {
       navigate(`/quilts/${host}/patches/${slug}`);
     }
-    searchInput = '';
-    setSearchQuery('');
+    mobileSearchOpen = false;
     return true;
   }
 
@@ -104,84 +112,24 @@
     if (!isQuiltRoute) labelSheetOpen = false;
   });
 
-  // Discovery surfaces: everywhere the scope/filter/query lenses apply in
-  // place (docs/adr/022). The events list narrows live like the quilt does.
-  const discoveryRoutes = new Set(['home', 'patchList', 'map', 'eventList']);
-  let isDiscoveryRoute = $derived(discoveryRoutes.has(routeName));
-
-  // Filter card (docs/adr/022): tags are toggled here and nowhere else.
-  // Opens on search focus — empty query included — and closes on click-away
-  // or Escape. The filter itself persists; only the card closes.
-  let filterCardOpen = $state(false);
-
-  function maybeOpenFilterCard() {
-    if (isDiscoveryRoute && getAllTags().length > 0) filterCardOpen = true;
-  }
-
-  // The count chip is also the way back into the card — from a non-discovery
-  // page it jumps to the quilt first, where the card can act.
-  function onIndicatorClick() {
-    if (!isDiscoveryRoute) {
-      navigate('/');
-      filterCardOpen = true;
-      return;
-    }
-    filterCardOpen = !filterCardOpen;
-  }
-
   // Mobile search: the shelf's search button swaps the top bar for a
-  // back-button + search-bar takeover. On a discovery surface it opens in
-  // place; from anywhere else it jumps to the quilt first.
+  // back-button + search takeover. The search works from any page now —
+  // results navigate — so the takeover opens in place, and any navigation
+  // (tapping a result, the action row) dismisses it.
   let mobileSearchOpen = $state(false);
-  let mobileSearchEl = $state(null);
 
-  function openMobileSearch() {
-    if (!isDiscoveryRoute) navigate('/');
-    mobileSearchOpen = true;
-  }
-
-  // Closing the takeover clears the query but never the filter: the filter
-  // has a standing indicator (the shelf badge); a query on mobile would have
-  // none, so letting it outlive its input would be a silent lens.
-  function closeMobileSearch() {
+  $effect(() => {
+    void routeName;
     mobileSearchOpen = false;
-    searchInput = '';
-    setSearchQuery('');
-  }
-
-  $effect(() => {
-    if (mobileSearchOpen && mobileSearchEl) mobileSearchEl.focus();
   });
 
-  // Navigating off discovery (tapping a result) dismisses the takeover.
+  // Mobile canvas filter sheet (docs/adr/033): open-while-using, dismissed
+  // when done — never a preference, unlike the chips' collapse state.
+  let filterSheetOpen = $state(false);
   $effect(() => {
-    if (mobileSearchOpen && !discoveryRoutes.has(routeName)) closeMobileSearch();
+    // Leaving the canvas closes the sheet, like the label sheet.
+    if (!isQuiltRoute) filterSheetOpen = false;
   });
-
-  // Search applies in place on every discovery surface (docs/adr/022 — the
-  // old jump-to-quilt doctrine is retired there). From a non-discovery page
-  // Enter still carries the query to the quilt.
-  function onSearchInput(e) {
-    searchInput = e.target.value;
-    if (recognizePatchLink(searchInput)) return;
-    if (!isDiscoveryRoute) return;
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => setSearchQuery(searchInput), 300);
-  }
-
-  function onSearchKeydown(e) {
-    if (e.key === 'Enter' && recognizePatchLink(searchInput)) return;
-    if (e.key === 'Enter' && !isDiscoveryRoute) {
-      setSearchQuery(searchInput);
-      navigate('/');
-    }
-  }
-
-  // Escape closes the card wherever focus sits inside it (a just-toggled
-  // chip, the input). Window-level: the card has no single focus root.
-  function handleWindowKeydown(e) {
-    if (e.key === 'Escape' && filterCardOpen) filterCardOpen = false;
-  }
 
   // Nav items for the sidebar
   const navItems = [
@@ -210,8 +158,11 @@
     if (scopeMenuOpen && !e.target.closest('.scope-switcher')) {
       scopeMenuOpen = false;
     }
-    if (filterCardOpen && !e.target.closest('.bar-search-wrap')) {
-      filterCardOpen = false;
+    if (filterSheetOpen && !e.target.closest('.filter-sheet') && !e.target.closest('.filter-fab')) {
+      filterSheetOpen = false;
+    }
+    if (mobileSearchOpen && !e.target.closest('.mobile-search-bar') && !e.target.closest('.rail-search')) {
+      mobileSearchOpen = false;
     }
   }
 
@@ -225,27 +176,7 @@
   }
 </script>
 
-<svelte:window onclick={handleWindowClick} onkeydown={handleWindowKeydown} />
-
-{#snippet filterChips()}
-  <div class="filter-card-head">
-    <span class="filter-card-label">Filter by tag</span>
-    {#if getSelectedTags().length > 0}
-      <button class="filter-clear" onclick={clearTags}>Clear</button>
-    {/if}
-  </div>
-  <div class="filter-chip-grid">
-    {#each getAllTags() as tag (tag)}
-      {@const active = getSelectedTags().includes(tag)}
-      <button
-        class="filter-chip lt-resin lt-resin-frosted"
-        style="--lt-resin-color: {colorForTag(tag)}; {active ? `background: ${colorForTag(tag)}; border-color: ${colorForTag(tag)}; color: ${textOnColor(colorForTag(tag))};` : `border-color: ${colorForTag(tag)}40;`}"
-        aria-pressed={active}
-        onclick={() => toggleTag(tag)}
-      >{tag}</button>
-    {/each}
-  </div>
-{/snippet}
+<svelte:window onclick={handleWindowClick} />
 
 <div class="social-layout" class:quilt-mode={isQuiltRoute}>
   <GlobalBar glass={isQuiltRoute} bordered={!isQuiltRoute} shelfBell>
@@ -319,64 +250,42 @@
     {/snippet}
 
     {#snippet search()}
-      <div class="bar-search-wrap">
-        <div class="bar-search">
-          <span class="bar-search-icon"><MagnifyingGlass size={15} weight="duotone" /></span>
-          <input
-            class="bar-search-input"
-            type="search"
-            placeholder="Search patches…"
-            value={searchInput}
-            oninput={onSearchInput}
-            onkeydown={onSearchKeydown}
-            onfocus={maybeOpenFilterCard}
-            onclick={maybeOpenFilterCard}
-          />
-          {#if getSelectedTags().length > 0}
-            <button
-              class="filter-indicator"
-              onclick={onIndicatorClick}
-              title="Filtering by {getSelectedTags().join(', ')}"
-              aria-label="{getSelectedTags().length} active tag filters"
-            >
-              <FunnelSimple size={13} weight="bold" />
-              {getSelectedTags().length}
-            </button>
-          {/if}
-        </div>
-        {#if filterCardOpen && isDiscoveryRoute}
-          <div class="filter-card">
-            {@render filterChips()}
-          </div>
-        {/if}
-      </div>
+      <!-- The search (docs/adr/033): the same autocomplete posture the
+           workspace and admin contexts use, over the discovery corpus. -->
+      <WorkspaceSearch
+        placeholder="Search patches and events…"
+        provider={discoveryProvider}
+        actionLabel={(q) => `Show matches on the quilt for “${q}”`}
+        onAction={showMatchesOnQuilt}
+        intercept={recognizePatchLink}
+      />
     {/snippet}
   </GlobalBar>
 
-  <!-- Mobile search takeover: covers the global bar while open. The filter
-       card rides along beneath it — this is the card's mobile home. -->
+  <!-- Mobile search takeover: covers the global bar while open. Full
+       width, no back button — the shelf's search button toggles it, and
+       tapping away or navigating dismisses it. -->
   {#if mobileSearchOpen}
     <div class="mobile-search-bar">
-      <button class="search-back" onclick={closeMobileSearch} aria-label="Back">
-        <ArrowLeft size={20} weight="bold" />
-      </button>
-      <div class="bar-search mobile-search">
-        <span class="bar-search-icon"><MagnifyingGlass size={15} weight="duotone" /></span>
-        <input
-          bind:this={mobileSearchEl}
-          class="bar-search-input"
-          type="search"
-          placeholder="Search patches…"
-          value={searchInput}
-          oninput={onSearchInput}
-        />
-      </div>
+      <WorkspaceSearch
+        variant="takeover"
+        autofocus
+        placeholder="Search patches and events…"
+        provider={discoveryProvider}
+        actionLabel={(q) => `Show matches on the quilt for “${q}”`}
+        onAction={showMatchesOnQuilt}
+        intercept={recognizePatchLink}
+      />
     </div>
-    {#if isDiscoveryRoute && getAllTags().length > 0}
-      <div class="mobile-filter-card">
-        {@render filterChips()}
-      </div>
-    {/if}
+  {/if}
+
+  <!-- Filter chips over the canvas (docs/adr/033): desktop-only here — the
+       row overlays the quilt/map top edge, bounded away from the rail and
+       the cards pane. Mobile canvases get the FAB + sheet below instead. -->
+  {#if isQuiltRoute}
+    <div class="quilt-chips" class:rail-collapsed={sidebarCollapsed}>
+      <FilterChips variant="overlay" />
+    </div>
   {/if}
 
   <!-- ===== SIDEBAR: nav, collapsible ===== -->
@@ -396,19 +305,16 @@
         </a>
       {/each}
       <!-- Mobile only: search swaps the top bar for a search takeover.
-           The badge keeps an active filter announced while the takeover is
-           closed — the never-silently-active rule (docs/adr/022). -->
+           The filter announces itself on the surfaces it narrows (the
+           canvas FAB, the events page chips), not here (docs/adr/033). -->
       <button
         class="rail-item rail-search"
         class:active={mobileSearchOpen}
-        onclick={openMobileSearch}
+        onclick={() => { mobileSearchOpen = !mobileSearchOpen; }}
         title="Search"
       >
         <span class="rail-icon">
           <MagnifyingGlass size={22} weight="duotone" />
-          {#if getSelectedTags().length > 0}
-            <span class="rail-badge filter-badge">{getSelectedTags().length}</span>
-          {/if}
         </span>
         <span class="rail-label">Search</span>
       </button>
@@ -449,6 +355,33 @@
     >
       <Info size={20} weight="duotone" />
     </button>
+  {/if}
+
+  <!-- Mobile only, quilt/map only: the filter FAB, opposite the info button
+       on the right — same floating row as the view pill. Its badge is the
+       filter's mobile announcement (docs/adr/033). -->
+  {#if isQuiltRoute}
+    <button
+      class="filter-fab"
+      class:active={filterSheetOpen}
+      onclick={() => { filterSheetOpen = !filterSheetOpen; }}
+      title="Filter"
+      aria-label="Filter by tag{getActiveFilterCount() > 0 ? ` — ${getActiveFilterCount()} active` : ''}"
+      aria-expanded={filterSheetOpen}
+    >
+      <FunnelSimple size={16} weight="bold" />
+      {#if getActiveFilterCount() > 0}
+        <span class="filter-fab-badge">{getActiveFilterCount()}</span>
+      {/if}
+    </button>
+  {/if}
+
+  <!-- The filter sheet: chips over the canvas, just above the nav row.
+       Open-while-using — the collapse preference never governs a sheet. -->
+  {#if filterSheetOpen && isQuiltRoute}
+    <div class="filter-sheet">
+      <FilterChips variant="sheet" />
+    </div>
   {/if}
 
   <!-- The Label's mobile summary sheet (docs/adr/023) -->
@@ -644,148 +577,28 @@
     color: var(--color-primary);
   }
 
-  /* --- Search --- */
-  .bar-search-wrap {
-    position: relative;
-    flex: 1;
-    max-width: 420px;
-  }
-
-  .bar-search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    max-width: 420px;
-    height: 36px;
-    padding: 0 12px;
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    background: var(--color-bg);
-    color: var(--color-text-muted);
-    transition: border-color 150ms ease;
-  }
-
-  .bar-search:focus-within {
-    border-color: var(--color-primary);
-  }
-
-  .bar-search-icon {
-    display: flex;
-    flex-shrink: 0;
-  }
-
-  .bar-search-input {
-    flex: 1;
-    min-width: 0;
-    border: none;
-    background: none;
-    padding: 0;
-    font-size: 0.88rem;
-    color: var(--color-text);
-    outline: none;
-  }
-
-  .bar-search-input::placeholder {
-    color: var(--color-text-muted);
-  }
-
-  /* Active-filter count chip: the desktop indicator, and the click-target
-     back into the filter card. */
-  .filter-indicator {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    flex-shrink: 0;
-    padding: 2px 8px;
-    border: none;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--color-primary) 15%, transparent);
-    color: var(--color-primary);
-    font-family: inherit;
-    font-size: 0.72rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 150ms ease;
-  }
-
-  .filter-indicator:hover {
-    background: color-mix(in srgb, var(--color-primary) 25%, transparent);
-  }
-
-  /* --- Filter card (docs/adr/022) --- */
-  .filter-card {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    right: 0;
-    min-width: 320px;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 16px var(--color-shadow);
-    z-index: 200;
-    padding: 10px 12px 12px;
-  }
-
-  .filter-card-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-
-  .filter-card-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-muted);
-  }
-
-  .filter-clear {
-    border: none;
-    background: none;
-    padding: 0;
-    font-family: inherit;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    cursor: pointer;
-  }
-
-  .filter-clear:hover {
-    text-decoration: underline;
-  }
-
-  .filter-chip-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .filter-chip {
-    padding: 5px 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--color-text);
-    cursor: pointer;
-    white-space: nowrap;
-  }
-
-  /* The card's mobile home: a sheet under the takeover bar. */
-  .mobile-filter-card {
+  /* --- Filter chips over the canvas (docs/adr/033) --- */
+  /* Desktop only: overlays the quilt/map top edge under the glass bar,
+     bounded left of the rail's floating card and right of the cards pane —
+     wrapping within that span, never extending across it. */
+  .quilt-chips {
     position: fixed;
-    top: 56px;
-    left: 0;
-    right: 0;
-    z-index: 70;
-    background: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: 0 8px 24px var(--color-shadow);
-    padding: 10px 12px 12px;
-    max-height: 45vh;
-    overflow-y: auto;
+    top: calc(56px + 12px);
+    left: 224px; /* clear the rail's floating glass card (12px + 200px + gap) */
+    right: calc(45% + 16px); /* clear the cards pane */
+    z-index: 20; /* the canvas chrome layer — same as the view pill */
+  }
+
+  .quilt-chips.rail-collapsed {
+    left: 68px; /* clear the collapsed rail's floating chips */
+  }
+
+  /* The FAB and sheet are the mobile canvas home — hidden on desktop. */
+  .filter-fab {
+    display: none;
+  }
+  .filter-sheet {
+    display: none;
   }
 
   /* ================================================================
@@ -980,24 +793,6 @@
     display: none;
   }
 
-  .search-back {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-    border: none;
-    background: none;
-    color: var(--color-text);
-    border-radius: var(--radius);
-    cursor: pointer;
-  }
-
-  .search-back:hover {
-    background: var(--color-overlay);
-  }
-
   .rail-badge {
     position: absolute;
     top: -4px;
@@ -1012,13 +807,6 @@
     text-align: center;
     border-radius: 8px;
     padding: 0 3px;
-  }
-
-  /* Filter count on the shelf search button: informational, not an alert —
-     primary, where the bell's unread badge is error-red. */
-  .rail-badge.filter-badge {
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
   }
 
   /* ================================================================
@@ -1048,12 +836,79 @@
      RESPONSIVE — mobile keeps the bottom pill nav; the bar stays up top
      ================================================================ */
   @media (max-width: 768px) {
-    .bar-search-wrap {
+    .bar-sidebar-toggle {
       display: none;
     }
 
-    .bar-sidebar-toggle {
+    /* The desktop chips overlay yields to the FAB + sheet on mobile. */
+    .quilt-chips {
       display: none;
+    }
+
+    /* Filter FAB: opposite the info button, same floating row as the view
+       pill — canvas chrome, right where the thumb lives. */
+    /* Styled like the desktop chips-toggle — an outlined circle, not the
+       glass-highlight treatment the info button wears. */
+    .filter-fab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      right: 12px;
+      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+      z-index: 20; /* same floating layer as the view pill and info button */
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      /* Mixed from text-muted, not --color-border: the dark theme's border
+         color disappears against the dark canvas, and a floating circle
+         with no visible edge reads as a smudge. */
+      border: 1px solid color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+      border-radius: 999px;
+      background: var(--color-surface);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+
+    .filter-fab.active,
+    .filter-fab:hover {
+      border-color: var(--color-primary);
+      color: var(--color-text);
+    }
+
+    .filter-fab-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--color-primary);
+      color: var(--color-btn-on-primary);
+      font-size: 0.6rem;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
+      line-height: 16px;
+      text-align: center;
+      border-radius: 8px;
+      padding: 0 3px;
+    }
+
+    /* The filter sheet: rises from the FAB, clearing the floating row so
+       its toggle stays visible — the label sheet's geometry. */
+    .filter-sheet {
+      display: block;
+      position: fixed;
+      left: 8px;
+      right: 8px;
+      bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+      z-index: 56; /* just above the rail (55), under the bar (60) */
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px var(--color-shadow);
+      padding: 14px 16px;
+      max-height: 45vh;
+      overflow-y: auto;
     }
 
     /* Full-width bottom bar. The extra selector outranks the desktop
@@ -1176,15 +1031,8 @@
       z-index: 70; /* above the global bar (60) */
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 0 12px 0 8px;
+      padding: 0 12px;
       background: var(--color-surface);
-    }
-
-    /* The takeover's own search pill escapes the mobile bar-search hide. */
-    .mobile-search-bar .bar-search.mobile-search {
-      display: flex;
-      max-width: none;
     }
 
     .rail-label {

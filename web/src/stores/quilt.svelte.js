@@ -16,7 +16,13 @@ let instanceLoaded = $state(false);
 let neighborQuilts = $state([]);
 let instanceDomain = $state('');
 
-// --- Filter state ---
+// --- Filter state (docs/adr/033) ---
+// The filter — tag selection plus the search chip — is standing state that
+// narrows every discovery surface. It is set only by explicit acts (chip
+// toggles, the search dropdown's "Show matches on the quilt" row), announced
+// by the on-surface filter chips wherever it bites, and survives navigation.
+// Reload is the only reset: module state, deliberately not persisted.
+
 let allTags = $state([]);
 // Full vocabulary rows [{id, name, motif, node_count}] — the tag pickers
 // and the admin vocabulary page need more than names.
@@ -52,6 +58,42 @@ export function toggleTag(tag) {
 
 export function clearTags() {
   selectedTags = [];
+}
+
+// Drops the whole filter at once — the chips' Clear button.
+export function resetFilters() {
+  selectedTags = [];
+  searchQuery = '';
+}
+
+// How many chips are active — the collapsed button's badge count. The
+// search chip counts as one: it narrows like any tag.
+export function getActiveFilterCount() {
+  return selectedTags.length + (searchQuery.trim() ? 1 : 0);
+}
+
+// --- Chip collapse preference (docs/adr/033) ---
+// One shared preference across every chips home (canvas overlay, top of the
+// events page): a person is a chips-open or chips-collapsed person, and the
+// interface never disagrees with itself about which. Defaults open on
+// desktop, closed on mobile. The mobile canvas sheet is exempt — a sheet is
+// open-while-using, never a preference.
+const CHIPS_KEY = 'patchwork-filter-chips-collapsed';
+// null = no stored preference; the default is computed at read time, not
+// module-load time — the viewport may not have real dimensions yet when
+// this module first evaluates.
+let chipsCollapsed = $state(
+  localStorage.getItem(CHIPS_KEY) != null
+    ? localStorage.getItem(CHIPS_KEY) === '1'
+    : null
+);
+
+export function getChipsCollapsed() {
+  return chipsCollapsed ?? window.innerWidth < 768;
+}
+export function setChipsCollapsed(collapsed) {
+  chipsCollapsed = collapsed;
+  localStorage.setItem(CHIPS_KEY, collapsed ? '1' : '0');
 }
 
 // --- Loaders ---

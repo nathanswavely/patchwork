@@ -2,9 +2,11 @@
   import { CalendarBlank, CaretDown } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { getSelectedTags, getSearchQuery, clearTags } from '../stores/quilt.svelte.js';
+  import { getSelectedTags, getSearchQuery, resetFilters } from '../stores/quilt.svelte.js';
+  import FilterChips from '../components/FilterChips.svelte';
   import { getRemoteFollows } from '../stores/multiQuilt.svelte.js';
   import { sortByDate } from '../lib/multiQuilt.js';
+  import { textMatches } from '../lib/textMatch.js';
 
   let { quiltScope = 'local' } = $props();
 
@@ -193,8 +195,7 @@
         matches = (patch.tags || []).some(t => tags.includes(t));
       }
       if (matches && query.trim()) {
-        const q = query.toLowerCase();
-        matches = patch.name?.toLowerCase().includes(q) || patch.description?.toLowerCase().includes(q);
+        matches = textMatches(patch.name, query) || textMatches(patch.description, query);
       }
       if (matches) visiblePatchIds.add(id);
     }
@@ -205,8 +206,7 @@
         let matches = true;
         if (tags.length > 0) matches = (e._tags || []).some(t => tags.includes(t));
         if (matches && query.trim()) {
-          const q = query.toLowerCase();
-          matches = e.title?.toLowerCase().includes(q) || e.node_name?.toLowerCase().includes(q);
+          matches = textMatches(e.title, query) || textMatches(e.node_name, query);
         }
         return matches;
       }
@@ -241,6 +241,9 @@
   <div class="events-header">
     <h1>Events</h1>
   </div>
+
+  <!-- The filter chips: the page's own top-of-flow home (docs/adr/033). -->
+  <FilterChips variant="flow" />
 
   <!-- Date filter -->
   <div class="date-filter">
@@ -298,16 +301,12 @@
   {:else if filtered.length === 0}
     <div class="events-empty">
       {#if getSelectedTags().length > 0 || getSearchQuery().trim()}
-        <!-- The filter is a standing lens (docs/adr/022) — when it empties
+        <!-- The filter is standing state (docs/adr/033) — when it empties
              the list, say so and offer the way out. -->
         <p class="muted">
-          No events match your
-          {getSelectedTags().length > 0 && getSearchQuery().trim() ? 'search and filter'
-            : getSelectedTags().length > 0 ? 'filter' : 'search'}{datePreset !== 'any' ? ' for this date range' : ''}.
+          No events match your filter{datePreset !== 'any' ? ' for this date range' : ''}.
         </p>
-        {#if getSelectedTags().length > 0}
-          <button class="btn btn-secondary" onclick={clearTags}>Clear filter</button>
-        {/if}
+        <button class="btn btn-secondary" onclick={resetFilters}>Clear filter</button>
       {:else}
         <p class="muted">No upcoming events{datePreset !== 'any' ? ' for this date range' : ''}.</p>
       {/if}
