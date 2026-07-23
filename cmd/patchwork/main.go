@@ -364,6 +364,8 @@ func main() {
 	mux.HandleFunc("GET /api/v1/notifications/count", middleware.AuthRequired(db, handler.NotificationCount(db)))
 	mux.HandleFunc("PATCH /api/v1/notifications/{id}/read", middleware.AuthRequired(db, handler.MarkNotificationRead(db)))
 	mux.HandleFunc("POST /api/v1/notifications/read-all", middleware.AuthRequired(db, handler.MarkAllNotificationsRead(db)))
+	mux.HandleFunc("DELETE /api/v1/notifications/{id}", middleware.AuthRequired(db, handler.DeleteNotification(db)))
+	mux.HandleFunc("DELETE /api/v1/notifications", middleware.AuthRequired(db, handler.ClearNotifications(db)))
 	mux.HandleFunc("GET /api/v1/notifications/preferences", middleware.AuthRequired(db, handler.GetNotificationPreferences(db, notifier)))
 	mux.HandleFunc("PUT /api/v1/notifications/preferences", middleware.AuthRequired(db, handler.UpdateNotificationPreferences(db)))
 

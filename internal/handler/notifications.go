@@ -154,6 +154,56 @@ func MarkAllNotificationsRead(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// DeleteNotification handles DELETE /api/v1/notifications/{id}.
+func DeleteNotification(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		notifID := r.PathValue("id")
+		if notifID == "" {
+			http.Error(w, `{"error":"notification id required"}`, http.StatusBadRequest)
+			return
+		}
+
+		result, err := db.Exec(
+			`DELETE FROM notifications WHERE id = ? AND user_id = ?`,
+			notifID, user.ID,
+		)
+		if err != nil {
+			http.Error(w, `{"error":"failed to delete notification"}`, http.StatusInternalServerError)
+			return
+		}
+		rows, _ := result.RowsAffected()
+		if rows == 0 {
+			http.Error(w, `{"error":"notification not found"}`, http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	}
+}
+
+// ClearNotifications handles DELETE /api/v1/notifications.
+// Deletes all of the requesting user's notifications, read and unread.
+func ClearNotifications(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+
+		result, err := db.Exec(`DELETE FROM notifications WHERE user_id = ?`, user.ID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to clear notifications"}`, http.StatusInternalServerError)
+			return
+		}
+		rows, _ := result.RowsAffected()
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status":  "ok",
+			"deleted": rows,
+		})
+	}
+}
+
 // GetNotificationPreferences handles GET /api/v1/notifications/preferences.
 // Returns the user's merged preferences grouped by category, plus available channels.
 func GetNotificationPreferences(db *database.DB, notifier *notifications.Notifier) http.HandlerFunc {
