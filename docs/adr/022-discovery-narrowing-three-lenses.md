@@ -1,6 +1,6 @@
 # ADR 022: Discovery narrowing is three independent lenses
 
-Date: 2026-07-20. Status: accepted; amended by ADR 032 (typing no longer
+Date: 2026-07-20. Status: accepted; amended by ADR 033 (typing no longer
 sets the query lens — search is a dropdown, the lens is set explicitly;
 the filter's home moves to a standing button). Decided while grilling the
 tag-filter UI rethink after PR #67.
