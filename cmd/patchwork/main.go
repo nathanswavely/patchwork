@@ -343,6 +343,11 @@ func main() {
 	mux.HandleFunc("PATCH /api/v1/events/{id}", middleware.AuthRequired(db, handler.UpdateEvent(db)))
 	mux.HandleFunc("DELETE /api/v1/events/{id}", middleware.AuthRequired(db, handler.DeleteEvent(db)))
 	mux.HandleFunc("PATCH /api/v1/events/{id}/review", middleware.AuthRequired(db, handler.ReviewEventSubmission(db)))
+	// Event links (docs/adr/032): one owner, two consents.
+	mux.HandleFunc("POST /api/v1/events/{id}/links", middleware.AuthRequired(db, handler.CreateEventLink(db, cfg)))
+	mux.HandleFunc("POST /api/v1/events/{id}/links/{nodeId}/confirm", middleware.AuthRequired(db, handler.ConfirmEventLink(db)))
+	mux.HandleFunc("DELETE /api/v1/events/{id}/links/{nodeId}", middleware.AuthRequired(db, handler.RemoveEventLink(db)))
+	mux.HandleFunc("DELETE /api/v1/events/{id}/mentions/{mentionId}", middleware.AuthRequired(db, handler.RemoveEventMention(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/event-submissions", middleware.AuthRequired(db, handler.ListNodeEventSubmissions(db)))
 
 	// Tree route — public, optionally personalized with scope=my.

@@ -55,7 +55,8 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
-					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0) AS event_count
+					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
+					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active'), 0) AS event_count
 				FROM nodes n
 				JOIN memberships mem ON mem.node_id = n.id AND mem.user_id = ? AND mem.status = 'active'
 				WHERE n.status IN ('active','unclaimed') AND n.removed_at IS NULL
@@ -68,7 +69,8 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
-					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0) AS event_count
+					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
+					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active'), 0) AS event_count
 				FROM nodes n
 				WHERE n.status IN ('active','unclaimed') AND n.removed_at IS NULL AND n.visibility = 'public'
 				ORDER BY n.name ASC`
@@ -187,6 +189,33 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				var score int
 				if eventRows.Scan(&a, &b, &score) == nil {
 					// Normalize direction so a < b.
+					if a > b {
+						a, b = b, a
+					}
+					addAffinity(affinityMap, a, b, float64(score))
+				}
+			}
+		}
+
+		// Confirmed event links (weight 2 per linked event): two patches
+		// explicitly agreeing they did a thing together is the strongest
+		// event signal we have (docs/adr/032). Same tier as the
+		// created_by heuristic above, which it will eventually subsume.
+		linkRows, err := db.Query(`
+			SELECT e.node_id, el.node_id, COUNT(*) * 2 AS score
+			FROM event_links el
+			JOIN events e ON e.id = el.event_id AND e.status = 'active'
+			JOIN nodes n1 ON e.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.visibility = 'public'
+			JOIN nodes n2 ON el.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.visibility = 'public'
+			WHERE el.status = 'confirmed'
+			GROUP BY e.node_id, el.node_id
+		`)
+		if err == nil {
+			defer linkRows.Close()
+			for linkRows.Next() {
+				var a, b string
+				var score int
+				if linkRows.Scan(&a, &b, &score) == nil {
 					if a > b {
 						a, b = b, a
 					}
