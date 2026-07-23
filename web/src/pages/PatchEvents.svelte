@@ -2,7 +2,8 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isLoggedIn, isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
+  import { isLoggedIn, isAdmin as isInstanceAdmin, getUser } from '../stores/auth.svelte.js';
+  import { parseCsv, rowsToEvents, TEMPLATE_CSV } from '../lib/eventCsv.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
@@ -82,6 +83,77 @@
     }
   }
 
+  // Bulk upload is an admin act: patch admins on active patches, the
+  // instance admin and trusted contributors on unclaimed ones. Members
+  // create events one at a time.
+  let canBulkUpload = $derived(
+    isUnclaimed
+      ? (isInstanceAdmin() || !!getUser()?.trusted_contributor)
+      : (patch.value.isAdmin || isInstanceAdmin())
+  );
+
+  let showUpload = $state(false);
+  let uploadFileName = $state('');
+  let uploadEvents = $state([]);
+  let uploadErrors = $state([]);
+  let uploading = $state(false);
+
+  function onUploadFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    uploadFileName = file.name;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const { events: evts, errors } = rowsToEvents(parseCsv(String(reader.result)));
+      uploadEvents = evts;
+      uploadErrors = errors;
+    };
+    reader.readAsText(file);
+  }
+
+  async function confirmUpload() {
+    uploading = true;
+    try {
+      const res = await api(`nodes/${slug}/events/bulk`, {
+        method: 'POST',
+        body: { events: uploadEvents },
+      });
+      showToast(
+        res.skipped > 0
+          ? `Created ${res.created} events — ${res.skipped} already on the calendar`
+          : `Created ${res.created} events`
+      );
+      resetUpload();
+      showUpload = false;
+      await loadEvents();
+    } catch (err) {
+      showToast(err.message || 'Upload failed', 'error');
+    } finally {
+      uploading = false;
+    }
+  }
+
+  function resetUpload() {
+    uploadFileName = '';
+    uploadEvents = [];
+    uploadErrors = [];
+  }
+
+  function downloadTemplate() {
+    const url = URL.createObjectURL(new Blob([TEMPLATE_CSV], { type: 'text/csv' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'events-template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function previewWhen(iso) {
+    return new Date(iso).toLocaleString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+    });
+  }
+
   // Subscribable feeds exist only for public patches (docs/adr/031).
   let showSubscribe = $state(false);
   let feedAvailable = $derived(node?.visibility === 'public');
@@ -126,11 +198,18 @@
       {/if}
     </span>
     {#if isMember && membershipRole !== 'follower'}
-      <a
-        href="/events/new"
-        class="btn btn-primary btn-sm"
-        onclick={(e) => { e.preventDefault(); navigate('/events/new'); }}
-      >Create Event</a>
+      <span class="header-buttons">
+        {#if canBulkUpload}
+          <button class="btn btn-secondary btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
+        {/if}
+        <a
+          href="/events/new"
+          class="btn btn-primary btn-sm"
+          onclick={(e) => { e.preventDefault(); navigate('/events/new'); }}
+        >Create Event</a>
+      </span>
+    {:else if canBulkUpload}
+      <button class="btn btn-secondary btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
     {:else if canSuggest}
       <a
         href="/events/new?node={slug}"
@@ -143,6 +222,61 @@
       <span class="role-prompt muted">Join this patch to create events.</span>
     {/if}
   </div>
+
+  {#if showUpload && canBulkUpload}
+    <div class="upload-panel">
+      <div class="upload-row">
+        <input type="file" accept=".csv,text/csv" onchange={onUploadFile} disabled={uploading} />
+        <button class="btn-link" onclick={downloadTemplate}>Download template</button>
+      </div>
+
+      {#if uploadErrors.length > 0}
+        <ul class="upload-errors">
+          {#each uploadErrors as err}
+            <li>{err.row > 0 ? `Row ${err.row}: ` : ''}{err.message}</li>
+          {/each}
+        </ul>
+      {/if}
+
+      {#if uploadEvents.length > 0}
+        <div class="upload-preview">
+          <table>
+            <thead><tr><th>When</th><th>Title</th><th>Location</th></tr></thead>
+            <tbody>
+              {#each uploadEvents.slice(0, 8) as ev}
+                <tr>
+                  <td>{previewWhen(ev.starts_at)}</td>
+                  <td>{ev.title}</td>
+                  <td>{ev.location || ''}</td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+          {#if uploadEvents.length > 8}
+            <p class="muted upload-more">…and {uploadEvents.length - 8} more</p>
+          {/if}
+        </div>
+        <div class="upload-actions">
+          <button
+            class="btn btn-primary btn-sm"
+            onclick={confirmUpload}
+            disabled={uploading || uploadErrors.length > 0}
+          >{uploading ? 'Uploading…' : `Create ${uploadEvents.length} ${uploadEvents.length === 1 ? 'event' : 'events'}`}</button>
+          <button class="btn btn-secondary btn-sm" onclick={() => { resetUpload(); showUpload = false; }} disabled={uploading}>Cancel</button>
+          {#if uploadErrors.length > 0}
+            <span class="muted upload-fix-note">Fix the rows above and re-pick the file.</span>
+          {/if}
+        </div>
+      {:else if uploadFileName && uploadErrors.length === 0}
+        <p class="muted">No events found in {uploadFileName}.</p>
+      {/if}
+
+      <p class="muted upload-hint">
+        Times are read in your timezone. Rows matching an event already on the
+        calendar are skipped, so re-uploading a corrected file is safe.
+      </p>
+    </div>
+  {/if}
 
   {#if showSubscribe && feedAvailable}
     <div class="subscribe-panel">
@@ -251,6 +385,94 @@
     align-items: center;
     margin-bottom: 1rem;
     font-size: 0.85rem;
+  }
+
+  .header-buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .upload-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  .upload-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  .btn-link:hover {
+    text-decoration: underline;
+  }
+
+  .upload-errors {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.8rem;
+    color: var(--color-danger, #c0392b);
+  }
+
+  .upload-preview {
+    overflow-x: auto;
+  }
+
+  .upload-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  .upload-preview th,
+  .upload-preview td {
+    text-align: left;
+    padding: 0.3rem 0.6rem 0.3rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .upload-preview th {
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  .upload-more {
+    font-size: 0.75rem;
+    margin: 0.25rem 0 0;
+  }
+
+  .upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .upload-fix-note {
+    font-size: 0.78rem;
+  }
+
+  .upload-hint {
+    font-size: 0.75rem;
+    margin: 0;
   }
 
   .subscribe-toggle {
