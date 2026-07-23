@@ -78,7 +78,7 @@ test.describe('Navigation — Discovery <> Work Mode', () => {
   test('9.1 — discovery mode shows quilt + rail chrome', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.canvas-container')).toBeVisible();
-    await expect(page.locator('.bar-search-input')).toBeVisible();
+    await expect(page.locator('.finder-input')).toBeVisible();
     await expect(page.locator('.rail-item').first()).toBeVisible();
   });
 

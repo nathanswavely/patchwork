@@ -32,12 +32,17 @@ test.describe('Discovery — Quilt View', () => {
     }
   });
 
-  test('1.4 — top bar search exists and accepts text', async ({ page }) => {
+  test('1.4 — top bar search accepts text and opens the dropdown', async ({ page }) => {
+    // The search is an autocomplete dropdown (docs/adr/033): typing shows
+    // typed results plus the "Show matches on the quilt" action row.
     await page.goto('/');
-    const searchInput = page.locator('.bar-search-input');
+    const searchInput = page.locator('.finder-input');
     await expect(searchInput).toBeVisible();
+    await searchInput.click();
     await searchInput.fill('Lancaster');
     await expect(searchInput).toHaveValue('Lancaster');
+    await expect(page.locator('.finder-results')).toBeVisible();
+    await expect(page.locator('.finder-action')).toContainText('Show matches on the quilt');
   });
 
   test('1.8 — theme toggle in user menu switches between light and dark', async ({ page }) => {
