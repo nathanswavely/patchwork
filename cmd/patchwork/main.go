@@ -281,6 +281,7 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/event-sources/{id}", middleware.AuthRequired(db, handler.DeleteEventSource(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources/{id}/sync", middleware.AuthRequired(db, handler.SyncEventSource(db)))
 	mux.HandleFunc("POST /api/v1/events/{id}/detach", middleware.AuthRequired(db, handler.DetachEvent(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/events/bulk", middleware.AuthRequired(db, handler.BulkCreateEvents(db)))
 
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/leave", middleware.AuthRequired(db, handler.LeaveNode(db)))

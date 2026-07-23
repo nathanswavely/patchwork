@@ -305,6 +305,18 @@ longer synced — and the source ignores it from then on. The escape hatch
 that lets imported events stay read-only without trapping admins.
 _Avoid_: unlink, unsync, override
 
+**Event upload**:
+A one-time batch of events from a spreadsheet (CSV), previewed row by
+row before anything is created. An admin act, deliberately narrower than
+single-event posting: patch admins upload to their own patch; on
+unclaimed patches the instance admin and trusted contributors do,
+members and suggesters never. Not an event source — nothing syncs and
+nothing stays authoritative; the rows become ordinary events the moment
+they land. Re-uploading skips rows already on the calendar, and uploads
+are quiet: a season arriving is not forty notifications.
+_Avoid_: import (that is the sources' word for synced events), bulk
+create (backend term), CSV sync (nothing syncs)
+
 **Personal feed**:
 A person's private calendar feed of every event on their My Quilt,
 subscribed from their own calendar app via a secret URL they can
