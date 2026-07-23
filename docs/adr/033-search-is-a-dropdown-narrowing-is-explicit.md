@@ -1,4 +1,4 @@
-# ADR 032: Search is a dropdown; narrowing is explicit
+# ADR 033: Search is a dropdown; narrowing is explicit
 
 Date: 2026-07-22. Status: accepted. Amends ADR 022. Decided while
 grilling the search rethink after the lens-persistence bug (search

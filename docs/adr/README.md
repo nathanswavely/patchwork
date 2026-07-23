@@ -25,7 +25,7 @@ several branches are in flight.
 | [018](018-email-recipes-not-a-platform.md) | Email is one relay plus recipes, not a platform |
 | [020](020-recovery-without-a-delivery-channel.md) | Account recovery without a delivery channel |
 | [021](021-tags-are-the-only-classification.md) | Tags are the only classification; the affinity tag term is not a thread |
-| [022](022-discovery-narrowing-three-lenses.md) | Discovery narrowing is three independent lenses (amended by 032) |
+| [022](022-discovery-narrowing-three-lenses.md) | Discovery narrowing is three independent lenses (amended by 033) |
 | [023](023-the-label-stewardship-disclosure.md) | The Label — how a quilt is run, who stewards it, what it costs |
 | [024](024-cross-quilt-following.md) | Cross-quilt following — switcher to browse, home-side follows |
 | [026](026-events-on-unclaimed-patches.md) | Events on unclaimed patches: submissions plus trusted contributors |
@@ -34,7 +34,8 @@ several branches are in flight.
 | [029](029-drafted-blocks-are-inline-appearance-data.md) | Drafted blocks are inline appearance data, not entities |
 | [030](030-claims-are-assertions-not-reservations.md) | Claims are assertions, not reservations |
 | [031](031-event-sources-vouch-for-the-feed.md) | Event sources: vouch for the feed, not each event |
-| [032](032-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit |
+| [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents |
+| [033](033-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit |
 
 ## Adopted as design boundaries — implementation is backlog
 
@@ -50,7 +51,6 @@ several branches are in flight.
 | [007](007-media-references-not-bytes.md) | Media: the instance stores references, patches own their bytes |
 | [008](008-ledger-and-commons.md) | The ledger and the commons — earmarked contributions, not stored value |
 | [019](019-self-hosted-mail-spike.md) | Self-hosted mail sidecar — spike plan |
-| [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents |
 
 ## Rejected after evaluation
 
