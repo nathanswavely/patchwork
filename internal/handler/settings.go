@@ -61,6 +61,7 @@ func AdminGetSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, nameOverridden := settings.Get(db, settings.KeyName)
 		_, descOverridden := settings.Get(db, settings.KeyDescription)
+		hideAmended, _ := settings.Get(db, settings.KeyHideAmendedLinings)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -69,6 +70,7 @@ func AdminGetSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			"domain":                 cfg.Instance.Domain,
 			"name_overridden":        nameOverridden,
 			"description_overridden": descOverridden,
+			"hide_amended_linings":   hideAmended == "true",
 			"icon":                   currentIconState(db, cfg),
 			"default_icons":          iconBlockKeys(),
 			"icon_constraints": map[string]interface{}{
@@ -91,6 +93,9 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Name        *string `json:"name"`
 			Description *string `json:"description"`
 			IconDefault *string `json:"icon_default"`
+			// Quilt policy: hide amended-lining patches from discovery for
+			// everyone (docs/adr/036).
+			HideAmendedLinings *bool `json:"hide_amended_linings"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -141,6 +146,17 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 					http.Error(w, `{"error":"failed to save icon choice"}`, http.StatusInternalServerError)
 					return
 				}
+			}
+		}
+
+		if req.HideAmendedLinings != nil {
+			v := "false"
+			if *req.HideAmendedLinings {
+				v = "true"
+			}
+			if err := settings.Set(db, settings.KeyHideAmendedLinings, v); err != nil {
+				http.Error(w, `{"error":"failed to save policy"}`, http.StatusInternalServerError)
+				return
 			}
 		}
 

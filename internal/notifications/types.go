@@ -44,6 +44,9 @@ const (
 
 	GovernanceDocUpdated   NotificationType = "governance.doc_updated"
 	GovernanceRulesChanged NotificationType = "governance.rules_changed"
+	// LiningUpdated fires when a stale lining auto-updates to the current
+	// shipped text (docs/adr/036). Notified, never asked.
+	LiningUpdated NotificationType = "governance.lining_updated"
 
 	MembershipJoined      NotificationType = "membership.joined"
 	MembershipRequest     NotificationType = "membership.request"
@@ -117,6 +120,7 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 
 	GovernanceDocUpdated:   {CategoryGovernance, "Document updated", AudienceAllMembers, PriorityNormal},
 	GovernanceRulesChanged: {CategoryGovernance, "Rules changed", AudienceAllMembers, PriorityHigh},
+	LiningUpdated:          {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
 	MembershipRequest:     {CategoryMembership, "Membership request pending", AudienceAdminsOnly, PriorityHigh},
@@ -166,7 +170,7 @@ func TypesForCategory(cat Category) []NotificationType {
 	allTypes := []NotificationType{
 		ProposalNew, ProposalVoting, ProposalVoteReceived, ProposalApproved,
 		ProposalRejected, ProposalApplied, ProposalComment, ProposalDeadline,
-		GovernanceDocUpdated, GovernanceRulesChanged,
+		GovernanceDocUpdated, GovernanceRulesChanged, LiningUpdated,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		EventCreated, EventReminder, EventUpdated, EventCancelled,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,

@@ -167,6 +167,18 @@
               <button class="btn-link" onclick={() => activeTab = 'changes'}>View changes</button>
             </div>
           </section>
+        {:else if proposal.doc_text_hidden}
+          <!-- The target charter is members only, so the diff text was
+               withheld server-side (docs/adr/035). Say so rather than
+               rendering a proposal that looks like it changes nothing. -->
+          <section class="proposal-section">
+            <div class="changes-summary">
+              <span class="muted">
+                This proposal modifies a members-only document. The text of the
+                change is visible to members.
+              </span>
+            </div>
+          </section>
         {/if}
 
         <!-- Vote section -->

@@ -10,6 +10,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
@@ -55,6 +56,25 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		conditions = append(conditions, "n.removed_at IS NULL")
 		if nodeID == "" {
 			conditions = append(conditions, "n.visibility = 'public'")
+
+			// Amended-lining discovery filter (docs/adr/036): the instance-wide
+			// feed drops a diverged patch's events, except for viewers who
+			// knowingly joined or followed it — the filter protects browsers,
+			// not participants. A patch's own page (nodeID != "") is a direct
+			// link, and direct links always work.
+			if hideAmendedLinings(db, r) {
+				viewer := middleware.UserFromContext(r.Context())
+				for divergedID, status := range NodeLiningStatuses(db) {
+					if status != governance.LiningDiverged {
+						continue
+					}
+					if viewer != nil && userHasNodeRole(db, viewer.ID, divergedID, "admin", "member", "follower") {
+						continue
+					}
+					conditions = append(conditions, "e.node_id != ?")
+					args = append(args, divergedID)
+				}
+			}
 		}
 
 		if nodeID != "" {

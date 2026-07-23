@@ -318,17 +318,36 @@ device (a session is per-browser, not per-machine)
 A governance document a patch keeps — community standards, bylaws,
 whatever the patch writes down about how it runs itself. Versioned and
 diffed; the database is canonical and a per-patch git repository mirrors
-the history (docs/adr/011). Amended through proposals. "Governance doc"
-remains the backend term in code and endpoints.
+the history (docs/adr/011). Amended through proposals. Each charter
+carries its own visibility — members only (the default for a new one) or
+public; a patch **publishes** a charter, it isn't published by default
+(docs/adr/035). "Governance doc" remains the backend term in code and
+endpoints.
 _Avoid_: lining (that is one specific charter, not the type), policy,
-rules doc
+rules doc; "private charter" (the pair is members only / public, and
+"private" is the patch-level word)
 
 **Lining**:
 The shared baseline community-standards charter — the one every patch on
 the quilt agrees to, carrying the anti-discrimination baseline. "The
 lining" names this document specifically, the layer that sits behind
-every patch; it is not the generic word for charters.
-_Avoid_: using "lining" for governance documents in general
+every patch; it is not the generic word for charters. The lining is
+project-owned: its text ships with Patchwork itself, and no instance
+admin setting changes it — a quilt that wants a different baseline forks
+the open source repo.
+_Avoid_: using "lining" for governance documents in general; "default
+lining" implying an instance could have a non-default one
+
+**Amended lining**:
+The user-facing state of a patch whose lining text no longer matches any
+version Patchwork has shipped. Every patch starts with the lining and may
+amend it by proposal — but the lining is always public, the amendment is
+public, and the patch wears an "Amended lining" badge. Reverting to a
+shipped version clears the state. Viewers and instance admins can filter
+amended-lining patches out of discovery. A patch on an older shipped
+version is stale, not amended — staleness is resolved by auto-update, not
+worn as a badge. "Diverged" is the backend/predicate term.
+_Avoid_: diverged (in UI copy), modified/forked lining
 
 **Proposal**:
 Something a patch votes on: discussion, then voting, then in effect.

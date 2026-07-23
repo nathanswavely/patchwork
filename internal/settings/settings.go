@@ -22,6 +22,11 @@ const (
 	// default template wholesale; no key means the default is in effect.
 	KeyLegalPrivacy = "legal_privacy"
 	KeyLegalTerms   = "legal_terms"
+
+	// Quilt policy (docs/adr/036): "true" hides amended-lining patches from
+	// discovery for everyone. The per-user twin is users.hide_amended_linings;
+	// strictest wins — the user switch can hide more, never reveal more.
+	KeyHideAmendedLinings = "hide_amended_linings"
 )
 
 // Get returns the stored value for key and whether it exists.

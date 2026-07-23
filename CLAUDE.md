@@ -94,6 +94,10 @@ Every community, collective, band, venue, or group is a patch. Patches differ no
 
 The governance features (proposals, governance docs) are available to all patches but optional. The `membership_policy` field drives access control.
 
+Governance docs (charters) carry their own per-document visibility — `members` (the default for a new doc) or `public` (docs/adr/035). Publishing is a deliberate act at Governance → Documents, not the state a doc is born in. Only public docs federate, and amendment proposals withhold the mirrored charter text (`proposed_body`, `current_doc_content`) from viewers who can't read the target charter. `nodes.visibility` is a separate, patch-level thing: private keeps a patch off the quilt, search, the map, public feeds, and federation, but a direct link still opens its page.
+
+The **lining** is the exception to all of the above (docs/adr/036): `governance_docs.kind='lining'`, identified by column not title, project-owned (text ships in the binary — `internal/governance/lining.go` holds the versioned lineage; no instance override, fork the repo instead). Pinned public, title immutable, undeletable, body changed only by amendment proposal. A patch whose lining matches no shipped version is **diverged** — it wears a public "Amended lining" badge and can be filtered out of discovery by per-user setting (`users.hide_amended_linings`) or instance policy (`hide_amended_linings` in instance_settings; strictest wins). Stale linings (older shipped versions) auto-update at startup with member notification. Updating the lining's text = appending to the lineage in `lining.go` — a release, not a migration.
+
 ### Membership Roles
 
 Three relationships a person can have with a patch:

@@ -21,6 +21,8 @@
   let isAdmin = $state(false);
   let membershipRole = $state('');
   let isUnclaimed = $state(false);
+  // 'diverged' wears the public "Amended lining" badge (docs/adr/036).
+  let liningStatus = $state('');
   let isBanned = $state(false);
   let loading = $state(true);
   let error = $state('');
@@ -67,6 +69,7 @@
       isAdmin = data.is_admin || false;
       membershipRole = data.membership_role || '';
       isUnclaimed = data.is_unclaimed || false;
+      liningStatus = data.lining_status || '';
       isBanned = data.is_banned || false;
       followerPermissions = (data.node || data).follower_permissions || null;
       loadActivity();
@@ -189,6 +192,18 @@
       </div>
       {#if node.description}
         <p class="profile-desc">{node.description}</p>
+      {/if}
+      {#if liningStatus === 'diverged'}
+        <!-- Public by design (docs/adr/036): this patch amended the shared
+             baseline, and the divergence is worn, not whispered. -->
+        <p class="amended-lining-row">
+          <a
+            href="/patches/{slug}/governance"
+            class="amended-lining-badge"
+            title="This patch changed the shared community standards every patch starts with. Read its version in Governance."
+            onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance`); }}
+          >Amended lining</a>
+        </p>
       {/if}
     </div>
 
@@ -473,6 +488,27 @@
     line-height: 1.6;
     max-width: 440px;
     margin: 0 auto;
+  }
+
+  .amended-lining-row {
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .amended-lining-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-warning, #b5892e);
+    color: var(--color-warning, #b5892e);
+    text-decoration: none;
+  }
+
+  .amended-lining-badge:hover {
+    background: color-mix(in srgb, var(--color-warning, #b5892e) 10%, transparent);
   }
 
   /* Actions */

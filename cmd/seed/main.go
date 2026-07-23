@@ -1308,9 +1308,18 @@ func (s *seeder) seedGovernanceDocs() {
 
 		id := auth.NewUUIDv7()
 		createdAt := s.ts(s.rng.Intn(60) + 60)
-		_, err := s.db.Exec(`INSERT INTO governance_docs (id, node_id, title, body, version, created_by, created_at, updated_at)
-			VALUES (?, ?, ?, ?, 1, ?, ?, ?)`,
-			id, nodeID, d.title, d.body, creatorID, createdAt, createdAt)
+		// Seeded charters are published: demo data exists to be read by a
+		// signed-out visitor, which is the opposite of the members-only
+		// default a real new doc gets (docs/adr/035). The seeder runs after
+		// migrations, so migration 037's title backfill can't reach these
+		// rows — kind is set here (docs/adr/036).
+		kind := "charter"
+		if d.title == governance.DefaultLiningTitle {
+			kind = "lining"
+		}
+		_, err := s.db.Exec(`INSERT INTO governance_docs (id, node_id, title, body, kind, visibility, version, created_by, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?, 'public', 1, ?, ?, ?)`,
+			id, nodeID, d.title, d.body, kind, creatorID, createdAt, createdAt)
 		if err != nil {
 			log.Fatalf("seed governance doc %s: %v", d.title, err)
 		}

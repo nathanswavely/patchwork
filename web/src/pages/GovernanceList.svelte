@@ -3,6 +3,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
+  import { showToast } from '../stores/toast.svelte.js';
   import GovernanceShell from '../components/GovernanceShell.svelte';
 
   const patch = getContext('patch');
@@ -36,6 +37,25 @@
       loading = false;
     }
   }
+
+  // Per-document visibility (docs/adr/035). Publishing is one click, but it is
+  // the click that puts a document in front of the whole internet, so the
+  // label says which way it goes rather than naming a state.
+  let savingVisibility = $state('');
+
+  async function setVisibility(doc, visibility) {
+    savingVisibility = doc.id;
+    try {
+      await api(`governance/${doc.id}`, { method: 'PUT', body: { visibility } });
+      doc.visibility = visibility;
+      docs = docs;
+      showToast(visibility === 'public' ? 'Published' : 'Hidden from visitors', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to change visibility', 'error');
+    } finally {
+      savingVisibility = '';
+    }
+  }
 </script>
 
 <GovernanceShell activeSection="documents">
@@ -51,6 +71,12 @@
       <div class="page-header">
         <div>
           <h2>Documents</h2>
+          {#if isAdmin}
+            <p class="muted section-hint">
+              New documents start members only. Publish one to let visitors and
+              other quilts read it.
+            </p>
+          {/if}
         </div>
         <div class="header-actions">
           {#if isLoggedIn() && isAdmin}
@@ -86,9 +112,28 @@
                 <div class="doc-meta">
                   <span class="muted">v{doc.version}</span>
                   <span class="muted">Updated {new Date(doc.updated_at).toLocaleDateString()}</span>
+                  {#if doc.kind === 'lining'}
+                    <span
+                      class="vis-chip lining"
+                      title="The shared baseline every patch starts with. Always public; changed only by amendment."
+                    >The lining</span>
+                  {:else if isAdmin}
+                    <span class="vis-chip" class:public={doc.visibility === 'public'}>
+                      {doc.visibility === 'public' ? 'Public' : 'Members only'}
+                    </span>
+                  {/if}
                 </div>
               </a>
               <div class="doc-actions">
+                {#if isLoggedIn() && isAdmin && doc.kind !== 'lining'}
+                  <button
+                    class="btn btn-secondary btn-sm"
+                    disabled={savingVisibility === doc.id}
+                    onclick={() => setVisibility(doc, doc.visibility === 'public' ? 'members' : 'public')}
+                  >
+                    {doc.visibility === 'public' ? 'Make members only' : 'Publish'}
+                  </button>
+                {/if}
                 <a
                   href="/patches/{slug}/governance/docs/{doc.id}/history"
                   class="history-link"
@@ -148,12 +193,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 
+  /* The row now carries a third action, so it wraps as a block rather than
+     squeezing the title into one word per line. */
   .doc-link {
     text-decoration: none;
     color: inherit;
-    flex: 1;
+    flex: 1 1 18rem;
   }
 
   .doc-link:hover {
@@ -173,7 +222,36 @@
   .doc-meta {
     display: flex;
     gap: 0.75rem;
+    align-items: center;
     font-size: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .section-hint {
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    max-width: 46ch;
+  }
+
+  .vis-chip {
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+  }
+
+  .vis-chip.public {
+    border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+    color: var(--color-primary);
+  }
+
+  .vis-chip.lining {
+    border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+    color: var(--color-primary);
+    cursor: help;
   }
 
   .header-actions {
@@ -186,7 +264,7 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    flex-shrink: 0;
+    flex-wrap: wrap;
   }
 
   .history-link {

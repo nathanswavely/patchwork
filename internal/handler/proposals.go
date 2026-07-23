@@ -34,14 +34,17 @@ func join(elems []string, sep string) string {
 // same body. These aliases keep existing callers and tests working.
 const DefaultLiningTitle = governance.DefaultLiningTitle
 
-// DefaultLiningBody is the body for the auto-created governance doc.
-const DefaultLiningBody = governance.DefaultLiningBody
+// DefaultLiningBody is the body for the auto-created governance doc — the
+// head of the shipped lineage (docs/adr/036), so it is a var, not a const.
+var DefaultLiningBody = governance.DefaultLiningBody
 
-// CreateDefaultLining creates the default governance document for a node.
+// CreateDefaultLining creates the lining for a node: kind='lining' is its
+// durable identity, and it is born public — the one doc the members-only
+// default never applies to (docs/adr/036).
 func CreateDefaultLining(db *database.DB, nodeID, userID string) {
 	id := auth.NewUUIDv7()
 	db.Exec(
-		`INSERT INTO governance_docs (id, node_id, title, body, created_by) VALUES (?, ?, ?, ?, ?)`,
+		`INSERT INTO governance_docs (id, node_id, title, body, kind, visibility, created_by) VALUES (?, ?, ?, ?, 'lining', 'public', ?)`,
 		id, nodeID, DefaultLiningTitle, DefaultLiningBody, userID,
 	)
 }
@@ -96,11 +99,16 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			AbstainCount int    `json:"abstain_count"`
 		}
 
+		docHidden := hiddenDocRedactor(db, r, nodeID)
+
 		var proposals []proposalItem
 		for rows.Next() {
 			var p proposalItem
 			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount); err != nil {
 				continue
+			}
+			if docHidden(p.TargetDoc) {
+				p.ProposedBody, p.ProposedTitle = "", ""
 			}
 			proposals = append(proposals, p)
 		}
@@ -323,6 +331,13 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// The mirrored charter text follows that charter's visibility, even
+		// when the proposal quoting it is public (docs/adr/035).
+		docTextHidden := hiddenDocRedactor(db, r, p.NodeID)(p.TargetDoc)
+		if docTextHidden {
+			p.ProposedBody, p.ProposedTitle = "", ""
+		}
+
 		// Vote resolution: if voting_ends_at has passed and status is open, resolve.
 		if p.Status == "open" && p.VotingEndsAt != nil {
 			endsAt, parseErr := time.Parse("2006-01-02T15:04:05.000Z", *p.VotingEndsAt)
@@ -472,15 +487,21 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"my_vote":        myVote,
 		}
 
-		// Include amendment-specific fields if this is a governance amendment
+		// Include amendment-specific fields if this is a governance amendment.
+		// The two text fields — the proposed body and the current text it would
+		// replace — are the charter itself, so they carry its visibility; the
+		// rest of the amendment stays public.
 		if p.TargetDoc != "" {
 			result["target_doc"] = p.TargetDoc
 			result["proposed_branch"] = p.ProposedBranch
 			result["proposed_body"] = p.ProposedBody
 			result["proposed_title"] = p.ProposedTitle
 			result["git_sha"] = p.GitSHA
-			currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
-			result["current_doc_content"] = currentContent
+			result["doc_text_hidden"] = docTextHidden
+			if !docTextHidden {
+				currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
+				result["current_doc_content"] = currentContent
+			}
 		}
 
 		w.Header().Set("Content-Type", "application/json")

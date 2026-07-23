@@ -112,9 +112,14 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			admins = []adminInfo{}
 		}
 
-		// Count documents.
+		// Count documents the viewer can actually open — a count that includes
+		// charters they can't reach reads as a broken link, not a hint.
+		docQuery := "SELECT COUNT(*) FROM governance_docs WHERE node_id = ?"
+		if !canReadPatchDocs(db, r, nodeID) {
+			docQuery += " AND visibility = 'public'"
+		}
 		var docCount int
-		db.QueryRow("SELECT COUNT(*) FROM governance_docs WHERE node_id = ?", nodeID).Scan(&docCount)
+		db.QueryRow(docQuery, nodeID).Scan(&docCount)
 
 		// Count proposals by status.
 		var openProposals, passedProposals, rejectedProposals int
