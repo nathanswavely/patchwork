@@ -370,19 +370,6 @@
     font-size: 0.85rem;
   }
 
-  .changes-summary .btn-link {
-    border: none;
-    background: none;
-    color: var(--color-primary);
-    font-size: 0.82rem;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .changes-summary .btn-link:hover {
-    text-decoration: underline;
-  }
-
   .changes-tab {
     padding-top: 0;
   }
