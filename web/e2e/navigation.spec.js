@@ -11,6 +11,28 @@ test.describe('Navigation — Public Routes', () => {
     await expect(page.locator('.canvas-container')).toBeVisible();
   });
 
+  test('/map renders the map on a direct load', async ({ page }) => {
+    await page.goto('/map');
+    await expect(page.locator('.leaflet-container')).toBeVisible();
+  });
+
+  // The quilt's tooltip used to be the last node of QuiltCanvas's own
+  // fragment and got moved to <body> on mount, so tearing the canvas down
+  // swept the {#if} anchor with it and the pane stayed empty until a reload.
+  // Coverage, not a guard: this suite runs the Vite *dev* build, whose extra
+  // anchor comments hide that failure — it only shows in a production build.
+  test('quilt → map → quilt swaps the pane in-app', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.canvas-container')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Map', exact: true }).first().click();
+    await expect(page).toHaveURL(/\/map$/);
+    await expect(page.locator('.leaflet-container')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Quilt', exact: true }).first().click();
+    await expect(page.locator('.canvas-container')).toBeVisible();
+  });
+
   test('/login renders login form', async ({ page }) => {
     await page.goto('/login');
     await expect(page.locator('input[type="email"]')).toBeVisible();
