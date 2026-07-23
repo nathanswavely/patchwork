@@ -49,6 +49,7 @@ several branches are in flight.
 | [007](007-media-references-not-bytes.md) | Media: the instance stores references, patches own their bytes |
 | [008](008-ledger-and-commons.md) | The ledger and the commons — earmarked contributions, not stored value |
 | [019](019-self-hosted-mail-spike.md) | Self-hosted mail sidecar — spike plan |
+| [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents |
 
 ## Rejected after evaluation
 

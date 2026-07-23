@@ -46,6 +46,26 @@ routes, and notification labels while "pin" survived mainly in docs. A
 term nobody reaches for when building the thing isn't the thing's name.
 _Avoid_: pin (retired), happening, gathering
 
+**Event link**:
+An explicit, mutual association between an event and a patch beyond its
+owner — admins on one side propose, admins on the other confirm, and
+either side removes it at will. The event stays the owner's to edit; the
+linked patch gains presence: the event card reads "with" the linked patch,
+and the event counts as that patch's activity. Flat — a link carries no
+role label. Not a thread (threads are inferred; a link is declared), and
+distinct from detach's territory: severing a link is "remove", never
+"unlink" (docs/adr/032).
+_Avoid_: co-host, tagged patch, on the bill, unlink (reserved against
+detach), shared event
+
+**Cross-quilt mention**:
+A display-only doorway on an event page pointing at a patch on another
+quilt — "with Cool Band ⧉" — created when the owner pastes a remote patch
+URL. Not an event link: no handshake, no calendar placement, no counts;
+it has the standing of naming the band in the description
+(docs/adr/032).
+_Avoid_: remote link, federation link
+
 **Member count**:
 Admins plus members — never followers. A follower is an interested
 observer, not a member; follower interest is its own count. The two are
