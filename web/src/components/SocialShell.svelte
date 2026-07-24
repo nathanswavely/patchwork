@@ -351,7 +351,7 @@
       class:active={labelSheetOpen}
       onclick={() => { labelSheetOpen = !labelSheetOpen; }}
       title="The Label"
-      aria-label="About this quilt — the Label"
+      aria-label="About this quilt"
     >
       <Info size={20} weight="duotone" />
     </button>
@@ -366,7 +366,7 @@
       class:active={filterSheetOpen}
       onclick={() => { filterSheetOpen = !filterSheetOpen; }}
       title="Filter"
-      aria-label="Filter by tag{getActiveFilterCount() > 0 ? ` — ${getActiveFilterCount()} active` : ''}"
+      aria-label="Filter by tag{getActiveFilterCount() > 0 ? `, ${getActiveFilterCount()} active` : ''}"
       aria-expanded={filterSheetOpen}
     >
       <FunnelSimple size={16} weight="bold" />

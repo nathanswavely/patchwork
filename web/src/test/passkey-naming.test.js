@@ -68,6 +68,6 @@ describe('passkey naming happens after enrollment', () => {
   it('treats a failed rename as a rename failure, not a lost passkey', () => {
     // The credential is already enrolled and usable at this point; the copy
     // must not imply otherwise.
-    expect(src).toContain('your passkey still works');
+    expect(src).toContain('Your passkey still works');
   });
 });

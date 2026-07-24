@@ -159,7 +159,7 @@
                   <p class="warning-text">This will suspend the reported user's account.</p>
                 {:else if selectedAction === 'reset_appearance'}
                   <p class="warning-text">
-                    This clears the patch's chosen tile — the quilt decides its look again.
+                    This clears the patch's chosen tile, so the quilt decides its look again.
                     The patch itself is untouched.
                   </p>
                 {/if}

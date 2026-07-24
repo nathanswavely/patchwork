@@ -42,7 +42,7 @@
         class="chips-toggle"
         onclick={() => setChipsCollapsed(false)}
         title="Show filters"
-        aria-label="Show filters{count > 0 ? ` — ${count} active` : ''}"
+        aria-label="Show filters{count > 0 ? `, ${count} active` : ''}"
         aria-expanded="false"
       >
         <FunnelSimple size={16} weight="bold" />
@@ -56,7 +56,7 @@
           <button
             class="chip search-chip lt-resin lt-resin-frosted"
             onclick={() => setSearchQuery('')}
-            title={`Showing matches for “${query}” — click to clear`}
+            title={`Showing matches for “${query}”. Click to clear.`}
           >
             <span class="search-chip-q">“{query}”</span>
             <X size={11} weight="bold" />

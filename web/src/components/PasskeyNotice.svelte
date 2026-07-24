@@ -14,8 +14,8 @@
   <p class="passkey-notice" role="status">
     <strong>Passkey needed.</strong>
     To {action} you'll be asked to confirm with a passkey, and you don't have
-    one enrolled yet. <a href="/settings/security">Add a passkey</a> first —
-    it takes a moment and uses the sign-in you already have.
+    one enrolled yet. <a href="/settings/security">Add a passkey</a> first.
+    It takes a moment and uses the sign-in you already have.
   </p>
 {/if}
 

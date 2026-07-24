@@ -43,7 +43,7 @@
 <div class="admin-page">
   <h1>Archived Patches</h1>
   <p class="page-desc">
-    Archived patches are hidden everywhere but nothing is erased — members,
+    Archived patches are hidden everywhere but nothing is erased. Members,
     events, and history stay intact. Restoring returns a patch to what it was
     before, without notifying anyone.
   </p>

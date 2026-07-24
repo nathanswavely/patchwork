@@ -215,8 +215,8 @@
       <p class="muted">Not on the map.</p>
     {/if}
     <p class="muted tags-hint">
-      Placing a marker adds this patch to the map. The marker can be set
-      approximately — it is separate from the address above.
+      Placing a marker adds this patch to the map. The marker can be
+      approximate, and is separate from the address above.
     </p>
 
     {#if placingLocation}
