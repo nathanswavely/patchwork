@@ -230,6 +230,33 @@ The instance admin surface at /admin. Gets the same full-screen takeover
 treatment as a workspace.
 _Avoid_: admin area, dashboard (that is the user's personal page)
 
+## Layout & spacing
+
+**Gutter**:
+The inset between the viewport edge and content. Exactly one gutter applies
+to any point on screen — it is set once by the shell and never re-applied
+by a page or a surface inside it. Distinct from a card's own inner padding,
+which is a different token on a different scale: shrinking the gutter for a
+phone must not shrink what's inside the cards.
+_Avoid_: sashing (that is the framing between remote-quilt regions — it
+lives on the quilt canvas, not in page layout), margin, page padding,
+container padding
+
+**Card**:
+A bordered surface holding something that could move — an item that would
+still make sense on a different page (a patch tile, an event, a member, a
+proposal in a list). Sections of a page are not cards: a settings section
+is the page, so it separates with a heading and a rule, not a box.
+_Avoid_: panel, box, tile (that is a patch on the quilt), section (a
+section may or may not be a card)
+
+**Interruption**:
+The one other thing that earns a border: a surface that is loud on purpose
+because it breaks the reading flow — a danger zone, a warning callout, an
+unsaved-changes banner. A closed category, deliberately small, so that
+"but this needs a box" can't re-admit page sections as cards.
+_Avoid_: alert card, notice card, banner (that is the global bar's word)
+
 ## People & profiles
 
 **Person**:
