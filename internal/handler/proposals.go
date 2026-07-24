@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
@@ -40,13 +41,28 @@ var DefaultLiningBody = governance.DefaultLiningBody
 
 // CreateDefaultLining creates the lining for a node: kind='lining' is its
 // durable identity, and it is born public — the one doc the members-only
-// default never applies to (docs/adr/037).
+// default never applies to (docs/adr/037). Best-effort mirrors to the node's
+// governance repo exactly like AutoUpdateLinings' heal path does — until
+// this, the create path (including patch setup, docs/adr/039) was the one
+// write that never reached git, a live-verified bug.
 func CreateDefaultLining(db *database.DB, nodeID, userID string) {
 	id := auth.NewUUIDv7()
 	db.Exec(
 		`INSERT INTO governance_docs (id, node_id, title, body, kind, visibility, created_by) VALUES (?, ?, ?, ?, 'lining', 'public', ?)`,
 		id, nodeID, DefaultLiningTitle, DefaultLiningBody, userID,
 	)
+
+	if dataDir := governance.GetDataDir(); dataDir != "" {
+		var slug string
+		if err := db.QueryRow("SELECT slug FROM nodes WHERE id = ?", nodeID).Scan(&slug); err == nil {
+			commitMsg := "The lining, v" + strconv.Itoa(governance.CurrentLiningVersion()) + " (shipped with Patchwork)"
+			if _, gitErr := governance.DirectEdit(dataDir, nodeID,
+				governanceFilename(DefaultLiningTitle), governance.CurrentLiningBody(),
+				"Patchwork", "patchwork@"+slug+".local", commitMsg); gitErr != nil {
+				log.Printf("lining: git mirror for node %s: %v", nodeID, gitErr)
+			}
+		}
+	}
 }
 
 // ListProposals handles GET /api/v1/nodes/{slug}/proposals.

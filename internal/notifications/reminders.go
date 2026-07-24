@@ -35,6 +35,7 @@ func StartReminderWorker(ctx context.Context, notifier *Notifier) {
 func runReminders(n *Notifier) {
 	checkProposalDeadlines(n)
 	checkEventReminders(n)
+	checkClaimSetupExpiring(n)
 	cleanupOldNotifications(n)
 	ExpireStaleClaims(n.DB)
 }
@@ -161,6 +162,74 @@ func checkEventReminders(n *Notifier) {
 			remID, "event", id, "reminder",
 		)
 	}
+}
+
+// checkClaimSetupExpiring reminds a claimant once when their approved
+// claim's setup window closes within 3 days (docs/adr/039). The claim is
+// single-use and there is no permanent reminder-sent table entry for it
+// (that table is keyed by entity_type/entity_id, built for proposals and
+// events); instead this dedupes the same way instance_actor.go's inbound-AP
+// notifications do — checking the notifications table itself for a prior
+// send of this type to this user at this link, since the notifications
+// table carries no entity_id column of its own.
+func checkClaimSetupExpiring(n *Notifier) {
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	soon := time.Now().Add(3 * 24 * time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+
+	rows, err := n.DB.Query(
+		`SELECT cr.id, cr.user_id, cr.setup_expires_at, n.id, n.slug, n.name
+		 FROM claim_requests cr
+		 JOIN nodes n ON n.id = cr.node_id AND n.status = 'unclaimed' AND n.removed_at IS NULL
+		 WHERE cr.status = 'approved'
+		   AND cr.setup_expires_at IS NOT NULL
+		   AND cr.setup_expires_at > ?
+		   AND cr.setup_expires_at <= ?`,
+		now, soon,
+	)
+	if err != nil {
+		log.Printf("reminders: claim setup expiry query: %v", err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var claimID, userID, expiresAt, nodeID, slug, name string
+		if err := rows.Scan(&claimID, &userID, &expiresAt, &nodeID, &slug, &name); err != nil {
+			continue
+		}
+
+		link := "/patches/" + slug + "/setup"
+		var existing int
+		n.DB.QueryRow(
+			`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = ? AND link = ?`,
+			userID, string(ClaimSetupExpiring), link,
+		).Scan(&existing)
+		if existing > 0 {
+			continue
+		}
+
+		n.Notify(Event{
+			Type:     ClaimSetupExpiring,
+			NodeID:   nodeID,
+			NodeSlug: slug,
+			NodeName: name,
+			TargetID: userID,
+			EntityID: claimID,
+			Title:    "Your approved claim on " + name + " expires " + formatClaimDate(expiresAt),
+			Link:     link,
+		})
+	}
+}
+
+// formatClaimDate renders an ISO timestamp for claimant-facing copy
+// ("expires August 7, 2026"). Falls back to the raw string if parsing ever
+// fails — never worth failing a notification over.
+func formatClaimDate(iso string) string {
+	t, err := time.Parse("2006-01-02T15:04:05.000Z", iso)
+	if err != nil {
+		return iso
+	}
+	return t.Format("January 2, 2006")
 }
 
 // cleanupOldNotifications deletes notifications older than 90 days to prevent unbounded growth.

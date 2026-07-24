@@ -8,29 +8,65 @@
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
   import TagPicker from '../components/TagPicker.svelte';
   import { MOTIFS, MOTIF_KEYS } from '../lib/patchIcons.js';
-  import { PALETTES, PALETTE_KEYS } from '../lib/quiltTheme.js';
-  import { BLOCKS } from '../lib/quiltBlocks.js';
+  import { PALETTES, PALETTE_KEYS, paletteForPatch } from '../lib/quiltTheme.js';
+  import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
 
-  let name = $state('');
-  let description = $state('');
-  let address = $state('');
-  let website = $state('');
-  let visibility = $state('public');
+  // Patch setup (docs/adr/039) reuses this exact form: a claim is creation
+  // with prepopulated fields, not a handoff. mode='setup' prepopulates
+  // from the existing unclaimed listing (`initial`) instead of starting
+  // blank, locks the slug, and posts to the claim's setup endpoint before
+  // saving the (possibly edited) fields — everything else about the form,
+  // including the lining presentation below, is identical to creation.
+  let {
+    mode = 'create',
+    slug: setupSlug = '',
+    claimId = '',
+    expiresAt = '',
+    initial = null,
+  } = $props();
+
+  let name = $state(initial?.name || '');
+  let description = $state(initial?.description || '');
+  let address = $state(initial?.address || '');
+  let website = $state(initial?.website || '');
+  let visibility = $state(initial?.visibility || 'public');
   let template = $state('casual');
-  // Motif is optional at creation: '' means it is derived from the first
-  // motif-bearing tag, falling back to the quilt mark.
-  let motif = $state('');
   // Tags, in priority order — the first motif-bearing tag derives the
   // motif, and shared tags place new patches near their kind on the quilt.
-  let tags = $state([]);
+  let tags = $state(Array.isArray(initial?.tags) ? [...initial.tags] : []);
 
-  // Tile appearance. The form always shows a concrete pick — seeded
-  // randomly so every new patch starts somewhere real — and creation pins
-  // it. Drafting your own block and swapping fabrics live in Patch
-  // Settings → Appearance after creation.
-  let palette = $state(PALETTE_KEYS[Math.floor(Math.random() * PALETTE_KEYS.length)]);
-  let blockKey = $state(BLOCKS[Math.floor(Math.random() * BLOCKS.length)].key);
-  let rotation = $state([0, 90, 180, 270][Math.floor(Math.random() * 4)]);
+  // Tile appearance. At creation the form always shows a concrete pick —
+  // seeded randomly so every new patch starts somewhere real — and
+  // creation pins it. In setup mode it instead seeds from the listing's
+  // current effective appearance (chosen or hash-assigned) so the
+  // claimant sees what's already there rather than a reroll. Motif stays
+  // '' (auto-derived from tags) unless the listing has an explicit pick.
+  // Drafting your own block and swapping fabrics live in Patch Settings →
+  // Appearance after creation/setup.
+  const seededAppearance = (() => {
+    if (mode !== 'setup' || !initial) {
+      return {
+        palette: PALETTE_KEYS[Math.floor(Math.random() * PALETTE_KEYS.length)],
+        blockKey: BLOCKS[Math.floor(Math.random() * BLOCKS.length)].key,
+        rotation: [0, 90, 180, 270][Math.floor(Math.random() * 4)],
+        motif: '',
+      };
+    }
+    const ap = initial.appearance || null;
+    const pal = paletteForPatch(initial.id, ap);
+    return {
+      palette: pal.paletteKey || PALETTE_KEYS[0],
+      blockKey: BLOCKS[getBlockIndex(initial.id, ap)].key,
+      rotation: getRotation(initial.id, ap),
+      motif: ap?.icon && MOTIFS[ap.icon] ? ap.icon : '',
+    };
+  })();
+  // Motif is optional: '' means it is derived from the first motif-bearing
+  // tag, falling back to the quilt mark.
+  let motif = $state(seededAppearance.motif);
+  let palette = $state(seededAppearance.palette);
+  let blockKey = $state(seededAppearance.blockKey);
+  let rotation = $state(seededAppearance.rotation);
 
   const PREVIEW_SIZE = 84;
   const THUMB_SIZE = 40;
@@ -85,6 +121,11 @@
     return '';
   }
 
+  function formatExpiry(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
   async function handleSubmit() {
     const validationError = validate();
     if (validationError) {
@@ -94,6 +135,60 @@
 
     error = '';
     submitting = true;
+
+    const appearance = {
+      palette,
+      block: blockKey,
+      rotation,
+      ...(motif ? { icon: motif } : {}),
+    };
+
+    if (mode === 'setup') {
+      // Setup submit is the creation moment (docs/adr/039): the claim's
+      // setup endpoint activates the patch, forks governance from the
+      // chosen template, and adopts the lining; the (possibly edited)
+      // fields save separately. A PATCH failure after activation still
+      // lands the claimant on their new patch — the edits just wait in
+      // Settings.
+      try {
+        await api(`claims/${claimId}/setup`, { method: 'POST', body: { template } });
+      } catch (e) {
+        if (e.status === 410) {
+          showToast(e.message || 'Your setup window has expired. The patch is claimable again.', 'error');
+          navigate(`/patches/${setupSlug}`);
+        } else if (e.status === 409) {
+          showToast('This patch is no longer claimable.', 'error');
+          navigate(`/patches/${setupSlug}`);
+        } else {
+          error = e.message || 'Failed to complete setup';
+          showToast('Something went wrong. Please try again.', 'error');
+        }
+        submitting = false;
+        return;
+      }
+
+      try {
+        await api(`nodes/${setupSlug}`, {
+          method: 'PATCH',
+          body: {
+            name: name.trim(),
+            description: description.trim() || undefined,
+            address: address.trim() || undefined,
+            website: website.trim() || undefined,
+            visibility,
+            appearance,
+            tags: tags.length > 0 ? tags : undefined,
+          },
+        });
+        showToast('This patch is yours', 'success');
+      } catch (e) {
+        showToast('Patch set up. Finish edits in Patch Settings.', 'info');
+      }
+      navigate(`/patches/${setupSlug}`);
+      submitting = false;
+      return;
+    }
+
     try {
       const body = {
         name: name.trim(),
@@ -102,12 +197,7 @@
         website: website.trim() || undefined,
         visibility,
         template,
-        appearance: {
-          palette,
-          block: blockKey,
-          rotation,
-          ...(motif ? { icon: motif } : {}),
-        },
+        appearance,
         tags: tags.length > 0 ? tags : undefined,
       };
       const result = await api('nodes', { method: 'POST', body });
@@ -125,13 +215,29 @@
 <div class="page-fade">
   <div class="container-narrow">
     <div>
-      <h1>Create Patch</h1>
-      <p class="muted" style="margin-bottom: {getSubmissionsEnabled() ? '0.35rem' : '1.5rem'};">Start a new community, collective, venue, or group.</p>
-      {#if getSubmissionsEnabled()}
-        <p class="muted" style="margin-bottom: 1.5rem;">Creating a patch makes you its admin. Know a group that isn't yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest a patch</a> instead.</p>
+      {#if mode === 'setup'}
+        <h1>Set up your patch</h1>
+        <p class="muted" style="margin-bottom: 0.35rem;">Complete this patch's details to activate it.</p>
+        {#if expiresAt}
+          <p class="muted setup-expiry" style="margin-bottom: 1.5rem;">Approval expires {formatExpiry(expiresAt)}.</p>
+        {/if}
+      {:else}
+        <h1>Create Patch</h1>
+        <p class="muted" style="margin-bottom: {getSubmissionsEnabled() ? '0.35rem' : '1.5rem'};">Start a new community, collective, venue, or group.</p>
+        {#if getSubmissionsEnabled()}
+          <p class="muted" style="margin-bottom: 1.5rem;">Creating a patch makes you its admin. Know a group that isn't yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest a patch</a> instead.</p>
+        {/if}
       {/if}
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        {#if mode === 'setup'}
+          <div class="field">
+            <label for="setup-slug">Address</label>
+            <input id="setup-slug" type="text" value={setupSlug} disabled readonly />
+            <span class="field-hint muted">This is the patch's existing address.</span>
+          </div>
+        {/if}
+
         <div class="field">
           <label for="name">Name <span class="required">*</span></label>
           <input id="name" type="text" bind:value={name} disabled={submitting} required placeholder="e.g. Gallery Row, Lancaster Beats Lab" />
@@ -311,12 +417,16 @@
 
         <div class="field-actions">
           <button type="submit" class="btn btn-primary" disabled={submitting}>
-            {submitting ? 'Creating...' : 'Create Patch'}
+            {#if mode === 'setup'}
+              {submitting ? 'Finishing...' : 'Finish setup'}
+            {:else}
+              {submitting ? 'Creating...' : 'Create Patch'}
+            {/if}
           </button>
           <button
             type="button"
             class="btn btn-secondary"
-            onclick={() => navigate('/dashboard')}
+            onclick={() => navigate(mode === 'setup' ? `/patches/${setupSlug}` : '/dashboard')}
           >
             Cancel
           </button>

@@ -23,7 +23,10 @@
   async function handleAction(id, action) {
     try {
       await api(`admin/claims/${id}`, { method: 'PATCH', body: { action } });
-      showToast(action === 'approve' ? 'Claim approved. Ownership transferred.' : 'Claim rejected', 'success');
+      // Approval doesn't transfer ownership by itself (docs/adr/039) — it
+      // grants a single-use, expiring right to enter setup, which is where
+      // the claimant actually becomes admin.
+      showToast(action === 'approve' ? 'Claim approved. The claimant can now complete setup.' : 'Claim rejected', 'success');
       await loadClaims();
     } catch (e) {
       showToast(e.message || 'Failed', 'error');
@@ -65,7 +68,7 @@
             <p class="claim-evidence">{claim.evidence}</p>
           {/if}
           <div class="claim-actions">
-            <button class="btn btn-primary btn-sm" onclick={() => handleAction(claim.id, 'approve')}>Approve &amp; Transfer</button>
+            <button class="btn btn-primary btn-sm" onclick={() => handleAction(claim.id, 'approve')}>Approve</button>
             <button class="btn btn-danger btn-sm" onclick={() => handleAction(claim.id, 'reject')}>Reject</button>
           </div>
         </div>

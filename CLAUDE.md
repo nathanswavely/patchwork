@@ -67,7 +67,11 @@ Before claiming a number, check what's in flight, not just what's on disk:
 ```sh
 git ls-tree --name-only origin/main docs/adr/   # or migrations/
 gh pr list --state open                          # branches that haven't merged yet
+git branch --list                                # local branches, incl. other worktrees'
 ```
+
+Local branches matter as much as PRs: an unpushed worktree branch claimed
+ADR 038 invisibly to a session that checked only origin/main and open PRs.
 
 When running parallel agents or worktrees on one repo, **assign each its
 number up front** rather than letting each pick. If a collision does land,

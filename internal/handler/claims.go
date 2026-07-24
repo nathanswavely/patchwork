@@ -24,11 +24,17 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/mail"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 )
+
+// setupWindow is how long a verified or approved claim remains a valid,
+// unused right to enter patch setup before it lapses and the patch becomes
+// claimable again (docs/adr/039).
+const setupWindow = 14 * 24 * time.Hour
 
 // External lookups used by claim verification, swappable in tests.
 var (
@@ -236,6 +242,21 @@ func escapeHTMLClaims(s string) string {
 	return s
 }
 
+// expirePastDueApprovedClaims lazily moves any approved claim on a node
+// whose setup window has passed to 'expired' (docs/adr/039). There is no
+// standing worker for this — a claim only needs to be honest at the moments
+// something reads or acts on it, so this runs inline wherever that happens
+// (RequestClaim, MyClaim; SetupClaim does its own check so it can respond
+// with the specific 410).
+func expirePastDueApprovedClaims(db *database.DB, nodeID string) {
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec(
+		`UPDATE claim_requests SET status = 'expired', updated_at = ?
+		 WHERE node_id = ? AND status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?`,
+		now, nodeID, now,
+	)
+}
+
 // RequestClaim handles POST /api/v1/nodes/{slug}/claim.
 func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -252,6 +273,17 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		if nodeStatus != "unclaimed" {
 			http.Error(w, `{"error":"this patch is not available for claiming"}`, http.StatusBadRequest)
+			return
+		}
+
+		// An approved claim is a single-use right to enter setup, not a
+		// reservation held forever — expire it first so a lapsed claim never
+		// blocks a fresh one (docs/adr/039).
+		expirePastDueApprovedClaims(db, nodeID)
+		var approvedOpen int
+		db.QueryRow("SELECT COUNT(*) FROM claim_requests WHERE node_id = ? AND status = 'approved'", nodeID).Scan(&approvedOpen)
+		if approvedOpen > 0 {
+			http.Error(w, `{"error":"this patch has an approved claim awaiting setup"}`, http.StatusConflict)
 			return
 		}
 
@@ -380,6 +412,9 @@ func MyClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
+		// A reload must never show a stale approved claim as still actionable.
+		expirePastDueApprovedClaims(db, nodeID)
+
 		resp := map[string]interface{}{
 			"claim":               nil,
 			"methods":             claimMethodsFor(verificationDomain, cfg),
@@ -388,11 +423,12 @@ func MyClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 
 		var c model.ClaimRequest
+		var setupExpiresAt sql.NullString
 		err = db.QueryRow(
-			`SELECT id, method, evidence, status, verification_token, COALESCE(email,''), created_at
-			 FROM claim_requests WHERE node_id = ? AND user_id = ? AND status = 'pending'
+			`SELECT id, method, evidence, status, verification_token, COALESCE(email,''), created_at, setup_expires_at
+			 FROM claim_requests WHERE node_id = ? AND user_id = ? AND status IN ('pending','approved')
 			 ORDER BY created_at DESC LIMIT 1`, nodeID, user.ID,
-		).Scan(&c.ID, &c.Method, &c.Evidence, &c.Status, &c.VerificationToken, &c.Email, &c.CreatedAt)
+		).Scan(&c.ID, &c.Method, &c.Evidence, &c.Status, &c.VerificationToken, &c.Email, &c.CreatedAt, &setupExpiresAt)
 		if err == nil {
 			claim := map[string]interface{}{
 				"id":         c.ID,
@@ -401,6 +437,9 @@ func MyClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				"status":     c.Status,
 				"email":      c.Email,
 				"created_at": c.CreatedAt,
+			}
+			if setupExpiresAt.Valid {
+				claim["setup_expires_at"] = setupExpiresAt.String
 			}
 			claimInstructions(c.Method, c.VerificationToken, verificationDomain, c.Email, claim)
 			resp["claim"] = claim
@@ -559,7 +598,7 @@ func CompleteEmailClaim(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
-		claimID, nodeID, userID, _, slug, expiresAt, ok := lookupEmailClaim(db, req.Token)
+		claimID, _, userID, _, slug, expiresAt, ok := lookupEmailClaim(db, req.Token)
 		if !ok {
 			http.Error(w, `{"error":"invalid or already-used verification link"}`, http.StatusNotFound)
 			return
@@ -569,15 +608,16 @@ func CompleteEmailClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		if err := transferOwnership(db, nodeID, userID, claimID, r.RemoteAddr); err != nil {
-			http.Error(w, `{"error":"failed to transfer ownership"}`, http.StatusInternalServerError)
+		if err := approveClaim(db, claimID, userID, r.RemoteAddr); err != nil {
+			http.Error(w, `{"error":"failed to approve claim"}`, http.StatusInternalServerError)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"status": "approved",
-			"slug":   slug,
+			"status":         "approved",
+			"slug":           slug,
+			"setup_required": true,
 		})
 	}
 }
@@ -663,15 +703,16 @@ func VerifyClaim(db *database.DB) http.HandlerFunc {
 		}
 
 		if verified {
-			if err := transferOwnership(db, claim.NodeID, user.ID, claimID, r.RemoteAddr); err != nil {
-				http.Error(w, `{"error":"failed to transfer ownership"}`, http.StatusInternalServerError)
+			if err := approveClaim(db, claimID, user.ID, r.RemoteAddr); err != nil {
+				http.Error(w, `{"error":"failed to approve claim"}`, http.StatusInternalServerError)
 				return
 			}
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]interface{}{
-				"status":   "approved",
-				"verified": true,
-				"slug":     nodeSlug,
+				"status":         "approved",
+				"verified":       true,
+				"slug":           nodeSlug,
+				"setup_required": true,
 			})
 		} else {
 			w.Header().Set("Content-Type", "application/json")
@@ -804,16 +845,17 @@ func ReviewClaim(db *database.DB) http.HandlerFunc {
 		}
 
 		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		resp := map[string]interface{}{"status": "ok"}
 
 		switch req.Action {
 		case "approve":
-			if err := transferOwnership(db, claim.NodeID, claim.UserID, claimID, r.RemoteAddr); err != nil {
-				http.Error(w, `{"error":"failed to transfer ownership"}`, http.StatusInternalServerError)
+			if err := approveClaim(db, claimID, admin.ID, r.RemoteAddr); err != nil {
+				http.Error(w, `{"error":"failed to approve claim"}`, http.StatusInternalServerError)
 				return
 			}
 			db.Exec("UPDATE claim_requests SET reviewed_by = ?, review_note = ?, updated_at = ? WHERE id = ?",
 				admin.ID, req.Note, now, claimID)
-			auth.LogAuditEvent(db, admin.ID, "node.claim_approved", "node", claim.NodeID, r.RemoteAddr, "")
+			resp["setup_required"] = true
 
 		case "reject":
 			db.Exec("UPDATE claim_requests SET status = 'rejected', reviewed_by = ?, review_note = ?, updated_at = ? WHERE id = ?",
@@ -826,7 +868,7 @@ func ReviewClaim(db *database.DB) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		json.NewEncoder(w).Encode(resp)
 	}
 }
 
@@ -871,7 +913,9 @@ func AdminSetVerificationDomain(db *database.DB) http.HandlerFunc {
 }
 
 // AdminAssignOwner handles POST /api/v1/admin/nodes/{slug}/assign.
-// Admin directly assigns a user as owner of an unclaimed patch.
+// An admin directly names who setup is reserved for — consent still can't
+// be assigned, so this opens the same 14-day setup window a self-service
+// claim would (docs/adr/039), it just skips proof.
 func AdminAssignOwner(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		admin := middleware.UserFromContext(r.Context())
@@ -886,8 +930,8 @@ func AdminAssignOwner(db *database.DB) http.HandlerFunc {
 		}
 
 		// Verify node is unclaimed.
-		var nodeID, nodeStatus string
-		err := db.QueryRow("SELECT id, status FROM nodes WHERE slug = ? AND removed_at IS NULL", slug).Scan(&nodeID, &nodeStatus)
+		var nodeID, nodeStatus, nodeName string
+		err := db.QueryRow("SELECT id, status, name FROM nodes WHERE slug = ? AND removed_at IS NULL", slug).Scan(&nodeID, &nodeStatus, &nodeName)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -905,34 +949,133 @@ func AdminAssignOwner(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		if err := transferOwnership(db, nodeID, req.UserID, "", r.RemoteAddr); err != nil {
+		claimID := auth.NewUUIDv7()
+		now := time.Now().UTC()
+		nowStr := now.Format("2006-01-02T15:04:05.000Z")
+		expiresAt := now.Add(setupWindow).Format("2006-01-02T15:04:05.000Z")
+		_, err = db.Exec(
+			// verification_token is unused for the admin method but given an
+			// empty string rather than left NULL: model.ClaimRequest scans it
+			// into a plain string everywhere claims are read back.
+			`INSERT INTO claim_requests (id, node_id, user_id, method, evidence, status, verification_token, setup_expires_at, created_at, updated_at)
+			 VALUES (?, ?, ?, 'admin', 'Assigned by instance admin', 'approved', '', ?, ?, ?)`,
+			claimID, nodeID, req.UserID, expiresAt, nowStr, nowStr,
+		)
+		if err != nil {
 			http.Error(w, `{"error":"failed to assign owner"}`, http.StatusInternalServerError)
 			return
 		}
+		finalizeClaimApproval(db, claimID, nodeID, slug, nodeName, req.UserID, expiresAt)
 
 		auth.LogAuditEvent(db, admin.ID, "node.owner_assigned", "node", nodeID, r.RemoteAddr, fmt.Sprintf(`{"assigned_to":"%s"}`, req.UserID))
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok", "slug": slug})
+		json.NewEncoder(w).Encode(map[string]interface{}{"status": "ok", "slug": slug, "setup_required": true})
 	}
 }
 
-// transferOwnership moves an unclaimed patch to active status with a new owner.
-func transferOwnership(db *database.DB, nodeID, newOwnerID, claimID, remoteAddr string) error {
+// finalizeClaimApproval rejects any other pending claims on the node and
+// notifies the claimant that setup is open (docs/adr/039). Shared by every
+// path that lands a claim in 'approved' status — self-service verification,
+// admin review, and admin assignment — after each has done its own status
+// update however it needed to.
+func finalizeClaimApproval(db *database.DB, claimID, nodeID, nodeSlug, nodeName, claimantID, expiresAt string) {
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec(
+		"UPDATE claim_requests SET status = 'rejected', review_note = 'Another claim was approved', updated_at = ? WHERE node_id = ? AND status = 'pending' AND id != ?",
+		now, nodeID, claimID,
+	)
 
-	// Update node ownership and status.
-	_, err := db.Exec(
-		"UPDATE nodes SET owner_id = ?, status = 'active', updated_at = ? WHERE id = ?",
+	notify(notifications.Event{
+		Type:     notifications.ClaimApproved,
+		NodeID:   nodeID,
+		NodeSlug: nodeSlug,
+		NodeName: nodeName,
+		TargetID: claimantID,
+		EntityID: claimID,
+		Title:    "Your claim on " + nodeName + " was approved",
+		Body:     "Finish setting up the patch to make it yours. This approval expires " + formatClaimDate(expiresAt) + ".",
+		Link:     "/patches/" + nodeSlug + "/setup",
+	})
+}
+
+// formatClaimDate renders an ISO timestamp for claimant-facing copy
+// ("expires August 7, 2026"). Falls back to the raw string if parsing ever
+// fails — never worth failing a notification over.
+func formatClaimDate(iso string) string {
+	t, err := time.Parse("2006-01-02T15:04:05.000Z", iso)
+	if err != nil {
+		return iso
+	}
+	return t.Format("January 2, 2006")
+}
+
+// markClaimApproved transitions a pending claim to 'approved' and opens its
+// 14-day setup window, then runs the shared finalize step (docs/adr/039). It
+// never touches the nodes row — approval is no longer activation.
+func markClaimApproved(db *database.DB, claimID string) (nodeID string, err error) {
+	var nodeSlug, nodeName, claimantID string
+	err = db.QueryRow(
+		`SELECT cr.node_id, n.slug, n.name, cr.user_id FROM claim_requests cr JOIN nodes n ON cr.node_id = n.id WHERE cr.id = ?`,
+		claimID,
+	).Scan(&nodeID, &nodeSlug, &nodeName, &claimantID)
+	if err != nil {
+		return "", err
+	}
+
+	now := time.Now().UTC()
+	expiresAt := now.Add(setupWindow).Format("2006-01-02T15:04:05.000Z")
+	if _, err = db.Exec(
+		"UPDATE claim_requests SET status = 'approved', setup_expires_at = ?, updated_at = ? WHERE id = ?",
+		expiresAt, now.Format("2006-01-02T15:04:05.000Z"), claimID,
+	); err != nil {
+		return "", err
+	}
+
+	finalizeClaimApproval(db, claimID, nodeID, nodeSlug, nodeName, claimantID, expiresAt)
+	return nodeID, nil
+}
+
+// approveClaim marks a claim approved (docs/adr/039) and logs the audit
+// event under actorID — the claimant for self-service verification, the
+// admin for a manual review. Used by every path where an existing pending
+// claim is the thing being approved; AdminAssignOwner has no pending claim
+// to approve, so it builds one directly and calls finalizeClaimApproval
+// itself under its own "node.owner_assigned" audit event instead.
+func approveClaim(db *database.DB, claimID, actorID, remoteAddr string) error {
+	nodeID, err := markClaimApproved(db, claimID)
+	if err != nil {
+		return err
+	}
+	auth.LogAuditEvent(db, actorID, "node.claim_approved", "node", nodeID, remoteAddr, "")
+	return nil
+}
+
+// errNodeNotUnclaimed reports that activation lost the race: the node
+// stopped being unclaimed between the handler's check and the update.
+var errNodeNotUnclaimed = fmt.Errorf("node is not unclaimed")
+
+// activateClaimedNode is the activation core of patch setup (docs/adr/039):
+// flips an unclaimed patch to active under its new owner and grants them
+// admin membership. Used only by SetupClaim — approval no longer touches
+// the nodes row, so this is the one place a node actually goes live.
+func activateClaimedNode(db *database.DB, nodeID, newOwnerID, now string) error {
+	// Conditional on still-unclaimed so two racing setups can't both
+	// activate: the status check in SetupClaim is advisory, this is the gate.
+	res, err := db.Exec(
+		"UPDATE nodes SET owner_id = ?, status = 'active', updated_at = ? WHERE id = ? AND status = 'unclaimed'",
 		newOwnerID, now, nodeID,
 	)
 	if err != nil {
 		return err
 	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return errNodeNotUnclaimed
+	}
 
 	// Create admin membership for new owner (if not already a member). A
-	// failure here must fail the transfer: otherwise the patch goes active
-	// with an owner who holds no admin membership.
+	// failure here must fail setup: otherwise the patch goes active with an
+	// owner who holds no admin membership.
 	var existingMem int
 	db.QueryRow("SELECT COUNT(*) FROM memberships WHERE user_id = ? AND node_id = ?", newOwnerID, nodeID).Scan(&existingMem)
 	if existingMem == 0 {
@@ -947,14 +1090,107 @@ func transferOwnership(db *database.DB, nodeID, newOwnerID, claimID, remoteAddr 
 	if err != nil {
 		return fmt.Errorf("grant admin membership: %w", err)
 	}
-
-	// If there's a claim, mark it approved and reject all others.
-	if claimID != "" {
-		db.Exec("UPDATE claim_requests SET status = 'approved', updated_at = ? WHERE id = ?", now, claimID)
-		db.Exec("UPDATE claim_requests SET status = 'rejected', review_note = 'Another claim was approved', updated_at = ? WHERE node_id = ? AND status = 'pending' AND id != ?",
-			now, nodeID, claimID)
-	}
-
-	auth.LogAuditEvent(db, newOwnerID, "node.claimed", "node", nodeID, remoteAddr, "")
 	return nil
+}
+
+// SetupClaim handles POST /api/v1/claims/{id}/setup — the creation moment
+// (docs/adr/039). An approved claim is a single-use, expiring right to enter
+// the patch creation flow prepopulated with the listing's data: this
+// activates the node, grants the claimant admin, and adopts the
+// then-current lining out loud, exactly as at ordinary patch creation.
+func SetupClaim(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		claimID := r.PathValue("id")
+
+		// The setup form reuses the creation form, template picker included —
+		// setup allows everything creation allows (docs/adr/039). The body is
+		// optional; an empty one keeps the default template, same as before.
+		var req struct {
+			Template string `json:"template"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil && err != io.EOF {
+			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+			return
+		}
+		if req.Template != "" {
+			valid := false
+			for _, t := range governance.ValidTemplates {
+				if t == req.Template {
+					valid = true
+					break
+				}
+			}
+			if !valid {
+				http.Error(w, `{"error":"unknown governance template"}`, http.StatusBadRequest)
+				return
+			}
+		}
+
+		var claimUserID, claimStatus, nodeID, nodeSlug, nodeStatus string
+		var setupExpiresAt sql.NullString
+		err := db.QueryRow(
+			`SELECT cr.user_id, cr.status, cr.setup_expires_at, n.id, n.slug, n.status
+			 FROM claim_requests cr JOIN nodes n ON cr.node_id = n.id
+			 WHERE cr.id = ?`, claimID,
+		).Scan(&claimUserID, &claimStatus, &setupExpiresAt, &nodeID, &nodeSlug, &nodeStatus)
+		if err != nil {
+			http.Error(w, `{"error":"claim not found"}`, http.StatusNotFound)
+			return
+		}
+		if claimUserID != user.ID {
+			http.Error(w, `{"error":"not your claim"}`, http.StatusForbidden)
+			return
+		}
+		if claimStatus != "approved" {
+			http.Error(w, fmt.Sprintf(`{"error":"claim is %s, not approved"}`, claimStatus), http.StatusBadRequest)
+			return
+		}
+
+		now := time.Now().UTC()
+		nowStr := now.Format("2006-01-02T15:04:05.000Z")
+		if setupExpiresAt.Valid && setupExpiresAt.String != "" {
+			if exp, perr := time.Parse("2006-01-02T15:04:05.000Z", setupExpiresAt.String); perr == nil && now.After(exp) {
+				db.Exec("UPDATE claim_requests SET status = 'expired', updated_at = ? WHERE id = ?", nowStr, claimID)
+				http.Error(w, `{"error":"this claim's setup window has expired — the patch is claimable again"}`, http.StatusGone)
+				return
+			}
+		}
+		// No "awaiting setup" state exists — a claim that hasn't finished
+		// setup leaves the patch unclaimed to everyone (docs/adr/039). If it
+		// isn't unclaimed anymore, either this claim already consumed the
+		// window or someone else's did.
+		if nodeStatus != "unclaimed" {
+			http.Error(w, `{"error":"this patch is no longer unclaimed"}`, http.StatusConflict)
+			return
+		}
+
+		if err := activateClaimedNode(db, nodeID, user.ID, nowStr); err != nil {
+			if err == errNodeNotUnclaimed {
+				http.Error(w, `{"error":"this patch is no longer unclaimed"}`, http.StatusConflict)
+				return
+			}
+			http.Error(w, `{"error":"failed to complete setup"}`, http.StatusInternalServerError)
+			return
+		}
+
+		// Governance is created here, not at claim approval — an unclaimed
+		// patch carries none (docs/adr/039). Best-effort like every other
+		// governance write; a missing data dir (gitless test/dev runs) is
+		// tolerated, same as the startup backfill.
+		if dataDir := governance.GetDataDir(); dataDir != "" {
+			if err := governance.ForkForNode(dataDir, nodeID, req.Template); err != nil {
+				log.Printf("claims: governance fork for node %s: %v", nodeID, err)
+			}
+		}
+		CreateDefaultLining(db, nodeID, user.ID)
+
+		// The claim row stays 'approved' — a second setup attempt is refused
+		// because the node is no longer unclaimed, not because the claim
+		// changed state (docs/adr/039).
+		auth.LogAuditEvent(db, user.ID, "node.claimed", "node", nodeID, r.RemoteAddr, "")
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{"status": "ok", "slug": nodeSlug})
+	}
 }

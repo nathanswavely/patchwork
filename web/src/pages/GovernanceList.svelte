@@ -10,6 +10,7 @@
   let slug = $derived(patch.value.slug);
   let isMember = $derived(patch.value.isMember);
   let isAdmin = $derived(patch.value.isAdmin);
+  let isUnclaimed = $derived(patch.value.isUnclaimed);
   let membershipRole = $derived(patch.value.membershipRole);
   let followerPermissions = $derived(patch.value.followerPermissions);
   let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.charters === false);
@@ -18,7 +19,15 @@
   let loading = $state(true);
   let error = $state('');
 
+  // Unclaimed patches carry no governance (docs/adr/039) — this route is
+  // already unreachable through the shell's own guard, but a bookmarked
+  // or shared link should still bounce rather than show an empty
+  // document list.
   $effect(() => {
+    if (slug && isUnclaimed) {
+      navigate(`/patches/${slug}/events`);
+      return;
+    }
     if (slug) {
       loadDocs();
     }

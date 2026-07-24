@@ -162,6 +162,19 @@
 
   let finderProvider = $derived(workspaceFinderProvider(slug));
 
+  // Unclaimed patches carry no governance at all (docs/adr/039) — absence,
+  // not an empty state. workspaceTabs() already drops Governance from the
+  // tab row for one, but a direct URL to any governance sub-route (Hub,
+  // Documents, Proposals, a doc/proposal detail...) would otherwise still
+  // render past that; every one of them maps to activeTab 'governance'
+  // (see derivePatchTab in App.svelte), so this single guard covers all of
+  // them and lands on the workspace's actual live surface instead.
+  $effect(() => {
+    if (node && isUnclaimed && activeTab === 'governance') {
+      navigate(`${basePath}/events`);
+    }
+  });
+
   function handleTabClick(e, href) {
     e.preventDefault();
     navigate(href);

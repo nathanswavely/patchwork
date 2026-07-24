@@ -41,6 +41,7 @@ several branches are in flight.
 | [036](036-charters-are-published-not-exposed.md) | Charters are published, not exposed — per-document visibility |
 | [037](037-the-lining-is-bible.md) | The lining is bible — project-owned, always public, amendable only in the open |
 | [038](038-one-gutter-cards-must-be-liftable.md) | One gutter per screen; a card must be liftable |
+| [039](039-unclaimed-patches-carry-no-governance.md) | Unclaimed patches carry no governance; claims complete through setup |
 
 ## Adopted as design boundaries — implementation is backlog
 

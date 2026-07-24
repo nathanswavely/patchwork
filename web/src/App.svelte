@@ -37,6 +37,7 @@
   import PatchEvents from './pages/PatchEvents.svelte';
   import EventForm from './pages/EventForm.svelte';
   import PatchForm from './pages/PatchForm.svelte';
+  import PatchSetup from './pages/PatchSetup.svelte';
   import ProposalList from './pages/ProposalList.svelte';
   import ProposalForm from './pages/ProposalForm.svelte';
   import ProposalDetail from './pages/ProposalDetail.svelte';
@@ -111,6 +112,9 @@
   // Patch routes
   addRoute('/patches/new', 'patchNew');
   addRoute('/patches/:slug/claim', 'claimPatch');
+  // Patch setup (docs/adr/039): the second half of a claim, completed
+  // through the creation flow prepopulated with the listing's data.
+  addRoute('/patches/:slug/setup', 'patchSetup');
 
   // Email-claim link landing (docs/adr/030) — public: the token is the
   // proof, and the click may happen in a browser with no session.
@@ -227,18 +231,23 @@
   // it renders inside the shell so admins keep the global nav and identity).
   let isSocialRoute = $derived(!isStandaloneRoute);
 
-  // Derive active tab for PatchShell
+  // Derive active tab for PatchShell. 'claimPatch' gets its own id, distinct
+  // from 'governance': it's the one patch-shell route an unclaimed patch
+  // must render, and PatchShell redirects any 'governance'-tagged route
+  // away from an unclaimed patch (docs/adr/039) — folding claim into
+  // 'governance' here would bounce the claim page itself.
   function derivePatchTab(name) {
     if (name === 'patchMembers') return 'members';
     if (name === 'patchEvents') return 'events';
     if (name.startsWith('patchSettings')) return 'settings';
+    if (name === 'claimPatch') return 'claim';
     return 'governance';
   }
   let patchTab = $derived(derivePatchTab(routeName));
 
   // Auth-guarded routes.
   let authRequired = $derived(
-    ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchNew', 'eventNew', 'eventEdit',
+    ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchSetup', 'patchNew', 'eventNew', 'eventEdit',
      'governanceProposalNew', 'governanceDocNew',
      'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminLabel', 'adminLegal'].includes(routeName)
   );
@@ -370,7 +379,7 @@
   // exempt: creating a patch is the natural first act on a fresh instance.
   $effect(() => {
     if (isLoggedIn() && isMembershipsLoaded() && getMemberships().length === 0) {
-      if (!['welcome', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchNew'].includes(routeName)
+      if (!['welcome', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew'].includes(routeName)
           && !isOnboardingDismissed(getUser()?.id)) {
         navigate('/welcome');
       }
@@ -564,6 +573,8 @@
         <Dashboard />
       {:else if routeName === 'patchNew'}
         <PatchForm />
+      {:else if routeName === 'patchSetup'}
+        <PatchSetup slug={routeParams.slug} />
       {:else if routeName === 'eventNew'}
         <EventForm />
       {:else if routeName === 'eventEdit'}

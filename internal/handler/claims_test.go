@@ -6,6 +6,7 @@ package handler_test
 // sender, admin via the review endpoint.
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,6 +18,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 )
@@ -61,6 +63,19 @@ func claimStatus(t *testing.T, db *database.DB, claimID string) string {
 		t.Fatalf("claim status: %v", err)
 	}
 	return s
+}
+
+// claimSetupExpiresAt reads a claim's setup window, empty if unset.
+func claimSetupExpiresAt(t *testing.T, db *database.DB, claimID string) string {
+	t.Helper()
+	var s sql.NullString
+	if err := db.QueryRow("SELECT setup_expires_at FROM claim_requests WHERE id = ?", claimID).Scan(&s); err != nil {
+		t.Fatalf("claim setup_expires_at: %v", err)
+	}
+	if !s.Valid {
+		return ""
+	}
+	return s.String
 }
 
 // --- Concurrency + per-user rules ---
@@ -157,13 +172,27 @@ func TestClaimDNSVerify(t *testing.T) {
 	if vr["verified"] != true {
 		t.Fatalf("dns verification failed: %s", w.Body.String())
 	}
+	if vr["setup_required"] != true {
+		t.Fatalf("verify response missing setup_required: %s", w.Body.String())
+	}
 
+	// Verification approves the claim and opens a setup window — it does not
+	// activate the patch (docs/adr/039). Every visitor still sees "unclaimed"
+	// until setup is submitted.
 	status, ownerID := nodeState(t, db, nodeID)
-	if status != "active" || ownerID != alice.ID {
-		t.Fatalf("node after claim: status=%s owner=%s", status, ownerID)
+	if status != "unclaimed" || ownerID != owner.ID {
+		t.Fatalf("node after verify: status=%s owner=%s, want still unclaimed under the original owner", status, ownerID)
 	}
 	if s := claimStatus(t, db, claimID); s != "approved" {
 		t.Fatalf("winning claim status: %s", s)
+	}
+	if claimSetupExpiresAt(t, db, claimID) == "" {
+		t.Fatal("approved claim has no setup_expires_at")
+	}
+	var claimant string
+	db.QueryRow("SELECT user_id FROM claim_requests WHERE id = ?", claimID).Scan(&claimant)
+	if claimant != alice.ID {
+		t.Fatalf("approved claim belongs to %s, want alice", claimant)
 	}
 	// First proof wins: the competing claim is auto-rejected.
 	if s := claimStatus(t, db, bobClaimID); s != "rejected" {
@@ -187,7 +216,7 @@ func TestClaimMetaTagVerify(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := claimCfg(false)
 	owner, _ := createTestUser(t, db, "owner", "member")
-	alice, aliceToken := createTestUser(t, db, "alice", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
 
 	nodeID := createTestNode(t, db, owner.ID, "Meta Venue", "meta-venue", "open")
 	makeClaimable(t, db, nodeID, "metavenue.example")
@@ -220,7 +249,8 @@ func TestClaimMetaTagVerify(t *testing.T) {
 		t.Fatal("verification passed without the meta tag")
 	}
 
-	// Page with the tag: succeeds and transfers.
+	// Page with the tag: succeeds — approves the claim and opens setup,
+	// but the patch stays unclaimed until setup is submitted (docs/adr/039).
 	page = fmt.Sprintf(`<html><head><meta name="patchwork-verify" content="%s"></head></html>`, metaContent)
 	r = authedRequest("POST", "/api/v1/claims/"+claimID+"/verify", nil, aliceToken)
 	w = serveMux(t, db, "POST", "/api/v1/claims/{id}/verify", handler.VerifyClaim(db), r)
@@ -228,9 +258,18 @@ func TestClaimMetaTagVerify(t *testing.T) {
 	if vr["verified"] != true {
 		t.Fatalf("meta_tag verification failed: %s", w.Body.String())
 	}
+	if vr["setup_required"] != true {
+		t.Fatalf("verify response missing setup_required: %s", w.Body.String())
+	}
 	status, ownerID := nodeState(t, db, nodeID)
-	if status != "active" || ownerID != alice.ID {
-		t.Fatalf("node after claim: status=%s owner=%s", status, ownerID)
+	if status != "unclaimed" || ownerID != owner.ID {
+		t.Fatalf("node after verify: status=%s owner=%s, want still unclaimed", status, ownerID)
+	}
+	if s := claimStatus(t, db, claimID); s != "approved" {
+		t.Fatalf("claim after verify: %s, want approved", s)
+	}
+	if claimSetupExpiresAt(t, db, claimID) == "" {
+		t.Fatal("approved claim has no setup_expires_at")
 	}
 }
 
@@ -284,15 +323,34 @@ func TestClaimEmailRoundTrip(t *testing.T) {
 		t.Fatal("GET completed the claim — it must be read-only")
 	}
 
-	// The POST completes it, no session needed.
+	// The POST completes it, no session needed. It approves the claim and
+	// opens setup — the patch itself stays unclaimed (docs/adr/039).
 	r = authedRequest("POST", "/api/v1/claims/verify-email", map[string]interface{}{"token": token}, "")
 	w = servePublicMux(t, "POST", "/api/v1/claims/verify-email", handler.CompleteEmailClaim(db), r)
 	if w.Code != http.StatusOK {
 		t.Fatalf("complete email claim: %d %s", w.Code, w.Body.String())
 	}
+	var completeResp map[string]interface{}
+	json.Unmarshal(w.Body.Bytes(), &completeResp)
+	if completeResp["setup_required"] != true {
+		t.Fatalf("complete-email response missing setup_required: %s", w.Body.String())
+	}
 	status, ownerID := nodeState(t, db, nodeID)
-	if status != "active" || ownerID != alice.ID {
-		t.Fatalf("node after email claim: status=%s owner=%s", status, ownerID)
+	if status != "unclaimed" || ownerID != owner.ID {
+		t.Fatalf("node after email claim: status=%s owner=%s, want still unclaimed", status, ownerID)
+	}
+	var emailClaimID string
+	db.QueryRow("SELECT id FROM claim_requests WHERE node_id = ? AND method = 'email'", nodeID).Scan(&emailClaimID)
+	if s := claimStatus(t, db, emailClaimID); s != "approved" {
+		t.Fatalf("claim after email complete: %s, want approved", s)
+	}
+	var emailClaimant string
+	db.QueryRow("SELECT user_id FROM claim_requests WHERE id = ?", emailClaimID).Scan(&emailClaimant)
+	if emailClaimant != alice.ID {
+		t.Fatalf("approved claim belongs to %s, want alice", emailClaimant)
+	}
+	if claimSetupExpiresAt(t, db, emailClaimID) == "" {
+		t.Fatal("approved email claim has no setup_expires_at")
 	}
 
 	// Token is single-use: the claim is no longer pending, so replay dies.
@@ -472,7 +530,8 @@ func TestAdminReviewClaim(t *testing.T) {
 		t.Fatalf("after reject: %s", s)
 	}
 
-	// New claim, approve: ownership transfers.
+	// New claim, approve: opens the claimant's setup window — it does not
+	// transfer ownership by itself (docs/adr/039).
 	resp, _ = openClaim(t, db, cfg, aliceToken, "review-venue", map[string]interface{}{"method": "admin", "evidence": "here are the deeds"})
 	claimID = resp["id"].(string)
 	r = authedRequest("PATCH", "/api/v1/admin/claims/"+claimID, map[string]interface{}{"action": "approve"}, adminToken)
@@ -480,9 +539,364 @@ func TestAdminReviewClaim(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("approve: got %d %s", w.Code, w.Body.String())
 	}
+	var reviewResp map[string]interface{}
+	json.Unmarshal(w.Body.Bytes(), &reviewResp)
+	if reviewResp["setup_required"] != true {
+		t.Fatalf("review-approve response missing setup_required: %s", w.Body.String())
+	}
+	status, ownerID := nodeState(t, db, nodeID)
+	if status != "unclaimed" || ownerID != owner.ID {
+		t.Fatalf("node after approve: status=%s owner=%s, want still unclaimed", status, ownerID)
+	}
+	if s := claimStatus(t, db, claimID); s != "approved" {
+		t.Fatalf("claim after review-approve: %s, want approved", s)
+	}
+	if claimSetupExpiresAt(t, db, claimID) == "" {
+		t.Fatal("reviewed claim has no setup_expires_at")
+	}
+	var reviewedClaimant string
+	db.QueryRow("SELECT user_id FROM claim_requests WHERE id = ?", claimID).Scan(&reviewedClaimant)
+	if reviewedClaimant != alice.ID {
+		t.Fatalf("approved claim belongs to %s, want alice", reviewedClaimant)
+	}
+
+	// The claimant completes setup like any other claim.
+	r = authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, aliceToken)
+	w = serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+	status, ownerID = nodeState(t, db, nodeID)
+	if status != "active" || ownerID != alice.ID {
+		t.Fatalf("node after setup: status=%s owner=%s", status, ownerID)
+	}
+}
+
+// --- Patch setup (docs/adr/039) ---
+
+// approveAdminClaim opens an admin-method claim for claimantToken and has
+// adminToken approve it, returning the claim ID with status 'approved' and
+// setup_expires_at set — the shared starting point for every setup test.
+func approveAdminClaim(t *testing.T, db *database.DB, cfg *config.Config, slug, claimantToken, adminToken string) string {
+	t.Helper()
+	resp, code := openClaim(t, db, cfg, claimantToken, slug, map[string]interface{}{"method": "admin", "evidence": "it's mine"})
+	if code != http.StatusCreated {
+		t.Fatalf("open claim: got %d", code)
+	}
+	claimID := resp["id"].(string)
+
+	r := authedRequest("PATCH", "/api/v1/admin/claims/"+claimID, map[string]interface{}{"action": "approve"}, adminToken)
+	w := serveAdminMux(t, db, "PATCH", "/api/v1/admin/claims/{id}", handler.ReviewClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("approve: got %d %s", w.Code, w.Body.String())
+	}
+	return claimID
+}
+
+func TestSetupClaimHappyPath(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	alice, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	tmp := t.TempDir()
+	governance.SetDataDir(tmp)
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	nodeID := createTestNode(t, db, owner.ID, "Setup Venue", "setup-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "setup-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+	var resp map[string]interface{}
+	json.Unmarshal(w.Body.Bytes(), &resp)
+	if resp["status"] != "ok" || resp["slug"] != "setup-venue" {
+		t.Fatalf("setup response: %s", w.Body.String())
+	}
+
 	status, ownerID := nodeState(t, db, nodeID)
 	if status != "active" || ownerID != alice.ID {
-		t.Fatalf("node after approve: status=%s owner=%s", status, ownerID)
+		t.Fatalf("node after setup: status=%s owner=%s", status, ownerID)
+	}
+
+	var memRole, memStatus string
+	if err := db.QueryRow("SELECT role, status FROM memberships WHERE user_id = ? AND node_id = ?", alice.ID, nodeID).Scan(&memRole, &memStatus); err != nil {
+		t.Fatalf("claimant membership missing: %v", err)
+	}
+	if memRole != "admin" || memStatus != "active" {
+		t.Fatalf("claimant membership: role=%s status=%s", memRole, memStatus)
+	}
+
+	var kind, docBody string
+	if err := db.QueryRow("SELECT kind, body FROM governance_docs WHERE node_id = ?", nodeID).Scan(&kind, &docBody); err != nil {
+		t.Fatalf("lining row missing after setup: %v", err)
+	}
+	if kind != "lining" || docBody != governance.CurrentLiningBody() {
+		t.Fatalf("lining after setup: kind=%s, body matches current=%v", kind, docBody == governance.CurrentLiningBody())
+	}
+
+	// The lining is adopted out loud on setup, git mirror included — the
+	// create-path bug this task also fixes.
+	gitBody, err := governance.GetDocument(tmp, nodeID, "community-standards.md")
+	if err != nil || gitBody != docBody {
+		t.Errorf("git mirror missing or mismatched at setup: err=%v", err)
+	}
+
+	// The claim itself stays 'approved' — consumed is distinguished by the
+	// node being active, not by a claim status change (docs/adr/039).
+	if s := claimStatus(t, db, claimID); s != "approved" {
+		t.Fatalf("claim after setup: %s, want still approved", s)
+	}
+}
+
+func TestSetupClaimWithTemplate(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	tmp := t.TempDir()
+	governance.SetDataDir(tmp)
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	nodeID := createTestNode(t, db, owner.ID, "Formal Venue", "formal-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "formal-venue", aliceToken, adminToken)
+
+	// Setup reuses the creation form, template picker included (docs/adr/039).
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", map[string]interface{}{"template": "formal"}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup with template: got %d %s", w.Code, w.Body.String())
+	}
+
+	if _, err := governance.GetDocument(tmp, nodeID, "charter.md"); err != nil {
+		t.Errorf("formal template file missing from forked repo: %v", err)
+	}
+}
+
+func TestSetupClaimUnknownTemplateRejected(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Bad Template Venue", "bad-template-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "bad-template-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", map[string]interface{}{"template": "not-a-template"}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("unknown template: got %d, want 400: %s", w.Code, w.Body.String())
+	}
+	if status, _ := nodeState(t, db, nodeID); status != "unclaimed" {
+		t.Fatal("node activated despite rejected template")
+	}
+}
+
+func TestSetupClaimForbiddenForOtherUser(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, bobToken := createTestUser(t, db, "bob", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Guarded Venue", "guarded-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "guarded-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, bobToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("foreign setup: got %d, want 403", w.Code)
+	}
+	if status, _ := nodeState(t, db, nodeID); status != "unclaimed" {
+		t.Fatal("node activated by a foreign setup attempt")
+	}
+}
+
+func TestSetupClaimAfterExpiry(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Lapsed Venue", "lapsed-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "lapsed-venue", aliceToken, adminToken)
+
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusGone {
+		t.Fatalf("expired setup window: got %d, want 410: %s", w.Code, w.Body.String())
+	}
+	if s := claimStatus(t, db, claimID); s != "expired" {
+		t.Fatalf("claim after expired setup attempt: %s, want expired", s)
+	}
+	if status, _ := nodeState(t, db, nodeID); status != "unclaimed" {
+		t.Fatal("node activated after setup window expired")
+	}
+}
+
+func TestSetupClaimSecondAttemptConflicts(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Twice Venue", "twice-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "twice-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("first setup: got %d %s", w.Code, w.Body.String())
+	}
+
+	r = authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, aliceToken)
+	w = serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusConflict {
+		t.Fatalf("second setup attempt: got %d, want 409: %s", w.Code, w.Body.String())
+	}
+	_ = nodeID
+}
+
+func TestRequestClaimBlockedByApprovedClaim(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, bobToken := createTestUser(t, db, "bob", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Contested Venue", "contested-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	approveAdminClaim(t, db, cfg, "contested-venue", aliceToken, adminToken)
+
+	// Someone else can't open a fresh claim while alice's setup window is
+	// still open — a claim is single-use, but it isn't nothing either
+	// (docs/adr/039).
+	if _, code := openClaim(t, db, cfg, bobToken, "contested-venue", map[string]interface{}{"method": "admin", "evidence": "actually me"}); code != http.StatusConflict {
+		t.Fatalf("claim while another is approved: got %d, want 409", code)
+	}
+}
+
+func TestRequestClaimNotBlockedByExpiredApprovedClaim(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, bobToken := createTestUser(t, db, "bob", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Lapsed Open Venue", "lapsed-open-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "lapsed-open-venue", aliceToken, adminToken)
+
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+
+	if _, code := openClaim(t, db, cfg, bobToken, "lapsed-open-venue", map[string]interface{}{"method": "admin", "evidence": "now it's me"}); code != http.StatusCreated {
+		t.Fatalf("claim after the prior one expired: got %d, want 201", code)
+	}
+	if s := claimStatus(t, db, claimID); s != "expired" {
+		t.Fatalf("lapsed claim not lazily expired: %s", s)
+	}
+}
+
+func TestMyClaimReturnsApprovedClaim(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Approved Reload Venue", "approved-reload-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	approveAdminClaim(t, db, cfg, "approved-reload-venue", aliceToken, adminToken)
+
+	r := authedRequest("GET", "/api/v1/nodes/approved-reload-venue/claims/mine", nil, aliceToken)
+	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/claims/mine", handler.MyClaim(db, cfg), r)
+	var mine struct {
+		Claim map[string]interface{} `json:"claim"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &mine)
+	if mine.Claim == nil {
+		t.Fatalf("no claim returned: %s", w.Body.String())
+	}
+	if mine.Claim["status"] != "approved" {
+		t.Fatalf("claim status = %v, want approved", mine.Claim["status"])
+	}
+	if s, _ := mine.Claim["setup_expires_at"].(string); s == "" {
+		t.Fatalf("claims/mine missing setup_expires_at: %s", w.Body.String())
+	}
+}
+
+func TestAdminAssignOwnerOpensSetupWindow(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	assignee, assigneeToken := createTestUser(t, db, "assignee", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Assigned Venue", "assigned-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+
+	r := authedRequest("POST", "/api/v1/admin/nodes/assigned-venue/assign", map[string]string{"user_id": assignee.ID}, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/admin/nodes/{slug}/assign", handler.AdminAssignOwner(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("assign: got %d %s", w.Code, w.Body.String())
+	}
+	var resp map[string]interface{}
+	json.Unmarshal(w.Body.Bytes(), &resp)
+	if resp["setup_required"] != true {
+		t.Fatalf("assign response missing setup_required: %s", w.Body.String())
+	}
+
+	// Consent can't be assigned: the patch stays unclaimed, and what exists
+	// is a claim (approved, no proof required) rather than an activation.
+	status, ownerID := nodeState(t, db, nodeID)
+	if status != "unclaimed" || ownerID != owner.ID {
+		t.Fatalf("node after assign: status=%s owner=%s, want still unclaimed", status, ownerID)
+	}
+	var method, evidence, claimStat string
+	var setupExpiresAt sql.NullString
+	if err := db.QueryRow("SELECT method, evidence, status, setup_expires_at FROM claim_requests WHERE node_id = ? AND user_id = ?", nodeID, assignee.ID).
+		Scan(&method, &evidence, &claimStat, &setupExpiresAt); err != nil {
+		t.Fatalf("assigned claim missing: %v", err)
+	}
+	if method != "admin" || evidence != "Assigned by instance admin" || claimStat != "approved" || !setupExpiresAt.Valid {
+		t.Fatalf("assigned claim: method=%s evidence=%s status=%s setup_expires_at.Valid=%v", method, evidence, claimStat, setupExpiresAt.Valid)
+	}
+
+	// The assignee still has to complete setup — assignment isn't a shortcut
+	// past the creation moment.
+	var claimID string
+	db.QueryRow("SELECT id FROM claim_requests WHERE node_id = ? AND user_id = ?", nodeID, assignee.ID).Scan(&claimID)
+	r = authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, assigneeToken)
+	w = serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("assignee setup: got %d %s", w.Code, w.Body.String())
+	}
+	status, ownerID = nodeState(t, db, nodeID)
+	if status != "active" || ownerID != assignee.ID {
+		t.Fatalf("node after assignee setup: status=%s owner=%s", status, ownerID)
 	}
 }
 
