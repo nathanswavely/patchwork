@@ -1,0 +1,222 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  # Manual runs, e.g. re-publishing the image after a registry permission fix.
+  workflow_dispatch:
+
+# Least privilege by default. `packages: write` lives on the `image` job only —
+# the `test` job runs project code and third-party deps, and must not hold a
+# token that can push to ghcr.io.
+permissions:
+  contents: read
+
+# Serialize per ref so two quick pushes to main can't race and leave the loser
+# as :latest (production pulls :latest). Tag builds are never cancelled — a
+# release must publish even if another tag lands while it's running.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+# Every third-party action is pinned to a full commit SHA: a tag is mutable, and
+# a moved tag would execute attacker code inside CI. The trailing comment is the
+# human-readable version; dependabot (.github/dependabot.yml) keeps both current.
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build frontend
+        run: |
+          cd web
+          npm ci
+          npm run build
+
+      # govulncheck below covers Go; until this step existed nothing at all
+      # looked at the frontend tree, which is the half that ships to browsers.
+      #
+      # Two thresholds on purpose. Production deps are executed by every visitor,
+      # so a moderate advisory there (an XSS bypass in dompurify, say) should stop
+      # the build; dev tooling only runs on our own machines, so it gates at high
+      # to avoid blocking merges on a ReDoS in a test runner. Neither is symbol-
+      # level like govulncheck — expect the occasional unreachable advisory, and
+      # fix it forward rather than adding blanket excludes.
+      - name: npm audit (production deps)
+        run: cd web && npm audit --omit=dev --audit-level=moderate
+
+      - name: npm audit (all deps)
+        run: cd web && npm audit --audit-level=high
+
+      # Verifies each package's registry signature against npm's public keys —
+      # catches a tampered tarball served for a legitimate version, which the
+      # advisory database above cannot see.
+      - name: npm audit signatures
+        run: cd web && npm audit signatures
+
+      - name: Frontend unit tests
+        run: cd web && npx vitest run
+
+      # go.mod's `go` directive carries a full patch version on purpose: setup-go
+      # installs it exactly, so a bare `go 1.25` would hand CI a toolchain with
+      # every stdlib CVE patched since .0 still live. govulncheck below enforces it.
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+
+      - name: Go build
+        run: go build ./...
+
+      - name: Go vet
+        run: go vet ./...
+
+      - name: Go tests
+        run: go test ./...
+
+      # Fails the build on a known CVE reachable from our call graph. Symbol-level
+      # analysis, so an advisory in a dependency we never call doesn't block merges.
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
+
+  smoke:
+    # Recreate-survival test: builds the real image, writes data through the
+    # API, force-recreates the container, and checks the data is still there.
+    # It also asserts the image's HEALTHCHECK reports healthy.
+    #
+    # This runs in CI because it silently rotted otherwise — the script broke
+    # when signup started requiring a chosen username (adr/013) and nobody
+    # noticed, so the regression test for the 2026-07-19 data-loss incident
+    # was dead for weeks. Nothing else in CI exercises the container.
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Recreate-survival smoke test
+        run: scripts/smoke-recreate.sh
+
+  e2e:
+    # The full Playwright suites — seeded instance and empty instance — against
+    # a real backend (`go run`, cgo/sqlite) plus Vite. The suites boot their own
+    # isolated stacks on checkout-derived ports (web/e2e/ports.js) and fall back
+    # to patchwork.yaml.example, so the job needs no services and no setup
+    # beyond toolchains and a Chromium.
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+
+      - name: Install frontend deps
+        run: cd web && npm ci
+
+      - name: Install Playwright Chromium
+        run: cd web && npx playwright install --with-deps chromium
+
+      - name: e2e (seeded instance)
+        run: cd web && npx playwright test
+
+      - name: e2e (empty instance)
+        run: cd web && npx playwright test --config playwright.empty.config.js
+
+  image:
+    # Publish to ghcr.io on pushes to main and version tags. Version tags are
+    # multi-arch (amd64 + arm64 for Raspberry Pi); main pushes are amd64 only,
+    # so :latest is amd64 — pull a version tag for arm64, or build from source
+    # (docker-compose.yaml does, which is the documented Pi path).
+    #
+    # Hard-gated on the whole pipeline: nothing publishes — release tag or
+    # :latest — unless unit suites, the recreate-survival smoke test, AND the
+    # full e2e suites are green. Production pulls these images; a red suite
+    # must mean no artifact. The cost is publish latency (e2e is the long
+    # pole); a genuinely flaky e2e test blocks releases and should be treated
+    # as a release blocker itself, not routed around.
+    needs: [test, smoke, e2e]
+    # Publishes on pushes and on manual runs (workflow_dispatch only fires
+    # from main, so a manual run republishes :latest).
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # Required by build-push-action to push provenance/SBOM attestations.
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      # The binary's -X Version stamp used to come from `git describe` inside the
+      # Dockerfile, which silently degraded to a bare SHA: actions/checkout is
+      # shallow and fetches no tags, so main builds never saw one. Pass it in
+      # explicitly instead — the tag on a release, the full commit SHA otherwise.
+      - name: Resolve version stamp
+        id: version
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          # arm64 (Raspberry Pi) builds under QEMU emulation and costs ~15min.
+          # It matters at release time, not per-merge: main pushes publish
+          # amd64 only; version tags publish the full multi-arch image.
+          platforms: ${{ startsWith(github.ref, 'refs/tags/') && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
+          push: true
+          build-args: |
+            VERSION=${{ steps.version.outputs.value }}
+          tags: ${{ steps.meta.outputs.tags }}
+          # Carries org.opencontainers.image.revision, so `docker inspect` on the
+          # server answers "what commit is this?" without guessing.
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          # Full build provenance + SBOM. This project asks other communities to
+          # run its image; they should be able to audit what's in it.
+          provenance: mode=max
+          sbom: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

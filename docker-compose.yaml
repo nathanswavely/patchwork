@@ -1,0 +1,58 @@
+services:
+  patchwork:
+    # Source-build path: `docker compose up -d --build` compiles the image
+    # locally. To run a prebuilt image from ghcr instead, copy
+    # docker-compose.override.yml.example to docker-compose.override.yml —
+    # it sets `image:` and compose then pulls rather than builds.
+    # The two paths are mutually exclusive: with the override in place, do
+    # NOT pass --build (it would rebuild locally and overwrite the pinned
+    # ghcr tag with an untested local image). See docs/DEPLOYMENT.md.
+    build: .
+    restart: unless-stopped
+    volumes:
+      - data:/data
+      - ./patchwork.yaml:/patchwork.yaml:ro
+    expose:
+      - "8080"
+    # Docker's default json-file driver has no size cap, so logs grow until
+    # the disk fills. 10MB x 3 is ~30MB worst case per container.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Sized for the project's floor target (Raspberry Pi 4 / 2GB VPS, often
+    # with no swap): generous headroom over the app's steady state, but low
+    # enough that a runaway allocation kills the container instead of the
+    # host. Raise if you run a large instance.
+    mem_limit: 1g
+    pids_limit: 512
+    # HEALTHCHECK is baked into the image (`patchwork -healthcheck`).
+    # `docker compose ps` shows the result.
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      # Set DOMAIN in a .env file next to this compose file (or export it)
+      # to get automatic HTTPS via Let's Encrypt. Defaults to localhost.
+      DOMAIN: ${DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    mem_limit: 256m
+    pids_limit: 128
+
+volumes:
+  data:
+  caddy_data:
+  caddy_config:

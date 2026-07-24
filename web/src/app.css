@@ -1,0 +1,351 @@
+:root {
+  --radius: 6px;
+  /* Body/UI: grotesque for low-fatigue reading. Display: the hand-lettered
+     voice, reserved for big headings where it's personality, not strain. */
+  --font: 'Space Grotesk Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Shantell Sans Variable', var(--font);
+
+  /* Button sizing lives here, not in components, so a media query can
+     retune every button at once (see the coarse-pointer block below). */
+  --btn-pad-y: 0.5rem;
+  --btn-pad-x: 1.25rem;
+  --btn-font: 0.9rem;
+  --btn-sm-pad-y: 0.25rem;
+  --btn-sm-pad-x: 0.6rem;
+  --btn-sm-font: 0.78rem;
+}
+
+/* Touch targets: small buttons are finger-sized on coarse pointers. */
+@media (pointer: coarse) {
+  :root {
+    --btn-sm-pad-y: 0.45rem;
+    --btn-sm-pad-x: 0.85rem;
+    --btn-sm-font: 0.85rem;
+  }
+}
+
+/* ---- Light theme — textile canvas + punk palette ----
+   Contrast notes (WCAG AA, vs --color-bg unless stated):
+   text 13.4:1 · muted 5.1:1 · primary-as-text 4.5:1 ·
+   white-on-primary 5.2:1 · success-as-text 5.1:1 · accent-as-text 4.6:1 */
+[data-theme="light"] {
+  --color-bg: #f4f0e8;
+  --color-surface: #faf6ee;
+  --color-text: #2a2520;
+  --color-text-muted: #6b655c;
+  --color-primary: #0272b5;
+  --color-primary-hover: #025e94;
+  --color-accent: #c43d07;
+  --color-border: #ddd8cc;
+  --color-error: #C02624;
+  --color-success: #4e6e49;
+  --color-glass: rgba(244, 240, 232, 0.92);
+  --color-glass-heavy: rgba(244, 240, 232, 0.95);
+  --color-overlay: rgba(0, 0, 0, 0.06);
+  --color-overlay-hover: rgba(0, 0, 0, 0.18);
+  --color-shadow: rgba(0, 0, 0, 0.08);
+  --color-scrim: rgba(0, 0, 0, 0.4);
+  --color-btn-on-primary: #ffffff;
+  --color-on-success: #ffffff;
+  --color-on-error: #ffffff;
+  --color-on-accent: #ffffff;
+  --color-on-muted: #ffffff;
+  --color-warning: #e6a817;
+  --color-on-warning: #151820;
+  --color-success-bg: #e3ede1;
+  --color-info-bg: #eaf1f8;
+  --color-danger-bg: #f5e8ea;
+  --color-label-bg: rgba(250, 246, 238, 0.45);
+  --color-label-bg-selected: rgba(250, 246, 238, 0.65);
+  --color-label-text: #2a2520;
+  --color-label-text-selected: #1a1510;
+  --color-badge-outline: rgba(250, 246, 238, 0.9);
+}
+
+/* ---- Dark theme — raw denim + punk palette ----
+   Contrast notes (WCAG AA, vs --color-bg unless stated):
+   text 12.9:1 · muted 5.5:1 (on surface) · primary-as-text 7.6:1 ·
+   ink-on-primary 7.6:1 — bright fills take INK text in dark, not white
+   (white on the dark-theme primary/success/accent fails AA badly). */
+[data-theme="dark"] {
+  --color-bg: #151820;
+  --color-surface: #1c2028;
+  --color-text: #e0dbd4;
+  --color-text-muted: #9b958c;
+  --color-primary: #39b4f6;
+  --color-primary-hover: #60c4ff;
+  --color-accent: #E8734A;
+  --color-border: #2a2e38;
+  --color-error: #e05555;
+  --color-success: #81AE7F;
+  --color-glass: rgba(21, 24, 32, 0.92);
+  --color-glass-heavy: rgba(21, 24, 32, 0.95);
+  --color-overlay: rgba(255, 255, 255, 0.04);
+  --color-overlay-hover: rgba(255, 255, 255, 0.1);
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-scrim: rgba(0, 0, 0, 0.6);
+  --color-btn-on-primary: #151820;
+  --color-on-success: #151820;
+  --color-on-error: #151820;
+  --color-on-accent: #151820;
+  --color-on-muted: #151820;
+  --color-warning: #e6a817;
+  --color-on-warning: #151820;
+  --color-success-bg: #1d2a1d;
+  --color-info-bg: #16222e;
+  --color-danger-bg: #241318;
+  --color-label-bg: rgba(0, 0, 0, 0.5);
+  --color-label-bg-selected: rgba(0, 0, 0, 0.7);
+  --color-label-text: #e8e6e3;
+  --color-label-text-selected: #ffffff;
+  --color-badge-outline: rgba(0, 0, 0, 0.6);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  font-family: var(--font);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  /* Kill the double-tap-to-zoom delay/jump — a double tap on the quilt or a
+     mistimed tap on a control shouldn't scale the UI. Pinch zoom stays. */
+  touch-action: manipulation;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.25;
+}
+
+/* Big headings carry the hand-lettered brand voice; smaller headings and
+   everything else stay in the grotesque for readability. */
+h1, h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'BNCE' 20;
+}
+
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+  /* Buttons don't inherit color by default — without this, any button
+     missing an explicit color renders the UA's black ButtonText, which
+     vanishes in dark mode. */
+  color: inherit;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="datetime-local"],
+input[type="date"],
+textarea,
+select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color 150ms ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: var(--color-primary);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: var(--btn-font);
+  /* Explicit: <a class="btn"> inherits the body's 1.5 while <button> uses
+     `normal`, so without this a link-button is taller than its sibling. */
+  line-height: 1.2;
+  font-weight: 500;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.btn-sm {
+  padding: var(--btn-sm-pad-y) var(--btn-sm-pad-x);
+  font-size: var(--btn-sm-font);
+  gap: 0.35rem;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-btn-on-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.container-narrow {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Standard work-mode content area — used by shells and standalone pages.
+   No max-width here — content fills the viewport with consistent gutters.
+   Individual sections (forms, cards) constrain their own width. */
+.work-content {
+  padding: 1.5rem 2rem 2rem;
+}
+
+.work-content-narrow {
+  padding: 1.5rem 2rem 2rem;
+  max-width: 800px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.error-text {
+  color: var(--color-error);
+  font-size: 0.85rem;
+}
+
+.success-text {
+  color: var(--color-success);
+  font-size: 0.85rem;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.page-fade {
+  animation: fadeIn 150ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="datetime-local"],
+  input[type="date"],
+  textarea,
+  select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* iOS zooms the whole page when a focused field is under 16px. Component
+     styles are scoped (higher specificity than a bare element selector), so
+     the floor has to be forced — otherwise tapping the search bar, which sets
+     its own 0.88rem, jolts the layout. */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 641px) {
+  .show-mobile-only {
+    display: none !important;
+  }
+}

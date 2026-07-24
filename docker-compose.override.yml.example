@@ -1,0 +1,24 @@
+# Run a prebuilt image instead of building from source.
+#
+# Copy this file to `docker-compose.override.yml` next to docker-compose.yaml.
+# Compose merges it automatically; `image:` wins over the base file's
+# `build: .`, so `docker compose pull && docker compose up -d` fetches the
+# CI-published image rather than compiling on the server.
+#
+# This is how the reference instance runs. Building on a small VPS means
+# `npm ci` + vite + a static CGO Go link on a box that may have no swap —
+# an OOM risk, and it produces an image that never went through CI.
+#
+# Always `docker compose pull` before `up -d`. The base file still carries a
+# `build:` section, and compose builds rather than pulls if the tagged image
+# is not already present locally. Pulling first makes it present.
+#
+# With this override in place, never pass --build. It would rebuild locally
+# and retag the result as ghcr.io/...:latest, silently replacing the tested
+# image with an untested one.
+#
+# Pinning a specific version instead of :latest makes rollbacks trivial —
+# just edit the tag and re-run `docker compose up -d`.
+services:
+  patchwork:
+    image: ghcr.io/nathanswavely/patchwork:latest

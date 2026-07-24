@@ -1,0 +1,17 @@
+# Config for the empty-instance e2e suite (web/playwright.empty.config.js).
+#
+# A completely fresh, unseeded database: zero patches, zero users. This is
+# the state a real first admin hits on a new deploy, and the one the seeded
+# suite structurally can't reach. Paths are relative to the repo root (the
+# backend is spawned with cwd = repo root by e2e-empty/global-setup.js).
+instance:
+  name: Empty Test Patchwork
+  domain: localhost
+
+# The suite overrides this with PATCHWORK_PORT (web/e2e/ports.js picks a
+# port per checkout); this value only applies if you boot it by hand.
+server:
+  port: "8095"
+
+database:
+  path: data/e2e-empty/patchwork.db
