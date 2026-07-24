@@ -15,7 +15,9 @@ _Avoid_: group, community (as an entity name), stitch
 A directory listing for a real place or organization whose owner hasn't
 arrived yet. Follow-only: it can be followed and claimed, never joined —
 membership in an organization that hasn't admitted anyone is a fabricated
-relationship. Claiming turns it into that owner's patch.
+relationship, and for the same reason it carries no governance and no
+lining: agreement by an organization that hasn't arrived is fabricated
+consent. Claiming turns it into that owner's patch.
 _Avoid_: ghost patch, placeholder, stub
 
 **Claim**:
@@ -23,8 +25,22 @@ An assertion of ownership over an unclaimed patch, pending proof — never a
 reservation. One person's unproven claim doesn't stop anyone else from
 proving theirs: claims on the same patch run concurrently, and the first
 to verify (or be approved) wins; the rest are auto-rejected. A user holds
-at most one open claim per patch.
-_Avoid_: lock, hold, reservation
+at most one open claim per patch. A verified or approved claim is a
+single-use, expiring right to enter patch setup — until setup is
+submitted, the patch is still unclaimed to every visitor, and an expired
+claim simply makes the patch claimable again.
+_Avoid_: lock, hold, reservation; "claimed" for a patch whose setup
+hasn't been submitted
+
+**Patch setup**:
+The completion of a claim: the patch creation flow, prepopulated with the
+unclaimed listing's data. A claim is creation with prepopulated fields,
+not a handoff — the claimant can change anything creation allows except
+the slug (the patch's existing public address) and the verification
+domain (the trust anchor the claim just proved). Submitting setup is the
+moment the patch becomes active, the claimant becomes its admin, and the
+lining is adopted — shown out loud, exactly as at creation.
+_Avoid_: handoff, transfer, onboarding
 
 **Verification domain**:
 The trust anchor for self-service claims on an unclaimed patch — the one
@@ -355,9 +371,11 @@ rules doc; "private charter" (the pair is members only / public, and
 "private" is the patch-level word)
 
 **Lining**:
-The shared baseline community-standards charter — the one every patch on
-the quilt agrees to, carrying the anti-discrimination baseline. "The
-lining" names this document specifically, the layer that sits behind
+The shared baseline community-standards charter — the one every active
+patch on the quilt agrees to, carrying the anti-discrimination baseline.
+Adoption is an act performed by a person, at patch creation or patch
+setup; unclaimed patches carry no lining because nobody has performed it.
+"The lining" names this document specifically, the layer that sits behind
 every patch; it is not the generic word for charters. The lining is
 project-owned: its text ships with Patchwork itself, and no instance
 admin setting changes it — a quilt that wants a different baseline forks
@@ -367,8 +385,8 @@ lining" implying an instance could have a non-default one
 
 **Amended lining**:
 The user-facing state of a patch whose lining text no longer matches any
-version Patchwork has shipped. Every patch starts with the lining and may
-amend it by proposal — but the lining is always public, the amendment is
+version Patchwork has shipped. Every active patch starts with the lining
+and may amend it by proposal — but the lining is always public, the amendment is
 public, and the patch wears an "Amended lining" badge. Reverting to a
 shipped version clears the state. Viewers and instance admins can filter
 amended-lining patches out of discovery. A patch on an older shipped
