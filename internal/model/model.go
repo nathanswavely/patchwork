@@ -21,9 +21,13 @@ type User struct {
 	// events this person records on unclaimed patches skip review. It is
 	// orthogonal to patch roles and worth nothing on active patches.
 	TrustedContributor bool    `json:"trusted_contributor"`
-	SuspendedAt        *string `json:"suspended_at,omitempty"`
-	CreatedAt          string  `json:"created_at"`
-	UpdatedAt          string  `json:"updated_at"`
+	// StartOnMyQuilt is the per-person landing preference (docs/adr/035):
+	// when true, a cold visit to "/" redirects once to "/my". Default false
+	// — the whole quilt is the shared default landing.
+	StartOnMyQuilt bool    `json:"start_on_my_quilt"`
+	SuspendedAt    *string `json:"suspended_at,omitempty"`
+	CreatedAt      string  `json:"created_at"`
+	UpdatedAt      string  `json:"updated_at"`
 }
 
 type Notification struct {

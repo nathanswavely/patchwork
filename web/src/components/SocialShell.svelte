@@ -6,6 +6,7 @@
    * are full-screen takeovers with their own shells (docs/adr/005).
    */
   import { navigate } from '../stores/router.svelte.js';
+  import { scopedPath, surfaceForRoute } from '../lib/scope.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import {
     getInstanceName,
@@ -24,7 +25,7 @@
   import LabelFooter from './LabelFooter.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
-  let { children, routeName = 'home', quiltScope = 'local', onScopeChange = () => {} } = $props();
+  let { children, routeName = 'home', quiltScope = 'local' } = $props();
 
   let scopeMenuOpen = $state(false);
 
@@ -36,7 +37,8 @@
 
   function showMatchesOnQuilt(q) {
     setSearchQuery(q);
-    navigate('/');
+    // Land on the quilt of the scope you're already in (docs/adr/035).
+    navigate(scopedPath('quilt', quiltScope));
   }
 
   let activeScopeLabel = $derived(quiltScope === 'my' ? 'My Quilt' : getInstanceName());
@@ -98,7 +100,7 @@
   }
 
   // Quilt routes get the immersive treatment: glass bar, floating icon rail.
-  const quiltRoutes = new Set(['home', 'patchList', 'map']);
+  const quiltRoutes = new Set(['home', 'homeMy', 'patchList', 'map', 'mapMy']);
   let isQuiltRoute = $derived(quiltRoutes.has(routeName));
 
   // The Label's mobile affordance (docs/adr/023): the quilt view has no
@@ -131,15 +133,21 @@
     if (!isQuiltRoute) filterSheetOpen = false;
   });
 
-  // Nav items for the sidebar
+  // Nav items for the sidebar. Patches and Events carry scope: moving
+  // between surfaces keeps the quilt you're in (docs/adr/035), so their
+  // hrefs are computed from the current scope rather than fixed.
   const navItems = [
-    { id: 'patches', label: 'Patches', href: '/', icon: SquaresFour,
-      routes: ['home', 'quilt', 'patchList', 'map'] },
-    { id: 'events', label: 'Events', href: '/events', icon: CalendarBlank,
-      routes: ['eventList', 'eventDetail'] },
+    { id: 'patches', label: 'Patches', surface: 'quilt', icon: SquaresFour,
+      routes: ['home', 'homeMy', 'quilt', 'patchList', 'map', 'mapMy'] },
+    { id: 'events', label: 'Events', surface: 'events', icon: CalendarBlank,
+      routes: ['eventList', 'eventListMy', 'eventDetail'] },
     { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: Gauge,
       routes: ['dashboard'] },
   ];
+
+  function navHref(item) {
+    return item.surface ? scopedPath(item.surface, quiltScope) : item.href;
+  }
 
   let activeNavId = $derived.by(() => {
     for (const item of navItems) {
@@ -166,13 +174,14 @@
     }
   }
 
-  // Picking a quilt in the switcher goes to that quilt's view — including
-  // the one already selected. The switcher names places, so it should land
-  // you in one, not just re-lens whatever page you happen to be on.
+  // Flipping scope keeps the surface you're on and just swaps the scope
+  // segment (docs/adr/035): from /map to /map/my, from /events/my to
+  // /events. On a page with no scope-able surface (a patch profile), land
+  // on the scope root. Scope reads as "same view, other quilt", not "go
+  // home".
   function selectScope(scope) {
-    onScopeChange(scope);
     scopeMenuOpen = false;
-    navigate('/');
+    navigate(scopedPath(surfaceForRoute(routeName) || 'quilt', scope));
   }
 </script>
 
@@ -294,10 +303,10 @@
       {#each navItems as item (item.id)}
         {@const Icon = item.icon}
         <a
-          href={item.href}
+          href={navHref(item)}
           class="rail-item"
           class:active={activeNavId === item.id}
-          onclick={(e) => handleNav(e, item.href)}
+          onclick={(e) => handleNav(e, navHref(item))}
           title={item.label}
         >
           <span class="rail-icon"><Icon size={22} weight="duotone" /></span>

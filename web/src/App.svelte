@@ -15,6 +15,7 @@
     setRegistryQuilts, loadMultiQuilt, clearMultiQuilt,
   } from './stores/multiQuilt.svelte.js';
   import { loadInstance, loadTags } from './stores/quilt.svelte.js';
+  import { scopeForRoute, surfaceForRoute, scopedPath } from './lib/scope.js';
   import { loadRegistry } from './lib/registry.js';
   import { isOnboardingDismissed } from './lib/onboarding.js';
   import { markFamiliar } from './lib/vocab.js';
@@ -81,11 +82,16 @@
   import Toast from './components/Toast.svelte';
 
   // --- Routes ---
-  // Home / discovery
+  // Home / discovery. Scope lives in the URL (docs/adr/035): the whole
+  // quilt is the unmarked default; My Quilt is the `/my` suffix on each
+  // surface. `/events/my` is all-static, so it outranks `/events/:id`.
   addRoute('/', 'home');
+  addRoute('/my', 'homeMy');
   addRoute('/patches', 'patchList');
   addRoute('/map', 'map');
+  addRoute('/map/my', 'mapMy');
   addRoute('/events', 'eventList');
+  addRoute('/events/my', 'eventListMy');
   // /events/new and /:id/edit must register before /events/:id — first match
   // wins, and ':id' would swallow "new".
   addRoute('/events/new', 'eventNew');
@@ -194,7 +200,7 @@
 
   // Route categories
   const socialHomeRoutes = new Set([
-    'home', 'patchList', 'map',
+    'home', 'homeMy', 'patchList', 'map', 'mapMy',
   ]);
   let isSocialHome = $derived(socialHomeRoutes.has(routeName));
 
@@ -237,24 +243,41 @@
      'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminLabel', 'adminLegal'].includes(routeName)
   );
 
-  let quiltScope = $state('local');
-  let hasSetDefaultScope = false;
+  // Scope is derived from the URL, never held in memory (docs/adr/035).
+  // 'my' or 'local' — other quilts are doorways, never a scope (objects
+  // blend, places don't — docs/adr/024). There is no auth-conditional
+  // default: `/` is the whole quilt for everyone. A per-person "start on
+  // My Quilt" preference redirects once at cold load (below) instead.
+  let quiltScope = $derived(scopeForRoute(routeName));
 
-  // Scope is local or my — other quilts are doorways, never a scope
-  // (objects blend, places don't — docs/adr/024).
-  function changeScope(scope) {
-    quiltScope = scope;
-  }
+  // The path the app was opened on — captured once, before any in-app
+  // navigation, so the landing-preference redirect fires only on a genuine
+  // cold entry to `/`, never when the person later navigates to `/`.
+  const initialPath = window.location.pathname;
+  let didScopeRedirect = false;
 
-  // Default to 'my' scope for authenticated users.
+  // Landing preference (docs/adr/035): a one-shot at cold load. Gated on
+  // auth being resolved; runs at most once regardless. replaceRoute (not a
+  // push) so a bare `/` never enters the back stack — back from a patch
+  // returns to `/my`, and explicit later visits to `/` still show the whole
+  // quilt because this never re-fires.
   $effect(() => {
-    if (isLoggedIn() && !hasSetDefaultScope) {
-      quiltScope = 'my';
-      hasSetDefaultScope = true;
+    if (didScopeRedirect || !isAuthChecked()) return;
+    didScopeRedirect = true;
+    if (initialPath !== '/') return;
+    if (isLoggedIn() && getUser()?.start_on_my_quilt) {
+      replaceRoute('/my');
     }
-    if (!isLoggedIn()) {
-      quiltScope = 'local';
-      hasSetDefaultScope = false;
+  });
+
+  // A logged-out visitor on a My Quilt route has no quilt of their own to
+  // show; drop them to the whole-quilt equivalent of the same surface
+  // rather than an empty view. Discovery is public, so this beats a login
+  // wall for a bookmarked `/my`.
+  $effect(() => {
+    if (!isAuthChecked() || isLoggedIn()) return;
+    if (scopeForRoute(routeName) === 'my') {
+      replaceRoute(scopedPath(surfaceForRoute(routeName) || 'quilt', 'local'));
     }
   });
 
@@ -463,7 +486,7 @@
 
 {:else}
   <!-- ===== SOCIAL SHELL (discovery + personal pages) ===== -->
-  <SocialShell {routeName} {quiltScope} onScopeChange={changeScope}>
+  <SocialShell {routeName} {quiltScope}>
     {#snippet children()}
       {#if authRequired && !isLoggedIn()}
         <div class="auth-gate">
@@ -477,11 +500,10 @@
         <SocialHome
           {quiltScope}
           {routeName}
-          onScopeChange={changeScope}
         />
 
       <!-- ===== EVENTS ===== -->
-      {:else if routeName === 'eventList'}
+      {:else if routeName === 'eventList' || routeName === 'eventListMy'}
         <EventsPage {quiltScope} />
       {:else if routeName === 'eventDetail'}
         <EventDetail eventId={routeParams.id} />
