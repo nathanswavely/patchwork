@@ -120,17 +120,38 @@ test.describe('Discovery — Workspace Switcher', () => {
     await expect(options.nth(1)).toContainText('My Quilt');
   });
 
-  test('logged in — My Quilt is the default scope', async ({ page }) => {
+  // Scope lives in the URL (docs/adr/035): / is the whole quilt for
+  // everyone — the old logged-in default to My Quilt is gone.
+  test('logged in — / is the whole quilt, never My Quilt', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
+    await page.waitForTimeout(1000);
+
+    await expect(page.locator('.scope-btn .logo-label')).not.toContainText('My Quilt');
+  });
+
+  test('logged in — /my is My Quilt scope', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/my');
     await page.waitForTimeout(1000);
 
     await expect(page.locator('.scope-btn .logo-label')).toContainText('My Quilt');
   });
 
-  test('logged in — selecting the instance switches scope', async ({ page }) => {
+  test('logged in — selecting My Quilt moves to /my', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
+    await page.waitForTimeout(1000);
+
+    await page.locator('.scope-btn').click();
+    await page.locator('.scope-dropdown .scope-option').nth(1).click();
+    await expect(page.locator('.scope-btn .logo-label')).toContainText('My Quilt');
+    await expect(page).toHaveURL(/\/my$/);
+  });
+
+  test('logged in — selecting the instance switches scope back', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/my');
     await page.waitForTimeout(1000);
 
     await page.locator('.scope-btn').click();
