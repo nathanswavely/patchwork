@@ -120,8 +120,8 @@
 
   <p class="picker-hint">
     Click the map to drop the marker, then drag it to adjust. Place it as
-    precisely or as approximately as you like — nothing is saved until you
-    save.
+    precisely or as loosely as you like. Nothing is saved until you hit
+    Save location.
   </p>
 
   <div class="picker-readout">

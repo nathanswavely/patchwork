@@ -83,8 +83,8 @@
   <p class="muted intro">
     The vocabulary patch admins tag their patches with. Tags power discovery
     and pull patches with shared tags together on the quilt. A tag's motif
-    is the mark shown for patches that chose no motif of their own —
-    deleting a tag removes it from every patch wearing it.
+    is the mark shown for patches that chose no motif of their own.
+    Deleting a tag removes it from every patch wearing it.
   </p>
 
   <form class="create-row" onsubmit={(e) => { e.preventDefault(); createTag(); }}>

@@ -221,7 +221,7 @@
               <span class="muted small">@{s.username}</span>
             </span>
             <span class="steward-state muted small">
-              {s.listed ? (s.blurb || 'Listed') : 'Invited — not yet accepted'}
+              {s.listed ? (s.blurb || 'Listed') : 'Invite pending'}
             </span>
             <button class="icon-btn" title="Remove" onclick={() => removeSteward(s)}>
               <Trash size={16} />

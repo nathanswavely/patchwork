@@ -117,7 +117,7 @@
       await navigator.clipboard.writeText(feedUrl);
       showToast('Copied');
     } catch {
-      showToast('Copy failed — select the address instead', 'error');
+      showToast('Copy failed. Select the address instead.', 'error');
     }
   }
 
@@ -200,7 +200,7 @@
       <h2>Personal feed</h2>
       <p class="muted profile-hint">
         A calendar feed of every event on your My Quilt, for your calendar
-        app. The address is a secret — anyone who has it can read your feed.
+        app. The address is a secret. Anyone who has it can read your feed.
       </p>
       {#if feedUrl}
         <div class="feed-url-row">
@@ -208,7 +208,7 @@
           <button class="btn btn-secondary" onclick={copyFeedUrl}>Copy</button>
         </div>
         <p class="muted profile-hint">
-          Copy it now — this address won't be shown again. Regenerating
+          Copy it now. This address won't be shown again, and regenerating
           replaces it.
         </p>
       {/if}

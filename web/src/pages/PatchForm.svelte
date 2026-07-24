@@ -153,8 +153,8 @@
         <div class="field">
           <label>Tile</label>
           <p class="field-hint muted">
-            How this patch looks on the quilt. You can change it anytime —
-            and draft your own block — in Patch Settings → Appearance.
+            How this patch looks on the quilt. You can change it anytime
+            in Patch Settings → Appearance, and draft your own block there too.
           </p>
           <div class="tile-picker">
             <div class="tile-preview-col">

@@ -167,7 +167,7 @@
         <code class="verify-code">&lt;meta name="patchwork-verify" content="{claim.meta_content}"&gt;</code>
 
       {:else if claim.method === 'email'}
-        <p>We sent a verification link to <strong>{claim.email}</strong>. Open it to finish claiming — the link expires 24 hours after it's sent.</p>
+        <p>We sent a verification link to <strong>{claim.email}</strong>. Open it to finish claiming. The link expires 24 hours after it's sent.</p>
 
       {:else if claim.method === 'admin'}
         <p>Your claim is with the quilt admins for review. You'll be notified when it's resolved.</p>

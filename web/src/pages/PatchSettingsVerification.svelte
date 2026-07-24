@@ -101,7 +101,7 @@
       {/if}
     </div>
     {#if !domain.trim()}
-      <p class="muted v-note">No verification domain set — claims can only be approved by admin review.</p>
+      <p class="muted v-note">No verification domain set. Claims can only be approved by admin review.</p>
     {/if}
   </section>
 

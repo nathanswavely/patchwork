@@ -115,8 +115,8 @@
 <div class="page-fade">
   <h2>Event Sources</h2>
   <p class="muted subtitle">
-    Calendar feeds this patch pulls events from. Paste an ICS address — a
-    Google Calendar's secret address, the calendar feed from your website —
+    Calendar feeds this patch pulls events from. Paste an ICS address (a
+    Google Calendar's secret address, the calendar feed from your website)
     or an events page from Squarespace, Humanitix, and similar sites.
     Imported events publish directly and stay in step with the feed.
   </p>
@@ -152,7 +152,7 @@
               >{syncing[source.id] ? 'Syncing…' : 'Sync now'}</button>
               <ConfirmAction
                 label="Remove"
-                confirmLabel="Remove — future imported events go with it"
+                confirmLabel="Yes, remove it and its upcoming events"
                 variant="danger"
                 onConfirm={() => removeSource(source.id)}
               />

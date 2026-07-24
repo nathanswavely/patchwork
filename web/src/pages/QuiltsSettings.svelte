@@ -18,7 +18,7 @@
     followError = '';
     const m = followUrl.trim().match(/^https?:\/\/([^/]+)\/patches\/([a-z0-9-]+)\/?$/);
     if (!m) {
-      followError = 'That doesn’t look like a patch link — expected https://their-quilt/patches/patch-name.';
+      followError = "That doesn't look like a patch link. Expected https://their-quilt/patches/patch-name.";
       return;
     }
     const [, host, slug] = m;
@@ -54,7 +54,7 @@
       await connectQuilt(newUrl.trim(), instance.name || '');
       validatedName = instance.name;
       if (instance.multi_quilt === false) {
-        validatedName += ' — note: this quilt doesn’t allow browsing from other quilts, so it will open on their site';
+        validatedName += " (this quilt doesn't allow browsing from other quilts, so it will open on their site)";
       }
       newUrl = '';
     } catch (e) {
@@ -96,7 +96,7 @@
 <div class="page-fade">
   <div class="container-narrow">
     <h1>Connected Quilts</h1>
-    <p class="page-desc">Connect other Patchworks to keep them a click away in the quilt switcher — each opens on its own site. Your connections are part of your account, so they follow you to any device.</p>
+    <p class="page-desc">Connect other Patchworks to keep them a click away in the quilt switcher. Each opens on its own site. Your connections are part of your account, so they follow you to any device.</p>
 
     <div class="follow-link card">
       <h2>Follow a patch from another quilt</h2>

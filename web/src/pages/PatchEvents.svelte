@@ -120,7 +120,7 @@
       });
       showToast(
         res.skipped > 0
-          ? `Created ${res.created} events — ${res.skipped} already on the calendar`
+          ? `Created ${res.created} events (${res.skipped} already on the calendar)`
           : `Created ${res.created} events`
       );
       resetUpload();
@@ -165,7 +165,7 @@
       await navigator.clipboard.writeText(url);
       showToast('Copied');
     } catch {
-      showToast('Copy failed — select the address instead', 'error');
+      showToast('Copy failed. Select the address instead.', 'error');
     }
   }
 
