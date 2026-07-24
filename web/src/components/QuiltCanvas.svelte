@@ -49,6 +49,13 @@
     // Clears the tag filter from the filtered-to-nothing overlay. The store
     // stays out of this component — the parent owns the lens state.
     onClearFilter = () => {},
+    // Static/compact mode (the About page hero, docs/adr/040): a live
+    // miniature of the real quilt with no pan/zoom and no name badges. The
+    // parent controls the footprint by sizing/positioning the wrapper —
+    // this component just stops capturing gestures and stops drawing
+    // chrome that a small non-interactive tile has no room for.
+    interactive = true,
+    showLabels = true,
   } = $props();
 
   let containerEl = $state(null);
@@ -642,7 +649,7 @@
       const g = contentG.append('g')
         .attr('class', tile.isFiller ? 'filler' : 'tile')
         .attr('transform', `translate(${tileCx},${tileCy}) scale(${animate ? 0 : 1})`)
-        .style('cursor', tile.isFiller ? 'default' : 'pointer')
+        .style('cursor', (!interactive || tile.isFiller) ? 'default' : 'pointer')
         .style('opacity', animate ? 0 : 1);
 
       // Inner group offset so content draws from top-left.
@@ -750,26 +757,30 @@
           .attr('fill', 'transparent')
           .style('pointer-events', 'none');
 
-        // Hover + click.
-        g.on('mouseenter', function(event) {
-          d3.select(this).select('.overlay').attr('fill', 'var(--color-overlay-hover)');
-          if (tooltip && !labeledPatchIds.has(tile.data.id)) {
-            showTooltip(tile.data, event.clientX, event.clientY);
-          }
-        })
-        .on('mousemove', function(event) {
-          if (tooltip && tooltip.style.display === 'block') {
-            tooltip.style.left = event.clientX + 14 + 'px';
-            tooltip.style.top = event.clientY - 10 + 'px';
-          }
-        })
-        .on('mouseleave', function() {
-          d3.select(this).select('.overlay').attr('fill', 'transparent');
-          if (tooltip) tooltip.style.display = 'none';
-        })
-        .on('click', function() {
-          if (tile.data.slug) onPatchClick(tile.data.slug, tile.data._source || null);
-        });
+        // Hover + click — a static hero has nowhere for a tooltip to land
+        // and nothing to navigate to, so it skips gestures entirely rather
+        // than swallowing them silently.
+        if (interactive) {
+          g.on('mouseenter', function(event) {
+            d3.select(this).select('.overlay').attr('fill', 'var(--color-overlay-hover)');
+            if (tooltip && !labeledPatchIds.has(tile.data.id)) {
+              showTooltip(tile.data, event.clientX, event.clientY);
+            }
+          })
+          .on('mousemove', function(event) {
+            if (tooltip && tooltip.style.display === 'block') {
+              tooltip.style.left = event.clientX + 14 + 'px';
+              tooltip.style.top = event.clientY - 10 + 'px';
+            }
+          })
+          .on('mouseleave', function() {
+            d3.select(this).select('.overlay').attr('fill', 'transparent');
+            if (tooltip) tooltip.style.display = 'none';
+          })
+          .on('click', function() {
+            if (tile.data.slug) onPatchClick(tile.data.slug, tile.data._source || null);
+          });
+        }
 
         tileGroups.push({ g, dist, tile, shadowDiv });
       }
@@ -860,7 +871,10 @@
       });
 
     svgSelection = svg;
-    svg.call(zoomBehavior);
+    // Static mode never binds the interaction listeners, but zoomBehavior
+    // still owns the element's transform state, so the programmatic
+    // fit-to-view call below (and any later relayout) works either way.
+    if (interactive) svg.call(zoomBehavior);
 
     // Default zoom: fit the quilt to the visible area rather than starting at
     // identity. A small or uniformly-sized quilt otherwise renders too small
@@ -922,6 +936,7 @@
 
   function updateLabels() {
     if (!labelsEl) return;
+    if (!showLabels) { labelsEl.innerHTML = ''; return; }
 
     const t = currentTransform;
     const k = t.k;
@@ -1125,9 +1140,11 @@
     // then sweeps every following sibling, including the {#if} anchor its
     // parent needs to render the next branch (quilt → map left the pane
     // permanently empty). Its styles are already :global.
-    tooltip = document.createElement('div');
-    tooltip.className = 'canvas-tooltip';
-    document.body.appendChild(tooltip);
+    if (interactive) {
+      tooltip = document.createElement('div');
+      tooltip.className = 'canvas-tooltip';
+      document.body.appendChild(tooltip);
+    }
     // Text measured before the display font loads used the fallback font's
     // metrics — remeasure once real metrics exist.
     document.fonts?.ready?.then(() => {
@@ -1141,8 +1158,11 @@
   });
 
   // A pinch on the quilt is a quilt zoom, never a page zoom — including over
-  // the labels layer, which sits on top of the svg d3 already guards.
+  // the labels layer, which sits on top of the svg d3 already guards. A
+  // static hero has no zoom to protect, and must not steal the page's own
+  // scroll/pinch gestures out from under it.
   $effect(() => {
+    if (!interactive) return;
     const cleanups = [containerEl, labelsEl].map(blockPageZoom);
     return () => cleanups.forEach(fn => fn());
   });
@@ -1199,7 +1219,7 @@
     {/if}
   </div>
 {:else}
-  <div class="canvas-container lt-fill-canvas lt-texture-grain" bind:this={containerEl}></div>
+  <div class="canvas-container lt-fill-canvas lt-texture-grain" class:non-interactive={!interactive} bind:this={containerEl}></div>
   <div class="shadows-layer" bind:this={shadowsEl}></div>
   <div class="labels-layer" bind:this={labelsEl}></div>
   {#if visibleIds.size === 0 && (filterTags.length > 0 || searchQuery.trim())}
@@ -1247,6 +1267,17 @@
 
   .canvas-container :global(svg:active) {
     cursor: grabbing;
+  }
+
+  /* Static/compact mode (docs/adr/040): no gestures to invite, and the
+     page's own scroll/pinch must pass through rather than be captured. */
+  .canvas-container.non-interactive {
+    touch-action: auto;
+  }
+
+  .canvas-container.non-interactive :global(svg),
+  .canvas-container.non-interactive :global(svg:active) {
+    cursor: default;
   }
 
   .shadows-layer {

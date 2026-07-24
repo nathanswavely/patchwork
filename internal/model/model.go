@@ -265,6 +265,11 @@ type Membership struct {
 	// profile's patch list and the patch's public member list (docs/adr/006).
 	Visible  bool   `json:"visible"`
 	JoinedAt string `json:"joined_at"`
+	// JoinMessage is the join sheet's optional intro note to admins on a
+	// pending membership request (docs/adr/040). Populated only for pending
+	// requests shown to that patch's admins — never in public member
+	// listings, and nulled once the request is resolved.
+	JoinMessage string `json:"join_message,omitempty"`
 }
 
 type Proposal struct {

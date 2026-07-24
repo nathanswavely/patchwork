@@ -7,7 +7,6 @@
   import { loadMemberships } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
-  import { PALETTES, PALETTE_KEYS } from '../lib/quiltTheme.js';
   import { dismissOnboarding } from '../lib/onboarding.js';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
@@ -35,7 +34,6 @@
 
   // --- Step state ---
   let step = $state(1);
-  let agreed = $state(false);
 
   // --- Step 2: Interests ---
   let selectedInterests = $state(new Set());
@@ -158,9 +156,6 @@
     dismissOnboarding(user?.id);
     navigate('/patches/new');
   }
-
-  // --- Mini-quilt colors for Step 1 ---
-  const miniQuiltColors = PALETTE_KEYS.slice(0, 9).map(k => PALETTES[k].primary);
 </script>
 
 <div class="welcome" class:step-1={step === 1} class:step-2={step === 2} class:step-3={step === 3}>
@@ -169,30 +164,14 @@
   <div class="step-content" style="animation: fadeIn 150ms ease">
 
     {#if step === 1}
-      <!-- ===== STEP 1: Welcome + Agreement ===== -->
+      <!-- ===== STEP 1: Orientation (docs/adr/040: the agreement happened
+           at signup — this step shows, it doesn't sign) ===== -->
       <div class="step step-welcome">
-        <span class="instance-label">{instanceName}</span>
-
-        <div class="mini-quilt" aria-hidden="true">
-          {#each miniQuiltColors as color, i}
-            <div
-              class="mini-tile"
-              style="background: {color}; clip-path: polygon({2 + (i % 3)}% {1 + (i % 2)}%, {97 + (i % 2)}% {2 - (i % 3)}%, {99 - (i % 2)}% {98 + (i % 3)}%, {1 + (i % 2)}% {99 - (i % 3)}%)"
-            ></div>
-          {/each}
-        </div>
-
-        <h1>Your community, pieced together</h1>
+        <h1>Welcome to {instanceName}</h1>
 
         <div class="explainer">
-          <p>{instanceName} is a quilt of the communities around you.</p>
-          <p>Each patch is a group. A band, a venue, a collective, a club. Patches that share people sit closer together.</p>
-          <p>Follow the ones you care about and your corner of the quilt takes shape.</p>
-        </div>
-
-        <div class="not-social">
-          <h2>Built for organizing</h2>
-          <p>Nobody is selling ads here, and no algorithm decides what you see. A person in your community runs this server, and what happens on it stays under the community's control.</p>
+          <p>Each patch here is a group. Follow the ones you care about and your corner of the quilt takes shape.</p>
+          <p><a href="/about" target="_blank" rel="noopener">What is Patchwork? &rarr;</a></p>
         </div>
 
         {#if label?.published}
@@ -211,25 +190,21 @@
         {/if}
 
         <div class="agreement">
-          <h2>Before you begin</h2>
-          <p>By joining this patchwork, you agree to:</p>
+          <h2>What's expected here</h2>
+          <p>The heart of the <a href="/terms" target="_blank" rel="noopener">agreement</a> you accepted when you created your account:</p>
           <ul>
             <li>Treat every person with dignity and respect</li>
             <li>Participate in good faith</li>
             <li>Support the communities you join</li>
             <li>Report harmful behavior instead of ignoring it</li>
           </ul>
-          <label class="agree-check">
-            <input type="checkbox" bind:checked={agreed} />
-            <span>I agree to the community standards</span>
-          </label>
+          <p class="agreement-lining-note">Every patch starts from <a href="/lining" target="_blank" rel="noopener">the lining</a>, the shared baseline behind these.</p>
         </div>
 
         <!-- No tags means nothing to pick on step 2 (empty instance) — go
              straight to the patches step. -->
         <button
           class="btn btn-primary cta-btn"
-          disabled={!agreed}
           onclick={() => goToStep(allTags.length > 0 ? 2 : 3)}
         >
           Build your quilt &rarr;
@@ -423,9 +398,13 @@
     to { opacity: 1; }
   }
 
+  /* Welcome no longer owns the full viewport (docs/adr/040): it renders
+     inside ThresholdShell, whose bar already claims the top 56px. Sizing
+     to the full 100vh here on top of that would push the page 56px taller
+     than the viewport and force a scrollbar for no reason. */
   .welcome {
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: calc(100vh - 56px);
+    min-height: calc(100dvh - 56px);
     background: var(--color-bg);
     display: flex;
     flex-direction: column;
@@ -448,28 +427,6 @@
   }
 
   /* Step 1: Welcome */
-  .instance-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-muted);
-    margin-bottom: 2rem;
-  }
-
-  .mini-quilt {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-    width: 120px;
-    margin-bottom: 2rem;
-  }
-
-  .mini-tile {
-    aspect-ratio: 1;
-    border-radius: 2px;
-  }
-
   .step-welcome h1 {
     font-size: clamp(1.8rem, 5vw, 2.4rem);
     font-weight: 700;
@@ -512,27 +469,6 @@
     text-decoration: none;
   }
 
-  .not-social {
-    margin-bottom: 2rem;
-    padding: 1.25rem;
-    border-left: 3px solid var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
-    border-radius: 0 6px 6px 0;
-  }
-
-  .not-social h2 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 0.4rem;
-    color: var(--color-text);
-  }
-
-  .not-social p {
-    font-size: 0.88rem;
-    line-height: 1.6;
-    color: var(--color-text-muted);
-  }
-
   .agreement {
     margin-bottom: 2rem;
   }
@@ -572,19 +508,9 @@
     font-weight: 700;
   }
 
-  .agree-check {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.88rem;
-    cursor: pointer;
-    color: var(--color-text);
-  }
-
-  .agree-check input {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--color-primary);
+  .agreement-lining-note {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
   }
 
   /* Step 2: Interests */

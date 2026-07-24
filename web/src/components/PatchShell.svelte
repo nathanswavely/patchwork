@@ -19,6 +19,9 @@
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
+  import UnlockPanel from './UnlockPanel.svelte';
+  import SetupChecklist from './SetupChecklist.svelte';
+  import JoinSheet from './JoinSheet.svelte';
   import { Scales, UsersThree, CalendarBlank, GearSix, Eye } from 'phosphor-svelte';
 
   let { slug = '', activeTab = 'governance', children } = $props();
@@ -75,6 +78,7 @@
     try {
       const data = await api(`nodes/${slug}`);
       node = data.node || data;
+      liningStatus = data.lining_status || '';
       isMember = data.is_member || false;
       isAdmin = data.is_admin || false;
       membershipRole = data.membership_role || '';
@@ -91,13 +95,23 @@
     }
   }
 
-  async function handleJoin() {
+  // The join sheet stands between the click and membership (docs/adr/040)
+  // — this workspace path must not bypass what the profile path shows.
+  let joinSheetOpen = $state(false);
+  let liningStatus = $state('');
+
+  function openJoinSheet() {
     if (!isLoggedIn()) { navigate('/login'); return; }
+    joinSheetOpen = true;
+  }
+
+  async function handleJoin(message) {
     const wasFollower = membershipRole === 'follower';
     joining = true;
     try {
-      const result = await api(`nodes/${slug}/join`, { method: 'POST' });
+      const result = await api(`nodes/${slug}/join`, { method: 'POST', body: message ? { message } : undefined });
       await loadNode();
+      joinSheetOpen = false;
       if (result.status === 'pending') {
         showToast('Membership request sent', 'success');
       } else {
@@ -245,18 +259,23 @@
             <span class="banned-notice">Removed from this community</span>
           {:else if isMember}
             {#if membershipRole === 'follower'}
-              <button class="btn btn-primary btn-sm" onclick={handleJoin} disabled={joining}>Become Member</button>
+              <button class="btn btn-primary btn-sm" onclick={openJoinSheet} disabled={joining}>Become Member</button>
               <button class="btn btn-secondary btn-sm" onclick={handleLeave} disabled={joining}>Unfollow</button>
             {:else}
               <button class="btn btn-secondary btn-sm" onclick={handleLeave} disabled={joining}>Leave</button>
             {/if}
           {:else}
-            <button class="btn btn-primary btn-sm" onclick={handleJoin} disabled={joining}>Join</button>
+            <button class="btn btn-primary btn-sm" onclick={openJoinSheet} disabled={joining}>Join</button>
             <button class="btn btn-secondary btn-sm" onclick={handleFollow} disabled={joining}>Follow</button>
           {/if}
         </div>
       {/if}
     </div>
+
+    <!-- Onboarding surfaces (docs/adr/040): panels, never wizards — self-gating,
+         each renders nothing when it doesn't apply. -->
+    <UnlockPanel />
+    <SetupChecklist />
 
     <!-- Tab content -->
     <div class="workspace-body work-content">
@@ -264,6 +283,17 @@
     </div>
   {/if}
 </div>
+
+<JoinSheet
+  open={joinSheetOpen}
+  onClose={() => { joinSheetOpen = false; }}
+  onConfirm={handleJoin}
+  slug={slug}
+  patchName={node?.name || ''}
+  membershipPolicy={node?.membership_policy || 'open'}
+  liningStatus={liningStatus}
+  submitting={joining}
+/>
 
 <style>
   .workspace {

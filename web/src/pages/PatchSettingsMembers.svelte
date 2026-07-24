@@ -150,25 +150,31 @@
     {:else}
       <ul class="member-list">
         {#each pendingMembers as member (member.user_id)}
-          <li class="member-row">
-            <div class="member-info">
-              <span class="member-name">{member.display_name || member.username}</span>
-              <span class="badge badge-pending">pending</span>
+          <li class="member-row pending-row">
+            <div class="member-row-main">
+              <div class="member-info">
+                <span class="member-name">{member.display_name || member.username}</span>
+                <span class="badge badge-pending">pending</span>
+              </div>
+              <div class="member-actions">
+                <ConfirmAction
+                  label="Approve"
+                  confirmLabel="Approve"
+                  variant="default"
+                  onConfirm={() => approveMember(member.user_id)}
+                />
+                <ConfirmAction
+                  label="Reject"
+                  confirmLabel="Reject"
+                  variant="danger"
+                  onConfirm={() => rejectMember(member.user_id)}
+                />
+              </div>
             </div>
-            <div class="member-actions">
-              <ConfirmAction
-                label="Approve"
-                confirmLabel="Approve"
-                variant="default"
-                onConfirm={() => approveMember(member.user_id)}
-              />
-              <ConfirmAction
-                label="Reject"
-                confirmLabel="Reject"
-                variant="danger"
-                onConfirm={() => rejectMember(member.user_id)}
-              />
-            </div>
+            {#if member.join_message}
+              <!-- The join sheet's optional intro note (docs/adr/040) — quoted, never editable here. -->
+              <p class="join-message">&ldquo;{member.join_message}&rdquo;</p>
+            {/if}
           </li>
         {/each}
       </ul>
@@ -291,6 +297,27 @@
 
   .member-row:last-child {
     border-bottom: none;
+  }
+
+  .pending-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+  }
+
+  .member-row-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .join-message {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+    margin: 0;
+    padding-left: 0.1rem;
   }
 
   .member-info {

@@ -7,9 +7,11 @@ import { setTagMotifs } from '../lib/patchIcons.js';
 
 // --- Instance info ---
 let instanceName = $state('Patchwork');
+let instanceDescription = $state('');
 let instanceModules = $state({ map: true, governance: true, ledger: false });
 let instanceSubmissionsEnabled = $state(true);
 let instanceIconUrl = $state('');
+let instanceStats = $state({ node_count: 0, event_count: 0, member_count: 0 });
 let instanceLoaded = $state(false);
 // Neighbor quilts (docs/adr/024): the instance's public adjacency list,
 // shown to every visitor in the quilt switcher.
@@ -33,10 +35,13 @@ let searchQuery = $state('');
 
 // --- Getters ---
 export function getInstanceName() { return instanceName; }
+export function getInstanceDescription() { return instanceDescription; }
 export function getNeighborQuilts() { return neighborQuilts; }
 export function getInstanceDomain() { return instanceDomain; }
 export function getInstanceIconUrl() { return instanceIconUrl; }
 export function getInstanceModules() { return instanceModules; }
+export function getInstanceStats() { return instanceStats; }
+export function isInstanceLoaded() { return instanceLoaded; }
 export function getSubmissionsEnabled() { return instanceSubmissionsEnabled; }
 export function getAllTags() { return allTags; }
 export function getTagVocabulary() { return tagVocabulary; }
@@ -112,9 +117,11 @@ export async function loadInstance() {
       instanceName = data.name;
       document.title = data.name;
     }
+    if (data?.description !== undefined) instanceDescription = data.description;
     if (data?.modules) instanceModules = data.modules;
     if (data?.submissions_enabled !== undefined) instanceSubmissionsEnabled = data.submissions_enabled;
     if (data?.icon_url) instanceIconUrl = data.icon_url;
+    if (data?.stats) instanceStats = data.stats;
     if (data?.branding?.color) {
       document.documentElement.style.setProperty('--color-primary', data.branding.color);
     }

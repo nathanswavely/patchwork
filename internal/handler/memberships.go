@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
@@ -25,11 +27,21 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 
 		// Check if this is a follow request.
 		var reqBody struct {
-			Role string `json:"role"`
+			Role    string `json:"role"`
+			Message string `json:"message"`
 		}
 		// Try to parse body for role; default to member.
 		json.NewDecoder(r.Body).Decode(&reqBody)
 		isFollow := reqBody.Role == "follower"
+
+		// The join sheet's optional intro message (docs/adr/040). Trimmed
+		// and length-checked regardless of path; only ever stored when
+		// the join lands as a pending member request — see below.
+		joinMessage := strings.TrimSpace(reqBody.Message)
+		if len(joinMessage) > 500 {
+			http.Error(w, `{"error":"message must be 500 characters or fewer"}`, http.StatusBadRequest)
+			return
+		}
 
 		// Followers can follow any public patch regardless of membership policy.
 		if isFollow {
@@ -84,9 +96,14 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						newStatus = "pending"
 						auditAction = "membership.request"
 					}
+					// Store the join sheet message only on a pending request (docs/adr/040).
+					var storedMessage interface{}
+					if newStatus == "pending" && joinMessage != "" {
+						storedMessage = joinMessage
+					}
 					_, err = db.Exec(
-						"UPDATE memberships SET role = ?, status = ?, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
-						newRole, newStatus, existingID,
+						"UPDATE memberships SET role = ?, status = ?, join_message = ?, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+						newRole, newStatus, storedMessage, existingID,
 					)
 					if err != nil {
 						http.Error(w, `{"error":"failed to upgrade membership"}`, http.StatusInternalServerError)
@@ -130,9 +147,14 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 				newStatus = "pending"
 				auditAction = "membership.request"
 			}
+			// Store the join sheet message only on a pending request (docs/adr/040).
+			var storedMessage interface{}
+			if newStatus == "pending" && joinMessage != "" {
+				storedMessage = joinMessage
+			}
 			_, err = db.Exec(
-				"UPDATE memberships SET status = ?, role = ?, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
-				newStatus, newRole, existingID,
+				"UPDATE memberships SET status = ?, role = ?, join_message = ?, joined_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+				newStatus, newRole, storedMessage, existingID,
 			)
 			if err != nil {
 				http.Error(w, `{"error":"failed to rejoin node"}`, http.StatusInternalServerError)
@@ -186,10 +208,16 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 			auditAction = "membership.request"
 		}
 
+		// Store the join sheet message only on a pending request (docs/adr/040).
+		var storedMessage interface{}
+		if newStatus == "pending" && joinMessage != "" {
+			storedMessage = joinMessage
+		}
+
 		id := auth.NewUUIDv7()
 		_, err = db.Exec(
-			`INSERT INTO memberships (id, user_id, node_id, role, status) VALUES (?, ?, ?, ?, ?)`,
-			id, user.ID, nodeID, role, newStatus,
+			`INSERT INTO memberships (id, user_id, node_id, role, status, join_message) VALUES (?, ?, ?, ?, ?, ?)`,
+			id, user.ID, nodeID, role, newStatus, storedMessage,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to join node"}`, http.StatusInternalServerError)
@@ -320,7 +348,16 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.joined_at, u.username, u.display_name, u.avatar_url
+		// The pending queue is admin-only reachable (see the statusFilter gate
+		// above), so join_message rides along only there — it never appears on
+		// the active/public listing (docs/adr/040).
+		includeMessage := statusFilter == "pending"
+
+		cols := "m.id, m.user_id, m.node_id, m.role, m.status, m.joined_at, u.username, u.display_name, u.avatar_url"
+		if includeMessage {
+			cols += ", m.join_message"
+		}
+		query := `SELECT ` + cols + `
 			FROM memberships m JOIN users u ON m.user_id = u.id
 			WHERE m.node_id = ? AND m.status = ?`
 		args := []interface{}{nodeID, statusFilter}
@@ -352,12 +389,25 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			Username    string `json:"username"`
 			DisplayName string `json:"display_name"`
 			AvatarURL   string `json:"avatar_url"`
+			// JoinMessage is the join sheet's intro note. Present only on the
+			// admin-only pending listing (docs/adr/040).
+			JoinMessage string `json:"join_message,omitempty"`
 		}
 		var members []memberResponse
 		for rows.Next() {
 			var m memberResponse
-			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.JoinedAt, &m.Username, &m.DisplayName, &m.AvatarURL); err != nil {
-				continue
+			if includeMessage {
+				var jm sql.NullString
+				if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.JoinedAt, &m.Username, &m.DisplayName, &m.AvatarURL, &jm); err != nil {
+					continue
+				}
+				if jm.Valid {
+					m.JoinMessage = jm.String
+				}
+			} else {
+				if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.JoinedAt, &m.Username, &m.DisplayName, &m.AvatarURL); err != nil {
+					continue
+				}
 			}
 			members = append(members, m)
 		}
@@ -494,7 +544,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					http.Error(w, `{"error":"can only approve pending members"}`, http.StatusBadRequest)
 					return
 				}
-				_, err = db.Exec("UPDATE memberships SET status = 'active' WHERE id = ?", memID)
+				_, err = db.Exec("UPDATE memberships SET status = 'active', join_message = NULL WHERE id = ?", memID)
 				if err != nil {
 					http.Error(w, `{"error":"failed to approve member"}`, http.StatusInternalServerError)
 					return
@@ -561,7 +611,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			case "left":
 				// Reject a pending member OR reinstate a banned member.
 				if currentStatus == "pending" {
-					_, err = db.Exec("UPDATE memberships SET status = 'left' WHERE id = ?", memID)
+					_, err = db.Exec("UPDATE memberships SET status = 'left', join_message = NULL WHERE id = ?", memID)
 					if err != nil {
 						http.Error(w, `{"error":"failed to reject member"}`, http.StatusInternalServerError)
 						return

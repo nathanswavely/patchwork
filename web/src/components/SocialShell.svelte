@@ -23,6 +23,7 @@
   import { getUnread } from '../stores/notifications.svelte.js';
   import { ArrowSquareOut, Bell, CaretDown, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
   import LabelFooter from './LabelFooter.svelte';
+  import IntroCard from './IntroCard.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
   let { children, routeName = 'home', quiltScope = 'local' } = $props();
@@ -270,6 +271,11 @@
       />
     {/snippet}
   </GlobalBar>
+
+  <!-- The intro card (CONTEXT.md "Intro card", docs/adr/040): mounted once
+       here so it follows every discovery route in this shell. Anonymous
+       visitors only, first visit only — see IntroCard.svelte. -->
+  <IntroCard {routeName} />
 
   <!-- Mobile search takeover: covers the global bar while open. Full
        width, no back button — the shelf's search button toggles it, and
