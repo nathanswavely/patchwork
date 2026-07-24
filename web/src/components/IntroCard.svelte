@@ -8,9 +8,9 @@
    * and whether it has already been dismissed for good.
    *
    * Corner-overlaid, never blocking — no backdrop, nothing under it is
-   * inert. Dismissed once, gone forever (lib/introCard.js); the "What is
-   * Patchwork?" affordance in the global bar remains as the standing path
-   * to the About page after this card is gone.
+   * inert. Dismissed once, gone forever (lib/introCard.js); the sidebar's
+   * "What is Patchwork?" entry remains as the standing path to the About
+   * page after this card is gone.
    */
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, isAuthChecked } from '../stores/auth.svelte.js';

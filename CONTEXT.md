@@ -364,9 +364,8 @@ algorithm runs it, with the two ways onward — the About page and
 joining. Overlaid on a corner of the surface, never covering it; on
 deep-linked landings (a shared event, a patch profile) it takes its most
 compact form and never competes with the shared content. Dismissed once,
-gone forever; the "What is Patchwork?" affordance in the global bar
-remains as the standing path to the About page. Signed-in people never
-see it.
+gone forever; the sidebar's "What is Patchwork?" entry remains as the
+standing path to the About page. Signed-in people never see it.
 _Avoid_: welcome modal, splash screen, announcement banner, popup (as a
 UI word)
 
@@ -530,7 +529,8 @@ it exposes the Label's gist inline and hands off to /label for the full
 statement of who runs the quilt and what it costs; the two pages never
 trade jobs. The community's own voice here is the instance description
 and the exposed Label, never a separate editable document. Reached from
-the "What is Patchwork?" affordance beside the sign-up entry.
+the sidebar's "What is Patchwork?" entry (anonymous visitors only) and
+the intro card.
 _Avoid_: help page, FAQ, marketing page, landing page (discovery is the
 landing), about (as a name for the Label)
 

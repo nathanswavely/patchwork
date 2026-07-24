@@ -189,16 +189,14 @@
         {/if}
       </div>
     {:else}
-      <!-- Anonymous: three affordances (docs/adr/040). "What is Patchwork?"
-           is the standing path to the About page — it survives the intro
-           card's dismissal, so it lives here rather than only there. Hidden
-           under 768px to keep the bar from crowding on mobile, where the
-           intro card and the About page itself remain reachable. /login
-           leads with "Join {instanceName}" (signup-primary), so a single
-           "Log In" link disagreed with its own destination. Sign Up is
-           primary and matches /login's default panel; Log In is secondary
-           and opens /login straight to the sign-in panel via ?mode=signin. -->
-      <a href="/about" class="bar-about" onclick={(e) => handleNav(e, '/about')}>What is Patchwork?</a>
+      <!-- Anonymous: auth entries only — "What is Patchwork?" lives in the
+           sidebar, where there's room (docs/adr/040). /login leads with
+           "Join {instanceName}" (signup-primary), so a single "Log In" link
+           disagreed with its own destination. Sign Up is primary and
+           matches /login's default panel; Log In is secondary and opens
+           /login straight to the sign-in panel via ?mode=signin. Under
+           640px only Sign Up remains: /login's sign-in toggle is one tap
+           in, the unified-auth-page pattern. -->
       <a href="/login?mode=signin" class="bar-login" onclick={(e) => handleNav(e, '/login?mode=signin')}>Log In</a>
       <a href="/login" class="btn btn-primary bar-signup" onclick={(e) => handleNav(e, '/login')}>Sign Up</a>
     {/if}
@@ -337,29 +335,6 @@
     object-fit: cover;
   }
 
-  .bar-about {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    padding: 8px 10px;
-    border-radius: var(--radius);
-    white-space: nowrap;
-  }
-
-  .bar-about:hover {
-    background: var(--color-overlay);
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  /* Keep the bar uncrowded on mobile — the intro card and the About page
-     itself stay reachable without this link (docs/adr/040). */
-  @media (max-width: 768px) {
-    .bar-about {
-      display: none;
-    }
-  }
-
   .bar-login {
     font-size: 0.9rem;
     font-weight: 600;
@@ -376,6 +351,15 @@
   .bar-signup {
     flex-shrink: 0;
     font-size: 0.85rem;
+  }
+
+  /* Narrow: one auth entry. Sign Up stays (it's the primary ask of an
+     anonymous visitor); /login's own sign-in toggle covers returning
+     users, so the bar never overflows. */
+  @media (max-width: 640px) {
+    .bar-login {
+      display: none;
+    }
   }
 
   /* --- + New button --- */

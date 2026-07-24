@@ -40,12 +40,15 @@ describe('About and Lining routes', () => {
   });
 });
 
-describe('The global bar exposes "What is Patchwork?" to anonymous visitors', () => {
+describe('The sidebar exposes "What is Patchwork?" to anonymous visitors', () => {
+  const shell = source('components/SocialShell.svelte');
   const bar = source('components/GlobalBar.svelte');
 
-  it('links to /about', () => {
-    expect(bar).toContain('href="/about"');
-    expect(bar).toContain('What is Patchwork?');
+  it('links to /about from the sidebar rail, not the bar', () => {
+    expect(shell).toContain('href="/about"');
+    expect(shell).toContain('What is Patchwork?');
+    // The bar carries no /about link anymore (a comment may still name it).
+    expect(bar).not.toContain('href="/about"');
   });
 });
 

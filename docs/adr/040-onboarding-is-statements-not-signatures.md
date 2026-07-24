@@ -87,7 +87,9 @@ the repo (`docs/START-A-QUILT.md`), not in the app.
 - The threshold flows (`/login`, `/invite/:token`, `/signup/complete`,
   `/welcome`) share a minimal shell — quilt mark as the exit home —
   instead of being shell-less traps; the global bar gains a Sign Up
-  entry and the "What is Patchwork?" affordance for anonymous visitors.
+  entry (collapsing to Sign Up alone on narrow screens, the unified
+  auth page covering sign-in), and the standing "What is Patchwork?"
+  affordance for anonymous visitors lives in the sidebar.
 - The Welcome checkbox's disappearance moves the standards affirmation
   wholly into the User Agreement; its shipped default must actually
   carry that weight before the checkbox is removed.
