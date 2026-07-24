@@ -79,17 +79,24 @@ export function getActiveFilterCount() {
 // desktop, closed on mobile. The mobile canvas sheet is exempt — a sheet is
 // open-while-using, never a preference.
 const CHIPS_KEY = 'patchwork-filter-chips-collapsed';
-// null = no stored preference; the default is computed at read time, not
-// module-load time — the viewport may not have real dimensions yet when
-// this module first evaluates.
+// null = no stored preference; the default falls back to the viewport width.
 let chipsCollapsed = $state(
   localStorage.getItem(CHIPS_KEY) != null
     ? localStorage.getItem(CHIPS_KEY) === '1'
     : null
 );
 
+// Viewport width, tracked reactively so the collapse default recomputes on
+// resize. Reading window.innerWidth directly inside getChipsCollapsed()
+// wouldn't work: it's not a reactive dependency, so a $derived over it would
+// freeze at whatever width the component first rendered at (docs/adr/033).
+let viewportWidth = $state(typeof window !== 'undefined' ? window.innerWidth : 1024);
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => { viewportWidth = window.innerWidth; });
+}
+
 export function getChipsCollapsed() {
-  return chipsCollapsed ?? window.innerWidth < 768;
+  return chipsCollapsed ?? viewportWidth < 768;
 }
 export function setChipsCollapsed(collapsed) {
   chipsCollapsed = collapsed;
