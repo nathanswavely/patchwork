@@ -19,11 +19,11 @@
 
   let { routeName = 'home' } = $props();
 
-  // Full form on the home quilt — the first thing a cold landing sees.
-  // Every other public surface (a deep-linked event, a patch profile, the
-  // events list, the map) gets the compact one-liner so the card never
-  // competes with the content someone actually came to see.
-  const FULL_ROUTES = new Set(['home']);
+  // Full form on the canvas views (home quilt and map) — the first thing a
+  // cold landing sees. Every other public surface (a deep-linked event, a
+  // patch profile, the events list) gets the compact one-liner so the card
+  // never competes with the content someone actually came to see.
+  const FULL_ROUTES = new Set(['home', 'map']);
   // No card where the card's own destinations render — pointing someone at
   // the page they're already reading is noise, not orientation.
   const SUPPRESSED_ROUTES = new Set(['about', 'lining', 'label', 'legalDoc']);
@@ -74,18 +74,16 @@
 {/if}
 
 <style>
-  /* Corner overlay, never a modal — no backdrop, nothing beneath it is
-     inert. Sits below the global bar (z-index 60) and above the sidebar
-     rail (55), matching the label/filter sheets' layer. Anchored top-right
-     rather than a bottom corner, which is already claimed by the Label
-     overlay, the quilt/map FABs, and toasts — but offset BELOW the results
-     pane's header row so the Quilt/Map toggle and result counts stay
-     clickable with the card up. It may overlap dismissible content (the
-     top of the results list), never a control. */
+  /* Overlay, never a modal — no backdrop, nothing beneath it is inert.
+     Sits below the global bar (z-index 60) and above the sidebar rail
+     (55), matching the label/filter sheets' layer. Desktop placement is
+     per-variant: the full card sits bottom-left on the canvas views,
+     clear of the results pane, the Quilt/Map toggle, and the bottom-right
+     corner (Label overlay, FABs, toasts); the compact strip centers just
+     under the global bar. It may overlap dismissible content, never a
+     control. */
   .intro-card {
     position: fixed;
-    top: calc(56px + 76px);
-    right: 16px;
     z-index: 56;
     max-width: 320px;
     padding: 16px 18px;
@@ -93,6 +91,11 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     box-shadow: 0 8px 24px var(--color-shadow);
+  }
+
+  .intro-card:not(.compact) {
+    left: 16px;
+    bottom: 16px;
   }
 
   .intro-dismiss {
@@ -148,13 +151,17 @@
   }
 
   /* Compact: one line, wraps to fit content instead of the full card's
-     fixed measure — deep links never compete with the card for space. */
+     fixed measure — deep links never compete with the card for space.
+     Centered just under the global bar on desktop. */
   .intro-card.compact {
     display: flex;
     align-items: center;
     gap: 10px;
     max-width: 92vw;
     padding: 10px 34px 10px 14px;
+    top: calc(56px + 12px);
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .intro-card.compact .intro-line {
@@ -174,15 +181,15 @@
     right: 8px;
   }
 
+  /* Mobile keeps the full-width strip under the bar for both variants. */
   @media (max-width: 640px) {
-    .intro-card {
+    .intro-card,
+    .intro-card.compact {
       left: 12px;
       right: 12px;
-      max-width: none;
       top: calc(56px + 8px);
-    }
-
-    .intro-card.compact {
+      bottom: auto;
+      transform: none;
       max-width: none;
     }
   }

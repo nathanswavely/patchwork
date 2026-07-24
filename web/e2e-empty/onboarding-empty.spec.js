@@ -44,7 +44,8 @@ test('zero-membership user is redirected to first-run onboarding', async ({ page
 test('skip genuinely exits onboarding on an empty instance', async ({ page }) => {
   await loginAsFirstUser(page);
   await page.goto('/welcome');
-  await page.getByRole('checkbox').check();
+  // No agreement checkbox here anymore (docs/adr/040): the signature
+  // happened at account creation, and step 1 is orientation only.
   await page.getByRole('button', { name: /build your quilt/i }).click();
 
   // Empty instance: no tags, so the interests step is bypassed, and with no
@@ -70,7 +71,6 @@ test('skip genuinely exits onboarding on an empty instance', async ({ page }) =>
 test('empty instance steers the first user to create a patch', async ({ page }) => {
   await loginAsFirstUser(page);
   await page.goto('/welcome');
-  await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: /build your quilt/i }).click();
 
   await expect(page.getByRole('heading', { name: /first one here/i })).toBeVisible();
