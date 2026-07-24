@@ -12,6 +12,25 @@
   let saveMessage = $state('');
   let hydrated = false;
 
+  // Landing preference (docs/adr/035): start on the whole quilt (default)
+  // or on My Quilt. Saved on toggle — a single switch doesn't need a Save
+  // button.
+  let startOnMyQuilt = $state(false);
+  let landingSaving = $state(false);
+
+  async function setStartOnMyQuilt(value) {
+    landingSaving = true;
+    try {
+      await api('auth/me', { method: 'PATCH', body: { start_on_my_quilt: value } });
+      startOnMyQuilt = value;
+      await checkAuth();
+      showToast(value ? 'Patchwork will open on My Quilt' : 'Patchwork will open on the whole quilt', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    }
+    landingSaving = false;
+  }
+
   // Steward listing (docs/adr/023): the person's own switch. Appears only
   // when this person is on the Label's stewards list — listed, or invited
   // by an instance admin and not yet accepted.
@@ -62,6 +81,7 @@
       displayName = user.display_name || '';
       bio = user.bio || '';
       links = (user.links || []).map((l) => ({ ...l }));
+      startOnMyQuilt = !!user.start_on_my_quilt;
       hydrated = true;
     }
   });
@@ -194,6 +214,24 @@
           {/if}
         </div>
       </form>
+    </section>
+
+    <section class="card">
+      <h2>When you open Patchwork</h2>
+      <p class="muted profile-hint">
+        Patchwork opens on the whole quilt. Switch this on to start on My
+        Quilt instead — the patches you're part of and follow. You can
+        always move between them from the switcher.
+      </p>
+      <label class="toggle-row">
+        <input
+          type="checkbox"
+          checked={startOnMyQuilt}
+          disabled={landingSaving}
+          onchange={(e) => setStartOnMyQuilt(e.currentTarget.checked)}
+        />
+        <span>Start on My Quilt</span>
+      </label>
     </section>
 
     <section class="card">
@@ -350,5 +388,21 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .toggle-row input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--color-primary);
+    cursor: pointer;
   }
 </style>

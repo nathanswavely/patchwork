@@ -556,9 +556,10 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 
 		var req struct {
-			DisplayName *string           `json:"display_name"`
-			Bio         *string           `json:"bio"`
-			Links       *[]model.NodeLink `json:"links"`
+			DisplayName    *string           `json:"display_name"`
+			Bio            *string           `json:"bio"`
+			Links          *[]model.NodeLink `json:"links"`
+			StartOnMyQuilt *bool             `json:"start_on_my_quilt"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -594,6 +595,16 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 				return
 			}
 		}
+		if req.StartOnMyQuilt != nil {
+			_, err := db.Exec("UPDATE users SET start_on_my_quilt = ?, updated_at = ? WHERE id = ?",
+				*req.StartOnMyQuilt, time.Now().UTC().Format(time.RFC3339), user.ID)
+			if err != nil {
+				http.Error(w, `{"error":"failed to update landing preference"}`, http.StatusInternalServerError)
+				return
+			}
+			user.StartOnMyQuilt = *req.StartOnMyQuilt
+		}
+
 		loadUserLinks(db, user)
 
 		w.Header().Set("Content-Type", "application/json")
