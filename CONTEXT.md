@@ -355,6 +355,57 @@ session is logout; "sign out everywhere else" keeps it and cuts the rest.
 _Avoid_: any textile term, login (the act, not the standing state),
 device (a session is per-browser, not per-machine)
 
+## Onboarding
+
+**Intro card**:
+The non-blocking card an anonymous visitor meets on their first landing
+on any public surface: three sentences on what this quilt is and that no
+algorithm runs it, with the two ways onward — the About page and
+joining. Overlaid on a corner of the surface, never covering it; on
+deep-linked landings (a shared event, a patch profile) it takes its most
+compact form and never competes with the shared content. Dismissed once,
+gone forever; the "What is Patchwork?" affordance in the global bar
+remains as the standing path to the About page. Signed-in people never
+see it.
+_Avoid_: welcome modal, splash screen, announcement banner, popup (as a
+UI word)
+
+**Join sheet**:
+The statement shown between clicking Join and standing as a member or
+requester: the patch's membership policy, its lining state (including an
+amended lining, with the changes one link away), and its published
+charters. A lens over the patch's public face, never a bypass of document
+visibility — a members-only charter stays unseen. Informative, not
+contractual: no checkbox; joining informed is the agreement. On
+approval-required patches it carries the one optional intro message to
+the admins — a field, never a questionnaire. Follows never see it:
+following has no ceremony.
+_Avoid_: join agreement, application form, consent modal, membership form
+
+**Unlock panel**:
+The dismissible panel a new member meets on their first workspace visit
+after joining or being approved: what membership just made visible —
+members-only charters, proposals and their vote, the member list. The
+full governance introduction happens here, after acceptance, because
+this is when the documents become readable: nobody agrees to documents
+they weren't allowed to read. A panel, not a wizard — it never blocks
+the workspace.
+_Avoid_: welcome wizard, tour, member orientation (as a blocking step)
+
+**Setup checklist**:
+The panel a patch's admins see in their workspace until their patch has
+its footing: tile designed, tags chosen, whereabouts stated (skippable —
+not every patch is a place), first event posted, patch link shared,
+governance decided (optional — a band never needs it). Completion is
+derived from real state, never stored progress, so it cannot lie or nag
+about done work. Per-admin dismissible, collapses when complete, blocks
+nothing — the workspace is fully usable from second one. Applies equally
+to a claim-completed owner. Deliberately never says "invite members":
+account invites are instance-scoped (docs/adr/001); a patch grows by its
+link traveling.
+_Avoid_: onboarding wizard, getting-started guide (that is prose, this
+is state), progress tracker, gamification
+
 ## Governance
 
 **Charter**:
@@ -470,6 +521,18 @@ unset means hash-assigned from the quilt's name, stable but not chosen
 seamrip — a fork re-brands.
 _Avoid_: logo (that is branding.logo_url, a different slot), avatar (people
 have those), favicon
+
+**About page**:
+The public orientation page at /about: what this quilt is and how a
+Patchwork works, in the product's voice — patches, following and joining,
+the quilt view, no algorithm, community-run. Orientation, not disclosure:
+it exposes the Label's gist inline and hands off to /label for the full
+statement of who runs the quilt and what it costs; the two pages never
+trade jobs. The community's own voice here is the instance description
+and the exposed Label, never a separate editable document. Reached from
+the "What is Patchwork?" affordance beside the sign-up entry.
+_Avoid_: help page, FAQ, marketing page, landing page (discovery is the
+landing), about (as a name for the Label)
 
 **Label**:
 The quilt's public statement of how it is run and paid for — who stewards
