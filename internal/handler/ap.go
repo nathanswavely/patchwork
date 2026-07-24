@@ -262,10 +262,13 @@ func APGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Only public docs federate: the fediverse has no session to check a
+		// membership against, so members-only is off the wire entirely
+		// (docs/adr/036).
 		var doc model.GovernanceDoc
 		err := db.QueryRow(
 			`SELECT id, node_id, title, body, version, created_by, created_at, updated_at
-			 FROM governance_docs WHERE id = ?`, docID,
+			 FROM governance_docs WHERE id = ? AND visibility = 'public'`, docID,
 		).Scan(&doc.ID, &doc.NodeID, &doc.Title, &doc.Body, &doc.Version, &doc.CreatedBy, &doc.CreatedAt, &doc.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"governance doc not found"}`, http.StatusNotFound)

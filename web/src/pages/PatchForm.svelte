@@ -5,6 +5,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import TemplatePreviewDrawer from '../components/TemplatePreviewDrawer.svelte';
+  import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
   import TagPicker from '../components/TagPicker.svelte';
   import { MOTIFS, MOTIF_KEYS } from '../lib/patchIcons.js';
   import { PALETTES, PALETTE_KEYS } from '../lib/quiltTheme.js';
@@ -58,6 +59,17 @@
   });
 
   let submitting = $state(false);
+  // The lining (docs/adr/037): shown at creation because adoption should
+  // never be a surprise. Text fetched lazily when the drawer opens.
+  let liningOpen = $state(false);
+  let lining = $state(null);
+
+  function toggleLining() {
+    liningOpen = !liningOpen;
+    if (liningOpen && !lining) {
+      api('instance/lining').then((l) => { lining = l; }).catch(() => {});
+    }
+  }
   let error = $state('');
   let previewTemplate = $state('');
 
@@ -249,6 +261,28 @@
               </button>
             {/each}
           </div>
+        </div>
+
+        <div class="field">
+          <label>The lining</label>
+          <p class="field-hint muted">
+            Every patch starts with the lining — this quilt's shared community
+            standards. It is always public, and if your patch amends it, the
+            changes are public and the patch is marked as having amended the
+            lining.
+          </p>
+          <button type="button" class="lining-toggle" onclick={toggleLining}>
+            {liningOpen ? 'Hide the lining' : 'Read the lining'}
+          </button>
+          {#if liningOpen}
+            <div class="lining-text">
+              {#if lining}
+                <MarkdownRenderer content={lining.body} />
+              {:else}
+                <span class="muted">Loading...</span>
+              {/if}
+            </div>
+          {/if}
         </div>
 
         <div class="field">
@@ -563,4 +597,27 @@
       flex-direction: column;
     }
   }
+  .lining-toggle {
+    align-self: flex-start;
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .lining-text {
+    margin-top: 0.6rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    font-size: 0.88rem;
+    line-height: 1.7;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
 </style>

@@ -15,6 +15,12 @@ func ListRevisions(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		proposalID := r.PathValue("id")
 
+		// Revisions snapshot the proposed charter text, so they inherit the
+		// target charter's visibility (docs/adr/036).
+		var revNodeID, revTargetDoc string
+		db.QueryRow("SELECT node_id, COALESCE(target_doc,'') FROM proposals WHERE id = ?", proposalID).Scan(&revNodeID, &revTargetDoc)
+		docTextHidden := revNodeID != "" && hiddenDocRedactor(db, r, revNodeID)(revTargetDoc)
+
 		rows, err := db.Query(
 			`SELECT r.id, r.proposal_id, r.title, r.body, COALESCE(r.proposed_body,''), r.revision_number, r.author_id, r.change_note, r.created_at,
 			 COALESCE(u.display_name, u.username) as author_name
@@ -47,6 +53,9 @@ func ListRevisions(db *database.DB) http.HandlerFunc {
 			var rev revisionItem
 			if err := rows.Scan(&rev.ID, &rev.ProposalID, &rev.Title, &rev.Body, &rev.ProposedBody, &rev.RevisionNumber, &rev.AuthorID, &rev.ChangeNote, &rev.CreatedAt, &rev.AuthorName); err != nil {
 				continue
+			}
+			if docTextHidden {
+				rev.ProposedBody = ""
 			}
 			revisions = append(revisions, rev)
 		}

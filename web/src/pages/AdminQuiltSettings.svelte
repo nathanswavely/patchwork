@@ -20,6 +20,22 @@
   // Identity form
   let name = $state('');
   let description = $state('');
+  // Quilt policy (docs/adr/037): hide amended-lining patches from discovery
+  // for everyone. Personal settings can hide more, never reveal what this hides.
+  let hideAmendedLinings = $state(false);
+  let savingPolicy = $state(false);
+
+  async function savePolicy(value) {
+    savingPolicy = true;
+    try {
+      await api('admin/settings', { method: 'PATCH', body: { hide_amended_linings: value } });
+      hideAmendedLinings = value;
+      showToast('Policy saved', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    }
+    savingPolicy = false;
+  }
   let savingIdentity = $state(false);
 
   // Icon
@@ -53,6 +69,7 @@
       data = await api('admin/settings');
       name = data.name;
       description = data.description;
+      hideAmendedLinings = !!data.hide_amended_linings;
     } catch (e) {
       error = e.message;
     }
@@ -323,6 +340,25 @@
 
     <!-- ===== Data export ===== -->
     <section class="section">
+      <h2>The Lining</h2>
+      <p class="section-desc">
+        Every patch starts with the lining and can amend its copy by proposal.
+        Amended patches always wear a public badge; this policy also keeps them
+        out of the quilt, search, the map, and public feeds for everyone.
+        Direct links still work.
+      </p>
+      <label class="policy-toggle">
+        <input
+          type="checkbox"
+          checked={hideAmendedLinings}
+          disabled={savingPolicy}
+          onchange={(e) => savePolicy(e.target.checked)}
+        />
+        <span>Hide patches that amended the lining</span>
+      </label>
+    </section>
+
+    <section class="section">
       <h2>Data Export (Seamrip)</h2>
       <div class="card settings-card">
         <p class="section-desc">
@@ -410,6 +446,14 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .policy-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
   }
 
   .section-desc {

@@ -545,6 +545,9 @@ func Me(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
 		loadUserLinks(db, user)
+		var hide int
+		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
+		user.HideAmendedLinings = hide == 1
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(user)
 	}
@@ -556,10 +559,11 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 
 		var req struct {
-			DisplayName    *string           `json:"display_name"`
-			Bio            *string           `json:"bio"`
-			Links          *[]model.NodeLink `json:"links"`
-			StartOnMyQuilt *bool             `json:"start_on_my_quilt"`
+			DisplayName        *string           `json:"display_name"`
+			Bio                *string           `json:"bio"`
+			Links              *[]model.NodeLink `json:"links"`
+			StartOnMyQuilt     *bool             `json:"start_on_my_quilt"`
+			HideAmendedLinings *bool             `json:"hide_amended_linings"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -605,7 +609,22 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 			user.StartOnMyQuilt = *req.StartOnMyQuilt
 		}
 
+		if req.HideAmendedLinings != nil {
+			v := 0
+			if *req.HideAmendedLinings {
+				v = 1
+			}
+			_, err := db.Exec("UPDATE users SET hide_amended_linings = ?, updated_at = ? WHERE id = ?",
+				v, time.Now().UTC().Format(time.RFC3339), user.ID)
+			if err != nil {
+				http.Error(w, `{"error":"failed to update setting"}`, http.StatusInternalServerError)
+				return
+			}
+		}
 		loadUserLinks(db, user)
+		var hide int
+		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
+		user.HideAmendedLinings = hide == 1
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(user)

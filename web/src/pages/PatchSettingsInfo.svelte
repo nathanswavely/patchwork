@@ -127,6 +127,37 @@
     patch.value.reload();
   }
 
+  // Patch visibility. Each option carries the consequence, not just the word:
+  // "Private" alone reads like a promise the patch page can't keep.
+  const visibilityOptions = [
+    {
+      value: 'public',
+      label: 'Public',
+      description:
+        'On the quilt. Anyone can find this patch through the quilt, search, the map, and public event feeds, and other quilts can follow it.',
+    },
+    {
+      value: 'private',
+      label: 'Private',
+      description:
+        'Off the quilt. Kept out of the quilt, search, the map, and public feeds, and it does not federate.',
+    },
+  ];
+  let currentVisibility = $derived(node?.visibility || 'public');
+  let savingVisibility = $state(false);
+
+  async function saveVisibility(value) {
+    if (value === currentVisibility) return;
+    savingVisibility = true;
+    try {
+      await saveField('visibility', value);
+    } catch (e) {
+      showToast(e.message || 'Failed to save visibility', 'error');
+    } finally {
+      savingVisibility = false;
+    }
+  }
+
   // Event suggestions switch (docs/adr/026): whether non-members can
   // suggest events to this patch for admin review.
   let savingSuggestions = $state(false);
@@ -254,16 +285,41 @@
     placeholder="https://..."
   />
 
-  <InlineEdit
-    label="Visibility"
-    value={node?.visibility || 'public'}
-    type="select"
-    options={[
-      { value: 'public', label: 'Public' },
-      { value: 'private', label: 'Private' },
-    ]}
-    onSave={(v) => saveField('visibility', v)}
-  />
+  <!-- Visibility. The old control was a bare Public/Private select, which
+       named a state without saying what it does — and said nothing about the
+       one thing admins asked: whether it covers the patch's documents too
+       (it doesn't; charters carry their own switch, docs/adr/036). -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Visibility</span>
+    </div>
+    <p class="muted tags-hint">
+      This is about the patch itself — where it shows up. Events, members, and
+      documents each carry their own visibility.
+    </p>
+    <div class="choice-list">
+      {#each visibilityOptions as opt}
+        <label class="choice" class:selected={currentVisibility === opt.value}>
+          <input
+            type="radio"
+            name="patch-visibility"
+            value={opt.value}
+            checked={currentVisibility === opt.value}
+            disabled={savingVisibility}
+            onchange={() => saveVisibility(opt.value)}
+          />
+          <span class="choice-text">
+            <span class="choice-label">{opt.label}</span>
+            <span class="muted choice-desc">{opt.description}</span>
+          </span>
+        </label>
+      {/each}
+    </div>
+    <p class="muted tags-hint caveat">
+      Either way, anyone holding a direct link can open this patch's page. Private
+      keeps it from being found, not from being visited.
+    </p>
+  </div>
 
   <!-- Tags section -->
   <div class="links-section">
@@ -463,6 +519,58 @@
 
   .toggle-row input {
     accent-color: var(--color-primary);
+  }
+
+  .choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .choice {
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+
+  .choice:hover {
+    border-color: var(--color-primary);
+  }
+
+  .choice.selected {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  }
+
+  .choice input {
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .choice-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .choice-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .choice-desc {
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .caveat {
+    margin-top: 0.5rem;
   }
 
   .tags-hint {

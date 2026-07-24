@@ -64,6 +64,11 @@
             <div class="doc-meta">
               <span class="badge">v{doc.version}</span>
               <span class="muted">Last updated {new Date(doc.updated_at).toLocaleDateString()}</span>
+              {#if isMember && doc.visibility !== 'public'}
+                <!-- Only members see this doc at all; the chip tells them the
+                     public can't (docs/adr/036). -->
+                <span class="vis-chip">Members only</span>
+              {/if}
             </div>
           </div>
           <div class="doc-actions">
@@ -111,6 +116,17 @@
     gap: 0.75rem;
     align-items: center;
     font-size: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .vis-chip {
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
   }
 
   .doc-body {

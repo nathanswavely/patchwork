@@ -116,42 +116,12 @@ func templateFiles(template string) map[string]string {
 // drift happened.
 const DefaultLiningTitle = "Community Standards"
 
-// DefaultLiningBody deliberately has no top-level heading: the title lives
-// in the governance_docs row (and this constant), and git file content
-// must equal the DB body verbatim so the two stores stay diffably equal.
-const DefaultLiningBody = `This is the lining, the baseline that holds this patchwork together. Every patch on this quilt agrees to these standards. Individual patches can build on top of them, but they can't override them.
-
-## Our Commitment
-
-This patchwork is antifascist by design. Everyone gets a welcoming and safe place here, regardless of race, ethnicity, gender identity, sexual orientation, disability, age, religion, immigration status, or socioeconomic background.
-
-## Expected Behavior
-
-- **Treat every person with dignity and respect.** Disagree all you want. Personal attacks are out of bounds.
-- **Participate in good faith.** Contribute constructively to the communities you join.
-- **Support the communities you're part of.** Show up, follow through, and help when you can.
-- **Report harmful behavior.** If you see something that violates these standards, tell a patch admin or instance admin. Don't ignore it.
-
-## Unacceptable Behavior
-
-- Discrimination, harassment, or hate speech of any kind
-- Threats, intimidation, or deliberate disruption
-- Sharing others' private information without consent
-- Sustained unwelcome contact after being asked to stop
-- Using this infrastructure to organize against the humanity of other people
-
-## Enforcement
-
-Patch admins may warn, temporarily suspend, or permanently remove members who violate these standards. Instance admins may take action on patches that fail to enforce these standards.
-
-## The Right to Seamrip
-
-Any group can take the tools, the governance docs, and the data, and start their own quilt. That's the immune system working. The threat of seamripping keeps the organization honest.
-
-## Amendments
-
-These standards can be amended through the governance process. Proposed changes require community review and a supermajority vote at the instance level.
-`
+// DefaultLiningBody is the current shipped lining text — the head of the
+// lineage in lining.go (docs/adr/037). It deliberately has no top-level
+// heading: the title lives in the governance_docs row (and the constant
+// above), and git file content must equal the DB body verbatim so the two
+// stores stay diffably equal.
+var DefaultLiningBody = CurrentLiningBody()
 
 // ============================================================
 // GOVERNANCE RULES (JSON) — one per template

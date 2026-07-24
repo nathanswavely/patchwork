@@ -10,6 +10,8 @@
 
   let title = $state('');
   let body = $state('');
+  // Members only until the patch decides otherwise (docs/adr/036).
+  let visibility = $state('members');
   let submitting = $state(false);
   let error = $state('');
   let previewMode = $state(false);
@@ -88,7 +90,7 @@ Violations may result in a warning, temporary suspension, or removal from the co
     try {
       const result = await api(`nodes/${slug}/governance`, {
         method: 'POST',
-        body: { title: title.trim(), body: body.trim() },
+        body: { title: title.trim(), body: body.trim(), visibility },
       });
       showToast('Document created', 'success');
       navigate(`/patches/${slug}/governance/docs/${result.id}`);
@@ -165,6 +167,19 @@ Violations may result in a warning, temporary suspension, or removal from the co
             </div>
           </div>
 
+          <div class="field">
+            <label for="doc-visibility">Who can read this</label>
+            <select id="doc-visibility" bind:value={visibility} disabled={submitting}>
+              <option value="members">Members only</option>
+              <option value="public">Anyone</option>
+            </select>
+            <p class="muted field-hint">
+              {visibility === 'public'
+                ? 'Visitors, search engines, and other quilts can read this document.'
+                : 'Only this patch’s members and admins can read this document. You can publish it later.'}
+            </p>
+          </div>
+
           {#if error}
             <p class="error-text">{error}</p>
           {/if}
@@ -207,6 +222,22 @@ Violations may result in a warning, temporary suspension, or removal from the co
 
   .required {
     color: var(--color-error);
+  }
+
+  .field select {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    max-width: 22rem;
+  }
+
+  .field-hint {
+    font-size: 0.8rem;
+    max-width: 52ch;
   }
 
   .template-selector {

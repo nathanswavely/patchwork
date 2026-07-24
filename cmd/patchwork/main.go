@@ -155,6 +155,16 @@ func main() {
 		log.Println("notifications: email channel enabled")
 	}
 	handler.SetNotifier(notifier)
+
+	// Bring every patch's lining to the current shipped text (docs/adr/037):
+	// create missing linings, auto-update stale ones. Diverged linings are
+	// never touched. Runs after the repo backfill (so git mirrors land) and
+	// after SetNotifier (so lining.updated notifications aren't dropped).
+	if created, updatedLinings, err := handler.AutoUpdateLinings(db); err != nil {
+		log.Fatalf("lining auto-update: %v", err)
+	} else if created > 0 || updatedLinings > 0 {
+		log.Printf("lining: created %d, auto-updated %d to v%d", created, updatedLinings, governance.CurrentLiningVersion())
+	}
 	reminderCtx, reminderCancel := context.WithCancel(context.Background())
 	defer reminderCancel()
 	notifications.StartReminderWorker(reminderCtx, notifier)
@@ -192,6 +202,7 @@ func main() {
 	mux.HandleFunc("GET /api/v1/health", handler.Health(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance", handler.Instance(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance/icon", handler.InstanceIcon(db, cfg))
+	mux.HandleFunc("GET /api/v1/instance/lining", handler.GetInstanceLining(db))
 
 	// The Label (docs/adr/023) — public read: its most important reader
 	// has no account yet. Steward self-listing is the person's own switch.
@@ -255,7 +266,7 @@ func main() {
 	mux.HandleFunc("GET /api/v1/nodes", middleware.AuthOptional(db, handler.ListNodes(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}", middleware.AuthOptional(db, handler.GetNode(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/members", middleware.AuthOptional(db, handler.ListMembers(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/proposals", handler.ListProposals(db))
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/proposals", middleware.AuthOptional(db, handler.ListProposals(db)))
 
 	// User profiles — public (docs/adr/006).
 	mux.HandleFunc("GET /api/v1/users/{username}", handler.GetUserProfile(db))
@@ -299,8 +310,9 @@ func main() {
 	mux.HandleFunc("GET /api/v1/me/nodes", middleware.AuthRequired(db, handler.ListMyMemberships(db)))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
 
-	// Proposal routes — public.
-	mux.HandleFunc("GET /api/v1/proposals/{id}", handler.GetProposal(db))
+	// Proposal routes — public, but amendment text follows the target
+	// charter's visibility, so the optional session is read (docs/adr/036).
+	mux.HandleFunc("GET /api/v1/proposals/{id}", middleware.AuthOptional(db, handler.GetProposal(db)))
 
 	// Proposal routes — auth required.
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/proposals", middleware.AuthRequired(db, handler.CreateProposal(db)))
@@ -309,11 +321,13 @@ func main() {
 	mux.HandleFunc("POST /api/v1/proposals/{id}/vote", middleware.AuthRequired(db, handler.VoteOnProposal(db)))
 	mux.HandleFunc("POST /api/v1/proposals/{id}/apply", middleware.AuthRequired(db, handler.ApplyProposal(db)))
 
-	// Governance routes — public.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance", handler.ListGovernanceDocs(db))
-	mux.HandleFunc("GET /api/v1/governance/{id}/versions", handler.GetGovernanceVersions(db))
-	mux.HandleFunc("GET /api/v1/governance/{id}/diff", handler.GetGovernanceDiff(db))
-	mux.HandleFunc("GET /api/v1/governance/{id}", handler.GetGovernanceDoc(db))
+	// Governance reads — public docs for everyone, members-only docs for
+	// viewers the patch has admitted, so each needs the optional session
+	// (docs/adr/036).
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance", middleware.AuthOptional(db, handler.ListGovernanceDocs(db)))
+	mux.HandleFunc("GET /api/v1/governance/{id}/versions", middleware.AuthOptional(db, handler.GetGovernanceVersions(db)))
+	mux.HandleFunc("GET /api/v1/governance/{id}/diff", middleware.AuthOptional(db, handler.GetGovernanceDiff(db)))
+	mux.HandleFunc("GET /api/v1/governance/{id}", middleware.AuthOptional(db, handler.GetGovernanceDoc(db)))
 
 	// Governance routes — auth required.
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/governance", middleware.AuthRequired(db, handler.CreateGovernanceDoc(db)))
@@ -329,7 +343,7 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/comments/{id}/reactions/{emoji}", middleware.AuthRequired(db, handler.RemoveReaction(db)))
 
 	// Revisions.
-	mux.HandleFunc("GET /api/v1/proposals/{id}/revisions", handler.ListRevisions(db))
+	mux.HandleFunc("GET /api/v1/proposals/{id}/revisions", middleware.AuthOptional(db, handler.ListRevisions(db)))
 	mux.HandleFunc("POST /api/v1/proposals/{id}/revisions", middleware.AuthRequired(db, handler.CreateRevision(db)))
 
 	// Event routes — public. GetEvent is AuthOptional because a pending

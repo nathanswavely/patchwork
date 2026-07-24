@@ -20,14 +20,18 @@ type User struct {
 	// TrustedContributor is the instance-level grant from docs/adr/026:
 	// events this person records on unclaimed patches skip review. It is
 	// orthogonal to patch roles and worth nothing on active patches.
-	TrustedContributor bool    `json:"trusted_contributor"`
+	TrustedContributor bool `json:"trusted_contributor"`
 	// StartOnMyQuilt is the per-person landing preference (docs/adr/035):
 	// when true, a cold visit to "/" redirects once to "/my". Default false
 	// — the whole quilt is the shared default landing.
-	StartOnMyQuilt bool    `json:"start_on_my_quilt"`
-	SuspendedAt    *string `json:"suspended_at,omitempty"`
-	CreatedAt      string  `json:"created_at"`
-	UpdatedAt      string  `json:"updated_at"`
+	StartOnMyQuilt bool `json:"start_on_my_quilt"`
+	// HideAmendedLinings is the personal discovery filter (docs/adr/037):
+	// hide amended-lining patches from this user's quilt, search, map, and
+	// public feeds. Populated by the Me handler, not by session validation.
+	HideAmendedLinings bool    `json:"hide_amended_linings"`
+	SuspendedAt        *string `json:"suspended_at,omitempty"`
+	CreatedAt          string  `json:"created_at"`
+	UpdatedAt          string  `json:"updated_at"`
 }
 
 type Notification struct {
@@ -287,14 +291,22 @@ type Proposal struct {
 }
 
 type GovernanceDoc struct {
-	ID        string `json:"id"`
-	NodeID    string `json:"node_id"`
-	Title     string `json:"title"`
-	Body      string `json:"body"`
-	Version   int    `json:"version"`
-	CreatedBy string `json:"created_by"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ID     string `json:"id"`
+	NodeID string `json:"node_id"`
+	Title  string `json:"title"`
+	Body   string `json:"body"`
+	// Kind is "charter" or "lining" (docs/adr/037). The lining is the shared
+	// baseline every patch adopts at creation; it is machine-identified by
+	// this column, never by its title.
+	Kind string `json:"kind"`
+	// Visibility is "public" or "members" (docs/adr/036). New docs default
+	// to members-only; a patch admin publishes each one deliberately. The
+	// lining is pinned public (docs/adr/037).
+	Visibility string `json:"visibility"`
+	Version    int    `json:"version"`
+	CreatedBy  string `json:"created_by"`
+	CreatedAt  string `json:"created_at"`
+	UpdatedAt  string `json:"updated_at"`
 }
 
 type Vote struct {

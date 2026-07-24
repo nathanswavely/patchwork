@@ -6,6 +6,9 @@
 
   let user = $derived(getUser());
   let displayName = $state('');
+  // Personal discovery filter (docs/adr/037).
+  let hideAmendedLinings = $state(false);
+  let hideAmendedSaving = $state(false);
   let bio = $state('');
   let links = $state([]);
   let saving = $state(false);
@@ -37,6 +40,24 @@
   let steward = $state(null);
   let stewardBlurb = $state('');
   let stewardSaving = $state(false);
+
+  $effect(() => {
+    api('auth/me')
+      .then((me) => { hideAmendedLinings = !!me.hide_amended_linings; })
+      .catch(() => {});
+  });
+
+  async function saveHideAmended(value) {
+    hideAmendedSaving = true;
+    try {
+      await api('auth/me', { method: 'PATCH', body: { hide_amended_linings: value } });
+      hideAmendedLinings = value;
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    } finally {
+      hideAmendedSaving = false;
+    }
+  }
 
   $effect(() => {
     api('users/me/steward')
@@ -235,6 +256,23 @@
     </section>
 
     <section class="card">
+      <h2>Discovery</h2>
+      <label class="toggle-row">
+        <input
+          type="checkbox"
+          checked={hideAmendedLinings}
+          disabled={hideAmendedSaving}
+          onchange={(e) => saveHideAmended(e.target.checked)}
+        />
+        <span>Hide patches that amended the lining</span>
+      </label>
+      <p class="muted profile-hint">
+        Keeps patches that changed the shared community standards out of your
+        quilt, search, map, and event feed. Direct links still work.
+      </p>
+    </section>
+
+    <section class="card">
       <h2>Personal feed</h2>
       <p class="muted profile-hint">
         A calendar feed of every event on your My Quilt, for your calendar
@@ -320,6 +358,15 @@
   .profile-hint {
     font-size: 0.85rem;
     margin-bottom: 1rem;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 0.35rem;
   }
 
   .feed-url-row {

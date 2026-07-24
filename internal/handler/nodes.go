@@ -469,6 +469,18 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			conditions = append(conditions, "n.latitude IS NOT NULL AND n.longitude IS NOT NULL")
 		}
 
+		// Amended-lining discovery filter (docs/adr/037). Excluded in SQL so
+		// cursor pagination stays exact. Never applies to My Quilt — a patch
+		// you belong to is yours to see.
+		if !myScope && hideAmendedLinings(db, r) {
+			for nodeID, status := range NodeLiningStatuses(db) {
+				if status == governance.LiningDiverged {
+					conditions = append(conditions, "n.id != ?")
+					args = append(args, nodeID)
+				}
+			}
+		}
+
 		if after != "" {
 			conditions = append(conditions, "n.id > ?")
 			args = append(args, after)
@@ -565,6 +577,12 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		resp := map[string]interface{}{
 			"node":         n,
 			"is_unclaimed": isUnclaimed,
+		}
+		// Lining status is deliberately public (docs/adr/037): "amended
+		// lining" (diverged) is the badge state the whole design hangs on.
+		var liningBody string
+		if db.QueryRow("SELECT body FROM governance_docs WHERE node_id = ? AND kind = 'lining'", n.ID).Scan(&liningBody) == nil {
+			resp["lining_status"] = governance.LiningStatus(liningBody)
 		}
 		// The verification domain is the trust anchor for claims (docs/adr/030);
 		// surface it for unclaimed patches so the admin's Verification settings

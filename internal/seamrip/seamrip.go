@@ -187,10 +187,11 @@ func Tables() []Table {
 		{
 			File: "governance.json",
 			Name: "governance_docs",
-			Query: `SELECT id, node_id, title, body, version, created_by,
+			Query: `SELECT id, node_id, title, body, kind, visibility, version, created_by,
 				created_at, updated_at FROM governance_docs`,
 			Columns: cols(id("id"), id("node_id"), c("title"), c("body"),
-				c("version"), id("created_by"), c("created_at"), c("updated_at")),
+				c("kind"), c("visibility"), c("version"), id("created_by"),
+				c("created_at"), c("updated_at")),
 		},
 		{
 			File: "claim_requests.json",
