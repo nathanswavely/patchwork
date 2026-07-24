@@ -74,29 +74,25 @@ func CurrentLiningVersion() int {
 // (docs/adr/037: the lineage starts at the handwritten text; earlier drafts
 // are legacy, healed but unrecorded).
 //
-// PLACEHOLDER: this is the working draft pending Nathan's final wording. It
-// must be replaced by the finalized v1 before this branch ships — the whole
-// point of the lineage is that v1 is written by hand.
-//
 // No top-level heading: the title lives in the governance_docs row
 // (DefaultLiningTitle), and git file content must equal the DB body verbatim.
-const liningV1 = `This is our lining. This patch, like every patch on this quilt, starts by agreeing to it. This patch runs itself, except in what's written here. It's deliberately short.
+const liningV1 = `This patch, like every patch on the quilt, starts by agreeing to the lining. If a patch changes this lining, the change is recorded and public. Its members operate with autonomy as long as they maintain the following commitment:
 
 ## Keep each other safe
 
-This patch, like the quilt it belongs to, is antifascist by design. Nobody gets targeted here for who they are: race, ethnicity, gender, sexuality, disability, age, religion, immigration status, class. A space that tolerates hate turns into a space for hate. So we don't tolerate it.
+This is an antifascist space. Nobody is harmed, excluded, or diminished for who they are: not for race, ethnicity, gender, sexuality, disability, age, religion, immigration status, or class. We regulate actions, not identity. Tolerance is a social contract, and whoever organizes to end it for others isn't owed a place in it. Any organizing that ranks people by any of those lines, scapegoats minorities, or promotes xenophobia is prohibited. No fascist or white-supremacist organizing, recruiting, or symbols, no matter how politely they're dressed. A space that tolerates hate turns into a space for hate.
 
 ## Good faith
 
-Argue as hard as you want about ideas and leave the people out of it. Do what you said you'd do. If you can't, say so. Leave people and places a little better than you found them.
+We accept that argument and debate are an essential part of community building, but personal attacks are prohibited. We do our best to follow through on our word, and if we can't, we communicate clearly. We leave people and places a little better than we found them, and we do the good that's ours to do.
 
 ## Don't look away
 
-If someone is being harmed, tell a patch admin, and if the patch itself is the problem, tell the quilt's admin. Reporting isn't snitching, and nobody else is coming to handle it.
+If someone is being harmed, we say something, and if the patch itself is the problem, we escalate. Reporting isn't snitching, and we don't assume it's someone else's problem.
 
-## Hard limits
+## Prohibited behavior
 
-Harassment, threats, or hate speech. Outing people, or passing along what they told you in confidence. Contact that keeps coming after someone says stop. Any of these can get a person removed, and a patch that shelters them can go with them.`
+Harassment, threats, or hate speech. Outing people, or passing along what they told you in confidence. Contact that keeps coming after someone says stop. Any of these can result in user removal, and a patch that shelters such users will risk removal as well.`
 
 // legacyLiningDraft is the pre-lineage text live instances carry (the body
 // DefaultLiningBody shipped as before docs/adr/037). Held here only so the
