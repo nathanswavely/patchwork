@@ -289,8 +289,8 @@
   {/if}
 
   <!-- Filter chips over the canvas (docs/adr/033): desktop-only here — the
-       row overlays the quilt/map top edge, bounded away from the rail and
-       the cards pane. Mobile canvases get the FAB + sheet below instead. -->
+       row overlays the quilt/map bottom-left corner, bounded away from the
+       rail and the cards pane. Mobile canvases get the FAB + sheet below. -->
   {#if isQuiltRoute}
     <div class="quilt-chips" class:rail-collapsed={sidebarCollapsed}>
       <FilterChips variant="overlay" />
@@ -587,12 +587,13 @@
   }
 
   /* --- Filter chips over the canvas (docs/adr/033) --- */
-  /* Desktop only: overlays the quilt/map top edge under the glass bar,
-     bounded left of the rail's floating card and right of the cards pane —
-     wrapping within that span, never extending across it. */
+  /* Desktop only: overlays the quilt/map bottom-left corner, bounded left of
+     the rail's floating card and right of the cards pane — wrapping within
+     that span and growing upward from the bottom edge, never extending across
+     it. The attribution strip owns the bottom-right, so the two never meet. */
   .quilt-chips {
     position: fixed;
-    top: calc(56px + 12px);
+    bottom: 12px;
     left: 224px; /* clear the rail's floating glass card (12px + 200px + gap) */
     right: calc(45% + 16px); /* clear the cards pane */
     z-index: 20; /* the canvas chrome layer — same as the view pill */
