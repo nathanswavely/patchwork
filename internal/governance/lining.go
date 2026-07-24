@@ -28,6 +28,14 @@ var legacyLiningBodies = []string{
 	legacyLiningHumanized,
 }
 
+// LegacyLiningBodies returns copies of the healed pre-lineage drafts, oldest
+// first. While the lineage holds a single version these are the only bodies
+// that classify as stale; exported so tests outside this package can stage a
+// lining that AutoUpdateLinings will heal.
+func LegacyLiningBodies() []string {
+	return append([]string(nil), legacyLiningBodies...)
+}
+
 // LiningStatus values. Backend/predicate terms; the UI says "amended lining"
 // for diverged (CONTEXT.md).
 const (

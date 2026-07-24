@@ -2,10 +2,12 @@ package handler_test
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 )
 
 // The lining is bible (docs/adr/037): kind='lining', pinned public, title
@@ -115,5 +117,67 @@ func TestAutoUpdateLinings(t *testing.T) {
 	db.QueryRow("SELECT body, version FROM governance_docs WHERE node_id = ? AND kind = 'lining'", diverged).Scan(&divergedBody, &divergedVersion)
 	if divergedBody != "our own rules" || divergedVersion != 3 {
 		t.Errorf("diverged lining was touched: body=%q version=%d", divergedBody, divergedVersion)
+	}
+}
+
+// One rollout, at most one notification per user: a member of two healed
+// patches hears once with the count; a member of one keeps the per-patch
+// wording and deep link. The doc updates themselves stay per-patch.
+func TestAutoUpdateLiningsOneNotificationPerUser(t *testing.T) {
+	db := setupTestDB(t)
+	handler.SetNotifier(notifications.NewNotifier(db))
+	t.Cleanup(func() { handler.SetNotifier(nil) })
+
+	shared, _ := createTestUser(t, db, "lin4shared", "member")
+	solo, _ := createTestUser(t, db, "lin4solo", "member")
+
+	nodeA := createTestNode(t, db, shared.ID, "Stale A", "stale-a", "open")
+	nodeB := createTestNode(t, db, shared.ID, "Stale B", "stale-b", "open")
+	createTestMembership(t, db, shared.ID, nodeA, "admin", "active")
+	createTestMembership(t, db, shared.ID, nodeB, "admin", "active")
+	createTestMembership(t, db, solo.ID, nodeA, "member", "active")
+
+	staleBody := governance.LegacyLiningBodies()[0]
+	for _, nodeID := range []string{nodeA, nodeB} {
+		handler.CreateDefaultLining(db, nodeID, shared.ID)
+		db.Exec("UPDATE governance_docs SET body = ? WHERE node_id = ? AND kind = 'lining'", staleBody, nodeID)
+	}
+
+	_, updated, err := handler.AutoUpdateLinings(db)
+	if err != nil {
+		t.Fatalf("auto-update: %v", err)
+	}
+	if updated != 2 {
+		t.Fatalf("expected 2 updated linings, got %d", updated)
+	}
+
+	var sharedCount int
+	db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = ?",
+		shared.ID, string(notifications.LiningUpdated)).Scan(&sharedCount)
+	if sharedCount != 1 {
+		t.Fatalf("member of 2 healed patches: expected 1 notification, got %d", sharedCount)
+	}
+	var sharedTitle, sharedBody string
+	db.QueryRow("SELECT title, body FROM notifications WHERE user_id = ?", shared.ID).Scan(&sharedTitle, &sharedBody)
+	if sharedTitle != "The lining was updated across 2 of your patches" {
+		t.Errorf("coalesced title = %q", sharedTitle)
+	}
+	if !strings.Contains(sharedBody, "Stale A") || !strings.Contains(sharedBody, "Stale B") {
+		t.Errorf("coalesced body should name both patches, got %q", sharedBody)
+	}
+
+	var soloCount int
+	db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = ?",
+		solo.ID, string(notifications.LiningUpdated)).Scan(&soloCount)
+	if soloCount != 1 {
+		t.Fatalf("member of 1 healed patch: expected 1 notification, got %d", soloCount)
+	}
+	var soloTitle, soloLink string
+	db.QueryRow("SELECT title, link FROM notifications WHERE user_id = ?", solo.ID).Scan(&soloTitle, &soloLink)
+	if soloTitle != "The lining was updated" {
+		t.Errorf("single-patch title = %q", soloTitle)
+	}
+	if !strings.HasPrefix(soloLink, "/patches/stale-a/governance/docs/") {
+		t.Errorf("single-patch notification should deep-link to the doc, got %q", soloLink)
 	}
 }

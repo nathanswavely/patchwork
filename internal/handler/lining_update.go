@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
@@ -135,6 +136,7 @@ func AutoUpdateLinings(db *database.DB) (int, int, error) {
 	current := governance.CurrentLiningBody()
 	commitMsg := "The lining, v" + strconv.Itoa(governance.CurrentLiningVersion()) + " (shipped with Patchwork)"
 	updated := 0
+	var healed []notifications.Event
 	for _, s := range stale {
 		_, err := db.Exec(
 			`UPDATE governance_docs SET body = ?, visibility = 'public', version = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
@@ -157,7 +159,7 @@ func AutoUpdateLinings(db *database.DB) (int, int, error) {
 		// No audit entry: audit_log.user_id references users, and this is a
 		// system action with no user. The git commit and the notification are
 		// the record.
-		notify(notifications.Event{
+		healed = append(healed, notifications.Event{
 			Type:     notifications.LiningUpdated,
 			NodeID:   s.nodeID,
 			NodeSlug: s.nodeSlug,
@@ -168,5 +170,31 @@ func AutoUpdateLinings(db *database.DB) (int, int, error) {
 		})
 	}
 
+	notifyLiningUpdates(healed)
+
 	return created, updated, nil
+}
+
+// notifyLiningUpdates delivers one rollout's per-patch lining-update events
+// with at most one notification per user: a member of several healed patches
+// hears once, with the count, instead of once per patch. Synchronous — this
+// runs once at startup and nothing waits on it.
+func notifyLiningUpdates(events []notifications.Event) {
+	if pkgNotifier == nil || len(events) == 0 {
+		return
+	}
+	pkgNotifier.NotifyCoalesced(events, func(userEvents []notifications.Event) notifications.Event {
+		if len(userEvents) == 1 {
+			return userEvents[0]
+		}
+		names := make([]string, len(userEvents))
+		for i, e := range userEvents {
+			names[i] = e.NodeName
+		}
+		return notifications.Event{
+			Type:  notifications.LiningUpdated,
+			Title: fmt.Sprintf("The lining was updated across %d of your patches", len(userEvents)),
+			Body:  strings.Join(names, ", "),
+		}
+	})
 }

@@ -87,6 +87,53 @@ func (n *Notifier) Notify(event Event) {
 	}
 }
 
+// NotifyCoalesced delivers a batch of same-type events with at most one
+// notification per recipient. Recipients are resolved per event — each
+// patch's category config still gates its own event, and each event's actor
+// is excluded from that event only — then a user reached by several events
+// gets a single notification, built by merge from exactly the events that
+// reached them. Delivery is synchronous; callers that must not block wrap
+// the call in a goroutine.
+func (n *Notifier) NotifyCoalesced(events []Event, merge func(userEvents []Event) Event) {
+	if len(events) == 0 {
+		return
+	}
+	meta, ok := TypeRegistry[events[0].Type]
+	if !ok {
+		log.Printf("notifications: unknown type %q", events[0].Type)
+		return
+	}
+
+	perUser := map[string][]Event{}
+	var order []string
+	for _, event := range events {
+		if event.NodeID != "" && !IsCategoryEnabled(n.DB, event.NodeID, meta.Category) {
+			continue
+		}
+		for _, uid := range n.resolveRecipients(event, meta.Audience) {
+			if uid == event.ActorID {
+				continue
+			}
+			if len(perUser[uid]) == 0 {
+				order = append(order, uid)
+			}
+			perUser[uid] = append(perUser[uid], event)
+		}
+	}
+
+	for _, uid := range order {
+		event := merge(perUser[uid])
+		for _, ch := range n.Channels {
+			if !ch.Available() {
+				continue
+			}
+			if IsChannelEnabled(n.DB, uid, event.Type, ch.Name()) {
+				ch.Send(n.DB, uid, event)
+			}
+		}
+	}
+}
+
 // resolveRecipients returns user IDs based on audience type.
 func (n *Notifier) resolveRecipients(event Event, audience Audience) []string {
 	switch audience {
