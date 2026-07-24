@@ -13,6 +13,36 @@
   --btn-sm-pad-y: 0.25rem;
   --btn-sm-pad-x: 0.6rem;
   --btn-sm-font: 0.78rem;
+
+  /* ---- Layout spacing (docs/adr/038) ----
+     Fluid, so there are no spacing breakpoints to fight: a future
+     [data-density] on <html> layers on top the way [data-theme] does,
+     instead of losing a specificity argument to a media query.
+
+     These govern LAYOUT — the space between things a page composes.
+     Component-internal spacing (a badge's pill padding, --btn-pad-*)
+     is that component's own drawing and stays local. */
+
+  /* Viewport edge to content. Set once, by the shell. Never re-applied
+     by a page or by a surface inside one. */
+  --pw-gutter: clamp(0.75rem, 3vw, 1.5rem);
+
+  /* A card or interruption's own edge to its own content. Deliberately
+     a separate scale from the gutter — collapsing the page's edges for
+     a phone must not squeeze what's inside the boxes. */
+  --pw-pad: clamp(1rem, 2.5vw, 1.25rem);
+
+  /* Between sibling blocks in flow. Near-constant on purpose: with card
+     borders gone, vertical separation is the only thing left saying a
+     section ended, so it must not collapse along with the gutter. */
+  --pw-stack: clamp(1.25rem, 1vw, 1.5rem);
+
+  /* Between inline siblings — chips, button rows. */
+  --pw-gap: clamp(0.5rem, 1.5vw, 0.75rem);
+
+  /* Line length for prose. Replaces the 640/520/800/1000px measures. */
+  --pw-measure: 68ch;
+  --pw-measure-wide: 90ch; /* tables and diffs — not prose */
 }
 
 /* Touch targets: small buttons are finger-sized on coarse pointers. */
@@ -252,13 +282,17 @@ button:disabled {
 
 /* Standard work-mode content area — used by shells and standalone pages.
    No max-width here — content fills the viewport with consistent gutters.
-   Individual sections (forms, cards) constrain their own width. */
+   Individual sections constrain their own width with --pw-measure.
+
+   The horizontal padding is THE gutter for the workspace and the admin
+   panel (docs/adr/038): pages inside must not add their own. Before the
+   token this was a flat 2rem that shipped to phones verbatim. */
 .work-content {
-  padding: 1.5rem 2rem 2rem;
+  padding: 1.5rem var(--pw-gutter) 2rem;
 }
 
 .work-content-narrow {
-  padding: 1.5rem 2rem 2rem;
+  padding: 1.5rem var(--pw-gutter) 2rem;
   max-width: 800px;
 }
 

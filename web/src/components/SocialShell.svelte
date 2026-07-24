@@ -821,12 +821,14 @@
   /* ================================================================
      MAIN CONTENT
      ================================================================ */
-  /* The container owns content padding — pages should not re-pad
-     themselves (see docs — issue #17). 56px clears the fixed global bar;
-     2rem/1.5rem is the app's standard breathing room. */
+  /* This is THE gutter for every page in the social shell — the container
+     owns it and pages must not re-pad themselves (docs/adr/038, which is
+     issue #17's rule made structural after the Label and the legal
+     documents both re-padded on top of it anyway). 56px clears the fixed
+     global bar. */
   .social-main {
     margin-left: 200px;
-    padding: calc(56px + 2rem) 1.5rem 2rem;
+    padding: calc(56px + 2rem) var(--pw-gutter) 2rem;
     min-height: 100vh;
     transition: margin-left 150ms ease;
   }

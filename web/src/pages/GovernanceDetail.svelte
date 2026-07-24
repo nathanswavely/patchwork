@@ -46,7 +46,7 @@
 </script>
 
 <div class="page-fade">
-  <div class="container-narrow">
+  <div class="doc-page">
     {#if loading}
       <div style="padding: 2rem 0;">
         <Skeleton lines={1} height="2rem" width="60%" />
@@ -129,12 +129,18 @@
     color: var(--color-text-muted);
   }
 
+  /* The charter is the page — it can't move, so it isn't a card
+     (docs/adr/038). It used to sit in a bordered surface inside
+     .container-narrow inside the workspace gutter: three insets, 69px a
+     side, leaving 237px of measure on a 375px phone. The shell owns the
+     gutter now and the box is gone. */
+  .doc-page {
+    max-width: var(--pw-measure);
+    margin: 0 auto;
+  }
+
   .doc-body {
     line-height: 1.8;
-    padding: 1.25rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
   }
 
   .doc-body :global(strong) {
