@@ -441,6 +441,7 @@ func main() {
 	mux.HandleFunc("POST /api/v1/claims/{id}/verify", middleware.AuthRequired(db, handler.VerifyClaim(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/withdraw", middleware.AuthRequired(db, handler.WithdrawClaim(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/resend-email", middleware.AuthRequired(db, handler.ResendClaimEmail(db, cfg)))
+	mux.HandleFunc("POST /api/v1/claims/{id}/setup", middleware.AuthRequired(db, handler.SetupClaim(db)))
 	// Email-claim link landing: no auth — possessing the token is the proof
 	// (docs/adr/030). GET is read-only; completion requires the POST.
 	mux.HandleFunc("GET /api/v1/claims/verify-email", handler.EmailClaimInfo(db))

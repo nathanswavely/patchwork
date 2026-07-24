@@ -120,6 +120,30 @@ func TestAutoUpdateLinings(t *testing.T) {
 	}
 }
 
+// Unclaimed patches carry no governance at all (docs/adr/039): they are
+// outside lining semantics, not a "missing lining" to backfill.
+func TestAutoUpdateLiningsSkipsUnclaimedNodes(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "lin5", "member")
+
+	unclaimed := createTestNode(t, db, admin.ID, "Directory Listing", "directory-listing", "open")
+	db.Exec("UPDATE nodes SET status = 'unclaimed' WHERE id = ?", unclaimed)
+
+	created, updated, err := handler.AutoUpdateLinings(db)
+	if err != nil {
+		t.Fatalf("auto-update: %v", err)
+	}
+	if created != 0 || updated != 0 {
+		t.Errorf("expected no linings created or updated for an unclaimed patch, got created=%d updated=%d", created, updated)
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM governance_docs WHERE node_id = ?", unclaimed).Scan(&count)
+	if count != 0 {
+		t.Errorf("unclaimed patch grew a governance doc: %d rows", count)
+	}
+}
+
 // One rollout, at most one notification per user: a member of two healed
 // patches hears once with the count; a member of one keeps the per-patch
 // wording and deep link. The doc updates themselves stay per-patch.

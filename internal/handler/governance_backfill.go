@@ -16,6 +16,9 @@ import (
 // distroless container before repo init went pure go-git. Returns the number
 // of repos created.
 //
+// Scoped to active nodes only — unclaimed patches carry no governance repo
+// at all (docs/adr/039); one is created only when a claim's setup completes.
+//
 // The template chosen at node creation is not persisted, so backfilled repos
 // start from the default template; admins can re-run governance setup to
 // change the rules.
@@ -25,7 +28,7 @@ func BackfillNodeGovernanceRepos(db *database.DB) (int, error) {
 		return 0, fmt.Errorf("governance data dir not set")
 	}
 
-	rows, err := db.Query(`SELECT id FROM nodes WHERE status IN ('active','unclaimed') AND removed_at IS NULL`)
+	rows, err := db.Query(`SELECT id FROM nodes WHERE status = 'active' AND removed_at IS NULL`)
 	if err != nil {
 		return 0, fmt.Errorf("list nodes: %w", err)
 	}

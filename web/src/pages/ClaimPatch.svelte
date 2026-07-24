@@ -91,8 +91,11 @@
     try {
       const result = await api(`claims/${claim.id}/verify`, { method: 'POST' });
       if (result.verified) {
-        showToast('Patch claimed! You are now the owner.', 'success');
-        navigate(`/patches/${slug}`);
+        // Verifying no longer activates the patch (docs/adr/039) — it's a
+        // single-use, expiring right to enter setup, which is where the
+        // patch actually becomes active.
+        showToast('Claim verified. Finish setup to activate this patch.', 'success');
+        navigate(result.setup_required === false ? `/patches/${slug}` : `/patches/${slug}/setup`);
       } else {
         error = result.error || 'Verification failed. Please try again.';
       }
@@ -101,6 +104,11 @@
     } finally {
       verifying = false;
     }
+  }
+
+  function formatExpiry(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   async function handleWithdraw() {
@@ -148,6 +156,27 @@
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
+
+  {:else if claim && claim.status === 'approved'}
+    <!-- Approved: a single-use, expiring right to enter setup — not yet an
+         active patch, and no "awaiting setup" state visible to anyone
+         else (docs/adr/039). -->
+    <div class="card verify-card approved-card">
+      <div class="verify-header">
+        <h2>Claim approved</h2>
+      </div>
+      <p>You're cleared to set up this patch. Setup is where it becomes active — until then, it still reads as unclaimed to everyone else.</p>
+      {#if claim.setup_expires_at}
+        <p class="muted">Approval expires {formatExpiry(claim.setup_expires_at)}.</p>
+      {/if}
+      <div class="form-actions" style="margin-top: 1rem;">
+        <a
+          href="/patches/{slug}/setup"
+          class="btn btn-primary"
+          onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/setup`); }}
+        >Set up your patch</a>
+      </div>
+    </div>
 
   {:else if claim}
     <!-- An open claim: its instructions, actions, and a real way out. -->

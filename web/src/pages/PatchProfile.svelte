@@ -82,9 +82,12 @@
   }
 
   async function loadActivity() {
-    // Show governance content if member OR if patch allows public governance
-    const showProposals = isMember || followerPermissions?.proposals === true;
-    const showCharters = isMember || followerPermissions?.charters === true;
+    // Show governance content if member OR if patch allows public
+    // governance. Unclaimed patches carry no governance at all
+    // (docs/adr/039) — absence, not an empty state — so neither fetch
+    // runs for one.
+    const showProposals = !isUnclaimed && (isMember || followerPermissions?.proposals === true);
+    const showCharters = !isUnclaimed && (isMember || followerPermissions?.charters === true);
     const [eventData, proposalData, charterData] = await Promise.all([
       api(`events?node_slug=${encodeURIComponent(slug)}&limit=5`).catch(() => ({ items: [] })),
       (showProposals ? api(`nodes/${slug}/proposals?limit=3`) : Promise.resolve({ items: [] })).catch(() => ({ items: [] })),
@@ -193,7 +196,7 @@
       {#if node.description}
         <p class="profile-desc">{node.description}</p>
       {/if}
-      {#if liningStatus === 'diverged'}
+      {#if !isUnclaimed && liningStatus === 'diverged'}
         <!-- Public by design (docs/adr/037): this patch amended the shared
              baseline, and the divergence is worn, not whispered. -->
         <p class="amended-lining-row">
@@ -312,8 +315,10 @@
       {/if}
     </section>
 
-    <!-- Governance Docs (charters) -->
-    {#if governanceDocs.length > 0}
+    <!-- Governance Docs (charters). Unclaimed patches carry no governance
+         (docs/adr/039) — the section is simply absent, never an empty
+         state. -->
+    {#if !isUnclaimed && governanceDocs.length > 0}
       <section class="profile-section">
         <h3 class="section-title">Governance Documents</h3>
         <div class="doc-list">
@@ -329,8 +334,8 @@
       </section>
     {/if}
 
-    <!-- Recent Proposals -->
-    {#if recentProposals.length > 0}
+    <!-- Recent Proposals: same absence rule as governance docs. -->
+    {#if !isUnclaimed && recentProposals.length > 0}
       <section class="profile-section">
         <h3 class="section-title">Recent Proposals</h3>
         <div class="proposal-list">

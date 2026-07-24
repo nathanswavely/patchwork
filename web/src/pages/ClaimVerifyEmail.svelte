@@ -37,8 +37,10 @@
     try {
       const result = await api('claims/verify-email', { method: 'POST', body: { token } });
       done = true;
-      showToast('Patch claimed! Ownership transferred.', 'success');
-      navigate(`/patches/${result.slug}`);
+      // Confirming proves the email, it doesn't activate the patch
+      // (docs/adr/039) — setup is the next, separate step.
+      showToast('Claim verified. Finish setup to activate this patch.', 'success');
+      navigate(result.setup_required === false ? `/patches/${result.slug}` : `/patches/${result.slug}/setup`);
     } catch (e) {
       error = e.message || 'Verification failed';
     } finally {
@@ -70,7 +72,7 @@
   {:else if info}
     <div class="state-block">
       <p>You're confirming the claim of <strong>{info.node_name}</strong>.</p>
-      <p class="muted">This transfers ownership of the listing to the account that opened the claim.</p>
+      <p class="muted">This proves the account that opened the claim controls this email address. You'll complete setup next to activate the patch.</p>
       <button class="btn btn-primary" onclick={handleConfirm} disabled={confirming || done}>
         {confirming ? 'Confirming...' : 'Confirm claim'}
       </button>

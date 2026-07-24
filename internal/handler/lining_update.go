@@ -17,8 +17,11 @@ import (
 
 // NodeLiningStatuses returns node_id → lining status (pristine/stale/diverged)
 // for every lining row. Nodes without a lining row are absent; treat absent as
-// pristine (AutoUpdateLinings creates missing rows at startup, so absence is a
-// transient state, not a divergence).
+// pristine. For an active node that's still transient (AutoUpdateLinings
+// creates the missing row at startup); for an unclaimed patch it's permanent
+// and legitimate — unclaimed patches carry no lining at all (docs/adr/039),
+// so absence there is outside lining semantics, never a divergence to filter
+// on.
 func NodeLiningStatuses(db *database.DB) map[string]string {
 	rows, err := db.Query("SELECT node_id, body FROM governance_docs WHERE kind = 'lining'")
 	if err != nil {
@@ -66,8 +69,10 @@ func GetInstanceLining(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// AutoUpdateLinings brings every live patch's lining to the current shipped
+// AutoUpdateLinings brings every active patch's lining to the current shipped
 // text (docs/adr/037). Runs at startup, after the governance repo backfill.
+// Scoped to active patches only — unclaimed patches carry no governance at
+// all (docs/adr/039), so they are never a source of missing or stale rows.
 // Two passes:
 //
 //  1. Patches with no lining row at all (nodes created before the lining
@@ -85,7 +90,7 @@ func GetInstanceLining(db *database.DB) http.HandlerFunc {
 func AutoUpdateLinings(db *database.DB) (int, int, error) {
 	rows, err := db.Query(
 		`SELECT n.id, n.owner_id, n.slug, n.name FROM nodes n
-		 WHERE n.status IN ('active','unclaimed') AND n.removed_at IS NULL
+		 WHERE n.status = 'active' AND n.removed_at IS NULL
 		   AND NOT EXISTS (SELECT 1 FROM governance_docs g WHERE g.node_id = n.id AND g.kind = 'lining')`)
 	if err != nil {
 		return 0, 0, fmt.Errorf("list nodes missing linings: %w", err)
@@ -110,7 +115,7 @@ func AutoUpdateLinings(db *database.DB) (int, int, error) {
 
 	rows, err = db.Query(
 		`SELECT g.id, g.node_id, g.body, g.version, n.slug, n.name FROM governance_docs g
-		 JOIN nodes n ON n.id = g.node_id AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
+		 JOIN nodes n ON n.id = g.node_id AND n.status = 'active' AND n.removed_at IS NULL
 		 WHERE g.kind = 'lining'`)
 	if err != nil {
 		return created, 0, fmt.Errorf("list linings: %w", err)

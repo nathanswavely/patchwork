@@ -299,9 +299,11 @@ func TestEditAndDeleteFollowTheSameDoor(t *testing.T) {
 	}
 }
 
-// The claim transition adopts the calendar: transferOwnership flips the
-// node to active, so pending submissions land in the new admins' queue
-// and the community-submitted label (derived from node status) vanishes.
+// The claim transition adopts the calendar, but only once setup completes
+// (docs/adr/039): activateClaimedNode flips the node to active, so pending
+// submissions land in the new admins' queue and the community-submitted
+// label (derived from node status) vanishes only after setup, not at
+// approval or assignment.
 func TestClaimMovesQueueToNewAdmins(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := submissionsCfg(true)
@@ -321,9 +323,36 @@ func TestClaimMovesQueueToNewAdmins(t *testing.T) {
 		t.Fatalf("assign owner: code=%d body=%s", w0.Code, w0.Body.String())
 	}
 
-	// Gone from the instance admin's queue.
+	// Assignment alone opens a setup window; it doesn't activate the patch
+	// (docs/adr/039). The queue stays with the instance admin until the
+	// assignee actually completes setup.
 	r := authedRequest("GET", "/api/v1/admin/event-submissions", nil, adminToken)
 	w := serveMux(t, db, "GET", "/api/v1/admin/event-submissions", handler.ListAdminEventSubmissions(db), r)
+	if !bodyContains(w.Body.Bytes(), e.ID) {
+		t.Fatal("assignment alone moved the queue before setup was completed")
+	}
+
+	// The assignee completes setup like any claimant.
+	r = authedRequest("GET", "/api/v1/nodes/spark-hall/claims/mine", nil, claimantToken)
+	w = serveMux(t, db, "GET", "/api/v1/nodes/{slug}/claims/mine", handler.MyClaim(db, claimCfg(false)), r)
+	var mine struct {
+		Claim map[string]interface{} `json:"claim"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &mine)
+	if mine.Claim == nil {
+		t.Fatalf("assignee has no claim to set up: %s", w.Body.String())
+	}
+	setupClaimID := mine.Claim["id"].(string)
+
+	r = authedRequest("POST", "/api/v1/claims/"+setupClaimID+"/setup", nil, claimantToken)
+	w = serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != 200 {
+		t.Fatalf("setup: code=%d body=%s", w.Code, w.Body.String())
+	}
+
+	// Gone from the instance admin's queue.
+	r = authedRequest("GET", "/api/v1/admin/event-submissions", nil, adminToken)
+	w = serveMux(t, db, "GET", "/api/v1/admin/event-submissions", handler.ListAdminEventSubmissions(db), r)
 	if bodyContains(w.Body.Bytes(), e.ID) {
 		t.Fatal("claimed patch's submission still in instance admin queue")
 	}

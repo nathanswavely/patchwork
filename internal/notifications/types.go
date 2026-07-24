@@ -77,6 +77,12 @@ const (
 	AdminSubmission       NotificationType = "admin.submission"
 	AdminEventSubmission  NotificationType = "admin.event_submission"
 	AdminEventLinkRequest NotificationType = "admin.event_link_request"
+
+	// Claim lifecycle (docs/adr/039): a verified or approved claim opens a
+	// 14-day, single-use window into patch setup — these are claimant-facing,
+	// unlike AdminClaimRequest above.
+	ClaimApproved      NotificationType = "claim.approved"
+	ClaimSetupExpiring NotificationType = "claim.setup_expiring"
 )
 
 // Priority determines default channel behavior.
@@ -145,6 +151,9 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	AdminSubmission:       {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventSubmission:  {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventLinkRequest: {CategoryAdmin, "Event link request (unclaimed patch)", AudienceSiteAdmins, PriorityNormal},
+
+	ClaimApproved:      {CategoryAdmin, "Your claim was approved", AudienceSpecificUser, PriorityHigh},
+	ClaimSetupExpiring: {CategoryAdmin, "Your claim's setup window is closing", AudienceSpecificUser, PriorityHigh},
 }
 
 // DefaultEnabled returns whether a channel should be on by default for a given type.
@@ -176,6 +185,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
+		ClaimApproved, ClaimSetupExpiring,
 	}
 	for _, t := range allTypes {
 		if TypeRegistry[t].Category == cat {
