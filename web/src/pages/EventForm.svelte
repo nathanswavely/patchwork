@@ -192,7 +192,7 @@
         {/if}
       </p>
 
-      <form class="card" onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
           <label for="title">Title <span class="required">*</span></label>
           <input id="title" type="text" bind:value={title} disabled={submitting} required />

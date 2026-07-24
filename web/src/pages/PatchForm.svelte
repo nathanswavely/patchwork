@@ -131,7 +131,7 @@
         <p class="muted" style="margin-bottom: 1.5rem;">Creating a patch makes you its admin. Know a group that isn't yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest a patch</a> instead.</p>
       {/if}
 
-      <form class="card" onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
           <label for="name">Name <span class="required">*</span></label>
           <input id="name" type="text" bind:value={name} disabled={submitting} required placeholder="e.g. Gallery Row, Lancaster Beats Lab" />

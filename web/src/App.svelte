@@ -582,10 +582,12 @@
 <Toast />
 
 <style>
+  /* The third gutter owner: these routes (welcome, login, invite, signup)
+     render outside every shell, so this is their gutter (docs/adr/038). */
   .standalone-main {
     max-width: 640px;
     margin: 0 auto;
-    padding: 0 1rem 2rem;
+    padding: 0 var(--pw-gutter) 2rem;
     min-height: 100vh;
   }
 

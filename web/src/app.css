@@ -35,7 +35,7 @@
   /* Between sibling blocks in flow. Near-constant on purpose: with card
      borders gone, vertical separation is the only thing left saying a
      section ended, so it must not collapse along with the gutter. */
-  --pw-stack: clamp(1.25rem, 1vw, 1.5rem);
+  --pw-stack: clamp(1.25rem, 2.5vw, 1.5rem);
 
   /* Between inline siblings — chips, button rows. */
   --pw-gap: clamp(0.5rem, 1.5vw, 0.75rem);
@@ -296,11 +296,32 @@ button:disabled {
   max-width: 800px;
 }
 
+/* A card holds something that could MOVE — an item that would still make
+   sense on another page (docs/adr/038). Ask "could this move?" before
+   reaching for it: a page's own sections can't, and get .section below.
+   The one other thing that earns a border is an interruption — a danger
+   zone, a warning, an unsaved-changes banner. That list is closed. */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: var(--pw-pad);
+}
+
+/* A page section: the non-card way to separate content. A section is part
+   of its page, so it separates with a rule and vertical space rather than
+   a box — which on a phone is the difference between reading at ~285px
+   and reading at ~350px. The rule sits between siblings only, so the
+   first section never opens with a stray line.
+
+   Prefixed because a plain `.section` is already a scoped class in four
+   components (AdminLabel, AdminQuiltSettings, AdminDashboard,
+   TemplatePreviewDrawer), where it means that page's own wrapper — an
+   unprefixed global would fire on all of them. */
+.pw-section + .pw-section {
+  margin-top: var(--pw-stack);
+  padding-top: var(--pw-stack);
+  border-top: 1px solid var(--color-border);
 }
 
 .badge {

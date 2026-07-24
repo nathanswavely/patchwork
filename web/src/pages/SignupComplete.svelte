@@ -118,11 +118,11 @@
 <div class="page-fade">
   <div class="signup-page">
     {#if validating}
-      <div class="card">
+      <div class="state-block">
         <p class="muted">Checking your link...</p>
       </div>
     {:else if !valid}
-      <div class="card">
+      <div class="state-block">
         <h1>Link expired</h1>
         <p class="error-text">{validationError}</p>
         <p class="muted" style="margin-top: 1rem;">
@@ -135,7 +135,7 @@
         </a>
       </div>
     {:else if registered}
-      <div class="card">
+      <div class="state-block">
         <h1>You're in</h1>
         {#if passkeyDone}
           <p class="success-text">Passkey saved.</p>
@@ -168,7 +168,7 @@
         {/if}
       </div>
     {:else}
-      <div class="card">
+      <div class="state-block">
         <h1>Choose your username</h1>
         <p class="muted" style="margin-bottom: 1.5rem;">
           You're signing up as <strong>{email}</strong>. Pick the name
@@ -236,7 +236,7 @@
     padding-bottom: 3rem;
   }
 
-  .signup-page .card {
+  .signup-page .state-block {
     max-width: 480px;
     margin: 0 auto;
   }
