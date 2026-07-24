@@ -2,6 +2,7 @@
   import { Heart, Wrench, UsersThree } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { scopedPath, surfaceForRoute } from '../lib/scope.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
   import { textMatches } from '../lib/textMatch.js';
   import { motifComponentForPatch } from '../lib/patchIcons.js';
@@ -23,11 +24,16 @@
   import MapView from '../components/MapView.svelte';
   import PatchTile from '../components/PatchTile.svelte';
 
-  let { quiltScope = 'local', routeName = 'home', onScopeChange = () => {} } = $props();
+  let { quiltScope = 'local', routeName = 'home' } = $props();
+
+  // Scope-aware surface targets (docs/adr/035): the quilt/map toggles stay
+  // in the scope you're already in — `/` vs `/my`, `/map` vs `/map/my`.
+  let quiltPath = $derived(scopedPath('quilt', quiltScope));
+  let mapPath = $derived(scopedPath('map', quiltScope));
 
   // --- Map view (the module gates the toggle and route) ---
   let mapEnabled = $derived(getInstanceModules().map !== false);
-  let showMap = $derived(routeName === 'map' && mapEnabled);
+  let showMap = $derived(surfaceForRoute(routeName) === 'map' && mapEnabled);
 
   // --- Map view data (full node records carry lat/lng; the tree doesn't) ---
   let mapNodes = $state([]);
@@ -248,9 +254,9 @@
        already carries the scope switcher on mobile) -->
   <div class="mobile-header">
     <div class="mobile-pill-toggle">
-      <button class="pill-option" class:active={mobileView === 'main' && !showMap} onclick={() => { if (showMap) navigate('/'); mobileView = 'main'; }}>Quilt</button>
+      <button class="pill-option" class:active={mobileView === 'main' && !showMap} onclick={() => { if (showMap) navigate(quiltPath); mobileView = 'main'; }}>Quilt</button>
       {#if mapEnabled}
-        <button class="pill-option" class:active={mobileView === 'main' && showMap} onclick={() => { if (!showMap) navigate('/map'); mobileView = 'main'; }}>Map</button>
+        <button class="pill-option" class:active={mobileView === 'main' && showMap} onclick={() => { if (!showMap) navigate(mapPath); mobileView = 'main'; }}>Map</button>
       {/if}
       <button class="pill-option" class:active={mobileView === 'list'} onclick={() => mobileView = 'list'}>List</button>
     </div>
@@ -289,8 +295,8 @@
       <span class="cards-count">{resultCount} results</span>
       {#if mapEnabled}
         <div class="view-toggle">
-          <button class="view-option" class:active={!showMap} onclick={() => navigate('/')}>Quilt</button>
-          <button class="view-option" class:active={showMap} onclick={() => navigate('/map')}>Map</button>
+          <button class="view-option" class:active={!showMap} onclick={() => navigate(quiltPath)}>Quilt</button>
+          <button class="view-option" class:active={showMap} onclick={() => navigate(mapPath)}>Map</button>
         </div>
       {/if}
     </div>
@@ -317,7 +323,7 @@
             <div class="empty-actions">
               <button class="btn btn-secondary" onclick={resetFilters}>Clear filter</button>
               {#if quiltScope === 'my'}
-                <button class="btn btn-secondary" onclick={() => onScopeChange('local')}>Search the whole quilt</button>
+                <button class="btn btn-secondary" onclick={() => navigate(scopedPath(surfaceForRoute(routeName) || 'quilt', 'local'))}>Search the whole quilt</button>
               {/if}
             </div>
           {:else}

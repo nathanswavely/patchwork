@@ -37,6 +37,7 @@ several branches are in flight.
 | [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents |
 | [033](033-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit |
 | [034](034-archive-keeps-its-gravity.md) | Archive keeps its gravity — restore is an instance-admin action |
+| [035](035-scope-lives-in-the-url.md) | Scope lives in the URL — My Quilt is `/my`, the whole quilt stays at `/` |
 
 ## Adopted as design boundaries — implementation is backlog
 

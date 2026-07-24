@@ -120,13 +120,13 @@ func ValidateSession(db *database.DB, rawToken string) (*model.User, error) {
 	tokenHash := HashToken(rawToken)
 
 	err := db.QueryRow(`
-		SELECT u.id, COALESCE(u.email,''), u.username, u.display_name, u.bio, u.avatar_url, u.role, u.trusted_contributor, u.suspended_at, u.created_at, u.updated_at, s.expires_at, COALESCE(s.last_used_at,'')
+		SELECT u.id, COALESCE(u.email,''), u.username, u.display_name, u.bio, u.avatar_url, u.role, u.trusted_contributor, u.start_on_my_quilt, u.suspended_at, u.created_at, u.updated_at, s.expires_at, COALESCE(s.last_used_at,'')
 		FROM sessions s
 		JOIN users u ON u.id = s.user_id
 		WHERE s.token = ?
 	`, tokenHash).Scan(
 		&user.ID, &user.Email, &user.Username, &user.DisplayName,
-		&user.Bio, &user.AvatarURL, &user.Role, &user.TrustedContributor, &user.SuspendedAt, &user.CreatedAt, &user.UpdatedAt,
+		&user.Bio, &user.AvatarURL, &user.Role, &user.TrustedContributor, &user.StartOnMyQuilt, &user.SuspendedAt, &user.CreatedAt, &user.UpdatedAt,
 		&expiresAt, &lastUsedAt,
 	)
 	if err == sql.ErrNoRows {
