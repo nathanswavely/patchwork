@@ -1,4 +1,4 @@
--- Migration 037: governance_docs.kind — the lining becomes machine-identifiable.
+-- Migration 038: governance_docs.kind — the lining becomes machine-identifiable.
 --
 -- The lining was only ever identified by its title constant, and titles are
 -- editable; one rename and every lining rule goes blind. The kind column is

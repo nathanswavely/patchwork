@@ -1,4 +1,4 @@
--- Migration 036: per-document visibility for governance docs (charters).
+-- Migration 037: per-document visibility for governance docs (charters).
 --
 -- Charters were unconditionally world-readable: the list and detail endpoints
 -- took no session at all. A patch's rules are often drafted before they are
