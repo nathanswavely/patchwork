@@ -88,7 +88,7 @@
   });
 </script>
 
-<div class="page-container remote-patch" style="--sash-color: {sashColor}">
+<div class="remote-patch" style="--sash-color: {sashColor}">
   {#if loading}
     <p class="muted">Loading…</p>
   {:else if error}

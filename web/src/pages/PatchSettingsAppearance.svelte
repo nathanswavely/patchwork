@@ -336,7 +336,7 @@
 
 <style>
   .appearance-settings {
-    max-width: 640px;
+    max-width: var(--pw-measure);
   }
 
   .section-intro {

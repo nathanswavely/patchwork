@@ -282,7 +282,7 @@
 </script>
 
 <div class="page-fade">
-  <section class="card">
+  <section class="pw-section">
     <h2>Passkeys</h2>
     <p class="muted" style="margin-bottom: 1rem;">
       Passkeys sign you in without a password or email.
@@ -360,7 +360,7 @@
     {/if}
   </section>
 
-  <section class="card">
+  <section class="pw-section">
     <h2>Active sessions</h2>
     <p class="muted" style="margin-bottom: 1rem;">
       Where you're signed in. Sign out any session you don't recognize.
@@ -411,7 +411,7 @@
     {/if}
   </section>
 
-  <section class="card">
+  <section class="pw-section">
     <h2>Recovery codes</h2>
     <p class="muted" style="margin-bottom: 1rem;">
       If you lose your passkey, a recovery code signs you in. Each code works

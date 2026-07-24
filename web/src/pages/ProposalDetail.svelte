@@ -153,7 +153,7 @@
         {#if proposal.body}
           <section class="proposal-section">
             <h2>Why this change</h2>
-            <div class="content-card">
+            <div class="proposal-body">
               <MarkdownRenderer content={proposal.body} />
             </div>
           </section>
@@ -254,7 +254,7 @@
 
 <style>
   .proposal-page {
-    max-width: 1000px;
+    max-width: var(--pw-measure-wide);
   }
 
   .proposal-header {
@@ -359,17 +359,19 @@
     letter-spacing: 0.03em;
   }
 
-  .content-card {
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
+  /* The reviewed document is the section's content — it can't move, so it
+     isn't a card (docs/adr/038), the same call as the charter's body. The
+     box is gone; the prose is bounded to a reading measure because the
+     page itself is --pw-measure-wide for the diff tab, which is far too
+     wide for body text. */
+  .proposal-body {
+    max-width: var(--pw-measure);
     font-size: 0.92rem;
     line-height: 1.7;
   }
 
-  .content-card :global(p:first-child) { margin-top: 0; }
-  .content-card :global(p:last-child) { margin-bottom: 0; }
+  .proposal-body :global(p:first-child) { margin-top: 0; }
+  .proposal-body :global(p:last-child) { margin-bottom: 0; }
 
   .changes-summary {
     display: flex;

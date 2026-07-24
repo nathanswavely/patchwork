@@ -106,11 +106,11 @@
 <div class="page-fade">
   <div class="invite-page">
     {#if validating}
-      <div class="card">
+      <div class="state-block">
         <p class="muted">Checking your invite...</p>
       </div>
     {:else if !valid}
-      <div class="card">
+      <div class="state-block">
         <h1>This invite didn't work</h1>
         <p class="error-text">{validationError}</p>
         <p class="muted" style="margin-top: 1rem;">
@@ -119,7 +119,7 @@
         </p>
       </div>
     {:else if registered}
-      <div class="card">
+      <div class="state-block">
         <h1>You're in</h1>
         {#if passkeyDone}
           <p class="success-text">Passkey saved.</p>
@@ -152,7 +152,7 @@
         {/if}
       </div>
     {:else}
-      <div class="card">
+      <div class="state-block">
         <h1>You're invited</h1>
         <p class="muted" style="margin-bottom: 1.5rem;">
           Someone here sent you this link. Pick a username and you're in.
@@ -218,7 +218,7 @@
     padding-bottom: 3rem;
   }
 
-  .invite-page .card {
+  .invite-page .state-block {
     max-width: 480px;
     margin: 0 auto;
   }

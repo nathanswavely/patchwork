@@ -157,7 +157,7 @@
 
 <style>
   .admin-legal {
-    max-width: 760px;
+    max-width: var(--pw-measure);
   }
 
   .page-head {

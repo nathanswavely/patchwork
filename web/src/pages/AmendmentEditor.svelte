@@ -268,7 +268,7 @@
 
 <style>
   .amendment-editor {
-    max-width: 1000px;
+    max-width: var(--pw-measure-wide);
   }
 
   .editor-header {

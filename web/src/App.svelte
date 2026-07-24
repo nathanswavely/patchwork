@@ -552,21 +552,22 @@
           </UserSettingsShell>
         {/if}
 
-      <!-- ===== STANDALONE SOCIAL PAGES ===== -->
+      <!-- Standalone social pages — no wrapper: .social-main owns the
+           gutter (docs/adr/038), so each page renders directly. -->
       {:else if routeName === 'notifications'}
-        <div class="page-container"><Notifications /></div>
+        <Notifications />
       {:else if routeName === 'activity'}
-        <div class="page-container"><Activity /></div>
+        <Activity />
       {:else if routeName === 'submitPatch'}
-        <div class="page-container"><SubmitPatch /></div>
+        <SubmitPatch />
       {:else if routeName === 'dashboard'}
-        <div class="page-container"><Dashboard /></div>
+        <Dashboard />
       {:else if routeName === 'patchNew'}
-        <div class="page-container"><PatchForm /></div>
+        <PatchForm />
       {:else if routeName === 'eventNew'}
-        <div class="page-container"><EventForm /></div>
+        <EventForm />
       {:else if routeName === 'eventEdit'}
-        <div class="page-container"><EventForm eventId={routeParams.id} /></div>
+        <EventForm eventId={routeParams.id} />
 
       {:else}
         <div class="auth-gate">
@@ -582,10 +583,12 @@
 <Toast />
 
 <style>
+  /* The third gutter owner: these routes (welcome, login, invite, signup)
+     render outside every shell, so this is their gutter (docs/adr/038). */
   .standalone-main {
-    max-width: 640px;
+    max-width: var(--pw-measure);
     margin: 0 auto;
-    padding: 0 1rem 2rem;
+    padding: 0 var(--pw-gutter) 2rem;
     min-height: 100vh;
   }
 
@@ -599,9 +602,5 @@
   .auth-gate {
     text-align: center;
     padding: 3rem 0;
-  }
-
-  /* No padding here — SocialShell's .social-main container owns it (issue #17). */
-  .page-container {
   }
 </style>

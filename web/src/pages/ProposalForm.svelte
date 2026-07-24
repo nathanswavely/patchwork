@@ -67,7 +67,7 @@
     <div style="padding-top: 2rem;">
       <p class="amendment-hint muted">Want to change a governance document or rules? Go to the <a href="/patches/{slug}/governance/docs" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>Documents</a> page and click "Propose change" on the document you want to edit.</p>
 
-      <form class="card" onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
           <label for="title">Title <span class="required">*</span></label>
           <input id="title" type="text" bind:value={title} disabled={submitting} required />

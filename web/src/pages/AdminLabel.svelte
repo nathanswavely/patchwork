@@ -180,7 +180,7 @@
   {:else}
     <!-- ===== Publish state ===== -->
     <section class="section">
-      <div class="card settings-card publish-card">
+      <div class="settings-card publish-card">
         <div>
           <strong>{published ? 'Published' : 'Not published'}</strong>
           <p class="muted small">
@@ -207,7 +207,7 @@
     <!-- ===== Stewards ===== -->
     <section class="section">
       <h2>Stewards</h2>
-      <div class="card settings-card">
+      <div class="settings-card">
         <p class="section-desc">
           The people who answer for this quilt, by name. Add yourself and
           you appear right away. Add anyone else and they get an invitation
@@ -245,7 +245,7 @@
     <!-- ===== In your own words ===== -->
     <section class="section">
       <h2>In your own words</h2>
-      <div class="card settings-card">
+      <div class="settings-card">
         <p class="section-desc">
           Introduce yourself. Say why this quilt exists and what you spend
           to keep it going, in whatever voice you'd actually use out loud.
@@ -290,7 +290,7 @@
     <!-- ===== Costs ===== -->
     <section class="section">
       <h2>What this runs on</h2>
-      <div class="card settings-card">
+      <div class="settings-card">
         <p class="section-desc">
           List what you pay and when you last checked each number, and the
           page can show readers a monthly total and warn them when a figure
@@ -341,12 +341,6 @@
   .section h2 {
     font-size: 1.05rem;
     margin: 0 0 10px;
-  }
-  .card {
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    background: var(--color-surface);
-    padding: 16px;
   }
   .section-desc {
     margin: 0 0 14px;

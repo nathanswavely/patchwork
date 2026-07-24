@@ -244,7 +244,7 @@
 
 <style>
   .rules-editor {
-    max-width: 800px;
+    max-width: var(--pw-measure-wide);
   }
 
   .editor-header {

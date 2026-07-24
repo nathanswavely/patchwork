@@ -261,7 +261,7 @@
 
 <style>
   .settings-members {
-    max-width: 600px;
+    max-width: var(--pw-measure-narrow);
   }
 
   .members-section {

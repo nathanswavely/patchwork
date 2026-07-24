@@ -14,7 +14,11 @@
 </div>
 
 <style>
-  .markdown-body { font-size: 0.9rem; line-height: 1.7; color: var(--color-text); }
+  /* Full body size: this renders governance prose — the charter, proposal
+     bodies, legal docs — meant to be read at length, now at a proper
+     measure (docs/adr/038). 0.9rem left it small as well as, until P0/P2,
+     narrow. */
+  .markdown-body { font-size: 1rem; line-height: 1.7; color: var(--color-text); }
   .markdown-body :global(h1) { font-size: 1.4rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
   .markdown-body :global(h2) { font-size: 1.2rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
   .markdown-body :global(h3) { font-size: 1.05rem; font-weight: 600; margin: 1rem 0 0.3rem; }

@@ -396,7 +396,7 @@
 
 <style>
   .profile {
-    max-width: 560px;
+    max-width: var(--pw-measure-narrow);
     margin: 0 auto;
     /* Padding comes from SocialShell's .social-main container (issue #17). */
   }

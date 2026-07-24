@@ -440,7 +440,7 @@
   .step {
     flex: 1;
     padding: 3rem 2rem 2rem;
-    max-width: 560px;
+    max-width: var(--pw-measure-narrow);
     width: 100%;
     margin: 0 auto;
     display: flex;

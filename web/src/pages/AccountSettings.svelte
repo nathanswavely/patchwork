@@ -191,7 +191,7 @@
 
 <div class="page-fade">
   {#if user}
-    <section class="card">
+    <section class="pw-section">
       <h2>Profile</h2>
       <p class="muted profile-hint">
         Your <a href="/users/{user.username}" onclick={(e) => { e.preventDefault(); navigate(`/users/${user.username}`); }}>public profile</a>
@@ -237,7 +237,7 @@
       </form>
     </section>
 
-    <section class="card">
+    <section class="pw-section">
       <h2>When you open Patchwork</h2>
       <p class="muted profile-hint">
         Patchwork opens on the whole quilt. Switch this on to start on My
@@ -255,7 +255,7 @@
       </label>
     </section>
 
-    <section class="card">
+    <section class="pw-section">
       <h2>Discovery</h2>
       <label class="toggle-row">
         <input
@@ -272,7 +272,7 @@
       </p>
     </section>
 
-    <section class="card">
+    <section class="pw-section">
       <h2>Personal feed</h2>
       <p class="muted profile-hint">
         A calendar feed of every event on your My Quilt, for your calendar
@@ -305,7 +305,7 @@
     </section>
 
     {#if steward?.steward}
-      <section class="card">
+      <section class="pw-section">
         <h2>Steward listing</h2>
         {#if steward.listed}
           <p class="muted profile-hint">

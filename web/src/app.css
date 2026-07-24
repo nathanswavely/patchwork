@@ -13,6 +13,46 @@
   --btn-sm-pad-y: 0.25rem;
   --btn-sm-pad-x: 0.6rem;
   --btn-sm-font: 0.78rem;
+
+  /* ---- Layout spacing (docs/adr/038) ----
+     Fluid, so there are no spacing breakpoints to fight: a future
+     [data-density] on <html> layers on top the way [data-theme] does,
+     instead of losing a specificity argument to a media query.
+
+     These govern LAYOUT — the space between things a page composes.
+     Component-internal spacing (a badge's pill padding, --btn-pad-*)
+     is that component's own drawing and stays local. */
+
+  /* Viewport edge to content. Set once, by the shell. Never re-applied
+     by a page or by a surface inside one. */
+  --pw-gutter: clamp(0.75rem, 3vw, 1.5rem);
+
+  /* A card or interruption's own edge to its own content. Deliberately
+     a separate scale from the gutter — collapsing the page's edges for
+     a phone must not squeeze what's inside the boxes. */
+  --pw-pad: clamp(1rem, 2.5vw, 1.25rem);
+
+  /* Between sibling blocks in flow. Near-constant on purpose: with card
+     borders gone, vertical separation is the only thing left saying a
+     section ended, so it must not collapse along with the gutter. */
+  --pw-stack: clamp(1.25rem, 2.5vw, 1.5rem);
+
+  /* Between inline siblings — chips, button rows. */
+  --pw-gap: clamp(0.5rem, 1.5vw, 0.75rem);
+
+  /* Line length for prose. Replaces the 640/520/800/1000px measures. */
+  /* Line length for content columns. Three tiers, because the pages had
+     three (docs/adr/038 named two; enumerating the widths found a
+     distinct forms tier the two-token set had no home for):
+       narrow — a single-column form or profile. Wider and the label→input
+                travel hurts; this replaces the scattered 480/520/600.
+       measure — the default reading/content column (event, feed, admin
+                list). Replaces 640/680/760.
+       wide — editors and diffs, which are not prose and want the room.
+                Replaces 800/1000. */
+  --pw-measure-narrow: 54ch;
+  --pw-measure: 66ch;
+  --pw-measure-wide: 90ch;
 }
 
 /* Touch targets: small buttons are finger-sized on coarse pointers. */
@@ -252,21 +292,46 @@ button:disabled {
 
 /* Standard work-mode content area — used by shells and standalone pages.
    No max-width here — content fills the viewport with consistent gutters.
-   Individual sections (forms, cards) constrain their own width. */
+   Individual sections constrain their own width with --pw-measure.
+
+   The horizontal padding is THE gutter for the workspace and the admin
+   panel (docs/adr/038): pages inside must not add their own. Before the
+   token this was a flat 2rem that shipped to phones verbatim. */
 .work-content {
-  padding: 1.5rem 2rem 2rem;
+  padding: 1.5rem var(--pw-gutter) 2rem;
 }
 
 .work-content-narrow {
-  padding: 1.5rem 2rem 2rem;
+  padding: 1.5rem var(--pw-gutter) 2rem;
   max-width: 800px;
 }
 
+/* A card holds something that could MOVE — an item that would still make
+   sense on another page (docs/adr/038). Ask "could this move?" before
+   reaching for it: a page's own sections can't, and get .section below.
+   The one other thing that earns a border is an interruption — a danger
+   zone, a warning, an unsaved-changes banner. That list is closed. */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: var(--pw-pad);
+}
+
+/* A page section: the non-card way to separate content. A section is part
+   of its page, so it separates with a rule and vertical space rather than
+   a box — which on a phone is the difference between reading at ~285px
+   and reading at ~350px. The rule sits between siblings only, so the
+   first section never opens with a stray line.
+
+   Prefixed because a plain `.section` is already a scoped class in four
+   components (AdminLabel, AdminQuiltSettings, AdminDashboard,
+   TemplatePreviewDrawer), where it means that page's own wrapper — an
+   unprefixed global would fire on all of them. */
+.pw-section + .pw-section {
+  margin-top: var(--pw-stack);
+  padding-top: var(--pw-stack);
+  border-top: 1px solid var(--color-border);
 }
 
 .badge {

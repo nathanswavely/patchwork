@@ -161,10 +161,13 @@
 </div>
 
 <style>
+  /* No horizontal padding: .social-main owns the gutter (docs/adr/038).
+     This page's own 20px used to stack on top of it, which cost 40px of
+     measure on a phone. */
   .label-page {
-    max-width: 640px;
+    max-width: var(--pw-measure);
     margin: 0 auto;
-    padding: 32px 20px 64px;
+    padding: 32px 0 64px;
   }
 
   .label-empty {

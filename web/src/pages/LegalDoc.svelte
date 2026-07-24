@@ -80,10 +80,11 @@
 </div>
 
 <style>
+  /* No horizontal padding: .social-main owns the gutter (docs/adr/038). */
   .legal-page {
-    max-width: 640px;
+    max-width: var(--pw-measure);
     margin: 0 auto;
-    padding: 32px 20px 64px;
+    padding: 32px 0 64px;
   }
 
   .legal-header {

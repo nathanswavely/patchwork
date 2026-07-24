@@ -253,7 +253,7 @@
     <!-- ===== Identity ===== -->
     <section class="section">
       <h2>Identity</h2>
-      <div class="card settings-card">
+      <div class="settings-card">
         <label class="field">
           <span class="field-label">Quilt name</span>
           <input type="text" bind:value={name} maxlength="100" />
@@ -281,7 +281,7 @@
     <!-- ===== Quilt icon ===== -->
     <section class="section">
       <h2>Quilt Icon</h2>
-      <div class="card settings-card">
+      <div class="settings-card">
         <p class="section-desc">
           Represents this quilt in the quilt switcher and in other people's Connected Quilts.
           Square PNG or JPEG, {data.icon_constraints.min_px}&ndash;{data.icon_constraints.max_px} px,
@@ -360,7 +360,7 @@
 
     <section class="section">
       <h2>Data Export (Seamrip)</h2>
-      <div class="card settings-card">
+      <div class="settings-card">
         <p class="section-desc">
           Download this quilt's portable community data as a zip: patches, people,
           memberships, events, proposals with votes, and governance records.
@@ -434,7 +434,7 @@
 
   .section {
     margin-bottom: 2rem;
-    max-width: 640px;
+    max-width: var(--pw-measure);
   }
 
   .section h2 {

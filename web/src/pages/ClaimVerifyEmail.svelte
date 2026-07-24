@@ -53,12 +53,12 @@
   {#if loading}
     <Skeleton lines={3} height="1rem" />
   {:else if error && !info}
-    <div class="card">
+    <div class="state-block">
       <p class="error-text">{error}</p>
       <p class="muted">The link may have been used already, or the claim was withdrawn or resolved.</p>
     </div>
   {:else if info?.expired}
-    <div class="card">
+    <div class="state-block">
       <p>This verification link has expired.</p>
       <p class="muted">Request a new email from the claim page for <strong>{info.node_name}</strong>.</p>
       <a
@@ -68,7 +68,7 @@
       >Go to claim page</a>
     </div>
   {:else if info}
-    <div class="card">
+    <div class="state-block">
       <p>You're confirming the claim of <strong>{info.node_name}</strong>.</p>
       <p class="muted">This transfers ownership of the listing to the account that opened the claim.</p>
       <button class="btn btn-primary" onclick={handleConfirm} disabled={confirming || done}>
@@ -83,7 +83,7 @@
 
 <style>
   .verify-email-page {
-    max-width: 520px;
+    max-width: var(--pw-measure-narrow);
     margin: 0 auto;
   }
 
@@ -92,11 +92,11 @@
     margin-bottom: 1rem;
   }
 
-  .card p {
+  .state-block p {
     margin-bottom: 0.75rem;
   }
 
-  .card .btn {
+  .state-block .btn {
     margin-top: 0.25rem;
   }
 </style>
