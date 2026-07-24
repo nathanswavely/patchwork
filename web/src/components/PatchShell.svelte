@@ -19,7 +19,7 @@
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
-  import { Scales, UsersThree, CalendarBlank, GearSix, ArrowSquareOut } from 'phosphor-svelte';
+  import { Scales, UsersThree, CalendarBlank, GearSix, Eye } from 'phosphor-svelte';
 
   let { slug = '', activeTab = 'governance', children } = $props();
 
@@ -184,7 +184,18 @@
 <div class="workspace">
   <GlobalBar>
     {#snippet leading()}
-      <ContextCrumb label={node?.name || slug} href={`${basePath}/governance`} />
+      <div class="crumb-group">
+        <ContextCrumb label={node?.name || slug} href={`${basePath}/governance`} />
+        <a
+          href="/patches/{slug}"
+          class="view-profile-action"
+          onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}`); }}
+          title="View the public profile"
+          aria-label="View the public profile"
+        >
+          <Eye size={18} weight="duotone" />
+        </a>
+      </div>
     {/snippet}
     {#snippet search()}
       <WorkspaceSearch placeholder="Search this patch…" provider={finderProvider} />
@@ -228,16 +239,8 @@
         {/each}
       </nav>
 
-      <div class="workspace-cluster">
-        {#if isAdmin}
-          <span class="role-badge managing">Managing</span>
-        {:else if membershipRole === 'member'}
-          <span class="role-badge">Member</span>
-        {:else if membershipRole === 'follower'}
-          <span class="role-badge">Following</span>
-        {/if}
-
-        {#if !isAdmin}
+      {#if !isAdmin}
+        <div class="workspace-cluster">
           {#if isBanned}
             <span class="banned-notice">Removed from this community</span>
           {:else if isMember}
@@ -251,18 +254,8 @@
             <button class="btn btn-primary btn-sm" onclick={handleJoin} disabled={joining}>Join</button>
             <button class="btn btn-secondary btn-sm" onclick={handleFollow} disabled={joining}>Follow</button>
           {/if}
-        {/if}
-
-        <a
-          href="/patches/{slug}"
-          class="view-profile"
-          onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}`); }}
-          title="View the public profile"
-        >
-          <ArrowSquareOut size={14} weight="duotone" />
-          <span>View profile</span>
-        </a>
-      </div>
+        </div>
+      {/if}
     </div>
 
     <!-- Tab content -->
@@ -373,49 +366,37 @@
     padding: 8px 0;
   }
 
-  .role-badge {
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-text-muted);
-    background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-
-  .role-badge.managing {
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  }
-
   .banned-notice {
     font-size: 0.78rem;
     color: var(--color-error);
   }
 
-  .view-profile {
+  /* --- Public-profile action, beside the context crumb in the global bar.
+     The crumb name truncates around it; the action itself never shrinks. --- */
+  .crumb-group {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    padding: 6px 8px;
-    border-radius: var(--radius);
-    white-space: nowrap;
+    gap: 2px;
+    min-width: 0;
+    flex-shrink: 1;
   }
 
-  .view-profile:hover {
+  .view-profile-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .view-profile-action:hover {
     color: var(--color-text);
     background: var(--color-overlay);
     text-decoration: none;
-  }
-
-  @media (max-width: 768px) {
-    .view-profile span {
-      display: none;
-    }
   }
 </style>
