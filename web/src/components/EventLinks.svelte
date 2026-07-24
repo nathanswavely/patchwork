@@ -182,7 +182,7 @@
       <div class="pending-row">
         <span class="muted">
           {#if l.initiated_by === 'owner'}
-            Link proposed to <strong>{l.node_name}</strong> — awaiting their confirmation
+            Waiting for <strong>{l.node_name}</strong> to confirm this link
           {:else}
             <strong>{l.node_name}</strong> asked to link to this event
           {/if}

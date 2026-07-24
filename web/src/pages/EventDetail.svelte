@@ -51,7 +51,7 @@
   async function detachEvent() {
     try {
       await api(`events/${event.id}/detach`, { method: 'POST' });
-      showToast('Detached — this is an ordinary event now');
+      showToast('Detached. This is an ordinary event now.');
       await loadEvent(event.id);
     } catch (e) {
       showToast(e.message || 'Failed to detach event', 'error');
@@ -143,7 +143,7 @@
           {#if imported && canManage}
             <ConfirmAction
               label="Detach"
-              confirmLabel="Detach — the feed lets go of this event"
+              confirmLabel="Yes, detach from the feed"
               onConfirm={detachEvent}
             />
           {/if}
@@ -165,7 +165,7 @@
             href="/patches/{event.node_slug}/settings/sources"
             onclick={(e) => { e.preventDefault(); navigate(`/patches/${event.node_slug}/settings/sources`); }}
           >this patch's event sources</a>{:else}this patch's event sources{/if}
-        and updates with it. To change it, edit the source calendar — or
+        and updates with it. To change it, edit the source calendar, or
         detach it to make it an ordinary event.
       </p>
     {/if}

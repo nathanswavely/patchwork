@@ -132,7 +132,7 @@
       codesCopied = true;
       showToast('Codes copied', 'success');
     } catch {
-      showToast('Copy failed — select and copy them by hand', 'error');
+      showToast('Copy failed. Select and copy them by hand.', 'error');
     }
   }
 
@@ -232,7 +232,7 @@
       closeNaming();
     } catch (e) {
       savingName = false;
-      showToast(e.message || 'Could not rename — your passkey still works.', 'error');
+      showToast(e.message || 'Could not rename. Your passkey still works.', 'error');
     }
   }
 
@@ -434,7 +434,7 @@
             {codesCopied ? 'Copied' : 'Copy all'}
           </button>
           <button class="btn-link" onclick={() => { newCodes = []; }}>
-            Done — I've saved them
+            I've saved them
           </button>
         </div>
       </div>
@@ -444,7 +444,7 @@
           {recoveryStatus.remaining} of {recoveryStatus.total} codes left.
         </p>
         {#if recoveryStatus.remaining <= 3}
-          <p class="codes-warning">Running low — generate a fresh set.</p>
+          <p class="codes-warning">Running low. Generate a fresh set.</p>
         {/if}
         <div style="margin-top: 1rem;">
           <ConfirmAction
@@ -453,8 +453,8 @@
             onConfirm={generateRecoveryCodes}
           />
           <p class="muted" style="margin-top: 0.5rem; font-size: 0.8rem;">
-            New codes replace the old set — anything written down stops
-            working.
+            New codes replace the old set. Anything already written down
+            stops working.
           </p>
         </div>
       {:else}

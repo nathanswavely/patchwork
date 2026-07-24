@@ -48,7 +48,7 @@
         events = ed.items || ed || [];
       }
     } catch {
-      error = 'Couldn’t reach this patch — its quilt may be unreachable or may not allow browsing from other quilts.';
+      error = "Couldn't reach this patch. Its quilt may be unreachable or may not allow browsing from other quilts.";
     } finally {
       loading = false;
     }
@@ -103,7 +103,7 @@
       <div class="remote-sash">
         <img src="{origin}/api/v1/instance/icon" alt="" width="18" height="18" />
         <span style="color: {textOnColor(sashColor)}">
-          On {quiltInfo?.name || host} — another quilt
+          On {quiltInfo?.name || host}, another quilt
         </span>
       </div>
 
