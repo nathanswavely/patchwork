@@ -20,7 +20,7 @@
   // Identity form
   let name = $state('');
   let description = $state('');
-  // Quilt policy (docs/adr/036): hide amended-lining patches from discovery
+  // Quilt policy (docs/adr/037): hide amended-lining patches from discovery
   // for everyone. Personal settings can hide more, never reveal what this hides.
   let hideAmendedLinings = $state(false);
   let savingPolicy = $state(false);

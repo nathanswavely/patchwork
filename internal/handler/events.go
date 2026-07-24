@@ -57,7 +57,7 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		if nodeID == "" {
 			conditions = append(conditions, "n.visibility = 'public'")
 
-			// Amended-lining discovery filter (docs/adr/036): the instance-wide
+			// Amended-lining discovery filter (docs/adr/037): the instance-wide
 			// feed drops a diverged patch's events, except for viewers who
 			// knowingly joined or followed it — the filter protects browsers,
 			// not participants. A patch's own page (nodeID != "") is a direct

@@ -28,7 +28,7 @@ func validDocVisibility(v string) bool {
 }
 
 // canReadPatchDocs reports whether the request's viewer may read this patch's
-// members-only charters (docs/adr/035). Instance admins and the patch's
+// members-only charters (docs/adr/036). Instance admins and the patch's
 // admins/members always may; a follower may when the patch's follower
 // permissions grant charters — the same knob the workspace UI reads, so the
 // two never disagree. Signed-out visitors never may.
@@ -132,7 +132,7 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 		// Members-only unless the admin asks otherwise, here and in the DB
-		// default: a charter is published deliberately (docs/adr/035).
+		// default: a charter is published deliberately (docs/adr/036).
 		if req.Visibility == "" {
 			req.Visibility = "members"
 		}
@@ -143,7 +143,7 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		// A new charter can't take the lining's identity: title→filename is
 		// how DB rows and git files link (docs/adr/011), so a charter that
 		// slugifies to the lining's filename would collide with it in the
-		// repo and in the amendment flow (docs/adr/036).
+		// repo and in the amendment flow (docs/adr/037).
 		if governanceFilename(req.Title) == governanceFilename(DefaultLiningTitle) {
 			http.Error(w, `{"error":"that title is reserved for the lining"}`, http.StatusBadRequest)
 			return
@@ -187,7 +187,7 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 }
 
 // ListGovernanceDocs handles GET /api/v1/nodes/{slug}/governance.
-// Members-only docs are omitted for viewers who can't read them (docs/adr/035),
+// Members-only docs are omitted for viewers who can't read them (docs/adr/036),
 // so the route is mounted with AuthOptional rather than left anonymous.
 func ListGovernanceDocs(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -322,7 +322,7 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// The lining is bible (docs/adr/036): its title is its identity, its
+		// The lining is bible (docs/adr/037): its title is its identity, its
 		// visibility is pinned public, and its body changes only through a
 		// passed amendment — a voted, recorded act — never a direct edit.
 		if docKind == "lining" {

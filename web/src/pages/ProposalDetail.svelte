@@ -169,7 +169,7 @@
           </section>
         {:else if proposal.doc_text_hidden}
           <!-- The target charter is members only, so the diff text was
-               withheld server-side (docs/adr/035). Say so rather than
+               withheld server-side (docs/adr/036). Say so rather than
                rendering a proposal that looks like it changes nothing. -->
           <section class="proposal-section">
             <div class="changes-summary">

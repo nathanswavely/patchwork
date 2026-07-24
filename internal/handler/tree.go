@@ -28,7 +28,7 @@ type TreeNode struct {
 	EventCount    int `json:"event_count"`
 	IsUnclaimed   bool `json:"is_unclaimed,omitempty"`
 	// AmendedLining marks a patch whose lining diverged from every shipped
-	// version (docs/adr/036) — the badge state, deliberately public.
+	// version (docs/adr/037) — the badge state, deliberately public.
 	AmendedLining bool       `json:"amended_lining,omitempty"`
 	Children      []TreeNode `json:"children"`
 }
@@ -110,7 +110,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			flat = append(flat, fn)
 		}
 
-		// Amended-lining state and the discovery filter (docs/adr/036). The
+		// Amended-lining state and the discovery filter (docs/adr/037). The
 		// filter never applies to scope=my: hiding someone's own patch from
 		// their own workspace would not be a discovery decision.
 		liningStates := NodeLiningStatuses(db)

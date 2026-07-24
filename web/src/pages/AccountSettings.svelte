@@ -6,7 +6,7 @@
 
   let user = $derived(getUser());
   let displayName = $state('');
-  // Personal discovery filter (docs/adr/036).
+  // Personal discovery filter (docs/adr/037).
   let hideAmendedLinings = $state(false);
   let hideAmendedSaving = $state(false);
   let bio = $state('');

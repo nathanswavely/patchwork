@@ -35,12 +35,12 @@ func join(elems []string, sep string) string {
 const DefaultLiningTitle = governance.DefaultLiningTitle
 
 // DefaultLiningBody is the body for the auto-created governance doc — the
-// head of the shipped lineage (docs/adr/036), so it is a var, not a const.
+// head of the shipped lineage (docs/adr/037), so it is a var, not a const.
 var DefaultLiningBody = governance.DefaultLiningBody
 
 // CreateDefaultLining creates the lining for a node: kind='lining' is its
 // durable identity, and it is born public — the one doc the members-only
-// default never applies to (docs/adr/036).
+// default never applies to (docs/adr/037).
 func CreateDefaultLining(db *database.DB, nodeID, userID string) {
 	id := auth.NewUUIDv7()
 	db.Exec(
@@ -332,7 +332,7 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		// The mirrored charter text follows that charter's visibility, even
-		// when the proposal quoting it is public (docs/adr/035).
+		// when the proposal quoting it is public (docs/adr/036).
 		docTextHidden := hiddenDocRedactor(db, r, p.NodeID)(p.TargetDoc)
 		if docTextHidden {
 			p.ProposedBody, p.ProposedTitle = "", ""

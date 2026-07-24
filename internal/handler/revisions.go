@@ -16,7 +16,7 @@ func ListRevisions(db *database.DB) http.HandlerFunc {
 		proposalID := r.PathValue("id")
 
 		// Revisions snapshot the proposed charter text, so they inherit the
-		// target charter's visibility (docs/adr/035).
+		// target charter's visibility (docs/adr/036).
 		var revNodeID, revTargetDoc string
 		db.QueryRow("SELECT node_id, COALESCE(target_doc,'') FROM proposals WHERE id = ?", proposalID).Scan(&revNodeID, &revTargetDoc)
 		docTextHidden := revNodeID != "" && hiddenDocRedactor(db, r, revNodeID)(revTargetDoc)

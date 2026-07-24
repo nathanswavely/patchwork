@@ -117,7 +117,7 @@ func templateFiles(template string) map[string]string {
 const DefaultLiningTitle = "Community Standards"
 
 // DefaultLiningBody is the current shipped lining text — the head of the
-// lineage in lining.go (docs/adr/036). It deliberately has no top-level
+// lineage in lining.go (docs/adr/037). It deliberately has no top-level
 // heading: the title lives in the governance_docs row (and the constant
 // above), and git file content must equal the DB body verbatim so the two
 // stores stay diffably equal.

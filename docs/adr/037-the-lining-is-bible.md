@@ -1,6 +1,6 @@
 # The lining is bible — project-owned, always public, amendable only in the open
 
-ADR 035 gave every governance doc a visibility switch, members-only by
+ADR 036 gave every governance doc a visibility switch, members-only by
 default. That quietly gutted the lining's founding purpose: the shared
 baseline every patch adopts at creation — the anti-discrimination floor —
 was suddenly a document a patch could hide, or retitle, or silently
@@ -24,7 +24,7 @@ charter, and the differences are enforced, not requested:
   editable — one rename and every rule below goes blind. The column is
   deliberately extensible; only `'lining'` carries behavior today.
 - **Pinned public, title immutable, undeletable, amendment-only.** The
-  visibility switch (ADR 035) refuses `kind='lining'`; so does a title
+  visibility switch (ADR 036) refuses `kind='lining'`; so does a title
   edit and a direct body edit (`PUT /governance/{id}`). The only path
   that changes a lining's body is a passed amendment proposal — a voted,
   recorded, notified act. A lone admin's silent 2am edit is not a
@@ -74,7 +74,7 @@ pre-launch data reset would erase it, and purpose-built git-history
 rewriting was rejected as falsification machinery with one use.
 
 Consequences: "Amended lining" is a first-class user-facing state
-(CONTEXT.md); the lining is the one document ADR 035's members-only
+(CONTEXT.md); the lining is the one document ADR 036's members-only
 default can never touch; amendment proposals targeting a lining never
 redact their text (it is public by definition); and every future edit to
 the lining's text is a lineage append that auto-propagates to all

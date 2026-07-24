@@ -38,7 +38,7 @@
     }
   }
 
-  // Per-document visibility (docs/adr/035). Publishing is one click, but it is
+  // Per-document visibility (docs/adr/036). Publishing is one click, but it is
   // the click that puts a document in front of the whole internet, so the
   // label says which way it goes rather than naming a state.
   let savingVisibility = $state('');

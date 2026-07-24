@@ -66,7 +66,7 @@
               <span class="muted">Last updated {new Date(doc.updated_at).toLocaleDateString()}</span>
               {#if isMember && doc.visibility !== 'public'}
                 <!-- Only members see this doc at all; the chip tells them the
-                     public can't (docs/adr/035). -->
+                     public can't (docs/adr/036). -->
                 <span class="vis-chip">Members only</span>
               {/if}
             </div>

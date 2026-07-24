@@ -1310,9 +1310,9 @@ func (s *seeder) seedGovernanceDocs() {
 		createdAt := s.ts(s.rng.Intn(60) + 60)
 		// Seeded charters are published: demo data exists to be read by a
 		// signed-out visitor, which is the opposite of the members-only
-		// default a real new doc gets (docs/adr/035). The seeder runs after
+		// default a real new doc gets (docs/adr/036). The seeder runs after
 		// migrations, so migration 037's title backfill can't reach these
-		// rows — kind is set here (docs/adr/036).
+		// rows — kind is set here (docs/adr/037).
 		kind := "charter"
 		if d.title == governance.DefaultLiningTitle {
 			kind = "lining"

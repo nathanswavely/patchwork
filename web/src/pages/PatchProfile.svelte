@@ -21,7 +21,7 @@
   let isAdmin = $state(false);
   let membershipRole = $state('');
   let isUnclaimed = $state(false);
-  // 'diverged' wears the public "Amended lining" badge (docs/adr/036).
+  // 'diverged' wears the public "Amended lining" badge (docs/adr/037).
   let liningStatus = $state('');
   let isBanned = $state(false);
   let loading = $state(true);
@@ -194,7 +194,7 @@
         <p class="profile-desc">{node.description}</p>
       {/if}
       {#if liningStatus === 'diverged'}
-        <!-- Public by design (docs/adr/036): this patch amended the shared
+        <!-- Public by design (docs/adr/037): this patch amended the shared
              baseline, and the divergence is worn, not whispered. -->
         <p class="amended-lining-row">
           <a

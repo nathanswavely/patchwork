@@ -25,7 +25,7 @@ type User struct {
 	// when true, a cold visit to "/" redirects once to "/my". Default false
 	// — the whole quilt is the shared default landing.
 	StartOnMyQuilt bool `json:"start_on_my_quilt"`
-	// HideAmendedLinings is the personal discovery filter (docs/adr/036):
+	// HideAmendedLinings is the personal discovery filter (docs/adr/037):
 	// hide amended-lining patches from this user's quilt, search, map, and
 	// public feeds. Populated by the Me handler, not by session validation.
 	HideAmendedLinings bool    `json:"hide_amended_linings"`
@@ -295,13 +295,13 @@ type GovernanceDoc struct {
 	NodeID string `json:"node_id"`
 	Title  string `json:"title"`
 	Body   string `json:"body"`
-	// Kind is "charter" or "lining" (docs/adr/036). The lining is the shared
+	// Kind is "charter" or "lining" (docs/adr/037). The lining is the shared
 	// baseline every patch adopts at creation; it is machine-identified by
 	// this column, never by its title.
 	Kind string `json:"kind"`
-	// Visibility is "public" or "members" (docs/adr/035). New docs default
+	// Visibility is "public" or "members" (docs/adr/036). New docs default
 	// to members-only; a patch admin publishes each one deliberately. The
-	// lining is pinned public (docs/adr/036).
+	// lining is pinned public (docs/adr/037).
 	Visibility string `json:"visibility"`
 	Version    int    `json:"version"`
 	CreatedBy  string `json:"created_by"`

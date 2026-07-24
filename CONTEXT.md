@@ -321,7 +321,7 @@ diffed; the database is canonical and a per-patch git repository mirrors
 the history (docs/adr/011). Amended through proposals. Each charter
 carries its own visibility — members only (the default for a new one) or
 public; a patch **publishes** a charter, it isn't published by default
-(docs/adr/035). "Governance doc" remains the backend term in code and
+(docs/adr/036). "Governance doc" remains the backend term in code and
 endpoints.
 _Avoid_: lining (that is one specific charter, not the type), policy,
 rules doc; "private charter" (the pair is members only / public, and

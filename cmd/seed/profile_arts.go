@@ -549,7 +549,7 @@ var artsProposals = []proposalDef{
 
 var artsGovDocs = []govDocDef{
 	// The district's lining carries a custom body, so the seed demonstrates a
-	// patch that amended its lining (docs/adr/036): diverged badge, filterable.
+	// patch that amended its lining (docs/adr/037): diverged badge, filterable.
 	{"lancaster-arts-district", "Community Standards", "We are artists, makers, and supporters building an arts scene in Lancaster, PA with room for everyone.\n\nWe stand against all forms of discrimination including racism, sexism, homophobia, transphobia, and ableism. Our spaces are for everyone.\n\nMembers agree to treat one another with respect, resolve conflicts through dialogue, and uplift emerging voices alongside established ones."},
 	{"common-ground-ceramics", "Studio Usage Guidelines", "Studio hours: Monday-Friday 8am-10pm, Saturday-Sunday 10am-6pm.\n\nAll members must complete safety orientation before using kilns or wheels. Clean your workspace after each session. Shared glazes are for members only; label personal supplies clearly. Kiln scheduling is first-come, first-served via the sign-up sheet. Bisque loads fire Tuesdays and Fridays."},
 	{"warehouse-arts-collective", "Equipment Lending Policy", "Members may borrow shared tools for up to 7 days. Complete the checkout log and return items clean and working. Report damage immediately. Borrowers are responsible for replacement costs. Power tools require safety certification. No lending to non-members without board approval."},

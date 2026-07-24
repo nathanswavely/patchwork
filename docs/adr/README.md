@@ -38,8 +38,8 @@ several branches are in flight.
 | [033](033-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit |
 | [034](034-archive-keeps-its-gravity.md) | Archive keeps its gravity — restore is an instance-admin action |
 | [035](035-scope-lives-in-the-url.md) | Scope lives in the URL — My Quilt is `/my`, the whole quilt stays at `/` |
-| [035](035-charters-are-published-not-exposed.md) | Charters are published, not exposed — per-document visibility |
-| [036](036-the-lining-is-bible.md) | The lining is bible — project-owned, always public, amendable only in the open |
+| [036](036-charters-are-published-not-exposed.md) | Charters are published, not exposed — per-document visibility |
+| [037](037-the-lining-is-bible.md) | The lining is bible — project-owned, always public, amendable only in the open |
 
 ## Adopted as design boundaries — implementation is backlog
 

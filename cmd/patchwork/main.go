@@ -156,7 +156,7 @@ func main() {
 	}
 	handler.SetNotifier(notifier)
 
-	// Bring every patch's lining to the current shipped text (docs/adr/036):
+	// Bring every patch's lining to the current shipped text (docs/adr/037):
 	// create missing linings, auto-update stale ones. Diverged linings are
 	// never touched. Runs after the repo backfill (so git mirrors land) and
 	// after SetNotifier (so lining.updated notifications aren't dropped).
@@ -311,7 +311,7 @@ func main() {
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
 
 	// Proposal routes — public, but amendment text follows the target
-	// charter's visibility, so the optional session is read (docs/adr/035).
+	// charter's visibility, so the optional session is read (docs/adr/036).
 	mux.HandleFunc("GET /api/v1/proposals/{id}", middleware.AuthOptional(db, handler.GetProposal(db)))
 
 	// Proposal routes — auth required.
@@ -323,7 +323,7 @@ func main() {
 
 	// Governance reads — public docs for everyone, members-only docs for
 	// viewers the patch has admitted, so each needs the optional session
-	// (docs/adr/035).
+	// (docs/adr/036).
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance", middleware.AuthOptional(db, handler.ListGovernanceDocs(db)))
 	mux.HandleFunc("GET /api/v1/governance/{id}/versions", middleware.AuthOptional(db, handler.GetGovernanceVersions(db)))
 	mux.HandleFunc("GET /api/v1/governance/{id}/diff", middleware.AuthOptional(db, handler.GetGovernanceDiff(db)))

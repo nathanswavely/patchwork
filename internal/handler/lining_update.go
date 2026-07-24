@@ -36,7 +36,7 @@ func NodeLiningStatuses(db *database.DB) map[string]string {
 }
 
 // hideAmendedLinings reports whether this request's discovery surfaces should
-// omit amended-lining patches (docs/adr/036). Strictest wins: quilt policy
+// omit amended-lining patches (docs/adr/037). Strictest wins: quilt policy
 // (instance setting) hides for everyone including signed-out visitors; the
 // per-user switch can hide when policy shows, never the reverse.
 func hideAmendedLinings(db *database.DB, r *http.Request) bool {
@@ -53,7 +53,7 @@ func hideAmendedLinings(db *database.DB, r *http.Request) bool {
 
 // GetInstanceLining handles GET /api/v1/instance/lining — the current shipped
 // lining text. Public: its most important reader is deciding whether to
-// create a patch, and adoption should never be a surprise (docs/adr/036).
+// create a patch, and adoption should never be a surprise (docs/adr/037).
 func GetInstanceLining(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -66,7 +66,7 @@ func GetInstanceLining(db *database.DB) http.HandlerFunc {
 }
 
 // AutoUpdateLinings brings every live patch's lining to the current shipped
-// text (docs/adr/036). Runs at startup, after the governance repo backfill.
+// text (docs/adr/037). Runs at startup, after the governance repo backfill.
 // Two passes:
 //
 //  1. Patches with no lining row at all (nodes created before the lining

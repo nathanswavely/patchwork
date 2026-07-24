@@ -59,7 +59,7 @@
   });
 
   let submitting = $state(false);
-  // The lining (docs/adr/036): shown at creation because adoption should
+  // The lining (docs/adr/037): shown at creation because adoption should
   // never be a surprise. Text fetched lazily when the drawer opens.
   let liningOpen = $state(false);
   let lining = $state(null);

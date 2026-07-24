@@ -45,7 +45,7 @@ const (
 	GovernanceDocUpdated   NotificationType = "governance.doc_updated"
 	GovernanceRulesChanged NotificationType = "governance.rules_changed"
 	// LiningUpdated fires when a stale lining auto-updates to the current
-	// shipped text (docs/adr/036). Notified, never asked.
+	// shipped text (docs/adr/037). Notified, never asked.
 	LiningUpdated NotificationType = "governance.lining_updated"
 
 	MembershipJoined      NotificationType = "membership.joined"

@@ -8,7 +8,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
 
-// The lining is bible (docs/adr/036): kind='lining', pinned public, title
+// The lining is bible (docs/adr/037): kind='lining', pinned public, title
 // immutable, body amendable only by proposal, stale copies auto-updated.
 
 func TestLiningBornPublicAndPristine(t *testing.T) {

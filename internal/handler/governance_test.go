@@ -42,7 +42,7 @@ func TestListGovernanceDocs(t *testing.T) {
 	nodeID := createTestNode(t, db, admin.ID, "List Gov", "list-gov", "open")
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
-	// Create a doc. Published, so an anonymous list sees it (docs/adr/035).
+	// Create a doc. Published, so an anonymous list sees it (docs/adr/036).
 	body := map[string]interface{}{"title": "Doc 1", "body": "Content", "visibility": "public"}
 	r := authedRequest("POST", "/api/v1/nodes/list-gov/governance", body, adminToken)
 	serveMux(t, db, "POST", "/api/v1/nodes/{slug}/governance", handler.CreateGovernanceDoc(db), r)
@@ -176,7 +176,7 @@ func TestGetGovernanceDoc(t *testing.T) {
 	}
 }
 
-// --- Per-document visibility (docs/adr/035) ---
+// --- Per-document visibility (docs/adr/036) ---
 
 // createGovDoc posts a governance doc and returns its id.
 func createGovDoc(t *testing.T, db *database.DB, slug, token, title, visibility string) string {

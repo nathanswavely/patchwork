@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 )
 
-// The lining's shipped lineage (docs/adr/036). The binary carries every
+// The lining's shipped lineage (docs/adr/037). The binary carries every
 // version the project has ever shipped, in order; the last entry is current.
 // Divergence is a property of the text, not the history: a patch's lining is
 // pristine if it matches the current entry, stale if it matches an older one,
@@ -71,7 +71,7 @@ func CurrentLiningVersion() int {
 }
 
 // liningV1 is the first shipped lining, written by the project author
-// (docs/adr/036: the lineage starts at the handwritten text; earlier drafts
+// (docs/adr/037: the lineage starts at the handwritten text; earlier drafts
 // are legacy, healed but unrecorded).
 //
 // PLACEHOLDER: this is the working draft pending Nathan's final wording. It
@@ -99,7 +99,7 @@ If someone is being harmed, tell a patch admin, and if the patch itself is the p
 Harassment, threats, or hate speech. Outing people, or passing along what they told you in confidence. Contact that keeps coming after someone says stop. Any of these can get a person removed, and a patch that shelters them can go with them.`
 
 // legacyLiningDraft is the pre-lineage text live instances carry (the body
-// DefaultLiningBody shipped as before docs/adr/036). Held here only so the
+// DefaultLiningBody shipped as before docs/adr/037). Held here only so the
 // startup heal recognizes and replaces it; it is not a shipped version.
 const legacyLiningDraft = `This is the lining, the baseline that holds this patchwork together. Every patch on this quilt agrees to these standards. Individual patches can build on top of them, but they can't override them.
 

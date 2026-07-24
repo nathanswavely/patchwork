@@ -23,7 +23,7 @@ const (
 	KeyLegalPrivacy = "legal_privacy"
 	KeyLegalTerms   = "legal_terms"
 
-	// Quilt policy (docs/adr/036): "true" hides amended-lining patches from
+	// Quilt policy (docs/adr/037): "true" hides amended-lining patches from
 	// discovery for everyone. The per-user twin is users.hide_amended_linings;
 	// strictest wins — the user switch can hide more, never reveal more.
 	KeyHideAmendedLinings = "hide_amended_linings"

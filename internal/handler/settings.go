@@ -94,7 +94,7 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Description *string `json:"description"`
 			IconDefault *string `json:"icon_default"`
 			// Quilt policy: hide amended-lining patches from discovery for
-			// everyone (docs/adr/036).
+			// everyone (docs/adr/037).
 			HideAmendedLinings *bool `json:"hide_amended_linings"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

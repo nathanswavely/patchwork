@@ -469,7 +469,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			conditions = append(conditions, "n.latitude IS NOT NULL AND n.longitude IS NOT NULL")
 		}
 
-		// Amended-lining discovery filter (docs/adr/036). Excluded in SQL so
+		// Amended-lining discovery filter (docs/adr/037). Excluded in SQL so
 		// cursor pagination stays exact. Never applies to My Quilt — a patch
 		// you belong to is yours to see.
 		if !myScope && hideAmendedLinings(db, r) {
@@ -578,7 +578,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			"node":         n,
 			"is_unclaimed": isUnclaimed,
 		}
-		// Lining status is deliberately public (docs/adr/036): "amended
+		// Lining status is deliberately public (docs/adr/037): "amended
 		// lining" (diverged) is the badge state the whole design hangs on.
 		var liningBody string
 		if db.QueryRow("SELECT body FROM governance_docs WHERE node_id = ? AND kind = 'lining'", n.ID).Scan(&liningBody) == nil {

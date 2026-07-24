@@ -288,7 +288,7 @@
   <!-- Visibility. The old control was a bare Public/Private select, which
        named a state without saying what it does — and said nothing about the
        one thing admins asked: whether it covers the patch's documents too
-       (it doesn't; charters carry their own switch, docs/adr/035). -->
+       (it doesn't; charters carry their own switch, docs/adr/036). -->
   <div class="links-section">
     <div class="links-header">
       <span class="links-label">Visibility</span>

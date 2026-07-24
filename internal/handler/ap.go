@@ -264,7 +264,7 @@ func APGovernanceDoc(db *database.DB) http.HandlerFunc {
 
 		// Only public docs federate: the fediverse has no session to check a
 		// membership against, so members-only is off the wire entirely
-		// (docs/adr/035).
+		// (docs/adr/036).
 		var doc model.GovernanceDoc
 		err := db.QueryRow(
 			`SELECT id, node_id, title, body, version, created_by, created_at, updated_at

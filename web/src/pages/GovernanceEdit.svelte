@@ -10,7 +10,7 @@
 
   let title = $state('');
   let body = $state('');
-  // Members only until the patch decides otherwise (docs/adr/035).
+  // Members only until the patch decides otherwise (docs/adr/036).
   let visibility = $state('members');
   let submitting = $state(false);
   let error = $state('');
