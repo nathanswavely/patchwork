@@ -204,7 +204,10 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     padding: 0.9rem 1rem;
-    margin: 1rem var(--pw-gutter) 0;
+    /* Full width of the hosting pane — the Overview container owns the
+       gutters now (the old var(--pw-gutter) margins date from shell-level
+       mounting and double-inset the panel here). */
+    margin: 0 0 1.25rem;
   }
 
   .checklist-header {
