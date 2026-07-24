@@ -26,7 +26,10 @@
   let passKeyError = $state('');
   let passKeyLoading = $state(false);
 
-  let showSignIn = $state(false);
+  // The global bar's Log In affordance (docs/adr/040) sends people here
+  // with ?mode=signin so the sign-in panel opens directly, instead of
+  // landing on the signup-primary panel and making them click through.
+  let showSignIn = $state(getQuery().get('mode') === 'signin');
   let showRecovery = $state(false);
   let recoveryUsername = $state('');
   let recoveryCode = $state('');

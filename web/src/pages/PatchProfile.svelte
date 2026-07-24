@@ -5,6 +5,7 @@
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import Modal from '../components/Modal.svelte';
+  import JoinSheet from '../components/JoinSheet.svelte';
   import PatchCover from '../components/PatchCover.svelte';
   import ReportButton from '../components/ReportButton.svelte';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
@@ -27,6 +28,10 @@
   let loading = $state(true);
   let error = $state('');
   let joining = $state(false);
+  // The join sheet (docs/adr/040) stands between clicking Join/Become
+  // Member and the actual join call — Follow has no ceremony and keeps
+  // calling handleFollow directly.
+  let joinSheetOpen = $state(false);
 
   let recentEvents = $state([]);
   let recentProposals = $state([]);
@@ -98,12 +103,16 @@
     governanceDocs = charterData.items || charterData || [];
   }
 
-  async function handleJoin() {
+  function openJoinSheet() {
     if (!isLoggedIn()) { navigate('/login'); return; }
+    joinSheetOpen = true;
+  }
+
+  async function handleJoin(message) {
     const wasFollower = membershipRole === 'follower';
     joining = true;
     try {
-      const result = await api(`nodes/${slug}/join`, { method: 'POST' });
+      const result = await api(`nodes/${slug}/join`, { method: 'POST', body: message ? { message } : undefined });
       await loadNode();
       if (result.status === 'pending') {
         showToast('Membership request sent', 'success');
@@ -114,6 +123,7 @@
       showToast(e.message || 'Failed to join', 'error');
     } finally {
       joining = false;
+      joinSheetOpen = false;
     }
   }
 
@@ -228,13 +238,13 @@
         </a>
       {:else if isMember}
         {#if membershipRole === 'follower'}
-          <button class="btn btn-primary" onclick={handleJoin} disabled={joining}>Become Member</button>
+          <button class="btn btn-primary" onclick={openJoinSheet} disabled={joining}>Become Member</button>
           <button class="btn btn-secondary" onclick={handleLeave} disabled={joining}>Unfollow</button>
         {:else if membershipRole !== 'admin'}
           <button class="btn btn-secondary" onclick={handleLeave} disabled={joining}>Leave</button>
         {/if}
       {:else}
-        <button class="btn btn-primary" onclick={handleJoin} disabled={joining}>Join</button>
+        <button class="btn btn-primary" onclick={openJoinSheet} disabled={joining}>Join</button>
         <button class="btn btn-secondary" onclick={handleFollow} disabled={joining}>Follow</button>
       {/if}
       {#if canSuggest}
@@ -365,6 +375,17 @@
     {/if}
   {/if}
 </div>
+
+<JoinSheet
+  open={joinSheetOpen}
+  onClose={() => { joinSheetOpen = false; }}
+  onConfirm={handleJoin}
+  slug={slug}
+  patchName={node?.name || ''}
+  membershipPolicy={node?.membership_policy || 'open'}
+  liningStatus={liningStatus}
+  submitting={joining}
+/>
 
 <Modal open={modalOpen} label={modalItem?.title ?? 'Details'} onClose={() => { modalOpen = false; modalItem = null; }}>
   {#snippet children()}

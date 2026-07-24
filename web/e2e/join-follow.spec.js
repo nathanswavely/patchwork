@@ -118,6 +118,8 @@ test.describe('Follow Flow', () => {
     await expect(page.getByRole('button', { name: 'Become Member' })).toBeVisible({ timeout: 10000 });
 
     await page.getByRole('button', { name: 'Become Member' }).click();
+    // The join sheet interposes (docs/adr/040): confirm through it.
+    await page.getByRole('dialog').getByRole('button', { name: 'Join', exact: true }).click();
     // Open policy, so the upgrade is immediate: a plain member sees Leave.
     await expect(page.getByRole('button', { name: 'Leave' })).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('button', { name: 'Become Member' })).not.toBeVisible();
@@ -133,9 +135,11 @@ test.describe('Join Flow — Direct', () => {
     // Assert the post-click state rather than sampling it: the join round
     // trip is async, and under a loaded backend the page is still re-fetching
     // when a bare isVisible() would read it.
-    await page.getByRole('button', { name: 'Join' }).click();
+    await page.getByRole('button', { name: 'Join', exact: true }).click();
+    // The join sheet interposes (docs/adr/040): confirm through it.
+    await page.getByRole('dialog').getByRole('button', { name: 'Join', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Leave' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Join' })).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Join', exact: true })).not.toBeVisible();
   });
 });
 
@@ -145,7 +149,9 @@ test.describe('Leave Flow', () => {
     await resetRoundTrip(page);
     await goto(page, ROUND_TRIP_URL);
 
-    await page.getByRole('button', { name: 'Join' }).click();
+    await page.getByRole('button', { name: 'Join', exact: true }).click();
+    // The join sheet interposes (docs/adr/040): confirm through it.
+    await page.getByRole('dialog').getByRole('button', { name: 'Join', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Leave' })).toBeVisible({ timeout: 10000 });
 
     await page.getByRole('button', { name: 'Leave' }).click();

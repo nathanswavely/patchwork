@@ -99,8 +99,19 @@ export async function escapeOnboarding(page, slug = 'sowe-garden') {
 /**
  * Navigate and wait for the page to settle (network idle + no loading spinners).
  * Replaces the pattern of goto + waitForTimeout.
+ *
+ * Also pre-dismisses the anonymous intro card (docs/adr/040) before the
+ * first navigation: it overlays the top of the results list, and specs
+ * that aren't about the card itself shouldn't race its dismissal. A spec
+ * that wants the card visible clears `patchwork_intro_dismissed` itself.
  */
 export async function goto(page, path) {
+  if (!page.__introCardSuppressed) {
+    page.__introCardSuppressed = true;
+    await page.addInitScript(() => {
+      try { localStorage.setItem('patchwork_intro_dismissed', '1'); } catch {}
+    });
+  }
   await page.goto(path);
   await page.waitForLoadState('networkidle');
 }

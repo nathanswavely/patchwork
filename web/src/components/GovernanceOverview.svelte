@@ -3,13 +3,25 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isLoggedIn } from '../stores/auth.svelte.js';
+  import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
+  import { markGovernanceHubVisited } from '../lib/onboarding.js';
   import Skeleton from './Skeleton.svelte';
+  import UnlockPanel from './UnlockPanel.svelte';
+  import SetupChecklist from './SetupChecklist.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let isMember = $derived(patch.value.isMember);
   let isAdmin = $derived(patch.value.isAdmin);
+  let nodeId = $derived(patch.value.node?.id);
+
+  // Setup checklist fallback (docs/adr/040, CONTEXT.md "Setup checklist"):
+  // "decide how you govern" has no single derivable signal for a patch
+  // that never amends anything, so an admin actually reaching this page
+  // counts as having decided.
+  $effect(() => {
+    if (isAdmin && nodeId) markGovernanceHubVisited(getUser()?.id, nodeId);
+  });
 
   let overview = $state(null);
   let loading = $state(true);
@@ -87,6 +99,11 @@
 </script>
 
 <div class="governance-overview">
+  <!-- Onboarding panels (docs/adr/040) live inside the overview pane, the
+       workspace's landing view — self-gating, each renders nothing when it
+       doesn't apply. -->
+  <UnlockPanel />
+  <SetupChecklist />
   {#if loading}
     <Skeleton lines={6} height="1rem" />
   {:else if !overview}

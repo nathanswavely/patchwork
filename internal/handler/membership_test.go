@@ -2,11 +2,13 @@ package handler_test
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	patchwork "github.com/patchwork-toolkit/patchwork"
@@ -484,5 +486,191 @@ func TestSiteAdminCanUpdateMembers(t *testing.T) {
 	result := decodeJSON(t, w)
 	if result["role"] != "follower" {
 		t.Errorf("expected role=follower, got %v", result["role"])
+	}
+}
+
+// --- Join sheet intro message (docs/adr/040) ---
+
+func TestJoinMessageStoredOnApprovalRequiredRequest(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin17", "member")
+	_, userToken := createTestUser(t, db, "joiner17", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Message Node", "message-node", "approval_required")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	body := map[string]string{"message": "  Hi, I'd love to help with sound.  "}
+	r := authedRequest("POST", "/api/v1/nodes/message-node/join", body, userToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+	result := decodeJSON(t, w)
+	if result["status"] != "pending" {
+		t.Fatalf("expected status=pending, got %v", result["status"])
+	}
+
+	var joinerID string
+	db.QueryRow("SELECT id FROM users WHERE username = 'joiner17'").Scan(&joinerID)
+
+	var msg sql.NullString
+	if err := db.QueryRow("SELECT join_message FROM memberships WHERE user_id = ? AND node_id = ?", joinerID, nodeID).Scan(&msg); err != nil {
+		t.Fatalf("query join_message: %v", err)
+	}
+	if !msg.Valid || msg.String != "Hi, I'd love to help with sound." {
+		t.Errorf("expected trimmed join_message, got %+v", msg)
+	}
+
+	// Visible to the patch's admins in the pending queue.
+	pendingReq := authedRequest("GET", "/api/v1/nodes/message-node/members?status=pending", nil, adminToken)
+	pendingW := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), pendingReq)
+	if pendingW.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", pendingW.Code, pendingW.Body.String())
+	}
+	pendingResult := decodeJSON(t, pendingW)
+	items, ok := pendingResult["items"].([]interface{})
+	if !ok || len(items) != 1 {
+		t.Fatalf("expected 1 pending item, got %v", pendingResult["items"])
+	}
+	item := items[0].(map[string]interface{})
+	if item["join_message"] != "Hi, I'd love to help with sound." {
+		t.Errorf("expected join_message in pending listing, got %v", item["join_message"])
+	}
+}
+
+func TestJoinMessageIgnoredForFollower(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "admin18", "member")
+	_, userToken := createTestUser(t, db, "follower18", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Follow Message Node", "follow-message-node", "approval_required")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	body := map[string]string{"role": "follower", "message": "please let me follow"}
+	r := authedRequest("POST", "/api/v1/nodes/follow-message-node/join", body, userToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var followerID string
+	db.QueryRow("SELECT id FROM users WHERE username = 'follower18'").Scan(&followerID)
+
+	var msg sql.NullString
+	if err := db.QueryRow("SELECT join_message FROM memberships WHERE user_id = ? AND node_id = ?", followerID, nodeID).Scan(&msg); err != nil {
+		t.Fatalf("query join_message: %v", err)
+	}
+	if msg.Valid {
+		t.Errorf("expected join_message to be ignored for a follow, got %q", msg.String)
+	}
+}
+
+func TestJoinMessageIgnoredForOpenJoin(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "admin19", "member")
+	_, userToken := createTestUser(t, db, "opener19", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Open Message Node", "open-message-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	body := map[string]string{"message": "excited to join!"}
+	r := authedRequest("POST", "/api/v1/nodes/open-message-node/join", body, userToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+	result := decodeJSON(t, w)
+	if result["status"] != "active" {
+		t.Fatalf("expected status=active, got %v", result["status"])
+	}
+
+	var openerID string
+	db.QueryRow("SELECT id FROM users WHERE username = 'opener19'").Scan(&openerID)
+
+	var msg sql.NullString
+	if err := db.QueryRow("SELECT join_message FROM memberships WHERE user_id = ? AND node_id = ?", openerID, nodeID).Scan(&msg); err != nil {
+		t.Fatalf("query join_message: %v", err)
+	}
+	if msg.Valid {
+		t.Errorf("expected join_message to be ignored for an open join, got %q", msg.String)
+	}
+}
+
+func TestJoinMessageTooLongRejected(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "admin20", "member")
+	_, userToken := createTestUser(t, db, "joiner20", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Long Message Node", "long-message-node", "approval_required")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	body := map[string]string{"message": strings.Repeat("a", 501)}
+	r := authedRequest("POST", "/api/v1/nodes/long-message-node/join", body, userToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+func TestJoinMessageAbsentFromPublicListing(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "admin21", "member")
+	_, userToken := createTestUser(t, db, "joiner21", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Public Listing Node", "public-listing-node", "approval_required")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	body := map[string]string{"message": "a private note for the admins"}
+	r := authedRequest("POST", "/api/v1/nodes/public-listing-node/join", body, userToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	// An anonymous request for the pending queue is silently downgraded to the
+	// active/public listing (existing behavior) — join_message must not leak.
+	publicReq := authedRequest("GET", "/api/v1/nodes/public-listing-node/members?status=pending", nil, "")
+	publicW := servePublicMux(t, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), publicReq)
+	if publicW.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", publicW.Code, publicW.Body.String())
+	}
+	if strings.Contains(publicW.Body.String(), "join_message") {
+		t.Errorf("join_message must never appear in a public listing, got body: %s", publicW.Body.String())
+	}
+}
+
+func TestJoinMessageNulledAfterApproval(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin22", "member")
+	_, userToken := createTestUser(t, db, "joiner22", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Approve Message Node", "approve-message-node", "approval_required")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	body := map[string]string{"message": "would love to get involved"}
+	r := authedRequest("POST", "/api/v1/nodes/approve-message-node/join", body, userToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var joinerID string
+	db.QueryRow("SELECT id FROM users WHERE username = 'joiner22'").Scan(&joinerID)
+
+	var before sql.NullString
+	db.QueryRow("SELECT join_message FROM memberships WHERE user_id = ? AND node_id = ?", joinerID, nodeID).Scan(&before)
+	if !before.Valid {
+		t.Fatalf("expected join_message to be set before approval")
+	}
+
+	approveBody := map[string]string{"status": "active"}
+	approveReq := authedRequest("PATCH", "/api/v1/nodes/approve-message-node/members/"+joinerID, approveBody, adminToken)
+	approveW := serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), approveReq)
+	if approveW.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", approveW.Code, approveW.Body.String())
+	}
+
+	var after sql.NullString
+	db.QueryRow("SELECT join_message FROM memberships WHERE user_id = ? AND node_id = ?", joinerID, nodeID).Scan(&after)
+	if after.Valid {
+		t.Errorf("expected join_message to be nulled after approval, got %q", after.String)
 	}
 }

@@ -189,7 +189,16 @@
         {/if}
       </div>
     {:else}
-      <a href="/login" class="bar-login" onclick={(e) => handleNav(e, '/login')}>Log In</a>
+      <!-- Anonymous: auth entries only — "What is Patchwork?" lives in the
+           sidebar, where there's room (docs/adr/040). /login leads with
+           "Join {instanceName}" (signup-primary), so a single "Log In" link
+           disagreed with its own destination. Sign Up is primary and
+           matches /login's default panel; Log In is secondary and opens
+           /login straight to the sign-in panel via ?mode=signin. Under
+           640px only Sign Up remains: /login's sign-in toggle is one tap
+           in, the unified-auth-page pattern. -->
+      <a href="/login?mode=signin" class="bar-login" onclick={(e) => handleNav(e, '/login?mode=signin')}>Log In</a>
+      <a href="/login" class="btn btn-primary bar-signup" onclick={(e) => handleNav(e, '/login')}>Sign Up</a>
     {/if}
   </div>
 </header>
@@ -337,6 +346,20 @@
   .bar-login:hover {
     background: var(--color-overlay);
     text-decoration: none;
+  }
+
+  .bar-signup {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+  }
+
+  /* Narrow: one auth entry. Sign Up stays (it's the primary ask of an
+     anonymous visitor); /login's own sign-in toggle covers returning
+     users, so the bar never overflows. */
+  @media (max-width: 640px) {
+    .bar-login {
+      display: none;
+    }
   }
 
   /* --- + New button --- */

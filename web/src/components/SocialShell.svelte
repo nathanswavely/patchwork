@@ -7,7 +7,7 @@
    */
   import { navigate } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
-  import { isLoggedIn } from '../stores/auth.svelte.js';
+  import { isLoggedIn, isAuthChecked } from '../stores/auth.svelte.js';
   import {
     getInstanceName,
     getInstanceIconUrl,
@@ -23,6 +23,7 @@
   import { getUnread } from '../stores/notifications.svelte.js';
   import { ArrowSquareOut, Bell, CaretDown, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
   import LabelFooter from './LabelFooter.svelte';
+  import IntroCard from './IntroCard.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
   let { children, routeName = 'home', quiltScope = 'local' } = $props();
@@ -271,6 +272,11 @@
     {/snippet}
   </GlobalBar>
 
+  <!-- The intro card (CONTEXT.md "Intro card", docs/adr/040): mounted once
+       here so it follows every discovery route in this shell. Anonymous
+       visitors only, first visit only — see IntroCard.svelte. -->
+  <IntroCard {routeName} />
+
   <!-- Mobile search takeover: covers the global bar while open. Full
        width, no back button — the shelf's search button toggles it, and
        tapping away or navigating dismisses it. -->
@@ -313,6 +319,21 @@
           <span class="rail-label">{item.label}</span>
         </a>
       {/each}
+      {#if isAuthChecked() && !isLoggedIn()}
+        <!-- The standing path to the About page for anonymous visitors —
+             it survives the intro card's dismissal, and the sidebar has
+             the room the global bar doesn't (docs/adr/040). -->
+        <a
+          href="/about"
+          class="rail-item"
+          class:active={routeName === 'about'}
+          onclick={(e) => handleNav(e, '/about')}
+          title="What is Patchwork?"
+        >
+          <span class="rail-icon"><Info size={22} weight="duotone" /></span>
+          <span class="rail-label">What is Patchwork?</span>
+        </a>
+      {/if}
       <!-- Mobile only: search swaps the top bar for a search takeover.
            The filter announces itself on the surfaces it narrows (the
            canvas FAB, the events page chips), not here (docs/adr/033). -->
@@ -505,6 +526,16 @@
     font-size: 1.05rem;
     color: var(--color-text);
     line-height: 1;
+  }
+
+  /* Narrow bars drop the quilt's name from the switcher trigger — the
+     mark and chevron carry it (the mark is the identity, and My Quilt
+     scope still reads from the house icon). The dropdown keeps full
+     names. */
+  @media (max-width: 900px) {
+    .logo-label {
+      display: none;
+    }
   }
 
   .logo-chevron {

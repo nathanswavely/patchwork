@@ -24,6 +24,7 @@
   import SocialShell from './components/SocialShell.svelte';
   import AdminShell from './components/AdminShell.svelte';
   import UserSettingsShell from './components/UserSettingsShell.svelte';
+  import ThresholdShell from './components/ThresholdShell.svelte';
 
   // Social mode pages
   import SocialHome from './pages/SocialHome.svelte';
@@ -65,6 +66,8 @@
   import AdminNeighborQuilts from './pages/AdminNeighborQuilts.svelte';
   import AdminLabel from './pages/AdminLabel.svelte';
   import Label from './pages/Label.svelte';
+  import About from './pages/About.svelte';
+  import Lining from './pages/Lining.svelte';
   import AdminLegal from './pages/AdminLegal.svelte';
   import LegalDoc from './pages/LegalDoc.svelte';
   import SubmitPatch from './pages/SubmitPatch.svelte';
@@ -104,6 +107,11 @@
 
   // The Label (docs/adr/023) — public, readable logged out.
   addRoute('/label', 'label');
+
+  // Onboarding-as-statement public surfaces (docs/adr/040) — public,
+  // readable logged out, same register as /label.
+  addRoute('/about', 'about');
+  addRoute('/lining', 'lining');
 
   // Legal documents (docs/adr/028) — public, readable logged out.
   addRoute('/privacy', 'privacy');
@@ -324,6 +332,17 @@
     }
   });
 
+  // /welcome is auth-gated the other direction (docs/adr/040): it's
+  // reachable only from signup/invite completion, so an anonymous visitor
+  // who lands there directly is bounced to /login instead of rendering the
+  // onboarding flow. Same isAuthChecked() gate as the /login redirect above
+  // so this fires once auth state is actually known.
+  $effect(() => {
+    if (routeName === 'welcome' && isAuthChecked() && !isLoggedIn()) {
+      replaceRoute('/login');
+    }
+  });
+
   function handleNav(e, target) {
     e.preventDefault();
     navigate(target);
@@ -388,20 +407,24 @@
 </script>
 
 {#if isStandaloneRoute}
-  <!-- ===== STANDALONE PAGES (no shell) ===== -->
-  <main class="standalone-main">
-    {#if routeName === 'welcome'}
-      <Welcome />
-    {:else if routeName === 'login'}
-      {#if isAuthChecked() && !isLoggedIn()}
-        <Login />
+  <!-- ===== STANDALONE PAGES: threshold shell (docs/adr/040) ===== -->
+  <ThresholdShell>
+    {#snippet children()}
+      {#if routeName === 'welcome'}
+        {#if isAuthChecked() && isLoggedIn()}
+          <Welcome />
+        {/if}
+      {:else if routeName === 'login'}
+        {#if isAuthChecked() && !isLoggedIn()}
+          <Login />
+        {/if}
+      {:else if routeName === 'invite'}
+        <InviteLanding />
+      {:else if routeName === 'signupComplete'}
+        <SignupComplete />
       {/if}
-    {:else if routeName === 'invite'}
-      <InviteLanding />
-    {:else if routeName === 'signupComplete'}
-      <SignupComplete />
-    {/if}
-  </main>
+    {/snippet}
+  </ThresholdShell>
 
 {:else if isAdminRoute}
   <!-- ===== ADMIN PANEL: full-screen takeover (docs/adr/005) ===== -->
@@ -533,6 +556,12 @@
       {:else if routeName === 'label'}
         <Label />
 
+      <!-- ===== ABOUT + THE LINING (docs/adr/040) ===== -->
+      {:else if routeName === 'about'}
+        <About />
+      {:else if routeName === 'lining'}
+        <Lining />
+
       <!-- ===== LEGAL DOCUMENTS (docs/adr/028) ===== -->
       {:else if routeName === 'privacy' || routeName === 'terms'}
         <LegalDoc doc={routeName} />
@@ -594,15 +623,6 @@
 <Toast />
 
 <style>
-  /* The third gutter owner: these routes (welcome, login, invite, signup)
-     render outside every shell, so this is their gutter (docs/adr/038). */
-  .standalone-main {
-    max-width: var(--pw-measure);
-    margin: 0 auto;
-    padding: 0 var(--pw-gutter) 2rem;
-    min-height: 100vh;
-  }
-
   .takeover-gate {
     display: flex;
     align-items: center;
