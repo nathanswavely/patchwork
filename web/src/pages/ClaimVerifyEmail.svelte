@@ -83,7 +83,7 @@
 
 <style>
   .verify-email-page {
-    max-width: 520px;
+    max-width: var(--pw-measure-narrow);
     margin: 0 auto;
   }
 

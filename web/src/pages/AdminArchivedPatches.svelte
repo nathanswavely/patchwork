@@ -83,7 +83,7 @@
 
 <style>
   .admin-page {
-    max-width: 640px;
+    max-width: var(--pw-measure);
   }
 
   h1 {

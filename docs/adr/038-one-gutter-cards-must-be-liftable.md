@@ -86,11 +86,20 @@ We decided:
   five-token system becomes forty and the sweep becomes all 455 `padding`
   declarations in the tree.
 
-Consequences: `--pw-measure` collapses five contradictory content widths
-(`640px` ×26, `520px`, `800px`, `1000px`, and none at all) onto one
-`ch`-based value — the measure the codebase already got right in exactly
-one place, `max-width: 60ch` in AdminLegal, whose public counterpart
-LegalDoc renders the same prose at `640px`. Because `.card` is bypassed
+Consequences: the content-width sweep collapses the contradictory
+`max-width`es (`480/520/560/600/640/680/760/800/1000px`, and some with
+none at all) onto `ch`-based tokens — the measure the codebase already
+got right in exactly one place, `max-width: 60ch` in AdminLegal, whose
+public counterpart LegalDoc rendered the same prose at `640px`.
+Enumerating the widths during the sweep found **three** tiers, not the
+two this decision first named: a `--pw-measure-narrow` (54ch) for
+single-column forms and profiles, where the prose measure would put too
+much travel between a label and its input; `--pw-measure` (66ch) for the
+default reading column; and `--pw-measure-wide` (90ch) for editors and
+diffs. Component-internal caps — truncation limits, the toast, the modal,
+dropdowns, the deliberately-tight login and invite surfaces — stay as
+local pixel values, on the layout/component stop line above. Because
+`.card` is bypassed
 4-to-1 by hand-rolled surfaces, the sweep is 54 files rather than a
 change to one class. If a deployment later wants roomier text for its
 audience, that is a fork or a PR, not a toggle. MarkdownRenderer's

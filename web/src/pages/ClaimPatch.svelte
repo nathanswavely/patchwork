@@ -239,7 +239,7 @@
 
 <style>
   .claim-page {
-    max-width: 600px;
+    max-width: var(--pw-measure-narrow);
   }
 
   h1 {

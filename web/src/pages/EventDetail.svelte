@@ -212,7 +212,7 @@
 
 <style>
   .event-detail {
-    max-width: 680px;
+    max-width: var(--pw-measure);
     margin: 0 auto;
     /* Padding comes from SocialShell's .social-main container (issue #17). */
   }

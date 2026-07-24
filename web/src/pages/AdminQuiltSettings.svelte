@@ -434,7 +434,7 @@
 
   .section {
     margin-bottom: 2rem;
-    max-width: 640px;
+    max-width: var(--pw-measure);
   }
 
   .section h2 {

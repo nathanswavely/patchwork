@@ -41,8 +41,18 @@
   --pw-gap: clamp(0.5rem, 1.5vw, 0.75rem);
 
   /* Line length for prose. Replaces the 640/520/800/1000px measures. */
-  --pw-measure: 68ch;
-  --pw-measure-wide: 90ch; /* tables and diffs — not prose */
+  /* Line length for content columns. Three tiers, because the pages had
+     three (docs/adr/038 named two; enumerating the widths found a
+     distinct forms tier the two-token set had no home for):
+       narrow — a single-column form or profile. Wider and the label→input
+                travel hurts; this replaces the scattered 480/520/600.
+       measure — the default reading/content column (event, feed, admin
+                list). Replaces 640/680/760.
+       wide — editors and diffs, which are not prose and want the room.
+                Replaces 800/1000. */
+  --pw-measure-narrow: 54ch;
+  --pw-measure: 66ch;
+  --pw-measure-wide: 90ch;
 }
 
 /* Touch targets: small buttons are finger-sized on coarse pointers. */

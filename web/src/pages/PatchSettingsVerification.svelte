@@ -130,7 +130,7 @@
 
 <style>
   .verification {
-    max-width: 520px;
+    max-width: var(--pw-measure-narrow);
   }
 
   .v-section {

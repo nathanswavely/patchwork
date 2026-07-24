@@ -36,7 +36,7 @@
 
 <style>
   .danger-zone {
-    max-width: 520px;
+    max-width: var(--pw-measure-narrow);
   }
 
   .danger-heading {

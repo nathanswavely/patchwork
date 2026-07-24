@@ -173,7 +173,7 @@
 
 <style>
   .admin-tags {
-    max-width: 640px;
+    max-width: var(--pw-measure);
   }
 
   h1 {

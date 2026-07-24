@@ -254,7 +254,7 @@
 
 <style>
   .proposal-page {
-    max-width: 1000px;
+    max-width: var(--pw-measure-wide);
   }
 
   .proposal-header {

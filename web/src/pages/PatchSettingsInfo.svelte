@@ -426,7 +426,7 @@
 
 <style>
   .settings-info {
-    max-width: 520px;
+    max-width: var(--pw-measure-narrow);
   }
 
   .links-section {
