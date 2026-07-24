@@ -58,8 +58,8 @@
       <button class="intro-dismiss" onclick={dismiss} aria-label="Dismiss">&times;</button>
       <h2 class="intro-heading">{instanceName} is a quilt of the communities around you.</h2>
       <p class="intro-body">
-        Every tile is a real group &mdash; placed near the groups it shares
-        people with. No ads, no algorithm; run by people here.
+        Every tile is a real group, placed near the groups it shares
+        people with. No ads, no algorithm. Run by people here.
       </p>
       <div class="intro-actions">
         <a href="/about" class="intro-about" onclick={goAbout}>What is Patchwork?</a>

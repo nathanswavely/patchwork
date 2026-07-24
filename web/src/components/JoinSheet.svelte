@@ -77,16 +77,16 @@
 
     <p class="join-line">
       {#if isApproval}
-        Membership is admin-approved — this sends a request.
+        Membership is admin-approved. This sends a request.
       {:else}
-        Membership is open — joining makes you a member.
+        Membership is open. Joining makes you a member.
       {/if}
     </p>
 
     {#if liningStatus === 'diverged'}
       <p class="join-line">
-        This patch has amended the lining —
-        <a href="/patches/{slug}/governance" onclick={goTo(`/patches/${slug}/governance`)}>see the changes</a>.
+        This patch has amended the lining.
+        <a href="/patches/{slug}/governance" onclick={goTo(`/patches/${slug}/governance`)}>See the changes</a>.
       </p>
     {:else if liningStatus === 'pristine' || liningStatus === 'stale'}
       <p class="join-line">

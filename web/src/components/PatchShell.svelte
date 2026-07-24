@@ -19,8 +19,6 @@
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
-  import UnlockPanel from './UnlockPanel.svelte';
-  import SetupChecklist from './SetupChecklist.svelte';
   import JoinSheet from './JoinSheet.svelte';
   import { Scales, UsersThree, CalendarBlank, GearSix, Eye } from 'phosphor-svelte';
 
@@ -271,11 +269,6 @@
         </div>
       {/if}
     </div>
-
-    <!-- Onboarding surfaces (docs/adr/040): panels, never wizards — self-gating,
-         each renders nothing when it doesn't apply. -->
-    <UnlockPanel />
-    <SetupChecklist />
 
     <!-- Tab content -->
     <div class="workspace-body work-content">

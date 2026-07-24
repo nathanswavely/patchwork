@@ -72,7 +72,7 @@
   <section class="about-section">
     <h2>What this is</h2>
     <p>
-      <strong>{instanceName}</strong> is a Patchwork &mdash; a home the
+      <strong>{instanceName}</strong> is a Patchwork: a home the
       communities here run for themselves, on their own machine.
       {#if instanceDescription}{instanceDescription}{/if}
     </p>
@@ -81,24 +81,23 @@
   <section class="about-section">
     <h2>How it works</h2>
     <p>
-      Every group here &mdash; a band, a venue, a collective, a coalition
-      &mdash; is a patch. Patches are equals: none is a subcategory of
-      another, and none owns another.
+      Every group here is a patch. A band, a venue, a collective, a
+      coalition. Patches are equals: none is a subcategory of another,
+      and none owns another.
     </p>
     <p>
-      Following any public patch is free and instant. Joining is for people
-      who want to belong &mdash; vote on proposals, show up as a member,
-      take on the running of the place.
+      Following any public patch takes one click. Joining is for people
+      who want to belong: members vote on proposals, appear on the member
+      list, and help run the place.
     </p>
     <p>
       The quilt places patches near the other patches they share people
-      with. Spatial closeness on the quilt is a real signal: it means real
-      people move between those groups, not that anyone decided the two
-      belong together.
+      with. When two tiles sit close, real people move between those
+      groups. Nobody arranges the layout by hand.
     </p>
     <p>
-      Events flow from the patches you follow or join &mdash; your feed is
-      built from your own connections, not ranked by an algorithm.
+      Events come from the patches you follow or join. Your feed is built
+      from those connections and nothing else.
     </p>
   </section>
 
@@ -106,17 +105,16 @@
     <h2>What makes it different</h2>
     <ul>
       <li>No ads, and nothing here is for sale.</li>
-      <li>No algorithm decides what you see &mdash; the quilt and your feed follow the connections you actually have.</li>
-      <li>Run by named people in this community, not a company.</li>
+      <li>No algorithm decides what you see. The quilt and your feed follow the connections you actually have.</li>
+      <li>Run by named people in this community, with the costs stated in the open.</li>
       <li>
         Every patch starts from <a href="/lining" onclick={goLining}>the lining</a>,
         a shared community-standards baseline. Amendments to it are public.
       </li>
       <li>
-        Leaving is built in &mdash; the community's data can be exported and
-        stood up again under new stewards (a seamrip). The
-        <a href="/label">Label</a> says where the door is, and the threat of
-        leaving is what keeps any quilt honest.
+        Leaving is built in. A community can export its data and stand up
+        again under new stewards, which is called a seamrip here. The
+        <a href="/label">Label</a> says where the door is.
       </li>
     </ul>
   </section>
@@ -131,7 +129,7 @@
 
   <footer class="about-footer">
     <a href={REPO_URL} target="_blank" rel="noopener">
-      Patchwork is open source &mdash; start your own quilt &rarr;
+      Patchwork is open source. Start your own quilt &rarr;
     </a>
   </footer>
 </div>

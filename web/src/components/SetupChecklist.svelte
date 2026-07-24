@@ -157,7 +157,7 @@
       await navigator.clipboard.writeText(url);
       showToast('Copied');
     } catch {
-      showToast('Copy failed — select the address instead', 'error');
+      showToast('Copy failed. Select the address instead', 'error');
       return;
     }
     shared = true;

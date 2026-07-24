@@ -86,7 +86,7 @@ Be someone your community would vouch for. What you post stays yours, the stewar
 
 {quilt_name} is a community site run by the people named on the [Label](/label), called the stewards from here on, using the open-source Patchwork software. Nobody operates it as a company or a commercial service. Creating an account or using the site means you agree to what's on this page.
 
-Every group here is a patch, and the patches govern themselves. What connects them is people, not an algorithm: nothing here ranks, recommends, or competes for your attention. [What is Patchwork?](/about) explains how the place works.
+Every group here is a patch, and the patches govern themselves. People are the only thing connecting them: nothing on this site ranks what you see or competes for your attention. [What is Patchwork?](/about) explains how the place works.
 
 ## Who can join
 
@@ -108,7 +108,7 @@ These rules apply everywhere on this site:
 - No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.
 - Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.
 
-These expectations don't wait for you to join anything. They cover every way you use the site — following, RSVPing, commenting, voting — member of a patch or not.
+These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.
 
 ## Moderation
 

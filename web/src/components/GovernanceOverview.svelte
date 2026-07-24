@@ -6,6 +6,8 @@
   import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
   import { markGovernanceHubVisited } from '../lib/onboarding.js';
   import Skeleton from './Skeleton.svelte';
+  import UnlockPanel from './UnlockPanel.svelte';
+  import SetupChecklist from './SetupChecklist.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -97,6 +99,11 @@
 </script>
 
 <div class="governance-overview">
+  <!-- Onboarding panels (docs/adr/040) live inside the overview pane, the
+       workspace's landing view — self-gating, each renders nothing when it
+       doesn't apply. -->
+  <UnlockPanel />
+  <SetupChecklist />
   {#if loading}
     <Skeleton lines={6} height="1rem" />
   {:else if !overview}

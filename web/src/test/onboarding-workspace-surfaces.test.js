@@ -20,8 +20,8 @@ describe('JoinSheet', () => {
   });
 
   it('states the membership policy in one sentence for both policies', () => {
-    expect(src).toContain('Membership is open — joining makes you a member.');
-    expect(src).toContain('Membership is admin-approved — this sends a request.');
+    expect(src).toContain('Membership is open. Joining makes you a member.');
+    expect(src).toContain('Membership is admin-approved. This sends a request.');
   });
 
   it('shows the lining state, linking amended lining to governance and the baseline to /lining', () => {
@@ -175,22 +175,19 @@ describe('GovernanceOverview marks the governance-visited fallback for the setup
   });
 });
 
-describe('PatchShell mounts the unlock panel and setup checklist above tab content', () => {
-  const src = source('components/PatchShell.svelte');
+describe('GovernanceOverview hosts the unlock panel and setup checklist', () => {
+  const src = source('components/GovernanceOverview.svelte');
+  const shellSrc = source('components/PatchShell.svelte');
 
-  it('imports both', () => {
+  it('imports and renders both inside the overview pane', () => {
     expect(src).toContain("import UnlockPanel from './UnlockPanel.svelte'");
     expect(src).toContain("import SetupChecklist from './SetupChecklist.svelte'");
+    expect(src).toContain('<UnlockPanel');
+    expect(src).toContain('<SetupChecklist');
   });
 
-  it('renders them before the tab content div', () => {
-    const unlockIdx = src.indexOf('<UnlockPanel');
-    const checklistIdx = src.indexOf('<SetupChecklist');
-    const tabContentIdx = src.indexOf('class="workspace-body work-content"');
-    expect(unlockIdx).toBeGreaterThan(-1);
-    expect(checklistIdx).toBeGreaterThan(-1);
-    expect(tabContentIdx).toBeGreaterThan(-1);
-    expect(unlockIdx).toBeLessThan(tabContentIdx);
-    expect(checklistIdx).toBeLessThan(tabContentIdx);
+  it('PatchShell no longer mounts them shell-wide', () => {
+    expect(shellSrc).not.toContain('<UnlockPanel');
+    expect(shellSrc).not.toContain('<SetupChecklist');
   });
 });
