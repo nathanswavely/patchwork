@@ -77,12 +77,14 @@
   /* Corner overlay, never a modal — no backdrop, nothing beneath it is
      inert. Sits below the global bar (z-index 60) and above the sidebar
      rail (55), matching the label/filter sheets' layer. Anchored top-right
-     under the bar's Log In / Sign Up cluster rather than a bottom corner,
-     which is already claimed by the Label overlay, the quilt/map FABs, and
-     toasts. */
+     rather than a bottom corner, which is already claimed by the Label
+     overlay, the quilt/map FABs, and toasts — but offset BELOW the results
+     pane's header row so the Quilt/Map toggle and result counts stay
+     clickable with the card up. It may overlap dismissible content (the
+     top of the results list), never a control. */
   .intro-card {
     position: fixed;
-    top: calc(56px + 12px);
+    top: calc(56px + 76px);
     right: 16px;
     z-index: 56;
     max-width: 320px;
