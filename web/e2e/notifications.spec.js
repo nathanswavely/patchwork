@@ -146,7 +146,7 @@ test.describe('Notifications — Preferences', () => {
     await expect(page.locator('h2', { hasText: 'Notification Preferences' })).toBeVisible();
     // Should show category groups with toggle switches
     await expect(page.locator('.category-label').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.toggle-track').first()).toBeVisible();
+    await expect(page.locator('.prefs-toggle .switch').first()).toBeVisible();
   });
 
   test('toggling a preference saves without error', async ({ page }) => {

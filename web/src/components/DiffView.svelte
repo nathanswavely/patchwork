@@ -1,5 +1,6 @@
 <script>
   import { diffLines } from 'diff';
+  import SegmentedControl from './SegmentedControl.svelte';
 
   let {
     oldText = '',
@@ -202,8 +203,12 @@
         {#if stats.removed > 0}<span class="stat-removed">-{stats.removed}</span>{/if}
       </span>
       <div class="mode-toggle">
-        <button class:active={viewMode === 'split'} onclick={() => viewMode = 'split'}>Split</button>
-        <button class:active={viewMode === 'unified'} onclick={() => viewMode = 'unified'}>Unified</button>
+        <SegmentedControl
+          label="Diff view"
+          options={[{ value: 'split', label: 'Split' }, { value: 'unified', label: 'Unified' }]}
+          value={viewMode}
+          onchange={(v) => { viewMode = v; }}
+        />
       </div>
     </div>
   </div>
@@ -331,27 +336,6 @@
 
   .stat-added { color: var(--color-success); }
   .stat-removed { color: var(--color-error); }
-
-  .mode-toggle {
-    display: flex;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .mode-toggle button {
-    padding: 0.15rem 0.5rem;
-    border: none;
-    background: var(--color-surface);
-    font-size: 0.72rem;
-    color: var(--color-text-muted);
-    cursor: pointer;
-  }
-
-  .mode-toggle button.active {
-    background: var(--color-primary);
-    color: var(--color-btn-on-primary);
-  }
 
   /* Unified view */
   .diff-body.unified {
