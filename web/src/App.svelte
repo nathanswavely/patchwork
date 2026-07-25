@@ -173,7 +173,7 @@
   // Not a retired scheme — a shape that was never routed at all. Every event
   // notification, reminder email, and ICS/RSS item pointed here and fell
   // through to the home quilt (issue #56). The producers now emit /events/:id
-  // (internal/weblink) and migration 041 repaired the stored rows, but links
+  // (internal/weblink) and migration 042 repaired the stored rows, but links
   // already sent and feeds already subscribed can't be recalled, so honor it.
   addRoute('/patches/:slug/events/:id', 'redirectPatchScopedEvent');
 

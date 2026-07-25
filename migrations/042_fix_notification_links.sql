@@ -1,4 +1,8 @@
--- Migration 041: repair notification links that point nowhere (issue #56).
+-- Migration 042: repair notification links that point nowhere (issue #56).
+-- (Originally merged as a second migration 041 — renumbered; the number
+-- collided with 041_governance_config_leadership from a parallel branch.
+-- Both are idempotent, so instances that already ran this under the old
+-- name no-op through the re-run.)
 --
 -- Two shapes were built by hand in Go and never matched a registered SPA
 -- route (see internal/weblink for the fix at the source):
