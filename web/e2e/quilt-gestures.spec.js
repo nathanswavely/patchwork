@@ -77,6 +77,45 @@ test('a finger dragging from a name badge keeps panning the quilt', async ({ pag
   expect(await page.locator('.patch-label.gesture-holdover').count()).toBe(0);
 });
 
+test('a pan moves the badges rather than rebuilding them', async ({ page }) => {
+  await goto(page, '/');
+  const { x, y } = await firstLabelCenter(page);
+
+  const badges = await page.locator('.patch-label').count();
+  expect(badges).toBeGreaterThan(1);
+
+  // Count badges added to the layer while the quilt pans. Each badge carries a
+  // motif svg and six listeners, so rebuilding the set every frame is the most
+  // expensive thing on a phone during a drag.
+  await page.evaluate(() => {
+    window.__badgesAdded = 0;
+    new MutationObserver((records) => {
+      for (const r of records) {
+        for (const n of r.addedNodes) {
+          if (n.classList?.contains('patch-label')) window.__badgesAdded++;
+        }
+      }
+    }).observe(document.querySelector('.labels-layer'), { childList: true });
+  });
+
+  const FRAMES = 8;
+  const steps = [];
+  for (let i = 1; i <= FRAMES; i++) steps.push([i * 15, 0]);
+  await touchDrag(page, x, y, steps);
+
+  // A rebuild per frame would add FRAMES × badges. Reuse only adds the few that
+  // newly earn a label as the quilt slides, so anything near one full set of
+  // badges means the layer is being rebuilt again.
+  const added = await page.evaluate(() => window.__badgesAdded);
+  expect(added).toBeLessThan(badges);
+
+  // The failure mode reuse introduces is bookkeeping drift: a patch ending up
+  // with two badges, or a dropped one left parked in the layer.
+  const names = await page.locator('.patch-label .label-name').allInnerTexts();
+  expect(new Set(names).size).toBe(names.length);
+  expect(await page.locator('.patch-label.gesture-holdover').count()).toBe(0);
+});
+
 test('two fingers landing on a name badge pinch the quilt', async ({ page }) => {
   await goto(page, '/');
   const { x, y } = await firstLabelCenter(page);

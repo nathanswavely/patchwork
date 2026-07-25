@@ -158,6 +158,9 @@
   let canvasOffsetX = $state(0);
   let canvasOffsetY = $state(0);
   let labeledPatchIds = new Set();
+  // Map of patch ID → the badge element on screen for it, so a pan moves badges
+  // instead of rebuilding them (see updateLabels).
+  let labelEls = new Map();
   // Map of patch ID → { g, shadowDiv, tile, dist, visible } for per-tile animation.
   let tileMap = new Map();
   let layoutBuilt = false;
@@ -956,11 +959,12 @@
   // the badge immediately. For a mouse that is all it takes. Touch is stricter:
   // every event in a touch sequence is addressed to the element that received
   // the touchstart, for the life of the sequence, so it only reaches window
-  // while that element is still in the document — and updateLabels wipes the
-  // whole layer on every zoom tick, which is to say on the first pan frame.
-  // The badge under the finger therefore has to outlive its own rebuild: it
-  // stays in the layer as a holdover (hidden, inert) until the finger lifts.
-  // Without that the pan moves once and then freezes.
+  // while that element is still in the document. A badge normally survives a
+  // pan (updateLabels moves badges rather than rebuilding them), but any pass
+  // can still drop one: it collides with a bigger label, leaves the viewport,
+  // or loses its data to a refetch. When that happens to the badge under the
+  // finger it stays on as a holdover — hidden, inert, removed when the finger
+  // lifts. Without it the pan stops dead the moment the badge goes.
   const TAP_SLOP = 10; // px of travel still forgiven as a tap
   const DRAG_SLOP = 4; // a mouse is steadier than a finger — commit sooner
   let labelGesture = null;
@@ -1112,26 +1116,115 @@
     });
   }
 
-  // Empty the layer, but put back any badge a live touch gesture is still being
-  // delivered to (see LABEL DRAG GESTURES). Hidden and inert: the visible badge
-  // for that patch is whichever one this rebuild goes on to create.
-  function clearLabelsLayer() {
-    labelsEl.innerHTML = '';
-    for (const el of labelHoldovers) {
-      el.classList.add('gesture-holdover');
-      labelsEl.appendChild(el);
+  // Build one badge. Everything in here is fixed for as long as the patch's data
+  // and the viewer's role in it are: the motif is an svg per badge and there are
+  // six listeners to bind, which is why updateLabels reuses these rather than
+  // building a fresh set on every zoom tick.
+  function createLabelElement(tile, textW, lines, role) {
+    const label = document.createElement('div');
+    label.className = 'patch-label lt-vellum';
+
+    // Layered motif badge: white outline → colored bg → motif.
+    // Identity color: the patch's palette primary, matching its tile.
+    const badge = document.createElement('div');
+    badge.className = 'label-badge lt-resin lt-resin-tinted';
+    badge.style.background = identityColorForPatch(tile.data);
+
+    const icon = createMotifElement(tile.data, 16, '#fff');
+    icon.setAttribute('class', 'label-icon');
+    badge.appendChild(icon);
+    label.appendChild(badge);
+
+    // Text: name only, 2-line ellipsis. Wrapped names get an explicit
+    // width — the measured balanced width — so the pill hugs the text
+    // instead of every two-liner rendering at the full cap.
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'label-name';
+    if (lines === 2) {
+      nameSpan.style.width = textW + 'px';
+    } else {
+      nameSpan.style.maxWidth = LABEL_TEXT_MAX + 'px';
     }
+    nameSpan.textContent = tile.data.name || '';
+    label.appendChild(nameSpan);
+
+    // Role mark (CONTEXT.md): star = belonging (admin/member), never a
+    // follow. A followed-only patch gets a small filled heart instead.
+    if (role === 'admin' || role === 'member') {
+      const star = document.createElement('span');
+      star.className = 'my-patch-star';
+      star.title = role === 'admin' ? 'Admin' : 'Member';
+      star.appendChild(createMyPatchStar(12));
+      label.appendChild(star);
+    } else if (role === 'follower') {
+      const heart = document.createElement('span');
+      heart.className = 'my-patch-heart';
+      heart.title = 'Following';
+      heart.appendChild(createFollowedHeart(12));
+      label.appendChild(heart);
+    }
+
+    // Label hover → tooltip + click → select patch.
+    const tileData = tile.data;
+    label.addEventListener('mouseenter', (event) => {
+      showTooltip(tileData, event.clientX, event.clientY);
+    });
+    label.addEventListener('mousemove', (event) => {
+      if (tooltip && tooltip.style.display === 'block') {
+        tooltip.style.left = event.clientX + 14 + 'px';
+        tooltip.style.top = event.clientY - 10 + 'px';
+      }
+    });
+    label.addEventListener('mouseleave', () => {
+      if (tooltip) tooltip.style.display = 'none';
+    });
+    label.addEventListener('click', () => {
+      // A pan that started on this badge still ends in a click (synthesized
+      // on touch, native on mouseup) — dragging the quilt shouldn't open
+      // whatever happened to be under the pointer.
+      if (labelGestureMoved) {
+        labelGestureMoved = false;
+        return;
+      }
+      if (tileData.slug) onPatchClick(tileData.slug, tileData._source || null);
+    });
+    // Touch: pan and pinch the quilt even when the finger lands on a badge.
+    attachLabelGestures(label);
+    // Forward wheel events to the SVG so zoom works while hovering labels.
+    label.addEventListener('wheel', (event) => {
+      const svg = containerEl?.querySelector('svg');
+      if (svg) svg.dispatchEvent(new WheelEvent(event.type, event));
+    }, { passive: true });
+
+    // What the badge was built from, so a later pass can tell whether it still
+    // matches (both are compared by identity — a refetch hands out new data
+    // objects, and joining a patch changes the role mark).
+    label.__data = tile.data;
+    label.__role = role;
+    return label;
+  }
+
+  // A badge that is no longer wanted on screen. Normally it goes; if a finger is
+  // still on it, it stays in the tree as a holdover instead (see LABEL DRAG
+  // GESTURES) so the touch sequence keeps arriving somewhere live.
+  function dropLabelElement(el) {
+    if (labelHoldovers.has(el)) el.classList.add('gesture-holdover');
+    else el.remove();
+  }
+
+  function dropAllLabels() {
+    for (const el of labelEls.values()) dropLabelElement(el);
+    labelEls.clear();
   }
 
   function updateLabels() {
     if (!labelsEl) return;
-    if (!showLabels) { clearLabelsLayer(); return; }
+    if (!showLabels) { dropAllLabels(); return; }
 
     const t = currentTransform;
     const k = t.k;
     const { vw, vh } = getContainerSize();
 
-    clearLabelsLayer();
     labeledPatchIds = new Set();
 
     // Progressive reveal by ON-SCREEN size: a tile earns a label once it is
@@ -1204,90 +1297,34 @@
       });
       labeledPatchIds.add(tile.data.id);
 
-      // Create the label element.
-      const label = document.createElement('div');
-      label.className = 'patch-label lt-vellum';
-      if (tile.data.slug === selectedPatchSlug) {
-        label.classList.add('selected');
+      // Reuse this patch's badge if it still matches what it was built from.
+      // A pan is a stream of these passes, and on all but the first the answer
+      // is yes for every badge on screen — leaving position as the only thing
+      // that has to be written.
+      const id = tile.data.id;
+      let label = labelEls.get(id);
+      if (label && (label.__data !== tile.data || label.__role !== role)) {
+        dropLabelElement(label); // may be under a finger, so not a plain remove
+        labelEls.delete(id);
+        label = null;
       }
-
-      // Layered motif badge: white outline → colored bg → motif.
-      // Identity color: the patch's palette primary, matching its tile.
-      const badgeColor = identityColorForPatch(tile.data);
-      const badge = document.createElement('div');
-      badge.className = 'label-badge lt-resin lt-resin-tinted';
-      badge.style.background = badgeColor;
-
-      const icon = createMotifElement(tile.data, 16, '#fff');
-      icon.setAttribute('class', 'label-icon');
-      badge.appendChild(icon);
-      label.appendChild(badge);
-
-      // Text: name only, 2-line ellipsis. Wrapped names get an explicit
-      // width — the measured balanced width — so the pill hugs the text
-      // instead of every two-liner rendering at the full cap.
-      const nameSpan = document.createElement('span');
-      nameSpan.className = 'label-name';
-      if (lines === 2) {
-        nameSpan.style.width = textW + 'px';
-      } else {
-        nameSpan.style.maxWidth = LABEL_TEXT_MAX + 'px';
+      if (!label) {
+        label = createLabelElement(tile, textW, lines, role);
+        labelEls.set(id, label);
       }
-      nameSpan.textContent = name;
-      label.appendChild(nameSpan);
+      if (label.parentNode !== labelsEl) labelsEl.appendChild(label);
 
-      // Role mark (CONTEXT.md): star = belonging (admin/member), never a
-      // follow. A followed-only patch gets a small filled heart instead.
-      if (role === 'admin' || role === 'member') {
-        const star = document.createElement('span');
-        star.className = 'my-patch-star';
-        star.title = role === 'admin' ? 'Admin' : 'Member';
-        star.appendChild(createMyPatchStar(12));
-        label.appendChild(star);
-      } else if (role === 'follower') {
-        const heart = document.createElement('span');
-        heart.className = 'my-patch-heart';
-        heart.title = 'Following';
-        heart.appendChild(createFollowedHeart(12));
-        label.appendChild(heart);
-      }
-
+      label.classList.toggle('selected', tile.data.slug === selectedPatchSlug);
       label.style.left = screenX + 'px';
       label.style.top = screenY + 'px';
+    }
 
-      // Label hover → tooltip + click → select patch.
-      const tileData = tile.data;
-      label.addEventListener('mouseenter', (event) => {
-        showTooltip(tileData, event.clientX, event.clientY);
-      });
-      label.addEventListener('mousemove', (event) => {
-        if (tooltip && tooltip.style.display === 'block') {
-          tooltip.style.left = event.clientX + 14 + 'px';
-          tooltip.style.top = event.clientY - 10 + 'px';
-        }
-      });
-      label.addEventListener('mouseleave', () => {
-        if (tooltip) tooltip.style.display = 'none';
-      });
-      label.addEventListener('click', () => {
-        // A pan that started on this badge still ends in a click (synthesized
-        // on touch, native on mouseup) — dragging the quilt shouldn't open
-        // whatever happened to be under the pointer.
-        if (labelGestureMoved) {
-          labelGestureMoved = false;
-          return;
-        }
-        if (tileData.slug) onPatchClick(tileData.slug, tileData._source || null);
-      });
-      // Touch: pan and pinch the quilt even when the finger lands on a badge.
-      attachLabelGestures(label);
-      // Forward wheel events to the SVG so zoom works while hovering labels.
-      label.addEventListener('wheel', (event) => {
-        const svg = containerEl?.querySelector('svg');
-        if (svg) svg.dispatchEvent(new WheelEvent(event.type, event));
-      }, { passive: true });
-
-      labelsEl.appendChild(label);
+    // Badges whose patch didn't earn one this pass: too small now, collided
+    // with a bigger one, or panned off the edge.
+    for (const [id, el] of labelEls) {
+      if (labeledPatchIds.has(id)) continue;
+      labelEls.delete(id);
+      dropLabelElement(el);
     }
   }
 
@@ -1391,12 +1428,16 @@
     // metrics — remeasure once real metrics exist.
     document.fonts?.ready?.then(() => {
       measureCache.clear();
+      // The badges on screen were sized from those metrics, and reuse can't see
+      // that the numbers moved — so make this pass build them again.
+      dropAllLabels();
       updateLabels();
     });
     return () => {
       tooltip?.remove();
       tooltip = null;
       endLabelGesture(); // a gesture in flight when the canvas leaves
+      labelEls.clear();
     };
   });
 
