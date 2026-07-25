@@ -4,9 +4,9 @@
   const LABELS = {
     decision_method: 'Decision Method',
     quorum_percent: 'Quorum',
-    voting_period_hours: 'Default Voting Period',
+    default_vote_duration_hours: 'Default Voting Period',
     amendment_threshold: 'Amendment Threshold',
-    auto_apply: 'Auto-Apply Amendments',
+    amendment_auto_apply: 'Auto-Apply Amendments',
     succession_policy: 'Succession Policy',
     min_voting_tenure_days: 'Min Voting Tenure',
     membership_policy: 'Membership Policy',
@@ -14,7 +14,7 @@
   };
 
   const VALUE_LABELS = {
-    admin_decides: 'Admin decides',
+    admin: 'Admin decides',
     majority: 'Majority vote',
     supermajority: 'Supermajority (2/3)',
     consensus: 'Full consensus',
@@ -37,8 +37,8 @@
   function formatValue(key, val) {
     if (val === undefined || val === null) return '\u2014';
     if (key === 'quorum_percent') return `${val}%`;
-    if (key === 'voting_period_hours') return DURATION_LABELS[val] || `${val}h`;
-    if (key === 'auto_apply') return val ? 'Yes' : 'No';
+    if (key === 'default_vote_duration_hours') return DURATION_LABELS[val] || `${val}h`;
+    if (key === 'amendment_auto_apply') return val ? 'Yes' : 'No';
     if (key === 'min_voting_tenure_days') {
       if (val === 0) return 'Immediate';
       return `${val} days`;

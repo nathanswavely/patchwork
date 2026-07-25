@@ -9,11 +9,17 @@
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
+  let isAdmin = $derived(patch.value.isAdmin);
 
   let currentRules = $state(null);
   let proposedRules = $state(null);
   let loading = $state(true);
   let error = $state('');
+
+  // Direct change (docs/adr/035): under admin-decides rules an admin's
+  // submission applies immediately — the words propose/submit/vote never
+  // appear for one.
+  let directChange = $derived(isAdmin && currentRules?.decision_method === 'admin');
 
   // Step: 'editing' or 'reviewing'
   let step = $state('editing');
@@ -35,7 +41,7 @@
   });
 
   $effect(() => {
-    patch.value.setBreadcrumbExtra?.([{ label: 'Propose rules change' }]);
+    patch.value.setBreadcrumbExtra?.([{ label: directChange ? 'Change rules' : 'Propose rules change' }]);
     return () => patch.value.setBreadcrumbExtra?.([]);
   });
 
@@ -101,11 +107,22 @@
   }
 
   // Generate title from changed fields.
+  const TITLE_VALUES = {
+    admin: 'admin decides',
+    majority: 'majority vote',
+    supermajority: 'supermajority vote',
+    consensus: 'consensus',
+    approval_required: 'approval-required',
+    invite_only: 'invite-only',
+  };
+  function titleValue(v) {
+    return TITLE_VALUES[v] || String(v).replace(/_/g, ' ');
+  }
   function generateTitle() {
     if (!currentRules || !proposedRules) return 'Update governance rules';
     const changes = [];
     if (currentRules.decision_method !== proposedRules.decision_method) {
-      changes.push(`change voting to ${proposedRules.decision_method}`);
+      changes.push(`decisions by ${titleValue(proposedRules.decision_method)}`);
     }
     if (currentRules.quorum_percent !== proposedRules.quorum_percent) {
       changes.push(`set quorum to ${proposedRules.quorum_percent}%`);
@@ -115,10 +132,10 @@
       changes.push(`${days}-day voting period`);
     }
     if (currentRules.membership_policy !== proposedRules.membership_policy) {
-      changes.push(`${proposedRules.membership_policy} membership`);
+      changes.push(`${titleValue(proposedRules.membership_policy)} membership`);
     }
     if (currentRules.leadership_model !== proposedRules.leadership_model) {
-      changes.push(`${proposedRules.leadership_model} leadership`);
+      changes.push(`${titleValue(proposedRules.leadership_model)} leadership`);
     }
     if (changes.length === 0) return 'Update governance rules';
     return changes.join(', ').replace(/^./, c => c.toUpperCase());
@@ -147,7 +164,7 @@
       };
       const result = await api(`nodes/${slug}/proposals`, { method: 'POST', body: payload });
       if (draftKey) localStorage.removeItem(draftKey);
-      showToast('Proposal created', 'success');
+      showToast(directChange ? 'Change applied' : 'Proposal created', 'success');
       navigate(`/patches/${slug}/governance/${result.id}`);
     } catch (e) {
       showToast(e.message || 'Failed to create proposal', 'error');
@@ -169,7 +186,7 @@
   {:else if currentRules}
 
     <div class="editor-header">
-      <span class="editor-context muted">Proposing changes to</span>
+      <span class="editor-context muted">{directChange ? 'Changing' : 'Proposing changes to'}</span>
       <h1>Governance Rules</h1>
     </div>
 
@@ -189,7 +206,7 @@
 
         <div class="editor-card-footer">
           <button class="btn btn-primary" onclick={goToReview} disabled={!hasChanges}>
-            Review & submit
+            {directChange ? 'Review & apply' : 'Review & submit'}
           </button>
           <button class="btn btn-secondary" onclick={() => navigate(`/patches/${slug}/governance`)}>
             Cancel
@@ -214,7 +231,7 @@
         </div>
 
         <div class="review-card">
-          <div class="review-card-header">Describe your proposal</div>
+          <div class="review-card-header">{directChange ? 'Describe this change' : 'Describe your proposal'}</div>
           <div class="review-card-body">
             <div class="field">
               <label for="rules-title">Summary of changes</label>
@@ -222,13 +239,17 @@
             </div>
 
             <div class="field">
-              <label for="rules-desc">Why are you proposing this? <span class="muted">(optional)</span></label>
+              <label for="rules-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="muted">(optional)</span></label>
               <textarea id="rules-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
 
             <div class="review-actions">
               <button class="btn btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
-                {submitting ? 'Submitting...' : 'Submit proposal'}
+                {#if directChange}
+                  {submitting ? 'Applying...' : 'Apply change'}
+                {:else}
+                  {submitting ? 'Submitting...' : 'Submit proposal'}
+                {/if}
               </button>
               <button class="btn btn-secondary" onclick={() => { step = 'editing'; }} disabled={submitting}>
                 Back to editing

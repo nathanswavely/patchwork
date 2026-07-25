@@ -30,7 +30,9 @@
   let address = $state(initial?.address || '');
   let website = $state(initial?.website || '');
   let visibility = $state(initial?.visibility || 'public');
-  let template = $state('casual');
+  // Minimal is the default (docs/adr/041): the typical new patch is one
+  // person running a listing; ceremony is opted into, not inherited.
+  let template = $state('minimal');
   // Tags, in priority order — the first motif-bearing tag derives the
   // motif, and shared tags place new patches near their kind on the quilt.
   let tags = $state(Array.isArray(initial?.tags) ? [...initial.tags] : []);

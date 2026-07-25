@@ -72,6 +72,22 @@ func ReadRules(dataDir, nodeID string) (*GovernanceRules, error) {
 	return rules, nil
 }
 
+// WriteRules marshals rules to governance-rules.json and commits it directly
+// to the node repo's main branch. Returns the commit SHA. The write is
+// skipped (empty SHA, nil error) when the file already holds this content,
+// so callers can invoke it unconditionally without minting no-op commits.
+func WriteRules(dataDir, nodeID string, rules *GovernanceRules, message string) (string, error) {
+	b, err := json.MarshalIndent(rules, "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("marshal rules: %w", err)
+	}
+	content := string(b) + "\n"
+	if current, err := GetDocument(dataDir, nodeID, "governance-rules.json"); err == nil && current == content {
+		return "", nil
+	}
+	return DirectEdit(dataDir, nodeID, "governance-rules.json", content, "Patchwork System", "system@patchwork.local", message)
+}
+
 // marshalConfig renders the governance_config cache column value for a rule set.
 func marshalConfig(rules *GovernanceRules) (string, error) {
 	gcJSON, err := json.Marshal(model.GovernanceConfig{

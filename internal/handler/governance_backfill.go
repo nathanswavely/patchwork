@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -58,6 +59,74 @@ func BackfillNodeGovernanceRepos(db *database.DB) (int, error) {
 		}
 	}
 	return created, nil
+}
+
+// BackfillGovernanceConfig fills the governance_config cache for live nodes
+// that have none. Until this sync existed, CreateNode forked the template's
+// rules file but never cached it, so every DB read path saw voting defaults
+// and the admin-decides fast-track never fired (docs/adr/035). For each such
+// node the DB's live membership_policy — and follower_permissions where they
+// were explicitly set — are absorbed into the rules file first: they were
+// the enforced values while the cache was empty, and a blind sync would
+// clobber them with template values. Nodes with a populated cache are left
+// alone; their git and DB stores are already kept in sync by the amendment
+// apply paths. Must run after BackfillNodeGovernanceRepos so every node has
+// a repo. Returns the number of nodes synced.
+func BackfillGovernanceConfig(db *database.DB) (int, error) {
+	dataDir := governance.GetDataDir()
+	if dataDir == "" {
+		return 0, fmt.Errorf("governance data dir not set")
+	}
+
+	// The schema DEFAULT stamped on every node row by migration 013 — the
+	// value a node still carries if and only if no rules sync has ever run
+	// for it. No template sync can reproduce this exact string (every
+	// template carries leadership fields the marshaler would include), so
+	// it is a reliable never-synced marker rather than a chosen config.
+	const migration013DefaultGC = `{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0}`
+
+	rows, err := db.Query(`SELECT id, membership_policy, COALESCE(follower_permissions,'')
+		FROM nodes WHERE status IN ('active','unclaimed') AND removed_at IS NULL
+		AND (governance_config IS NULL OR governance_config = '' OR governance_config = '{}' OR governance_config = ?)`,
+		migration013DefaultGC)
+	if err != nil {
+		return 0, fmt.Errorf("list nodes: %w", err)
+	}
+	type nodeRow struct {
+		id, membershipPolicy, fpJSON string
+	}
+	var nodes []nodeRow
+	for rows.Next() {
+		var n nodeRow
+		if err := rows.Scan(&n.id, &n.membershipPolicy, &n.fpJSON); err != nil {
+			rows.Close()
+			return 0, fmt.Errorf("scan node: %w", err)
+		}
+		nodes = append(nodes, n)
+	}
+	rows.Close()
+
+	synced := 0
+	for _, n := range nodes {
+		rules, err := governance.ReadRules(dataDir, n.id)
+		if err != nil {
+			return synced, fmt.Errorf("read rules for node %s: %w", n.id, err)
+		}
+		if n.membershipPolicy != "" {
+			rules.MembershipPolicy = n.membershipPolicy
+		}
+		if n.fpJSON != "" && n.fpJSON != "{}" {
+			json.Unmarshal([]byte(n.fpJSON), &rules.FollowerPermissions)
+		}
+		if _, err := governance.WriteRules(dataDir, n.id, rules, "Backfill: absorb live membership settings"); err != nil {
+			return synced, fmt.Errorf("write rules for node %s: %w", n.id, err)
+		}
+		if err := governance.SyncRulesToDB(db, dataDir, n.id); err != nil {
+			return synced, fmt.Errorf("sync rules for node %s: %w", n.id, err)
+		}
+		synced++
+	}
+	return synced, nil
 }
 
 // mirrorDocsToRepo writes a node's governance_docs bodies into its git repo

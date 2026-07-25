@@ -11,6 +11,7 @@
     votingEndsAt = null,
     approveCount = 0,
     rejectCount = 0,
+    directChange = false,
     onStateChange = () => {},
   } = $props();
 
@@ -106,7 +107,7 @@
 
 {:else if effectiveState === 'in_effect' || effectiveState === 'passed'}
   <div class="status-banner in-effect">
-    <p>Approved. This change is now in effect.</p>
+    <p>{directChange ? 'This change is in effect.' : 'Approved. This change is now in effect.'}</p>
   </div>
 
 {:else if effectiveState === 'rejected'}

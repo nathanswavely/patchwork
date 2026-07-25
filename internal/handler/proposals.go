@@ -239,19 +239,15 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		var gc model.GovernanceConfig
 		json.Unmarshal([]byte(gcJSON), &gc)
 
-		// Template-driven ceremony:
-		// - "admin" decision method (Minimal): admin proposals auto-apply immediately
-		// - Casual (maintainer leadership, majority voting, 0 quorum): admin proposals auto-apply
-		// - Collaborative/Formal: all proposals go through voting
+		// Ceremony follows the rules in force (docs/adr/035): only the
+		// admin-decides decision method lets an admin apply directly — a
+		// direct change, born applied. Every voting method votes, admins
+		// included; the old maintainer+zero-quorum bypass let admins skip a
+		// vote the patch's own charter promised, and was removed.
 		initialState := "voting"
 		autoApplyNow := false
 
 		if gc.DecisionMethod == "admin" && isNodeAdmin {
-			// Minimal template: admin changes apply immediately.
-			initialState = "in_effect"
-			autoApplyNow = true
-		} else if isNodeAdmin && gc.LeadershipModel == "maintainer" && gc.QuorumPercent == 0 {
-			// Casual template with maintainer leadership and no quorum: admin fast-track.
 			initialState = "in_effect"
 			autoApplyNow = true
 		}
@@ -266,26 +262,37 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Auto-apply for lightweight templates (admin fast-track).
-		if autoApplyNow && req.ProposalType == "amendment" && branchName != "" {
-			dataDir := governance.GetDataDir()
-			sha, mergeErr := governance.MergeBranch(dataDir, nodeID, branchName, user.DisplayName, user.Email)
-			if mergeErr != nil {
-				log.Printf("proposal %s: fast-track merge failed: %v", id, mergeErr)
-			} else {
+		// Apply a direct change now (docs/adr/035). Amendments merge their
+		// branch first; a merge failure leaves the record open rather than
+		// claiming an application that didn't happen.
+		if autoApplyNow {
+			applied := true
+			if req.ProposalType == "amendment" && branchName != "" {
+				dataDir := governance.GetDataDir()
+				sha, mergeErr := governance.MergeBranch(dataDir, nodeID, branchName, user.DisplayName, user.Email)
+				if mergeErr != nil {
+					log.Printf("proposal %s: direct-change merge failed: %v", id, mergeErr)
+					applied = false
+				} else {
+					if _, err := db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, id); err != nil {
+						log.Printf("proposal %s: direct-change sha update failed: %v", id, err)
+					}
+					governance.DeleteBranch(dataDir, nodeID, branchName)
+					// Same post-merge DB syncs as the other apply paths (docs/adr/011).
+					if req.TargetDoc == "governance-rules.json" || req.TargetDoc == "Governance Rules" {
+						governance.SyncRulesToDB(db, dataDir, nodeID)
+					}
+					syncLiningToDB(db, nodeID, req.TargetDoc, req.ProposedTitle, user.ID)
+				}
+			}
+			if applied {
 				// 'approved' is the terminal success status everywhere else
 				// (and the only one the schema CHECK allows — 'passed' was
 				// silently rejected, leaving fast-tracked amendments 'open').
-				if _, err := db.Exec("UPDATE proposals SET git_sha = ?, status = 'approved', applied_at = ?, applied_by = ? WHERE id = ?",
-					sha, createdAt, user.ID, id); err != nil {
-					log.Printf("proposal %s: fast-track status update failed: %v", id, err)
+				if _, err := db.Exec("UPDATE proposals SET status = 'approved', applied_at = ?, applied_by = ? WHERE id = ?",
+					createdAt, user.ID, id); err != nil {
+					log.Printf("proposal %s: direct-change status update failed: %v", id, err)
 				}
-				governance.DeleteBranch(dataDir, nodeID, branchName)
-				// Same post-merge DB syncs as the other apply paths (docs/adr/011).
-				if req.TargetDoc == "governance-rules.json" || req.TargetDoc == "Governance Rules" {
-					governance.SyncRulesToDB(db, dataDir, nodeID)
-				}
-				syncLiningToDB(db, nodeID, req.TargetDoc, req.ProposedTitle, user.ID)
 			}
 		}
 
@@ -329,20 +336,148 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// eligibleVoters returns how many people may currently vote on a node's
+// proposals — active admins and members past the minimum voting tenure —
+// and, when the electorate is exactly one person, that voter's user ID.
+func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (int, string) {
+	query := `SELECT user_id FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin','member')`
+	args := []interface{}{nodeID}
+	if gc.MinVotingTenureDays > 0 {
+		// Stored timestamps are ISO 8601 with a 'T'; format the cutoff the
+		// same way so the string comparison stays chronological.
+		query += ` AND joined_at <= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', ?)`
+		args = append(args, fmt.Sprintf("-%d days", gc.MinVotingTenureDays))
+	}
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return 0, ""
+	}
+	defer rows.Close()
+	count := 0
+	sole := ""
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			count++
+			sole = id
+		}
+	}
+	if count != 1 {
+		sole = ""
+	}
+	return count, sole
+}
+
+// resolveProposal tallies an open proposal and finalizes it: status update,
+// amendment auto-apply, audit event, AP broadcast. Returns the new status
+// ("approved" or "rejected"), or "" when the proposal stayed open (not open
+// to begin with, or quorum not met). Callers decide when resolution is due —
+// the voting window expiring, or the sole-voter early close (docs/adr/035).
+func resolveProposal(db *database.DB, proposalID string) string {
+	var p model.Proposal
+	err := db.QueryRow(
+		`SELECT id, node_id, author_id, status, proposal_type, COALESCE(target_doc,''), COALESCE(proposed_title,'')
+		 FROM proposals WHERE id = ?`, proposalID,
+	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.ProposalType, &p.TargetDoc, &p.ProposedTitle)
+	if err != nil || p.Status != "open" {
+		return ""
+	}
+
+	// Tally votes for resolution.
+	var approveCount, rejectCount, abstainCount int
+	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'approve'", proposalID).Scan(&approveCount)
+	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'reject'", proposalID).Scan(&rejectCount)
+	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'abstain'", proposalID).Scan(&abstainCount)
+
+	// Load governance config for the node
+	var gcJSON string
+	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", p.NodeID).Scan(&gcJSON)
+	var gc model.GovernanceConfig
+	json.Unmarshal([]byte(gcJSON), &gc)
+
+	// Quorum check
+	var activeMemberCount int
+	db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin','member')", p.NodeID).Scan(&activeMemberCount)
+	totalVotes := approveCount + rejectCount + abstainCount
+	quorumMet := gc.QuorumPercent == 0 || (activeMemberCount > 0 && (totalVotes*100/activeMemberCount) >= gc.QuorumPercent)
+	if !quorumMet {
+		// Quorum not met — leave open.
+		return ""
+	}
+
+	// Determine threshold
+	threshold := gc.DecisionMethod
+	if p.ProposalType == "amendment" && gc.AmendmentThreshold != "" {
+		threshold = gc.AmendmentThreshold
+	}
+
+	passed := false
+	switch threshold {
+	case "supermajority":
+		passed = approveCount > 0 && float64(approveCount)/float64(approveCount+rejectCount) >= 0.667
+	case "consensus":
+		passed = rejectCount == 0 && approveCount > 0
+	default: // "majority"
+		passed = approveCount > rejectCount
+	}
+
+	newStatus := "rejected"
+	if passed {
+		newStatus = "approved"
+	}
+
+	// Update status
+	db.Exec("UPDATE proposals SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", newStatus, proposalID)
+
+	// Auto-apply amendment if approved and configured
+	if newStatus == "approved" && p.ProposalType == "amendment" && p.TargetDoc != "" && gc.AmendmentAutoApply {
+		var branch string
+		db.QueryRow("SELECT COALESCE(proposed_branch,'') FROM proposals WHERE id = ?", proposalID).Scan(&branch)
+		if branch != "" {
+			sha, mergeErr := governance.MergeBranch(governance.GetDataDir(), p.NodeID, branch, "Patchwork System", "system@patchwork.local")
+			if mergeErr == nil {
+				db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, proposalID)
+				// Same post-merge DB syncs as the manual ApplyProposal path
+				// (docs/adr/011): rules to governance config, markdown docs
+				// to governance_docs.
+				if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
+					governance.SyncRulesToDB(db, governance.GetDataDir(), p.NodeID)
+				}
+				syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
+			}
+		}
+	}
+
+	auth.LogAuditEvent(db, "", "proposal.resolved", "proposal", proposalID,
+		fmt.Sprintf(`{"result":"%s","approve":%d,"reject":%d,"abstain":%d,"quorum_met":true}`, newStatus, approveCount, rejectCount, abstainCount), "")
+
+	// Broadcast resolution
+	go func() {
+		resolveActivity := ap.ProposalResolvedActivity(
+			ap.ProposalAPID(ap.GetDomain(), proposalID),
+			ap.NodeAPID(ap.GetDomain(), p.NodeID),
+			newStatus, approveCount, rejectCount, abstainCount,
+		)
+		ap.BroadcastToFollowers(db, "node", p.NodeID, resolveActivity)
+	}()
+
+	return newStatus
+}
+
 // GetProposal handles GET /api/v1/proposals/{id}.
 func GetProposal(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		proposalID := r.PathValue("id")
 
 		var p model.Proposal
-		var authorName string
+		var authorName, appliedAt string
 		err := db.QueryRow(
-			`SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
+			`SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, COALESCE(p.state,''), COALESCE(p.applied_at,''), p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
 			 COALESCE(p.target_doc,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
 			 COALESCE(u.display_name, u.username) as author_name
 			 FROM proposals p LEFT JOIN users u ON u.id = p.author_id
 			 WHERE p.id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &authorName)
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &authorName)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -362,84 +497,9 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 				endsAt, parseErr = time.Parse(time.RFC3339, *p.VotingEndsAt)
 			}
 			if parseErr == nil && time.Now().UTC().After(endsAt) {
-				// Tally votes for resolution.
-				var approveCount, rejectCount, abstainCount int
-				db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'approve'", proposalID).Scan(&approveCount)
-				db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'reject'", proposalID).Scan(&rejectCount)
-				db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'abstain'", proposalID).Scan(&abstainCount)
-
-				// Load governance config for the node
-				var gcJSON string
-				db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", p.NodeID).Scan(&gcJSON)
-				var gc model.GovernanceConfig
-				json.Unmarshal([]byte(gcJSON), &gc)
-
-				// Quorum check
-				var activeMemberCount int
-				db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin','member')", p.NodeID).Scan(&activeMemberCount)
-				totalVotes := approveCount + rejectCount + abstainCount
-				quorumMet := gc.QuorumPercent == 0 || (activeMemberCount > 0 && (totalVotes*100/activeMemberCount) >= gc.QuorumPercent)
-
-				if quorumMet {
-					// Determine threshold
-					threshold := gc.DecisionMethod
-					if p.ProposalType == "amendment" && gc.AmendmentThreshold != "" {
-						threshold = gc.AmendmentThreshold
-					}
-
-					passed := false
-					switch threshold {
-					case "supermajority":
-						passed = approveCount > 0 && float64(approveCount)/float64(approveCount+rejectCount) >= 0.667
-					case "consensus":
-						passed = rejectCount == 0 && approveCount > 0
-					default: // "majority"
-						passed = approveCount > rejectCount
-					}
-
-					newStatus := "rejected"
-					if passed {
-						newStatus = "approved"
-					}
-
-					// Update status
-					db.Exec("UPDATE proposals SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", newStatus, proposalID)
+				if newStatus := resolveProposal(db, proposalID); newStatus != "" {
 					p.Status = newStatus
-
-					// Auto-apply amendment if approved and configured
-					if newStatus == "approved" && p.ProposalType == "amendment" && p.TargetDoc != "" && gc.AmendmentAutoApply {
-						var branch string
-						db.QueryRow("SELECT COALESCE(proposed_branch,'') FROM proposals WHERE id = ?", proposalID).Scan(&branch)
-						if branch != "" {
-							sha, mergeErr := governance.MergeBranch(governance.GetDataDir(), p.NodeID, branch, "Patchwork System", "system@patchwork.local")
-							if mergeErr == nil {
-								db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, proposalID)
-								// Same post-merge DB syncs as the manual
-								// ApplyProposal path (docs/adr/011): rules
-								// to governance config, markdown docs to
-								// governance_docs.
-								if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
-									governance.SyncRulesToDB(db, governance.GetDataDir(), p.NodeID)
-								}
-								syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
-							}
-						}
-					}
-
-					auth.LogAuditEvent(db, "", "proposal.resolved", "proposal", proposalID,
-						fmt.Sprintf(`{"result":"%s","approve":%d,"reject":%d,"abstain":%d,"quorum_met":true}`, newStatus, approveCount, rejectCount, abstainCount), "")
-
-					// Broadcast resolution
-					go func() {
-						resolveActivity := ap.ProposalResolvedActivity(
-							ap.ProposalAPID(ap.GetDomain(), proposalID),
-							ap.NodeAPID(ap.GetDomain(), p.NodeID),
-							newStatus, approveCount, rejectCount, abstainCount,
-						)
-						ap.BroadcastToFollowers(db, "node", p.NodeID, resolveActivity)
-					}()
 				}
-				// If quorum not met, don't resolve — leave as open
 			}
 		}
 
@@ -484,24 +544,35 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			}
 		}
 
+		// Electorate size — drives the sole-voter notice in the UI
+		// (docs/adr/035).
+		var gcJSON string
+		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", p.NodeID).Scan(&gcJSON)
+		var gc model.GovernanceConfig
+		json.Unmarshal([]byte(gcJSON), &gc)
+		eligibleCount, _ := eligibleVoters(db, p.NodeID, gc)
+
 		result := map[string]interface{}{
-			"id":             p.ID,
-			"node_id":        p.NodeID,
-			"author_id":      p.AuthorID,
-			"author_name":    authorName,
-			"title":          p.Title,
-			"body":           p.Body,
-			"status":         p.Status,
-			"proposal_type":  p.ProposalType,
-			"duration_hours": p.DurationHours,
-			"voting_ends_at": p.VotingEndsAt,
-			"created_at":     p.CreatedAt,
-			"updated_at":     p.UpdatedAt,
-			"approve_count":  approveCount,
-			"reject_count":   rejectCount,
-			"abstain_count":  abstainCount,
-			"voters":         voters,
-			"my_vote":        myVote,
+			"id":              p.ID,
+			"node_id":         p.NodeID,
+			"author_id":       p.AuthorID,
+			"author_name":     authorName,
+			"title":           p.Title,
+			"body":            p.Body,
+			"status":          p.Status,
+			"proposal_type":   p.ProposalType,
+			"duration_hours":  p.DurationHours,
+			"voting_ends_at":  p.VotingEndsAt,
+			"created_at":      p.CreatedAt,
+			"updated_at":      p.UpdatedAt,
+			"approve_count":   approveCount,
+			"reject_count":    rejectCount,
+			"abstain_count":   abstainCount,
+			"voters":          voters,
+			"my_vote":         myVote,
+			"eligible_voters": eligibleCount,
+			"state":           p.State,
+			"applied_at":      appliedAt,
 		}
 
 		// Include amendment-specific fields if this is a governance amendment.
@@ -614,6 +685,17 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		auth.LogAuditEvent(db, user.ID, "proposal.vote", "proposal", proposalID, `{"value":"`+req.Value+`"}`, clientIP(r))
+
+		// Sole-voter early close (docs/adr/035): when exactly one person is
+		// eligible to vote and that person has cast a decisive vote, the
+		// outcome is settled — a voting window for an electorate of one
+		// holds space for nobody. An abstain never closes early: it reads
+		// as "not deciding yet" and stays changeable until the window ends.
+		if req.Value != "abstain" {
+			if _, sole := eligibleVoters(db, nodeID, gc); sole == user.ID {
+				resolveProposal(db, proposalID)
+			}
+		}
 
 		// Broadcast vote (non-blocking)
 		go func() {

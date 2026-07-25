@@ -457,6 +457,19 @@ document templates. A term nobody reaches for when building the thing
 isn't the thing's name.
 _Avoid_: baste request (retired), motion, petition
 
+**Direct change**:
+A governance change an admin applies immediately on a patch whose
+decision method is admin-decides — born applied, never voted. Stored as
+an instantly-applied proposal record so it shares the governance
+timeline, notifications, and history with voted proposals; the UI never
+says "propose", "submit", or "vote" for one. Which framing a patch gets
+follows the rules in force, not its size: the words are "change these
+rules" / "rule change · applied by …" on admin-decides patches, and
+"proposal" everywhere a vote actually happens.
+_Avoid_: proposal (nothing is proposed to anyone), fast-track (an
+implementation word, not a concept), edit (undersells that it's tracked
+and visible)
+
 ## Event sources
 
 **Event source**:
