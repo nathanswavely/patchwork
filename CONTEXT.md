@@ -364,11 +364,14 @@ device (a session is per-browser, not per-machine)
 The non-blocking card an anonymous visitor meets on their first landing
 on any public surface: three sentences on what this quilt is and that no
 algorithm runs it, with the two ways onward — the About page and
-joining. Overlaid on a corner of the surface, never covering it; on
-deep-linked landings (a shared event, a patch profile) it takes its most
-compact form and never competes with the shared content. Dismissed once,
-gone forever; the sidebar's "What is Patchwork?" entry remains as the
-standing path to the About page. Signed-in people never see it.
+joining — plus a worded decline ("I'll lurk for now"), because reading
+this quilt has never required an account and Join should not be the only
+named way forward. Overlaid on a corner of the surface, never covering
+it; on deep-linked landings (a shared event, a patch profile) it takes
+its most compact form and never competes with the shared content.
+Dismissed once, gone forever; the sidebar's "What is Patchwork?" entry
+remains as the standing path to the About page. Signed-in people never
+see it.
 _Avoid_: welcome modal, splash screen, announcement banner, popup (as a
 UI word)
 
