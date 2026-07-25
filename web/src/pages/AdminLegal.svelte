@@ -48,7 +48,7 @@
         method: 'PUT',
         body: { markdown: drafts[active] },
       });
-      showToast(`${current.title} saved — live at /${active}`, 'success');
+      showToast(`${current.title} saved, now live at /${active}`, 'success');
       await load();
     } catch (e) {
       showToast(e.message || 'Save failed', 'error');

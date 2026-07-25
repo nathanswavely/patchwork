@@ -60,7 +60,7 @@
 <div class="admin-page">
   <h1>Neighbor Quilts</h1>
   <p class="page-desc">
-    Neighbor quilts appear in the quilt switcher for <strong>every</strong> visitor —
+    Neighbor quilts appear in the quilt switcher for <strong>every</strong> visitor,
     including people without accounts. Neighboring is a public statement that
     your community stands beside theirs. People connect their own quilts
     privately on top of this list.

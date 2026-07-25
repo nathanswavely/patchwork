@@ -271,7 +271,7 @@
     <div class="picker-group">
       <BundlePicker
         bind:bundle={draft.bundle}
-        hint="Swap any fabric off the wall — the first is the patch's identity color."
+        hint="Swap any fabric off the wall. The first is the patch's identity color."
       />
     </div>
 
