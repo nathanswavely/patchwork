@@ -562,22 +562,22 @@ var artsGovDocs = []govDocDef{
 }
 
 var artsNotifications = []notifDef{
-	{1, "membership_approved", "Welcome to Gallery Row", "Your membership request for Gallery Row has been approved.", "/nodes/gallery-row", true},
+	{1, "membership_approved", "Welcome to Gallery Row", "Your membership request for Gallery Row has been approved.", "/patches/gallery-row", true},
 	{2, "new_event", "New event: Jazz Quartet", "A new event has been posted in The Selvage.", "/events", true},
-	{3, "proposal_result", "Proposal approved: Shared equipment lending", "The proposal to adopt a shared equipment lending policy has passed.", "/nodes/warehouse-arts-collective/proposals", true},
-	{5, "membership_approved", "Welcome to Common Ground Ceramics", "Your membership request has been approved.", "/nodes/common-ground-ceramics", false},
-	{6, "proposal_created", "New proposal: Weekend open studio hours", "A new proposal has been created in Common Ground Ceramics.", "/nodes/common-ground-ceramics/proposals", false},
-	{4, "new_member", "New member joined Wallflower Murals", "Rachel Green has joined the Wallflower Mural Project.", "/nodes/wallflower-mural-project/members", true},
-	{8, "proposal_result", "Proposal rejected: Increase monthly dues", "The proposal to increase monthly dues has been rejected.", "/nodes/common-ground-ceramics/proposals", true},
+	{3, "proposal_result", "Proposal approved: Shared equipment lending", "The proposal to adopt a shared equipment lending policy has passed.", "/patches/warehouse-arts-collective/governance/proposals", true},
+	{5, "membership_approved", "Welcome to Common Ground Ceramics", "Your membership request has been approved.", "/patches/common-ground-ceramics", false},
+	{6, "proposal_created", "New proposal: Weekend open studio hours", "A new proposal has been created in Common Ground Ceramics.", "/patches/common-ground-ceramics/governance/proposals", false},
+	{4, "new_member", "New member joined Wallflower Murals", "Rachel Green has joined the Wallflower Mural Project.", "/patches/wallflower-mural-project/members", true},
+	{8, "proposal_result", "Proposal rejected: Increase monthly dues", "The proposal to increase monthly dues has been rejected.", "/patches/common-ground-ceramics/governance/proposals", true},
 	{9, "new_event", "New event: Dance Showcase", "A new spring showcase has been announced.", "/events", false},
-	{10, "membership_request", "New membership request", "A new member has requested to join Gallery Row.", "/nodes/gallery-row/members", false},
-	{14, "proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/nodes/lancaster-arts-district/proposals", false},
-	{1, "new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/nodes/first-friday-collective/members", true},
+	{10, "membership_request", "New membership request", "A new member has requested to join Gallery Row.", "/patches/gallery-row/members", false},
+	{14, "proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
+	{1, "new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
 	{12, "new_event", "New event: Auditions", "Open auditions for the Summer One-Act Festival.", "/events", false},
 	{18, "new_event", "New event: Spring Plot Assignments", "Annual plot lottery at SoWe Community Garden.", "/events", false},
 	{20, "new_event", "New event: Fix-It Clinic", "Bring your broken stuff to the Tinker's Damn.", "/events", false},
 	{24, "new_event", "New event: Beat Battle", "16 producers, one night at the Low End Lab.", "/events", false},
-	{22, "membership_approved", "Welcome to the Tinker's Damn", "Your membership at the Tinker's Damn is confirmed.", "/nodes/tinkers-damn", true},
+	{22, "membership_approved", "Welcome to the Tinker's Damn", "Your membership at the Tinker's Damn is confirmed.", "/patches/tinkers-damn", true},
 }
 
 var artsUnclaimed = []unclaimedDef{

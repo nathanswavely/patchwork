@@ -50,6 +50,93 @@ test.describe('Notifications — Bell', () => {
   });
 });
 
+// The two behaviours issues #55 and #56 were reported at: the badge has to
+// move the moment something is read (it used to wait for the bell's 60s poll),
+// and a notification has to open the thing it is about (event and charter
+// links were built to paths the router never had, so they fell through to the
+// home quilt or rendered "proposal not found").
+//
+// These mark the admin's notifications read, which the ownership map in
+// setup.js assigns to this spec. Declaration order matters: the click test
+// needs something unread, so it runs before mark-all-read.
+test.describe('Notifications — Reading and navigating', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsAdmin(page);
+  });
+
+  // Find an unread notification by title prefix, open the panel, click it.
+  async function clickNotification(page, prefix) {
+    await goto(page, '/dashboard');
+    const feed = await page.request.get('/api/v1/notifications?limit=20').then((r) => r.json());
+    const target = (feed.items || []).find((n) => n.title.startsWith(prefix) && !n.read_at);
+    expect(target, `seed data should include an unread "${prefix}…" notification`).toBeTruthy();
+
+    const before = Number(await page.locator('.badge-count').innerText());
+    expect(before).toBeGreaterThan(0);
+
+    await page.locator('.bell-btn').click();
+    await expect(page.locator('.sidepanel')).toBeVisible({ timeout: 3000 });
+    await page.locator('.notif-item', { hasText: target.title }).first().click();
+    return { target, before };
+  }
+
+  // The seeder plants one deep link per broken shape (cmd/seed/main.go): an
+  // event and a charter. Picking "whatever is unread first" is not enough —
+  // that lands on a list link, which routed fine before the fix too.
+  for (const { label, prefix } of [
+    { label: 'an event', prefix: 'Tomorrow: ' },
+    { label: 'a charter', prefix: 'Charter updated: ' },
+  ]) {
+    test(`clicking ${label} notification opens what it is about`, async ({ page }) => {
+      const { target } = await clickNotification(page, prefix);
+
+      // Wait for the navigation rather than for the network: the click marks
+      // the notification read first, so in an SPA "networkidle" can be true
+      // before the route has moved at all.
+      const expected = target.link.split('?')[0];
+      await page.waitForURL((url) => new URL(url).pathname === expected, { timeout: 5000 });
+
+      // The URL proves nothing on its own — an unroutable link pushes its path
+      // and then renders whatever the fallback is, which is exactly how this
+      // bug hid. So assert the entity is actually on screen. It has to be a
+      // POSITIVE assertion: "the fallback is absent" passes trivially while
+      // the fallback is still loading, which is how a first draft of this test
+      // went green against the bug it was written to catch.
+      const entityTitle = target.title.slice(prefix.length);
+      await expect(page.getByRole('heading', { name: entityTitle })).toBeVisible({ timeout: 5000 });
+      await expectNoError(page);
+    });
+  }
+
+  // Deliberately a notification whose target stays inside the social shell, so
+  // the global bar (and its bell) is not remounted by the navigation. A target
+  // in the patch workspace would remount the bell, and its mount-time refresh
+  // would supply the right number on its own — making the assertion pass
+  // whether or not reading updates the count. Also a different notification
+  // from the two above, which have already been read by the time this runs.
+  test('reading a notification drops the badge without waiting for the poll', async ({ page }) => {
+    const { before } = await clickNotification(page, 'New event: ');
+    // The poll is 60s away, so anything visible this soon is the local update.
+    await expect(page.locator('.badge-count')).toHaveText(String(before - 1), { timeout: 3000 });
+  });
+
+  test('"mark all read" clears the badge', async ({ page }) => {
+    await goto(page, '/dashboard');
+    await page.locator('.bell-btn').click();
+    await expect(page.locator('.sidepanel')).toBeVisible({ timeout: 3000 });
+
+    const markAll = page.locator('.notif-mark-all');
+    await expect(markAll).toBeVisible({ timeout: 3000 });
+    await markAll.click();
+
+    // Gone, not decremented — read-all clears the whole table server-side,
+    // not just the rows the panel happens to have loaded.
+    await expect(page.locator('.badge-count')).toHaveCount(0, { timeout: 3000 });
+    const count = await page.request.get('/api/v1/notifications/count').then((r) => r.json());
+    expect(count.unread).toBe(0);
+  });
+});
+
 test.describe('Notifications — Full Page', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);

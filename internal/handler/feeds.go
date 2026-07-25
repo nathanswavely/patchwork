@@ -17,6 +17,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // feedEvent is one row bound for an outbound feed.
@@ -130,7 +131,7 @@ func writeICS(w http.ResponseWriter, r *http.Request, cfg *config.Config, calNam
 			geo.Value = strconv.FormatFloat(*fe.Latitude, 'f', -1, 64) + ";" + strconv.FormatFloat(*fe.Longitude, 'f', -1, 64)
 			ev.Props.Set(geo)
 		}
-		ev.Props.SetText(ical.PropURL, "https://"+cfg.Instance.Domain+"/patches/"+fe.NodeSlug+"/events/"+fe.ID)
+		ev.Props.SetText(ical.PropURL, weblink.Absolute(cfg.Instance.Domain, weblink.Event(fe.ID)))
 		cal.Children = append(cal.Children, ev.Component)
 	}
 
@@ -230,7 +231,7 @@ func NodeRSSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Version: "2.0",
 			Channel: rssChannel{
 				Title:       nodeName + " — events",
-				Link:        "https://" + cfg.Instance.Domain + "/patches/" + slug + "/events",
+				Link:        weblink.Absolute(cfg.Instance.Domain, weblink.PatchEvents(slug)),
 				Description: "Events from " + nodeName + " on " + cfg.Instance.Name,
 			},
 		}
@@ -246,7 +247,7 @@ func NodeRSSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			}
 			item := rssItem{
 				Title:       e.Title,
-				Link:        "https://" + cfg.Instance.Domain + "/patches/" + e.NodeSlug + "/events/" + e.ID,
+				Link:        weblink.Absolute(cfg.Instance.Domain, weblink.Event(e.ID)),
 				GUID:        e.ID + "@" + cfg.Instance.Domain,
 				Description: desc,
 			}

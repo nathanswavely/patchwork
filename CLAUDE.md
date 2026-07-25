@@ -40,6 +40,7 @@ patchwork/
 │   ├── safehttp/           # SSRF-guarded HTTP client shared by ap and eventsource
 │   ├── governance/         # git-backed charter repos, templates, rules, defaults
 │   ├── notifications/      # notification channels, email, reminder worker
+│   ├── weblink/            # the SPA paths Go emits (notification/email/feed links)
 │   └── seamrip/            # export/import portability boundary (docs/adr/002)
 ├── migrations/             # SQL migration files (sequential numbered; 006 intentionally absent)
 ├── docs/                   # DEPLOYMENT.md, adr/ (decision records; adr/README.md is the index)

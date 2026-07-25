@@ -13,6 +13,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // Source is one event_sources row, loaded fresh at sync time.
@@ -358,7 +359,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 				ActorID:  src.AddedBy,
 				EntityID: e.ID,
 				Title:    "New event: " + e.Title,
-				Link:     "/patches/" + nodeSlug + "/events/" + e.ID,
+				Link:     weblink.Event(e.ID),
 			})
 		}
 		broadcastCreate(db, e, src.NodeID)

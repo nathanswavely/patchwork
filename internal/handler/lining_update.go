@@ -13,6 +13,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/settings"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // NodeLiningStatuses returns node_id → lining status (pristine/stale/diverged)
@@ -171,7 +172,7 @@ func AutoUpdateLinings(db *database.DB) (int, int, error) {
 			NodeName: s.nodeName,
 			EntityID: s.docID,
 			Title:    "The lining was updated",
-			Link:     "/patches/" + s.nodeSlug + "/governance/docs/" + s.docID,
+			Link:     weblink.GovernanceDoc(s.nodeSlug, s.docID),
 		})
 	}
 

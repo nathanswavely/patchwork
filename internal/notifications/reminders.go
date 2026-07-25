@@ -7,6 +7,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // StartReminderWorker runs a background goroutine that checks for upcoming
@@ -100,7 +101,7 @@ func checkProposalDeadlines(n *Notifier) {
 			EntityID: id,
 			Title:    "Voting ends soon: " + title,
 			Body:     "Less than 24 hours to vote on this proposal.",
-			Link:     "/patches/" + slug + "/governance/" + id,
+			Link:     weblink.Proposal(slug, id),
 		})
 
 		// Mark as sent.
@@ -153,7 +154,7 @@ func checkEventReminders(n *Notifier) {
 			EntityID: id,
 			Title:    "Tomorrow: " + title,
 			Body:     "This event starts in less than 24 hours.",
-			Link:     "/patches/" + slug + "/events/" + id,
+			Link:     weblink.Event(id),
 		})
 
 		remID := auth.NewUUIDv7()
@@ -198,7 +199,7 @@ func checkClaimSetupExpiring(n *Notifier) {
 			continue
 		}
 
-		link := "/patches/" + slug + "/setup"
+		link := weblink.PatchSetup(slug)
 		var existing int
 		n.DB.QueryRow(
 			`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = ? AND link = ?`,

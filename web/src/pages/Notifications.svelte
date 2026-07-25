@@ -2,6 +2,7 @@
   import NotifIcon from '../components/NotifIcon.svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { clearUnread, decrementUnread } from '../stores/notifications.svelte.js';
 
   let notifications = $state([]);
   let loading = $state(true);
@@ -52,6 +53,7 @@
   async function markAllRead() {
     await api('notifications/read-all', { method: 'POST' });
     notifications = notifications.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() }));
+    clearUnread();
   }
 
   async function clickNotif(notif) {
@@ -60,6 +62,7 @@
         await api(`notifications/${notif.id}/read`, { method: 'PATCH' });
         notif.read_at = new Date().toISOString();
         notifications = [...notifications];
+        decrementUnread();
       } catch {}
     }
     if (notif.link) navigate(notif.link);

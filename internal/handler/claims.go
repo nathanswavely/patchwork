@@ -30,6 +30,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/safehttp"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // setupWindow is how long a verified or approved claim remains a valid,
@@ -998,7 +999,7 @@ func finalizeClaimApproval(db *database.DB, claimID, nodeID, nodeSlug, nodeName,
 		EntityID: claimID,
 		Title:    "Your claim on " + nodeName + " was approved",
 		Body:     "Finish setting up the patch to make it yours. This approval expires " + formatClaimDate(expiresAt) + ".",
-		Link:     "/patches/" + nodeSlug + "/setup",
+		Link:     weblink.PatchSetup(nodeSlug),
 	})
 }
 

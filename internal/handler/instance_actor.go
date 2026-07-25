@@ -10,6 +10,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/settings"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // The instance service actor (docs/adr/024): an Application actor that
@@ -177,7 +178,7 @@ func handleInstanceCreate(w http.ResponseWriter, db *database.DB, activityType s
 		if body == "" {
 			body = nodeSlug
 		}
-		rowLink := "/quilts/" + quiltHost(quiltURLRow) + "/patches/" + nodeSlug
+		rowLink := weblink.RemotePatch(quiltHost(quiltURLRow), nodeSlug)
 		if tail := idTail(objectID); tail != "" {
 			rowLink += "?event=" + tail
 		}

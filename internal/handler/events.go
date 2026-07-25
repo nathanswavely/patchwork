@@ -14,6 +14,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // ListEvents handles GET /api/v1/events.
@@ -334,7 +335,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 					ActorID:  user.ID,
 					EntityID: id,
 					Title:    "Event suggested: " + req.Title,
-					Link:     "/patches/" + nodeSlugN + "/events",
+					Link:     weblink.PatchEvents(nodeSlugN),
 				})
 			}
 		} else {
@@ -347,7 +348,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: id,
 				Title:    "New event: " + req.Title,
-				Link:     "/patches/" + nodeSlugN + "/events/" + id,
+				Link:     weblink.Event(id),
 			})
 			broadcastEventCreate(db, e, req.NodeID)
 		}
@@ -480,7 +481,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: eventID,
 				Title:    "Event updated: " + e.Title,
-				Link:     "/patches/" + nodeSlugN + "/events/" + eventID,
+				Link:     weblink.Event(eventID),
 			})
 		}
 
@@ -560,7 +561,7 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 			ActorID:  user.ID,
 			EntityID: eventID,
 			Title:    "Event cancelled: " + eventTitle,
-			Link:     "/patches/" + nodeSlugN,
+			Link:     weblink.Patch(nodeSlugN),
 		})
 
 		w.Header().Set("Content-Type", "application/json")

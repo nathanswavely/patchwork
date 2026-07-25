@@ -18,6 +18,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 func main() {
@@ -1430,8 +1431,25 @@ func (s *seeder) seedNotifications() {
 		read                     bool
 	}{
 		{"new_event", "New event: First Friday Gallery Walk", "A new event has been posted in the First Friday Collective.", "/events", false},
-		{"proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/nodes/lancaster-arts-district/proposals", false},
-		{"new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/nodes/first-friday-collective/members", true},
+		{"proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
+		{"new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
+	}
+	// Two deep links to single entities, the shapes issue #56 got wrong: an
+	// event (addressed globally) and a charter (needs its 'docs/' segment).
+	// Both are unreachable by construction if the shapes regress, which is
+	// what notifications.spec.js clicks — so they're seeded from real ids
+	// rather than left to whichever notification happens to be first.
+	if eventID, eventTitle, ok := s.firstEvent(); ok {
+		adminNotifs = append(adminNotifs, struct {
+			nType, title, body, link string
+			read                     bool
+		}{"event_reminder", "Tomorrow: " + eventTitle, "This event starts in less than 24 hours.", weblink.Event(eventID), false})
+	}
+	if slug, docID, docTitle, ok := s.firstGovernanceDoc(); ok {
+		adminNotifs = append(adminNotifs, struct {
+			nType, title, body, link string
+			read                     bool
+		}{"governance_doc_updated", "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
 	}
 	for i, n := range adminNotifs {
 		createdAt := s.now.AddDate(0, 0, -(i + 1)).Format("2006-01-02T15:04:05.000Z")
@@ -1448,6 +1466,25 @@ func (s *seeder) seedNotifications() {
 		}
 		s.stats.notifications++
 	}
+}
+
+// firstEvent and firstGovernanceDoc read back one seeded row each, so a
+// notification can deep-link to something that actually exists. Ordered by id
+// (UUIDv7, time-sortable) rather than left to SQLite's row order, so the same
+// seed produces the same fixture every run.
+func (s *seeder) firstEvent() (id, title string, ok bool) {
+	err := s.db.QueryRow(
+		`SELECT id, title FROM events WHERE status = 'active' ORDER BY id LIMIT 1`,
+	).Scan(&id, &title)
+	return id, title, err == nil
+}
+
+func (s *seeder) firstGovernanceDoc() (slug, id, title string, ok bool) {
+	err := s.db.QueryRow(
+		`SELECT n.slug, g.id, g.title FROM governance_docs g
+		 JOIN nodes n ON g.node_id = n.id ORDER BY g.id LIMIT 1`,
+	).Scan(&slug, &id, &title)
+	return slug, id, title, err == nil
 }
 
 // ---------------------------------------------------------------------------
