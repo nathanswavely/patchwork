@@ -11,6 +11,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // JoinNode handles POST /api/v1/nodes/{slug}/join.
@@ -120,7 +121,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						NodeName: nodeNameN,
 						ActorID:  user.ID,
 						Title:    "New member joined " + nodeNameN,
-						Link:     "/patches/" + nodeSlugN + "/members",
+						Link:     weblink.PatchMembers(nodeSlugN),
 					})
 
 					w.Header().Set("Content-Type", "application/json")
@@ -174,7 +175,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						NodeName: nodeNameN,
 						ActorID:  user.ID,
 						Title:    "New member joined " + nodeNameN,
-						Link:     "/patches/" + nodeSlugN + "/members",
+						Link:     weblink.PatchMembers(nodeSlugN),
 					})
 				} else if newStatus == "pending" {
 					notify(notifications.Event{
@@ -184,7 +185,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 						NodeName: nodeNameN,
 						ActorID:  user.ID,
 						Title:    "Membership request for " + nodeNameN,
-						Link:     "/patches/" + nodeSlugN + "/members?status=pending",
+						Link:     weblink.PatchMembersPending(nodeSlugN),
 					})
 				}
 			}
@@ -238,7 +239,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 					NodeName: nodeNameN,
 					ActorID:  user.ID,
 					Title:    "New member joined " + nodeNameN,
-					Link:     "/patches/" + nodeSlugN + "/members",
+					Link:     weblink.PatchMembers(nodeSlugN),
 				})
 			} else if newStatus == "pending" {
 				notify(notifications.Event{
@@ -248,7 +249,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 					NodeName: nodeNameN,
 					ActorID:  user.ID,
 					Title:    "Membership request for " + nodeNameN,
-					Link:     "/patches/" + nodeSlugN + "/members?status=pending",
+					Link:     weblink.PatchMembersPending(nodeSlugN),
 				})
 			}
 		}
@@ -563,7 +564,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					ActorID:  user.ID,
 					TargetID: targetUserID,
 					Title:    "Your membership in " + nodeNameN + " was approved",
-					Link:     "/patches/" + nodeSlugN,
+					Link:     weblink.Patch(nodeSlugN),
 				})
 
 			case "banned":
@@ -605,7 +606,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					TargetID: targetUserID,
 					Title:    "You have been removed from " + banName,
 					Body:     "A patch admin has removed you from this community.",
-					Link:     "/patches/" + banSlug,
+					Link:     weblink.Patch(banSlug),
 				})
 
 			case "left":
@@ -638,7 +639,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 						TargetID: targetUserID,
 						Title:    "You have been reinstated in " + reinstateName,
 						Body:     "You can now rejoin this community.",
-						Link:     "/patches/" + reinstateSlug,
+						Link:     weblink.Patch(reinstateSlug),
 					})
 				} else {
 					http.Error(w, `{"error":"can only reject pending or reinstate banned members"}`, http.StatusBadRequest)

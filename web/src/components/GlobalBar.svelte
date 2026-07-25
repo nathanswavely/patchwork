@@ -21,6 +21,7 @@
   import SidePanel from './SidePanel.svelte';
   import NotifIcon from './NotifIcon.svelte';
   import { api } from '../lib/api.js';
+  import { clearUnread, decrementUnread } from '../stores/notifications.svelte.js';
 
   // shelfBell: the discovery shell shows notifications on its mobile bottom
   // shelf, so the bar's bell hides under 768px there. Workspace/admin shells
@@ -61,12 +62,17 @@
     try {
       await api('notifications/read-all', { method: 'POST' });
       notifications = notifications.map(n => ({ ...n, read_at: new Date().toISOString() }));
+      clearUnread();
     } catch {}
   }
 
   async function clickNotification(notif) {
     if (!notif.read_at) {
-      try { await api(`notifications/${notif.id}/read`, { method: 'PATCH' }); } catch {}
+      try {
+        await api(`notifications/${notif.id}/read`, { method: 'PATCH' });
+        notif.read_at = new Date().toISOString();
+        decrementUnread();
+      } catch {}
     }
     notifPanelOpen = false;
     if (notif.link) navigate(notif.link);

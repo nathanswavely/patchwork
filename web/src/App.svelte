@@ -170,6 +170,12 @@
   addRoute('/patches/:slug/proposals/new', 'redirectProposalNew');
   addRoute('/patches/:slug/proposals/:id', 'redirectProposalDetail');
   addRoute('/patches/:slug/governance-setup', 'redirectGovernanceSetup');
+  // Not a retired scheme — a shape that was never routed at all. Every event
+  // notification, reminder email, and ICS/RSS item pointed here and fell
+  // through to the home quilt (issue #56). The producers now emit /events/:id
+  // (internal/weblink) and migration 041 repaired the stored rows, but links
+  // already sent and feeds already subscribed can't be recalled, so honor it.
+  addRoute('/patches/:slug/events/:id', 'redirectPatchScopedEvent');
 
   // Auth + onboarding
   addRoute('/login', 'login');
@@ -328,6 +334,7 @@
     redirectProposalNew: (p) => `/patches/${p.slug}/governance/new`,
     redirectProposalDetail: (p) => `/patches/${p.slug}/governance/${p.id}`,
     redirectGovernanceSetup: (p) => `/patches/${p.slug}/governance`,
+    redirectPatchScopedEvent: (p) => `/events/${p.id}`,
   };
   $effect(() => {
     const target = REDIRECTS[routeName]?.(routeParams);

@@ -10,6 +10,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // eventSubmission is a pending event plus enough context to review it.
@@ -197,7 +198,7 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				TargetID: e.CreatedBy,
 				EntityID: eventID,
 				Title:    "Your event was approved: " + e.Title,
-				Link:     "/patches/" + nodeSlug + "/events/" + eventID,
+				Link:     weblink.Event(eventID),
 			})
 			notify(notifications.Event{
 				Type:     notifications.EventCreated,
@@ -207,7 +208,7 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: eventID,
 				Title:    "New event: " + e.Title,
-				Link:     "/patches/" + nodeSlug + "/events/" + eventID,
+				Link:     weblink.Event(eventID),
 			})
 
 			var full model.Event
@@ -234,7 +235,7 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				EntityID: eventID,
 				Title:    "Your event was declined: " + e.Title,
 				Body:     req.Note,
-				Link:     "/patches/" + nodeSlug,
+				Link:     weblink.Patch(nodeSlug),
 			})
 		}
 

@@ -15,6 +15,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // join is a helper to avoid importing strings in this file for a single use.
@@ -319,7 +320,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			EntityID: id,
 			Title:    "New proposal: " + req.Title,
 			Body:     req.Body,
-			Link:     "/patches/" + slug + "/governance/" + id,
+			Link:     weblink.Proposal(slug, id),
 		})
 
 		w.Header().Set("Content-Type", "application/json")
@@ -642,7 +643,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 			EntityID: proposalID,
 			Title:    "New vote on: " + proposalTitle,
 			Body:     user.DisplayName + " voted " + req.Value,
-			Link:     "/patches/" + nodeSlug + "/governance/" + proposalID,
+			Link:     weblink.Proposal(nodeSlug, proposalID),
 		})
 
 		w.Header().Set("Content-Type", "application/json")
@@ -699,7 +700,7 @@ func WithdrawProposal(db *database.DB) http.HandlerFunc {
 			EntityID: proposalID,
 			Title:    "Proposal withdrawn: " + proposalTitle,
 			Body:     "This proposal was withdrawn by the author.",
-			Link:     "/patches/" + nodeSlug + "/governance/" + proposalID,
+			Link:     weblink.Proposal(nodeSlug, proposalID),
 		})
 
 		w.Header().Set("Content-Type", "application/json")
@@ -880,7 +881,7 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 			EntityID: proposalID,
 			Title:    "Change applied: " + proposalTitle,
 			Body:     "This proposal is now in effect.",
-			Link:     "/patches/" + nodeSlug + "/governance/" + proposalID,
+			Link:     weblink.Proposal(nodeSlug, proposalID),
 		})
 
 		w.Header().Set("Content-Type", "application/json")

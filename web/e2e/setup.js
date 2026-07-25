@@ -18,7 +18,10 @@
  *                            proposals (specifically "Create youth mentorship
  *                            program")
  *   governance.spec.js       owns proposal creation in lancaster-arts-district
- *   notifications.spec.js    owns the admin's notification preferences and
+ *   notifications.spec.js    owns the admin's notification preferences, the
+ *                            admin's notification READ state (it reads one and
+ *                            then marks all read, so no other spec may assert
+ *                            on the admin's badge or unread count), and
  *                            code-and-coffee's notification config; also owns
  *                            the `new` user, whose bell it asserts is empty.
  *                            The ONLY membership `new` may ever be given is

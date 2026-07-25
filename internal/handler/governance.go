@@ -15,6 +15,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // governanceDocColumns is the one column list every governance_docs read uses,
@@ -177,7 +178,7 @@ func CreateGovernanceDoc(db *database.DB) http.HandlerFunc {
 			ActorID:  user.ID,
 			EntityID: id,
 			Title:    "New governance document: " + req.Title,
-			Link:     "/patches/" + slug + "/governance/" + id,
+			Link:     weblink.GovernanceDoc(slug, id),
 		})
 
 		w.Header().Set("Content-Type", "application/json")
@@ -416,7 +417,7 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: docID,
 				Title:    "Governance document updated: " + newTitle,
-				Link:     "/patches/" + nodeSlugN + "/governance/" + docID,
+				Link:     weblink.GovernanceDoc(nodeSlugN, docID),
 			})
 		}
 

@@ -50,6 +50,16 @@ func TestNodeICSFeed_PublicEventsOnly(t *testing.T) {
 	if ct := w.Header().Get("Content-Type"); !strings.HasPrefix(ct, "text/calendar") {
 		t.Errorf("content type: %s", ct)
 	}
+	// The URL a subscriber's calendar app opens has to be the event's real
+	// address — /events/{id}, not the patch-scoped path the SPA never routed
+	// (issue #56). Unfolded first, since ICS wraps long lines.
+	unfolded := strings.ReplaceAll(body, "\r\n ", "")
+	if !strings.Contains(unfolded, "https://quilt.test/events/") {
+		t.Errorf("ICS URL property is not the canonical event URL:\n%s", body)
+	}
+	if strings.Contains(unfolded, "/patches/feed-venue/events/") {
+		t.Errorf("ICS URL property still uses the unrouted patch-scoped path:\n%s", body)
+	}
 
 	// Conditional GET: same content, one 304.
 	etag := w.Header().Get("ETag")
@@ -116,9 +126,17 @@ func TestNodeRSSFeed(t *testing.T) {
 		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
 	}
 	body := w.Body.String()
-	if !strings.Contains(body, "<rss") || !strings.Contains(body, "RSS Show") ||
-		!strings.Contains(body, "https://quilt.test/patches/rss-venue/events/") {
+	if !strings.Contains(body, "<rss") || !strings.Contains(body, "RSS Show") {
 		t.Errorf("rss body:\n%s", body)
+	}
+	// Item links must be the event's real address. This used to assert
+	// /patches/{slug}/events/{id}, a path the SPA never routed — feed readers
+	// followed it to the home quilt (issue #56).
+	if !strings.Contains(body, "https://quilt.test/events/") {
+		t.Errorf("rss item link is not the canonical event URL:\n%s", body)
+	}
+	if strings.Contains(body, "/patches/rss-venue/events/") {
+		t.Errorf("rss item link still uses the unrouted patch-scoped event path:\n%s", body)
 	}
 }
 

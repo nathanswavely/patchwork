@@ -1,28 +1,21 @@
 <script>
   import { Bell } from 'phosphor-svelte';
-  import { api } from '../lib/api.js';
-  import { getUnread, setUnread } from '../stores/notifications.svelte.js';
+  import { getUnread, refreshUnread } from '../stores/notifications.svelte.js';
 
   let { onOpen = () => {} } = $props();
 
   let intervalId = $state(null);
 
+  // The poll reconciles with the server (notifications can arrive while
+  // you sit on a page). Reading one drops the badge immediately instead,
+  // via the store — see notifications.svelte.js.
   $effect(() => {
-    fetchCount();
-    intervalId = setInterval(fetchCount, 60000);
+    refreshUnread();
+    intervalId = setInterval(refreshUnread, 60000);
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
   });
-
-  async function fetchCount() {
-    try {
-      const data = await api('notifications/count');
-      setUnread(data.unread || 0);
-    } catch {
-      // Silently fail
-    }
-  }
 </script>
 
 <div class="notif-container">

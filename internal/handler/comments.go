@@ -8,6 +8,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // allowedEmoji is the set of valid reaction emoji.
@@ -219,7 +220,7 @@ func CreateComment(db *database.DB) http.HandlerFunc {
 			EntityID: proposalID,
 			Title:    "New comment on: " + proposalTitle,
 			Body:     req.Body,
-			Link:     "/patches/" + nodeSlugN + "/governance/" + proposalID,
+			Link:     weblink.Proposal(nodeSlugN, proposalID),
 		})
 
 		// Return the created comment.

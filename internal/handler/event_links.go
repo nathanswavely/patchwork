@@ -13,6 +13,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // Event links (docs/adr/032): one owner, two consents. Admins on either
@@ -79,7 +80,7 @@ func loadLinkableEvent(db *database.DB, eventID string) (nodeID, title, status s
 func notifyLinkRequest(db *database.DB, confirmingNodeID, actorID, eventID, eventTitle, ownerSlug string) {
 	var slug, name, status string
 	db.QueryRow("SELECT slug, name, status FROM nodes WHERE id = ?", confirmingNodeID).Scan(&slug, &name, &status)
-	link := "/patches/" + ownerSlug + "/events/" + eventID
+	link := weblink.Event(eventID)
 	if status == "unclaimed" {
 		notify(notifications.Event{
 			Type:     notifications.AdminEventLinkRequest,
@@ -290,7 +291,7 @@ func finalizeConfirmedLink(db *database.DB, actorID, eventID, eventTitle, ownerN
 		ActorID:  actorID,
 		EntityID: eventID,
 		Title:    "Event linked: " + eventTitle,
-		Link:     "/patches/" + ownerSlug + "/events/" + eventID,
+		Link:     weblink.Event(eventID),
 	})
 
 	// Only public events federate (matching broadcastEventCreate).
