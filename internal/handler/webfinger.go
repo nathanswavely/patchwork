@@ -45,6 +45,9 @@ func WebFinger(db *database.DB) http.HandlerFunc {
 
 		// Look up user by username first, then node by slug.
 		// Both map to preferredUsername on their AP actors; users win on collision.
+		// Nodes resolve only while public: federation is public-only
+		// (docs/adr/024), and webfinger is the fediverse's front door — a
+		// private patch that resolved here would be discoverable by handle.
 		var actorURL string
 		var userID string
 		err := db.QueryRow(
@@ -55,7 +58,7 @@ func WebFinger(db *database.DB) http.HandlerFunc {
 		} else {
 			var nodeID string
 			err = db.QueryRow(
-				"SELECT id FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL", username,
+				"SELECT id FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'", username,
 			).Scan(&nodeID)
 			if err != nil {
 				http.Error(w, `{"error":"actor not found"}`, http.StatusNotFound)

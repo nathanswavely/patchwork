@@ -444,15 +444,17 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			args = append(args, tag)
 		}
 
-		// Visibility. The default listing is public-only; My Quilt deliberately
-		// is not. Every row the scoped query can reach is one the caller holds
-		// an active membership on, so a private patch they belong to is already
-		// theirs to see — the tree handler shows it on the quilt, and the map
-		// has to agree or markers disappear with no reason the viewer can read.
-		// The scoping is by the caller's own membership, so this widens nothing
-		// for anyone else. An explicit ?visibility= still narrows, as always.
-		if !myScope && visibility == "" {
-			visibility = "public"
+		// Visibility. Private is unlisted, not locked: GetNode serves a private
+		// patch by slug, but no discovery surface may enumerate them — so the
+		// public gate on the unscoped listing is unconditional, not a default
+		// the caller can override. ?visibility= only ever narrows: outside
+		// scope=my it filters within the public set (asking for private yields
+		// nothing), and under scope=my it filters within the caller's own
+		// memberships — every row the scoped query reaches is one they hold an
+		// active membership on, so a private patch they belong to is already
+		// theirs to see, and the quilt, map, and this listing all agree.
+		if !myScope {
+			conditions = append(conditions, "n.visibility = 'public'")
 		}
 		if visibility != "" {
 			conditions = append(conditions, "n.visibility = ?")

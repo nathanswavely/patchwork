@@ -198,7 +198,11 @@ func APNodeInbox(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Verify node exists and is active.
+		// Verify node exists and is active. Deliberately NOT gated on
+		// visibility: a remote follower of a patch that flipped
+		// public→private must still be able to deliver Undo(Follow) to
+		// clean up. New Follows of a non-public node are rejected in
+		// handleFollowNode.
 		var exists int
 		if err := db.QueryRow("SELECT 1 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL", nodeID).Scan(&exists); err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
