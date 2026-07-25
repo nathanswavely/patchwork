@@ -55,7 +55,6 @@
 {#if visible}
   <div class="intro-card" class:compact={variant === 'compact'}>
     {#if variant === 'full'}
-      <button class="intro-dismiss" onclick={dismiss} aria-label="Dismiss">&times;</button>
       <h2 class="intro-heading">{instanceName} is a quilt of the communities around you.</h2>
       <p class="intro-body">
         Every tile is a real group, placed near the groups it shares
@@ -65,6 +64,11 @@
         <a href="/about" class="intro-about" onclick={goAbout}>What is Patchwork?</a>
         <a href="/login" class="btn btn-primary intro-join" onclick={goJoin}>Join</a>
       </div>
+      <!-- The full card's only dismissal, and deliberately a worded one: a
+           × closes a box, this answers the card's actual question — you can
+           read this quilt without an account. Leaving Join as the only named
+           way forward implied otherwise. Dismisses for good, as the × did. -->
+      <button class="intro-lurk" onclick={dismiss}>I'll lurk for now</button>
     {:else}
       <span class="intro-line">{instanceName} is a quilt of the communities around you.</span>
       <a href="/about" class="intro-about" onclick={goAbout}>What is Patchwork?</a>
@@ -98,10 +102,13 @@
     bottom: 16px;
   }
 
-  .intro-dismiss {
+  /* Compact only. The one-line strip has no room for a worded decline, so
+     it keeps the × as its dismissal; the full card's is `.intro-lurk`. */
+  .intro-card.compact .intro-dismiss {
     position: absolute;
-    top: 6px;
+    top: 50%;
     right: 8px;
+    transform: translateY(-50%);
     border: none;
     background: none;
     color: var(--color-text-muted);
@@ -112,12 +119,12 @@
     opacity: 0.7;
   }
 
-  .intro-dismiss:hover {
+  .intro-card.compact .intro-dismiss:hover {
     opacity: 1;
   }
 
   .intro-heading {
-    margin: 0 22px 8px 0;
+    margin: 0 0 8px;
     font-size: 1rem;
     font-weight: 700;
   }
@@ -150,6 +157,26 @@
     font-size: 0.85rem;
   }
 
+  /* Quieter than both actions above it — declining should be easy to find
+     and never compete with them for attention. Still the full card's only
+     way out, so it can't recede any further than this. */
+  .intro-lurk {
+    display: block;
+    margin: 10px 0 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .intro-lurk:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
   /* Compact: one line, wraps to fit content instead of the full card's
      fixed measure — deep links never compete with the card for space.
      Centered just under the global bar on desktop. */
@@ -172,13 +199,6 @@
   .intro-card.compact .intro-about {
     font-size: 0.82rem;
     white-space: nowrap;
-  }
-
-  .intro-card.compact .intro-dismiss {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 8px;
   }
 
   /* Mobile keeps the full-width strip under the bar for both variants.
