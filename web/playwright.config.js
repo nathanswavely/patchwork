@@ -37,6 +37,19 @@ export default defineConfig({
   // Spec files run in parallel workers against one shared backend + database.
   // This is safe because each mutating spec owns the entities it mutates —
   // see the data-ownership map in e2e/setup.js before adding mutations.
+  //
+  // Playwright's default is '50%', which left CI using 2 of the runner's 4
+  // cores while this job was the whole critical path (~4:42 of a 6:20 e2e
+  // job). '100%' in CI only; local runs keep the default so an interactive
+  // `npx playwright test` doesn't saturate a machine you're working on.
+  //
+  // Parallelism is per FILE, and the ownership map is already written for
+  // concurrent files, so this changes how many run at once, not the contract.
+  // Two things to watch: SQLite write contention (busy_timeout is 5s, which
+  // should absorb it) and timing-sensitive assertions getting more exposure —
+  // the empty-bell flake noted in setup.js was a contract violation rather
+  // than a worker-count problem, but 4 workers is where a latent one shows.
+  ...(process.env.CI ? { workers: '100%' } : {}),
   globalSetup: './e2e/global-setup.js',
   use: {
     baseURL: WEB_URL,
