@@ -8,18 +8,18 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 )
 
-// Migration 041 rewrites notification links that were built to shapes the SPA
+// Migration 042 rewrites notification links that were built to shapes the SPA
 // never routed (issue #56). setupTestDB starts from an empty table, so there
 // is nothing for the migration to have repaired — these tests seed the legacy
 // rows and then run the migration's own SQL against them.
 func replayLinkRepair(t *testing.T, db *database.DB) {
 	t.Helper()
-	sql, err := patchwork.MigrationsFS.ReadFile("migrations/041_fix_notification_links.sql")
+	sql, err := patchwork.MigrationsFS.ReadFile("migrations/042_fix_notification_links.sql")
 	if err != nil {
-		t.Fatalf("read migration 041: %v", err)
+		t.Fatalf("read migration 042: %v", err)
 	}
 	if _, err := db.Exec(string(sql)); err != nil {
-		t.Fatalf("run migration 041: %v", err)
+		t.Fatalf("run migration 042: %v", err)
 	}
 }
 
