@@ -181,9 +181,13 @@
     right: 8px;
   }
 
-  /* Mobile keeps the full-width strip under the bar for both variants. */
+  /* Mobile keeps the full-width strip under the bar for both variants.
+     Both selectors carry two classes so they outrank the desktop
+     `.intro-card:not(.compact)` placement — a one-class override loses to
+     it and leaves the full card pinned top *and* bottom, stretched to the
+     whole viewport instead of hugging its text. */
   @media (max-width: 640px) {
-    .intro-card,
+    .intro-card:not(.compact),
     .intro-card.compact {
       left: 12px;
       right: 12px;
