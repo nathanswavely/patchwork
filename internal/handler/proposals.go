@@ -431,8 +431,12 @@ func resolveProposal(db *database.DB, proposalID string) string {
 		newStatus = "approved"
 	}
 
-	// Update status
-	db.Exec("UPDATE proposals SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", newStatus, proposalID)
+	// Update status and state together. `state` is what the proposal page
+	// renders from (migration 016) — moving only `status` left a resolved
+	// proposal still showing an open vote. 'approved' is a resting state:
+	// the community decided, an admin still makes it official, which is the
+	// approved → in_effect step the state machine describes.
+	db.Exec("UPDATE proposals SET status = ?, state = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", newStatus, newStatus, proposalID)
 
 	// Auto-apply amendment if approved and configured
 	if newStatus == "approved" && p.ProposalType == "amendment" && p.TargetDoc != "" && gc.AmendmentAutoApply {
@@ -449,6 +453,12 @@ func resolveProposal(db *database.DB, proposalID string) string {
 					governance.SyncRulesToDB(db, governance.GetDataDir(), p.NodeID)
 				}
 				syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
+				// The merge already happened, so there is nothing left for an
+				// admin to make official — skip 'approved' and land where the
+				// manual apply path lands. applied_by stays NULL: no person
+				// applied this one.
+				now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+				db.Exec("UPDATE proposals SET state = 'in_effect', applied_at = ?, updated_at = ? WHERE id = ?", now, now, proposalID)
 			}
 		}
 	}
@@ -503,7 +513,12 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			}
 			if parseErr == nil && time.Now().UTC().After(endsAt) {
 				if newStatus := resolveProposal(db, proposalID); newStatus != "" {
-					p.Status = newStatus
+					// Re-read rather than patching Status alone: resolution
+					// moves state too, and an auto-applied amendment also
+					// stamps applied_at.
+					db.QueryRow(
+						`SELECT status, COALESCE(state,''), COALESCE(applied_at,'') FROM proposals WHERE id = ?`, proposalID,
+					).Scan(&p.Status, &p.State, &appliedAt)
 				}
 			}
 		}
@@ -764,8 +779,10 @@ func WithdrawProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Both columns: `state` is what the SPA renders from (migration 016),
+		// so leaving it at 'voting' left the page looking untouched.
 		_, err = db.Exec(
-			"UPDATE proposals SET status = 'withdrawn', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+			"UPDATE proposals SET status = 'withdrawn', state = 'withdrawn', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
 			proposalID,
 		)
 		if err != nil {
