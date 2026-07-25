@@ -75,7 +75,7 @@
   }
 
   // Approved with zero votes = a direct change, born applied under
-  // admin-decides rules (docs/adr/035) — no vote to speak of, so the row
+  // admin-decides rules (docs/adr/041) — no vote to speak of, so the row
   // says "applied" rather than "approved".
   function isDirectRow(p) {
     return p.status === 'approved' && !((p.approve_count || 0) + (p.reject_count || 0) + (p.abstain_count || 0));

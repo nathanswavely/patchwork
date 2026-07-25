@@ -126,7 +126,7 @@ func TestVoteAndChangeVote(t *testing.T) {
 	nodeID := createTestNode(t, db, admin.ID, "Vote Node", "vote-node", "open")
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	// A second eligible voter keeps the electorate above one — a sole
-	// voter's decisive vote resolves immediately (docs/adr/035), which
+	// voter's decisive vote resolves immediately (docs/adr/041), which
 	// would make the vote change below impossible.
 	other, _ := createTestUser(t, db, "pvoter4", "member")
 	createTestMembership(t, db, other.ID, nodeID, "member", "active")
@@ -361,7 +361,7 @@ func TestCreateAmendmentProposal_AdminFastTrackApplies(t *testing.T) {
 	dataDir := setupGovernanceForNode(t, nodeID)
 
 	// Admin-decides rules: the one decision method that applies an admin's
-	// change directly (docs/adr/035).
+	// change directly (docs/adr/041).
 	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
 		`{"decision_method":"admin","quorum_percent":0,"default_vote_duration_hours":0,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0}`,
 		nodeID)
@@ -419,7 +419,7 @@ func TestCreateAmendmentProposal_VotingRulesDoNotBypass(t *testing.T) {
 
 	// Casual-style rules: maintainer leadership, no quorum, majority vote.
 	// These used to fast-track admin proposals past the vote the charter
-	// promised; under docs/adr/035 only decision_method "admin" applies
+	// promised; under docs/adr/041 only decision_method "admin" applies
 	// directly, so this proposal must open for voting.
 	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
 		`{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"leadership_model":"maintainer","succession_policy":"longest_tenure","min_voting_tenure_days":0}`,
@@ -478,7 +478,7 @@ func TestSoleVoterEarlyClose(t *testing.T) {
 	}
 
 	// A decisive vote from the only eligible voter resolves immediately
-	// (docs/adr/035) — no waiting out the 72-hour window.
+	// (docs/adr/041) — no waiting out the 72-hour window.
 	voteBody = map[string]string{"value": "approve"}
 	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", voteBody, adminToken)
 	w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)

@@ -11,7 +11,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 )
 
-// TestCreateNode_SyncsTemplateRules covers the creation half of docs/adr/035:
+// TestCreateNode_SyncsTemplateRules covers the creation half of docs/adr/041:
 // the template's rules file must land in the governance_config cache at
 // birth — with the creation form's membership choices absorbed into the
 // rules file first, not clobbered by the template's values.
@@ -74,7 +74,7 @@ func TestCreateNode_SyncsTemplateRules(t *testing.T) {
 	}
 }
 
-// TestBackfillGovernanceConfig covers the startup half of docs/adr/035:
+// TestBackfillGovernanceConfig covers the startup half of docs/adr/041:
 // nodes created while CreateNode forked without syncing get their cache
 // filled from git, with the DB's live membership settings absorbed rather
 // than overwritten; nodes with a populated cache are left alone.

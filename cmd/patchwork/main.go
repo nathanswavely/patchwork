@@ -135,7 +135,7 @@ func main() {
 	// Fill the governance_config cache for nodes created while CreateNode
 	// forked rules without syncing them — the rules in force become readable
 	// from the DB, which is what makes admin-decides patches actually behave
-	// as admin-decides (docs/adr/035). Warn-and-continue: a partial backfill
+	// as admin-decides (docs/adr/041). Warn-and-continue: a partial backfill
 	// leaves the affected nodes on the voting defaults they already had.
 	if n, err := handler.BackfillGovernanceConfig(db); err != nil {
 		log.Printf("warning: governance config backfill: %v", err)

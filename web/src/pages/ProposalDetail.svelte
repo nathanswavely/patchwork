@@ -36,7 +36,7 @@
     proposal?.target_doc === 'governance-rules.json' || proposal?.target_doc === 'Governance Rules'
   );
   // A record born applied under admin-decides rules — no vote ever happened,
-  // so the page shows an applied change, not a proposal (docs/adr/035).
+  // so the page shows an applied change, not a proposal (docs/adr/041).
   let isDirectChange = $derived(
     effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
   );

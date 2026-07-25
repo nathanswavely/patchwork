@@ -64,31 +64,37 @@ func BackfillNodeGovernanceRepos(db *database.DB) (int, error) {
 // BackfillGovernanceConfig fills the governance_config cache for live nodes
 // that have none. Until this sync existed, CreateNode forked the template's
 // rules file but never cached it, so every DB read path saw voting defaults
-// and the admin-decides fast-track never fired (docs/adr/035). For each such
+// and the admin-decides fast-track never fired (docs/adr/041). For each such
 // node the DB's live membership_policy — and follower_permissions where they
 // were explicitly set — are absorbed into the rules file first: they were
 // the enforced values while the cache was empty, and a blind sync would
 // clobber them with template values. Nodes with a populated cache are left
 // alone; their git and DB stores are already kept in sync by the amendment
 // apply paths. Must run after BackfillNodeGovernanceRepos so every node has
-// a repo. Returns the number of nodes synced.
+// a repo. Active nodes only — unclaimed patches carry no governance repo at
+// all (docs/adr/039), so there are no rules to sync until a claim's setup
+// completes. Returns the number of nodes synced.
 func BackfillGovernanceConfig(db *database.DB) (int, error) {
 	dataDir := governance.GetDataDir()
 	if dataDir == "" {
 		return 0, fmt.Errorf("governance data dir not set")
 	}
 
-	// The schema DEFAULT stamped on every node row by migration 013 — the
-	// value a node still carries if and only if no rules sync has ever run
-	// for it. No template sync can reproduce this exact string (every
-	// template carries leadership fields the marshaler would include), so
-	// it is a reliable never-synced marker rather than a chosen config.
+	// The two shapes a never-synced config can wear. Rows created before
+	// migration 041 were stamped by it with the 013 schema DEFAULT plus the
+	// default leadership block; rows created after carry the raw 013 DEFAULT
+	// (SQLite can't change an existing column's default) whenever the
+	// creation-time sync failed. The stamped string is also what a sync of
+	// pure-default rules marshals, so a default-rules node re-syncs on each
+	// startup — WriteRules skips the no-op git write, and the DB rewrite is
+	// same-values, so the repeat is cheap and changes nothing.
 	const migration013DefaultGC = `{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0}`
+	const migration041DefaultGC = `{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0,"leadership_model":"maintainer","succession_method":"admin_nominate","max_admins":3,"inactivity_days":90}`
 
 	rows, err := db.Query(`SELECT id, membership_policy, COALESCE(follower_permissions,'')
-		FROM nodes WHERE status IN ('active','unclaimed') AND removed_at IS NULL
-		AND (governance_config IS NULL OR governance_config = '' OR governance_config = '{}' OR governance_config = ?)`,
-		migration013DefaultGC)
+		FROM nodes WHERE status = 'active' AND removed_at IS NULL
+		AND (governance_config IS NULL OR governance_config = '' OR governance_config = '{}' OR governance_config = ? OR governance_config = ?)`,
+		migration013DefaultGC, migration041DefaultGC)
 	if err != nil {
 		return 0, fmt.Errorf("list nodes: %w", err)
 	}

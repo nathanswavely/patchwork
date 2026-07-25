@@ -739,11 +739,18 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// membership choices into the template's rules file, and sync the
 		// rules into the DB cache. Without the sync, the rules in force are
 		// invisible to every DB read path — the gap that left admin-decides
-		// patches waiting out voting windows (docs/adr/035). Skipped entirely
+		// patches waiting out voting windows (docs/adr/041). Skipped entirely
 		// when the fork fails; the startup backfill heals such nodes later.
 		dataDir := governance.GetDataDir()
 		if err := governance.ForkForNode(dataDir, id, req.Template); err != nil {
 			log.Printf("warning: governance fork for node %s: %v", id, err)
+			// Still cache complete default rules on the row — the INSERT
+			// above leaves the column default, which predates the leadership
+			// fields (migration 041). The startup backfill heals the git side
+			// once the repo can be created.
+			if err := governance.SyncConfigToDB(db, dataDir, id); err != nil {
+				log.Printf("warning: governance config sync for node %s: %v", id, err)
+			}
 		} else {
 			if rules, err := governance.ReadRules(dataDir, id); err == nil {
 				rules.MembershipPolicy = req.MembershipPolicy
@@ -757,12 +764,6 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			if err := governance.SyncRulesToDB(db, dataDir, id); err != nil {
 				log.Printf("warning: sync governance rules for node %s: %v", id, err)
 			}
-		}
-		// Cache the template's rules on the row — the INSERT above leaves the
-		// column default, which predates the leadership fields (migration 041).
-		// Falls back to complete defaults when the fork failed or is gitless.
-		if err := governance.SyncConfigToDB(db, governance.GetDataDir(), id); err != nil {
-			log.Printf("warning: governance config sync for node %s: %v", id, err)
 		}
 
 		auth.LogAuditEvent(db, user.ID, "node.create", "node", id, "{}", clientIP(r))

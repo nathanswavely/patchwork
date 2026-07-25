@@ -239,7 +239,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		var gc model.GovernanceConfig
 		json.Unmarshal([]byte(gcJSON), &gc)
 
-		// Ceremony follows the rules in force (docs/adr/035): only the
+		// Ceremony follows the rules in force (docs/adr/041): only the
 		// admin-decides decision method lets an admin apply directly — a
 		// direct change, born applied. Every voting method votes, admins
 		// included; the old maintainer+zero-quorum bypass let admins skip a
@@ -262,7 +262,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Apply a direct change now (docs/adr/035). Amendments merge their
+		// Apply a direct change now (docs/adr/041). Amendments merge their
 		// branch first; a merge failure leaves the record open rather than
 		// claiming an application that didn't happen.
 		if autoApplyNow {
@@ -293,6 +293,11 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 					createdAt, user.ID, id); err != nil {
 					log.Printf("proposal %s: direct-change status update failed: %v", id, err)
 				}
+			} else {
+				// The INSERT above stamped state 'in_effect'; roll it back so
+				// the unapplied record reads as an open proposal, not an
+				// applied change.
+				db.Exec("UPDATE proposals SET state = 'voting' WHERE id = ?", id)
 			}
 		}
 
@@ -372,7 +377,7 @@ func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (
 // amendment auto-apply, audit event, AP broadcast. Returns the new status
 // ("approved" or "rejected"), or "" when the proposal stayed open (not open
 // to begin with, or quorum not met). Callers decide when resolution is due —
-// the voting window expiring, or the sole-voter early close (docs/adr/035).
+// the voting window expiring, or the sole-voter early close (docs/adr/041).
 func resolveProposal(db *database.DB, proposalID string) string {
 	var p model.Proposal
 	err := db.QueryRow(
@@ -545,7 +550,7 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		// Electorate size — drives the sole-voter notice in the UI
-		// (docs/adr/035).
+		// (docs/adr/041).
 		var gcJSON string
 		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", p.NodeID).Scan(&gcJSON)
 		var gc model.GovernanceConfig
@@ -686,7 +691,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 
 		auth.LogAuditEvent(db, user.ID, "proposal.vote", "proposal", proposalID, `{"value":"`+req.Value+`"}`, clientIP(r))
 
-		// Sole-voter early close (docs/adr/035): when exactly one person is
+		// Sole-voter early close (docs/adr/041): when exactly one person is
 		// eligible to vote and that person has cast a decisive vote, the
 		// outcome is settled — a voting window for an electorate of one
 		// holds space for nobody. An abstain never closes early: it reads

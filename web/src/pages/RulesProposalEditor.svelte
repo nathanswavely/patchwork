@@ -16,7 +16,7 @@
   let loading = $state(true);
   let error = $state('');
 
-  // Direct change (docs/adr/035): under admin-decides rules an admin's
+  // Direct change (docs/adr/041): under admin-decides rules an admin's
   // submission applies immediately — the words propose/submit/vote never
   // appear for one.
   let directChange = $derived(isAdmin && currentRules?.decision_method === 'admin');

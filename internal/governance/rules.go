@@ -11,24 +11,24 @@ import (
 // GovernanceRules is the complete governance configuration stored in governance-rules.json.
 type GovernanceRules struct {
 	// Decision making
-	DecisionMethod      string                    `json:"decision_method"`
-	QuorumPercent       int                       `json:"quorum_percent"`
-	DefaultVoteDuration int                       `json:"default_vote_duration_hours"`
-	AmendmentThreshold  string                    `json:"amendment_threshold"`
-	AmendmentAutoApply  bool                      `json:"amendment_auto_apply"`
-	MinVotingTenureDays int                       `json:"min_voting_tenure_days"`
+	DecisionMethod      string `json:"decision_method"`
+	QuorumPercent       int    `json:"quorum_percent"`
+	DefaultVoteDuration int    `json:"default_vote_duration_hours"`
+	AmendmentThreshold  string `json:"amendment_threshold"`
+	AmendmentAutoApply  bool   `json:"amendment_auto_apply"`
+	MinVotingTenureDays int    `json:"min_voting_tenure_days"`
 
 	// Leadership & succession
-	LeadershipModel     string                    `json:"leadership_model"`
-	SuccessionMethod    string                    `json:"succession_method"`
-	SuccessionPolicy    string                    `json:"succession_policy"`
-	AdminTermMonths     int                       `json:"admin_term_months"`
-	MaxAdmins           int                       `json:"max_admins"`
-	InactivityDays      int                       `json:"inactivity_days"`
+	LeadershipModel  string `json:"leadership_model"`
+	SuccessionMethod string `json:"succession_method"`
+	SuccessionPolicy string `json:"succession_policy"`
+	AdminTermMonths  int    `json:"admin_term_months"`
+	MaxAdmins        int    `json:"max_admins"`
+	InactivityDays   int    `json:"inactivity_days"`
 
 	// Membership
 	MembershipPolicy    string                    `json:"membership_policy"`
-	FollowerPermissions model.FollowerPermissions  `json:"follower_permissions"`
+	FollowerPermissions model.FollowerPermissions `json:"follower_permissions"`
 }
 
 // DefaultRules returns the default governance rules.
