@@ -98,7 +98,12 @@ jobs:
     # when signup started requiring a chosen username (adr/013) and nobody
     # noticed, so the regression test for the 2026-07-19 data-loss incident
     # was dead for weeks. Nothing else in CI exercises the container.
-    needs: test
+    #
+    # Deliberately NOT gated on `test`: this job builds the image from source
+    # and consumes nothing `test` produces, so the dependency bought only a
+    # "don't burn minutes on a doomed PR" gate — and Actions minutes are free
+    # on a public repo. It cost ~2min of wall clock on every PR to save
+    # nothing. Publishing is still fully gated; see `image` below.
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -113,7 +118,10 @@ jobs:
     # isolated stacks on checkout-derived ports (web/e2e/ports.js) and fall back
     # to patchwork.yaml.example, so the job needs no services and no setup
     # beyond toolchains and a Chromium.
-    needs: test
+    #
+    # Not gated on `test` either, for the same reason as `smoke` above: the
+    # Playwright config builds web/dist itself when it's missing, so this job
+    # depends on no earlier artifact. All three jobs now start at once.
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
