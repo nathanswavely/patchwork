@@ -209,6 +209,13 @@
         >
           Build your quilt &rarr;
         </button>
+        <!-- The way out of the flow, offered at its start rather than only
+             at its end: someone who wants to look around before following
+             anything shouldn't have to walk two steps to be let go. Same
+             wording and same handleSkip as step 3 — one action, one name. -->
+        <button class="skip-link" onclick={handleSkip}>
+          I'll explore on my own
+        </button>
       </div>
 
     {:else if step === 2}
