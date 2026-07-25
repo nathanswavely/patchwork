@@ -95,6 +95,13 @@ func APUser(db *database.DB) http.HandlerFunc {
 
 // APNode serves GET /ap/nodes/{id}.
 // Returns an Organization actor with publicKey, inbox, outbox, followers.
+//
+// Federation is public-only (docs/adr/024): a private patch has no actor
+// document at all — resolving one would make private patches discoverable and
+// followable from the fediverse. A patch that flips public→private therefore
+// reads as deleted from outside, which is exactly the indistinguishability
+// docs/adr/024 promises; its ap_followers rows survive the flip, so flipping
+// back to public resumes federation with the same followers.
 func APNode(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		nodeID := r.PathValue("id")
@@ -106,7 +113,7 @@ func APNode(db *database.DB) http.HandlerFunc {
 		if !acceptsActivityPub(r) {
 			domain := ap.GetDomain()
 			var slug string
-			err := db.QueryRow("SELECT slug FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL", nodeID).Scan(&slug)
+			err := db.QueryRow("SELECT slug FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'", nodeID).Scan(&slug)
 			if err != nil {
 				http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 				return
@@ -119,7 +126,7 @@ func APNode(db *database.DB) http.HandlerFunc {
 		var publicKey sql.NullString
 		err := db.QueryRow(
 			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, website, visibility, membership_policy, created_at, updated_at, public_key
-			 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, nodeID,
+			 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'`, nodeID,
 		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Website, &n.Visibility, &n.MembershipPolicy, &n.CreatedAt, &n.UpdatedAt, &publicKey)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
@@ -371,9 +378,11 @@ func APNodeFollowers(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Verify node exists.
+		// Verify node exists and federates: like the outbox, the followers
+		// collection is a fully public surface, so a private patch doesn't
+		// serve one (docs/adr/024).
 		var exists int
-		if err := db.QueryRow("SELECT 1 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL", nodeID).Scan(&exists); err != nil {
+		if err := db.QueryRow("SELECT 1 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'", nodeID).Scan(&exists); err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
 		}

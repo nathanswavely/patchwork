@@ -29,6 +29,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/safehttp"
 )
 
 // setupWindow is how long a verified or approved claim remains a valid,
@@ -37,9 +38,11 @@ import (
 const setupWindow = 14 * 24 * time.Hour
 
 // External lookups used by claim verification, swappable in tests.
+// ClaimHTTPClient is SSRF-guarded: meta_tag verification fetches a page on
+// the claimed domain, a URL someone outside the instance influences.
 var (
 	ClaimLookupTXT  func(domain string) ([]string, error) = net.LookupTXT
-	ClaimHTTPClient                                       = &http.Client{Timeout: 10 * time.Second}
+	ClaimHTTPClient                                       = safehttp.NewClient(10 * time.Second)
 	ClaimSendMail   func(cfg config.SMTP, to []string, msg []byte) error = mail.Send
 )
 

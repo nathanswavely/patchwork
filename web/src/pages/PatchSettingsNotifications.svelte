@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import ToggleSwitch from '../components/ToggleSwitch.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -59,12 +60,7 @@
             <span class="category-label">{cat.label}</span>
             <span class="category-desc muted">{cat.description}</span>
           </div>
-          <label class="toggle-label">
-            <input type="checkbox" checked={cat.enabled} onchange={() => toggle(cat.id)} />
-            <span class="toggle-track">
-              <span class="toggle-thumb"></span>
-            </span>
-          </label>
+          <ToggleSwitch checked={cat.enabled} label={cat.label} onchange={() => toggle(cat.id)} />
         </div>
       {/each}
     </div>
@@ -113,39 +109,4 @@
     font-size: 0.8rem;
   }
 
-  .toggle-label {
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  .toggle-label input { display: none; }
-
-  .toggle-track {
-    display: block;
-    width: 38px;
-    height: 22px;
-    border-radius: 11px;
-    background: var(--color-text-muted);
-    position: relative;
-    transition: background 150ms ease;
-  }
-
-  .toggle-label input:checked + .toggle-track {
-    background: var(--color-primary);
-  }
-
-  .toggle-thumb {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--color-surface);
-    transition: transform 150ms ease;
-  }
-
-  .toggle-label input:checked + .toggle-track .toggle-thumb {
-    transform: translateX(16px);
-  }
 </style>

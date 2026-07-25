@@ -196,6 +196,74 @@ func TestListNodesScopeMyAnonymousReturnsEmpty(t *testing.T) {
 	}
 }
 
+// ?visibility= only ever narrows. Private patches are unlisted, not locked:
+// reachable by slug, never enumerable — so an explicit ?visibility=private
+// must not widen the unscoped listing past its public gate, for anonymous
+// callers or even for a member of the private patch.
+func TestListNodesVisibilityParamCannotWiden(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "vis-widen-owner", "member")
+	member, memberToken := createTestUser(t, db, "vis-widen-member", "member")
+
+	pub := createTestNode(t, db, owner.ID, "Public", "vis-widen-public", "open")
+	priv := createTestNode(t, db, owner.ID, "Private", "vis-widen-private", "invite_only")
+	if _, err := db.Exec(`UPDATE nodes SET visibility = 'private' WHERE id = ?`, priv); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+	createTestMembership(t, db, member.ID, priv, "member", "active")
+
+	// Anonymous ?visibility=private enumerates nothing.
+	r := httptest.NewRequest("GET", "/api/v1/nodes?visibility=private&limit=100", nil)
+	w := serveOptionalAuthMux(t, db, "GET", "/api/v1/nodes", handler.ListNodes(db), r)
+	resp := decodeListNodes(t, w)
+	if len(resp.Items) != 0 {
+		t.Fatalf("anonymous ?visibility=private must return nothing, got %d patches", len(resp.Items))
+	}
+
+	// Signed-in, unscoped: same answer — membership only surfaces via scope=my.
+	r = authedRequest("GET", "/api/v1/nodes?visibility=private&limit=100", nil, memberToken)
+	w = serveOptionalAuthMux(t, db, "GET", "/api/v1/nodes", handler.ListNodes(db), r)
+	resp = decodeListNodes(t, w)
+	if len(resp.Items) != 0 {
+		t.Fatalf("unscoped ?visibility=private must return nothing for signed-in callers, got %d patches", len(resp.Items))
+	}
+
+	// An explicit ?visibility=public stays a no-op narrowing.
+	r = httptest.NewRequest("GET", "/api/v1/nodes?visibility=public&limit=100", nil)
+	w = serveOptionalAuthMux(t, db, "GET", "/api/v1/nodes", handler.ListNodes(db), r)
+	ids := listNodeIDs(decodeListNodes(t, w))
+	if !ids[pub] {
+		t.Error("expected the public patch under ?visibility=public")
+	}
+	if ids[priv] {
+		t.Error("private patch must not appear under any visibility filter")
+	}
+}
+
+// Under scope=my the visibility param narrows within the caller's own
+// memberships — the one place a private row is theirs to filter.
+func TestListNodesScopeMyVisibilityNarrows(t *testing.T) {
+	db := setupTestDB(t)
+	user, token := createTestUser(t, db, "vis-my-user", "member")
+	owner, _ := createTestUser(t, db, "vis-my-owner", "member")
+
+	pub := createTestNode(t, db, owner.ID, "Mine Public", "vis-my-public", "open")
+	priv := createTestNode(t, db, owner.ID, "Mine Private", "vis-my-private", "invite_only")
+	if _, err := db.Exec(`UPDATE nodes SET visibility = 'private' WHERE id = ?`, priv); err != nil {
+		t.Fatalf("set private: %v", err)
+	}
+	createTestMembership(t, db, user.ID, pub, "member", "active")
+	createTestMembership(t, db, user.ID, priv, "member", "active")
+
+	r := authedRequest("GET", "/api/v1/nodes?scope=my&visibility=private&limit=100", nil, token)
+	w := serveOptionalAuthMux(t, db, "GET", "/api/v1/nodes", handler.ListNodes(db), r)
+	resp := decodeListNodes(t, w)
+
+	if len(resp.Items) != 1 || resp.Items[0].ID != priv {
+		t.Fatalf("expected only my private patch, got %+v", resp.Items)
+	}
+}
+
 // scope=my composes with the other filters rather than replacing them.
 func TestListNodesScopeMyWithTagFilter(t *testing.T) {
 	db := setupTestDB(t)

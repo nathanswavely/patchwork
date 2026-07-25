@@ -81,6 +81,9 @@
   const LABEL_FONT = '600 13px "Space Grotesk Variable", system-ui, sans-serif';
   // Below this container width the quilt is a phone-sized surface.
   const NARROW_VW = 700;
+  // How far the ideal tile size may drift from the one on screen before a
+  // resize earns a full relayout rather than a view adjustment (handleResize).
+  const BASE_UNIT_DRIFT = 0.1;
 
   // Measured badge text metrics, cached per name (names don't change
   // mid-session; the cache is busted once when the display font loads).
@@ -111,6 +114,18 @@
     }
     measureCache.set(name, m);
     return m;
+  }
+
+  /**
+   * Pixel size of one grid cell. The only thing about the container the tile
+   * geometry depends on: the packing itself (quiltLayout / composeGroupLayouts)
+   * takes no size input, so two container sizes that agree here produce
+   * identical tiles — which is what lets handleResize skip the rebuild.
+   */
+  function computeBaseUnit(vw, vh, n) {
+    const contentSize = Math.min(vw - Math.round(vw * insetRight) - 32, vh - 64);
+    const gridSide = Math.ceil(Math.sqrt(n * 3) * 1.3);
+    return Math.max(30, Math.min(80, Math.floor(contentSize / gridSide)));
   }
 
   /** Fit padding — a phone can't spare the desktop gutters. */
@@ -549,11 +564,7 @@
     const padRight = Math.round(vw * insetRight);
 
     const allChildren = treeData.children;
-    const contentSize = Math.min(vw - padLeft - padRight - 32, vh - 64);
-    const n = allChildren.length;
-    const estimatedCells = n * 3;
-    const gridSide = Math.ceil(Math.sqrt(estimatedCells) * 1.3);
-    baseUnit = Math.max(30, Math.min(80, Math.floor(contentSize / gridSide)));
+    baseUnit = computeBaseUnit(vw, vh, allChildren.length);
 
     const layout = groupsMeta
       ? composeGroupLayouts(groupsMeta, new Map([['home', affinityData]]))
@@ -934,6 +945,138 @@
       </div>`;
   }
 
+  // --- LABEL DRAG GESTURES ---
+  // Name badges are DOM elements stacked above the svg, so d3's zoom never
+  // sees a press that lands on one — every badge was a dead spot: on a phone
+  // the finger, and on a desktop the cursor, had to find bare fabric to pan.
+  // Drive the zoom behavior by hand instead, and only count the sequence as a
+  // tap/click if the pointer stayed put. (Mid-gesture the badge is rebuilt and
+  // detached by updateLabels, so the move/end listeners live on window, not on
+  // the element.)
+  const TAP_SLOP = 10; // px of travel still forgiven as a tap
+  const DRAG_SLOP = 4; // a mouse is steadier than a finger — commit sooner
+  let labelGesture = null;
+  let labelGestureMoved = false;
+
+  function touchById(list, id) {
+    for (const t of list) if (t.identifier === id) return t;
+    return null;
+  }
+
+  function touchDistance(a, b) {
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  }
+
+  function panQuiltBy(dxScreen, dyScreen) {
+    if (!svgSelection || !zoomBehavior) return;
+    const k = currentTransform.k || 1;
+    svgSelection.interrupt('zoomFit');
+    zoomBehavior.translateBy(svgSelection, dxScreen / k, dyScreen / k);
+  }
+
+  function zoomQuiltBy(ratio, clientX, clientY) {
+    if (!svgSelection || !zoomBehavior) return;
+    const node = svgSelection.node();
+    if (!node) return;
+    const rect = node.getBoundingClientRect();
+    svgSelection.interrupt('zoomFit');
+    zoomBehavior.scaleBy(svgSelection, ratio, [clientX - rect.left, clientY - rect.top]);
+  }
+
+  function onLabelTouchMove(event) {
+    if (!labelGesture) return;
+    if (labelGesture.mode === 'pan') {
+      const t = touchById(event.touches, labelGesture.id);
+      if (!t) return;
+      const dx = t.clientX - labelGesture.x;
+      const dy = t.clientY - labelGesture.y;
+      // Under the slop the finger is still resolving into a tap — holding the
+      // anchor here keeps a shaky tap from nudging the quilt.
+      if (!labelGestureMoved && Math.hypot(dx, dy) < TAP_SLOP) return;
+      labelGestureMoved = true;
+      labelGesture.x = t.clientX;
+      labelGesture.y = t.clientY;
+      panQuiltBy(dx, dy);
+    } else {
+      const a = touchById(event.touches, labelGesture.ids[0]);
+      const b = touchById(event.touches, labelGesture.ids[1]);
+      if (!a || !b) return;
+      const dist = touchDistance(a, b);
+      if (labelGesture.dist > 0 && dist > 0) {
+        zoomQuiltBy(dist / labelGesture.dist, (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2);
+      }
+      labelGesture.dist = dist;
+    }
+  }
+
+  function onLabelMouseMove(event) {
+    if (!labelGesture || labelGesture.mode !== 'drag') return;
+    // The button went up somewhere we couldn't hear it (outside the window,
+    // over a native menu) — don't keep dragging the quilt around.
+    if (!(event.buttons & 1)) {
+      endLabelGesture();
+      return;
+    }
+    const dx = event.clientX - labelGesture.x;
+    const dy = event.clientY - labelGesture.y;
+    if (!labelGestureMoved && Math.hypot(dx, dy) < DRAG_SLOP) return;
+    labelGestureMoved = true;
+    labelGesture.x = event.clientX;
+    labelGesture.y = event.clientY;
+    if (tooltip) tooltip.style.display = 'none'; // a drag isn't a hover
+    panQuiltBy(dx, dy);
+  }
+
+  function endLabelGesture() {
+    labelGesture = null;
+    window.removeEventListener('touchmove', onLabelTouchMove);
+    window.removeEventListener('touchend', endLabelGesture);
+    window.removeEventListener('touchcancel', endLabelGesture);
+    window.removeEventListener('mousemove', onLabelMouseMove);
+    window.removeEventListener('mouseup', endLabelGesture);
+  }
+
+  function attachLabelGestures(el) {
+    el.addEventListener('touchstart', (event) => {
+      endLabelGesture();
+      const touches = event.touches;
+      if (touches.length === 1) {
+        labelGesture = {
+          mode: 'pan',
+          id: touches[0].identifier,
+          x: touches[0].clientX,
+          y: touches[0].clientY,
+        };
+        labelGestureMoved = false;
+      } else if (touches.length === 2) {
+        labelGesture = {
+          mode: 'pinch',
+          ids: [touches[0].identifier, touches[1].identifier],
+          dist: touchDistance(touches[0], touches[1]),
+        };
+        labelGestureMoved = true; // a pinch is never a tap
+      } else {
+        return;
+      }
+      window.addEventListener('touchmove', onLabelTouchMove, { passive: true });
+      window.addEventListener('touchend', endLabelGesture, { passive: true });
+      window.addEventListener('touchcancel', endLabelGesture, { passive: true });
+    }, { passive: true });
+
+    el.addEventListener('mousedown', (event) => {
+      if (event.button !== 0) return; // left button only, as d3's zoom does
+      endLabelGesture();
+      labelGesture = { mode: 'drag', x: event.clientX, y: event.clientY };
+      labelGestureMoved = false;
+      // Keeps the drag from turning into a text selection of the patch name.
+      // The click still fires on mouseup, which is where the tap/drag split
+      // gets settled.
+      event.preventDefault();
+      window.addEventListener('mousemove', onLabelMouseMove);
+      window.addEventListener('mouseup', endLabelGesture);
+    });
+  }
+
   function updateLabels() {
     if (!labelsEl) return;
     if (!showLabels) { labelsEl.innerHTML = ''; return; }
@@ -1081,8 +1224,17 @@
         if (tooltip) tooltip.style.display = 'none';
       });
       label.addEventListener('click', () => {
+        // A pan that started on this badge still ends in a click (synthesized
+        // on touch, native on mouseup) — dragging the quilt shouldn't open
+        // whatever happened to be under the pointer.
+        if (labelGestureMoved) {
+          labelGestureMoved = false;
+          return;
+        }
         if (tileData.slug) onPatchClick(tileData.slug, tileData._source || null);
       });
+      // Touch: pan and pinch the quilt even when the finger lands on a badge.
+      attachLabelGestures(label);
       // Forward wheel events to the SVG so zoom works while hovering labels.
       label.addEventListener('wheel', (event) => {
         const svg = containerEl?.querySelector('svg');
@@ -1101,9 +1253,53 @@
     // Sub-pixel reflows shouldn't restart the pop-in animation.
     if (Math.abs(vw - lastBuiltW) < 2 && Math.abs(vh - lastBuiltH) < 2) return;
 
+    // A rebuild is only warranted when the tiles would come out meaningfully
+    // different — that is, when baseUnit drifts. The packing ignores the
+    // container entirely, so everything else a resize touches (svg dimensions,
+    // where the quilt sits on screen) is a view concern the zoom transform
+    // already expresses.
+    //
+    // Drift, not equality: baseUnit is a heuristic target, floored and clamped,
+    // and the fit scales the quilt's bounding box to the available area — so a
+    // baseUnit a pixel or two off is cancelled by a compensating zoom scale and
+    // looks identical. Equality would still rebuild for a scrollbar, since one
+    // baseUnit step costs only ~16px of width on a typical quilt. BASE_UNIT_DRIFT
+    // sits above the reflows (a pane settling, a scrollbar) and below a real
+    // window resize, which moves it many times over.
+    const idealUnit = computeBaseUnit(vw, vh, treeData.children.length);
+    if (svgSelection && zoomBehavior &&
+        Math.abs(idealUnit - baseUnit) <= baseUnit * BASE_UNIT_DRIFT) {
+      resizeViewport(vw, vh);
+      return;
+    }
+
     layoutBuilt = false;
     tileMap = new Map();
     buildLayout();
+  }
+
+  /**
+   * Grow or shrink the canvas without touching the layout: stretch the svg to
+   * the new container, then shift the view by half the delta so the quilt
+   * stays put relative to the viewport's center rather than pinned to its
+   * top-left. Zoom level and the viewer's panning survive intact.
+   */
+  function resizeViewport(vw, vh) {
+    const dx = (vw - lastBuiltW) / 2;
+    const dy = (vh - lastBuiltH) / 2;
+    lastBuiltW = vw;
+    lastBuiltH = vh;
+
+    svgSelection.attr('width', vw).attr('height', vh);
+
+    // Routing through zoomBehavior.transform keeps d3's internal transform in
+    // step with ours and fires the zoom handler, which repositions the shadow
+    // layer and the labels for us.
+    const t = currentTransform;
+    svgSelection.call(
+      zoomBehavior.transform,
+      d3.zoomIdentity.translate(t.x + dx, t.y + dy).scale(t.k),
+    );
   }
 
   // Watch the container itself rather than the window: it also catches the
@@ -1154,6 +1350,7 @@
     return () => {
       tooltip?.remove();
       tooltip = null;
+      endLabelGesture(); // a gesture in flight when the canvas leaves
     };
   });
 
@@ -1324,6 +1521,12 @@
     border: 2px solid var(--lt-thread);
     font-family: 'Space Grotesk Variable', system-ui, sans-serif;
     color: var(--color-text);
+  }
+
+  /* A badge drags the quilt like bare fabric does, so it borrows the svg's
+     grabbing cursor while the button is down. */
+  :global(.patch-label:active) {
+    cursor: grabbing;
   }
 
   :global(.patch-label.selected) {
