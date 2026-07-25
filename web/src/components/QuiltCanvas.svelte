@@ -81,6 +81,9 @@
   const LABEL_FONT = '600 13px "Space Grotesk Variable", system-ui, sans-serif';
   // Below this container width the quilt is a phone-sized surface.
   const NARROW_VW = 700;
+  // How far the ideal tile size may drift from the one on screen before a
+  // resize earns a full relayout rather than a view adjustment (handleResize).
+  const BASE_UNIT_DRIFT = 0.1;
 
   // Measured badge text metrics, cached per name (names don't change
   // mid-session; the cache is busted once when the display font loads).
@@ -111,6 +114,18 @@
     }
     measureCache.set(name, m);
     return m;
+  }
+
+  /**
+   * Pixel size of one grid cell. The only thing about the container the tile
+   * geometry depends on: the packing itself (quiltLayout / composeGroupLayouts)
+   * takes no size input, so two container sizes that agree here produce
+   * identical tiles — which is what lets handleResize skip the rebuild.
+   */
+  function computeBaseUnit(vw, vh, n) {
+    const contentSize = Math.min(vw - Math.round(vw * insetRight) - 32, vh - 64);
+    const gridSide = Math.ceil(Math.sqrt(n * 3) * 1.3);
+    return Math.max(30, Math.min(80, Math.floor(contentSize / gridSide)));
   }
 
   /** Fit padding — a phone can't spare the desktop gutters. */
@@ -549,11 +564,7 @@
     const padRight = Math.round(vw * insetRight);
 
     const allChildren = treeData.children;
-    const contentSize = Math.min(vw - padLeft - padRight - 32, vh - 64);
-    const n = allChildren.length;
-    const estimatedCells = n * 3;
-    const gridSide = Math.ceil(Math.sqrt(estimatedCells) * 1.3);
-    baseUnit = Math.max(30, Math.min(80, Math.floor(contentSize / gridSide)));
+    baseUnit = computeBaseUnit(vw, vh, allChildren.length);
 
     const layout = groupsMeta
       ? composeGroupLayouts(groupsMeta, new Map([['home', affinityData]]))
@@ -1101,9 +1112,53 @@
     // Sub-pixel reflows shouldn't restart the pop-in animation.
     if (Math.abs(vw - lastBuiltW) < 2 && Math.abs(vh - lastBuiltH) < 2) return;
 
+    // A rebuild is only warranted when the tiles would come out meaningfully
+    // different — that is, when baseUnit drifts. The packing ignores the
+    // container entirely, so everything else a resize touches (svg dimensions,
+    // where the quilt sits on screen) is a view concern the zoom transform
+    // already expresses.
+    //
+    // Drift, not equality: baseUnit is a heuristic target, floored and clamped,
+    // and the fit scales the quilt's bounding box to the available area — so a
+    // baseUnit a pixel or two off is cancelled by a compensating zoom scale and
+    // looks identical. Equality would still rebuild for a scrollbar, since one
+    // baseUnit step costs only ~16px of width on a typical quilt. BASE_UNIT_DRIFT
+    // sits above the reflows (a pane settling, a scrollbar) and below a real
+    // window resize, which moves it many times over.
+    const idealUnit = computeBaseUnit(vw, vh, treeData.children.length);
+    if (svgSelection && zoomBehavior &&
+        Math.abs(idealUnit - baseUnit) <= baseUnit * BASE_UNIT_DRIFT) {
+      resizeViewport(vw, vh);
+      return;
+    }
+
     layoutBuilt = false;
     tileMap = new Map();
     buildLayout();
+  }
+
+  /**
+   * Grow or shrink the canvas without touching the layout: stretch the svg to
+   * the new container, then shift the view by half the delta so the quilt
+   * stays put relative to the viewport's center rather than pinned to its
+   * top-left. Zoom level and the viewer's panning survive intact.
+   */
+  function resizeViewport(vw, vh) {
+    const dx = (vw - lastBuiltW) / 2;
+    const dy = (vh - lastBuiltH) / 2;
+    lastBuiltW = vw;
+    lastBuiltH = vh;
+
+    svgSelection.attr('width', vw).attr('height', vh);
+
+    // Routing through zoomBehavior.transform keeps d3's internal transform in
+    // step with ours and fires the zoom handler, which repositions the shadow
+    // layer and the labels for us.
+    const t = currentTransform;
+    svgSelection.call(
+      zoomBehavior.transform,
+      d3.zoomIdentity.translate(t.x + dx, t.y + dy).scale(t.k),
+    );
   }
 
   // Watch the container itself rather than the window: it also catches the
