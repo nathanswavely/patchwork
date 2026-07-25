@@ -1,10 +1,12 @@
 <script>
   import { api } from '../lib/api.js';
-  import { navigate } from '../stores/router.svelte.js';
+  import { navigate, getQuery } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import TagPicker from '../components/TagPicker.svelte';
 
-  let name = $state('');
+  // Arriving from a search that found nothing: the query becomes the name so
+  // nobody retypes what they just typed. Editable like any other field.
+  let name = $state(getQuery().get('name') || '');
   let description = $state('');
   let website = $state('');
   let links = $state([{ url: '', label: '' }]);

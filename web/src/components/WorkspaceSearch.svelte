@@ -9,7 +9,12 @@
    * Discovery extras, all optional:
    *  - actionLabel/onAction: one final row after the results ("Show matches
    *    on the quilt") — the only place a query becomes standing narrowing
-   *    state rather than a navigation.
+   *    state rather than a navigation. Hidden on a zero-result query:
+   *    narrowing to a provably empty set is a dead action.
+   *  - suggestLabel/onSuggest: a navigation row shown only when a query
+   *    matches nothing — the moment someone learns their group isn't here.
+   *    It leaves for the submission form like any result and never sets the
+   *    search chip, so the action row above still owns narrowing alone.
    *  - intercept: sees each input value first (pasted patch URLs); returning
    *    true consumes it and closes the dropdown.
    *  - variant="takeover": renders inside the mobile search takeover, where
@@ -24,6 +29,8 @@
     provider,
     actionLabel = null,
     onAction = null,
+    suggestLabel = null,
+    onSuggest = null,
     intercept = null,
     variant = 'bar',
     autofocus = false,
@@ -56,17 +63,26 @@
     ).slice(0, 12);
   });
 
-  // The action row navigates with the keyboard like any result, one slot
-  // past the last. hasAction gates every mention so workspace/admin callers
-  // are untouched.
-  let hasAction = $derived(!!onAction && !!query.trim());
-  let navLength = $derived(results.length + (hasAction ? 1 : 0));
+  // The bottom row navigates with the keyboard like any result, one slot
+  // past the last. Exactly one can ever show: with results, the action row
+  // narrows; with none, the suggest row offers the only useful move left.
+  // Both gate on their own callback so workspace/admin callers are untouched.
+  let hasSuggest = $derived(!!onSuggest && !!query.trim() && !loading && results.length === 0);
+  let hasAction = $derived(!!onAction && !!query.trim() && results.length > 0);
+  let navLength = $derived(results.length + (hasAction || hasSuggest ? 1 : 0));
 
   function runAction() {
     const q = query.trim();
     open = false;
     query = '';
     onAction?.(q);
+  }
+
+  function runSuggest() {
+    const q = query.trim();
+    open = false;
+    query = '';
+    onSuggest?.(q);
   }
 
   function onInput() {
@@ -110,7 +126,10 @@
     } else if (e.key === 'Enter' && activeIndex >= 0) {
       e.preventDefault();
       if (results[activeIndex]) select(results[activeIndex]);
-      else if (hasAction && activeIndex === results.length) runAction();
+      else if (activeIndex === results.length) {
+        if (hasAction) runAction();
+        else if (hasSuggest) runSuggest();
+      }
     }
   }
 
@@ -187,6 +206,14 @@
             onclick={runAction}
           >
             <span class="finder-item-label">{actionLabel ? actionLabel(query.trim()) : `Show matches for “${query.trim()}”`}</span>
+          </button>
+        {:else if hasSuggest}
+          <button
+            class="finder-item finder-action"
+            class:active={activeIndex === results.length}
+            onclick={runSuggest}
+          >
+            <span class="finder-item-label">{suggestLabel ? suggestLabel(query.trim()) : `Suggest “${query.trim()}” as a patch`}</span>
           </button>
         {/if}
       {/if}
