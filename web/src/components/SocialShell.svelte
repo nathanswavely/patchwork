@@ -14,6 +14,7 @@
     getNeighborQuilts,
     setSearchQuery,
     getActiveFilterCount,
+    getSubmissionsEnabled,
   } from '../stores/quilt.svelte.js';
   import { switcherQuilts, fetchQuiltInfo } from '../stores/multiQuilt.svelte.js';
   import GlobalBar from './GlobalBar.svelte';
@@ -40,6 +41,14 @@
     setSearchQuery(q);
     // Land on the quilt of the scope you're already in (docs/adr/035).
     navigate(scopedPath('quilt', quiltScope));
+  }
+
+  // A search that found nothing is the moment someone learns their group
+  // isn't here. Carry the query into the form as the name so they don't
+  // retype what they just typed; it stays editable for messy queries.
+  function suggestPatch(q) {
+    mobileSearchOpen = false;
+    navigate(`/submit?name=${encodeURIComponent(q)}`);
   }
 
   let activeScopeLabel = $derived(quiltScope === 'my' ? 'My Quilt' : getInstanceName());
@@ -267,6 +276,8 @@
         provider={discoveryProvider}
         actionLabel={(q) => `Show matches on the quilt for “${q}”`}
         onAction={showMatchesOnQuilt}
+        suggestLabel={(q) => `Suggest “${q}” as a patch`}
+        onSuggest={getSubmissionsEnabled() ? suggestPatch : null}
         intercept={recognizePatchLink}
       />
     {/snippet}
@@ -289,6 +300,8 @@
         provider={discoveryProvider}
         actionLabel={(q) => `Show matches on the quilt for “${q}”`}
         onAction={showMatchesOnQuilt}
+        suggestLabel={(q) => `Suggest “${q}” as a patch`}
+        onSuggest={getSubmissionsEnabled() ? suggestPatch : null}
         intercept={recognizePatchLink}
       />
     </div>

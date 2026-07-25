@@ -231,7 +231,10 @@ _Avoid_: saved search, active query, query lens (internal shorthand only)
 The global bar's contextual search: an autocomplete dropdown over the
 entities of the current context, opened by typing, resolved by picking a
 result. Context decides the corpus — discovery: all public patches and
-upcoming events, plus the one action row that sets the search chip;
+upcoming events, plus the one action row that sets the search chip and (when
+submissions are open) a navigation row to suggest a missing patch — the
+suggest row leaves for the submission form like any result, and never sets
+the chip, so "the one action row" still names the narrowing act alone;
 workspace: that patch's members, proposals, documents, events; admin
 panel: users, reports, submissions. Never instance-wide people: people
 appear only where a context legitimizes the result (a workspace's

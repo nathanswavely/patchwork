@@ -12,6 +12,15 @@
   import {
     getRemoteFollows, fetchQuiltInfo, colorForQuilt, refreshFollowSnapshot,
   } from '../stores/multiQuilt.svelte.js';
+  import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
+  import { navigate } from '../stores/router.svelte.js';
+
+  // A search that named a group the quilt doesn't have. The filter-miss case
+  // gets no such offer — a tag toggle hiding a patch isn't the patch missing.
+  function suggestPatch() {
+    navigate(`/submit?name=${encodeURIComponent(searchQuery.trim())}`);
+  }
+  let canSuggest = $derived(!!searchQuery.trim() && getSubmissionsEnabled());
 
   // Raw edge polygon variants — percentage coordinates from LT raw.css.
   // Each is 12 points: 4 corners + 8 edge midpoints with slight deviation.
@@ -1407,8 +1416,15 @@
         {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'
           : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.
       </p>
-      {#if filterTags.length > 0}
-        <button class="btn btn-secondary" onclick={onClearFilter}>Clear filter</button>
+      {#if filterTags.length > 0 || canSuggest}
+        <div class="empty-actions">
+          {#if filterTags.length > 0}
+            <button class="btn btn-secondary" onclick={onClearFilter}>Clear filter</button>
+          {/if}
+          {#if canSuggest}
+            <button class="btn btn-secondary" onclick={suggestPatch}>Suggest a patch</button>
+          {/if}
+        </div>
       {/if}
     {:else}
       <p>This quilt is empty.</p>
@@ -1428,8 +1444,15 @@
         {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'
           : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.
       </p>
-      {#if filterTags.length > 0}
-        <button class="btn btn-secondary" onclick={onClearFilter}>Clear filter</button>
+      {#if filterTags.length > 0 || canSuggest}
+        <div class="empty-actions">
+          {#if filterTags.length > 0}
+            <button class="btn btn-secondary" onclick={onClearFilter}>Clear filter</button>
+          {/if}
+          {#if canSuggest}
+            <button class="btn btn-secondary" onclick={suggestPatch}>Suggest a patch</button>
+          {/if}
+        </div>
       {/if}
     </div>
   {/if}
@@ -1585,6 +1608,15 @@
 
   .canvas-empty-overlay .btn {
     pointer-events: auto;
+  }
+
+  /* Clear filter and Suggest a patch sit side by side when a search-and-filter
+     miss raises both; wraps rather than crowding a narrow canvas. */
+  .empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
   .loading-spinner {

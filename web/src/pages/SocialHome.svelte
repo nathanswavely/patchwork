@@ -325,6 +325,9 @@
               {#if quiltScope === 'my'}
                 <button class="btn btn-secondary" onclick={() => navigate(scopedPath(surfaceForRoute(routeName) || 'quilt', 'local'))}>Search the whole quilt</button>
               {/if}
+              {#if getSearchQuery().trim() && getSubmissionsEnabled()}
+                <button class="btn btn-secondary" onclick={() => navigate(`/submit?name=${encodeURIComponent(getSearchQuery().trim())}`)}>Suggest a patch</button>
+              {/if}
             </div>
           {:else}
             <p class="muted">No patches here yet.</p>
