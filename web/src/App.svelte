@@ -260,6 +260,22 @@
      'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminLabel', 'adminLegal'].includes(routeName)
   );
 
+  // The gate is a detour, not a destination, so it carries where the person
+  // was headed — query string included, since that is where the errand's
+  // details live (a suggest-a-patch CTA arrives with the typed name in
+  // ?name=, and dropping it makes them retype what they just typed). The
+  // rest of the round-trip already worked: Login honors ?redirect= and
+  // persists it across the magic-link hop; only this href threw it away.
+  let loginHref = $derived.by(() => {
+    const qs = getQuery().toString();
+    const target = getPath() + (qs ? `?${qs}` : '');
+    // Same open-redirect guard the consuming end applies. getPath() is
+    // same-origin by construction; this holds if that ever stops being true.
+    return isSafeRedirectPath(target)
+      ? `/login?redirect=${encodeURIComponent(target)}`
+      : '/login';
+  });
+
   // Scope is derived from the URL, never held in memory (docs/adr/035).
   // 'my' or 'local' — other quilts are doorways, never a scope (objects
   // blend, places don't — docs/adr/024). There is no auth-conditional
@@ -433,7 +449,7 @@
       <div class="auth-gate">
         <h2>Sign in required</h2>
         <p class="muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
-        <a href="/login" class="btn btn-primary" onclick={(e) => handleNav(e, '/login')}>Log In</a>
+        <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
       </div>
     </main>
   {:else}
@@ -477,7 +493,7 @@
       <div class="auth-gate">
         <h2>Sign in required</h2>
         <p class="muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
-        <a href="/login" class="btn btn-primary" onclick={(e) => handleNav(e, '/login')}>Log In</a>
+        <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
       </div>
     </main>
   {:else}
@@ -524,7 +540,7 @@
         <div class="auth-gate">
           <h2>Sign in required</h2>
           <p class="muted" style="margin-bottom: 1rem;">You need to be logged in to view this page.</p>
-          <a href="/login" class="btn btn-primary" onclick={(e) => handleNav(e, '/login')}>Log In</a>
+          <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
         </div>
 
       <!-- ===== SOCIAL HOME: Quilt + Cards ===== -->
