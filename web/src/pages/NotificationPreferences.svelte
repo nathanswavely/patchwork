@@ -96,7 +96,7 @@
                   <span class="prefs-toggle">
                     <ToggleSwitch
                       checked={t.channels[ch]}
-                      label="{t.label} — {channelLabel(ch)}"
+                      label="{t.label}, {channelLabel(ch)}"
                       onchange={() => toggle(t.type, ch)}
                     />
                   </span>
