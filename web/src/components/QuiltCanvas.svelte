@@ -950,13 +950,23 @@
   // sees a press that lands on one — every badge was a dead spot: on a phone
   // the finger, and on a desktop the cursor, had to find bare fabric to pan.
   // Drive the zoom behavior by hand instead, and only count the sequence as a
-  // tap/click if the pointer stayed put. (Mid-gesture the badge is rebuilt and
-  // detached by updateLabels, so the move/end listeners live on window, not on
-  // the element.)
+  // tap/click if the pointer stayed put.
+  //
+  // The move/end listeners live on window, since the finger or cursor leaves
+  // the badge immediately. For a mouse that is all it takes. Touch is stricter:
+  // every event in a touch sequence is addressed to the element that received
+  // the touchstart, for the life of the sequence, so it only reaches window
+  // while that element is still in the document — and updateLabels wipes the
+  // whole layer on every zoom tick, which is to say on the first pan frame.
+  // The badge under the finger therefore has to outlive its own rebuild: it
+  // stays in the layer as a holdover (hidden, inert) until the finger lifts.
+  // Without that the pan moves once and then freezes.
   const TAP_SLOP = 10; // px of travel still forgiven as a tap
   const DRAG_SLOP = 4; // a mouse is steadier than a finger — commit sooner
   let labelGesture = null;
   let labelGestureMoved = false;
+  // Badges owed to a live touch sequence — one per finger that landed on one.
+  let labelHoldovers = new Set();
 
   function touchById(list, id) {
     for (const t of list) if (t.identifier === id) return t;
@@ -1027,7 +1037,23 @@
     panQuiltBy(dx, dy);
   }
 
-  function endLabelGesture() {
+  // Re-attached by updateLabels on every rebuild that happens mid-gesture, so
+  // the touch sequence addressed to this badge keeps reaching window.
+  function holdLabelForGesture(el) {
+    labelHoldovers.add(el);
+  }
+
+  // Called once the gesture is over: a badge that was only being kept alive for
+  // it has no business on screen. A badge that never lost its rebuild race is
+  // still the live one — leave it be.
+  function releaseLabelHoldovers() {
+    for (const el of labelHoldovers) {
+      if (el.classList.contains('gesture-holdover')) el.remove();
+    }
+    labelHoldovers.clear();
+  }
+
+  function detachLabelGestureListeners() {
     labelGesture = null;
     window.removeEventListener('touchmove', onLabelTouchMove);
     window.removeEventListener('touchend', endLabelGesture);
@@ -1036,9 +1062,17 @@
     window.removeEventListener('mouseup', endLabelGesture);
   }
 
+  function endLabelGesture() {
+    detachLabelGestureListeners();
+    releaseLabelHoldovers();
+  }
+
   function attachLabelGestures(el) {
     el.addEventListener('touchstart', (event) => {
-      endLabelGesture();
+      // Only the listeners are reset here, not the holdovers: a second finger
+      // landing on another badge promotes the gesture to a pinch, and the first
+      // finger's badge is still the address its moves are delivered to.
+      detachLabelGestureListeners();
       const touches = event.touches;
       if (touches.length === 1) {
         labelGesture = {
@@ -1056,8 +1090,9 @@
         };
         labelGestureMoved = true; // a pinch is never a tap
       } else {
-        return;
+        return; // Nothing to drive, so nothing to keep alive either.
       }
+      holdLabelForGesture(el);
       window.addEventListener('touchmove', onLabelTouchMove, { passive: true });
       window.addEventListener('touchend', endLabelGesture, { passive: true });
       window.addEventListener('touchcancel', endLabelGesture, { passive: true });
@@ -1077,15 +1112,26 @@
     });
   }
 
+  // Empty the layer, but put back any badge a live touch gesture is still being
+  // delivered to (see LABEL DRAG GESTURES). Hidden and inert: the visible badge
+  // for that patch is whichever one this rebuild goes on to create.
+  function clearLabelsLayer() {
+    labelsEl.innerHTML = '';
+    for (const el of labelHoldovers) {
+      el.classList.add('gesture-holdover');
+      labelsEl.appendChild(el);
+    }
+  }
+
   function updateLabels() {
     if (!labelsEl) return;
-    if (!showLabels) { labelsEl.innerHTML = ''; return; }
+    if (!showLabels) { clearLabelsLayer(); return; }
 
     const t = currentTransform;
     const k = t.k;
     const { vw, vh } = getContainerSize();
 
-    labelsEl.innerHTML = '';
+    clearLabelsLayer();
     labeledPatchIds = new Set();
 
     // Progressive reveal by ON-SCREEN size: a tile earns a label once it is
@@ -1527,6 +1573,14 @@
      grabbing cursor while the button is down. */
   :global(.patch-label:active) {
     cursor: grabbing;
+  }
+
+  /* A badge outliving its own rebuild because a finger is still on it: it holds
+     the touch sequence's delivery address and nothing else. Out of sight, out
+     of the hit-testing, gone as soon as the finger lifts. */
+  :global(.patch-label.gesture-holdover) {
+    visibility: hidden;
+    pointer-events: none;
   }
 
   :global(.patch-label.selected) {
