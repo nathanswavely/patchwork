@@ -11,24 +11,24 @@ import (
 // GovernanceRules is the complete governance configuration stored in governance-rules.json.
 type GovernanceRules struct {
 	// Decision making
-	DecisionMethod      string                    `json:"decision_method"`
-	QuorumPercent       int                       `json:"quorum_percent"`
-	DefaultVoteDuration int                       `json:"default_vote_duration_hours"`
-	AmendmentThreshold  string                    `json:"amendment_threshold"`
-	AmendmentAutoApply  bool                      `json:"amendment_auto_apply"`
-	MinVotingTenureDays int                       `json:"min_voting_tenure_days"`
+	DecisionMethod      string `json:"decision_method"`
+	QuorumPercent       int    `json:"quorum_percent"`
+	DefaultVoteDuration int    `json:"default_vote_duration_hours"`
+	AmendmentThreshold  string `json:"amendment_threshold"`
+	AmendmentAutoApply  bool   `json:"amendment_auto_apply"`
+	MinVotingTenureDays int    `json:"min_voting_tenure_days"`
 
 	// Leadership & succession
-	LeadershipModel     string                    `json:"leadership_model"`
-	SuccessionMethod    string                    `json:"succession_method"`
-	SuccessionPolicy    string                    `json:"succession_policy"`
-	AdminTermMonths     int                       `json:"admin_term_months"`
-	MaxAdmins           int                       `json:"max_admins"`
-	InactivityDays      int                       `json:"inactivity_days"`
+	LeadershipModel  string `json:"leadership_model"`
+	SuccessionMethod string `json:"succession_method"`
+	SuccessionPolicy string `json:"succession_policy"`
+	AdminTermMonths  int    `json:"admin_term_months"`
+	MaxAdmins        int    `json:"max_admins"`
+	InactivityDays   int    `json:"inactivity_days"`
 
 	// Membership
 	MembershipPolicy    string                    `json:"membership_policy"`
-	FollowerPermissions model.FollowerPermissions  `json:"follower_permissions"`
+	FollowerPermissions model.FollowerPermissions `json:"follower_permissions"`
 }
 
 // DefaultRules returns the default governance rules.
@@ -70,6 +70,22 @@ func ReadRules(dataDir, nodeID string) (*GovernanceRules, error) {
 	}
 
 	return rules, nil
+}
+
+// WriteRules marshals rules to governance-rules.json and commits it directly
+// to the node repo's main branch. Returns the commit SHA. The write is
+// skipped (empty SHA, nil error) when the file already holds this content,
+// so callers can invoke it unconditionally without minting no-op commits.
+func WriteRules(dataDir, nodeID string, rules *GovernanceRules, message string) (string, error) {
+	b, err := json.MarshalIndent(rules, "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("marshal rules: %w", err)
+	}
+	content := string(b) + "\n"
+	if current, err := GetDocument(dataDir, nodeID, "governance-rules.json"); err == nil && current == content {
+		return "", nil
+	}
+	return DirectEdit(dataDir, nodeID, "governance-rules.json", content, "Patchwork System", "system@patchwork.local", message)
 }
 
 // marshalConfig renders the governance_config cache column value for a rule set.

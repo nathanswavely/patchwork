@@ -58,7 +58,7 @@
       desc += ' Any number of votes counts. No minimum participation required.';
     }
 
-    if (rules.default_vote_duration_hours > 0) {
+    if (rules.decision_method !== 'admin' && rules.default_vote_duration_hours > 0) {
       const days = Math.round(rules.default_vote_duration_hours / 24);
       desc += ` Proposals stay open for ${days <= 1 ? rules.default_vote_duration_hours + ' hours' : days + ' days'}.`;
     }
@@ -128,7 +128,11 @@
     <section class="overview-section">
       <h3>How decisions are made</h3>
       <p class="overview-narrative">{describeDecisionMethod(rules)}</p>
-      {#if isMember || isAdmin}
+      {#if isAdmin && rules?.decision_method === 'admin'}
+        <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
+          Change these rules
+        </a>
+      {:else if isMember || isAdmin}
         <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
           Propose a change to these rules
         </a>

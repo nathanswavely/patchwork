@@ -35,6 +35,12 @@
   let isRulesChange = $derived(
     proposal?.target_doc === 'governance-rules.json' || proposal?.target_doc === 'Governance Rules'
   );
+  // A record born applied under admin-decides rules — no vote ever happened,
+  // so the page shows an applied change, not a proposal (docs/adr/041).
+  let isDirectChange = $derived(
+    effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
+  );
+  let soleVoter = $derived(isVoting && canVote && proposal?.eligible_voters === 1);
   let hasAmendment = $derived(
     proposal?.target_doc && proposal?.current_doc_content != null && proposal?.proposed_body != null
   );
@@ -113,6 +119,7 @@
       votingEndsAt={proposal.voting_ends_at}
       approveCount={proposal.approve_count || 0}
       rejectCount={proposal.reject_count || 0}
+      directChange={isDirectChange}
       onStateChange={handleStateChange}
     />
 
@@ -126,7 +133,7 @@
         {#if proposal.target_doc}
           <span class="target-badge">to {proposal.target_doc.replace('.json', '').replace(/-/g, ' ')}</span>
         {/if}
-        <span class="muted">Proposed by {proposal.author_name || 'unknown'}</span>
+        <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
         <span class="muted">{new Date(proposal.created_at).toLocaleDateString()}</span>
       </div>
     </div>
@@ -163,7 +170,7 @@
         {#if hasAmendment}
           <section class="proposal-section">
             <div class="changes-summary">
-              <span class="muted">This proposal modifies <strong>{proposal.target_doc.replace('.json', '').replace(/-/g, ' ')}</strong></span>
+              <span class="muted">This {isDirectChange ? 'change' : 'proposal'} modifies <strong>{proposal.target_doc.replace('.json', '').replace(/-/g, ' ')}</strong></span>
               <button class="btn-link" onclick={() => activeTab = 'changes'}>View changes</button>
             </div>
           </section>
@@ -181,10 +188,13 @@
           </section>
         {/if}
 
-        <!-- Vote section -->
-        {#if isVoting || effectiveState === 'approved' || effectiveState === 'in_effect' || effectiveState === 'rejected' || effectiveState === 'passed'}
+        <!-- Vote section — a direct change was never voted on -->
+        {#if !isDirectChange && (isVoting || effectiveState === 'approved' || effectiveState === 'in_effect' || effectiveState === 'rejected' || effectiveState === 'passed')}
           <section class="proposal-section">
             <h2>Vote</h2>
+            {#if soleVoter}
+              <p class="sole-voter-note">You're the only eligible voter — your vote decides this immediately.</p>
+            {/if}
             <VoteSection
               proposalId={proposal.id}
               approveCount={proposal.approve_count || 0}
@@ -357,6 +367,12 @@
     margin-bottom: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+  }
+
+  .sole-voter-note {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
   }
 
   /* The reviewed document is the section's content — it can't move, so it

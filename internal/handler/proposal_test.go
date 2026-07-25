@@ -125,6 +125,11 @@ func TestVoteAndChangeVote(t *testing.T) {
 	admin, adminToken := createTestUser(t, db, "padmin4", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Vote Node", "vote-node", "open")
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	// A second eligible voter keeps the electorate above one — a sole
+	// voter's decisive vote resolves immediately (docs/adr/041), which
+	// would make the vote change below impossible.
+	other, _ := createTestUser(t, db, "pvoter4", "member")
+	createTestMembership(t, db, other.ID, nodeID, "member", "active")
 
 	// Create proposal.
 	body := map[string]interface{}{"title": "Vote Test", "duration_hours": 72}
@@ -355,9 +360,10 @@ func TestCreateAmendmentProposal_AdminFastTrackApplies(t *testing.T) {
 
 	dataDir := setupGovernanceForNode(t, nodeID)
 
-	// Casual-style rules: maintainer leadership + no quorum → admin fast-track.
+	// Admin-decides rules: the one decision method that applies an admin's
+	// change directly (docs/adr/041).
 	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
-		`{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"leadership_model":"maintainer","succession_policy":"longest_tenure","min_voting_tenure_days":0}`,
+		`{"decision_method":"admin","quorum_percent":0,"default_vote_duration_hours":0,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0}`,
 		nodeID)
 
 	// DB-canonical lining row the fast-track must sync after merging (adr/011).
@@ -400,6 +406,114 @@ func TestCreateAmendmentProposal_AdminFastTrackApplies(t *testing.T) {
 	db.QueryRow(`SELECT body FROM governance_docs WHERE node_id = ?`, nodeID).Scan(&docBody)
 	if !strings.Contains(docBody, "Fast-tracked content") {
 		t.Errorf("governance_docs not synced after fast-track, got: %q", docBody)
+	}
+}
+
+func TestCreateAmendmentProposal_VotingRulesDoNotBypass(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "amend_admin_nb", "member")
+	nodeID := createTestNode(t, db, admin.ID, "NoBypass Node", "nobypass-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	setupGovernanceForNode(t, nodeID)
+
+	// Casual-style rules: maintainer leadership, no quorum, majority vote.
+	// These used to fast-track admin proposals past the vote the charter
+	// promised; under docs/adr/041 only decision_method "admin" applies
+	// directly, so this proposal must open for voting.
+	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
+		`{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"leadership_model":"maintainer","succession_policy":"longest_tenure","min_voting_tenure_days":0}`,
+		nodeID)
+
+	body := map[string]interface{}{
+		"title":         "Not a fast-track",
+		"proposal_type": "amendment",
+		"target_doc":    "community-standards.md",
+		"proposed_body": "# Standards\n\nMust be voted on.",
+	}
+	r := authedRequest("POST", "/api/v1/nodes/nobypass-node/proposals", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+	result := decodeJSON(t, w)
+	if result["state"] != "voting" {
+		t.Errorf("expected state=voting, got %v", result["state"])
+	}
+	if result["status"] != "open" {
+		t.Errorf("expected status=open, got %v", result["status"])
+	}
+}
+
+func TestSoleVoterEarlyClose(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "sole_admin", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Sole Node", "sole-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
+		`{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0}`,
+		nodeID)
+
+	body := map[string]interface{}{"title": "Sole voter proposal", "duration_hours": 72}
+	r := authedRequest("POST", "/api/v1/nodes/sole-node/proposals", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	createResult := decodeJSON(t, w)
+	proposalID := createResult["id"].(string)
+
+	// Submitting is not voting: the proposal must still be open.
+	var status string
+	db.QueryRow("SELECT status FROM proposals WHERE id = ?", proposalID).Scan(&status)
+	if status != "open" {
+		t.Fatalf("expected open after submit, got %s", status)
+	}
+
+	// An abstain from the sole voter must NOT close the proposal.
+	voteBody := map[string]string{"value": "abstain"}
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", voteBody, adminToken)
+	serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+	db.QueryRow("SELECT status FROM proposals WHERE id = ?", proposalID).Scan(&status)
+	if status != "open" {
+		t.Fatalf("expected open after sole-voter abstain, got %s", status)
+	}
+
+	// A decisive vote from the only eligible voter resolves immediately
+	// (docs/adr/041) — no waiting out the 72-hour window.
+	voteBody = map[string]string{"value": "approve"}
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", voteBody, adminToken)
+	w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on vote, got %d: %s", w.Code, w.Body.String())
+	}
+	db.QueryRow("SELECT status FROM proposals WHERE id = ?", proposalID).Scan(&status)
+	if status != "approved" {
+		t.Errorf("expected approved after sole-voter approve, got %s", status)
+	}
+}
+
+func TestSoleVoterEarlyClose_NotWithTwoVoters(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "duo_admin", "member")
+	other, _ := createTestUser(t, db, "duo_member", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Duo Node", "duo-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, other.ID, nodeID, "member", "active")
+
+	body := map[string]interface{}{"title": "Duo proposal", "duration_hours": 72}
+	r := authedRequest("POST", "/api/v1/nodes/duo-node/proposals", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	createResult := decodeJSON(t, w)
+	proposalID := createResult["id"].(string)
+
+	voteBody := map[string]string{"value": "approve"}
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", voteBody, adminToken)
+	serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+
+	// Two eligible voters — the window stays open even though one voted.
+	var status string
+	db.QueryRow("SELECT status FROM proposals WHERE id = ?", proposalID).Scan(&status)
+	if status != "open" {
+		t.Errorf("expected open with a second eligible voter, got %s", status)
 	}
 }
 

@@ -1182,16 +1182,46 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 		// patch carries none (docs/adr/039). Best-effort like every other
 		// governance write; a missing data dir (gitless test/dev runs) is
 		// tolerated, same as the startup backfill.
+		forked := false
 		if dataDir := governance.GetDataDir(); dataDir != "" {
 			if err := governance.ForkForNode(dataDir, nodeID, req.Template); err != nil {
 				log.Printf("claims: governance fork for node %s: %v", nodeID, err)
+			} else {
+				forked = true
 			}
 		}
-		// Cache the template's rules on the row — the unclaimed row carries
-		// the pre-leadership column default (migration 041); gitless runs get
-		// complete defaults.
-		if err := governance.SyncConfigToDB(db, governance.GetDataDir(), nodeID); err != nil {
-			log.Printf("claims: governance config sync for node %s: %v", nodeID, err)
+		if forked {
+			// Absorb the unclaimed row's live membership settings into the
+			// template's rules file, then sync the rules into the DB cache —
+			// the same treatment as ordinary creation (docs/adr/041). Without
+			// the absorb, the rules file holds the template's membership
+			// policy, and a later amendment sync would clobber the enforced
+			// value.
+			dataDir := governance.GetDataDir()
+			var membershipPolicy, fpJSON string
+			db.QueryRow(`SELECT membership_policy, COALESCE(follower_permissions,'') FROM nodes WHERE id = ?`, nodeID).
+				Scan(&membershipPolicy, &fpJSON)
+			if rules, err := governance.ReadRules(dataDir, nodeID); err == nil {
+				if membershipPolicy != "" {
+					rules.MembershipPolicy = membershipPolicy
+				}
+				if fpJSON != "" && fpJSON != "{}" {
+					json.Unmarshal([]byte(fpJSON), &rules.FollowerPermissions)
+				}
+				if _, err := governance.WriteRules(dataDir, nodeID, rules, "Membership settings from claim setup"); err != nil {
+					log.Printf("claims: absorb setup settings for node %s: %v", nodeID, err)
+				}
+			}
+			if err := governance.SyncRulesToDB(db, dataDir, nodeID); err != nil {
+				log.Printf("claims: sync governance rules for node %s: %v", nodeID, err)
+			}
+		} else {
+			// Cache the rules on the row anyway — the unclaimed row carries
+			// the pre-leadership column default (migration 041); gitless runs
+			// get complete defaults.
+			if err := governance.SyncConfigToDB(db, governance.GetDataDir(), nodeID); err != nil {
+				log.Printf("claims: governance config sync for node %s: %v", nodeID, err)
+			}
 		}
 		CreateDefaultLining(db, nodeID, user.ID)
 

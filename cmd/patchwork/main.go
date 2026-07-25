@@ -16,10 +16,10 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
-	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/web"
 )
@@ -130,6 +130,17 @@ func main() {
 		log.Fatalf("governance backfill: %v", err)
 	} else if n > 0 {
 		log.Printf("governance: backfilled repos for %d nodes", n)
+	}
+
+	// Fill the governance_config cache for nodes created while CreateNode
+	// forked rules without syncing them — the rules in force become readable
+	// from the DB, which is what makes admin-decides patches actually behave
+	// as admin-decides (docs/adr/041). Warn-and-continue: a partial backfill
+	// leaves the affected nodes on the voting defaults they already had.
+	if n, err := handler.BackfillGovernanceConfig(db); err != nil {
+		log.Printf("warning: governance config backfill: %v", err)
+	} else if n > 0 {
+		log.Printf("governance: synced rules for %d nodes", n)
 	}
 
 	// One-time pass for unclaimed patches created before migration 031:

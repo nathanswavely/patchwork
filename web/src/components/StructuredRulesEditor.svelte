@@ -2,7 +2,15 @@
   let { currentRules = null, onSave = () => {} } = $props();
 
   const DECISION_OPTIONS = [
-    { value: 'admin_decides', label: 'Admin decides' },
+    { value: 'admin', label: 'Admin decides' },
+    { value: 'majority', label: 'Majority vote' },
+    { value: 'supermajority', label: 'Supermajority (2/3)' },
+    { value: 'consensus', label: 'Full consensus' },
+  ];
+
+  // Amendment thresholds are always votes — "admin decides" is a decision
+  // method, not a threshold (under it, amendments never reach a vote).
+  const THRESHOLD_OPTIONS = [
     { value: 'majority', label: 'Majority vote' },
     { value: 'supermajority', label: 'Supermajority (2/3)' },
     { value: 'consensus', label: 'Full consensus' },
@@ -37,9 +45,9 @@
 
   // Editable state derived from currentRules
   let decisionMethod = $state('majority');
-  let quorumPercent = $state(25);
+  let quorumPercent = $state(0);
   let votingPeriodHours = $state(72);
-  let amendmentThreshold = $state('supermajority');
+  let amendmentThreshold = $state('majority');
   let autoApply = $state(true);
   let successionPolicy = $state('longest_tenure');
   let minVotingTenureDays = $state(0);
@@ -49,17 +57,22 @@
   let followerCharters = $state(true);
   let followerMembers = $state(true);
 
+  let adminDecides = $derived(decisionMethod === 'admin');
+
   // Initialize from currentRules
   $effect(() => {
     if (currentRules) {
-      decisionMethod = currentRules.decision_method || 'majority';
-      quorumPercent = currentRules.quorum_percent ?? currentRules.quorum ?? 25;
-      votingPeriodHours = currentRules.voting_period_hours ?? currentRules.default_vote_duration_hours ?? 72;
-      amendmentThreshold = currentRules.amendment_threshold ?? currentRules.amendment_method ?? 'supermajority';
-      autoApply = currentRules.auto_apply ?? currentRules.amendment_auto_apply ?? true;
-      successionPolicy = currentRules.succession_policy ?? currentRules.succession_rule ?? 'longest_tenure';
+      // 'admin_decides' is a value an older editor build could have written
+      // into a rules file; the backend's word is 'admin'.
+      const dm = currentRules.decision_method === 'admin_decides' ? 'admin' : currentRules.decision_method;
+      decisionMethod = dm || 'majority';
+      quorumPercent = currentRules.quorum_percent ?? 0;
+      votingPeriodHours = currentRules.default_vote_duration_hours || 72;
+      amendmentThreshold = currentRules.amendment_threshold || 'majority';
+      autoApply = currentRules.amendment_auto_apply ?? true;
+      successionPolicy = currentRules.succession_policy || 'longest_tenure';
       minVotingTenureDays = currentRules.min_voting_tenure_days ?? 0;
-      membershipPolicy = currentRules.membership_policy ?? 'open';
+      membershipPolicy = currentRules.membership_policy || 'open';
       const fp = currentRules.follower_permissions || {};
       followerEvents = fp.events !== false;
       followerProposals = fp.proposals !== false;
@@ -69,14 +82,13 @@
   });
 
   function buildRules() {
-    return {
+    // Spread first: fields this form doesn't edit (leadership_model,
+    // succession_method, max_admins, …) must survive the round trip —
+    // the rules file is whole-document, not a patch.
+    const rules = {
+      ...(currentRules || {}),
       decision_method: decisionMethod,
-      quorum_percent: quorumPercent,
-      voting_period_hours: votingPeriodHours,
-      amendment_threshold: amendmentThreshold,
-      auto_apply: autoApply,
       succession_policy: successionPolicy,
-      min_voting_tenure_days: minVotingTenureDays,
       membership_policy: membershipPolicy,
       follower_permissions: {
         events: followerEvents,
@@ -85,6 +97,17 @@
         members: followerMembers,
       },
     };
+    // The voting knobs are hidden and inert under admin-decides — their
+    // stored values pass through untouched rather than being rewritten
+    // from editor state.
+    if (!adminDecides) {
+      rules.quorum_percent = quorumPercent;
+      rules.default_vote_duration_hours = votingPeriodHours;
+      rules.amendment_threshold = amendmentThreshold;
+      rules.amendment_auto_apply = autoApply;
+      rules.min_voting_tenure_days = minVotingTenureDays;
+    }
+    return rules;
   }
 
   function handleSave() {
@@ -111,35 +134,37 @@
     </select>
   </div>
 
-  <div class="field">
-    <label for="re-quorum">Quorum (%)</label>
-    <input id="re-quorum" type="number" min="0" max="100" bind:value={quorumPercent} />
-  </div>
+  {#if !adminDecides}
+    <div class="field">
+      <label for="re-quorum">Quorum (%)</label>
+      <input id="re-quorum" type="number" min="0" max="100" bind:value={quorumPercent} />
+    </div>
 
-  <div class="field">
-    <label for="re-voting-period">Default Voting Period</label>
-    <select id="re-voting-period" bind:value={votingPeriodHours}>
-      {#each VOTING_PERIOD_OPTIONS as opt}
-        <option value={opt.value}>{opt.label}</option>
-      {/each}
-    </select>
-  </div>
+    <div class="field">
+      <label for="re-voting-period">Default Voting Period</label>
+      <select id="re-voting-period" bind:value={votingPeriodHours}>
+        {#each VOTING_PERIOD_OPTIONS as opt}
+          <option value={opt.value}>{opt.label}</option>
+        {/each}
+      </select>
+    </div>
 
-  <div class="field">
-    <label for="re-amendment">Amendment Threshold</label>
-    <select id="re-amendment" bind:value={amendmentThreshold}>
-      {#each DECISION_OPTIONS as opt}
-        <option value={opt.value}>{opt.label}</option>
-      {/each}
-    </select>
-  </div>
+    <div class="field">
+      <label for="re-amendment">Amendment Threshold</label>
+      <select id="re-amendment" bind:value={amendmentThreshold}>
+        {#each THRESHOLD_OPTIONS as opt}
+          <option value={opt.value}>{opt.label}</option>
+        {/each}
+      </select>
+    </div>
 
-  <div class="field checkbox-field">
-    <label>
-      <input type="checkbox" bind:checked={autoApply} />
-      Auto-Apply Amendments
-    </label>
-  </div>
+    <div class="field checkbox-field">
+      <label>
+        <input type="checkbox" bind:checked={autoApply} />
+        Auto-Apply Amendments
+      </label>
+    </div>
+  {/if}
 
   <div class="field">
     <label for="re-succession">Succession Policy</label>
@@ -150,14 +175,16 @@
     </select>
   </div>
 
-  <div class="field">
-    <label for="re-tenure">Minimum Voting Tenure</label>
-    <select id="re-tenure" bind:value={minVotingTenureDays}>
-      {#each TENURE_OPTIONS as opt}
-        <option value={opt.value}>{opt.label}</option>
-      {/each}
-    </select>
-  </div>
+  {#if !adminDecides}
+    <div class="field">
+      <label for="re-tenure">Minimum Voting Tenure</label>
+      <select id="re-tenure" bind:value={minVotingTenureDays}>
+        {#each TENURE_OPTIONS as opt}
+          <option value={opt.value}>{opt.label}</option>
+        {/each}
+      </select>
+    </div>
+  {/if}
 
   <div class="field">
     <label for="re-membership">Membership Policy</label>

@@ -73,6 +73,17 @@
     if (total === 0) return 50;
     return Math.round((approve / total) * 100);
   }
+
+  // Approved with zero votes = a direct change, born applied under
+  // admin-decides rules (docs/adr/041) — no vote to speak of, so the row
+  // says "applied" rather than "approved".
+  function isDirectRow(p) {
+    return p.status === 'approved' && !((p.approve_count || 0) + (p.reject_count || 0) + (p.abstain_count || 0));
+  }
+
+  function docLabel(doc) {
+    return doc.replace('.json', '').replace(/-/g, ' ');
+  }
 </script>
 
 <GovernanceShell activeSection="proposals">
@@ -131,18 +142,18 @@
                 <div class="proposal-title-row">
                   <h3>{proposal.title}</h3>
                   {#if proposal.target_doc}
-                    <span class="badge badge-amendment">Amendment: {proposal.target_doc}</span>
+                    <span class="badge badge-amendment">{isDirectRow(proposal) ? 'Change' : 'Amendment'}: {docLabel(proposal.target_doc)}</span>
                   {:else if proposal.proposal_type && proposal.proposal_type !== 'other'}
                     <span class="type-badge">{typeLabel(proposal.proposal_type)}</span>
                   {/if}
                 </div>
                 <div class="proposal-meta">
                   {#if proposal.author_name}
-                    <span class="muted">by {proposal.author_name}</span>
+                    <span class="muted">{isDirectRow(proposal) ? 'applied by' : 'by'} {proposal.author_name}</span>
                   {/if}
                   {#if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
-                  {:else if proposal.status !== 'open'}
+                  {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
                     <span class="muted">{proposal.status}</span>
                   {/if}
                 </div>
@@ -158,7 +169,7 @@
                   </div>
                 {/if}
               </div>
-              <span class="badge {statusClass(proposal.status)}">{proposal.status}</span>
+              <span class="badge {statusClass(proposal.status)}">{isDirectRow(proposal) ? 'applied' : proposal.status}</span>
             </a>
           {/each}
         </div>
