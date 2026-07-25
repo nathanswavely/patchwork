@@ -219,6 +219,16 @@ func TestWithdrawByAuthor(t *testing.T) {
 	if result["status"] != "withdrawn" {
 		t.Errorf("expected status=withdrawn, got %v", result["status"])
 	}
+
+	// The SPA renders from `state`, not `status` — if only one moves the
+	// page keeps showing an open vote after the withdraw toast.
+	var state string
+	if err := db.QueryRow("SELECT state FROM proposals WHERE id = ?", proposalID).Scan(&state); err != nil {
+		t.Fatalf("read state: %v", err)
+	}
+	if state != "withdrawn" {
+		t.Errorf("expected state=withdrawn, got %q", state)
+	}
 }
 
 func TestWithdrawByNonAuthor(t *testing.T) {
@@ -279,12 +289,20 @@ func TestVoteResolutionOnExpiredProposal(t *testing.T) {
 	if result["status"] != "approved" {
 		t.Errorf("expected status=passed, got %v", result["status"])
 	}
+	// The proposal page renders from `state` — if resolution leaves it at
+	// 'voting' the page keeps showing an open vote after the window closed.
+	if result["state"] != "approved" {
+		t.Errorf("expected state=approved in response, got %v", result["state"])
+	}
 
 	// Verify in DB.
-	var dbStatus string
-	db.QueryRow("SELECT status FROM proposals WHERE id = ?", proposalID).Scan(&dbStatus)
+	var dbStatus, dbState string
+	db.QueryRow("SELECT status, state FROM proposals WHERE id = ?", proposalID).Scan(&dbStatus, &dbState)
 	if dbStatus != "approved" {
 		t.Errorf("expected DB status=approved, got %s", dbStatus)
+	}
+	if dbState != "approved" {
+		t.Errorf("expected DB state=approved, got %s", dbState)
 	}
 
 	// Suppress unused variable warnings.
@@ -722,6 +740,19 @@ func TestProposalResolution_AmendmentAutoApply(t *testing.T) {
 	result := decodeJSON(t, w)
 	if result["status"] != "approved" {
 		t.Errorf("expected status=approved, got %v", result["status"])
+	}
+	// Auto-apply merged the branch, so there is nothing left for an admin to
+	// make official — the proposal lands in_effect, not approved.
+	if result["state"] != "in_effect" {
+		t.Errorf("expected state=in_effect in response, got %v", result["state"])
+	}
+	var dbState, dbAppliedAt string
+	db.QueryRow("SELECT state, COALESCE(applied_at,'') FROM proposals WHERE id = ?", proposalID).Scan(&dbState, &dbAppliedAt)
+	if dbState != "in_effect" {
+		t.Errorf("expected DB state=in_effect, got %s", dbState)
+	}
+	if dbAppliedAt == "" {
+		t.Error("expected applied_at to be stamped by auto-apply")
 	}
 
 	// Verify the governance doc was updated (branch merged).

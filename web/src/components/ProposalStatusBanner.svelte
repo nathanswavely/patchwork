@@ -1,6 +1,7 @@
 <script>
   import { api } from '../lib/api.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import ConfirmAction from './ConfirmAction.svelte';
 
   let {
     state: propState = '',
@@ -89,7 +90,14 @@
   <div class="status-banner voting">
     <p>Voting is open. {timeLeft}. Cast your vote below.</p>
     {#if isAuthor}
-      <button class="banner-link" onclick={handleWithdraw}>Withdraw this proposal</button>
+      <div class="banner-actions">
+        <ConfirmAction
+          label="Withdraw this proposal"
+          confirmLabel="Withdraw"
+          variant="danger"
+          onConfirm={handleWithdraw}
+        />
+      </div>
     {/if}
   </div>
 
@@ -178,20 +186,5 @@
 
   .banner-actions {
     margin-top: 0.5rem;
-  }
-
-  .banner-link {
-    border: none;
-    background: none;
-    color: var(--color-text-muted);
-    font-size: 0.78rem;
-    cursor: pointer;
-    padding: 0;
-    margin-top: 0.25rem;
-    text-decoration: underline;
-  }
-
-  .banner-link:hover {
-    color: var(--color-text);
   }
 </style>
