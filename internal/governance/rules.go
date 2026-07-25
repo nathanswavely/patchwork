@@ -72,13 +72,8 @@ func ReadRules(dataDir, nodeID string) (*GovernanceRules, error) {
 	return rules, nil
 }
 
-// SyncRulesToDB syncs the governance rules from git into the database cache columns.
-func SyncRulesToDB(db *database.DB, dataDir, nodeID string) error {
-	rules, err := ReadRules(dataDir, nodeID)
-	if err != nil {
-		return err
-	}
-
+// marshalConfig renders the governance_config cache column value for a rule set.
+func marshalConfig(rules *GovernanceRules) (string, error) {
 	gcJSON, err := json.Marshal(model.GovernanceConfig{
 		DecisionMethod:      rules.DecisionMethod,
 		QuorumPercent:       rules.QuorumPercent,
@@ -94,7 +89,38 @@ func SyncRulesToDB(db *database.DB, dataDir, nodeID string) error {
 		InactivityDays:      rules.InactivityDays,
 	})
 	if err != nil {
-		return fmt.Errorf("marshal governance_config: %w", err)
+		return "", fmt.Errorf("marshal governance_config: %w", err)
+	}
+	return string(gcJSON), nil
+}
+
+// SyncConfigToDB writes only the governance_config cache column from the
+// node's git rules (defaults when no repo exists). Unlike SyncRulesToDB it
+// leaves membership_policy and follower_permissions alone — at creation
+// those are the creator's form choices, which a template must not override.
+func SyncConfigToDB(db *database.DB, dataDir, nodeID string) error {
+	rules, err := ReadRules(dataDir, nodeID)
+	if err != nil {
+		return err
+	}
+	gcJSON, err := marshalConfig(rules)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec("UPDATE nodes SET governance_config = ? WHERE id = ?", gcJSON, nodeID)
+	return err
+}
+
+// SyncRulesToDB syncs the governance rules from git into the database cache columns.
+func SyncRulesToDB(db *database.DB, dataDir, nodeID string) error {
+	rules, err := ReadRules(dataDir, nodeID)
+	if err != nil {
+		return err
+	}
+
+	gcJSON, err := marshalConfig(rules)
+	if err != nil {
+		return err
 	}
 
 	fpJSON, err := json.Marshal(rules.FollowerPermissions)
@@ -104,7 +130,7 @@ func SyncRulesToDB(db *database.DB, dataDir, nodeID string) error {
 
 	_, err = db.Exec(
 		"UPDATE nodes SET governance_config = ?, membership_policy = ?, follower_permissions = ? WHERE id = ?",
-		string(gcJSON), rules.MembershipPolicy, string(fpJSON), nodeID,
+		gcJSON, rules.MembershipPolicy, string(fpJSON), nodeID,
 	)
 	return err
 }
