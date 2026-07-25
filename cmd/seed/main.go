@@ -452,15 +452,18 @@ func (s *seeder) seedNodes() {
 
 		apID := ap.NodeAPID(ap.GetDomain(), id)
 
-		// Assign governance config based on membership policy
+		// Assign governance config based on membership policy. Leadership
+		// fields match the template forked below (seed runs after
+		// migrations, so an incomplete literal would recreate the gap
+		// migration 041 backfills).
 		var gcJSON string
 		switch n.membershipPolicy {
 		case "open":
-			gcJSON = `{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0}`
+			gcJSON = `{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0,"leadership_model":"maintainer","succession_method":"admin_nominate","max_admins":3,"inactivity_days":90}`
 		case "approval_required":
-			gcJSON = `{"decision_method":"majority","quorum_percent":25,"default_vote_duration_hours":168,"amendment_threshold":"supermajority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":7}`
+			gcJSON = `{"decision_method":"majority","quorum_percent":25,"default_vote_duration_hours":168,"amendment_threshold":"supermajority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":7,"leadership_model":"meritocratic","succession_method":"admin_nominate","max_admins":5,"inactivity_days":60}`
 		case "invite_only":
-			gcJSON = `{"decision_method":"consensus","quorum_percent":50,"default_vote_duration_hours":336,"amendment_threshold":"consensus","amendment_auto_apply":false,"succession_policy":"longest_tenure","min_voting_tenure_days":30}`
+			gcJSON = `{"decision_method":"consensus","quorum_percent":50,"default_vote_duration_hours":336,"amendment_threshold":"consensus","amendment_auto_apply":false,"succession_policy":"longest_tenure","min_voting_tenure_days":30,"leadership_model":"maintainer","succession_method":"founder_designate","max_admins":1}`
 		}
 
 		createdAt := s.ts(s.rng.Intn(90) + 90)

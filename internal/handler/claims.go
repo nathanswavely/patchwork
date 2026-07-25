@@ -1186,6 +1186,12 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 				log.Printf("claims: governance fork for node %s: %v", nodeID, err)
 			}
 		}
+		// Cache the template's rules on the row — the unclaimed row carries
+		// the pre-leadership column default (migration 041); gitless runs get
+		// complete defaults.
+		if err := governance.SyncConfigToDB(db, governance.GetDataDir(), nodeID); err != nil {
+			log.Printf("claims: governance config sync for node %s: %v", nodeID, err)
+		}
 		CreateDefaultLining(db, nodeID, user.ID)
 
 		// The claim row stays 'approved' — a second setup attempt is refused

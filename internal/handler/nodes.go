@@ -739,6 +739,12 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		if err := governance.ForkForNode(governance.GetDataDir(), id, req.Template); err != nil {
 			log.Printf("warning: governance fork for node %s: %v", id, err)
 		}
+		// Cache the template's rules on the row — the INSERT above leaves the
+		// column default, which predates the leadership fields (migration 041).
+		// Falls back to complete defaults when the fork failed or is gitless.
+		if err := governance.SyncConfigToDB(db, governance.GetDataDir(), id); err != nil {
+			log.Printf("warning: governance config sync for node %s: %v", id, err)
+		}
 
 		auth.LogAuditEvent(db, user.ID, "node.create", "node", id, "{}", clientIP(r))
 		auth.LogAuditEvent(db, user.ID, "membership.join", "membership", memID, `{"role":"admin","auto":true}`, clientIP(r))
