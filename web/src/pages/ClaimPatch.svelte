@@ -165,7 +165,7 @@
       <div class="verify-header">
         <h2>Claim approved</h2>
       </div>
-      <p>You're cleared to set up this patch. Setup is where it becomes active — until then, it still reads as unclaimed to everyone else.</p>
+      <p>You're cleared to set up this patch. Setup is where it becomes active. Until then, it still reads as unclaimed to everyone else.</p>
       {#if claim.setup_expires_at}
         <p class="muted">Approval expires {formatExpiry(claim.setup_expires_at)}.</p>
       {/if}
