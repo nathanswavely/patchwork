@@ -58,6 +58,34 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 	return fp.Charters
 }
 
+// followerMayJoinProposals reports whether this person may take part in a
+// patch's proposals — comment on them, and anything else participation comes
+// to mean. Admins and members always may; a follower may unless the patch has
+// switched `follower_permissions.proposals` off (docs/adr/050).
+//
+// Non-members with no membership row at all fall through to true: the role
+// gate above this is what refuses them, and answering "yes" here for someone
+// who is not in the patch keeps this function about one question.
+func followerMayJoinProposals(db *database.DB, userID, nodeID string) bool {
+	var role string
+	if err := db.QueryRow(
+		"SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		userID, nodeID,
+	).Scan(&role); err != nil {
+		return true
+	}
+	if role != "follower" {
+		return true
+	}
+	var fpJSON string
+	db.QueryRow("SELECT COALESCE(follower_permissions,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&fpJSON)
+	// Absent means allowed: the shipped default is every box ticked, and a
+	// patch that has never opened the rules editor has not said otherwise.
+	fp := model.FollowerPermissions{Events: true, Proposals: true, Charters: true, Members: true}
+	json.Unmarshal([]byte(fpJSON), &fp)
+	return fp.Proposals
+}
+
 // membersOnlyDocFilenames returns the git filenames of a node's members-only
 // charters. An amendment proposal carries the full proposed text of the doc it
 // targets, and proposals are a public read — without this, a members-only

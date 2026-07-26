@@ -527,6 +527,19 @@ document templates. A term nobody reaches for when building the thing
 isn't the thing's name.
 _Avoid_: baste request (retired), motion, petition
 
+**Follower permissions**:
+What a patch offers its followers — which workspace tabs they get, and
+whether they may take part in proposals. Not access control: the events,
+proposals, and member lists behind those tabs are public reads, so
+switching one off hides a tab from a patch's own followers while leaving
+the same data readable by anyone signed out (docs/adr/050). The one
+exception is charters, which carry real per-document visibility and so
+can genuinely be withheld. A patch that switches proposals off is saying
+followers are not part of its deliberation, and that is honoured where it
+can be — commenting — rather than pretended at by hiding public pages.
+_Avoid_: permissions (in prose about what followers can *see* — the word
+promises a boundary that is only there for charters), access level
+
 **Electorate**:
 The people who may vote in a patch: active admins and members who have
 been there at least as long as the patch's minimum voting tenure. One

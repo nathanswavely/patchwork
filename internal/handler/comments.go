@@ -179,6 +179,21 @@ func CreateComment(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// ...unless the patch has told its followers that proposals are not
+		// theirs to take part in. `follower_permissions.proposals` is off, the
+		// workspace hides the tab, and a follower commenting anyway was the
+		// one place that setting had no effect (docs/adr/050).
+		//
+		// This gates taking part, not reading: proposals and their comments
+		// are a public read, so the setting cannot and does not hide them —
+		// an anonymous visitor sees the same thread. What a patch is saying
+		// by switching it off is about participation, and participation is
+		// where it can be honoured.
+		if user.Role != "admin" && !followerMayJoinProposals(db, user.ID, nodeID) {
+			http.Error(w, `{"error":"this patch does not include followers in its proposals"}`, http.StatusForbidden)
+			return
+		}
+
 		var req struct {
 			Body     string  `json:"body"`
 			ParentID *string `json:"parent_id"`
