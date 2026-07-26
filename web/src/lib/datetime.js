@@ -57,6 +57,18 @@ const shiftDays = (base, days) => {
   return d;
 };
 
+// Weeks start on Monday, so a weekend is the tail of one week rather than a
+// thing split across two. That matters more here than the US convention of
+// starting on Sunday does: "this weekend" is a first-class idea on an events
+// calendar, and a Sunday-start week puts Saturday and Sunday in different
+// weeks — which is exactly how "this week" (which used to end on Saturday)
+// and "next week" (which started on Monday) came to disagree, leaving every
+// Sunday in a gap that neither preset could reach.
+//
+// getDay() counts from Sunday and returns 0 for it, which is what broke the
+// day arithmetic at the week's edges. isoWeekday counts from Monday.
+const isoWeekday = (d) => (d.getDay() + 6) % 7; // Mon 0 … Sun 6
+
 // The first instant of a local day.
 export function dayStart(d) {
   return startOfDay(d).toISOString();
@@ -100,14 +112,21 @@ export function eventDateRange(preset, opts = {}) {
       return { from: dayStart(tom), to: dayEnd(tom) };
     }
     case 'weekend': {
-      const sat = shiftDays(today, 6 - today.getDay());
-      return { from: dayStart(sat), to: dayEnd(shiftDays(sat, 1)) };
+      // This week's weekend, never next week's. On Sunday that weekend has
+      // already begun, so it starts today rather than yesterday — the list
+      // looks forward, and the old arithmetic skipped a whole week here.
+      const saturday = shiftDays(today, 5 - isoWeekday(today));
+      const start = saturday < today ? today : saturday;
+      return { from: dayStart(start), to: dayEnd(shiftDays(saturday, 1)) };
     }
     case 'week':
-      return { from: dayStart(today), to: dayEnd(shiftDays(today, 6 - today.getDay())) };
+      // Today through Sunday. On Sunday that is today alone, which is honest:
+      // Sunday is the last day of its week, not the first of the next.
+      return { from: dayStart(today), to: dayEnd(shiftDays(today, 6 - isoWeekday(today))) };
     case 'nextweek': {
-      const nextMon = shiftDays(today, 8 - today.getDay());
-      return { from: dayStart(nextMon), to: dayEnd(shiftDays(nextMon, 6)) };
+      // The Monday after this week's Sunday, so the two presets meet exactly.
+      const monday = shiftDays(today, 7 - isoWeekday(today));
+      return { from: dayStart(monday), to: dayEnd(shiftDays(monday, 6)) };
     }
     case 'month': {
       const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);

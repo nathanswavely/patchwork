@@ -161,6 +161,101 @@ describe('eventDateRange bounds a day with instants', () => {
   });
 });
 
+// The week presets ran on two different week-start conventions: "this week"
+// ended on Saturday, "next week" began on Monday. Every Sunday therefore fell
+// between them and was unreachable from either preset — on every day of the
+// week, not just on Sundays. Weeks now start on Monday throughout, which also
+// keeps a weekend inside one week instead of straddling two.
+describe('week presets start weeks on Monday', () => {
+  // Mon 2026-07-20 through Sun 2026-07-26; next week is Mon 27 – Sun Aug 2.
+  const WEEK = [20, 21, 22, 23, 24, 25, 26];
+  const DAY_NAME = {
+    20: 'Monday', 21: 'Tuesday', 22: 'Wednesday', 23: 'Thursday',
+    24: 'Friday', 25: 'Saturday', 26: 'Sunday',
+  };
+
+  // Noon on a given local day, as the instant an event that day would carry.
+  const noon = (month, day) => new Date(2026, month, day, 12).toISOString();
+  const covers = (r, iso) => r.from <= iso && (!r.to || iso <= r.to);
+
+  for (const d of WEEK) {
+    const now = new Date(2026, 6, d, 15, 0);
+    const on = `on ${DAY_NAME[d]}`;
+
+    it(`runs "this week" from today to Sunday ${on}`, () => {
+      const r = eventDateRange('week', { now });
+      expect(covers(r, noon(6, d))).toBe(true);
+      expect(covers(r, noon(6, 26))).toBe(true); // Sunday, the week's last day
+      expect(covers(r, noon(6, 27))).toBe(false); // next Monday belongs to next week
+    });
+
+    it(`runs "next week" Mon 27 to Sun Aug 2 ${on}`, () => {
+      const r = eventDateRange('nextweek', { now });
+      expect(covers(r, noon(6, 27))).toBe(true);
+      expect(covers(r, noon(7, 2))).toBe(true);
+      expect(covers(r, noon(6, 26))).toBe(false);
+      expect(covers(r, noon(7, 3))).toBe(false);
+    });
+
+    // The regression that motivated the pass.
+    it(`leaves no day unreachable between the two ${on}`, () => {
+      const wk = eventDateRange('week', { now });
+      const nx = eventDateRange('nextweek', { now });
+      for (let day = d; day <= 26; day++) {
+        expect(covers(wk, noon(6, day)) || covers(nx, noon(6, day))).toBe(true);
+      }
+      for (let day = 27; day <= 31; day++) {
+        expect(covers(wk, noon(6, day)) || covers(nx, noon(6, day))).toBe(true);
+      }
+    });
+
+    it(`points "this weekend" at Jul 25–26, never next weekend, ${on}`, () => {
+      const r = eventDateRange('weekend', { now });
+      expect(covers(r, noon(6, 26))).toBe(true); // Sunday is in it from any day
+      expect(covers(r, noon(6, 25))).toBe(d <= 25); // Saturday, unless it has passed
+      expect(covers(r, noon(7, 1))).toBe(false); // never a week ahead
+    });
+
+    it(`never starts a range before today ${on}`, () => {
+      const midnight = new Date(2026, 6, d).toISOString();
+      for (const preset of ['weekend', 'week', 'nextweek', 'month', 'any']) {
+        expect(eventDateRange(preset, { now }).from >= midnight).toBe(true);
+      }
+    });
+  }
+
+  // A week whose Sunday is 23 or 25 hours long. Day arithmetic that adds
+  // 24-hour multiples drifts across these; calendar arithmetic does not.
+  for (const [label, month, sunday] of [
+    ['spring forward', 2, 8], // Sun 2026-03-08 in the US
+    ['fall back', 10, 1], // Sun 2026-11-01 in the US
+  ]) {
+    it(`covers a week containing a ${label} transition`, () => {
+      const monday = new Date(2026, month, sunday - 6, 15, 0);
+      const r = eventDateRange('week', { now: monday });
+      for (let day = sunday - 6; day <= sunday; day++) {
+        expect(covers(r, new Date(2026, month, day, 12).toISOString())).toBe(true);
+      }
+      // The transition day's evening is still inside the week.
+      expect(covers(r, new Date(2026, month, sunday, 23, 0).toISOString())).toBe(true);
+      // The Monday after is not.
+      expect(covers(r, new Date(2026, month, sunday + 1, 0, 30).toISOString())).toBe(false);
+    });
+  }
+
+  it('treats Sunday as the end of its week, not the start of the next', () => {
+    const sunday = new Date(2026, 6, 26, 15, 0);
+    // "This week" is Sunday alone, and next week still begins the next day.
+    expect(covers(eventDateRange('week', { now: sunday }), noon(6, 26))).toBe(true);
+    expect(covers(eventDateRange('nextweek', { now: sunday }), noon(6, 27))).toBe(true);
+    // "This weekend" is today — the old arithmetic jumped a full week here.
+    const weekend = eventDateRange('weekend', { now: sunday });
+    expect(covers(weekend, noon(6, 26))).toBe(true);
+    expect(covers(weekend, noon(7, 1))).toBe(false);
+    expect(covers(weekend, noon(7, 2))).toBe(false);
+  });
+});
+
 // There is no Svelte render library in this project (see
 // patch-profile-window.test.js), so the wiring is asserted against source.
 describe('EventForm uses the pairing on both sides', () => {
