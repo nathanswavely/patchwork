@@ -12,7 +12,7 @@ type Event struct {
 	NodeID   string // Patch context (empty for site-level admin notifications)
 	NodeSlug string // For building links
 	NodeName string // For display / email subject
-	ActorID  string // Who triggered the event (excluded from recipients)
+	ActorID  string // Who triggered the event (excluded from recipients, unless NotifiesSelf)
 	TargetID string // Specific user for AudienceSpecificUser
 	EntityID string // Proposal/event/doc ID for building links
 	Title    string // Notification title
@@ -62,10 +62,11 @@ func (n *Notifier) Notify(event Event) {
 	// 2. Resolve recipients.
 	recipients := n.resolveRecipients(event, meta.Audience)
 
-	// 3. Filter out actor.
+	// 3. Filter out actor, unless this type reaches them too.
+	self := NotifiesSelf(event.Type)
 	filtered := make([]string, 0, len(recipients))
 	for _, uid := range recipients {
-		if uid != event.ActorID {
+		if self || uid != event.ActorID {
 			filtered = append(filtered, uid)
 		}
 	}
@@ -90,10 +91,10 @@ func (n *Notifier) Notify(event Event) {
 // NotifyCoalesced delivers a batch of same-type events with at most one
 // notification per recipient. Recipients are resolved per event — each
 // patch's category config still gates its own event, and each event's actor
-// is excluded from that event only — then a user reached by several events
-// gets a single notification, built by merge from exactly the events that
-// reached them. Delivery is synchronous; callers that must not block wrap
-// the call in a goroutine.
+// is excluded from that event only (unless NotifiesSelf) — then a user
+// reached by several events gets a single notification, built by merge from
+// exactly the events that reached them. Delivery is synchronous; callers that
+// must not block wrap the call in a goroutine.
 func (n *Notifier) NotifyCoalesced(events []Event, merge func(userEvents []Event) Event) {
 	if len(events) == 0 {
 		return
@@ -104,6 +105,7 @@ func (n *Notifier) NotifyCoalesced(events []Event, merge func(userEvents []Event
 		return
 	}
 
+	self := NotifiesSelf(events[0].Type)
 	perUser := map[string][]Event{}
 	var order []string
 	for _, event := range events {
@@ -111,7 +113,7 @@ func (n *Notifier) NotifyCoalesced(events []Event, merge func(userEvents []Event
 			continue
 		}
 		for _, uid := range n.resolveRecipients(event, meta.Audience) {
-			if uid == event.ActorID {
+			if uid == event.ActorID && !self {
 				continue
 			}
 			if len(perUser[uid]) == 0 {

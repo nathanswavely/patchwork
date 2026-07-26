@@ -156,6 +156,25 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	ClaimSetupExpiring: {CategoryAdmin, "Your claim's setup window is closing", AudienceSpecificUser, PriorityHigh},
 }
 
+// selfNotifyingTypes reach their own actor. Notifications normally skip the
+// person who caused them — nobody needs telling what they just did — but a
+// review-queue notification reports the state of a queue, which is true no
+// matter who filled it. It also meant a lone site admin's queues notified
+// nobody at all: they are the only recipient and, when they submit, the only
+// actor. Patch-level queues need no equivalent, since anyone who could be a
+// recipient there posts directly instead of submitting.
+var selfNotifyingTypes = map[NotificationType]bool{
+	AdminClaimRequest:     true,
+	AdminSubmission:       true,
+	AdminEventSubmission:  true,
+	AdminEventLinkRequest: true,
+}
+
+// NotifiesSelf reports whether a type is delivered to its own actor.
+func NotifiesSelf(t NotificationType) bool {
+	return selfNotifyingTypes[t]
+}
+
 // DefaultEnabled returns whether a channel should be on by default for a given type.
 func DefaultEnabled(t NotificationType, channel string) bool {
 	meta, ok := TypeRegistry[t]
