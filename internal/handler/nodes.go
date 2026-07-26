@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"log"
 
@@ -572,6 +573,26 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		db.QueryRow(
 			`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND status = 'active' AND role = 'follower'`, n.ID,
 		).Scan(&n.FollowerCount)
+
+		// The profile states an upcoming count, so the server counts it —
+		// the page used to report the length of the capped page of rows it
+		// had fetched, which meant a venue with forty shows advertised
+		// five (CONTEXT.md "Upcoming events"). Deliberately not the tree's
+		// event_count: that one is all-time, and a patch idle since spring
+		// should not read as busy. The conditions mirror ListEvents' own
+		// node filter, including the guard that keeps a private patch's
+		// linked events off another patch's page — a count that disagrees
+		// with the list under it is the bug being fixed.
+		db.QueryRow(
+			`SELECT COUNT(*) FROM events e JOIN nodes n ON e.node_id = n.id
+			 WHERE e.visibility = 'public' AND e.removed_at IS NULL
+			   AND e.status = 'active' AND e.starts_at >= ?
+			   AND (e.node_id = ? OR EXISTS (
+			         SELECT 1 FROM event_links el WHERE el.event_id = e.id
+			         AND el.node_id = ? AND el.status = 'confirmed'))
+			   AND (n.visibility = 'public' OR e.node_id = ?)`,
+			time.Now().UTC().Format(time.RFC3339), n.ID, n.ID, n.ID,
+		).Scan(&n.UpcomingEventCount)
 
 		isUnclaimed := n.Status == "unclaimed"
 

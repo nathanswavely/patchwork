@@ -3,6 +3,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { getUser } from '../stores/auth.svelte.js';
   import ReportButton from '../components/ReportButton.svelte';
+  import { formatMonth as formatDate } from '../lib/datetime.js';
 
   let { username = '' } = $props();
 
@@ -36,10 +37,6 @@
     catch { return url; }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  }
 </script>
 
 <div class="profile">

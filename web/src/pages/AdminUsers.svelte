@@ -7,6 +7,7 @@
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import { formatDay as formatDate } from '../lib/datetime.js';
 
   let pendingRoles = $state({});
 
@@ -124,10 +125,6 @@
     }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-  }
 
   let inviteMaxUses = $state(1);
   let inviteExpiresHrs = $state(72);

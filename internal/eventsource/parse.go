@@ -9,6 +9,7 @@ package eventsource
 import (
 	"bytes"
 	"fmt"
+	"html"
 	"sort"
 	"strconv"
 	"strings"
@@ -211,6 +212,15 @@ func itemFromEvent(e *ical.Event, uid, occurrence string) (*Item, time.Time, boo
 	}
 	description, _ := e.Props.Text(ical.PropDescription)
 	location, _ := e.Props.Text(ical.PropLocation)
+
+	// Unescaped like the JSON-LD reader already does. iCalendar text is not
+	// HTML, but feeds generated out of a CMS carry entities through anyway,
+	// and "Workshop &amp; Tool Library" then renders literally. Location is
+	// the visible casualty: it is name-first (docs/adr/046), so the entity
+	// sits in the half that survives truncation.
+	title = html.UnescapeString(title)
+	description = html.UnescapeString(description)
+	location = html.UnescapeString(location)
 
 	it := &Item{
 		UID:         uid,

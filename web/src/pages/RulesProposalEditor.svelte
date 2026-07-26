@@ -10,6 +10,14 @@
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let isAdmin = $derived(patch.value.isAdmin);
+  let membershipRole = $derived(patch.value.membershipRole);
+
+  // The entry point on the governance hub is gated, but the route is
+  // reachable by URL, so the page states the rule itself rather than
+  // trusting the button that sent you. Not `isMember` — the node payload
+  // sets is_member for followers too, and following carries no governance
+  // rights.
+  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
 
   let currentRules = $state(null);
   let proposedRules = $state(null);
@@ -174,6 +182,16 @@
   }
 </script>
 
+<!-- The notice sits outside .rules-editor on purpose: that wrapper's measure
+     cap is for the form's line length, and a centered notice inheriting it
+     would center on the column instead of the page — visibly off-center, and
+     narrower than the same notice everywhere else it appears. -->
+{#if !canPropose}
+  <div class="permission-notice page-fade">
+    <p>Only members can propose a change to these rules.</p>
+    <p class="muted">Become a member to take part in how this patch governs itself.</p>
+  </div>
+{:else}
 <div class="rules-editor page-fade">
   {#if loading}
     <Skeleton lines={1} height="2rem" width="50%" />
@@ -262,6 +280,7 @@
 
   {/if}
 </div>
+{/if}
 
 <style>
   .rules-editor {
@@ -369,5 +388,15 @@
   .error-state {
     padding: 2rem 0;
     text-align: center;
+  }
+
+  .permission-notice {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .permission-notice p:first-child {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
   }
 </style>

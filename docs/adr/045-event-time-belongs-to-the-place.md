@@ -8,10 +8,11 @@ test name.
 What exists instead is a convention nobody wrote down: `events.starts_at`
 is `TEXT NOT NULL` (`migrations/001_initial.sql:92`) holding an ISO 8601
 instant in UTC, and every reader renders it with the *viewer's browser*
-zone — `new Date(iso).toLocaleTimeString('en-US', …)`, duplicated across
-`EventsPage.svelte:217`, `EventDetail.svelte:75`, `PatchEvents.svelte:174`,
-`Dashboard.svelte:76`, `PatchProfile.svelte:155`,
-`AdminEventSubmissions.svelte:54`, and `finderProviders.js:58`.
+zone — `new Date(iso).toLocaleTimeString('en-US', …)`. Those formatters have
+since been gathered into `web/src/lib/datetime.js`, which names the gap in
+its own header: a local evening event "can show on the wrong day to a viewer
+whose clock is set elsewhere. That is a known gap, not a decision made
+here." This is that decision.
 
 For a video call that is the correct behaviour: the instant is the fact and
 each participant's clock is a rendering of it. Patchwork does not host video
@@ -50,12 +51,12 @@ The absence has already produced four bugs that read as unrelated:
   `toISOString().slice(0, 10)` (`:29-30`), which reads that local midnight
   back in UTC.
 - **Floating and all-day feed times land on the wrong day.**
-  `parse.go:203` calls `e.DateTimeStart(time.UTC)`. go-ical honours an
+  `parse.go:204` calls `e.DateTimeStart(time.UTC)`. go-ical honours an
   explicit `TZID` correctly, but the location argument is the fallback for
   values carrying no zone — so a floating `DTSTART:20260722T190000` and an
   all-day `VALUE=DATE` from a New York venue are both read as UTC. The
   all-day case becomes `2026-07-22T00:00:00Z` and renders in Lancaster as
-  July 21st, 8pm. `jsonld.go:143` documents the same behaviour explicitly.
+  July 21st, 8pm. `jsonld.go:141` documents the same behaviour explicitly.
   Only the TZID path has a test (`parse_test.go:184`).
 
 None of these are fixable in isolation, because each one is a component
@@ -95,14 +96,16 @@ We decided:
   cross-origin — never reimplement the fallback, and never need to fetch
   the patch to render the event.
 
-- **Formatting happens in exactly one module.** `web/src/lib/datetime.js`,
-  taking `(iso, tz)` and going through `Intl.DateTimeFormat` with a
-  `timeZone` option. The seven duplicated formatters collapse into it. The
-  module shows a zone abbreviation **only when the event's zone differs
-  from the viewer's** — `8:00 PM` at home, `8:00 PM EDT` when it doesn't
-  match. Annotating every time teaches the reader to ignore the
-  annotation; annotating the surprising ones is what makes the merged
-  cross-quilt feed legible.
+- **Formatting happens in exactly one module.** `web/src/lib/datetime.js`
+  already exists and already holds every formatter; what it lacks is the
+  zone. Each takes `(iso, tz)` and goes through `Intl.DateTimeFormat` with a
+  `timeZone` option. The module shows a zone abbreviation **only when the
+  event's zone differs from the viewer's** — `8:00 PM` at home, `8:00 PM
+  EDT` when it doesn't match. Annotating every time teaches the reader to
+  ignore the annotation; annotating the surprising ones is what makes the
+  merged cross-quilt feed legible. Because the formatters are already named
+  and already called from one place, adding the parameter is the whole
+  frontend change.
 
 - **Day boundaries are computed in the event's zone and sent as
   instants.** `getDateRange` returns full RFC 3339 bounds rather than bare
@@ -111,7 +114,7 @@ We decided:
   to a place.
 
 - **Ingested times with no zone are read in the source patch's zone.**
-  `parse.go:203` and `jsonld.go:143` take the resolved zone instead of
+  `parse.go:204` and `jsonld.go:141` take the resolved zone instead of
   `time.UTC`. A venue's own calendar feed publishing floating times is
   publishing them in its own zone; that is what floating means.
 
@@ -176,6 +179,9 @@ harmless for ordering but breaks the exact-match dedupe key in
 neither is a timezone decision.
 
 Finally, the four bugs above are not follow-ups. They are the reason this
-decision exists, and the edit-form shift in particular is corrupting data
-on the live instance today, independent of any rendering choice — it is the
-part of this work that should land first and can land alone.
+decision exists, and three of them needed no part of it: the edit-form
+shift, the emptied single-day filter, and the week presets' disagreement are
+all fixed alongside this record, because none of them turns on where an
+event's time lives. Only the fourth waits — floating and `VALUE=DATE` feed
+times cannot be read correctly until something records the zone their source
+means, which is exactly what this decides.

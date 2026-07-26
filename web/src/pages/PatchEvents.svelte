@@ -4,6 +4,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, isAdmin as isInstanceAdmin, getUser } from '../stores/auth.svelte.js';
   import { parseCsv, rowsToEvents, TEMPLATE_CSV } from '../lib/eventCsv.js';
+  import { formatEventDate as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
@@ -169,15 +170,6 @@
     }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  }
-
-  function formatTime(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  }
 </script>
 
 {#if permissionDenied}

@@ -11,9 +11,14 @@
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
-  let isMember = $derived(patch.value.isMember);
   let isAdmin = $derived(patch.value.isAdmin);
+  let membershipRole = $derived(patch.value.membershipRole);
   let nodeId = $derived(patch.value.node?.id);
+
+  // Not `isMember`: the node payload sets is_member for followers too, and
+  // proposing a rules change is a member act — following carries no
+  // governance rights.
+  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
 
   // Setup checklist fallback (docs/adr/040, CONTEXT.md "Setup checklist"):
   // "decide how you govern" has no single derivable signal for a patch
@@ -132,7 +137,7 @@
         <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
           Change these rules
         </a>
-      {:else if isMember || isAdmin}
+      {:else if canPropose}
         <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
           Propose a change to these rules
         </a>

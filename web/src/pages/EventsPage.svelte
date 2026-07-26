@@ -1,13 +1,17 @@
 <script>
   import { CalendarBlank, CaretDown } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
-  import { eventDateRange } from '../lib/datetime.js';
   import { navigate } from '../stores/router.svelte.js';
   import { getSelectedTags, getSearchQuery, resetFilters } from '../stores/quilt.svelte.js';
   import FilterChips from '../components/FilterChips.svelte';
   import { getRemoteFollows } from '../stores/multiQuilt.svelte.js';
   import { sortByDate } from '../lib/multiQuilt.js';
   import { textMatches } from '../lib/textMatch.js';
+  import {
+    formatEventDate as formatDate,
+    formatEventTime as formatTime,
+    eventDateRange,
+  } from '../lib/datetime.js';
 
   let { quiltScope = 'local' } = $props();
 
@@ -177,16 +181,6 @@
       return visiblePatchIds.has(e.node_id);
     });
   });
-
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  }
-
-  function formatTime(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  }
 
   const presets = [
     { id: 'any', label: 'Any date' },
