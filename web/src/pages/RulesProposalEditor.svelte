@@ -182,13 +182,18 @@
   }
 </script>
 
+<!-- The notice sits outside .rules-editor on purpose: that wrapper's measure
+     cap is for the form's line length, and a centered notice inheriting it
+     would center on the column instead of the page — visibly off-center, and
+     narrower than the same notice everywhere else it appears. -->
+{#if !canPropose}
+  <div class="permission-notice page-fade">
+    <p>Only members can propose a change to these rules.</p>
+    <p class="muted">Become a member to take part in how this patch governs itself.</p>
+  </div>
+{:else}
 <div class="rules-editor page-fade">
-  {#if !canPropose}
-    <div class="permission-notice">
-      <p>Only members can propose a change to these rules.</p>
-      <p class="muted">Become a member to take part in how this patch governs itself.</p>
-    </div>
-  {:else if loading}
+  {#if loading}
     <Skeleton lines={1} height="2rem" width="50%" />
     <Skeleton lines={6} height="0.9rem" />
   {:else if error}
@@ -275,6 +280,7 @@
 
   {/if}
 </div>
+{/if}
 
 <style>
   .rules-editor {
