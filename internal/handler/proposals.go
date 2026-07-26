@@ -162,10 +162,19 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Raising a proposal is a member act. Not userHasMembership — that
-		// counts any active membership row, followers included, so it let a
-		// follower author a live proposal on a patch they cannot vote in.
-		if user.Role != "admin" && !mayPropose(db, user.ID, nodeID) {
+		// Raising a proposal is a member act, and a member act is a member's
+		// alone. Not userHasMembership — that counts any active membership row,
+		// followers included, so it let a follower author a live proposal on a
+		// patch they cannot vote in.
+		//
+		// No `user.Role == "admin"` bypass either. Instance admins keep one for
+		// commenting, which is speech, and for stewardship — withdrawing,
+		// applying, moderating. Proposing is neither: once it became a member
+		// act, an instance admin holding no role here proposing in a patch's
+		// governance was instance authority reaching into a per-patch choice,
+		// which CONTEXT.md ("Instance admin") and ADR 026 both refuse. Wanting
+		// a voice in a patch is what joining is for (docs/adr/044).
+		if !mayPropose(db, user.ID, nodeID) {
 			http.Error(w, `{"error":"must be member of node"}`, http.StatusForbidden)
 			return
 		}

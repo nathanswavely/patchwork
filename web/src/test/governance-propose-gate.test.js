@@ -21,7 +21,10 @@ describe('GovernanceOverview — propose entry point', () => {
   const src = source('components/GovernanceOverview.svelte');
 
   it('derives the propose gate from membershipRole, not the follower-inclusive is_member', () => {
-    expect(src).toMatch(/canPropose = \$derived\(\s*isAdmin \|\| membershipRole === 'member' \|\| membershipRole === 'admin'\s*\)/);
+    expect(src).toMatch(/canPropose = \$derived\(\s*membershipRole === 'member' \|\| membershipRole === 'admin'\s*\)/);
+    // Not `isAdmin`: the node payload sets it for instance admins too, and
+    // proposing needs standing in this patch (docs/adr/044).
+    expect(src).not.toMatch(/canPropose = \$derived\(isAdmin/);
   });
 
   it('gates the propose action on canPropose', () => {
@@ -49,7 +52,10 @@ describe.each(PROPOSE_ROUTES)('%s — the route itself', (_name, path, notice) =
   const src = source(path);
 
   it('gates on membershipRole, since the route is reachable by URL and not only by the button', () => {
-    expect(src).toMatch(/canPropose = \$derived\(\s*isAdmin \|\| membershipRole === 'member' \|\| membershipRole === 'admin'\s*\)/);
+    expect(src).toMatch(/canPropose = \$derived\(\s*membershipRole === 'member' \|\| membershipRole === 'admin'\s*\)/);
+    // Not `isAdmin`: the node payload sets it for instance admins too, and
+    // proposing needs standing in this patch (docs/adr/044).
+    expect(src).not.toMatch(/canPropose = \$derived\(isAdmin/);
   });
 
   it('refuses the editor before anything else renders', () => {
