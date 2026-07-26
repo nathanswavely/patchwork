@@ -19,6 +19,10 @@
     entityType,       // 'node' | 'event' | 'user'
     entityId = '',
     entityName = '',
+    // 'menuitem' renders the trigger as a row inside a host menu (the patch
+    // profile's overflow, docs/adr/042) and lets that menu close itself.
+    variant = 'button',
+    onOpen = () => {},
   } = $props();
 
   const REASONS = [
@@ -63,8 +67,16 @@
 </script>
 
 {#if isLoggedIn() && entityId}
-  <button class="report-trigger" onclick={() => (open = true)} title="Report this {NOUN[entityType]}">
-    <Flag size={13} weight="duotone" />
+  <button
+    class="report-trigger"
+    class:menuitem={variant === 'menuitem'}
+    role={variant === 'menuitem' ? 'menuitem' : undefined}
+    onclick={() => { onOpen(); open = true; }}
+    title="Report this {NOUN[entityType]}"
+  >
+    {#if variant !== 'menuitem'}
+      <Flag size={13} weight="duotone" />
+    {/if}
     <span>Report</span>
   </button>
 
@@ -116,6 +128,19 @@
     cursor: pointer;
     border-radius: var(--radius);
     transition: color 100ms ease, background 100ms ease;
+  }
+
+  /* Inside a host menu the trigger is a row, not a chip: full width, the
+     menu's own type scale, no icon. */
+  .report-trigger.menuitem {
+    display: block;
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    border-radius: calc(var(--radius) - 2px);
   }
 
   .report-trigger:hover {

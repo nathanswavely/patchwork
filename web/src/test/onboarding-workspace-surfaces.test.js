@@ -47,8 +47,10 @@ describe('JoinSheet', () => {
     expect(src).toContain('Introduce yourself to the admins (optional)');
   });
 
-  it('labels the CTA Join vs Request to join, and never fetches members-only content directly', () => {
-    expect(src).toMatch(/\{isApproval \? 'Request to join' : 'Join'\}/);
+  // "Join" names joining the quilt; the patch rung is "Become a member"
+  // everywhere, and the sheet's confirm names the act it commits (adr/042).
+  it('labels the CTA Become a member vs Send request, and never fetches members-only content directly', () => {
+    expect(src).toMatch(/\{isApproval \? 'Send request' : 'Become a member'\}/);
   });
 
   it('leaves the actual join call and post-join handling to the caller via onConfirm', () => {
@@ -57,27 +59,41 @@ describe('JoinSheet', () => {
   });
 });
 
-describe('PatchProfile wires the join sheet', () => {
-  const src = source('pages/PatchProfile.svelte');
+// The join sheet used to be wired twice, once in PatchProfile and once in
+// PatchShell, and the two had drifted. PatchRelationship owns it now
+// (docs/adr/042).
+describe('PatchRelationship wires the join sheet for both surfaces', () => {
+  const src = source('components/PatchRelationship.svelte');
+  const profileSrc = source('pages/PatchProfile.svelte');
+  const shellSrc = source('components/PatchShell.svelte');
 
   it('imports JoinSheet and mounts it', () => {
-    expect(src).toContain("import JoinSheet from '../components/JoinSheet.svelte'");
+    expect(src).toContain("import JoinSheet from './JoinSheet.svelte'");
     expect(src).toMatch(/<JoinSheet[\s\S]*?onConfirm={handleJoin}/);
   });
 
-  it('opens the sheet from Join and Become Member instead of calling the API directly', () => {
-    expect(src).toMatch(/<button class="btn btn-primary" onclick={openJoinSheet} disabled={joining}>Become Member<\/button>/);
-    expect(src).toMatch(/<button class="btn btn-primary" onclick={openJoinSheet} disabled={joining}>Join<\/button>/);
+  it('opens the sheet from the membership rung instead of calling the API directly', () => {
+    expect(src).toMatch(/onclick={openJoinSheet}[\s\S]{0,120}Become a member/);
   });
 
   it('leaves the Follow button calling handleFollow directly — follows never see a sheet', () => {
-    expect(src).toMatch(/<button class="btn btn-secondary" onclick={handleFollow} disabled={joining}>Follow<\/button>/);
+    expect(src).toMatch(/onclick={handleFollow}[\s\S]{0,60}>Follow</);
   });
 
   it('handleJoin accepts an optional message and still performs the original API call and toasts', () => {
     expect(src).toMatch(/async function handleJoin\(message\)/);
     expect(src).toMatch(/body: message \? \{ message \} : undefined/);
-    expect(src).toContain("showToast('Membership request sent', 'success')");
+    expect(src).toContain("'Membership request sent'");
+  });
+
+  it('is the only implementation — the profile and the shell mount it rather than repeat it', () => {
+    expect(profileSrc).toContain('<PatchRelationship');
+    expect(shellSrc).toContain('<PatchRelationship');
+    expect(profileSrc).not.toContain('<JoinSheet');
+    expect(shellSrc).not.toContain('<JoinSheet');
+    for (const s of [profileSrc, shellSrc]) {
+      expect(s).not.toMatch(/nodes\/\$\{slug\}\/leave/);
+    }
   });
 });
 

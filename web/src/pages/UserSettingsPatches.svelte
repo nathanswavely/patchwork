@@ -150,7 +150,7 @@
               <span class="muted joined-date">{formatDate(m.joined_at)}</span>
             </div>
             <div class="patch-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => handleBecomeMember(m.node_slug)}>Become Member</button>
+              <button class="btn btn-primary btn-sm" onclick={() => handleBecomeMember(m.node_slug)}>Become a member</button>
               <ConfirmAction label="Unfollow" variant="default" onConfirm={() => handleLeave(m.node_slug)} />
             </div>
           </div>

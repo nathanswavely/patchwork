@@ -99,6 +99,17 @@ it has the standing of naming the band in the description
 (docs/adr/032).
 _Avoid_: remote link, federation link
 
+**Thread**:
+A connection between two patches, inferred from shared admins and members
+— never declared, never drawn by hand. Followers don't make one: interest
+is not overlap. A thread is what the quilt's proximity means, so it has no
+control anywhere in the UI; the only way to make one is for people to
+belong to both patches. Distinct from placement affinity, the broader
+internal weighting the layout runs on (shared events, shared followers,
+shared tags), none of which is a thread.
+_Avoid_: edge (the removed explicit-connection concept), link (that is an
+event link, which is declared), connection (in UI copy — say thread)
+
 **Member count**:
 Admins plus members — never followers. A follower is an interested
 observer, not a member; follower interest is its own count. The two are
@@ -176,9 +187,13 @@ canonical patch URLs (/patches/:slug/governance|members|events|settings;
 the global bar with its own top-level nav. Not admin-only: members vote
 there, followers can browse.
 Design analogy: a GitHub repository — analogy only (docs/adr/005 records
-why "repo" was rejected as a name).
+why "repo" was rejected as a name). Chiefly an architecture word: the UI
+speaks it in exactly one place, the patch profile's overflow ("Workspace
+view"), and reaches it everywhere else by naming the room — Governance,
+Members, Events, Settings (docs/adr/042).
 _Avoid_: repo (collides with the git-backed governance repos), patch admin
-area, manage area
+area, manage area, workspace (as the label on a patch profile's primary
+way in — that door names a room or does not exist)
 
 **Scope**:
 The switch between seeing "My Quilt" and the whole instance. A discovery
@@ -293,8 +308,10 @@ contributor ladder is legible. Follows never appear on a profile; only the
 person sees their own follows. Readable by anonymous visitors. The person's
 federated actor carries identity only (name, bio, avatar); memberships
 appear on the profile but never federate, so hiding one takes effect
-immediately on every surface the instance controls.
-_Avoid_: account page (that is settings), dashboard (the personal page)
+immediately on every surface the instance controls. A patch's equivalent
+public page is the patch profile.
+_Avoid_: account page (that is settings), dashboard (the personal page),
+profile (unqualified, when a patch is meant — say patch profile)
 
 **Username**:
 A person's permanent handle, chosen by them at account creation — never
@@ -324,6 +341,41 @@ where the person is a member or admin — never a follow; a followed patch
 is marked with the heart. Where space allows, the mark is paired with its
 word rather than standing alone.
 _Avoid_: star for follows, favorite, bookmark, owner (as a role name)
+
+**Patch profile**:
+A patch's public page at /patches/:slug — the face it shows the street.
+Read at a glance: cover, description, and a glimpse of each of the
+patch's surfaces. Deliberately not the workspace and deliberately without
+the workspace's tab row; a person with standing enters through the
+glimpses themselves — each one both a preview of a room and the way into
+it — rather than through a door named for the container. The single
+exception is the overflow's "Workspace view", a fallback that exists
+because it costs nothing, not because the glimpses need it. Paired with a
+person's Profile, which does the same job for a person.
+_Avoid_: patch page (too vague — every /patches/:slug/* URL is one), patch
+home, landing page, lobby
+
+**Relationship row**:
+The one row of controls on a patch profile, and the only thing on the page
+that is a control rather than a glimpse. It says where the viewer stands
+and offers the next rung, and it holds nothing else — no navigation, no
+contribution, no moderation. At most two controls in any state: a standing
+control, and the next rung if there is one. The rung's word is always
+"Become a member"; "Join" belongs to joining the quilt and is never used
+for a patch.
+_Avoid_: action bar (it holds one kind of act, not all of them), CTA row,
+join buttons
+
+**Standing control**:
+The resting form of a person's standing with a patch — "Following",
+"Member", "Admin" — shown as a control rather than inferred from whatever
+verb happens to be on offer. Leaving is inside it, never beside it:
+Unfollow and Leave are its menu, so departure costs one deliberate extra
+step and the exit never sits at the weight of a rung. It is the only place
+standing is stated on a public page, so a member learns the page knows
+them without having to read the word "Leave".
+_Avoid_: follow button (it is not a toggle), membership badge (a badge is
+not clickable), leave button
 
 **Trusted contributor**:
 An instance-level grant — given and revoked by the instance admin, never

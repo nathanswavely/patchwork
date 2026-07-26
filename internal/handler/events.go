@@ -269,10 +269,16 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 
 		// Direct posting rights; everyone else may still submit for review.
+		//
+		// Members and admins only — not followers. This used to call
+		// userHasMembership, which counts any active membership, so a
+		// follower's event published straight to a calendar they have no
+		// standing on. Following is frictionless by design and grants no
+		// write rights; the contributor ladder is what earns them.
 		direct := user.Role == "admin"
 		switch nodeStatus {
 		case "active":
-			direct = direct || userHasMembership(db, user.ID, req.NodeID)
+			direct = direct || userHasNodeRole(db, user.ID, req.NodeID, "member", "admin")
 		case "unclaimed":
 			direct = direct || user.TrustedContributor
 		}

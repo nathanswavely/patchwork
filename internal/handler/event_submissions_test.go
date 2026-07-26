@@ -247,6 +247,39 @@ func TestActivePatchSuggestionReviewedByPatchAdmin(t *testing.T) {
 	}
 }
 
+// Following grants no write rights. Direct posting is the member/admin
+// rung of the ladder (docs/adr/026); a follower's event goes to review
+// like a stranger's. This once called userHasMembership, which counts any
+// active membership, so a follower published straight to the calendar.
+func TestFollowerEventEntersReview(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := submissionsCfg(true)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	follower, followerToken := createTestUser(t, db, "follower", "member")
+	member, memberToken := createTestUser(t, db, "member", "member")
+
+	nodeID := createTestNode(t, db, owner.ID, "Gallery Row", "gallery-row", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+
+	if _, err := db.Exec("UPDATE nodes SET accept_event_suggestions = 1 WHERE id = ?", nodeID); err != nil {
+		t.Fatalf("open suggestions: %v", err)
+	}
+
+	e, code := createEventVia(t, db, cfg, followerToken, eventBody(nodeID, "Follower's Show"))
+	if code != 201 || e.Status != "pending_review" {
+		t.Fatalf("follower: code=%d status=%q, want 201 pending_review", code, e.Status)
+	}
+
+	// The rung above still posts directly — this must not have been fixed
+	// by simply refusing everyone.
+	m, code := createEventVia(t, db, cfg, memberToken, eventBody(nodeID, "Member's Show"))
+	if code != 201 || m.Status != "active" {
+		t.Fatalf("member: code=%d status=%q, want 201 active", code, m.Status)
+	}
+}
+
 // Changes follow the same door: a trusted contributor edits their own
 // event directly; an ordinary submitter's edit re-enters review; deleting
 // your own event is always free.
