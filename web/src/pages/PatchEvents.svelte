@@ -49,7 +49,9 @@
   async function loadEvents() {
     loading = true;
     try {
-      const data = await api(`events?node_slug=${encodeURIComponent(slug)}`);
+      // The workspace calendar owns the whole calendar, past included —
+      // the public glimpse is the surface that means "upcoming".
+      const data = await api(`events?node_slug=${encodeURIComponent(slug)}&include_past=true`);
       events = data.items || data || [];
     } catch {
       events = [];

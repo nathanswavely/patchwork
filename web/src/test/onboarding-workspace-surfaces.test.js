@@ -158,7 +158,15 @@ describe('SetupChecklist', () => {
   });
 
   it('derives the first-event item from the events endpoint', () => {
-    expect(src).toMatch(/api\(`events\?node_slug=\$\{encodeURIComponent\(slug\)\}&limit=1`\)/);
+    expect(src).toMatch(/api\(`events\?node_slug=\$\{encodeURIComponent\(slug\)\}[^`]*&limit=1`\)/);
+  });
+
+  // The endpoint defaults to upcoming-only (issue #88). This item asks
+  // whether the patch has *ever* posted an event, so it must opt out —
+  // otherwise a patch whose only event has happened watches a completed
+  // step un-tick itself.
+  it('counts past events when asking whether a first event exists', () => {
+    expect(src).toMatch(/events\?node_slug=[^`]*include_past=true/);
   });
 
   it('derives governance decided from a non-lining doc, OR the localStorage visited fallback', () => {
