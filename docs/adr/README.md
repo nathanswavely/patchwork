@@ -50,6 +50,7 @@ several branches are in flight.
 | [046](046-location-is-one-name-first-field.md) | Location is one field, written name-first — the venue/address split rejected |
 | [047](047-a-vote-keeps-the-terms-it-opened-with.md) | A vote keeps the terms it opened with — rules freeze when voting opens *(open question settled by 048)* |
 | [048](048-proposals-are-born-voting.md) | Proposals are born voting — draft and discussion retired |
+| [050](050-follower-permissions-gate-taking-part.md) | Follower permissions gate taking part, not reading — only `charters` was ever a read gate |
 
 ## Adopted as design boundaries — implementation is backlog
 
