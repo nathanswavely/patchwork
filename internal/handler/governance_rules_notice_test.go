@@ -18,7 +18,7 @@ func TestRulesChange_NotifiesThePatch(t *testing.T) {
 	t.Cleanup(func() { handler.SetNotifier(nil) })
 
 	admin, adminToken := createTestUser(t, db, "rc_admin", "member")
-	member, _ := createTestUser(t, db, "rc_member", "member")
+	member, memberToken := createTestUser(t, db, "rc_member", "member")
 	follower, _ := createTestUser(t, db, "rc_follower", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rules Notice", "rules-notice", "open")
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
@@ -31,8 +31,15 @@ func TestRulesChange_NotifiesThePatch(t *testing.T) {
 	setNodeRules(t, db, nodeID,
 		`{"decision_method":"admin","quorum_percent":0,"amendment_threshold":"majority","amendment_auto_apply":true,"min_voting_tenure_days":0}`)
 
-	// A vote already running, which the change will not reach.
-	openBefore := createProposalVia(t, db, "rules-notice", adminToken, "Running before the change")
+	// A vote already running, which the change will not reach. Raised by the
+	// member, not the admin: under admin-decides rules an admin's own proposal
+	// is born applied (docs/adr/041), so only a member's stays open.
+	openBefore := createProposalVia(t, db, "rules-notice", memberToken, "Running before the change")
+	var openStatus string
+	db.QueryRow("SELECT status FROM proposals WHERE id = ?", openBefore).Scan(&openStatus)
+	if openStatus != "open" {
+		t.Fatalf("fixture: expected an open vote to exist, got status %q", openStatus)
+	}
 
 	body := map[string]interface{}{
 		"title":          "Require thirty days before voting",
@@ -47,15 +54,20 @@ func TestRulesChange_NotifiesThePatch(t *testing.T) {
 		t.Fatalf("rules change: expected 201, got %d: %s", w.Code, w.Body.String())
 	}
 
-	// The member hears about it.
-	if n := countNotifications(t, db, member.ID, notifications.GovernanceRulesChanged, 1); n != 1 {
-		t.Errorf("member notifications = %d, want 1", n)
+	// A vote is running, so the member gets the urgent type — the one that
+	// mails by default, because those votes close.
+	if n := countNotifications(t, db, member.ID, notifications.GovernanceRulesChangedMidVote, 1); n != 1 {
+		t.Errorf("mid-vote notifications = %d, want 1", n)
+	}
+	// And only that one: saying it twice is how people learn to ignore both.
+	if n := countNotifications(t, db, member.ID, notifications.GovernanceRulesChanged, 0); n != 0 {
+		t.Errorf("routine notifications = %d, want 0 — exactly one notice per edit", n)
 	}
 
 	// The follower does not: this type is AudienceAllMembers, which is admins
 	// and members and never followers — the same set as everywhere else the
 	// word member is load-bearing (CONTEXT.md, "Member count").
-	if n := countNotifications(t, db, follower.ID, notifications.GovernanceRulesChanged, 0); n != 0 {
+	if n := countNotifications(t, db, follower.ID, notifications.GovernanceRulesChangedMidVote, 0); n != 0 {
 		t.Errorf("follower notifications = %d, want 0", n)
 	}
 
@@ -63,7 +75,7 @@ func TestRulesChange_NotifiesThePatch(t *testing.T) {
 	var noticeBody string
 	db.QueryRow(
 		"SELECT COALESCE(body,'') FROM notifications WHERE user_id = ? AND type = ?",
-		member.ID, string(notifications.GovernanceRulesChanged),
+		member.ID, string(notifications.GovernanceRulesChangedMidVote),
 	).Scan(&noticeBody)
 	if noticeBody == "" || !strings.Contains(noticeBody, "already open") {
 		t.Errorf("notice body does not mention the running vote: %q", noticeBody)
@@ -75,6 +87,43 @@ func TestRulesChange_NotifiesThePatch(t *testing.T) {
 	db.QueryRow("SELECT COALESCE(voting_terms,'') FROM proposals WHERE id = ?", openBefore).Scan(&terms)
 	if terms == "" || strings.Contains(terms, `"min_voting_tenure_days":30`) {
 		t.Errorf("the running vote should still hold the old terms, got %q", terms)
+	}
+}
+
+// With nothing running, the same edit is routine: the quiet type, no email by
+// default. A patch tuning its own config should not mail everyone.
+func TestRulesChange_RoutineWhenNothingIsRunning(t *testing.T) {
+	db := setupTestDB(t)
+	handler.SetNotifier(notifications.NewNotifier(db))
+	t.Cleanup(func() { handler.SetNotifier(nil) })
+
+	admin, adminToken := createTestUser(t, db, "rc3_admin", "member")
+	member, _ := createTestUser(t, db, "rc3_member", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Quiet Change", "quiet-change", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+	setupGovernanceForNode(t, nodeID)
+	setNodeRules(t, db, nodeID,
+		`{"decision_method":"admin","quorum_percent":0,"amendment_threshold":"majority","amendment_auto_apply":true,"min_voting_tenure_days":0}`)
+
+	// No proposals open at all.
+	body := map[string]interface{}{
+		"title":          "Raise the quorum",
+		"proposal_type":  "amendment",
+		"target_doc":     "governance-rules.json",
+		"proposed_body":  `{"decision_method":"admin","quorum_percent":40,"amendment_threshold":"majority","amendment_auto_apply":true,"min_voting_tenure_days":0}`,
+		"duration_hours": 48,
+	}
+	r := authedRequest("POST", "/api/v1/nodes/quiet-change/proposals", body, adminToken)
+	if w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r); w.Code != http.StatusCreated {
+		t.Fatalf("rules change: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	if n := countNotifications(t, db, member.ID, notifications.GovernanceRulesChanged, 1); n != 1 {
+		t.Errorf("routine notifications = %d, want 1", n)
+	}
+	if n := countNotifications(t, db, member.ID, notifications.GovernanceRulesChangedMidVote, 0); n != 0 {
+		t.Errorf("mid-vote notifications = %d, want 0 — nothing was running", n)
 	}
 }
 

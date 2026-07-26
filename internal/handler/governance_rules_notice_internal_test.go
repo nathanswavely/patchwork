@@ -8,6 +8,7 @@ import (
 
 	patchwork "github.com/patchwork-toolkit/patchwork"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 )
 
 // newRulesNoticeTestDB is setupTestDB's twin for the internal package, which
@@ -68,16 +69,22 @@ func TestRulesChangeBody_NamesTheVotesItDoesNotReach(t *testing.T) {
 	db := newRulesNoticeTestDB(t)
 	nodeID := "node-1"
 
-	t.Run("nothing open says only that the rules changed", func(t *testing.T) {
-		body := rulesChangeBody(db, nodeID, newConfig)
+	t.Run("nothing open is the routine type", func(t *testing.T) {
+		typ, body := rulesChangeNotice(db, nodeID, newConfig, "")
+		if typ != notifications.GovernanceRulesChanged {
+			t.Errorf("type = %q, want the routine rules-changed type", typ)
+		}
 		if strings.Contains(body, "already open") {
 			t.Errorf("body mentions open votes when there are none: %q", body)
 		}
 	})
 
-	t.Run("one open vote under old terms is singular", func(t *testing.T) {
+	t.Run("one open vote under old terms escalates, and reads singular", func(t *testing.T) {
 		insertTestProposal(t, db, "p1", nodeID, "open", oldConfig)
-		body := rulesChangeBody(db, nodeID, newConfig)
+		typ, body := rulesChangeNotice(db, nodeID, newConfig, "")
+		if typ != notifications.GovernanceRulesChangedMidVote {
+			t.Errorf("type = %q, want the mid-vote type", typ)
+		}
 		if !strings.Contains(body, "One vote is already open") {
 			t.Errorf("expected singular phrasing, got %q", body)
 		}
@@ -85,7 +92,10 @@ func TestRulesChangeBody_NamesTheVotesItDoesNotReach(t *testing.T) {
 
 	t.Run("more than one is counted", func(t *testing.T) {
 		insertTestProposal(t, db, "p2", nodeID, "open", oldConfig)
-		body := rulesChangeBody(db, nodeID, newConfig)
+		typ, body := rulesChangeNotice(db, nodeID, newConfig, "")
+		if typ != notifications.GovernanceRulesChangedMidVote {
+			t.Errorf("type = %q, want the mid-vote type", typ)
+		}
 		if !strings.Contains(body, "2 votes are already open") {
 			t.Errorf("expected a count of 2, got %q", body)
 		}
@@ -93,14 +103,14 @@ func TestRulesChangeBody_NamesTheVotesItDoesNotReach(t *testing.T) {
 
 	t.Run("a vote already matching the new terms is not counted", func(t *testing.T) {
 		insertTestProposal(t, db, "p3", nodeID, "open", newConfig)
-		if got := proposalsUnderOldTerms(db, nodeID, newConfig); got != 2 {
+		if got := proposalsUnderOldTerms(db, nodeID, newConfig, ""); got != 2 {
 			t.Errorf("diverging count = %d, want 2 — p3 opened under the new terms", got)
 		}
 	})
 
 	t.Run("a resolved vote is not counted", func(t *testing.T) {
 		insertTestProposal(t, db, "p4", nodeID, "approved", oldConfig)
-		if got := proposalsUnderOldTerms(db, nodeID, newConfig); got != 2 {
+		if got := proposalsUnderOldTerms(db, nodeID, newConfig, ""); got != 2 {
 			t.Errorf("diverging count = %d, want 2 — p4 is resolved and decides nothing", got)
 		}
 	})
@@ -109,7 +119,7 @@ func TestRulesChangeBody_NamesTheVotesItDoesNotReach(t *testing.T) {
 		// It follows the live config, so there is nothing for it to diverge
 		// from — the seeder and fixtures insert proposals this way.
 		insertTestProposal(t, db, "p5", nodeID, "open", "")
-		if got := proposalsUnderOldTerms(db, nodeID, newConfig); got != 2 {
+		if got := proposalsUnderOldTerms(db, nodeID, newConfig, ""); got != 2 {
 			t.Errorf("diverging count = %d, want 2 — p5 has no photograph", got)
 		}
 	})

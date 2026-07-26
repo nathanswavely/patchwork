@@ -68,14 +68,29 @@ We decided **a vote is judged by the rules in force when it opened**.
   requiring 30 days' membership" is that explanation, and it is the same
   sentence, not a second one written for the refused.
 
-- **A notification fires only on real divergence.** Most rules edits
-  happen when nothing is open and want no alarm; an alert that cries
-  wolf gets muted, and then the one that mattered is muted too. So
+- **Two notification types, and exactly one fires per edit.**
   `governance.rules_changed` — declared in the notification registry
-  since it was written and **never once fired** — gets wired up for the
-  general case, and when the edit disagrees with a photograph a running
-  vote is holding, the notice says so specifically: these votes are
-  still running under the old terms.
+  since it was written and **never once fired** — carries the routine
+  case at normal priority. `governance.rules_changed_midvote` carries
+  the same edit landing while votes are open, at high priority, and says
+  which votes the new rules do not reach.
+
+  The split is forced by two mechanics, not by taste. Preferences key on
+  the *type*, so one type would mean a member who mutes their patch's
+  config churn also loses the warning that a vote they are trying to
+  join is running under terms they do not meet. And `DefaultEnabled`
+  turns email on for `PriorityHigh` alone, so one high-priority type
+  would mail every member on every config edit — which is how a whole
+  category gets filtered, and then the one that mattered is filtered
+  with it. Normal for routine, high for the case with a deadline
+  attached.
+
+  They are mutually exclusive: a mid-vote change is still a rules
+  change, and saying it twice teaches people to ignore both. The
+  proposal *making* the change is excluded from the count of votes left
+  behind — on the direct-change path the sync runs before that
+  proposal's status leaves `open`, so without the exclusion a rules
+  change reports itself as a vote its own terms no longer reach.
 
 - **The newly eligible are told too, not only the newly excluded.** They
   are the more confused group. Someone who becomes a member in good
