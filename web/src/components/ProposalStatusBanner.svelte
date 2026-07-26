@@ -17,6 +17,12 @@
     onStateChange = () => {},
   } = $props();
 
+  // A proposal opens for voting when it is created (docs/adr/048), so there
+  // are no `draft` or `discussion` branches here. The states exist in the
+  // migration-016 column and nothing writes them; the "Submit for voting"
+  // button that used to promote a draft PATCHed a field the handler drops,
+  // and the handler now refuses it by name.
+
   // Compute effective state from both state and legacy status fields.
   let effectiveState = $derived(propState || (status === 'open' ? 'voting' : status === 'passed' || status === 'approved' ? 'approved' : status));
 
@@ -38,7 +44,6 @@
   );
 
   let applying = $state(false);
-  let submittingForVote = $state(false);
 
   async function handleApply() {
     applying = true;
@@ -62,39 +67,9 @@
       showToast(e.message || 'Failed to withdraw', 'error');
     }
   }
-
-  async function handleSubmitForVoting() {
-    submittingForVote = true;
-    try {
-      await api(`proposals/${proposalId}`, { method: 'PATCH', body: { state: 'voting' } });
-      showToast('Submitted for voting', 'success');
-      onStateChange('voting');
-    } catch (e) {
-      showToast(e.message || 'Failed to submit', 'error');
-    } finally {
-      submittingForVote = false;
-    }
-  }
 </script>
 
-{#if effectiveState === 'draft'}
-  <div class="status-banner draft">
-    <p>This is a draft. Only you can see it.</p>
-    {#if isAuthor}
-      <div class="banner-actions">
-        <button class="btn btn-primary btn-sm" onclick={handleSubmitForVoting} disabled={submittingForVote}>
-          {submittingForVote ? 'Submitting...' : 'Submit for voting'}
-        </button>
-      </div>
-    {/if}
-  </div>
-
-{:else if effectiveState === 'discussion'}
-  <div class="status-banner discussion">
-    <p>Open for discussion. Voting begins soon. Members can comment and the author can revise.</p>
-  </div>
-
-{:else if effectiveState === 'voting'}
+{#if effectiveState === 'voting'}
   <div class="status-banner voting">
     <p>{votingLine}</p>
     {#if isAuthor}
@@ -148,18 +123,6 @@
 
   .status-banner p {
     margin: 0;
-  }
-
-  .draft {
-    background: var(--color-overlay);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-  }
-
-  .discussion {
-    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
-    border: 1px solid color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
-    color: var(--color-text);
   }
 
   .voting {
