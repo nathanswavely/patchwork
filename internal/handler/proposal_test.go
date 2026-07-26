@@ -78,6 +78,64 @@ func TestCreateProposal_FollowerRefused(t *testing.T) {
 	}
 }
 
+// An instance admin curates instance-wide options and does not override
+// per-patch choices (CONTEXT.md, "Instance admin"). Once proposing became a
+// member act, a site-wide admin raising a proposal in a patch they hold no
+// role in was instance authority reaching into a patch's own governance — the
+// thing ADR 026 refuses over the far smaller matter of an event queue. They
+// keep the bypass where it is speech (commenting) or stewardship (withdraw,
+// apply, moderate); wanting a voice in a patch is what joining is for.
+func TestCreateProposal_InstanceAdminWithoutMembershipRefused(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "padmin_ia", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Autonomy Prop", "autonomy-prop", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+
+	// Site-wide admin, no membership in this patch.
+	instanceAdmin, instanceAdminToken := createTestUser(t, db, "pinstance_ia", "admin")
+
+	body := map[string]interface{}{"title": "Reaching in", "proposal_type": "amendment"}
+	r := authedRequest("POST", "/api/v1/nodes/autonomy-prop/proposals", body, instanceAdminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("instance admin propose: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ?", nodeID).Scan(&count)
+	if count != 0 {
+		t.Errorf("expected no proposal written, got %d", count)
+	}
+
+	// Joining is the route back in: the same person, now a member, proposes.
+	createTestMembership(t, db, instanceAdmin.ID, nodeID, "member", "active")
+	r = authedRequest("POST", "/api/v1/nodes/autonomy-prop/proposals", body, instanceAdminToken)
+	w = serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("instance admin as member: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// Commenting stays open to an instance admin with no role in the patch: it is
+// speech, not a decision, and explaining a moderation action in the thread it
+// concerns is a thing stewardship legitimately needs.
+func TestCreateComment_InstanceAdminMayComment(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "padmin_ic", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Speech Node", "speech-node", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+	proposalID := createTestProposal(t, db, nodeID, owner.ID)
+
+	_, instanceAdminToken := createTestUser(t, db, "pinstance_ic", "admin")
+
+	body := map[string]interface{}{"body": "Acting on a report about this thread."}
+	r := authedRequest("POST", "/api/v1/proposals/"+proposalID+"/comments", body, instanceAdminToken)
+	w := serveMux(t, db, "POST", "/api/v1/proposals/{id}/comments", handler.CreateComment(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("instance admin comment: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 // The gate is on the role, not on having a membership row: a plain member —
 // no admin rights, no tenure — proposes freely. Voting has a minimum tenure;
 // raising the question does not.

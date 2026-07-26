@@ -369,12 +369,15 @@ func NodeIDFromSlug(db *database.DB, slug string) string {
 	return id
 }
 
-// userHasMembership checks if a user has an active membership in a node.
-func userHasMembership(db *database.DB, userID, nodeID string) bool {
-	var count int
-	db.QueryRow("SELECT COUNT(*) FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'", userID, nodeID).Scan(&count)
-	return count > 0
-}
+// userHasMembership is deliberately absent. It counted any active membership
+// row and read as "is a member", which followers are not, and it was wrong at
+// four doors in a row: a follower's event published straight to a calendar
+// (docs/adr/042), a follower voted and broke the quorum tally, a follower
+// authored proposals, and the "needs your vote" nudge counted them
+// (docs/adr/044). Every gate names the roles it admits — `userHasNodeRole`,
+// or one of the shared electorate conditions in proposals.go. Spell out
+// "follower" where followers belong, as CreateComment does, rather than
+// reaching for a helper that means it silently.
 
 // userHasNodeRole checks if a user has a specific role (or higher) on a node.
 func userHasNodeRole(db *database.DB, userID, nodeID string, roles ...string) bool {

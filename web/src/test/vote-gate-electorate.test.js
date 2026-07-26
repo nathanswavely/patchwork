@@ -66,3 +66,44 @@ describe('VoteSection — the buttons themselves', () => {
     expect(src).toMatch(/\{#if canVote &&/);
   });
 });
+
+/**
+ * A vote is judged by the terms it opened with (docs/adr/047), and the section
+ * that shows the arithmetic has to show the same ones the server used.
+ *
+ * The trap this guards: quorum and threshold were props, and GetProposal never
+ * sent them, so every patch was told "No quorum required" and "Majority" no
+ * matter what its rules said. Reading them off the payload's terms is what
+ * makes the display and the outcome the same rules.
+ */
+describe('VoteSection — the terms it shows', () => {
+  const src = source('components/VoteSection.svelte');
+
+  it('derives quorum and threshold from the vote terms, not from bare props', () => {
+    expect(src).toMatch(/quorumPercent = \$derived\(terms\?\.quorum_percent/);
+    expect(src).toMatch(/terms\?\.amendment_threshold \|\| terms\?\.decision_method/);
+    // The old prop names must not come back as inputs.
+    expect(src).not.toMatch(/^\s*quorumPercent = 0,/m);
+    expect(src).not.toMatch(/^\s*threshold = 'majority',/m);
+  });
+
+  it('divides quorum by the electorate, matching the server', () => {
+    expect(src).toMatch(/totalVotes \/ electorateSize/);
+    expect(src).not.toMatch(/memberCount/);
+  });
+
+  it('states the tenure requirement, which appears nowhere else in the UI', () => {
+    expect(src).toMatch(/voting requires \$\{tenureDays\} days' membership/);
+  });
+});
+
+describe('ProposalDetail — what it hands the vote section', () => {
+  const src = source('pages/ProposalDetail.svelte');
+
+  it('passes the electorate and the terms, not counts the payload never carried', () => {
+    expect(src).toMatch(/electorateSize=\{proposal\.eligible_voters/);
+    expect(src).toMatch(/terms=\{proposal\.voting_terms\}/);
+    expect(src).not.toMatch(/proposal\.member_count/);
+    expect(src).not.toMatch(/proposal\.quorum_percent/);
+  });
+});

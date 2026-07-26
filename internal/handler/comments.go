@@ -166,8 +166,15 @@ func CreateComment(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Require membership in the proposal's node.
-		if user.Role != "admin" && !userHasMembership(db, user.ID, nodeID) {
+		// Deliberation is open to everyone with standing here, followers
+		// included — the one governance act that is. Voting is deciding and
+		// proposing raises the question; commenting is neither, so the rung
+		// that carries no vote still carries a voice (docs/adr/044).
+		//
+		// The roles are named rather than left to a "has a membership row"
+		// helper. That helper read as "is a member", admitted followers, and
+		// was wrong at four doors in a row before it was gone.
+		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "follower", "member", "admin") {
 			http.Error(w, `{"error":"must be member of node"}`, http.StatusForbidden)
 			return
 		}

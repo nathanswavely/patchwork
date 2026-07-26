@@ -65,6 +65,11 @@ are counted are one set, expressed once**:
   Voting is deciding. The line is drawn at the decision, not at the
   door.
 
+  > **Narrowed by the fourth amendment below.** This grouped proposing
+  > with commenting as speech. Proposing has since become a member act,
+  > and the bypass went with it — an instance admin keeps it for
+  > commenting and for stewardship, not for raising proposals.
+
 - **`is_member` is not narrowed, and is not the member test.** The node
   payload sets `is_member` for any active membership, followers
   included. Narrowing it at the source is the cleaner-looking fix and
@@ -94,6 +99,11 @@ fix; what actually made this bug survivable was that the gate and the
 electorate were written in two places. Fixing the duplication is the
 load-bearing change, and the helper's fate can follow it. Left as
 follow-up rather than smuggled in here.
+
+> Done, once the duplication was fixed and `CreateProposal` stopped calling
+> it — see the third amendment below. Deferring was right: the helper turned
+> out to be wrong at a fourth door too, and deleting it early would have
+> renamed that bug rather than found it.
 
 **Amended 2026-07-26 — the nudge is a counting surface too.** The governance
 hub's "N proposals need your vote" counted every open proposal the viewer
@@ -131,9 +141,65 @@ carries `can_vote`, computed by `inElectorate`, and the page renders that
 answer rather than reconstructing one. Which surfaces gate is a UI question;
 who may vote is not.
 
-**Open, deliberately:** followers can still author proposals
-(`CreateProposal` admits any active membership), while the shipped
-Collaborative operating agreement says "Any member can propose changes
-to this operating agreement." That is a governance policy question — how
-open deliberation should be — not a defect in the tally, and it wants a
-decision rather than a patch.
+**Amended 2026-07-26 — the voter list is the record, not the tally.** The
+tally filter above was applied to the displayed voter list as well, which
+answered "does this ballot count" by erasing "was this ballot cast". It also
+broke direct-change detection: `ProposalDetail` reads an empty voter list as
+"no vote ever happened" to recognise a record born applied under admin-decides
+rules (docs/adr/041), and that inference is only sound while the list is
+complete. Filtered, a proposal that was genuinely voted on and passed would —
+once its voters had left or been demoted — render as one applied without a
+vote, and suppress its own vote history. A governance record must not describe
+a vote that happened as a vote that did not. The list is now every ballot, each
+carrying whether it counts; the counts stay filtered. The two legitimately
+disagree, and the list says which rows are which.
+
+**Amended 2026-07-26 — proposing is a member act, and the helper is gone.**
+The paragraph this replaces recorded followers authoring proposals as an open
+policy question. It is decided: they may not. The reasoning is the ladder
+rather than the act — a patch that wants open governance already has
+`membership_policy: "open"`, where joining makes you a member in one click, so
+the release valve is making the step cheap, not granting the rung below it the
+right. Someone who wants a hand in governance takes the step. This also puts
+the code back in agreement with the shipped Collaborative operating agreement
+("Any member can propose changes to this operating agreement"), which it had
+been contradicting. The gate was missing on three UI routes and on the server
+behind all of them; `mayPropose` now reads its role condition off
+`electorateMembership`, omitting the tenure clause, because a minimum *voting*
+tenure gates casting a ballot rather than raising the question.
+
+With that, `userHasMembership` had one caller left and is deleted. Four doors
+in a row were wrong because a helper that read as "is a member" admitted
+followers. `CreateComment` — the one governance act followers keep — now names
+them: `userHasNodeRole(…, "follower", "member", "admin")`. Same behaviour,
+stated. The rule that outlives all of this: a gate names the roles it admits.
+
+**Amended 2026-07-26 — governance participation needs standing in the patch.**
+The two questions left open above are answered, one of them by turning out not
+to exist.
+
+The `follower_permissions` gap was misdiagnosed. It was recorded as "a follower
+who cannot see proposals can still comment on one", but `fp.Proposals` gates
+nothing server-side — it has no backend reference at all — and proposal and
+comment reads are `AuthOptional` or fully public. Proposals are public
+deliberation by design, which is the same premise `hiddenDocRedactor` rests on
+when it withholds the mirrored charter text and leaves the proposal itself
+readable. `fp.Proposals` decides whether the workspace surfaces a proposals tab
+to followers: curation, not permission. Commenting on a proposal anyone can
+read is not incoherent, and there is nothing to fix.
+
+The instance-admin bypass was real, and the ground moved under the "speak, not
+decide" line above: it defended the bypass by grouping proposing with
+commenting as speech, and proposing has since become a member act. A member act
+is a member's alone. `CreateProposal` no longer accepts `user.Role == "admin"`,
+so a site-wide admin holding no role in a patch cannot raise a proposal in its
+governance — that is instance authority reaching into a per-patch choice, which
+CONTEXT.md ("Instance admin") and ADR 026 both refuse over much smaller matters.
+
+The bypass stays where the act is speech or stewardship: `CreateComment`,
+because explaining a moderation action in the thread it concerns is a thing
+stewardship needs and a comment decides nothing; and withdraw, apply, and
+comment moderation, which are stewardship outright. One rule underneath:
+**governance participation requires standing in the patch.** Instance admins
+moderate; they do not govern other people's patches. Wanting a voice in one is
+what joining is for.

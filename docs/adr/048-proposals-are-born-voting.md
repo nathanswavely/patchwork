@@ -65,8 +65,9 @@ We decided **a proposal opens for voting when it is created; `draft` and
 INSERT, and its conditional — "if that transition is ever wired up, the
 photograph moves with it" — is now settled rather than pending. Creation
 *is* the moment voting opens, so the two are the same instant by
-construction and cannot drift apart. 047 is in flight on its own branch;
-this note is the answer to the question it left, not an edit to it.
+construction and cannot drift apart. 047 landed while this was open; its
+conditional paragraph now carries a pointer here rather than reading as
+work still owed.
 
 **Considered and rejected: building the flow.** A draft phase is a real
 thing communities want — a place to circulate wording before the clock

@@ -527,6 +527,37 @@ document templates. A term nobody reaches for when building the thing
 isn't the thing's name.
 _Avoid_: baste request (retired), motion, petition
 
+**Electorate**:
+The people who may vote in a patch: active admins and members who have
+been there at least as long as the patch's minimum voting tenure. One
+set, not two — the gate that admits a vote, the denominator quorum
+divides by, the ballots a tally counts, and every surface that asks
+someone to vote all name this same group (docs/adr/044). A follower is
+never in it. Neither is an instance admin who holds no role in the patch:
+they curate the instance, they don't vote in its patches. Distinct from
+**member count**, which is the same roles without the tenure condition —
+a patch can have twelve members and an electorate of four. The electorate
+is who may *decide*, and nothing else gates on it: authoring a proposal
+is an admin/member act with no tenure condition, and commenting is open
+to followers too. Tenure asks whether someone has been here long enough
+to decide, so it applies only where deciding happens.
+_Avoid_: eligible members (blurs into member count), voters (that's who
+actually voted), the membership (follower-inclusive)
+
+**Voting terms**:
+The rules a vote runs under, fixed when voting opens and unchanged for
+that vote's life: who may vote, what quorum it needs, what threshold
+carries it. A patch can amend its rules at any time; a vote already in
+progress keeps the terms it opened with, because rules that move
+mid-vote redraw a contest people have already cast ballots in. A rules
+amendment therefore resolves under the old terms — you don't get to use
+the new rules to pass the change to the new rules. Whether an approved
+amendment applies itself is not a term: that switch takes effect the
+moment it is flipped, because it is a safety valve, not a rule of the
+contest.
+_Avoid_: current rules (the point is that they may no longer be
+current), snapshot (implementation), frozen rules (says how, not what)
+
 **Direct change**:
 A governance change an admin applies immediately on a patch whose
 decision method is admin-decides — born applied, never voted. Stored as
