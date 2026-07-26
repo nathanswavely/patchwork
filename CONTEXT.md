@@ -513,7 +513,12 @@ worn as a badge. "Diverged" is the backend/predicate term.
 _Avoid_: diverged (in UI copy), modified/forked lining
 
 **Proposal**:
-Something a patch votes on: discussion, then voting, then in effect.
+Something a patch votes on. It opens for voting the moment it is raised
+(docs/adr/048) and runs until its window closes: voting, then approved or
+rejected, then in effect. Discussion happens alongside the vote in the
+proposal's Discussion tab, not in a stage before it — the `draft` and
+`discussion` states in the migration-016 column are retired and nothing
+writes them.
 Deliberately the same word in the UI and the backend; the textile coinage
 "baste request" is retired. It explained a metaphor before it explained
 the feature — every UI surface had already grown Proposals headings and

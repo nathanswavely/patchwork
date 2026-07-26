@@ -139,6 +139,12 @@ be fixed when the vote starts, not when the draft was written, or a
 proposal could sit in discussion for a month and be judged by rules that
 predate the discussion.
 
+*Settled by docs/adr/048: that transition is not being wired up. The
+`draft` and `discussion` states are retired, `UpdateProposal` refuses
+`state` by name, and the SPA control is gone. Creation is when voting
+opens, so the photograph and the start of the vote are the same instant
+by construction — the conditional above cannot come due.*
+
 **This closes the tenure half of `countedBallot` without touching it.**
 The open question going in was whether `countedBallot` — which filters
 ballots by role and status but not tenure — should gain a tenure term, so

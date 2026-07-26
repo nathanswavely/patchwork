@@ -27,8 +27,8 @@ being true, the community can take its data and walk — see
 - **Events.** Patches host events. People find them on the quilt, the
   map, and in their feeds.
 - **Governance, when you want it.** Proposals run on a real state machine
-  (discussion → voting → in effect), with threaded discussion, revisions,
-  and vote tallies. Governance documents (*charters*) keep full version
+  (voting → approved → in effect), with threaded discussion alongside the
+  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version
   history and diffs, mirrored into per-patch **git repositories**. A band
   never has to touch any of it. A coalition can run itself entirely on it.
   Every new patch ships with the quilt's baseline lining — anti-discrimination

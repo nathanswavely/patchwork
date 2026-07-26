@@ -460,7 +460,9 @@ Members may leave at any time. Membership data is retained for 30 days in case o
 Any member can propose an amendment to these bylaws or any governance document by submitting a proposal.
 
 ### 4.2 Review Period
-Amendment proposals are open for 14 days of discussion before voting begins.
+Amendment proposals are open for 14 days. Discussion and voting run over
+that same window: comment on the proposal, and change your vote, at any
+point before it closes.
 
 ### 4.3 Approval
 Amendments to the bylaws require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.

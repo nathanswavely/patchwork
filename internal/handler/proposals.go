@@ -1044,9 +1044,21 @@ func UpdateProposal(db *database.DB) http.HandlerFunc {
 			Title  *string `json:"title"`
 			Body   *string `json:"body"`
 			Status *string `json:"status"`
+			// Decoded only to refuse it. A proposal opens for voting when it
+			// is created (docs/adr/048) — there is no pre-voting state to
+			// leave, so nothing promotes one. Dropping the field silently
+			// answered 400 "no valid fields to update", which reads like a
+			// bug in the caller; the SPA carried a "Submit for voting" button
+			// against this endpoint for exactly that reason. Say why instead.
+			State *string `json:"state"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+			return
+		}
+
+		if req.State != nil {
+			http.Error(w, `{"error":"state is not settable: proposals open for voting when they are created (docs/adr/048)"}`, http.StatusBadRequest)
 			return
 		}
 
