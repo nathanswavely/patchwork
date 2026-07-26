@@ -258,9 +258,13 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		apID := ap.ProposalAPID(ap.GetDomain(), id)
+		// Photograph the rules this vote will be judged by (docs/adr/047).
+		// `gcJSON` is the config read above, before anything in this request
+		// could have changed it — the terms in force at the moment voting
+		// opens. From here the node's rules may move; this vote's may not.
 		_, err := db.Exec(
-			`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, target_doc, proposed_branch, proposed_body, proposed_title, git_sha, base_sha, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEndsAt, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState,
+			`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, target_doc, proposed_branch, proposed_body, proposed_title, git_sha, base_sha, state, voting_terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEndsAt, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState, gcJSON,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create proposal"}`, http.StatusInternalServerError)
@@ -462,9 +466,38 @@ func tallyProposal(db *database.DB, proposalID string) (approve, reject, abstain
 	return approve, reject, abstain
 }
 
+// votingTerms returns the rules a proposal is judged by: the governance config
+// photographed when its voting opened (docs/adr/047). Every surface that
+// decides something about a running vote — who may cast a ballot, how many are
+// eligible, whether quorum is met, which threshold carries it — asks here
+// rather than reading the node's current config, so that a rules edit cannot
+// redraw a contest people have already voted in.
+//
+// Falls back to the node's live config when the proposal carries no
+// photograph: rows created before migration 045, and any resolved proposal,
+// which the migration deliberately left NULL because its terms no longer
+// decide anything.
+//
+// `amendment_auto_apply` is the exception and is NOT read from here — it says
+// what happens after a vote, not who wins it, and a safety valve has to take
+// effect when it is flipped. Callers that need it read the live config.
+func votingTerms(db *database.DB, proposalID, nodeID string) model.GovernanceConfig {
+	var termsJSON string
+	db.QueryRow("SELECT COALESCE(voting_terms,'') FROM proposals WHERE id = ?", proposalID).Scan(&termsJSON)
+	if termsJSON == "" || termsJSON == "{}" {
+		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&termsJSON)
+	}
+	var gc model.GovernanceConfig
+	json.Unmarshal([]byte(termsJSON), &gc)
+	return gc
+}
+
 // eligibleVoters returns how many people may currently vote on a node's
 // proposals — active admins and members past the minimum voting tenure —
 // and, when the electorate is exactly one person, that voter's user ID.
+//
+// The config passed in should be a proposal's votingTerms, not the node's
+// live config, wherever the answer is about one proposal.
 func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (int, string) {
 	cond, tenureArgs := electorateFilter("", gc)
 	args := append([]interface{}{nodeID}, tenureArgs...)
@@ -506,11 +539,17 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// Tally votes for resolution.
 	approveCount, rejectCount, abstainCount := tallyProposal(db, proposalID)
 
-	// Load governance config for the node
-	var gcJSON string
-	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", p.NodeID).Scan(&gcJSON)
-	var gc model.GovernanceConfig
-	json.Unmarshal([]byte(gcJSON), &gc)
+	// The rules this vote is judged by are the ones it opened with, not the
+	// node's current ones (docs/adr/047).
+	gc := votingTerms(db, proposalID, p.NodeID)
+
+	// ...except amendment_auto_apply, which is read live further down: it
+	// decides what happens after a vote, not who wins it, and switching it
+	// off has to stop in-flight amendments from applying themselves.
+	var liveGC model.GovernanceConfig
+	var liveGCJSON string
+	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", p.NodeID).Scan(&liveGCJSON)
+	json.Unmarshal([]byte(liveGCJSON), &liveGC)
 
 	// Quorum check. The denominator is the electorate — the same set the vote
 	// gate admits and the proposal page displays (docs/adr/044).
@@ -560,7 +599,10 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	db.Exec("UPDATE proposals SET status = ?, state = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", newStatus, newStatus, proposalID)
 
 	// Auto-apply amendment if approved and configured
-	if newStatus == "approved" && p.ProposalType == "amendment" && p.TargetDoc != "" && gc.AmendmentAutoApply {
+	// liveGC, not gc: the auto-apply switch is a safety valve and takes effect
+	// the moment it is flipped, including for votes already running
+	// (docs/adr/047).
+	if newStatus == "approved" && p.ProposalType == "amendment" && p.TargetDoc != "" && liveGC.AmendmentAutoApply {
 		var branch string
 		db.QueryRow("SELECT COALESCE(proposed_branch,'') FROM proposals WHERE id = ?", proposalID).Scan(&branch)
 		if branch != "" {
@@ -706,11 +748,9 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		// Electorate size — drives the sole-voter notice in the UI
-		// (docs/adr/041).
-		var gcJSON string
-		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", p.NodeID).Scan(&gcJSON)
-		var gc model.GovernanceConfig
-		json.Unmarshal([]byte(gcJSON), &gc)
+		// (docs/adr/041). Measured against this vote's own terms
+		// (docs/adr/047), so the number matches who the gate will admit.
+		gc := votingTerms(db, proposalID, p.NodeID)
 		eligibleCount, _ := eligibleVoters(db, p.NodeID, gc)
 
 		// Whether this viewer is in the electorate, answered by the same
@@ -742,6 +782,10 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"my_vote":         myVote,
 			"eligible_voters": eligibleCount,
 			"can_vote":        canVote,
+			// The terms this vote is judged by, so the page can say so rather
+			// than leaving a refused voter to guess (docs/adr/047). Fixed when
+			// voting opened — which is created_at, already in this payload.
+			"voting_terms": gc,
 			"state":           p.State,
 			"applied_at":      appliedAt,
 		}
@@ -800,10 +844,10 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		var gcJSON string
-		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
-		var gc model.GovernanceConfig
-		json.Unmarshal([]byte(gcJSON), &gc)
+		// This vote's terms, not the patch's current rules (docs/adr/047):
+		// someone who was eligible when voting opened stays eligible for it,
+		// and someone who became eligible afterward votes on the next one.
+		gc := votingTerms(db, proposalID, nodeID)
 
 		// Require the vote to come from someone the electorate counts — role
 		// and tenure both, evaluated by the one condition eligibleVoters
