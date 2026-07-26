@@ -9,7 +9,15 @@
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
+  let isAdmin = $derived(patch.value.isAdmin);
+  let membershipRole = $derived(patch.value.membershipRole);
   let docId = $derived(getParams().id || '');
+
+  // Amending a charter is a member act, and this route is reachable by URL,
+  // so the page states the rule itself rather than trusting the link that
+  // sent you. Not `isMember` — the node payload sets is_member for followers
+  // too, and following carries no governance rights.
+  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
 
   let doc = $state(null);
   let loading = $state(true);
@@ -145,6 +153,15 @@
 
 </script>
 
+<!-- Outside .amendment-editor on purpose: that wrapper's measure cap is for
+     the form's line length, and a centered notice inheriting it would center
+     on the column instead of the page. -->
+{#if !canPropose}
+  <div class="permission-notice page-fade">
+    <p>Only members can propose a change to this charter.</p>
+    <p class="muted">Become a member to take part in how this patch governs itself.</p>
+  </div>
+{:else}
 <div class="amendment-editor page-fade">
   {#if loading}
     <Skeleton lines={1} height="2rem" width="60%" />
@@ -254,10 +271,21 @@
 
   {/if}
 </div>
+{/if}
 
 <style>
   .amendment-editor {
     max-width: var(--pw-measure-wide);
+  }
+
+  .permission-notice {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .permission-notice p:first-child {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
   }
 
   .editor-header {

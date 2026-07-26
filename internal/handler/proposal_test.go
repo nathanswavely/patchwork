@@ -43,6 +43,82 @@ func TestCreateProposal(t *testing.T) {
 	}
 }
 
+// A follower has an active membership row, so the old userHasMembership check
+// waved them through: they could author a live proposal — including a charter
+// amendment, which cuts a branch in the governance repo — on a patch whose
+// ballot they are not on. Proposing is a member act (CONTEXT.md, "Member
+// count"); the frontend gates say so and the server has to say it too, since
+// the route is one fetch away with or without a button.
+func TestCreateProposal_FollowerRefused(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "padminf", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Follower Prop", "follower-prop", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	follower, followerToken := createTestUser(t, db, "pfollower", "member")
+	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
+
+	for _, proposalType := range []string{"action", "other", "membership", "amendment"} {
+		body := map[string]interface{}{
+			"title":         "Follower proposal",
+			"proposal_type": proposalType,
+		}
+		r := authedRequest("POST", "/api/v1/nodes/follower-prop/proposals", body, followerToken)
+		w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+
+		if w.Code != http.StatusForbidden {
+			t.Errorf("proposal_type=%s: expected 403 for a follower, got %d: %s", proposalType, w.Code, w.Body.String())
+		}
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ?", nodeID).Scan(&count)
+	if count != 0 {
+		t.Errorf("expected no proposals to exist, got %d", count)
+	}
+}
+
+// The gate is on the role, not on having a membership row: a plain member —
+// no admin rights, no tenure — proposes freely. Voting has a minimum tenure;
+// raising the question does not.
+func TestCreateProposal_MemberAllowed(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "padminm", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Member Prop", "member-prop", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	member, memberToken := createTestUser(t, db, "pmember", "member")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+
+	body := map[string]interface{}{"title": "Member proposal", "proposal_type": "action"}
+	r := authedRequest("POST", "/api/v1/nodes/member-prop/proposals", body, memberToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201 for a member, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// A membership that ended stops being a membership. LeaveNode sets status
+// 'left' rather than deleting the row, so status has to be part of the gate.
+func TestCreateProposal_LeftMemberRefused(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "padminl", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Left Prop", "left-prop", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	former, formerToken := createTestUser(t, db, "pformer", "member")
+	createTestMembership(t, db, former.ID, nodeID, "member", "left")
+
+	body := map[string]interface{}{"title": "Former member proposal", "proposal_type": "action"}
+	r := authedRequest("POST", "/api/v1/nodes/left-prop/proposals", body, formerToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+
+	if w.Code != http.StatusForbidden {
+		t.Errorf("expected 403 for a former member, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 func TestListProposals(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin2", "member")
