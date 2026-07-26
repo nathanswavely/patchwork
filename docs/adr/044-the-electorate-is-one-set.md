@@ -65,6 +65,11 @@ are counted are one set, expressed once**:
   Voting is deciding. The line is drawn at the decision, not at the
   door.
 
+  > **Narrowed by the fourth amendment below.** This grouped proposing
+  > with commenting as speech. Proposing has since become a member act,
+  > and the bypass went with it — an instance admin keeps it for
+  > commenting and for stewardship, not for raising proposals.
+
 - **`is_member` is not narrowed, and is not the member test.** The node
   payload sets `is_member` for any active membership, followers
   included. Narrowing it at the source is the cleaner-looking fix and
@@ -169,14 +174,32 @@ followers. `CreateComment` — the one governance act followers keep — now nam
 them: `userHasNodeRole(…, "follower", "member", "admin")`. Same behaviour,
 stated. The rule that outlives all of this: a gate names the roles it admits.
 
-**Still open, deliberately.** Two questions this work surfaced and did not
-answer, recorded so they are not rediscovered as bugs:
+**Amended 2026-07-26 — governance participation needs standing in the patch.**
+The two questions left open above are answered, one of them by turning out not
+to exist.
 
-- `CreateComment` applies no `follower_permissions` check, so a follower on a
-  patch with `proposals: false` cannot see proposals but can still comment on
-  one through the API.
-- `CreateProposal` keeps the `user.Role == "admin"` bypass, so a follower
-  inside a patch may not propose while an instance admin outside it may. The
-  "speak, not decide" line above defends that; the ladder rationale arguably
-  reaches instance admins too. Both readings are honest and the tension is
-  real.
+The `follower_permissions` gap was misdiagnosed. It was recorded as "a follower
+who cannot see proposals can still comment on one", but `fp.Proposals` gates
+nothing server-side — it has no backend reference at all — and proposal and
+comment reads are `AuthOptional` or fully public. Proposals are public
+deliberation by design, which is the same premise `hiddenDocRedactor` rests on
+when it withholds the mirrored charter text and leaves the proposal itself
+readable. `fp.Proposals` decides whether the workspace surfaces a proposals tab
+to followers: curation, not permission. Commenting on a proposal anyone can
+read is not incoherent, and there is nothing to fix.
+
+The instance-admin bypass was real, and the ground moved under the "speak, not
+decide" line above: it defended the bypass by grouping proposing with
+commenting as speech, and proposing has since become a member act. A member act
+is a member's alone. `CreateProposal` no longer accepts `user.Role == "admin"`,
+so a site-wide admin holding no role in a patch cannot raise a proposal in its
+governance — that is instance authority reaching into a per-patch choice, which
+CONTEXT.md ("Instance admin") and ADR 026 both refuse over much smaller matters.
+
+The bypass stays where the act is speech or stewardship: `CreateComment`,
+because explaining a moderation action in the thread it concerns is a thing
+stewardship needs and a comment decides nothing; and withdraw, apply, and
+comment moderation, which are stewardship outright. One rule underneath:
+**governance participation requires standing in the patch.** Instance admins
+moderate; they do not govern other people's patches. Wanting a voice in one is
+what joining is for.

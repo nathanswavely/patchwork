@@ -18,7 +18,7 @@
   // Not `isMember`: the node payload sets is_member for followers too, and
   // proposing a rules change is a member act — following carries no
   // governance rights.
-  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
+  let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
   // Setup checklist fallback (docs/adr/040, CONTEXT.md "Setup checklist"):
   // "decide how you govern" has no single derivable signal for a patch
@@ -133,7 +133,7 @@
     <section class="overview-section">
       <h3>How decisions are made</h3>
       <p class="overview-narrative">{describeDecisionMethod(rules)}</p>
-      {#if isAdmin && rules?.decision_method === 'admin'}
+      {#if membershipRole === 'admin' && rules?.decision_method === 'admin'}
         <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
           Change these rules
         </a>

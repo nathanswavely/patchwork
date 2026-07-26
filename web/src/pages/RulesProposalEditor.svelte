@@ -17,7 +17,7 @@
   // trusting the button that sent you. Not `isMember` — the node payload
   // sets is_member for followers too, and following carries no governance
   // rights.
-  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
+  let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
   let currentRules = $state(null);
   let proposedRules = $state(null);
@@ -27,7 +27,12 @@
   // Direct change (docs/adr/041): under admin-decides rules an admin's
   // submission applies immediately — the words propose/submit/vote never
   // appear for one.
-  let directChange = $derived(isAdmin && currentRules?.decision_method === 'admin');
+  //
+  // The admin the server means is this patch's admin (`isNodeAdmin`), not
+  // `isAdmin`, which the node payload also sets for instance admins. An
+  // instance admin who is a plain member here would have been told "Change
+  // applied" while the server opened a vote.
+  let directChange = $derived(membershipRole === 'admin' && currentRules?.decision_method === 'admin');
 
   // Step: 'editing' or 'reviewing'
   let step = $state('editing');

@@ -17,7 +17,7 @@
   // so the page states the rule itself rather than trusting the link that
   // sent you. Not `isMember` — the node payload sets is_member for followers
   // too, and following carries no governance rights.
-  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
+  let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
   let doc = $state(null);
   let loading = $state(true);

@@ -13,7 +13,7 @@
   // route is reachable by URL, so the page states the rule itself. Not
   // `isMember` — the node payload sets is_member for followers too, and
   // following carries no governance rights.
-  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
+  let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
   $effect(() => {
     patch.value.setBreadcrumbExtra?.([{ label: 'New Proposal' }]);
