@@ -108,6 +108,29 @@ all built from; the gate's tenure check, which had been its own Go-side date
 parse, is the same fragment now as well. Asking someone to vote is part of the
 same arithmetic as counting them.
 
+**Amended 2026-07-26 — the quorum denominator was never eligibleVoters.**
+This ADR says `eligibleVoters` is "the denominator every quorum calculation
+divides by." It wasn't. `resolveProposal` — the calculation that actually
+decides whether a proposal resolves — counted active admins and members with
+its own inline query, ignoring `min_voting_tenure_days` entirely, so it
+divided by people the gate refuses. The consequence was worse than a wrong
+percentage: on the shipped Formal defaults (quorum 50%, tenure 30 days), a
+patch where more than half the members joined inside the tenure window could
+not reach quorum at all. Every proposal sat open past its window and never
+resolved, with nothing to see — no error, no rejection, just a vote that never
+ended. Collaborative (25%, 7 days) is reachable but overstated by the same
+arithmetic. The resolution math now divides by `eligibleVoters` like the
+displayed count always did.
+
+The client was the far side of the same mistake. `ProposalDetail` derived
+`canVote` from `membershipRole`, which cannot see tenure — so a member inside
+the window was shown the buttons and refused on click, and the status banner
+told them to "cast your vote below" when there was no vote below. The
+electorate is not something a client can work out; the proposal payload now
+carries `can_vote`, computed by `inElectorate`, and the page renders that
+answer rather than reconstructing one. Which surfaces gate is a UI question;
+who may vote is not.
+
 **Open, deliberately:** followers can still author proposals
 (`CreateProposal` admits any active membership), while the shipped
 Collaborative operating agreement says "Any member can propose changes

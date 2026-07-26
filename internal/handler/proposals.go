@@ -494,11 +494,20 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	var gc model.GovernanceConfig
 	json.Unmarshal([]byte(gcJSON), &gc)
 
-	// Quorum check
-	var activeMemberCount int
-	db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin','member')", p.NodeID).Scan(&activeMemberCount)
+	// Quorum check. The denominator is the electorate — the same set the vote
+	// gate admits and the proposal page displays (docs/adr/044).
+	//
+	// This once counted active admins and members inline, ignoring
+	// min_voting_tenure_days, so the arithmetic divided by people who could
+	// not cast a ballot. On the Formal defaults (quorum 50%, tenure 30 days)
+	// a patch where more than half the members joined inside the tenure
+	// window could not reach quorum at all: every proposal sat open past its
+	// window and never resolved, silently. ADR 044 called eligibleVoters "the
+	// denominator every quorum calculation divides by"; this is the quorum
+	// calculation, and it wasn't.
+	eligibleCount, _ := eligibleVoters(db, p.NodeID, gc)
 	totalVotes := approveCount + rejectCount + abstainCount
-	quorumMet := gc.QuorumPercent == 0 || (activeMemberCount > 0 && (totalVotes*100/activeMemberCount) >= gc.QuorumPercent)
+	quorumMet := gc.QuorumPercent == 0 || (eligibleCount > 0 && (totalVotes*100/eligibleCount) >= gc.QuorumPercent)
 	if !quorumMet {
 		// Quorum not met — leave open.
 		return ""
@@ -669,10 +678,11 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		// Check current user's vote if logged in.
-		var myVote string
+		var myVote, viewerID string
 		cookie, _ := r.Cookie(auth.CookieName)
 		if cookie != nil {
 			if u, _ := auth.ValidateSession(db, cookie.Value); u != nil {
+				viewerID = u.ID
 				db.QueryRow("SELECT value FROM votes WHERE proposal_id = ? AND user_id = ?", proposalID, u.ID).Scan(&myVote)
 			}
 		}
@@ -684,6 +694,15 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		var gc model.GovernanceConfig
 		json.Unmarshal([]byte(gcJSON), &gc)
 		eligibleCount, _ := eligibleVoters(db, p.NodeID, gc)
+
+		// Whether this viewer is in the electorate, answered by the same
+		// condition VoteOnProposal gates on. The page used to work this out in
+		// JavaScript from membership_role alone, which knows nothing about
+		// min_voting_tenure_days — so a member inside the tenure window was
+		// shown vote buttons and got a 403 on click. Deciding who may vote is
+		// the server's answer to give (docs/adr/044); the client still decides
+		// whether the proposal is in a state that accepts one.
+		canVote := viewerID != "" && inElectorate(db, viewerID, p.NodeID, gc)
 
 		result := map[string]interface{}{
 			"id":              p.ID,
@@ -704,6 +723,7 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"voters":          voters,
 			"my_vote":         myVote,
 			"eligible_voters": eligibleCount,
+			"can_vote":        canVote,
 			"state":           p.State,
 			"applied_at":      appliedAt,
 		}

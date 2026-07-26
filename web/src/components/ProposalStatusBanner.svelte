@@ -13,6 +13,7 @@
     approveCount = 0,
     rejectCount = 0,
     directChange = false,
+    canVote = false,
     onStateChange = () => {},
   } = $props();
 
@@ -28,6 +29,13 @@
     if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
     return `${hours} hour${hours > 1 ? 's' : ''} left`;
   });
+
+  // "Cast your vote below" only when there is a vote below. A viewer outside
+  // the electorate has the buttons hidden, and an instruction pointing at
+  // nothing is the same dead end one sentence over (docs/adr/044).
+  let votingLine = $derived(
+    `Voting is open. ${timeLeft}.` + (canVote ? ' Cast your vote below.' : '')
+  );
 
   let applying = $state(false);
   let submittingForVote = $state(false);
@@ -88,7 +96,7 @@
 
 {:else if effectiveState === 'voting'}
   <div class="status-banner voting">
-    <p>Voting is open. {timeLeft}. Cast your vote below.</p>
+    <p>{votingLine}</p>
     {#if isAuthor}
       <div class="banner-actions">
         <ConfirmAction
