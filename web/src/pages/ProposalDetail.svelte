@@ -41,6 +41,12 @@
   );
   // A record born applied under admin-decides rules — no vote ever happened,
   // so the page shows an applied change, not a proposal (docs/adr/041).
+  //
+  // This reads "no vote ever happened" off an empty voter list, which is only
+  // true while that list is the complete record. It is (docs/adr/044): the
+  // tally drops ballots that no longer count, the list never does. Should the
+  // list ever be filtered again, a proposal that was voted on and passed would
+  // claim here that it never was.
   let isDirectChange = $derived(
     effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
   );

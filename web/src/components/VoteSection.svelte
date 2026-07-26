@@ -21,6 +21,12 @@
   let voting = $state(false);
   let showVoters = $state(false);
 
+  // The list is the whole record; the counts are only the ballots that still
+  // count (docs/adr/044), so the two legitimately disagree and the list says
+  // which rows are which. `counted === false` rather than `!counted`: a
+  // payload without the field predates it, and those rows were all counted.
+  let uncountedVotes = $derived(voters.filter((v) => v.counted === false).length);
+
   let totalVotes = $derived(approveCount + rejectCount + abstainCount);
   let approvePercent = $derived(totalVotes > 0 ? Math.round((approveCount / totalVotes) * 100) : 0);
   let rejectPercent = $derived(totalVotes > 0 ? Math.round((rejectCount / totalVotes) * 100) : 0);
@@ -143,12 +149,20 @@
     {#if showVoters}
       <ul class="voter-list">
         {#each voters as voter}
-          <li>
+          <li class:uncounted={voter.counted === false}>
             <span class="voter-name">{voter.display_name || voter.username}</span>
+            {#if voter.counted === false}
+              <span class="voter-note muted">not counted</span>
+            {/if}
             <span class="voter-value badge {voter.value}">{voter.value}</span>
           </li>
         {/each}
       </ul>
+      {#if uncountedVotes > 0}
+        <p class="voter-list-note muted">
+          Not counted: cast by someone who has since left this patch or is no longer a member.
+        </p>
+      {/if}
     {/if}
   {/if}
 </div>
@@ -289,13 +303,37 @@
 
   .voter-list li {
     display: flex;
-    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
     padding: 0.25rem 0;
     border-bottom: 1px solid var(--color-border);
   }
 
+  /* Grows so the value stays at the right edge whether or not the row
+     carries a "not counted" note between them. */
+  .voter-name {
+    flex: 1;
+  }
+
   .voter-list li:last-child {
     border-bottom: none;
+  }
+
+  /* Still legible, plainly secondary: the vote happened, it just no longer
+     counts (docs/adr/044). */
+  .voter-list li.uncounted .voter-name,
+  .voter-list li.uncounted .voter-value {
+    opacity: 0.55;
+  }
+
+  .voter-note {
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .voter-list-note {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
   }
 
   .voter-value.approve { color: var(--color-success); }
