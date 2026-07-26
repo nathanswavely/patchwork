@@ -16,7 +16,6 @@
   const patch = getContext('patch');
   let patchIsAdmin = $derived(patch.value.isAdmin);
   let patchIsMember = $derived(patch.value.isMember);
-  let membershipRole = $derived(patch.value.membershipRole);
   let proposalId = $derived(getParams().id || '');
 
   let proposal = $state(null);
@@ -25,7 +24,12 @@
 
   let user = $derived(getUser());
   let isAuthor = $derived(user && proposal && proposal.author_id === user.id);
-  let canVote = $derived(isLoggedIn() && patchIsMember && membershipRole !== 'follower');
+  // The server says who may vote — `can_vote` is the same electorate condition
+  // VoteOnProposal gates on (docs/adr/044). This was computed here from
+  // membershipRole, which cannot see min_voting_tenure_days, so a member inside
+  // the tenure window was offered the buttons and refused on click. The
+  // electorate is not a thing the client can work out for itself.
+  let canVote = $derived(isLoggedIn() && proposal?.can_vote === true);
 
   let effectiveState = $derived(
     proposal?.state || (proposal?.status === 'open' ? 'voting' : proposal?.status === 'passed' ? 'in_effect' : proposal?.status)
@@ -120,6 +124,7 @@
       approveCount={proposal.approve_count || 0}
       rejectCount={proposal.reject_count || 0}
       directChange={isDirectChange}
+      {canVote}
       onStateChange={handleStateChange}
     />
 
