@@ -620,28 +620,46 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// Tally.
 		approveCount, rejectCount, abstainCount := tallyProposal(db, proposalID)
 
-		// Voter list.
+		// Voter list — the whole record, with each ballot saying whether it
+		// still counts. Deliberately not filtered like the tally.
+		//
+		// A vote is a fact; whether it counts is a separate question asked
+		// fresh at read time (docs/adr/044). Dropping the uncounted ones from
+		// this list answered the second question by erasing the first, and it
+		// broke a third thing: the UI reads an empty voter list as "no vote
+		// ever happened" to recognise a direct change (docs/adr/041). That
+		// inference is only sound while the list is complete. Filtered, a
+		// proposal that was genuinely voted on and passed would — once its
+		// voters had left or been demoted — render as one that was applied
+		// without a vote. A governance record must not describe a vote that
+		// happened as a vote that did not.
+		//
+		// LEFT JOIN, so a voter with no membership row at all (an instance
+		// admin from before the vote gate closed) still appears, uncounted:
+		// countedBallot is NULL for them, and the CASE falls through to 0.
 		type voterInfo struct {
 			UserID      string `json:"user_id"`
 			DisplayName string `json:"display_name"`
 			Username    string `json:"username"`
 			Value       string `json:"value"`
+			Counted     bool   `json:"counted"`
 		}
 		var voters []voterInfo
 		rows, err := db.Query(
-			`SELECT v.user_id, COALESCE(u.display_name,'') as display_name, u.username, v.value
+			`SELECT v.user_id, COALESCE(u.display_name,'') as display_name, u.username, v.value,
+			        CASE WHEN `+countedBallot+` THEN 1 ELSE 0 END as counted
 			 FROM votes v
 			 JOIN users u ON u.id = v.user_id
 			 JOIN proposals p ON p.id = v.proposal_id
-			 JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
-			 WHERE v.proposal_id = ? AND `+countedBallot+`
+			 LEFT JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
+			 WHERE v.proposal_id = ?
 			 ORDER BY v.created_at ASC`, proposalID,
 		)
 		if err == nil {
 			defer rows.Close()
 			for rows.Next() {
 				var vi voterInfo
-				if err := rows.Scan(&vi.UserID, &vi.DisplayName, &vi.Username, &vi.Value); err == nil {
+				if err := rows.Scan(&vi.UserID, &vi.DisplayName, &vi.Username, &vi.Value, &vi.Counted); err == nil {
 					voters = append(voters, vi)
 				}
 			}

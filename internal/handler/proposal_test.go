@@ -257,13 +257,75 @@ func TestTally_ExcludesVotersWhoLeftTheElectorate(t *testing.T) {
 	if got := result["approve_count"]; got != float64(1) {
 		t.Errorf("expected approve_count=1 (admin only), got %v", got)
 	}
-	if voters, ok := result["voters"].([]interface{}); !ok || len(voters) != 1 {
-		t.Errorf("expected 1 counted voter, got %v", result["voters"])
-	}
 	// The tally and the electorate must describe the same people, or quorum
 	// arithmetic divides by the wrong denominator.
 	if got := result["eligible_voters"]; got != float64(1) {
 		t.Errorf("expected eligible_voters=1, got %v", got)
+	}
+
+	// The list is the record, not the tally: all three ballots are still
+	// reported, each saying whether it counts. A vote is a fact; whether it
+	// counts is a separate question (docs/adr/044).
+	voters, ok := result["voters"].([]interface{})
+	if !ok || len(voters) != 3 {
+		t.Fatalf("expected all 3 voters listed, got %v", result["voters"])
+	}
+	counted := map[string]bool{}
+	for _, v := range voters {
+		vm := v.(map[string]interface{})
+		counted[vm["username"].(string)] = vm["counted"].(bool)
+	}
+	for name, want := range map[string]bool{
+		"padmin21":    true,
+		"pdemoted21":  false,
+		"pdeparted21": false,
+	} {
+		if counted[name] != want {
+			t.Errorf("%s: expected counted=%v, got %v", name, want, counted[name])
+		}
+	}
+}
+
+// The UI reads an empty voter list as "this was applied without a vote"
+// (docs/adr/041). That inference is only sound while the list is the complete
+// record — filtering it would make a proposal that was genuinely voted on and
+// passed, whose voters have since left, describe itself as never voted on.
+func TestVoterList_SurvivesEveryVoterLeaving(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "padmin23", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Departed", "departed", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	voter, voterToken := createTestUser(t, db, "pvoter23", "member")
+	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
+
+	body := map[string]interface{}{"title": "Voted And Passed", "duration_hours": 72}
+	r := authedRequest("POST", "/api/v1/nodes/departed/proposals", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	proposalID := decodeJSON(t, w)["id"].(string)
+
+	for _, token := range []string{adminToken, voterToken} {
+		r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", map[string]string{"value": "approve"}, token)
+		serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+	}
+
+	// Everyone who voted subsequently leaves.
+	mustExec(t, db, "UPDATE memberships SET status = 'left' WHERE node_id = ?", nodeID)
+
+	r = authedRequest("GET", "/api/v1/proposals/"+proposalID, nil, "")
+	w = servePublicMux(t, "GET", "/api/v1/proposals/{id}", handler.GetProposal(db), r)
+	result := decodeJSON(t, w)
+
+	voters, ok := result["voters"].([]interface{})
+	if !ok || len(voters) != 2 {
+		t.Fatalf("expected the voter list to survive an empty electorate, got %v", result["voters"])
+	}
+	for _, v := range voters {
+		if vm := v.(map[string]interface{}); vm["counted"] != false {
+			t.Errorf("expected counted=false for %v", vm["username"])
+		}
+	}
+	if got := result["approve_count"]; got != float64(0) {
+		t.Errorf("expected approve_count=0, got %v", got)
 	}
 }
 
