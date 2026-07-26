@@ -146,13 +146,33 @@ test.describe('Admin — Quilt Icon Designer', () => {
     const save = page.getByRole('button', { name: /Save icon/ });
     await expect(save).toBeDisabled();
 
+    // Start from a block, then recut it in a fabric the assigned icon
+    // isn't already wearing. Picking a starter alone proves nothing: a
+    // quilt whose name happens to draw that same starter would save a
+    // byte-identical image, which is how this test first failed in CI.
     await page.locator('.starter-option', { hasText: 'Flying Geese' }).click();
+    // Read the fabrics as painted — the DOM hands back rgb(), not the hex
+    // the component wrote, so convert rather than parse the attribute.
+    const wall = await page.locator('.wall .swatch').evaluateAll((els) =>
+      els.map((el) => {
+        const rgb = getComputedStyle(el).backgroundColor.match(/\d+/g).map(Number);
+        return {
+          label: el.getAttribute('aria-label'),
+          hex: '#' + rgb.slice(0, 3).map((n) => n.toString(16).padStart(2, '0')).join(''),
+        };
+      }));
+    const before = servedBefore.toLowerCase();
+    const fresh = wall.findIndex((sw) => !before.includes(sw.hex));
+    expect(fresh, 'the wall offers a fabric the assigned icon lacks').toBeGreaterThan(-1);
+    await page.locator('.wall .swatch').nth(fresh).click();
+
     await expect(save).toBeEnabled();
     await save.click();
 
     await expect(page.locator('.icon-kind')).toContainText('Drafted for this quilt');
     const servedAfter = await page.evaluate(() =>
       fetch('/api/v1/instance/icon?e2e=' + Date.now()).then((r) => r.text()));
+    expect(servedAfter.toLowerCase(), `${wall[fresh].label} reached the served icon`).toContain(wall[fresh].hex);
     expect(servedAfter).not.toBe(servedBefore);
     expect(servedAfter).toContain('<polygon');
 
