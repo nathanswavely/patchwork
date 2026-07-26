@@ -29,6 +29,7 @@
 
   let menuOpen = $state(false);
   let subscribeOpen = $state(false);
+  let reportOpen = $state(false);
 
   // Subscribable feeds exist only for public patches (docs/adr/031).
   let feedAvailable = $derived(node?.visibility === 'public');
@@ -84,17 +85,23 @@
           >Workspace view</a>
         {/if}
         {#if canReport}
-          <ReportButton
-            entityType="node"
-            entityId={node.id}
-            entityName={node.name}
-            variant="menuitem"
-            onOpen={() => { menuOpen = false; }}
-          />
+          <button role="menuitem" onclick={() => { menuOpen = false; reportOpen = true; }}>Report</button>
         {/if}
       </div>
     {/if}
   </div>
+
+  <!-- Mounted outside the menu on purpose: opening the modal closes the
+       menu, and a modal rendered inside it would be destroyed with it. -->
+  {#if canReport}
+    <ReportButton
+      entityType="node"
+      entityId={node.id}
+      entityName={node.name}
+      variant="headless"
+      bind:open={reportOpen}
+    />
+  {/if}
 
   <Modal open={subscribeOpen} label="Subscribe to {node?.name || 'this patch'}" onClose={() => { subscribeOpen = false; }}>
     {#snippet children()}
@@ -152,9 +159,8 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
   }
 
-  .overflow-menu :global(> button),
-  .overflow-menu :global(> a),
-  .overflow-menu :global(.report-trigger) {
+  .overflow-menu > button,
+  .overflow-menu > a {
     display: block;
     width: 100%;
     padding: 0.4rem 0.6rem;
@@ -170,9 +176,8 @@
     cursor: pointer;
   }
 
-  .overflow-menu :global(> button):hover,
-  .overflow-menu :global(> a):hover,
-  .overflow-menu :global(.report-trigger):hover {
+  .overflow-menu > button:hover,
+  .overflow-menu > a:hover {
     background: var(--color-overlay);
     text-decoration: none;
   }

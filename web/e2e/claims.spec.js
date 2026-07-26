@@ -72,10 +72,14 @@ test.describe('Claim flow', () => {
     await expect(page.getByRole('button', { name: 'Withdraw Claim' })).toBeVisible();
   });
 
+  // The unclaimed state is a header notice that states the fact and carries
+  // the act inside it (docs/adr/042); "Claim in progress" used to be a
+  // status wearing a button's clothes.
   test('patch profile shows the claim in progress', async ({ page }) => {
     await loginAs(page, 'active');
     await goto(page, `/patches/${slug}`);
-    await expect(page.getByText('Claim in progress')).toBeVisible();
+    await expect(page.getByText('No one runs this patch yet.')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Your claim is in progress' })).toBeVisible();
   });
 
   test('withdraw, then claim again with a different method', async ({ page }) => {

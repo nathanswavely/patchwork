@@ -170,4 +170,15 @@ describe('PatchOverflow', () => {
   it('homes Report, and hides it from the people who run the patch', () => {
     expect(src).toMatch(/canReport = \$derived\(isLoggedIn\(\) && !isAdmin/);
   });
+
+  // Opening the report modal closes the menu. Mounted inside it, the modal
+  // would be destroyed by the very click that opened it.
+  it('mounts the report modal outside the menu it is triggered from', () => {
+    const menuStart = src.indexOf('{#if menuOpen}');
+    const menuEnd = src.indexOf('Mounted outside the menu');
+    expect(menuStart).toBeGreaterThan(-1);
+    expect(menuEnd).toBeGreaterThan(menuStart);
+    expect(src.slice(menuStart, menuEnd)).not.toContain('<ReportButton');
+    expect(src).toMatch(/variant="headless"[\s\S]{0,40}bind:open={reportOpen}/);
+  });
 });
