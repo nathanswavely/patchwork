@@ -116,6 +116,16 @@ We decided:
   alone: comments and proposal participation legitimately admit followers
   under `follower_permissions`, and only the events door was wrong.
 
+  > **Corrected by [ADR 044](044-the-electorate-is-one-set.md).** The last
+  > sentence was wrong on both halves. "Proposal participation" silently
+  > included `VoteOnProposal`, and voting is exactly the right a follower
+  > does not have — so the events door was *not* the only one. And
+  > `follower_permissions` grants none of this: it is a read gate
+  > (`canReadPatchDocs` returns `fp.Charters`), with no field that could
+  > admit anyone to voting or commenting. Clearing the helper on a
+  > mechanism that does not exist is how the same bug reached a third
+  > door. The gate now derives from the electorate itself.
+
 **Considered and rejected: collapsing the profile into the workspace tab
 row.** The strongest alternative, and the one that dissolves the naming
 problem outright — GitHub, the analogy `CONTEXT.md` already uses for the

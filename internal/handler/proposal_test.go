@@ -167,6 +167,140 @@ func TestVoteAndChangeVote(t *testing.T) {
 	}
 }
 
+// A follower is an interested observer, not a member (CONTEXT.md, "Member
+// count"), and the tally is only coherent if the people who may vote are the
+// same people eligibleVoters counts. This gate once called userHasMembership,
+// which admits any active membership, so a follower's vote was counted in the
+// numerator while the quorum denominator — admins and members — never saw it.
+func TestVoteOnProposal_FollowerCannotVote(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "padmin20", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Follower Vote", "follower-vote", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	// Keep the electorate above one so the proposal stays open for the
+	// follower's attempt (docs/adr/041 resolves a sole voter immediately).
+	member, memberToken := createTestUser(t, db, "pmember20", "member")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+	follower, followerToken := createTestUser(t, db, "pfollower20", "member")
+	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
+
+	body := map[string]interface{}{"title": "Members Decide", "duration_hours": 72}
+	r := authedRequest("POST", "/api/v1/nodes/follower-vote/proposals", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	proposalID := decodeJSON(t, w)["id"].(string)
+
+	voteBody := map[string]string{"value": "approve"}
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", voteBody, followerToken)
+	w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("follower vote: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND user_id = ?", proposalID, follower.ID).Scan(&count)
+	if count != 0 {
+		t.Errorf("expected no vote row for follower, got %d", count)
+	}
+
+	// The same request from a member is the control: the gate rejects the
+	// role, not the proposal's state.
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", voteBody, memberToken)
+	w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("member vote: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// Nothing purges a vote when the voter stops being part of the electorate, so
+// the tally has to exclude them at read time — otherwise their ballot stays in
+// the numerator while eligibleVoters drops them from the denominator, and a
+// quorum can be met by people who are no longer members.
+func TestTally_ExcludesVotersWhoLeftTheElectorate(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "padmin21", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Tally Node", "tally-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	demoted, demotedToken := createTestUser(t, db, "pdemoted21", "member")
+	createTestMembership(t, db, demoted.ID, nodeID, "member", "active")
+	departed, departedToken := createTestUser(t, db, "pdeparted21", "member")
+	createTestMembership(t, db, departed.ID, nodeID, "member", "active")
+
+	body := map[string]interface{}{"title": "Tally Test", "duration_hours": 72}
+	r := authedRequest("POST", "/api/v1/nodes/tally-node/proposals", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	proposalID := decodeJSON(t, w)["id"].(string)
+
+	// Everyone votes while still eligible.
+	for _, token := range []string{adminToken, demotedToken, departedToken} {
+		r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", map[string]string{"value": "approve"}, token)
+		w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("vote: expected 200, got %d: %s", w.Code, w.Body.String())
+		}
+	}
+
+	// Then the electorate shifts under the open proposal: one demoted to
+	// follower, one gone. Both keep their vote rows.
+	mustExec(t, db, "UPDATE memberships SET role = 'follower' WHERE user_id = ? AND node_id = ?", demoted.ID, nodeID)
+	mustExec(t, db, "UPDATE memberships SET status = 'left' WHERE user_id = ? AND node_id = ?", departed.ID, nodeID)
+
+	var rowCount int
+	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ?", proposalID).Scan(&rowCount)
+	if rowCount != 3 {
+		t.Fatalf("expected all 3 vote rows to survive, got %d", rowCount)
+	}
+
+	r = authedRequest("GET", "/api/v1/proposals/"+proposalID, nil, "")
+	w = servePublicMux(t, "GET", "/api/v1/proposals/{id}", handler.GetProposal(db), r)
+	result := decodeJSON(t, w)
+
+	if got := result["approve_count"]; got != float64(1) {
+		t.Errorf("expected approve_count=1 (admin only), got %v", got)
+	}
+	if voters, ok := result["voters"].([]interface{}); !ok || len(voters) != 1 {
+		t.Errorf("expected 1 counted voter, got %v", result["voters"])
+	}
+	// The tally and the electorate must describe the same people, or quorum
+	// arithmetic divides by the wrong denominator.
+	if got := result["eligible_voters"]; got != float64(1) {
+		t.Errorf("expected eligible_voters=1, got %v", got)
+	}
+}
+
+// An instance admin curates instance-wide options and does not override
+// per-patch choices (CONTEXT.md, "Instance admin"). Voting is the most
+// per-patch choice there is, and the site-wide role is not a seat in every
+// patch's electorate — eligibleVoters never counted them, so letting them vote
+// put a ballot in the numerator that the denominator could not see.
+func TestVoteOnProposal_InstanceAdminWithoutMembershipCannotVote(t *testing.T) {
+	db := setupTestDB(t)
+	owner, ownerToken := createTestUser(t, db, "powner22", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Autonomy", "autonomy", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+	member, _ := createTestUser(t, db, "pmember22", "member")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+
+	// Site-wide admin, no membership in this patch.
+	_, instanceAdminToken := createTestUser(t, db, "pinstance22", "admin")
+
+	body := map[string]interface{}{"title": "Patch Business", "duration_hours": 72}
+	r := authedRequest("POST", "/api/v1/nodes/autonomy/proposals", body, ownerToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	proposalID := decodeJSON(t, w)["id"].(string)
+
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", map[string]string{"value": "approve"}, instanceAdminToken)
+	w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("instance admin vote: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ?", proposalID).Scan(&count)
+	if count != 0 {
+		t.Errorf("expected no vote row, got %d", count)
+	}
+}
+
 func TestVoteAfterWindowExpires(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin5", "member")

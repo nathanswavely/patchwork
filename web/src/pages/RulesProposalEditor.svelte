@@ -10,6 +10,14 @@
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let isAdmin = $derived(patch.value.isAdmin);
+  let membershipRole = $derived(patch.value.membershipRole);
+
+  // The entry point on the governance hub is gated, but the route is
+  // reachable by URL, so the page states the rule itself rather than
+  // trusting the button that sent you. Not `isMember` — the node payload
+  // sets is_member for followers too, and following carries no governance
+  // rights.
+  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
 
   let currentRules = $state(null);
   let proposedRules = $state(null);
@@ -175,7 +183,12 @@
 </script>
 
 <div class="rules-editor page-fade">
-  {#if loading}
+  {#if !canPropose}
+    <div class="permission-notice">
+      <p>Only members can propose a change to these rules.</p>
+      <p class="muted">Become a member to take part in how this patch governs itself.</p>
+    </div>
+  {:else if loading}
     <Skeleton lines={1} height="2rem" width="50%" />
     <Skeleton lines={6} height="0.9rem" />
   {:else if error}
@@ -369,5 +382,15 @@
   .error-state {
     padding: 2rem 0;
     text-align: center;
+  }
+
+  .permission-notice {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .permission-notice p:first-child {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
   }
 </style>

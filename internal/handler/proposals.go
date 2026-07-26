@@ -82,9 +82,12 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		query := `SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
 			COALESCE(p.target_doc,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
 			COALESCE(u.display_name, u.username) as author_name,
-			(SELECT COUNT(*) FROM votes WHERE proposal_id = p.id AND value = 'approve') as approve_count,
-			(SELECT COUNT(*) FROM votes WHERE proposal_id = p.id AND value = 'reject') as reject_count,
-			(SELECT COUNT(*) FROM votes WHERE proposal_id = p.id AND value = 'abstain') as abstain_count
+			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
+				WHERE v.proposal_id = p.id AND v.value = 'approve' AND ` + countedBallot + `) as approve_count,
+			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
+				WHERE v.proposal_id = p.id AND v.value = 'reject' AND ` + countedBallot + `) as reject_count,
+			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
+				WHERE v.proposal_id = p.id AND v.value = 'abstain' AND ` + countedBallot + `) as abstain_count
 			FROM proposals p
 			LEFT JOIN users u ON u.id = p.author_id
 			WHERE p.node_id = ?`
@@ -341,6 +344,51 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// countedBallot separates a vote that counts from a row that merely exists.
+// It expects the ballot's membership joined as `m`.
+//
+// The electorate is active admins and members (see eligibleVoters; CONTEXT.md,
+// "Member count"), but membership moves underneath a vote: a member can vote
+// and then be demoted to follower, leave — LeaveNode sets status 'left' rather
+// than deleting the row — or be banned. Nothing purges their votes, and
+// deliberately so: the record of who voted is worth keeping. So the tally asks
+// who counts *now* instead of trusting that every membership path remembered to
+// clean up after itself. Every surface that counts ballots shares this
+// predicate, so the resolution math and the tally people read can't diverge.
+const countedBallot = `m.status = 'active' AND m.role IN ('admin','member')`
+
+// tallyProposal counts a proposal's approve/reject/abstain ballots, excluding
+// any cast by people the electorate no longer counts (see countedBallot).
+func tallyProposal(db *database.DB, proposalID string) (approve, reject, abstain int) {
+	rows, err := db.Query(
+		`SELECT v.value, COUNT(*)
+		 FROM votes v
+		 JOIN proposals p ON p.id = v.proposal_id
+		 JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
+		 WHERE v.proposal_id = ? AND `+countedBallot+`
+		 GROUP BY v.value`, proposalID)
+	if err != nil {
+		return 0, 0, 0
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var value string
+		var n int
+		if rows.Scan(&value, &n) != nil {
+			continue
+		}
+		switch value {
+		case "approve":
+			approve = n
+		case "reject":
+			reject = n
+		case "abstain":
+			abstain = n
+		}
+	}
+	return approve, reject, abstain
+}
+
 // eligibleVoters returns how many people may currently vote on a node's
 // proposals — active admins and members past the minimum voting tenure —
 // and, when the electorate is exactly one person, that voter's user ID.
@@ -389,10 +437,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	}
 
 	// Tally votes for resolution.
-	var approveCount, rejectCount, abstainCount int
-	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'approve'", proposalID).Scan(&approveCount)
-	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'reject'", proposalID).Scan(&rejectCount)
-	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'abstain'", proposalID).Scan(&abstainCount)
+	approveCount, rejectCount, abstainCount := tallyProposal(db, proposalID)
 
 	// Load governance config for the node
 	var gcJSON string
@@ -524,10 +569,7 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		// Tally.
-		var approveCount, rejectCount, abstainCount int
-		db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'approve'", proposalID).Scan(&approveCount)
-		db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'reject'", proposalID).Scan(&rejectCount)
-		db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND value = 'abstain'", proposalID).Scan(&abstainCount)
+		approveCount, rejectCount, abstainCount := tallyProposal(db, proposalID)
 
 		// Voter list.
 		type voterInfo struct {
@@ -539,8 +581,12 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		var voters []voterInfo
 		rows, err := db.Query(
 			`SELECT v.user_id, COALESCE(u.display_name,'') as display_name, u.username, v.value
-			 FROM votes v JOIN users u ON u.id = v.user_id
-			 WHERE v.proposal_id = ? ORDER BY v.created_at ASC`, proposalID,
+			 FROM votes v
+			 JOIN users u ON u.id = v.user_id
+			 JOIN proposals p ON p.id = v.proposal_id
+			 JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
+			 WHERE v.proposal_id = ? AND `+countedBallot+`
+			 ORDER BY v.created_at ASC`, proposalID,
 		)
 		if err == nil {
 			defer rows.Close()
@@ -649,8 +695,21 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Require membership in the proposal's node.
-		if user.Role != "admin" && !userHasMembership(db, user.ID, nodeID) {
+		// Require the vote to come from someone the electorate counts — the
+		// same condition eligibleVoters applies, deliberately, so that who may
+		// vote and who is counted can never be two different sets.
+		//
+		// This once called userHasMembership, which counts any active
+		// membership, so a follower could vote; following carries no voting
+		// rights (CONTEXT.md, "Member count"). It also carried the usual
+		// `user.Role == "admin"` bypass, which let an instance admin vote in a
+		// patch they hold no role in — but an instance admin "curates
+		// instance-wide options; does not override per-patch choices"
+		// (CONTEXT.md, "Instance admin"), and ADR 026 refuses instance
+		// authority reaching into an active patch for the far smaller matter
+		// of an event queue. A patch's vote is its own. An instance admin who
+		// is also a member votes as that member, like anyone else.
+		if !userHasNodeRole(db, user.ID, nodeID, "member", "admin") {
 			http.Error(w, `{"error":"must be member of node to vote"}`, http.StatusForbidden)
 			return
 		}
