@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -17,14 +18,43 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
+// dayBound widens a date-only `from`/`to` to the instant it means.
+//
+// starts_at holds a full timestamp and the range comparison below is
+// lexicographic, so '2026-07-26T20:00:00Z' sorts *after* '2026-07-26' — a
+// bare `to` silently excluded the day it named, and a caller asking for a
+// single day got nothing at all. A bare `from` was already equivalent to the
+// day's first instant; it is widened too so both ends read the same way.
+//
+// The day meant here is UTC's. A caller whose day starts somewhere else can
+// only say so by sending instants, which is what the web app does
+// (docs/adr/045); this is the floor for everyone else, including the other
+// quilts that read this endpoint cross-origin.
+//
+// The upper bound is T23:59:59Z and deliberately not T23:59:59.999Z: starts_at
+// holds two precisions (the web app writes .000Z, feed ingest writes none),
+// and under text comparison 'Z' sorts after '.', so a fractional bound would
+// have excluded a zero-fraction event in the day's last second. T23:59:59Z is
+// the largest string any timestamp on that day can take, so it admits every
+// precision while still sorting before the next day.
+func dayBound(v, instant string) string {
+	if len(v) != len("2006-01-02") {
+		return v
+	}
+	if _, err := time.Parse("2006-01-02", v); err != nil {
+		return v
+	}
+	return v + instant
+}
+
 // ListEvents handles GET /api/v1/events.
 func ListEvents(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		after, limit := parsePaginationParams(r)
 		nodeID := r.URL.Query().Get("node_id")
 		nodeSlug := r.URL.Query().Get("node_slug")
-		from := r.URL.Query().Get("from")
-		to := r.URL.Query().Get("to")
+		from := dayBound(r.URL.Query().Get("from"), "T00:00:00Z")
+		to := dayBound(r.URL.Query().Get("to"), "T23:59:59Z")
 
 		// Resolve node_slug to node_id if provided.
 		if nodeSlug != "" && nodeID == "" {

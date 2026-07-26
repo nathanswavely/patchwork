@@ -36,3 +36,89 @@ export function fromLocalInputValue(value) {
   if (Number.isNaN(d.getTime())) return undefined;
   return d.toISOString();
 }
+
+// ---------------------------------------------------------------------------
+// Day ranges for the events list filter.
+//
+// A calendar day is a span in some zone, and the API compares `starts_at` as
+// text (`events.go`, `e.starts_at <= ?`). So a day filter has to be sent as
+// the two instants that bound it: `2026-07-26` sorts *before* every timestamp
+// on 2026-07-26, so sending the bare date as `to` dropped the day it named —
+// and when `from` and `to` were the same day, the whole range.
+//
+// The zone is the browser's, as everywhere else for now; docs/adr/045 moves
+// it to the event's own, which is why this sits beside the conversions above.
+
+const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+const shiftDays = (base, days) => {
+  const d = new Date(base);
+  d.setDate(d.getDate() + days);
+  return d;
+};
+
+// The first instant of a local day.
+export function dayStart(d) {
+  return startOfDay(d).toISOString();
+}
+
+// The last second of a local day, inclusive, because the API's `to` is `<=`.
+// Derived from the next day's midnight rather than by adding 24 hours, so a
+// day that is 23 or 25 hours long still ends where it should.
+//
+// Emitted without milliseconds on purpose. `starts_at` holds two precisions —
+// the event form writes `.000Z`, feed ingest writes none — and the comparison
+// is text, where 'Z' sorts after '.'. A `...59.999Z` bound would therefore
+// have excluded a zero-fraction event landing on the day's last second.
+// Dropping the fraction makes the bound the largest string that day can take.
+export function dayEnd(d) {
+  const next = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+  return new Date(next.getTime() - 1000).toISOString().replace(/\.\d{3}Z$/, 'Z');
+}
+
+// "YYYY-MM-DD" from an <input type="date"> to a local Date. Passing it to
+// `new Date()` directly would parse it as UTC — a date-only form is the one
+// case the spec reads that way.
+function fromDateInput(s) {
+  const [y, m, d] = String(s || '').split('-').map(Number);
+  if (!y || !m || !d) return null;
+  const parsed = new Date(y, m - 1, d);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+// Bounds for one of the events list's date presets. `now` is injectable so
+// the presets can be tested against a fixed day.
+export function eventDateRange(preset, opts = {}) {
+  const { customFrom = '', customTo = '', now = new Date() } = opts;
+  const today = startOfDay(now);
+
+  switch (preset) {
+    case 'today':
+      return { from: dayStart(today), to: dayEnd(today) };
+    case 'tomorrow': {
+      const tom = shiftDays(today, 1);
+      return { from: dayStart(tom), to: dayEnd(tom) };
+    }
+    case 'weekend': {
+      const sat = shiftDays(today, 6 - today.getDay());
+      return { from: dayStart(sat), to: dayEnd(shiftDays(sat, 1)) };
+    }
+    case 'week':
+      return { from: dayStart(today), to: dayEnd(shiftDays(today, 6 - today.getDay())) };
+    case 'nextweek': {
+      const nextMon = shiftDays(today, 8 - today.getDay());
+      return { from: dayStart(nextMon), to: dayEnd(shiftDays(nextMon, 6)) };
+    }
+    case 'month': {
+      const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      return { from: dayStart(today), to: dayEnd(end) };
+    }
+    case 'custom': {
+      const f = fromDateInput(customFrom);
+      const t = fromDateInput(customTo);
+      return { from: dayStart(f || today), to: t ? dayEnd(t) : '' };
+    }
+    default: // 'any'
+      return { from: dayStart(today), to: '' };
+  }
+}
