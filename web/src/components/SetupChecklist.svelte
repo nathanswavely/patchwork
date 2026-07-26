@@ -57,7 +57,9 @@
   async function loadChecks() {
     checksLoaded = false;
     const [eventData, docData] = await Promise.all([
-      api(`events?node_slug=${encodeURIComponent(slug)}&limit=1`).catch(() => ({ items: [] })),
+      // "Has this patch posted an event yet" — a patch whose only event has
+      // already happened still has one, so the tick must not come back off.
+      api(`events?node_slug=${encodeURIComponent(slug)}&include_past=true&limit=1`).catch(() => ({ items: [] })),
       api(`nodes/${slug}/governance`).catch(() => ({ items: [] })),
     ]);
     const events = eventData.items || eventData || [];

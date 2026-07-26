@@ -56,6 +56,25 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		from := dayBound(r.URL.Query().Get("from"), "T00:00:00Z")
 		to := dayBound(r.URL.Query().Get("to"), "T23:59:59Z")
 
+		// No lower bound means *upcoming*, and history is asked for by name.
+		//
+		// This query sorts starts_at ascending, so an unbounded list is a
+		// list of a patch's oldest events — the exact inverse of what every
+		// caller headed "upcoming events" meant. Three surfaces shipped that
+		// bug simultaneously and none of their reviewers caught it, because
+		// it reads correctly on a young instance where every event is still
+		// ahead and only inverts as a calendar ages. Documenting the trap
+		// would have left it armed for the fourth caller; defaulting makes
+		// the safe reading free and the unsafe one deliberate.
+		//
+		// An explicit `from` always wins, including one in the past, so
+		// include_past is only for callers wanting no lower bound at all: a
+		// workspace calendar, a "has this patch any events yet" probe, a
+		// scoped search that should find what already happened.
+		if from == "" && r.URL.Query().Get("include_past") != "true" {
+			from = time.Now().UTC().Format(time.RFC3339)
+		}
+
 		// Resolve node_slug to node_id if provided.
 		if nodeSlug != "" && nodeID == "" {
 			nodeID = NodeIDFromSlug(db, nodeSlug)
