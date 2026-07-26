@@ -162,8 +162,10 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Require membership.
-		if user.Role != "admin" && !userHasMembership(db, user.ID, nodeID) {
+		// Raising a proposal is a member act. Not userHasMembership — that
+		// counts any active membership row, followers included, so it let a
+		// follower author a live proposal on a patch they cannot vote in.
+		if user.Role != "admin" && !mayPropose(db, user.ID, nodeID) {
 			http.Error(w, `{"error":"must be member of node"}`, http.StatusForbidden)
 			return
 		}
@@ -370,6 +372,22 @@ func electorateFilter(prefix string, gc model.GovernanceConfig) (string, []inter
 		args = append(args, fmt.Sprintf("-%d days", gc.MinVotingTenureDays))
 	}
 	return cond, args
+}
+
+// mayPropose reports whether one person may author a proposal on a node.
+//
+// It is electorateMembership without the tenure clause, and deliberately so:
+// the minimum *voting* tenure gates casting a ballot, not raising the question.
+// Everything else about the two is the same set, so it is read off the same
+// condition rather than spelled out again (docs/adr/044) — the frontend gates
+// say `isAdmin || membershipRole === 'member' || membershipRole === 'admin'`,
+// and this is that sentence in SQL.
+func mayPropose(db *database.DB, userID, nodeID string) bool {
+	var one int
+	return db.QueryRow(
+		`SELECT 1 FROM memberships WHERE node_id = ? AND user_id = ? AND `+electorateMembership(""),
+		nodeID, userID,
+	).Scan(&one) == nil
 }
 
 // inElectorate reports whether one person may currently vote on a node's

@@ -6,6 +6,14 @@
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
+  let isAdmin = $derived(patch.value.isAdmin);
+  let membershipRole = $derived(patch.value.membershipRole);
+
+  // The New Proposal button on the proposals list is already gated, but this
+  // route is reachable by URL, so the page states the rule itself. Not
+  // `isMember` — the node payload sets is_member for followers too, and
+  // following carries no governance rights.
+  let canPropose = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
 
   $effect(() => {
     patch.value.setBreadcrumbExtra?.([{ label: 'New Proposal' }]);
@@ -62,6 +70,14 @@
   }
 </script>
 
+<!-- Outside .container-narrow on purpose: a centered notice inheriting that
+     column would center on the column instead of the page. -->
+{#if !canPropose}
+  <div class="permission-notice page-fade">
+    <p>Only members can create proposals.</p>
+    <p class="muted">Become a member to take part in how this patch governs itself.</p>
+  </div>
+{:else}
 <div class="page-fade">
   <div class="container-narrow">
     <div style="padding-top: 2rem;">
@@ -151,8 +167,19 @@
     </div>
   </div>
 </div>
+{/if}
 
 <style>
+  .permission-notice {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .permission-notice p:first-child {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
   form {
     display: flex;
     flex-direction: column;

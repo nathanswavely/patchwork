@@ -34,8 +34,19 @@ describe('GovernanceOverview — propose entry point', () => {
   });
 });
 
-describe('RulesProposalEditor — the route itself', () => {
-  const src = source('pages/RulesProposalEditor.svelte');
+// Every route that can author a proposal, and the notice each shows instead.
+// They are listed together because the gate has to be the same sentence on
+// all of them — RulesProposalEditor had it and the other two did not, so a
+// follower reached the charter editor and the generic proposal form by URL
+// and got a live Submit button (#84).
+const PROPOSE_ROUTES = [
+  ['RulesProposalEditor', 'pages/RulesProposalEditor.svelte', 'Only members can propose a change to these rules.'],
+  ['AmendmentEditor', 'pages/AmendmentEditor.svelte', 'Only members can propose a change to this charter.'],
+  ['ProposalForm', 'pages/ProposalForm.svelte', 'Only members can create proposals.'],
+];
+
+describe.each(PROPOSE_ROUTES)('%s — the route itself', (_name, path, notice) => {
+  const src = source(path);
 
   it('gates on membershipRole, since the route is reachable by URL and not only by the button', () => {
     expect(src).toMatch(/canPropose = \$derived\(\s*isAdmin \|\| membershipRole === 'member' \|\| membershipRole === 'admin'\s*\)/);
@@ -43,6 +54,11 @@ describe('RulesProposalEditor — the route itself', () => {
 
   it('refuses the editor before anything else renders', () => {
     expect(src).toMatch(/\{#if !canPropose\}/);
-    expect(src).toContain('Only members can propose a change to these rules.');
+    expect(src).toContain(notice);
+  });
+
+  it('never gates on a bare isMember', () => {
+    expect(src).not.toMatch(/\{#if isMember\b/);
+    expect(src).not.toMatch(/canPropose = \$derived\(isMember/);
   });
 });
