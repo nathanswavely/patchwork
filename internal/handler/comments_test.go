@@ -52,6 +52,48 @@ func TestCreateComment(t *testing.T) {
 	}
 }
 
+// Commenting is the one governance act a follower keeps: voting is deciding
+// and proposing raises the question, but deliberation is open to everyone with
+// standing here (docs/adr/044). This gate used to reach that outcome by
+// accident — userHasMembership admitted any active row, followers among them,
+// and got three other doors wrong doing it. The helper is gone and the roles
+// are named, so the behaviour is now deliberate rather than incidental. A
+// stranger with no membership at all is still refused.
+func TestCreateComment_FollowerMayComment(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "c_admin_f", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Follower Comment", "follower-comment", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	proposalID := createTestProposal(t, db, nodeID, admin.ID)
+
+	follower, followerToken := createTestUser(t, db, "c_follower", "member")
+	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
+
+	body := map[string]interface{}{"body": "A follower's view"}
+	r := authedRequest("POST", "/api/v1/proposals/"+proposalID+"/comments", body, followerToken)
+	w := serveMux(t, db, "POST", "/api/v1/proposals/{id}/comments", handler.CreateComment(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("follower comment: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	// No membership row at all — standing is what the gate asks for.
+	_, strangerToken := createTestUser(t, db, "c_stranger", "member")
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/comments", body, strangerToken)
+	w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/comments", handler.CreateComment(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Errorf("stranger comment: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+
+	// A membership that ended is not standing either.
+	former, formerToken := createTestUser(t, db, "c_former", "member")
+	createTestMembership(t, db, former.ID, nodeID, "member", "left")
+	r = authedRequest("POST", "/api/v1/proposals/"+proposalID+"/comments", body, formerToken)
+	w = serveMux(t, db, "POST", "/api/v1/proposals/{id}/comments", handler.CreateComment(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Errorf("former member comment: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 func TestCreateComment_Threaded(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "c_admin2", "member")
