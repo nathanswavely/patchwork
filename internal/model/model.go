@@ -166,6 +166,11 @@ type Node struct {
 	GovernanceConfig       *GovernanceConfig    `json:"governance_config,omitempty"`
 	MemberCount            int                  `json:"member_count,omitempty"`
 	FollowerCount          int                  `json:"follower_count,omitempty"`
+	// Events not yet started — distinct from the tree endpoint's
+	// event_count, which is every active event past and future
+	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
+	// response only; the tree carries the all-time figure.
+	UpcomingEventCount     int                  `json:"upcoming_event_count"`
 	CreatedAt              string               `json:"created_at"`
 	UpdatedAt              string               `json:"updated_at"`
 }

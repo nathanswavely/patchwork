@@ -3,6 +3,7 @@
   import { getUser } from '../stores/auth.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
+  import { formatEventDate as formatDate, upcomingFrom } from '../lib/datetime.js';
 
   let user = $derived(getUser());
   let memberships = $state([]);
@@ -63,18 +64,13 @@
     });
 
     // Fetch upcoming events
-    const eventFetch = api('events?limit=5').then(data => {
+    const eventFetch = api(`events?from=${encodeURIComponent(upcomingFrom())}&limit=5`).then(data => {
       upcomingEvents = data.items || data || [];
     }).catch(() => {});
 
     await Promise.all([...adminFetches, ...memberFetches, eventFetch]);
     pendingCounts = pending;
     proposalCounts = proposals;
-  }
-
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   }
 
 

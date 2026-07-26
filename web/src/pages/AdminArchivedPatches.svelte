@@ -5,6 +5,7 @@
   import { api } from '../lib/api.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import { formatDay as formatDate } from '../lib/datetime.js';
 
   let nodes = $state([]);
   let loading = $state(true);
@@ -32,10 +33,6 @@
     }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-  }
 
   $effect(() => { load(); });
 </script>

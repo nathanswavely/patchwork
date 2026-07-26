@@ -5,6 +5,7 @@
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
   import DiffView from '../components/DiffView.svelte';
+  import { formatDay as formatDate } from '../lib/datetime.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -96,10 +97,6 @@
     }
   }
 
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-  }
 </script>
 
 <div class="page-fade">

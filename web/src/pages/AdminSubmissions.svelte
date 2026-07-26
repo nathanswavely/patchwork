@@ -4,6 +4,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
   import TagPicker from '../components/TagPicker.svelte';
+  import { formatDay as formatDate } from '../lib/datetime.js';
 
   let submissions = $state([]);
   let loading = $state(true);
@@ -52,10 +53,6 @@
     }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
 </script>
 
 <div class="page-fade">

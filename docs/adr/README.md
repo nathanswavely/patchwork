@@ -47,6 +47,7 @@ several branches are in flight.
 | [042](042-the-patch-profile-is-a-window.md) | The patch profile is a window, not a lobby — every door names a room |
 | [043](043-the-quilt-icon-is-drafted.md) | The quilt icon is drafted, not uploaded — the block drafter, no image upload |
 | [044](044-the-electorate-is-one-set.md) | The electorate is one set — the vote gate is the quorum denominator |
+| [046](046-location-is-one-name-first-field.md) | Location is one field, written name-first — the venue/address split rejected |
 
 ## Adopted as design boundaries — implementation is backlog
 

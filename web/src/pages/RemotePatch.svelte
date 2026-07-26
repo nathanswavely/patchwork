@@ -12,6 +12,7 @@
   import { textOnColor } from '../lib/quiltTheme.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { ArrowSquareOut, Heart, CalendarBlank, Users } from 'phosphor-svelte';
+  import { upcomingFrom } from '../lib/datetime.js';
 
   let { host = '', slug = '' } = $props();
 
@@ -36,7 +37,7 @@
     try {
       const [nodeRes, eventsRes, info] = await Promise.all([
         fetch(`${origin}/api/v1/nodes/${encodeURIComponent(slug)}`),
-        fetch(`${origin}/api/v1/events?node_slug=${encodeURIComponent(slug)}&limit=5`).catch(() => null),
+        fetch(`${origin}/api/v1/events?node_slug=${encodeURIComponent(slug)}&from=${encodeURIComponent(upcomingFrom())}&limit=5`).catch(() => null),
         fetchQuiltInfo(origin),
       ]);
       if (!nodeRes.ok) throw new Error(`HTTP ${nodeRes.status}`);

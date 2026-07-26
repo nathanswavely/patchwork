@@ -391,7 +391,12 @@
                   </span>
                   {patch.name}
                 </h3>
-                <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Upcoming Events</p>
+                <!-- "events", not "upcoming events": event_count is every
+                     active event a patch owns, past and future, and for a
+                     remote patch it comes from a cross-quilt snapshot that
+                     carries no upcoming figure at all (CONTEXT.md
+                     "Upcoming events"). -->
+                <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events</p>
                 {#if patch.description}
                   <p class="card-desc">{patch.description}</p>
                 {/if}

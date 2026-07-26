@@ -22,6 +22,14 @@
   import PatchOverflow from '../components/PatchOverflow.svelte';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
+  import { formatEventDate, formatEventTime, upcomingFrom } from '../lib/datetime.js';
+
+  // The glimpse shows three, not the five it used to fetch. A stacked row
+  // is taller than the clipped one-liner it replaces, and the section
+  // heading is now a door (docs/adr/042) — so the fourth and fifth event
+  // cost a scroll on a page read at a glance and buy nothing the door
+  // doesn't already offer.
+  const GLIMPSE_EVENTS = 3;
 
   let { slug = '' } = $props();
 
@@ -126,7 +134,7 @@
     // — absence, not an empty state — so neither fetch runs for one.
     const wantGovernance = !isUnclaimed && (isMember || isAdmin || followerPermissions?.proposals === true || followerPermissions?.charters === true);
     const [eventData, memberData, proposalData, charterData] = await Promise.all([
-      api(`events?node_slug=${encodeURIComponent(slug)}&limit=5`).catch(() => ({ items: [] })),
+      api(`events?node_slug=${encodeURIComponent(slug)}&from=${encodeURIComponent(upcomingFrom())}&limit=${GLIMPSE_EVENTS}`).catch(() => ({ items: [] })),
       (isUnclaimed ? Promise.resolve({ items: [] }) : api(`nodes/${slug}/members?limit=12`)).catch(() => ({ items: [] })),
       (wantGovernance ? api(`nodes/${slug}/proposals?limit=3`) : Promise.resolve({ items: [] })).catch(() => ({ items: [] })),
       (wantGovernance ? api(`nodes/${slug}/governance`) : Promise.resolve({ items: [] })).catch(() => ({ items: [] })),
@@ -150,10 +158,6 @@
     catch { return url; }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  }
 </script>
 
 <div class="profile">
@@ -177,7 +181,11 @@
         <div class="cover-text">
           <h1 class="profile-name">{node.name}</h1>
           <p class="profile-stats">
-            {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {recentEvents.length} Upcoming Events
+            <!-- Both halves are server totals. The events half used to be
+                 recentEvents.length — a capped page of rows reported as a
+                 count, so a venue with forty shows advertised five
+                 (CONTEXT.md "Upcoming events"). -->
+            {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events
           </p>
         </div>
         <div class="cover-overflow">
@@ -253,12 +261,25 @@
         {#if recentEvents.length > 0}
           <div class="event-list">
             {#each recentEvents as event (event.id)}
+              <!-- Stacked, not one line. Title and location used to compete
+                   for a single row where location never yielded, so a full
+                   postal address squeezed the title to one letter. Nothing
+                   here can clip the other: the column is fixed, and the
+                   block owns the rest. -->
               <a href="/events/{event.id}" class="event-item" onclick={go(`/events/${event.id}`)}>
-                <span class="event-date">{formatDate(event.starts_at)}</span>
-                <span class="event-name">{event.title}</span>
-                {#if event.location}
-                  <span class="event-location muted">{event.location}</span>
-                {/if}
+                <span class="event-when">
+                  <span class="event-date">{formatEventDate(event.starts_at)}</span>
+                  <span class="event-time">{formatEventTime(event.starts_at)}</span>
+                </span>
+                <span class="event-info">
+                  <span class="event-name">{event.title}</span>
+                  {#if event.location}
+                    <!-- Clamped to one line. A location is name-first
+                         (docs/adr/046), so the ellipsis eats the postal
+                         tail and keeps the venue. -->
+                    <span class="event-location muted">{event.location}</span>
+                  {/if}
+                </span>
               </a>
             {/each}
           </div>
@@ -579,7 +600,6 @@
   .event-item,
   .row-item {
     display: flex;
-    align-items: center;
     gap: 0.75rem;
     padding: 0.5rem;
     text-decoration: none;
@@ -594,19 +614,13 @@
     text-decoration: none;
   }
 
+  /* Governance rows stay one line: a charter title and a status chip fit,
+     and nothing there carries an address. */
   .row-item {
+    align-items: center;
     justify-content: space-between;
   }
 
-  .event-date {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    min-width: 5rem;
-    flex-shrink: 0;
-  }
-
-  .event-name,
   .row-title {
     font-size: 0.88rem;
     font-weight: 500;
@@ -617,9 +631,54 @@
     white-space: nowrap;
   }
 
+  /* An event row is two columns, each stacked. Baseline alignment puts the
+     date on the title's first line rather than centring a two-line column
+     against a two-line block. */
+  .event-item {
+    align-items: baseline;
+  }
+
+  .event-when {
+    display: flex;
+    flex-direction: column;
+    min-width: 5rem;
+    flex-shrink: 0;
+  }
+
+  .event-date {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .event-time {
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+  }
+
+  /* min-width: 0 is what lets the children below actually ellipsize — a
+     flex item's default min-width: auto refuses to shrink past its
+     content, which is how the old single-line row got clipped instead. */
+  .event-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .event-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .event-location {
     font-size: 0.78rem;
-    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .row-meta {

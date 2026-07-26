@@ -9,6 +9,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
+  import { formatEventDateStamped as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
 
   let submissions = $state([]);
   let loading = $state(true);
@@ -50,15 +51,6 @@
     }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
-  function formatTime(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  }
 </script>
 
 <div class="page-fade">
