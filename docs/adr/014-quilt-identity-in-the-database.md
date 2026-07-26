@@ -1,7 +1,7 @@
 # ADR 014: Quilt identity lives in the database; the icon is the bounded media exception
 
 Date: 2026-07-19. Status: accepted; the icon half superseded by
-[ADR 042](042-the-quilt-icon-is-drafted.md) (2026-07-26) — the icon is
+[ADR 043](043-the-quilt-icon-is-drafted.md) (2026-07-26) — the icon is
 drafted in the block drafter and image upload is gone, so the "bounded
 media exception" below no longer exists. Everything about quilt identity
 in the database, the settings tab, and the wipe still stands.

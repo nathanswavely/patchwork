@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// The quilt icon is drafted, not uploaded (docs/adr/042): it is a block
+// The quilt icon is drafted, not uploaded (docs/adr/043): it is a block
 // from the same drafter patches use for their tiles (docs/adr/029),
 // stored as a draft plus a bundle of fabrics and rendered to SVG here.
 // Consumers — the quilt switcher, other quilts' Connected Quilts, the
@@ -46,7 +46,7 @@ type iconDesign struct {
 
 // A starter is a traditional block expressed as a draft. Admins used to
 // pick one of these as a fixed default; now it is a place to start
-// drafting, and the drafter can take it apart (docs/adr/042).
+// drafting, and the drafter can take it apart (docs/adr/043).
 //
 // Colors are materialized from the rule below at startup rather than
 // written out by hand, so a starter is honest draft data — the client

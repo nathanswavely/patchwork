@@ -12,10 +12,10 @@ import (
 )
 
 // Migration 044 drops the uploaded-icon table and the stale default-block
-// key (docs/adr/042). setupTestDB has already run it, so there is nothing
+// key (docs/adr/043). setupTestDB has already run it, so there is nothing
 // left for it to drop — this test rebuilds the pre-044 state an upgrading
 // instance actually has and replays the migration's own SQL, the same
-// shape as the 042 and 043 migration tests.
+// shape as the tests for migrations 042 and 043.
 func TestMigration044DropsTheUploadedIcon(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := testConfig()

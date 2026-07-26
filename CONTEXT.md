@@ -535,7 +535,7 @@ The block that represents a whole quilt wherever quilts are listed or
 switched between — the scope switcher, Connected Quilts. Drafted in the
 block drafter, the same one patches use for their tiles, and stored as a
 design (block plus bundle) that the server renders to SVG; there is no
-image upload (docs/adr/042). Unset means hash-assigned from the quilt's
+image upload (docs/adr/043). Unset means hash-assigned from the quilt's
 name, stable but not chosen (same rule as tile appearance). Instance
 identity: it never travels in a seamrip — a fork re-brands.
 _Avoid_: logo (that is branding.logo_url, a different slot), avatar (people
@@ -774,7 +774,7 @@ _Avoid_: pattern (overloaded), design
 **Starter block**:
 A traditional pattern offered as a draft to open and take apart rather
 than a fixed choice to pick between — how drafting the quilt icon begins
-(docs/adr/042). Choosing one replaces what is on the canvas; nothing is
+(docs/adr/043). Choosing one replaces what is on the canvas; nothing is
 saved until you save.
 _Avoid_: template, preset, default block (that is the old fixed-choice thing)
 

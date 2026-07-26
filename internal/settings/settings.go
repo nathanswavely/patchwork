@@ -18,7 +18,7 @@ const (
 	KeyDescription = "instance_description"
 
 	// The quilt icon is a drafted block, stored as JSON — a block plus the
-	// fabrics it is pieced from (docs/adr/042). No key means the quilt
+	// fabrics it is pieced from (docs/adr/043). No key means the quilt
 	// wears a starter block assigned from its name.
 	KeyIconDesign = "icon_design"
 

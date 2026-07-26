@@ -9,7 +9,7 @@ import (
 //
 // This is the server-side twin of web/src/lib/draftGeometry.js — same
 // algorithm, same face ordering, so a drafted block renders identically
-// in the browser and in the SVG the server serves (docs/adr/042). The
+// in the browser and in the SVG the server serves (docs/adr/043). The
 // drafter itself stays in the frontend; what lives here is only what a
 // renderer needs: the pieces of a cell, in a stable order.
 //

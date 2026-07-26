@@ -19,7 +19,7 @@
  * regardless of seam order.
  *
  * internal/handler/draft_geometry.go mirrors the face computation so the
- * server can render a drafted quilt icon to SVG (docs/adr/042). Changing
+ * server can render a drafted quilt icon to SVG (docs/adr/043). Changing
  * the algorithm here means changing it there; both suites cover the same
  * fixtures on purpose.
  */

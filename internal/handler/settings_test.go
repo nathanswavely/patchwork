@@ -83,7 +83,7 @@ func getIcon(db *database.DB, cfg *config.Config, ifNoneMatch string) *httptest.
 	return w
 }
 
-// The quilt icon is drafted in the block drafter (docs/adr/042): the
+// The quilt icon is drafted in the block drafter (docs/adr/043): the
 // admin saves a design, the public endpoint renders it to SVG.
 func TestQuiltIconIsDrafted(t *testing.T) {
 	db := setupTestDB(t)

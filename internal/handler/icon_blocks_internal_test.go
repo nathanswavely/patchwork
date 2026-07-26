@@ -81,7 +81,7 @@ func TestFaceCountsAndOrder(t *testing.T) {
 
 // The same fixtures web/src/test/draftGeometry.test.js asserts on. Both
 // suites have to keep passing for the browser's drafter and the server's
-// renderer to agree about what a draft looks like (docs/adr/042).
+// renderer to agree about what a draft looks like (docs/adr/043).
 func TestGeometryMirrorsTheFrontend(t *testing.T) {
 	// A seam crossing many cells splits each locally.
 	seam := [][4]int{{0, 0, 12, 12}}

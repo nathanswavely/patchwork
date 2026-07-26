@@ -130,7 +130,7 @@ test.describe('Admin — Quilt Icon Designer', () => {
     await goto(page, '/admin/quilt');
     await expectNoError(page);
 
-    // No upload path survives (docs/adr/042).
+    // No upload path survives (docs/adr/043).
     await expect(page.locator('input[type="file"]')).toHaveCount(0);
 
     const preview = page.locator('.icon-preview');

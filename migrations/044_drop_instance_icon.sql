@@ -1,5 +1,5 @@
 -- 044_drop_instance_icon.sql
--- The quilt icon is drafted, not uploaded (docs/adr/042), so nothing reads
+-- The quilt icon is drafted, not uploaded (docs/adr/043), so nothing reads
 -- the uploaded-icon table or the old default-block choice any more. Drop
 -- both rather than leave a dead 512KB blob and a stale key behind.
 --

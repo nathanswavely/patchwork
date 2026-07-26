@@ -41,7 +41,7 @@
   }
   let savingIdentity = $state(false);
 
-  // Icon (docs/adr/042): drafted in the block drafter, like a patch tile.
+  // Icon (docs/adr/043): drafted in the block drafter, like a patch tile.
   let iconDraft = $state({ grid: 3, seams: [], colors: {} });
   let iconBundle = $state(['#039BE6', '#F2EEE4']);
   let iconSeed = $state('');

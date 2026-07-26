@@ -26,7 +26,7 @@ import (
 
 // iconState describes the effective quilt icon for API responses: the
 // design that is being served, and whether an admin drafted it or the
-// quilt was assigned one (docs/adr/042).
+// quilt was assigned one (docs/adr/043).
 type iconState struct {
 	Chosen bool       `json:"chosen"`
 	Design iconDesign `json:"design"`
@@ -75,7 +75,7 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Description *string `json:"description"`
 			// IconDesign is a drafted block plus its fabrics; explicit
 			// null clears it and the quilt goes back to an assigned block
-			// (docs/adr/042). Raw so absent and null stay distinguishable.
+			// (docs/adr/043). Raw so absent and null stay distinguishable.
 			IconDesign json.RawMessage `json:"icon_design"`
 			// Quilt policy: hide amended-lining patches from discovery for
 			// everyone (docs/adr/037).
@@ -161,7 +161,7 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 }
 
 // InstanceIcon handles GET /api/v1/instance/icon — the public quilt icon.
-// Renders the drafted design to SVG (docs/adr/042); an instance that has
+// Renders the drafted design to SVG (docs/adr/043); an instance that has
 // not drafted one gets a starter block assigned from its name, so every
 // quilt has an icon from first boot. Cross-quilt <img> loads need no
 // CORS; the multi_quilt CORS middleware additionally covers fetch()

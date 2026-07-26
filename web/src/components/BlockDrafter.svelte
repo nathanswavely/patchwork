@@ -15,7 +15,7 @@
   // draft: {grid, seams, colors} in quarter-cell units (docs/adr/029).
   // bundle: 1-6 hex fabrics off the wall; slot 0 is the identity color.
   // previewLabel: where the small preview is showing the block — a tile on
-  // the quilt, or the quilt's own icon in the switcher (docs/adr/042).
+  // the quilt, or the quilt's own icon in the switcher (docs/adr/043).
   let {
     draft = $bindable(),
     bundle = $bindable(),
