@@ -12,7 +12,7 @@
  * and the admin's memberships are untouched.
  */
 import { test, expect } from '@playwright/test';
-import { loginAs, goto } from './setup.js';
+import { loginAs, goto, openOverflow } from './setup.js';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -32,11 +32,15 @@ test.describe('Unclaimed patch workspace', () => {
     expect(slug).toBeTruthy();
   });
 
-  test('the profile Manage entry lands on the events workspace', async ({ page }) => {
+  // No "Manage" pill any more (docs/adr/042) — the overflow's workspace
+  // fallback still has to land on the events calendar, since an unclaimed
+  // patch has no governance to be its workspace root.
+  test('the overflow workspace entry lands on the events workspace', async ({ page }) => {
     await loginAs(page, 'admin');
     await goto(page, `/patches/${slug}`);
 
-    await page.getByRole('link', { name: 'Manage' }).click();
+    await openOverflow(page);
+    await page.getByRole('menuitem', { name: 'Workspace view' }).click();
     await page.waitForLoadState('networkidle');
     expect(page.url()).toContain(`/patches/${slug}/events`);
 

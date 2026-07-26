@@ -1,21 +1,29 @@
 <script>
+  /**
+   * The patch profile (CONTEXT.md "Patch profile", docs/adr/042): a patch's
+   * public face, read at a glance.
+   *
+   * It is a window, not a lobby. Each section is a glimpse of one workspace
+   * room and is itself the way into it, so there is no door named for the
+   * container — the old `Manage` / `Governance` pill. Items navigate to the
+   * surfaces that own them; they used to open a modal, which made every
+   * glance terminate in a dialog.
+   *
+   * The one control on the page is the relationship row. State (unclaimed,
+   * amended lining) is worn in the header; acts sit beside the thing they
+   * act on; rare acts live in the overflow.
+   */
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isLoggedIn } from '../stores/auth.svelte.js';
+  import { isLoggedIn, isAdmin as isInstanceAdmin, getUser } from '../stores/auth.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
-  import { showToast } from '../stores/toast.svelte.js';
-  import Modal from '../components/Modal.svelte';
-  import JoinSheet from '../components/JoinSheet.svelte';
   import PatchCover from '../components/PatchCover.svelte';
-  import ReportButton from '../components/ReportButton.svelte';
+  import PatchRelationship from '../components/PatchRelationship.svelte';
+  import PatchOverflow from '../components/PatchOverflow.svelte';
+  import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
 
   let { slug = '' } = $props();
-
-  // Modal state
-  let modalOpen = $state(false);
-  let modalType = $state(''); // 'doc' or 'proposal'
-  let modalItem = $state(null);
 
   let node = $state(null);
   let isMember = $state(false);
@@ -27,17 +35,48 @@
   let isBanned = $state(false);
   let loading = $state(true);
   let error = $state('');
-  let joining = $state(false);
-  // The join sheet (docs/adr/040) stands between clicking Join/Become
-  // Member and the actual join call — Follow has no ceremony and keeps
-  // calling handleFollow directly.
-  let joinSheetOpen = $state(false);
 
   let recentEvents = $state([]);
+  let members = $state([]);
+  let memberTotal = $state(0);
   let recentProposals = $state([]);
   let governanceDocs = $state([]);
   let followerPermissions = $state(null);
   let hasOpenClaim = $state(false);
+
+  // Standing is the membership relationship, never instance-admin power:
+  // an instance admin can manage any patch without standing in it.
+  let hasStanding = $derived(['follower', 'member', 'admin'].includes(membershipRole));
+
+  let canSeeGovernance = $derived(
+    !isUnclaimed && (isMember || isAdmin || followerPermissions?.proposals === true || followerPermissions?.charters === true)
+  );
+
+  // What posting an event here would actually do — see eventPostingRight.
+  let postingRight = $derived(eventPostingRight({
+    signedIn: isLoggedIn(),
+    isInstanceAdmin: isInstanceAdmin(),
+    trustedContributor: !!getUser()?.trusted_contributor,
+    isUnclaimed,
+    // Not `isMember`: the node payload sets is_member for followers too.
+    isMemberOrAdmin: membershipRole === 'member' || membershipRole === 'admin',
+    isBanned,
+    submissionsEnabled: getSubmissionsEnabled(),
+    acceptSuggestions: node?.accept_event_suggestions === true,
+  }));
+
+  /**
+   * A glimpse renders when the room has something in it, or when the viewer
+   * may act in it, or when they have standing — collapsing only when the
+   * room is both empty and inert for them. Without the standing clause a
+   * brand-new patch renders zero doors and strands its own admin.
+   */
+  let showEvents = $derived(recentEvents.length > 0 || hasStanding || isAdmin || postingRight !== 'none');
+  let showMembers = $derived(!isUnclaimed && (members.length > 0 || hasStanding || isAdmin));
+  let showGovernance = $derived(
+    canSeeGovernance && (governanceDocs.length > 0 || recentProposals.length > 0 || hasStanding || isAdmin)
+  );
+  let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address);
 
   async function loadClaimState() {
     try {
@@ -49,9 +88,7 @@
   }
 
   $effect(() => {
-    if (slug) {
-      loadNode();
-    }
+    if (slug) loadNode();
   });
 
   // Reactive on auth: on a fresh page load the session check may still be
@@ -59,9 +96,7 @@
   // race and miss the open claim.
   $effect(() => {
     hasOpenClaim = false;
-    if (slug && isUnclaimed && isLoggedIn()) {
-      loadClaimState();
-    }
+    if (slug && isUnclaimed && isLoggedIn()) loadClaimState();
   });
 
   async function loadNode() {
@@ -87,85 +122,28 @@
   }
 
   async function loadActivity() {
-    // Show governance content if member OR if patch allows public
-    // governance. Unclaimed patches carry no governance at all
-    // (docs/adr/039) — absence, not an empty state — so neither fetch
-    // runs for one.
-    const showProposals = !isUnclaimed && (isMember || followerPermissions?.proposals === true);
-    const showCharters = !isUnclaimed && (isMember || followerPermissions?.charters === true);
-    const [eventData, proposalData, charterData] = await Promise.all([
+    // Unclaimed patches carry no governance and no membership (docs/adr/039)
+    // — absence, not an empty state — so neither fetch runs for one.
+    const wantGovernance = !isUnclaimed && (isMember || isAdmin || followerPermissions?.proposals === true || followerPermissions?.charters === true);
+    const [eventData, memberData, proposalData, charterData] = await Promise.all([
       api(`events?node_slug=${encodeURIComponent(slug)}&limit=5`).catch(() => ({ items: [] })),
-      (showProposals ? api(`nodes/${slug}/proposals?limit=3`) : Promise.resolve({ items: [] })).catch(() => ({ items: [] })),
-      (showCharters ? api(`nodes/${slug}/governance`).catch(() => ({ items: [] })) : Promise.resolve({ items: [] })),
+      (isUnclaimed ? Promise.resolve({ items: [] }) : api(`nodes/${slug}/members?limit=12`)).catch(() => ({ items: [] })),
+      (wantGovernance ? api(`nodes/${slug}/proposals?limit=3`) : Promise.resolve({ items: [] })).catch(() => ({ items: [] })),
+      (wantGovernance ? api(`nodes/${slug}/governance`) : Promise.resolve({ items: [] })).catch(() => ({ items: [] })),
     ]);
     recentEvents = eventData.items || eventData || [];
+    // Admins plus members, never followers (CONTEXT.md "Member count"). The
+    // endpoint hands insiders the follower rows too, which belong to the
+    // members room's own page, not to a glimpse headed "Members".
+    members = (memberData.items || memberData || []).filter((m) => m.role !== 'follower');
+    memberTotal = node?.member_count ?? members.length;
     recentProposals = proposalData.items || proposalData || [];
     governanceDocs = charterData.items || charterData || [];
   }
 
-  function openJoinSheet() {
-    if (!isLoggedIn()) { navigate('/login'); return; }
-    joinSheetOpen = true;
+  function go(path) {
+    return (e) => { e.preventDefault(); navigate(path); };
   }
-
-  async function handleJoin(message) {
-    const wasFollower = membershipRole === 'follower';
-    joining = true;
-    try {
-      const result = await api(`nodes/${slug}/join`, { method: 'POST', body: message ? { message } : undefined });
-      await loadNode();
-      if (result.status === 'pending') {
-        showToast('Membership request sent', 'success');
-      } else {
-        showToast(wasFollower ? 'Now a member' : 'Joined patch', 'success');
-      }
-    } catch (e) {
-      showToast(e.message || 'Failed to join', 'error');
-    } finally {
-      joining = false;
-      joinSheetOpen = false;
-    }
-  }
-
-  async function handleFollow() {
-    if (!isLoggedIn()) { navigate('/login'); return; }
-    joining = true;
-    try {
-      await api(`nodes/${slug}/join`, { method: 'POST', body: { role: 'follower' } });
-      await loadNode();
-      showToast('Following patch', 'success');
-    } catch (e) {
-      showToast(e.message || 'Failed to follow', 'error');
-    } finally {
-      joining = false;
-    }
-  }
-
-  async function handleLeave() {
-    const wasFollower = membershipRole === 'follower';
-    joining = true;
-    try {
-      await api(`nodes/${slug}/leave`, { method: 'POST' });
-      await loadNode();
-      showToast(wasFollower ? 'Unfollowed patch' : 'Left patch', 'info');
-    } catch (e) {
-      showToast(e.message || 'Failed to leave', 'error');
-    } finally {
-      joining = false;
-    }
-  }
-
-  // Suggest-an-event door (docs/adr/026): logged-in people who can't post
-  // to this calendar directly can suggest an event for review. Unclaimed
-  // patches accept suggestions whenever the instance switch is on; active
-  // patches must also opt in.
-  let canSuggest = $derived.by(() => {
-    if (!node || !isLoggedIn() || isBanned) return false;
-    if (!getSubmissionsEnabled()) return false;
-    if (isUnclaimed) return true;
-    if (isAdmin || (isMember && membershipRole !== 'follower')) return false;
-    return node.accept_event_suggestions === true;
-  });
 
   function extractDomain(url) {
     try { return new URL(url).hostname.replace(/^www\./, ''); }
@@ -188,7 +166,7 @@
     <div class="profile-error">
       <h2>Patch not found</h2>
       <p class="muted">{error}</p>
-      <a href="/" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate('/'); }}>Back to Quilt</a>
+      <a href="/" class="btn btn-secondary" onclick={go('/')}>Back to Quilt</a>
     </div>
   {:else if node}
     <!-- Header: the patch's own block as a cover, name and stats sitting in it -->
@@ -202,10 +180,31 @@
             {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {recentEvents.length} Upcoming Events
           </p>
         </div>
+        <div class="cover-overflow">
+          <PatchOverflow {slug} {node} {isAdmin} {isUnclaimed} {hasStanding} />
+        </div>
       </div>
+
       {#if node.description}
         <p class="profile-desc">{node.description}</p>
       {/if}
+
+      <!-- State is worn in the header, never disguised as an action. The
+           unclaimed fact used to be visible only as a blue button, so the
+           act shouted while the fact stayed silent (docs/adr/042). -->
+      {#if isUnclaimed}
+        <p class="state-notice">
+          No one runs this patch yet.
+          {#if isAdmin}
+            <a href="/admin/claims" onclick={go('/admin/claims')}>Review claims</a>.
+          {:else if hasOpenClaim}
+            <a href="/patches/{slug}/claim" onclick={go(`/patches/${slug}/claim`)}>Your claim is in progress</a>.
+          {:else}
+            If it's yours, <a href="/patches/{slug}/claim" onclick={go(`/patches/${slug}/claim`)}>claim it</a>.
+          {/if}
+        </p>
+      {/if}
+
       {#if !isUnclaimed && liningStatus === 'diverged'}
         <!-- Public by design (docs/adr/037): this patch amended the shared
              baseline, and the divergence is worn, not whispered. -->
@@ -214,211 +213,153 @@
             href="/patches/{slug}/governance"
             class="amended-lining-badge"
             title="This patch changed the shared community standards every patch starts with. Read its version in Governance."
-            onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance`); }}
+            onclick={go(`/patches/${slug}/governance`)}
           >Amended lining</a>
         </p>
       {/if}
     </div>
 
-    <!-- Actions -->
+    <!-- The relationship row: standing, and the next rung. Nothing else. -->
     <div class="profile-actions">
-      {#if isBanned}
-        <span class="banned-notice">Removed from this community</span>
-      {:else if isUnclaimed}
-        <!-- Unclaimed patches are follow-only: nobody runs them yet, so
-             membership is impossible (the backend rejects it). Follow to
-             watch, or claim it if it's yours. -->
-        {#if membershipRole === 'follower'}
-          <button class="btn btn-secondary" onclick={handleLeave} disabled={joining}>Unfollow</button>
-        {:else}
-          <button class="btn btn-secondary" onclick={handleFollow} disabled={joining}>Follow</button>
-        {/if}
-        <a href="/patches/{slug}/claim" class="btn btn-primary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/claim`); }}>
-          {hasOpenClaim ? 'Claim in progress' : 'Claim this patch'}
-        </a>
-      {:else if isMember}
-        {#if membershipRole === 'follower'}
-          <button class="btn btn-primary" onclick={openJoinSheet} disabled={joining}>Become Member</button>
-          <button class="btn btn-secondary" onclick={handleLeave} disabled={joining}>Unfollow</button>
-        {:else if membershipRole !== 'admin'}
-          <button class="btn btn-secondary" onclick={handleLeave} disabled={joining}>Leave</button>
-        {/if}
-      {:else}
-        <button class="btn btn-primary" onclick={openJoinSheet} disabled={joining}>Join</button>
-        <button class="btn btn-secondary" onclick={handleFollow} disabled={joining}>Follow</button>
-      {/if}
-      {#if canSuggest}
-        <a
-          href="/events/new?node={slug}"
-          class="btn btn-secondary"
-          onclick={(e) => { e.preventDefault(); navigate(`/events/new?node=${slug}`); }}
-        >Suggest an event</a>
-      {/if}
-      {#if isAdmin}
-        <!-- Unclaimed patches have no governance workspace; Manage lands on
-             the events calendar, which is the live surface (docs/adr/026, #6). -->
-        {#if isUnclaimed}
-          <a href="/patches/{slug}/events" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/events`); }}>
-            Manage
-          </a>
-        {:else}
-          <a href="/patches/{slug}/governance" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance`); }}>
-            Manage
-          </a>
-        {/if}
-      {:else if isMember && !isBanned && !isUnclaimed}
-        <a href="/patches/{slug}/governance" class="btn btn-secondary" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance`); }}>
-          Governance
-        </a>
-      {/if}
-      {#if !isAdmin && node}
-        <ReportButton entityType="node" entityId={node.id} entityName={node.name} />
-      {/if}
+      <PatchRelationship
+        {slug}
+        {node}
+        {isUnclaimed}
+        {isBanned}
+        {membershipRole}
+        {liningStatus}
+        onChanged={loadNode}
+      />
     </div>
 
-    <!-- Upcoming Events -->
-    {#if recentEvents.length > 0}
+    <!-- Glimpses: one per room, each its own door -->
+    {#if showEvents}
       <section class="profile-section">
-        <h3 class="section-title">Upcoming Events</h3>
-        {#if isUnclaimed}
+        <div class="section-head">
+          <a class="section-title" href="/patches/{slug}/events" onclick={go(`/patches/${slug}/events`)}>Events</a>
+          {#if postingRight !== 'none'}
+            <a
+              class="section-action"
+              href="/events/new?node={slug}"
+              onclick={go(`/events/new?node=${slug}`)}
+            >{postingRight === 'direct' ? 'New event' : 'Suggest an event'}</a>
+          {/if}
+        </div>
+        {#if isUnclaimed && recentEvents.length > 0}
           <!-- Every event on an unclaimed patch is community-submitted —
                derived from the patch's status, shown once (docs/adr/026). -->
           <p class="community-note"><span class="badge">Community-submitted</span></p>
         {/if}
-        <div class="event-list">
-          {#each recentEvents as event (event.id)}
-            <a
-              href="/events/{event.id}"
-              class="event-item"
-              onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}`); }}
-            >
-              <span class="event-date">{formatDate(event.starts_at)}</span>
-              <span class="event-name">{event.title}</span>
-              {#if event.location}
-                <span class="event-location muted">{event.location}</span>
-              {/if}
-            </a>
-          {/each}
-        </div>
+        {#if recentEvents.length > 0}
+          <div class="event-list">
+            {#each recentEvents as event (event.id)}
+              <a href="/events/{event.id}" class="event-item" onclick={go(`/events/${event.id}`)}>
+                <span class="event-date">{formatDate(event.starts_at)}</span>
+                <span class="event-name">{event.title}</span>
+                {#if event.location}
+                  <span class="event-location muted">{event.location}</span>
+                {/if}
+              </a>
+            {/each}
+          </div>
+        {:else}
+          <p class="glimpse-empty muted">No upcoming events.</p>
+        {/if}
       </section>
     {/if}
 
-    <!-- About -->
-    <section class="profile-section">
-      <h3 class="section-title">About</h3>
-      {#if node.website}
-        <a href={node.website} class="about-link" target="_blank" rel="noopener">
-          {extractDomain(node.website)}
-        </a>
-      {/if}
-      {#if node.links && node.links.length > 0}
-        <div class="link-list">
-          {#each node.links as link}
-            <a href={link.url} class="about-link" target="_blank" rel="noopener">
-              {link.label || extractDomain(link.url)}
-            </a>
-          {/each}
-        </div>
-      {/if}
-      {#if node.address}
-        <p class="about-address muted">{node.address}</p>
-      {/if}
-    </section>
-
-    <!-- Governance Docs (charters). Unclaimed patches carry no governance
-         (docs/adr/039) — the section is simply absent, never an empty
-         state. -->
-    {#if !isUnclaimed && governanceDocs.length > 0}
+    {#if showAbout}
       <section class="profile-section">
-        <h3 class="section-title">Governance Documents</h3>
-        <div class="doc-list">
-          {#each governanceDocs as doc (doc.id)}
-            <button class="doc-item" onclick={() => { modalType = 'doc'; modalItem = doc; modalOpen = true; }}>
-              <span class="doc-title">{doc.title}</span>
-              {#if doc.version}
-                <span class="doc-version muted">v{doc.version}</span>
-              {/if}
-            </button>
-          {/each}
-        </div>
+        <h3 class="section-title static">About</h3>
+        {#if node.website}
+          <a href={node.website} class="about-link" target="_blank" rel="noopener">{extractDomain(node.website)}</a>
+        {/if}
+        {#if node.links && node.links.length > 0}
+          <div class="link-list">
+            {#each node.links as link}
+              <a href={link.url} class="about-link" target="_blank" rel="noopener">
+                {link.label || extractDomain(link.url)}
+              </a>
+            {/each}
+          </div>
+        {/if}
+        {#if node.address}
+          <p class="about-address muted">{node.address}</p>
+        {/if}
       </section>
     {/if}
 
-    <!-- Recent Proposals: same absence rule as governance docs. -->
-    {#if !isUnclaimed && recentProposals.length > 0}
+    <!-- Members: the public list ADR 006 designed, which the profile never
+         showed. Hidden memberships are filtered server-side. -->
+    {#if showMembers}
       <section class="profile-section">
-        <h3 class="section-title">Recent Proposals</h3>
-        <div class="proposal-list">
-          {#each recentProposals as proposal (proposal.id)}
-            <button class="proposal-item" onclick={() => { modalType = 'proposal'; modalItem = proposal; modalOpen = true; }}>
-              <span class="proposal-title">{proposal.title}</span>
-              <span class="proposal-status" class:status-open={proposal.status === 'open'} class:status-accepted={proposal.status === 'accepted'} class:status-rejected={proposal.status === 'rejected'}>{proposal.status}</span>
-            </button>
-          {/each}
-        </div>
-      </section>
-    {/if}
-
-    <!-- Empty state -->
-    {#if recentEvents.length === 0 && recentProposals.length === 0 && governanceDocs.length === 0 && !node.website && (!node.links || node.links.length === 0)}
-      <div class="profile-empty">
-        <p class="muted">
-          {#if !isMember}
-            Join this patch to participate, or follow to stay updated.
-          {:else if membershipRole === 'follower'}
-            You're following this patch. Become a member to participate.
-          {:else}
-            No recent activity yet.
+        <div class="section-head">
+          <a class="section-title" href="/patches/{slug}/members" onclick={go(`/patches/${slug}/members`)}>Members</a>
+          {#if members.length > 0 && memberTotal > members.length}
+            <span class="section-meta muted">{memberTotal}</span>
           {/if}
-        </p>
-      </div>
+        </div>
+        {#if members.length > 0}
+          <div class="member-list">
+            {#each members as m (m.id)}
+              <a href="/users/{m.username}" class="member-chip" onclick={go(`/users/${m.username}`)} title="{m.display_name || m.username} · {m.role}">
+                <span class="member-avatar">
+                  {#if m.avatar_url}
+                    <img src={m.avatar_url} alt="" />
+                  {:else}
+                    {(m.display_name || m.username || '?')[0].toUpperCase()}
+                  {/if}
+                </span>
+                <span class="member-name">{m.display_name || m.username}</span>
+              </a>
+            {/each}
+          </div>
+        {:else}
+          <p class="glimpse-empty muted">No members yet.</p>
+        {/if}
+      </section>
+    {/if}
+
+    {#if showGovernance}
+      <section class="profile-section">
+        <div class="section-head">
+          <a class="section-title" href="/patches/{slug}/governance" onclick={go(`/patches/${slug}/governance`)}>Governance</a>
+        </div>
+        {#if governanceDocs.length > 0 || recentProposals.length > 0}
+          <div class="doc-list">
+            {#each governanceDocs as doc (doc.id)}
+              <a
+                class="row-item"
+                href="/patches/{slug}/governance/docs/{doc.id}"
+                onclick={go(`/patches/${slug}/governance/docs/${doc.id}`)}
+              >
+                <span class="row-title">{doc.title}</span>
+                {#if doc.version}<span class="row-meta muted">v{doc.version}</span>{/if}
+              </a>
+            {/each}
+            {#each recentProposals as proposal (proposal.id)}
+              <a
+                class="row-item"
+                href="/patches/{slug}/governance/{proposal.id}"
+                onclick={go(`/patches/${slug}/governance/${proposal.id}`)}
+              >
+                <span class="row-title">{proposal.title}</span>
+                <span
+                  class="proposal-status"
+                  class:status-open={proposal.status === 'open'}
+                  class:status-accepted={proposal.status === 'accepted'}
+                  class:status-rejected={proposal.status === 'rejected'}
+                >{proposal.status}</span>
+              </a>
+            {/each}
+          </div>
+        {:else}
+          <p class="glimpse-empty muted">Nothing recorded yet.</p>
+        {/if}
+      </section>
     {/if}
   {/if}
 </div>
-
-<JoinSheet
-  open={joinSheetOpen}
-  onClose={() => { joinSheetOpen = false; }}
-  onConfirm={handleJoin}
-  slug={slug}
-  patchName={node?.name || ''}
-  membershipPolicy={node?.membership_policy || 'open'}
-  liningStatus={liningStatus}
-  submitting={joining}
-/>
-
-<Modal open={modalOpen} label={modalItem?.title ?? 'Details'} onClose={() => { modalOpen = false; modalItem = null; }}>
-  {#snippet children()}
-    {#if modalItem}
-      {#if modalType === 'doc'}
-        <h2 class="modal-title">{modalItem.title}</h2>
-        {#if modalItem.version}
-          <span class="modal-meta">Version {modalItem.version}</span>
-        {/if}
-        {#if modalItem.body}
-          <div class="modal-body">{modalItem.body}</div>
-        {:else}
-          <p class="muted">No content available.</p>
-        {/if}
-      {:else if modalType === 'proposal'}
-        <h2 class="modal-title">{modalItem.title}</h2>
-        <div class="modal-meta-row">
-          <span class="proposal-status" class:status-open={modalItem.status === 'open'} class:status-accepted={modalItem.status === 'accepted'} class:status-rejected={modalItem.status === 'rejected'}>{modalItem.status}</span>
-          {#if modalItem.created_at}
-            <span class="modal-meta">{formatDate(modalItem.created_at)}</span>
-          {/if}
-        </div>
-        {#if modalItem.description}
-          <div class="modal-body">{modalItem.description}</div>
-        {:else if modalItem.body}
-          <div class="modal-body">{modalItem.body}</div>
-        {:else}
-          <p class="muted">No description available.</p>
-        {/if}
-      {/if}
-    {/if}
-  {/snippet}
-</Modal>
 
 <style>
   .profile {
@@ -478,6 +419,25 @@
     width: 100%;
   }
 
+  /* The overflow rides the cover's top-right corner: present, never
+     competing with the name. */
+  .cover-overflow {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 2;
+    color: #fff;
+  }
+
+  .cover-overflow :global(.overflow-trigger) {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .cover-overflow :global(.overflow-trigger):hover {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
   .profile-name {
     font-size: 1.75rem;
     font-weight: 700;
@@ -516,6 +476,14 @@
     margin: 0 auto;
   }
 
+  /* State notice: a line, not a box. "Interruption" is a closed category
+     for things loud on purpose (docs/adr/038); unclaimed is a state. */
+  .state-notice {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-top: 0.6rem;
+  }
+
   .amended-lining-row {
     text-align: center;
     margin-top: 0.5rem;
@@ -537,19 +505,11 @@
     background: color-mix(in srgb, var(--color-warning, #b5892e) 10%, transparent);
   }
 
-  /* Actions */
+  /* The relationship row */
   .profile-actions {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
     margin-bottom: 2rem;
-    flex-wrap: wrap;
-  }
-
-  .banned-notice {
-    font-size: 0.85rem;
-    color: var(--color-error);
-    font-weight: 500;
   }
 
   /* Sections */
@@ -558,41 +518,84 @@
     padding: 1.25rem 0;
   }
 
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
   .section-title {
     font-size: 0.78rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  /* A heading that is a door gets to look like one on hover; About is the
+     one section that names identity rather than a room, so it stays inert. */
+  a.section-title:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .section-title.static {
+    display: block;
     margin-bottom: 0.75rem;
-    text-align: center;
+  }
+
+  .section-action,
+  .section-meta {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .section-action:hover {
+    text-decoration: underline;
+  }
+
+  .glimpse-empty {
+    font-size: 0.85rem;
+    padding: 0.25rem 0;
   }
 
   /* Events */
   .community-note {
-    text-align: center;
     margin-bottom: 0.5rem;
   }
 
-  .event-list {
+  .event-list,
+  .doc-list {
     display: flex;
     flex-direction: column;
   }
 
-  .event-item {
+  .event-item,
+  .row-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0.5rem;
+    padding: 0.5rem;
     text-decoration: none;
     color: var(--color-text);
     border-radius: var(--radius);
     transition: background 100ms ease;
   }
 
-  .event-item:hover {
+  .event-item:hover,
+  .row-item:hover {
     background: var(--color-overlay);
     text-decoration: none;
+  }
+
+  .row-item {
+    justify-content: space-between;
   }
 
   .event-date {
@@ -603,7 +606,8 @@
     flex-shrink: 0;
   }
 
-  .event-name {
+  .event-name,
+  .row-title {
     font-size: 0.88rem;
     font-weight: 500;
     flex: 1;
@@ -618,6 +622,11 @@
     flex-shrink: 0;
   }
 
+  .row-meta {
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
   /* About */
   .about-link {
     display: block;
@@ -625,7 +634,6 @@
     color: var(--color-primary);
     text-decoration: none;
     padding: 0.2rem 0;
-    text-align: center;
   }
 
   .about-link:hover {
@@ -641,107 +649,63 @@
   .about-address {
     font-size: 0.85rem;
     margin-top: 0.5rem;
-    text-align: center;
   }
 
-  /* Governance Docs */
-  .doc-list {
+  /* Members */
+  .member-list {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
 
-  .doc-item {
-    display: flex;
+  .member-chip {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: var(--radius);
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    transition: background 100ms ease;
-  }
-
-  .doc-item:hover {
-    background: var(--color-overlay);
-  }
-
-  .doc-title {
-    font-size: 0.88rem;
-    font-weight: 500;
+    gap: 0.4rem;
+    padding: 0.25rem 0.55rem 0.25rem 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    text-decoration: none;
     color: var(--color-text);
-  }
-
-  .doc-version {
-    font-size: 0.75rem;
-  }
-
-  /* Proposals */
-  .proposal-list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .proposal-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: var(--radius);
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
     transition: background 100ms ease;
   }
 
-  .proposal-item:hover {
+  .member-chip:hover {
     background: var(--color-overlay);
+    text-decoration: none;
   }
 
-  /* Modal content */
-  .modal-title {
-    font-size: 1.2rem;
+  .member-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    font-size: 0.7rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    padding-right: 2rem;
-  }
-
-  .modal-meta {
-    font-size: 0.8rem;
     color: var(--color-text-muted);
+    background: var(--color-overlay);
   }
 
-  .modal-meta-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  .member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .modal-body {
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: var(--color-text);
-    margin-top: 1rem;
-    white-space: pre-wrap;
-  }
-
-  .proposal-title {
-    font-size: 0.88rem;
+  .member-name {
+    font-size: 0.8rem;
     font-weight: 500;
-    flex: 1;
-    min-width: 0;
+    max-width: 9rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
+  /* Proposals */
   .proposal-status {
     font-size: 0.7rem;
     font-weight: 600;
@@ -751,6 +715,7 @@
     border-radius: 999px;
     color: var(--color-text-muted);
     background: var(--color-overlay);
+    flex-shrink: 0;
   }
 
   .proposal-status.status-open {
@@ -766,11 +731,5 @@
   .proposal-status.status-rejected {
     color: var(--color-error);
     background: color-mix(in srgb, var(--color-error) 12%, transparent);
-  }
-
-  /* Empty state */
-  .profile-empty {
-    text-align: center;
-    padding: 2rem 0;
   }
 </style>

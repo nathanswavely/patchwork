@@ -99,15 +99,19 @@ describe('GovernanceList bounces unclaimed patches instead of showing an empty l
 describe('PatchProfile treats unclaimed governance/lining as absent, not empty', () => {
   const src = source('pages/PatchProfile.svelte');
 
-  it('never fetches proposals or charters for an unclaimed patch', () => {
-    expect(src).toMatch(/showProposals = !isUnclaimed/);
-    expect(src).toMatch(/showCharters = !isUnclaimed/);
+  // The page became one glimpse per room (docs/adr/042); absence is now
+  // expressed by the glimpse's visibility derivation rather than by an
+  // {#if} per section, but the rule is unchanged.
+  it('never fetches proposals, charters, or members for an unclaimed patch', () => {
+    expect(src).toMatch(/const wantGovernance = !isUnclaimed/);
+    expect(src).toMatch(/isUnclaimed \? Promise\.resolve\(\{ items: \[\] \}\) : api\(`nodes\/\$\{slug\}\/members/);
   });
 
-  it('gates the governance docs, proposals, and amended-lining badge on claim state', () => {
+  it('gates the governance and members glimpses, and the amended-lining badge, on claim state', () => {
     expect(src).toMatch(/\{#if !isUnclaimed && liningStatus === 'diverged'\}/);
-    expect(src).toMatch(/\{#if !isUnclaimed && governanceDocs\.length > 0\}/);
-    expect(src).toMatch(/\{#if !isUnclaimed && recentProposals\.length > 0\}/);
+    expect(src).toMatch(/canSeeGovernance = \$derived\(\s*!isUnclaimed/);
+    expect(src).toMatch(/showGovernance = \$derived\(\s*canSeeGovernance/);
+    expect(src).toMatch(/showMembers = \$derived\(!isUnclaimed/);
   });
 });
 

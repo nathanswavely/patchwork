@@ -10,8 +10,6 @@
   import { setContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isLoggedIn } from '../stores/auth.svelte.js';
-  import { showToast } from '../stores/toast.svelte.js';
   import { setPatchName } from '../stores/patchName.svelte.js';
   import { workspaceFinderProvider } from '../lib/finderProviders.js';
   import { workspaceTabs } from '../lib/patchWorkspace.js';
@@ -19,7 +17,7 @@
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
-  import JoinSheet from './JoinSheet.svelte';
+  import PatchRelationship from './PatchRelationship.svelte';
   import { Scales, UsersThree, CalendarBlank, GearSix, Eye } from 'phosphor-svelte';
 
   let { slug = '', activeTab = 'governance', children } = $props();
@@ -32,7 +30,6 @@
   let followerPermissions = $state(null);
   let loading = $state(true);
   let error = $state('');
-  let joining = $state(false);
 
   let isUnclaimed = $state(false);
   let isBanned = $state(false);
@@ -93,62 +90,9 @@
     }
   }
 
-  // The join sheet stands between the click and membership (docs/adr/040)
-  // — this workspace path must not bypass what the profile path shows.
-  let joinSheetOpen = $state(false);
+  // Join/follow/leave — including the join sheet (docs/adr/040) — belong to
+  // PatchRelationship, mounted in the cluster below.
   let liningStatus = $state('');
-
-  function openJoinSheet() {
-    if (!isLoggedIn()) { navigate('/login'); return; }
-    joinSheetOpen = true;
-  }
-
-  async function handleJoin(message) {
-    const wasFollower = membershipRole === 'follower';
-    joining = true;
-    try {
-      const result = await api(`nodes/${slug}/join`, { method: 'POST', body: message ? { message } : undefined });
-      await loadNode();
-      joinSheetOpen = false;
-      if (result.status === 'pending') {
-        showToast('Membership request sent', 'success');
-      } else {
-        showToast(wasFollower ? 'You are now a member' : 'Joined patch', 'success');
-      }
-    } catch (e) {
-      showToast(e.message || 'Failed to join', 'error');
-    } finally {
-      joining = false;
-    }
-  }
-
-  async function handleFollow() {
-    if (!isLoggedIn()) { navigate('/login'); return; }
-    joining = true;
-    try {
-      await api(`nodes/${slug}/join`, { method: 'POST', body: { role: 'follower' } });
-      await loadNode();
-      showToast('Following patch', 'success');
-    } catch (e) {
-      showToast(e.message || 'Failed to follow', 'error');
-    } finally {
-      joining = false;
-    }
-  }
-
-  async function handleLeave() {
-    const wasFollower = membershipRole === 'follower';
-    joining = true;
-    try {
-      await api(`nodes/${slug}/leave`, { method: 'POST' });
-      await loadNode();
-      showToast(wasFollower ? 'Unfollowed patch' : 'Left patch', 'info');
-    } catch (e) {
-      showToast(e.message || 'Failed to leave', 'error');
-    } finally {
-      joining = false;
-    }
-  }
 
   // --- Tabs (one URL scheme per screen — ADR 003) ---
   // The workspace is for everyone; role and claim state decide what shows.
@@ -251,23 +195,22 @@
         {/each}
       </nav>
 
-      {#if !isAdmin}
-        <div class="workspace-cluster">
-          {#if isBanned}
-            <span class="banned-notice">Removed from this community</span>
-          {:else if isMember}
-            {#if membershipRole === 'follower'}
-              <button class="btn btn-primary btn-sm" onclick={openJoinSheet} disabled={joining}>Become Member</button>
-              <button class="btn btn-secondary btn-sm" onclick={handleLeave} disabled={joining}>Unfollow</button>
-            {:else}
-              <button class="btn btn-secondary btn-sm" onclick={handleLeave} disabled={joining}>Leave</button>
-            {/if}
-          {:else}
-            <button class="btn btn-primary btn-sm" onclick={openJoinSheet} disabled={joining}>Join</button>
-            <button class="btn btn-secondary btn-sm" onclick={handleFollow} disabled={joining}>Follow</button>
-          {/if}
-        </div>
-      {/if}
+      <!-- One implementation of the relationship row, shared with the patch
+           profile (docs/adr/042). The two surfaces each carried their own
+           copy and had drifted: this one rendered nothing at all for
+           admins, and the two worded the same join differently. -->
+      <div class="workspace-cluster">
+        <PatchRelationship
+          {slug}
+          {node}
+          {isUnclaimed}
+          {isBanned}
+          {membershipRole}
+          {liningStatus}
+          onChanged={loadNode}
+          size="sm"
+        />
+      </div>
     </div>
 
     <!-- Tab content -->
@@ -276,17 +219,6 @@
     </div>
   {/if}
 </div>
-
-<JoinSheet
-  open={joinSheetOpen}
-  onClose={() => { joinSheetOpen = false; }}
-  onConfirm={handleJoin}
-  slug={slug}
-  patchName={node?.name || ''}
-  membershipPolicy={node?.membership_policy || 'open'}
-  liningStatus={liningStatus}
-  submitting={joining}
-/>
 
 <style>
   .workspace {
@@ -387,11 +319,6 @@
     margin-left: auto;
     flex-shrink: 0;
     padding: 8px 0;
-  }
-
-  .banned-notice {
-    font-size: 0.78rem;
-    color: var(--color-error);
   }
 
   /* --- Public-profile action, beside the context crumb in the global bar.

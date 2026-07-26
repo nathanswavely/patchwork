@@ -77,18 +77,18 @@ test.describe('Patches — PatchShell Rendering', () => {
     }
   });
 
-  test('PatchShell shows membership controls', async ({ page }) => {
+  test('the profile shows a relationship control', async ({ page }) => {
     await page.goto('/patches/lancaster-arts-district');
     await page.waitForTimeout(2000);
 
-    // The profile-actions area should show Join/Follow or a role badge
+    // The relationship row states standing, or offers the next rung — and
+    // holds nothing else (docs/adr/042).
     const profileActions = page.locator('.profile-actions');
     if (await profileActions.isVisible()) {
-      const hasJoin = await page.getByRole('button', { name: 'Join' }).isVisible().catch(() => false);
-      const hasFollow = await page.getByRole('button', { name: 'Follow' }).isVisible().catch(() => false);
-      const hasBadge = await page.locator('.role-badge').first().isVisible().catch(() => false);
-      const hasLeave = await page.getByRole('button', { name: 'Leave' }).isVisible().catch(() => false);
-      expect(hasJoin || hasFollow || hasBadge || hasLeave).toBeTruthy();
+      const hasStanding = await page.locator('.standing').isVisible().catch(() => false);
+      const hasFollow = await page.getByRole('button', { name: 'Follow', exact: true })
+        .isVisible().catch(() => false);
+      expect(hasStanding || hasFollow).toBeTruthy();
     }
   });
 });
@@ -232,41 +232,36 @@ test.describe('Patches — Join/Leave/Follow', () => {
     await loginAsAdmin(page);
   });
 
-  test('3.4 — patch page shows membership controls in PatchShell', async ({ page }) => {
+  test('3.4 — patch page shows a relationship control, and nothing else', async ({ page }) => {
     await page.goto('/patches/lancaster-arts-district');
     await page.waitForTimeout(3000);
 
-    // The profile-actions area should show Join/Follow/Become Member or role badge
     const profileActions = page.locator('.profile-actions');
     if (await profileActions.isVisible()) {
-      const hasJoin = await page.getByRole('button', { name: 'Join' }).isVisible().catch(() => false);
-      const hasFollow = await page.getByRole('button', { name: 'Follow' }).isVisible().catch(() => false);
-      const hasBadge = await page.locator('.role-badge').first().isVisible().catch(() => false);
-      const hasLeave = await page.getByRole('button', { name: 'Leave' }).isVisible().catch(() => false);
-      const hasBecomeMember = await page.getByRole('button', { name: 'Become Member' }).isVisible().catch(() => false);
-      const hasUnfollow = await page.getByRole('button', { name: 'Unfollow' }).isVisible().catch(() => false);
-      expect(hasJoin || hasFollow || hasBadge || hasLeave || hasBecomeMember || hasUnfollow).toBeTruthy();
+      const hasStanding = await page.locator('.standing').isVisible().catch(() => false);
+      const hasFollow = await page.getByRole('button', { name: 'Follow', exact: true })
+        .isVisible().catch(() => false);
+      const hasRung = await page.getByRole('button', { name: 'Become a member' })
+        .isVisible().catch(() => false);
+      expect(hasStanding || hasFollow || hasRung).toBeTruthy();
+      // Navigation, contribution and moderation all live outside the row.
+      await expect(profileActions.getByRole('link')).toHaveCount(0);
     }
   });
 
-  test('PatchShell shows "Become Member" and "Unfollow" for followers', async ({ page }) => {
+  test('exits live inside the standing control, never beside the rung', async ({ page }) => {
     await page.goto('/patches/lancaster-arts-district');
     await page.waitForTimeout(3000);
 
-    // If the current user is a follower, PatchShell shows Become Member + Unfollow
-    // instead of a single Leave button
+    // Whatever the viewer's standing, the exits are inside the standing
+    // control and never sit beside the rung (docs/adr/042).
     const profileActions = page.locator('.profile-actions');
     if (await profileActions.isVisible()) {
-      const hasBecomeMember = await page.getByRole('button', { name: 'Become Member' }).isVisible().catch(() => false);
-      const hasUnfollow = await page.getByRole('button', { name: 'Unfollow' }).isVisible().catch(() => false);
+      await expect(page.getByRole('button', { name: 'Unfollow' })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Leave' })).toHaveCount(0);
 
-      // If follower controls are shown, both buttons should appear together
-      if (hasBecomeMember) {
-        expect(hasUnfollow).toBe(true);
-      }
-      // If Unfollow is shown, Become Member should also be present
-      if (hasUnfollow) {
-        expect(hasBecomeMember).toBe(true);
+      if (await page.locator('.standing').isVisible().catch(() => false)) {
+        await expect(page.locator('.standing')).toHaveText(/Following|Member|Admin/);
       }
     }
   });

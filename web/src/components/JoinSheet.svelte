@@ -71,9 +71,9 @@
   }
 </script>
 
-<Modal open={open} label="Join {patchName}" onClose={onClose}>
+<Modal open={open} label="Become a member of {patchName}" onClose={onClose}>
   {#snippet children()}
-    <h2 class="join-title">Join {patchName}</h2>
+    <h2 class="join-title">Become a member of {patchName}</h2>
 
     <p class="join-line">
       {#if isApproval}
@@ -125,7 +125,7 @@
     <div class="join-actions">
       <button class="btn btn-secondary" onclick={onClose} disabled={submitting}>Cancel</button>
       <button class="btn btn-primary" onclick={handleConfirm} disabled={submitting}>
-        {isApproval ? 'Request to join' : 'Join'}
+        {isApproval ? 'Send request' : 'Become a member'}
       </button>
     </div>
   {/snippet}
