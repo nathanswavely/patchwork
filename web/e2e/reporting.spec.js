@@ -8,16 +8,22 @@
  * shared seed state and can't collide with other workers.
  */
 import { test, expect } from '@playwright/test';
-import { loginAs, goto } from './setup.js';
+import { loginAs, goto, openOverflow } from './setup.js';
 
-const REPORT_TRIGGER = 'button[title="Report this patch"]';
+// On a patch profile the trigger is a row in the overflow (docs/adr/042);
+// the modal itself is mounted outside that menu, so opening it can close
+// the menu without destroying the dialog.
+const reportRow = (page) => page.getByRole('menuitem', { name: 'Report' });
 
 test.describe('Content reporting', () => {
+  // Reporting is rare and consequential, so it lives in the profile's
+  // overflow rather than in the relationship row (docs/adr/042).
   test('a signed-in member can report a patch', async ({ page }) => {
     await loginAs(page, 'lurker');
     await goto(page, '/patches/gallery-row');
 
-    await page.locator(REPORT_TRIGGER).click();
+    await openOverflow(page);
+    await reportRow(page).click();
     await expect(page.getByRole('heading', { name: 'Report this patch' })).toBeVisible();
 
     await page.getByRole('combobox').selectOption('Spam or scam');
@@ -35,8 +41,11 @@ test.describe('Content reporting', () => {
     await expect(page.getByRole('heading', { name: 'Report this patch' })).not.toBeVisible();
   });
 
+  // Signed out there is nothing to report with: the overflow still opens
+  // (the calendar feeds are public), but it carries no report row.
   test('the report control is hidden when signed out', async ({ page }) => {
     await goto(page, '/patches/gallery-row');
-    await expect(page.locator(REPORT_TRIGGER)).toHaveCount(0);
+    await openOverflow(page);
+    await expect(reportRow(page)).toHaveCount(0);
   });
 });

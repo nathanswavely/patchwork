@@ -120,6 +120,30 @@ export async function goto(page, path) {
 }
 
 /**
+ * The standing control (docs/adr/042): a person's standing with a patch,
+ * shown at rest as "Following" / "Member" / "Admin", with the exit inside
+ * it. Unfollow and Leave are menu items now, never buttons sitting at the
+ * weight of a rung — so a spec asks for standing, then opens it to leave.
+ */
+export function standing(page) {
+  return page.locator('.standing');
+}
+
+/** Open the standing control and take its exit ("Unfollow" or "Leave"). */
+export async function exitVia(page, item) {
+  await standing(page).click();
+  await page.getByRole('menuitem', { name: item }).click();
+}
+
+/**
+ * Open the patch profile's overflow (docs/adr/042), which holds the acts
+ * that are real but rare: Subscribe, Workspace view, Report.
+ */
+export async function openOverflow(page) {
+  await page.locator('.overflow-trigger').click();
+}
+
+/**
  * Assert that no "Page not found" or error state is visible.
  */
 export async function expectNoError(page) {

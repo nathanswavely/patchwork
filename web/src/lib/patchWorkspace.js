@@ -48,6 +48,46 @@ export function workspaceTabs({
 }
 
 /**
+ * What actually happens when this viewer posts an event to this patch.
+ *
+ * Mirrors the server's rule in events.go (docs/adr/026) rather than the
+ * patch's state, because the label has to name the outcome: "New event"
+ * when it publishes, "Suggest an event" when it enters review (docs/adr/042).
+ * The old profile-side check short-circuited on `isUnclaimed` before it
+ * considered direct-post rights, so instance admins and trusted
+ * contributors were offered a review queue they bypass.
+ *
+ * `isMemberOrAdmin` is the role test, not "has a membership row": following
+ * is frictionless and grants no write rights, so a follower suggests like
+ * anyone else. Note the node payload's `is_member` is true for followers
+ * too — pass the role, not that flag.
+ *
+ * @returns {'direct'|'suggest'|'none'}
+ */
+export function eventPostingRight({
+  signedIn = false,
+  isInstanceAdmin = false,
+  trustedContributor = false,
+  isUnclaimed = false,
+  isMemberOrAdmin = false,
+  isBanned = false,
+  submissionsEnabled = true,
+  acceptSuggestions = false,
+} = {}) {
+  if (!signedIn || isBanned) return 'none';
+  if (isInstanceAdmin) return 'direct';
+
+  if (isUnclaimed) {
+    if (trustedContributor) return 'direct';
+    return submissionsEnabled ? 'suggest' : 'none';
+  }
+
+  if (isMemberOrAdmin) return 'direct';
+  if (!submissionsEnabled) return 'none';
+  return acceptSuggestions ? 'suggest' : 'none';
+}
+
+/**
  * Patch Settings sections.
  *
  * Unclaimed patches drop Members and Notifications — both meaningless for a

@@ -44,6 +44,7 @@ several branches are in flight.
 | [039](039-unclaimed-patches-carry-no-governance.md) | Unclaimed patches carry no governance; claims complete through setup |
 | [040](040-onboarding-is-statements-not-signatures.md) | Onboarding is statements, not signatures — one signature, at account creation |
 | [041](041-governance-ceremony-follows-the-rules-in-force.md) | Governance ceremony follows the rules in force — direct change, no bypasses |
+| [042](042-the-patch-profile-is-a-window.md) | The patch profile is a window, not a lobby — every door names a room |
 | [043](043-the-quilt-icon-is-drafted.md) | The quilt icon is drafted, not uploaded — the block drafter, no image upload |
 
 ## Adopted as design boundaries — implementation is backlog

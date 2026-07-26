@@ -19,6 +19,12 @@
     entityType,       // 'node' | 'event' | 'user'
     entityId = '',
     entityName = '',
+    // 'headless' renders the modal with no trigger of its own, for a host
+    // that owns the trigger — the patch profile's overflow (docs/adr/042).
+    // The trigger cannot live in that menu: opening the modal closes the
+    // menu, and a modal mounted inside it would be destroyed with it.
+    variant = 'button',
+    open = $bindable(false),
   } = $props();
 
   const REASONS = [
@@ -33,7 +39,6 @@
 
   const NOUN = { node: 'patch', event: 'event', user: 'person' };
 
-  let open = $state(false);
   let reason = $state(REASONS[0]);
   let details = $state('');
   let submitting = $state(false);
@@ -63,10 +68,12 @@
 </script>
 
 {#if isLoggedIn() && entityId}
-  <button class="report-trigger" onclick={() => (open = true)} title="Report this {NOUN[entityType]}">
-    <Flag size={13} weight="duotone" />
-    <span>Report</span>
-  </button>
+  {#if variant !== 'headless'}
+    <button class="report-trigger" onclick={() => (open = true)} title="Report this {NOUN[entityType]}">
+      <Flag size={13} weight="duotone" />
+      <span>Report</span>
+    </button>
+  {/if}
 
   <Modal {open} label="Report this {NOUN[entityType]}" onClose={() => { open = false; }}>
     <h2 class="report-title">Report this {NOUN[entityType]}</h2>

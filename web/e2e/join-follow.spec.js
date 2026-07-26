@@ -11,7 +11,7 @@
  * that assertion into a coin flip — which is exactly how it used to fail.
  */
 import { test, expect } from '@playwright/test';
-import { loginAs, goto, expectNoError } from './setup.js';
+import { loginAs, goto, expectNoError, standing, exitVia } from './setup.js';
 import { API_URL } from './ports.js';
 
 // Read-only permission checks run against the richly-seeded patch.
@@ -41,21 +41,20 @@ test.describe('Join — Non-member', () => {
     await resetRoundTrip(page);
   });
 
-  test('sees Join and Follow buttons on patch page', async ({ page }) => {
+  // Follow leads for a stranger; the membership rung is secondary and is
+  // worded "Become a member" everywhere (docs/adr/042). "Join" now means
+  // joining the quilt and never appears on a patch.
+  test('sees Follow first and Become a member second', async ({ page }) => {
     await goto(page, ROUND_TRIP_URL);
-    const joinBtn = page.getByRole('button', { name: 'Join' });
-    const followBtn = page.getByRole('button', { name: 'Follow' });
-    await expect(joinBtn).toBeVisible({ timeout: 5000 });
-    await expect(followBtn).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Follow', exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('button', { name: 'Become a member' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Join', exact: true })).toHaveCount(0);
   });
 
-  test('does not see Leave or Unfollow buttons', async ({ page }) => {
+  test('has no standing control, because it has no standing to state', async ({ page }) => {
     await goto(page, ROUND_TRIP_URL);
     await page.waitForLoadState('networkidle');
-    const leaveBtn = page.getByRole('button', { name: 'Leave' });
-    const unfollowBtn = page.getByRole('button', { name: 'Unfollow' });
-    await expect(leaveBtn).not.toBeVisible();
-    await expect(unfollowBtn).not.toBeVisible();
+    await expect(standing(page)).toHaveCount(0);
   });
 
   test('does not see Settings tab', async ({ page }) => {
@@ -70,28 +69,27 @@ test.describe('Follow Flow', () => {
     await loginAs(page, 'joiner');
     await resetRoundTrip(page);
     await goto(page, ROUND_TRIP_URL);
-    await page.getByRole('button', { name: 'Follow' }).click();
-    // After following, should see "Become Member" + "Unfollow"
-    await expect(page.getByRole('button', { name: 'Become Member' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Unfollow' })).toBeVisible();
+    await page.getByRole('button', { name: 'Follow', exact: true }).click();
+    // Standing is now stated at rest, and the next rung is offered beside it.
+    await expect(standing(page)).toHaveText(/Following/, { timeout: 10000 });
+    await expect(page.getByRole('button', { name: 'Become a member' })).toBeVisible();
   });
 
-  test('follower sees Become Member and Unfollow buttons', async ({ page }) => {
+  test('a follower is told they are following', async ({ page }) => {
     // Use the lurker who follows patches
     await loginAs(page, 'lurker');
     await goto(page, PATCH_URL);
     await page.waitForLoadState('networkidle');
-    // Lurker may be a follower of this patch
-    const becomeBtn = page.getByRole('button', { name: 'Become Member' });
-    const unfollowBtn = page.getByRole('button', { name: 'Unfollow' });
-    const joinBtn = page.getByRole('button', { name: 'Join' });
-    // Should show either follower actions or non-member actions
-    const hasFollowerUI = await becomeBtn.isVisible().catch(() => false);
-    const hasNonMemberUI = await joinBtn.isVisible().catch(() => false);
-    expect(hasFollowerUI || hasNonMemberUI).toBeTruthy();
+    // Lurker may or may not follow this particular patch: either they have
+    // standing, or they are offered Follow. Never both.
+    const hasStanding = await standing(page).isVisible().catch(() => false);
+    const hasFollow = await page.getByRole('button', { name: 'Follow', exact: true })
+      .isVisible().catch(() => false);
+    expect(hasStanding || hasFollow).toBeTruthy();
+    expect(hasStanding && hasFollow).toBeFalsy();
   });
 
-  test('follower can unfollow a patch', async ({ page }) => {
+  test('follower can unfollow from inside the standing control', async ({ page }) => {
     await loginAs(page, 'joiner');
     // Set up the exact precondition via API: not a member, then follower.
     await resetRoundTrip(page);
@@ -101,33 +99,34 @@ test.describe('Follow Flow', () => {
     });
     await goto(page, ROUND_TRIP_URL);
 
-    const unfollowBtn = page.getByRole('button', { name: 'Unfollow' });
-    await expect(unfollowBtn).toBeVisible({ timeout: 10000 });
-    await unfollowBtn.click();
-    // Should go back to Join + Follow
-    await expect(page.getByRole('button', { name: 'Join' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Follow' })).toBeVisible();
+    await expect(standing(page)).toHaveText(/Following/, { timeout: 10000 });
+    // The exit costs one deliberate extra step; it is never a peer button.
+    await expect(page.getByRole('button', { name: 'Unfollow' })).toHaveCount(0);
+    await exitVia(page, 'Unfollow');
+
+    await expect(page.getByRole('button', { name: 'Follow', exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(standing(page)).toHaveCount(0);
   });
 
-  test('follower can upgrade to member via Become Member', async ({ page }) => {
+  test('follower can climb the next rung', async ({ page }) => {
     await loginAs(page, 'joiner');
     await resetRoundTrip(page);
     await goto(page, ROUND_TRIP_URL);
 
-    await page.getByRole('button', { name: 'Follow' }).click();
-    await expect(page.getByRole('button', { name: 'Become Member' })).toBeVisible({ timeout: 10000 });
+    await page.getByRole('button', { name: 'Follow', exact: true }).click();
+    await expect(standing(page)).toHaveText(/Following/, { timeout: 10000 });
 
-    await page.getByRole('button', { name: 'Become Member' }).click();
+    await page.getByRole('button', { name: 'Become a member' }).click();
     // The join sheet interposes (docs/adr/040): confirm through it.
-    await page.getByRole('dialog').getByRole('button', { name: 'Join', exact: true }).click();
-    // Open policy, so the upgrade is immediate: a plain member sees Leave.
-    await expect(page.getByRole('button', { name: 'Leave' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Become Member' })).not.toBeVisible();
+    await page.getByRole('dialog').getByRole('button', { name: 'Become a member' }).click();
+    // Open policy, so the upgrade is immediate — and there is no rung above.
+    await expect(standing(page)).toHaveText(/Member/, { timeout: 10000 });
+    await expect(page.getByRole('button', { name: 'Become a member' })).toHaveCount(0);
   });
 });
 
-test.describe('Join Flow — Direct', () => {
-  test('non-member can join a patch directly', async ({ page }) => {
+test.describe('Membership — Direct', () => {
+  test('a stranger can become a member in one step', async ({ page }) => {
     await loginAs(page, 'joiner');
     await resetRoundTrip(page);
     await goto(page, ROUND_TRIP_URL);
@@ -135,28 +134,27 @@ test.describe('Join Flow — Direct', () => {
     // Assert the post-click state rather than sampling it: the join round
     // trip is async, and under a loaded backend the page is still re-fetching
     // when a bare isVisible() would read it.
-    await page.getByRole('button', { name: 'Join', exact: true }).click();
+    await page.getByRole('button', { name: 'Become a member' }).click();
     // The join sheet interposes (docs/adr/040): confirm through it.
-    await page.getByRole('dialog').getByRole('button', { name: 'Join', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Leave' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Join', exact: true })).not.toBeVisible();
+    await page.getByRole('dialog').getByRole('button', { name: 'Become a member' }).click();
+    await expect(standing(page)).toHaveText(/Member/, { timeout: 10000 });
   });
 });
 
 test.describe('Leave Flow', () => {
-  test('member can leave a patch', async ({ page }) => {
+  test('member can leave from inside the standing control', async ({ page }) => {
     await loginAs(page, 'joiner');
     await resetRoundTrip(page);
     await goto(page, ROUND_TRIP_URL);
 
-    await page.getByRole('button', { name: 'Join', exact: true }).click();
+    await page.getByRole('button', { name: 'Become a member' }).click();
     // The join sheet interposes (docs/adr/040): confirm through it.
-    await page.getByRole('dialog').getByRole('button', { name: 'Join', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Leave' })).toBeVisible({ timeout: 10000 });
+    await page.getByRole('dialog').getByRole('button', { name: 'Become a member' }).click();
+    await expect(standing(page)).toHaveText(/Member/, { timeout: 10000 });
 
-    await page.getByRole('button', { name: 'Leave' }).click();
-    await expect(page.getByRole('button', { name: 'Join' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Follow' })).toBeVisible();
+    await exitVia(page, 'Leave');
+    await expect(page.getByRole('button', { name: 'Follow', exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: 'Become a member' })).toBeVisible();
   });
 
   test('sole admin cannot leave', async ({ page }) => {
@@ -171,12 +169,12 @@ test.describe('Leave Flow', () => {
 });
 
 test.describe('Logged-Out User', () => {
-  test('sees login prompt when clicking Join', async ({ page }) => {
+  test('sees login prompt when clicking Become a member', async ({ page }) => {
     await goto(page, PATCH_URL);
     await page.waitForLoadState('networkidle');
     // On the quilt view, clicking a patch tile opens PatchPanel
     // On direct URL, we see PatchShell — but logged out may redirect
-    const joinBtn = page.getByRole('button', { name: 'Join' });
+    const joinBtn = page.getByRole('button', { name: 'Become a member' });
     if (await joinBtn.isVisible()) {
       await joinBtn.click();
       await page.waitForTimeout(1000);
@@ -240,13 +238,13 @@ test.describe('PatchPanel — Quilt View Join/Follow', () => {
       const panel = page.locator('.preview-actions');
       if (await panel.isVisible()) {
         // Whichever tile the quilt put first, `joiner` may already belong to
-        // it (yoga-in-the-park) — any membership control counts.
-        const buttons = ['Join', 'Follow', 'Leave', 'Become Member', 'Unfollow'];
-        let hasSomeAction = false;
+        // it (yoga-in-the-park) — any relationship control counts.
+        const buttons = ['Follow', 'Become a member'];
+        let hasSomeAction = await standing(page).isVisible().catch(() => false);
         for (const name of buttons) {
+          if (hasSomeAction) break;
           if (await page.getByRole('button', { name }).isVisible().catch(() => false)) {
             hasSomeAction = true;
-            break;
           }
         }
         expect(hasSomeAction).toBeTruthy();
@@ -268,12 +266,15 @@ test.describe('Unclaimed Patches', () => {
     if (await unclaimedIndicator.isVisible()) {
       await unclaimedIndicator.click();
       await page.waitForTimeout(500);
-      const claimBtn = page.getByRole('button', { name: /Claim/i });
-      const followBtn = page.getByRole('button', { name: 'Follow' });
-      // Should have claim and/or follow option
-      const hasClaim = await claimBtn.isVisible().catch(() => false);
+      // The claim is a link inside the header notice now, not a competing
+      // primary button (docs/adr/042). Follow is the only control.
+      const claimLink = page.getByRole('link', { name: /claim/i });
+      const followBtn = page.getByRole('button', { name: 'Follow', exact: true });
+      const hasClaim = await claimLink.first().isVisible().catch(() => false);
       const hasFollow = await followBtn.isVisible().catch(() => false);
       expect(hasClaim || hasFollow).toBeTruthy();
+      // Membership is impossible on an unclaimed patch, so no rung is offered.
+      await expect(page.getByRole('button', { name: 'Become a member' })).toHaveCount(0);
     }
   });
 });
