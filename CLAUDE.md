@@ -192,8 +192,8 @@ Key endpoints:
 - `POST /api/v1/nodes/{slug}/events/bulk` — event upload (CSV door): admin-only batch create, all-or-nothing validation, title+start dedup, silent (no notify/AP burst)
 - `GET /api/v1/nodes/{slug}/events.{ics|rss}` — public subscribable feeds per patch; `GET /api/v1/feeds/{secret}/events.ics` + `GET|POST|DELETE /api/v1/users/me/feed-secret` — the personal My Quilt calendar behind a regenerable URL secret
 - `GET /api/v1/admin/export` — zip download of all instance data (admin only)
-- `GET /api/v1/instance/icon` — the public quilt icon: uploaded image or a generated default block SVG (`?block=<key>` previews a default)
-- `GET|PATCH /api/v1/admin/settings`, `PUT|DELETE /api/v1/admin/settings/icon`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, icon, danger-zone wipe (docs/adr/014)
+- `GET /api/v1/instance/icon` — the public quilt icon, rendered to SVG from the drafted design (docs/adr/043); an instance that has drafted none wears a starter block assigned from its name
+- `GET|PATCH /api/v1/admin/settings`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, the icon design (`icon_design`: a drafted block plus its fabrics; `null` clears it), danger-zone wipe (docs/adr/014, docs/adr/043)
 - `GET /api/v1/legal/{privacy|terms}` — public legal documents: shipped defaults or admin overrides, rendered at /privacy and /terms; admin editing via `GET /api/v1/admin/legal` + `PUT|DELETE /api/v1/admin/legal/{doc}` (docs/adr/028)
 
 ## Multi-Quilt / Cross-Quilt Following (docs/adr/024)

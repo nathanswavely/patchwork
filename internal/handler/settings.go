@@ -1,15 +1,11 @@
 package handler
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"image"
-	_ "image/jpeg" // register decoders for DecodeConfig
-	_ "image/png"
+	"hash/crc32"
 	"io"
 	"log"
-	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -28,32 +24,24 @@ import (
 // icon — is database state editable by the instance admin; deployment
 // concerns stay in patchwork.yaml.
 
-// Icon upload constraints. Stated verbatim in the admin UI; enforced here.
-const (
-	iconMaxBytes = 512 * 1024
-	iconMinPx    = 64
-	iconMaxPx    = 1024
-)
-
-// iconState describes the effective quilt icon for API responses.
+// iconState describes the effective quilt icon for API responses: the
+// design that is being served, and whether an admin drafted it or the
+// quilt was assigned one (docs/adr/043).
 type iconState struct {
-	Kind       string `json:"kind"`        // "upload" | "default"
-	DefaultKey string `json:"default_key"` // effective block key when kind=default
-	Chosen     bool   `json:"chosen"`      // default_key was picked (vs hash-assigned)
-	Mime       string `json:"mime,omitempty"`
-	UpdatedAt  string `json:"updated_at,omitempty"`
+	Chosen bool       `json:"chosen"`
+	Design iconDesign `json:"design"`
 }
 
 func currentIconState(db *database.DB, cfg *config.Config) iconState {
-	if mimeType, _, updatedAt, ok := settings.Icon(db); ok {
-		return iconState{Kind: "upload", Mime: mimeType, UpdatedAt: updatedAt}
-	}
-	if key, ok := settings.Get(db, settings.KeyIconDefault); ok && key != "" {
-		if _, valid := iconBlocks[key]; valid {
-			return iconState{Kind: "default", DefaultKey: key, Chosen: true}
+	if raw, ok := settings.Get(db, settings.KeyIconDesign); ok && raw != "" {
+		if d, valid := parseIconDesign(raw); valid {
+			return iconState{Chosen: true, Design: d}
 		}
 	}
-	return iconState{Kind: "default", DefaultKey: assignedIconBlock(settings.EffectiveName(db, cfg)), Chosen: false}
+	return iconState{Design: iconDesign{
+		Block:  startersByKey[assignedStarter(settings.EffectiveName(db, cfg))],
+		Bundle: defaultBundle(cfg.Branding.Color),
+	}}
 }
 
 // AdminGetSettings handles GET /api/v1/admin/settings.
@@ -72,14 +60,7 @@ func AdminGetSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			"description_overridden": descOverridden,
 			"hide_amended_linings":   hideAmended == "true",
 			"icon":                   currentIconState(db, cfg),
-			"default_icons":          iconBlockKeys(),
-			"icon_constraints": map[string]interface{}{
-				"formats":   []string{"image/png", "image/jpeg"},
-				"max_bytes": iconMaxBytes,
-				"min_px":    iconMinPx,
-				"max_px":    iconMaxPx,
-				"square":    true,
-			},
+			"icon_starters":          starters,
 		})
 	}
 }
@@ -92,7 +73,10 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		var req struct {
 			Name        *string `json:"name"`
 			Description *string `json:"description"`
-			IconDefault *string `json:"icon_default"`
+			// IconDesign is a drafted block plus its fabrics; explicit
+			// null clears it and the quilt goes back to an assigned block
+			// (docs/adr/043). Raw so absent and null stay distinguishable.
+			IconDesign json.RawMessage `json:"icon_design"`
 			// Quilt policy: hide amended-lining patches from discovery for
 			// everyone (docs/adr/037).
 			HideAmendedLinings *bool `json:"hide_amended_linings"`
@@ -130,20 +114,25 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			}
 		}
 
-		if req.IconDefault != nil {
-			key := *req.IconDefault
-			if key == "" {
-				if err := settings.Unset(db, settings.KeyIconDefault); err != nil {
-					http.Error(w, `{"error":"failed to clear icon choice"}`, http.StatusInternalServerError)
+		if len(req.IconDesign) > 0 {
+			var decoded interface{}
+			if err := json.Unmarshal(req.IconDesign, &decoded); err != nil {
+				http.Error(w, `{"error":"invalid icon_design"}`, http.StatusBadRequest)
+				return
+			}
+			if decoded == nil {
+				if err := settings.Unset(db, settings.KeyIconDesign); err != nil {
+					http.Error(w, `{"error":"failed to clear the icon"}`, http.StatusInternalServerError)
 					return
 				}
 			} else {
-				if _, ok := iconBlocks[key]; !ok {
-					http.Error(w, `{"error":"unknown default icon"}`, http.StatusBadRequest)
+				stored, err := normalizeIconDesign(decoded)
+				if err != nil {
+					http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
 					return
 				}
-				if err := settings.Set(db, settings.KeyIconDefault, key); err != nil {
-					http.Error(w, `{"error":"failed to save icon choice"}`, http.StatusInternalServerError)
+				if err := settings.Set(db, settings.KeyIconDesign, stored); err != nil {
+					http.Error(w, `{"error":"failed to save the icon"}`, http.StatusInternalServerError)
 					return
 				}
 			}
@@ -171,121 +160,26 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	}
 }
 
-// AdminUploadIcon handles PUT /api/v1/admin/settings/icon.
-// Raw image body: PNG or JPEG, square, 64-1024px, <=512KB. Dimensions are
-// checked with image.DecodeConfig (header parse only — the server never
-// decodes or resizes pixels; docs/adr/014).
-func AdminUploadIcon(db *database.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		adminUser := middleware.UserFromContext(r.Context())
-
-		ct := r.Header.Get("Content-Type")
-		if mt, _, err := mime.ParseMediaType(ct); err == nil {
-			ct = mt
-		}
-		if ct != "image/png" && ct != "image/jpeg" {
-			http.Error(w, `{"error":"icon must be a PNG or JPEG image"}`, http.StatusBadRequest)
-			return
-		}
-
-		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, iconMaxBytes))
-		if err != nil {
-			http.Error(w, fmt.Sprintf(`{"error":"icon must be %dKB or smaller"}`, iconMaxBytes/1024), http.StatusRequestEntityTooLarge)
-			return
-		}
-
-		cfgImg, format, err := image.DecodeConfig(bytes.NewReader(body))
-		if err != nil {
-			http.Error(w, `{"error":"could not read image — is it a valid PNG or JPEG?"}`, http.StatusBadRequest)
-			return
-		}
-		wantFormat := map[string]string{"image/png": "png", "image/jpeg": "jpeg"}[ct]
-		if format != wantFormat {
-			http.Error(w, `{"error":"image data does not match its declared format"}`, http.StatusBadRequest)
-			return
-		}
-		if cfgImg.Width != cfgImg.Height {
-			http.Error(w, `{"error":"icon must be square"}`, http.StatusBadRequest)
-			return
-		}
-		if cfgImg.Width < iconMinPx || cfgImg.Width > iconMaxPx {
-			http.Error(w, fmt.Sprintf(`{"error":"icon must be between %d and %d pixels"}`, iconMinPx, iconMaxPx), http.StatusBadRequest)
-			return
-		}
-
-		if err := settings.SetIcon(db, ct, body); err != nil {
-			http.Error(w, `{"error":"failed to save icon"}`, http.StatusInternalServerError)
-			return
-		}
-
-		auth.LogAuditEvent(db, adminUser.ID, "admin.instance_icon_upload", "instance", "", "{}", clientIP(r))
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-	}
-}
-
-// AdminDeleteIcon handles DELETE /api/v1/admin/settings/icon.
-func AdminDeleteIcon(db *database.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		adminUser := middleware.UserFromContext(r.Context())
-		if err := settings.DeleteIcon(db); err != nil {
-			http.Error(w, `{"error":"failed to remove icon"}`, http.StatusInternalServerError)
-			return
-		}
-		auth.LogAuditEvent(db, adminUser.ID, "admin.instance_icon_delete", "instance", "", "{}", clientIP(r))
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-	}
-}
-
 // InstanceIcon handles GET /api/v1/instance/icon — the public quilt icon.
-// Serves the uploaded image when one exists, otherwise a server-generated
-// default SVG block. ?block=<key> previews a specific default (used by the
-// admin picker). Cross-quilt <img> loads need no CORS; the multi_quilt
-// CORS middleware additionally covers fetch() consumers.
+// Renders the drafted design to SVG (docs/adr/043); an instance that has
+// not drafted one gets a starter block assigned from its name, so every
+// quilt has an icon from first boot. Cross-quilt <img> loads need no
+// CORS; the multi_quilt CORS middleware additionally covers fetch()
+// consumers.
 func InstanceIcon(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		serveSVG := func(key string) {
-			svg, ok := renderIconBlock(key, cfg.Branding.Color)
-			if !ok {
-				http.Error(w, `{"error":"unknown icon block"}`, http.StatusNotFound)
-				return
-			}
-			etag := fmt.Sprintf(`"block-%s-%s"`, key, cfg.Branding.Color)
-			if r.Header.Get("If-None-Match") == etag {
-				w.WriteHeader(http.StatusNotModified)
-				return
-			}
-			w.Header().Set("Content-Type", "image/svg+xml")
-			w.Header().Set("X-Content-Type-Options", "nosniff")
-			w.Header().Set("Content-Security-Policy", "default-src 'none'")
-			w.Header().Set("Cache-Control", "public, max-age=300")
-			w.Header().Set("ETag", etag)
-			io.WriteString(w, svg)
-		}
-
-		if block := r.URL.Query().Get("block"); block != "" {
-			serveSVG(block)
+		svg := renderIconSVG(currentIconState(db, cfg).Design, cfg.Branding.Color)
+		etag := fmt.Sprintf(`"quilt-%08x"`, crc32.ChecksumIEEE([]byte(svg)))
+		if r.Header.Get("If-None-Match") == etag {
+			w.WriteHeader(http.StatusNotModified)
 			return
 		}
-
-		if mimeType, data, updatedAt, ok := settings.Icon(db); ok {
-			etag := fmt.Sprintf(`"upload-%s"`, updatedAt)
-			if r.Header.Get("If-None-Match") == etag {
-				w.WriteHeader(http.StatusNotModified)
-				return
-			}
-			w.Header().Set("Content-Type", mimeType)
-			w.Header().Set("X-Content-Type-Options", "nosniff")
-			w.Header().Set("Cache-Control", "public, max-age=300")
-			w.Header().Set("ETag", etag)
-			w.Write(data)
-			return
-		}
-
-		state := currentIconState(db, cfg)
-		serveSVG(state.DefaultKey)
+		w.Header().Set("Content-Type", "image/svg+xml")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("Content-Security-Policy", "default-src 'none'")
+		w.Header().Set("Cache-Control", "public, max-age=300")
+		w.Header().Set("ETag", etag)
+		io.WriteString(w, svg)
 	}
 }
 

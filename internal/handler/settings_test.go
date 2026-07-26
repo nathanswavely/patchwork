@@ -1,17 +1,12 @@
 package handler_test
 
 import (
-	"bytes"
 	"encoding/json"
-	"image"
-	"image/jpeg"
-	"image/png"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
@@ -78,105 +73,108 @@ func TestQuiltRenameOverridesYaml(t *testing.T) {
 	}
 }
 
-func encodePNG(t *testing.T, w, h int) []byte {
-	t.Helper()
-	var buf bytes.Buffer
-	if err := png.Encode(&buf, image.NewRGBA(image.Rect(0, 0, w, h))); err != nil {
-		t.Fatalf("encode png: %v", err)
+func getIcon(db *database.DB, cfg *config.Config, ifNoneMatch string) *httptest.ResponseRecorder {
+	r := httptest.NewRequest("GET", "/api/v1/instance/icon", nil)
+	if ifNoneMatch != "" {
+		r.Header.Set("If-None-Match", ifNoneMatch)
 	}
-	return buf.Bytes()
+	w := httptest.NewRecorder()
+	handler.InstanceIcon(db, cfg)(w, r)
+	return w
 }
 
-func uploadIcon(db *database.DB, token, contentType string, body []byte) *httptest.ResponseRecorder {
-	r := httptest.NewRequest("PUT", "/api/v1/admin/settings/icon", bytes.NewReader(body))
-	r.Header.Set("Content-Type", contentType)
-	r.Header.Set("X-Patchwork-Request", "true")
-	r.AddCookie(&http.Cookie{Name: auth.CookieName, Value: token})
-	return serveAdmin(db, "PUT", "/api/v1/admin/settings/icon", handler.AdminUploadIcon(db), r)
-}
-
-func TestQuiltIconUploadAndServe(t *testing.T) {
+// The quilt icon is drafted in the block drafter (docs/adr/043): the
+// admin saves a design, the public endpoint renders it to SVG.
+func TestQuiltIconIsDrafted(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := testConfig()
 	_, token := createTestUser(t, db, "boss", "admin")
 
-	// Default: no upload → generated SVG block.
-	r := httptest.NewRequest("GET", "/api/v1/instance/icon", nil)
-	w := httptest.NewRecorder()
-	handler.InstanceIcon(db, cfg)(w, r)
+	// Undesigned: a starter block assigned from the quilt's name.
+	w := getIcon(db, cfg, "")
 	if w.Code != http.StatusOK || w.Header().Get("Content-Type") != "image/svg+xml" {
-		t.Fatalf("default icon: code %d, type %q", w.Code, w.Header().Get("Content-Type"))
+		t.Fatalf("assigned icon: code %d, type %q", w.Code, w.Header().Get("Content-Type"))
 	}
-	if !strings.Contains(w.Body.String(), "<svg") {
-		t.Fatal("default icon body is not SVG")
+	if !strings.Contains(w.Body.String(), "<polygon") {
+		t.Fatal("assigned icon has no pieces")
+	}
+	assigned := w.Body.String()
+
+	// The settings payload offers starters and reports the icon unchosen.
+	sr := authedRequest("GET", "/api/v1/admin/settings", nil, token)
+	sw := serveAdmin(db, "GET", "/api/v1/admin/settings", handler.AdminGetSettings(db, cfg), sr)
+	var settingsResp struct {
+		Icon struct {
+			Chosen bool `json:"chosen"`
+			Design struct {
+				Block  map[string]interface{} `json:"block"`
+				Bundle []string               `json:"bundle"`
+			} `json:"design"`
+		} `json:"icon"`
+		Starters []struct {
+			Key   string                 `json:"key"`
+			Name  string                 `json:"name"`
+			Block map[string]interface{} `json:"block"`
+		} `json:"icon_starters"`
+	}
+	if err := json.NewDecoder(sw.Body).Decode(&settingsResp); err != nil {
+		t.Fatalf("decode settings: %v", err)
+	}
+	if settingsResp.Icon.Chosen {
+		t.Error("a fresh quilt reports its icon as chosen")
+	}
+	if len(settingsResp.Icon.Design.Block) == 0 || len(settingsResp.Icon.Design.Bundle) == 0 {
+		t.Error("settings did not describe the effective icon design")
+	}
+	if len(settingsResp.Starters) == 0 {
+		t.Fatal("no starter blocks offered")
 	}
 
-	// Non-square upload is refused.
-	if w := uploadIcon(db, token, "image/png", encodePNG(t, 128, 64)); w.Code != http.StatusBadRequest {
-		t.Errorf("non-square: got %d, want 400", w.Code)
+	// Save a design.
+	design := map[string]interface{}{
+		"block": map[string]interface{}{
+			"grid":   2,
+			"seams":  [][]int{{0, 0, 8, 8}},
+			"colors": map[string][]int{"0,0": {1, 0}},
+		},
+		"bundle": []string{"#EC341C", "#F2EEE4"},
 	}
-	// Too small is refused.
-	if w := uploadIcon(db, token, "image/png", encodePNG(t, 32, 32)); w.Code != http.StatusBadRequest {
-		t.Errorf("too small: got %d, want 400", w.Code)
-	}
-	// Mismatched declared format is refused.
-	if w := uploadIcon(db, token, "image/jpeg", encodePNG(t, 128, 128)); w.Code != http.StatusBadRequest {
-		t.Errorf("format mismatch: got %d, want 400", w.Code)
-	}
-	// SVG (or any non-raster type) is refused outright.
-	if w := uploadIcon(db, token, "image/svg+xml", []byte("<svg/>")); w.Code != http.StatusBadRequest {
-		t.Errorf("svg: got %d, want 400", w.Code)
+	r := authedRequest("PATCH", "/api/v1/admin/settings", map[string]interface{}{"icon_design": design}, token)
+	if w := serveAdmin(db, "PATCH", "/api/v1/admin/settings", handler.AdminUpdateSettings(db, cfg), r); w.Code != http.StatusOK {
+		t.Fatalf("save design: got %d: %s", w.Code, w.Body.String())
 	}
 
-	// A valid square PNG is accepted.
-	if w := uploadIcon(db, token, "image/png", encodePNG(t, 128, 128)); w.Code != http.StatusOK {
-		t.Fatalf("valid upload: got %d: %s", w.Code, w.Body.String())
+	w = getIcon(db, cfg, "")
+	drafted := w.Body.String()
+	if drafted == assigned {
+		t.Error("the drafted icon renders the same as the assigned one")
+	}
+	if !strings.Contains(drafted, "#EC341C") {
+		t.Error("the design's fabric did not reach the SVG")
+	}
+	if etag := w.Header().Get("ETag"); etag == "" {
+		t.Error("icon served without an ETag")
+	} else if again := getIcon(db, cfg, etag); again.Code != http.StatusNotModified {
+		t.Errorf("conditional request: got %d, want 304", again.Code)
 	}
 
-	// A valid square JPEG replaces it.
-	var jbuf bytes.Buffer
-	if err := jpeg.Encode(&jbuf, image.NewRGBA(image.Rect(0, 0, 256, 256)), nil); err != nil {
-		t.Fatalf("encode jpeg: %v", err)
+	// A malformed design is refused, and the saved one survives.
+	bad := map[string]interface{}{"block": map[string]interface{}{"grid": 99}}
+	r = authedRequest("PATCH", "/api/v1/admin/settings", map[string]interface{}{"icon_design": bad}, token)
+	if w := serveAdmin(db, "PATCH", "/api/v1/admin/settings", handler.AdminUpdateSettings(db, cfg), r); w.Code != http.StatusBadRequest {
+		t.Errorf("grid 99: got %d, want 400", w.Code)
 	}
-	if w := uploadIcon(db, token, "image/jpeg", jbuf.Bytes()); w.Code != http.StatusOK {
-		t.Fatalf("jpeg upload: got %d: %s", w.Code, w.Body.String())
-	}
-
-	// Now the public endpoint serves the upload.
-	r = httptest.NewRequest("GET", "/api/v1/instance/icon", nil)
-	w = httptest.NewRecorder()
-	handler.InstanceIcon(db, cfg)(w, r)
-	if w.Header().Get("Content-Type") != "image/jpeg" {
-		t.Errorf("served type = %q, want image/jpeg", w.Header().Get("Content-Type"))
-	}
-	if w.Header().Get("ETag") == "" {
-		t.Error("uploaded icon served without ETag")
+	if got := getIcon(db, cfg, "").Body.String(); got != drafted {
+		t.Error("a refused design changed the served icon")
 	}
 
-	// Delete reverts to a default block.
-	dr := authedRequest("DELETE", "/api/v1/admin/settings/icon", nil, token)
-	if w := serveAdmin(db, "DELETE", "/api/v1/admin/settings/icon", handler.AdminDeleteIcon(db), dr); w.Code != http.StatusOK {
-		t.Fatalf("delete icon: got %d", w.Code)
+	// Explicit null goes back to the assigned starter.
+	r = authedRequest("PATCH", "/api/v1/admin/settings", map[string]interface{}{"icon_design": nil}, token)
+	if w := serveAdmin(db, "PATCH", "/api/v1/admin/settings", handler.AdminUpdateSettings(db, cfg), r); w.Code != http.StatusOK {
+		t.Fatalf("clear design: got %d: %s", w.Code, w.Body.String())
 	}
-	r = httptest.NewRequest("GET", "/api/v1/instance/icon", nil)
-	w = httptest.NewRecorder()
-	handler.InstanceIcon(db, cfg)(w, r)
-	if w.Header().Get("Content-Type") != "image/svg+xml" {
-		t.Errorf("after delete: type = %q, want image/svg+xml", w.Header().Get("Content-Type"))
-	}
-
-	// Block preview for the picker.
-	r = httptest.NewRequest("GET", "/api/v1/instance/icon?block=pinwheel", nil)
-	w = httptest.NewRecorder()
-	handler.InstanceIcon(db, cfg)(w, r)
-	if w.Code != http.StatusOK {
-		t.Errorf("block preview: got %d", w.Code)
-	}
-	r = httptest.NewRequest("GET", "/api/v1/instance/icon?block=nonsense", nil)
-	w = httptest.NewRecorder()
-	handler.InstanceIcon(db, cfg)(w, r)
-	if w.Code != http.StatusNotFound {
-		t.Errorf("unknown block: got %d, want 404", w.Code)
+	if got := getIcon(db, cfg, "").Body.String(); got != assigned {
+		t.Error("clearing the design did not restore the assigned block")
 	}
 }
 

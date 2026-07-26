@@ -17,6 +17,11 @@
  * Piece identity: faces of a cell are sorted by centroid (y, then x),
  * making the index into appearance.block.colors["r,c"] deterministic
  * regardless of seam order.
+ *
+ * internal/handler/draft_geometry.go mirrors the face computation so the
+ * server can render a drafted quilt icon to SVG (docs/adr/043). Changing
+ * the algorithm here means changing it there; both suites cover the same
+ * fixtures on purpose.
  */
 
 export const MAX_GRID = 10;

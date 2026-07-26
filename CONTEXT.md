@@ -583,12 +583,13 @@ belong to whoever operates the machine.
 _Avoid_: instance settings (UI label), site settings, general settings
 
 **Quilt icon**:
-The single image that represents a whole quilt wherever quilts are listed
-or switched between — the scope switcher, Connected Quilts. One uploaded
-image (square, small, explicit format rules) or a chosen default block;
-unset means hash-assigned from the quilt's name, stable but not chosen
-(same rule as tile appearance). Instance identity: it never travels in a
-seamrip — a fork re-brands.
+The block that represents a whole quilt wherever quilts are listed or
+switched between — the scope switcher, Connected Quilts. Drafted in the
+block drafter, the same one patches use for their tiles, and stored as a
+design (block plus bundle) that the server renders to SVG; there is no
+image upload (docs/adr/043). Unset means hash-assigned from the quilt's
+name, stable but not chosen (same rule as tile appearance). Instance
+identity: it never travels in a seamrip — a fork re-brands.
 _Avoid_: logo (that is branding.logo_url, a different slot), avatar (people
 have those), favicon
 
@@ -821,6 +822,13 @@ A geometric quilt pattern that a tile is drawn as. Either curated — a
 named traditional pattern (Pinwheel, Ohio Star, Log Cabin…) — or drafted
 by the patch's admins in the block drafter.
 _Avoid_: pattern (overloaded), design
+
+**Starter block**:
+A traditional pattern offered as a draft to open and take apart rather
+than a fixed choice to pick between — how drafting the quilt icon begins
+(docs/adr/043). Choosing one replaces what is on the canvas; nothing is
+saved until you save.
+_Avoid_: template, preset, default block (that is the old fixed-choice thing)
 
 **Drafting**:
 Designing a block on the grid, the way quilters draft on graph paper:

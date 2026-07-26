@@ -16,7 +16,11 @@ import (
 const (
 	KeyName        = "instance_name"
 	KeyDescription = "instance_description"
-	KeyIconDefault = "icon_default"
+
+	// The quilt icon is a drafted block, stored as JSON — a block plus the
+	// fabrics it is pieced from (docs/adr/043). No key means the quilt
+	// wears a starter block assigned from its name.
+	KeyIconDesign = "icon_design"
 
 	// Legal documents (docs/adr/028): a stored value replaces the shipped
 	// default template wholesale; no key means the default is in effect.
@@ -80,29 +84,4 @@ func EffectiveDescription(db *database.DB, cfg *config.Config) string {
 		return v
 	}
 	return cfg.Instance.Description
-}
-
-// Icon returns the uploaded quilt icon, if any.
-func Icon(db *database.DB) (mime string, data []byte, updatedAt string, ok bool) {
-	err := db.QueryRow(`SELECT mime, data, updated_at FROM instance_icon WHERE id = 1`).
-		Scan(&mime, &data, &updatedAt)
-	if err != nil {
-		return "", nil, "", false
-	}
-	return mime, data, updatedAt, true
-}
-
-// SetIcon stores (or replaces) the single uploaded quilt icon.
-func SetIcon(db *database.DB, mime string, data []byte) error {
-	_, err := db.Exec(`INSERT INTO instance_icon (id, mime, data, updated_at)
-		VALUES (1, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
-		ON CONFLICT(id) DO UPDATE SET mime = excluded.mime, data = excluded.data, updated_at = excluded.updated_at`,
-		mime, data)
-	return err
-}
-
-// DeleteIcon removes the uploaded icon, reverting to a default block.
-func DeleteIcon(db *database.DB) error {
-	_, err := db.Exec(`DELETE FROM instance_icon WHERE id = 1`)
-	return err
 }
