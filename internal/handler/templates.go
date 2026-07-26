@@ -7,6 +7,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
 // GetTemplate handles GET /api/v1/governance/templates/{id}.
@@ -127,15 +128,24 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'approved'", nodeID).Scan(&passedProposals)
 		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'rejected'", nodeID).Scan(&rejectedProposals)
 
-		// Count proposals needing current user's vote.
+		// Count proposals needing current user's vote — but only for someone
+		// who may actually cast one. This counted every open proposal the
+		// viewer hadn't voted on regardless of role or tenure, so a follower
+		// was told "2 proposals need your vote" and VoteOnProposal answered
+		// 403: the electorate has to be one set on the nudge too, not just at
+		// the gate (docs/adr/044).
 		var needsVote int
 		if user := middleware.UserFromContext(r.Context()); user != nil {
-			db.QueryRow(
-				`SELECT COUNT(*) FROM proposals p
-				 WHERE p.node_id = ? AND p.status = 'open'
-				 AND NOT EXISTS (SELECT 1 FROM votes v WHERE v.proposal_id = p.id AND v.user_id = ?)`,
-				nodeID, user.ID,
-			).Scan(&needsVote)
+			var gc model.GovernanceConfig
+			json.Unmarshal([]byte(gcJSON), &gc)
+			if inElectorate(db, user.ID, nodeID, gc) {
+				db.QueryRow(
+					`SELECT COUNT(*) FROM proposals p
+					 WHERE p.node_id = ? AND p.status = 'open'
+					 AND NOT EXISTS (SELECT 1 FROM votes v WHERE v.proposal_id = p.id AND v.user_id = ?)`,
+					nodeID, user.ID,
+				).Scan(&needsVote)
+			}
 		}
 
 		// Member count.

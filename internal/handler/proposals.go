@@ -344,18 +344,73 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// electorateMembership is the condition a `memberships` row must meet for its
+// person to belong to a patch's electorate: an active admin or member.
+// CONTEXT.md, "Member count" — following carries no voting rights. `prefix`
+// qualifies the columns with a table alias ("m."); pass "" when the query names
+// only one table.
+//
+// The electorate is one set, expressed once (docs/adr/044). It went wrong three
+// times because the gate and the denominator each said who could vote in their
+// own words; the fix is that they no longer have their own words.
+func electorateMembership(prefix string) string {
+	return prefix + "status = 'active' AND " + prefix + "role IN ('admin','member')"
+}
+
+// electorateFilter is electorateMembership plus the governance config's minimum
+// voting tenure — the whole condition for "may vote here, right now" — together
+// with the args the tenure term binds.
+func electorateFilter(prefix string, gc model.GovernanceConfig) (string, []interface{}) {
+	cond := electorateMembership(prefix)
+	var args []interface{}
+	if gc.MinVotingTenureDays > 0 {
+		// Stored timestamps are ISO 8601 with a 'T'; format the cutoff the
+		// same way so the string comparison stays chronological.
+		cond += " AND " + prefix + "joined_at <= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', ?)"
+		args = append(args, fmt.Sprintf("-%d days", gc.MinVotingTenureDays))
+	}
+	return cond, args
+}
+
+// inElectorate reports whether one person may currently vote on a node's
+// proposals. Every surface that asks "may this person vote?" — the vote gate,
+// and the governance hub's "needs your vote" count, which must not nudge
+// someone the gate will refuse — asks it here.
+func inElectorate(db *database.DB, userID, nodeID string, gc model.GovernanceConfig) bool {
+	cond, args := electorateFilter("", gc)
+	all := append([]interface{}{nodeID, userID}, args...)
+	var one int
+	return db.QueryRow(
+		`SELECT 1 FROM memberships WHERE node_id = ? AND user_id = ? AND `+cond, all...,
+	).Scan(&one) == nil
+}
+
+// electorateDenial explains why a person may not vote, or returns "" when they
+// may. The two answers worth telling apart — not one of us, not here long
+// enough — are both read off the one electorate condition rather than from a
+// second implementation of it.
+func electorateDenial(db *database.DB, userID, nodeID string, gc model.GovernanceConfig) string {
+	if inElectorate(db, userID, nodeID, gc) {
+		return ""
+	}
+	if gc.MinVotingTenureDays > 0 && inElectorate(db, userID, nodeID, model.GovernanceConfig{}) {
+		return fmt.Sprintf("must be a member for at least %d days to vote", gc.MinVotingTenureDays)
+	}
+	return "must be member of node to vote"
+}
+
 // countedBallot separates a vote that counts from a row that merely exists.
 // It expects the ballot's membership joined as `m`.
 //
-// The electorate is active admins and members (see eligibleVoters; CONTEXT.md,
-// "Member count"), but membership moves underneath a vote: a member can vote
-// and then be demoted to follower, leave — LeaveNode sets status 'left' rather
-// than deleting the row — or be banned. Nothing purges their votes, and
-// deliberately so: the record of who voted is worth keeping. So the tally asks
-// who counts *now* instead of trusting that every membership path remembered to
-// clean up after itself. Every surface that counts ballots shares this
-// predicate, so the resolution math and the tally people read can't diverge.
-const countedBallot = `m.status = 'active' AND m.role IN ('admin','member')`
+// The electorate is active admins and members (see electorateMembership), but
+// membership moves underneath a vote: a member can vote and then be demoted to
+// follower, leave — LeaveNode sets status 'left' rather than deleting the row —
+// or be banned. Nothing purges their votes, and deliberately so: the record of
+// who voted is worth keeping. So the tally asks who counts *now* instead of
+// trusting that every membership path remembered to clean up after itself.
+// Every surface that counts ballots shares this predicate, so the resolution
+// math and the tally people read can't diverge.
+var countedBallot = electorateMembership("m.")
 
 // tallyProposal counts a proposal's approve/reject/abstain ballots, excluding
 // any cast by people the electorate no longer counts (see countedBallot).
@@ -393,15 +448,9 @@ func tallyProposal(db *database.DB, proposalID string) (approve, reject, abstain
 // proposals — active admins and members past the minimum voting tenure —
 // and, when the electorate is exactly one person, that voter's user ID.
 func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (int, string) {
-	query := `SELECT user_id FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin','member')`
-	args := []interface{}{nodeID}
-	if gc.MinVotingTenureDays > 0 {
-		// Stored timestamps are ISO 8601 with a 'T'; format the cutoff the
-		// same way so the string comparison stays chronological.
-		query += ` AND joined_at <= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', ?)`
-		args = append(args, fmt.Sprintf("-%d days", gc.MinVotingTenureDays))
-	}
-	rows, err := db.Query(query, args...)
+	cond, tenureArgs := electorateFilter("", gc)
+	args := append([]interface{}{nodeID}, tenureArgs...)
+	rows, err := db.Query(`SELECT user_id FROM memberships WHERE node_id = ? AND `+cond, args...)
 	if err != nil {
 		return 0, ""
 	}
@@ -695,9 +744,15 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Require the vote to come from someone the electorate counts — the
-		// same condition eligibleVoters applies, deliberately, so that who may
-		// vote and who is counted can never be two different sets.
+		var gcJSON string
+		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
+		var gc model.GovernanceConfig
+		json.Unmarshal([]byte(gcJSON), &gc)
+
+		// Require the vote to come from someone the electorate counts — role
+		// and tenure both, evaluated by the one condition eligibleVoters
+		// counts by, so that who may vote and who is counted can never be two
+		// different sets.
 		//
 		// This once called userHasMembership, which counts any active
 		// membership, so a follower could vote; following carries no voting
@@ -709,27 +764,9 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// authority reaching into an active patch for the far smaller matter
 		// of an event queue. A patch's vote is its own. An instance admin who
 		// is also a member votes as that member, like anyone else.
-		if !userHasNodeRole(db, user.ID, nodeID, "member", "admin") {
-			http.Error(w, `{"error":"must be member of node to vote"}`, http.StatusForbidden)
+		if denial := electorateDenial(db, user.ID, nodeID, gc); denial != "" {
+			http.Error(w, `{"error":"`+denial+`"}`, http.StatusForbidden)
 			return
-		}
-
-		// Tenure check from governance config
-		var gcJSON string
-		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
-		var gc model.GovernanceConfig
-		json.Unmarshal([]byte(gcJSON), &gc)
-
-		if gc.MinVotingTenureDays > 0 {
-			var joinedAt string
-			db.QueryRow("SELECT joined_at FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'", user.ID, nodeID).Scan(&joinedAt)
-			if joinedAt != "" {
-				joined, _ := time.Parse("2006-01-02T15:04:05.000Z", joinedAt)
-				if time.Since(joined) < time.Duration(gc.MinVotingTenureDays)*24*time.Hour {
-					http.Error(w, fmt.Sprintf(`{"error":"must be a member for at least %d days to vote"}`, gc.MinVotingTenureDays), http.StatusForbidden)
-					return
-				}
-			}
 		}
 
 		var req struct {
