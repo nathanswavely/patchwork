@@ -151,10 +151,14 @@ jobs:
         run: cd web && npx playwright test --config playwright.empty.config.js
 
   image:
-    # Publish to ghcr.io on pushes to main and version tags. Version tags are
-    # multi-arch (amd64 + arm64 for Raspberry Pi); main pushes are amd64 only,
-    # so :latest is amd64 — pull a version tag for arm64, or build from source
-    # (docker-compose.yaml does, which is the documented Pi path).
+    # Build each architecture on its own NATIVE runner, in parallel, pushing
+    # only a digest — no tag. The `manifest` job below assembles the tags.
+    #
+    # arm64 used to cross-build under QEMU on the amd64 runner and cost ~15min
+    # of every release; the whole rest of the pipeline is ~6min. A native arm64
+    # runner (free for public repos) removes the emulation instead of removing
+    # the architecture — "runs on a Raspberry Pi 4" is a promise this project
+    # makes, so the fix is to make multi-arch cheap, not optional.
     #
     # Hard-gated on the whole pipeline: nothing publishes — release tag or
     # :latest — unless unit suites, the recreate-survival smoke test, AND the
@@ -166,7 +170,18 @@ jobs:
     # Publishes on pushes and on manual runs (workflow_dispatch only fires
     # from main, so a manual run republishes :latest).
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    strategy:
+      # Both legs run to completion so a release failure reports every broken
+      # architecture at once. Nothing is tagged here, so a half-finished matrix
+      # publishes nothing — `manifest` needs every leg.
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
       packages: write
@@ -175,7 +190,101 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Tags are deliberately absent here — this job pushes by digest only.
+      # The action still supplies labels and annotations for the per-platform
+      # image, and `manifest` re-runs it to get the tag list.
+      - uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      # The binary's -X Version stamp used to come from `git describe` inside the
+      # Dockerfile, which silently degraded to a bare SHA: actions/checkout is
+      # shallow and fetches no tags, so main builds never saw one. Pass it in
+      # explicitly instead — the tag on a release, the full commit SHA otherwise.
+      - name: Resolve version stamp
+        id: version
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        id: build
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          build-args: |
+            VERSION=${{ steps.version.outputs.value }}
+          # push-by-digest: the registry gets the layers and a digest, but no
+          # tag moves. Until `manifest` runs, :latest and :X.Y.Z still point at
+          # the previous release — a failed build cannot leave a tag resolving
+          # for one architecture and 404ing for the other.
+          outputs: type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=true
+          # Carries org.opencontainers.image.revision, so `docker inspect` on the
+          # server answers "what commit is this?" without guessing.
+          labels: ${{ steps.meta.outputs.labels }}
+          # Full build provenance + SBOM. This project asks other communities to
+          # run its image; they should be able to audit what's in it.
+          provenance: mode=max
+          sbom: true
+          # Scoped per platform: one shared scope would have the two legs
+          # evicting each other's layers every run.
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+
+      # The digest travels to `manifest` as a FILENAME, so the `sha256:` prefix
+      # has to come off: artifact paths reject a colon (they must stay valid on
+      # Windows). The manifest job re-adds `@sha256:` when it assembles the list.
+      - name: Export digest
+        env:
+          digest: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p /tmp/digests
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Name the digest artifact after the platform
+        id: pair
+        run: echo "value=${platform//\//-}" >> "$GITHUB_OUTPUT"
+        env:
+          platform: ${{ matrix.platform }}
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: digest-${{ steps.pair.outputs.value }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  manifest:
+    # The only step that creates a tag. It runs once, after every architecture
+    # has pushed its digest, so `:X.Y.Z` appears complete or not at all — a Pi
+    # self-hoster never meets a tag that resolves for amd64 and 404s for arm64.
+    # The manifest digest is final at publish time, which is what deploy records
+    # and rollback points are pinned to.
+    needs: image
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: /tmp/digests
+          pattern: digest-*
+          merge-multiple: true
 
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
@@ -194,37 +303,16 @@ jobs:
             type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
 
-      # The binary's -X Version stamp used to come from `git describe` inside the
-      # Dockerfile, which silently degraded to a bare SHA: actions/checkout is
-      # shallow and fetches no tags, so main builds never saw one. Pass it in
-      # explicitly instead — the tag on a release, the full commit SHA otherwise.
-      - name: Resolve version stamp
-        id: version
+      - name: Create manifest list and push
+        working-directory: /tmp/digests
         run: |
-          if [ "${{ github.ref_type }}" = "tag" ]; then
-            echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=${{ github.sha }}" >> "$GITHUB_OUTPUT"
-          fi
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf 'ghcr.io/${{ github.repository }}@sha256:%s ' *)
 
-      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
-        with:
-          context: .
-          # arm64 (Raspberry Pi) builds under QEMU emulation and costs ~15min.
-          # It matters at release time, not per-merge: main pushes publish
-          # amd64 only; version tags publish the full multi-arch image.
-          platforms: ${{ startsWith(github.ref, 'refs/tags/') && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
-          push: true
-          build-args: |
-            VERSION=${{ steps.version.outputs.value }}
-          tags: ${{ steps.meta.outputs.tags }}
-          # Carries org.opencontainers.image.revision, so `docker inspect` on the
-          # server answers "what commit is this?" without guessing.
-          labels: ${{ steps.meta.outputs.labels }}
-          annotations: ${{ steps.meta.outputs.annotations }}
-          # Full build provenance + SBOM. This project asks other communities to
-          # run its image; they should be able to audit what's in it.
-          provenance: mode=max
-          sbom: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      # Proof, in the run log, that the published tag really carries both
+      # architectures — the thing this whole split exists to guarantee.
+      - name: Inspect published manifest
+        run: |
+          docker buildx imagetools inspect \
+            "ghcr.io/${{ github.repository }}:${{ steps.meta.outputs.version }}"

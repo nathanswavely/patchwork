@@ -3,6 +3,14 @@
 Date: 2026-07-19. Status: **proposed**, not implemented. Spiked and measured
 (see Evidence); the spike was reverted and nothing in the tree depends on it.
 
+> **Update 2026-07-26 (issue #77).** The CI cost described below has been
+> removed a different way: each architecture now builds on its own native
+> runner and the results are merged into one manifest, so no arm64 QEMU step
+> exists to pay for. The tag-gate this ADR calls a workaround is gone with it
+> — `:latest` is multi-arch again. That does not retire this ADR, but it does
+> retire its headline argument: dropping CGO now has to stand on toolchain
+> simplicity, not on build time.
+
 ## Context
 
 `github.com/mattn/go-sqlite3` compiles SQLite's C amalgamation, so the binary
