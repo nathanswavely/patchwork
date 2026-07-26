@@ -48,6 +48,14 @@ func Event(id string) string {
 	return "/events/" + id
 }
 
+// PatchGovernance is a patch's governance hub, where its rules are stated —
+// /patches/:slug/governance. Registered after the /governance/:id route in
+// App.svelte, so it is the bare path and nothing more: appending an id here
+// lands on a proposal, not on the hub.
+func PatchGovernance(slug string) string {
+	return Patch(slug) + "/governance"
+}
+
 // Proposal is a proposal's detail page — /patches/:slug/governance/:id.
 func Proposal(slug, proposalID string) string {
 	return Patch(slug) + "/governance/" + proposalID
