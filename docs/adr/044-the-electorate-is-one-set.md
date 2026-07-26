@@ -95,6 +95,11 @@ electorate were written in two places. Fixing the duplication is the
 load-bearing change, and the helper's fate can follow it. Left as
 follow-up rather than smuggled in here.
 
+> Done, once the duplication was fixed and `CreateProposal` stopped calling
+> it — see the third amendment below. Deferring was right: the helper turned
+> out to be wrong at a fourth door too, and deleting it early would have
+> renamed that bug rather than found it.
+
 **Amended 2026-07-26 — the nudge is a counting surface too.** The governance
 hub's "N proposals need your vote" counted every open proposal the viewer
 hadn't voted on, with no role or tenure condition at all: a fourth place the
@@ -131,9 +136,47 @@ carries `can_vote`, computed by `inElectorate`, and the page renders that
 answer rather than reconstructing one. Which surfaces gate is a UI question;
 who may vote is not.
 
-**Open, deliberately:** followers can still author proposals
-(`CreateProposal` admits any active membership), while the shipped
-Collaborative operating agreement says "Any member can propose changes
-to this operating agreement." That is a governance policy question — how
-open deliberation should be — not a defect in the tally, and it wants a
-decision rather than a patch.
+**Amended 2026-07-26 — the voter list is the record, not the tally.** The
+tally filter above was applied to the displayed voter list as well, which
+answered "does this ballot count" by erasing "was this ballot cast". It also
+broke direct-change detection: `ProposalDetail` reads an empty voter list as
+"no vote ever happened" to recognise a record born applied under admin-decides
+rules (docs/adr/041), and that inference is only sound while the list is
+complete. Filtered, a proposal that was genuinely voted on and passed would —
+once its voters had left or been demoted — render as one applied without a
+vote, and suppress its own vote history. A governance record must not describe
+a vote that happened as a vote that did not. The list is now every ballot, each
+carrying whether it counts; the counts stay filtered. The two legitimately
+disagree, and the list says which rows are which.
+
+**Amended 2026-07-26 — proposing is a member act, and the helper is gone.**
+The paragraph this replaces recorded followers authoring proposals as an open
+policy question. It is decided: they may not. The reasoning is the ladder
+rather than the act — a patch that wants open governance already has
+`membership_policy: "open"`, where joining makes you a member in one click, so
+the release valve is making the step cheap, not granting the rung below it the
+right. Someone who wants a hand in governance takes the step. This also puts
+the code back in agreement with the shipped Collaborative operating agreement
+("Any member can propose changes to this operating agreement"), which it had
+been contradicting. The gate was missing on three UI routes and on the server
+behind all of them; `mayPropose` now reads its role condition off
+`electorateMembership`, omitting the tenure clause, because a minimum *voting*
+tenure gates casting a ballot rather than raising the question.
+
+With that, `userHasMembership` had one caller left and is deleted. Four doors
+in a row were wrong because a helper that read as "is a member" admitted
+followers. `CreateComment` — the one governance act followers keep — now names
+them: `userHasNodeRole(…, "follower", "member", "admin")`. Same behaviour,
+stated. The rule that outlives all of this: a gate names the roles it admits.
+
+**Still open, deliberately.** Two questions this work surfaced and did not
+answer, recorded so they are not rediscovered as bugs:
+
+- `CreateComment` applies no `follower_permissions` check, so a follower on a
+  patch with `proposals: false` cannot see proposals but can still comment on
+  one through the API.
+- `CreateProposal` keeps the `user.Role == "admin"` bypass, so a follower
+  inside a patch may not propose while an instance admin outside it may. The
+  "speak, not decide" line above defends that; the ladder rationale arguably
+  reaches instance admins too. Both readings are honest and the tension is
+  real.
