@@ -58,6 +58,7 @@ several branches are in flight.
 | [012](012-leaving-is-a-member-right.md) | Leaving is a member right — personal export, member seamrip, moved-to pointer |
 | [025](025-global-patchwork-is-an-instance.md) | A global patchwork would be an instance, not a service |
 | [045](045-event-time-belongs-to-the-place.md) | Event time belongs to the place — per-event zone, inherited from the patch |
+| [049](049-patchwork-states-only-what-it-enforces.md) | Patchwork states only what it enforces — six inert governance fields *(the `max_admins` guard shipped; the surface pass is backlog)* |
 
 ## Proposed — designs on record, not built
 

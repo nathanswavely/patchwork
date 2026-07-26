@@ -10,6 +10,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -667,6 +668,33 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				if adminCount <= 1 {
 					http.Error(w, `{"error":"cannot demote the last admin"}`, http.StatusConflict)
 					return
+				}
+			}
+
+			// Seats are real (docs/adr/049). The governance overview renders
+			// "3 of 7 seats filled" from max_admins, and nothing enforced the
+			// denominator, so "9 of 7" was reachable. This is the only path
+			// that promotes an existing member — patch creation and claim
+			// completion each mint the *first* admin, which no positive cap
+			// can exclude.
+			//
+			// max_admins <= 0 means no cap, matching every read surface. A
+			// patch already over its cap is left alone rather than pruned:
+			// the guard refuses to add a seat, never takes one away, because
+			// removing an admin is not a side effect a settings value gets to
+			// have.
+			if newRole == "admin" && currentRole != "admin" {
+				var gcJSON string
+				db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
+				var gc model.GovernanceConfig
+				json.Unmarshal([]byte(gcJSON), &gc)
+				if gc.MaxAdmins > 0 {
+					var adminCount int
+					db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'", nodeID).Scan(&adminCount)
+					if adminCount >= gc.MaxAdmins {
+						http.Error(w, fmt.Sprintf(`{"error":"all %d admin seats are filled"}`, gc.MaxAdmins), http.StatusConflict)
+						return
+					}
 				}
 			}
 
