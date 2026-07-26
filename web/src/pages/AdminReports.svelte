@@ -4,6 +4,7 @@
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import { formatDay as formatDate } from '../lib/datetime.js';
 
   let reports = $state([]);
   let loading = $state(true);
@@ -86,10 +87,6 @@
     }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-  }
 </script>
 
 <div class="page-fade">

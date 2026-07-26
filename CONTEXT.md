@@ -117,6 +117,16 @@ never summed in anything user-facing.
 _Avoid_: community size (ambiguous), total members (when it includes
 followers)
 
+**Upcoming events**:
+A patch's events that have not yet started — the number the patch profile
+states. Distinct from **event count**, which is every active event a patch
+owns or is linked to, past and future, and is what the quilt tile and
+cross-quilt snapshots carry. The two are never labelled with each other's
+word. A capped page of rows is never the count: reading five rows and
+printing "5" is how a venue with forty shows came to advertise five.
+_Avoid_: events (when the number is upcoming-only), event count (that is
+the all-time number)
+
 **Tag**:
 A label a patch wears, chosen by that patch's admins — many per patch —
 from a single vocabulary curated by the instance admin. Patch admins pick
@@ -780,6 +790,19 @@ there. Backend column: `nodes.address`. The word `location` is reserved for
 an event's venue text (`events.location`) and never names this field.
 _Avoid_: location (it means the event field), place, venue (events have
 those), where
+
+**Location**:
+An event's venue in prose, written name-first — "The Selvage", or "Lanc
+Workshop & Tool Library, 433 Ice Avenue, Lancaster, PA". One free-text
+field, never parsed into parts and never geocoded; a map position is a
+separate act (`events.latitude`, `events.longitude`). Name-first is a
+contract, not a coincidence: every importer that assembles a location puts
+the venue ahead of the street, so a surface short on room truncates from
+the tail and still names the place (docs/adr/046). The patch's own prose
+field is **Address** above — the two never name each other. Backend
+column: `events.location`.
+_Avoid_: address (that is the patch's field), venue and address as two
+fields (it is one), place, where
 
 **Map location**:
 A patch's placed marker on the map — a numeric latitude/longitude pair a

@@ -4,6 +4,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import { loadMemberships } from '../stores/memberships.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import { formatDay as formatDate } from '../lib/datetime.js';
 
   let patches = $state([]);
   let loading = $state(true);
@@ -31,10 +32,6 @@
   let memberPatches = $derived(patches.filter(m => m.role === 'member'));
   let followerPatches = $derived(patches.filter(m => m.role === 'follower'));
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
 
   async function handleLeave(slug) {
     try {

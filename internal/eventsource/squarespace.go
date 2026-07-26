@@ -81,7 +81,10 @@ func ParseSquarespace(data []byte, now time.Time) ([]Item, error) {
 			}
 			seen[si.ID] = true
 
-			title := strings.TrimSpace(si.Title)
+			// Entities, same as the excerpt below: only stripHTML unescaped
+			// before, so a title kept its &amp; while its description lost
+			// one.
+			title := strings.TrimSpace(html.UnescapeString(si.Title))
 			if title == "" {
 				title = "(untitled)"
 			}
@@ -100,8 +103,12 @@ func ParseSquarespace(data []byte, now time.Time) ([]Item, error) {
 			// Squarespace ships a DEFAULT map position (lower Manhattan)
 			// even when no address was entered — location only counts
 			// when a human actually typed one.
-			addr := strings.TrimSpace(strings.Join(nonEmpty(
-				si.Location.AddressTitle, si.Location.AddressLine1, si.Location.AddressLine2), ", "))
+			// Entities here too — the address fields come out of the same
+			// CMS. Location is where it showed: it is name-first
+			// (docs/adr/046), so an entity sits in the half that survives
+			// truncation on a narrow row.
+			addr := strings.TrimSpace(html.UnescapeString(strings.Join(nonEmpty(
+				si.Location.AddressTitle, si.Location.AddressLine1, si.Location.AddressLine2), ", ")))
 			if addr != "" {
 				it.Location = addr
 				if si.Location.MarkerLat != 0 || si.Location.MarkerLng != 0 {

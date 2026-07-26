@@ -7,6 +7,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import EventLinks from '../components/EventLinks.svelte';
+  import { formatEventDateLong as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
 
   let { eventId = '' } = $props();
 
@@ -69,18 +70,6 @@
     } catch (e) {
       showToast(e.message || 'Failed to delete event', 'error');
     }
-  }
-
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', {
-      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-    });
-  }
-
-  function formatTime(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   }
 
   let timeLabel = $derived.by(() => {

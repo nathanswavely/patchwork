@@ -2,6 +2,7 @@
   import { api } from '../lib/api.js';
   import { showToast } from '../stores/toast.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
+  import { formatDay as formatDate } from '../lib/datetime.js';
 
   let claims = $state([]);
   let loading = $state(true);
@@ -33,10 +34,6 @@
     }
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
 </script>
 
 <div class="page-fade">

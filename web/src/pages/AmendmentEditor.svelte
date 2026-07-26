@@ -5,6 +5,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import DiffView from '../components/DiffView.svelte';
   import Skeleton from '../components/Skeleton.svelte';
+  import { formatRelative } from '../lib/datetime.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -142,18 +143,6 @@
     }
   }
 
-  function formatTime(ts) {
-    if (!ts) return '';
-    const d = new Date(ts);
-    const now = new Date();
-    const diffMs = now - d;
-    const mins = Math.floor(diffMs / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    return d.toLocaleDateString();
-  }
 </script>
 
 <div class="amendment-editor page-fade">
@@ -177,7 +166,7 @@
 
       {#if draftRestored}
         <div class="draft-banner">
-          <span>Restored unsaved changes from {formatTime(draftTimestamp)}</span>
+          <span>Restored unsaved changes from {formatRelative(draftTimestamp)}</span>
           <div class="draft-actions">
             <button class="btn-link" onclick={dismissDraft}>Dismiss</button>
             <button class="btn-link danger" onclick={discardDraft}>Discard changes</button>
