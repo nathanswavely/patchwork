@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 )
 
 func submissionsCfg(enabled bool) *config.Config {
@@ -367,4 +369,72 @@ func TestClaimMovesQueueToNewAdmins(t *testing.T) {
 
 func bodyContains(body []byte, s string) bool {
 	return strings.Contains(string(body), s)
+}
+
+// countNotifications waits for the handler's fire-and-forget notify goroutine
+// before counting: it polls up to want, or — when want is zero and there is
+// nothing to poll for — lets the goroutine settle first, so a zero is a real
+// zero rather than a race.
+func countNotifications(t *testing.T, db *database.DB, userID string, typ notifications.NotificationType, want int) int {
+	t.Helper()
+	if want == 0 {
+		time.Sleep(250 * time.Millisecond)
+	}
+	deadline := time.Now().Add(2 * time.Second)
+	var n int
+	for {
+		db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = ?",
+			userID, string(typ)).Scan(&n)
+		if n >= want || time.Now().After(deadline) {
+			return n
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+// A review queue reports its own state, so the admin queue types reach their
+// actor too — otherwise a lone site admin's own submission notified nobody at
+// all. Every other type still skips the person who caused it.
+func TestAdminQueueNotificationsReachTheirActor(t *testing.T) {
+	db := setupTestDB(t)
+	handler.SetNotifier(notifications.NewNotifier(db))
+	t.Cleanup(func() { handler.SetNotifier(nil) })
+
+	cfg := submissionsCfg(true)
+	soloAdmin, soloAdminToken := createTestUser(t, db, "soloadmin", "admin")
+	otherAdmin, _ := createTestUser(t, db, "otheradmin", "admin")
+	stranger, strangerToken := createTestUser(t, db, "passerby", "member")
+
+	// A site admin submits a patch: the queue notification reaches them.
+	r := authedRequest("POST", "/api/v1/submissions", map[string]string{"name": "Self Submitted"}, soloAdminToken)
+	if w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r); w.Code != 201 {
+		t.Fatalf("admin self-submit: code=%d body=%s", w.Code, w.Body.String())
+	}
+	if n := countNotifications(t, db, soloAdmin.ID, notifications.AdminSubmission, 1); n != 1 {
+		t.Errorf("submitting admin's own queue notification: got %d, want 1", n)
+	}
+	if n := countNotifications(t, db, otherAdmin.ID, notifications.AdminSubmission, 1); n != 1 {
+		t.Errorf("other site admin: got %d, want 1", n)
+	}
+
+	// An event submitted to an unclaimed patch routes the same way.
+	unclaimedID := createTestNode(t, db, soloAdmin.ID, "Spark Hall", "spark-hall-q", "open")
+	makeUnclaimed(t, db, unclaimedID)
+	if _, code := createEventVia(t, db, cfg, strangerToken, eventBody(unclaimedID, "Basement Show")); code != 201 {
+		t.Fatalf("stranger event submit: code=%d", code)
+	}
+	if n := countNotifications(t, db, soloAdmin.ID, notifications.AdminEventSubmission, 1); n != 1 {
+		t.Errorf("site admin event queue: got %d, want 1", n)
+	}
+
+	// A patch-level suggestion still skips its own author, and members hear
+	// nothing about events they posted themselves.
+	activeID := createTestNode(t, db, stranger.ID, "Gallery Row", "gallery-row-q", "open")
+	createTestMembership(t, db, stranger.ID, activeID, "admin", "active")
+	if _, code := createEventVia(t, db, cfg, strangerToken, eventBody(activeID, "Members Night")); code != 201 {
+		t.Fatalf("member's own event: code=%d", code)
+	}
+	if n := countNotifications(t, db, stranger.ID, notifications.EventCreated, 0); n != 0 {
+		t.Errorf("member notified about their own event: got %d, want 0", n)
+	}
 }
