@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { toLocalInputValue, fromLocalInputValue } from '../lib/datetime.js';
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import VocabLabel from '../components/VocabLabel.svelte';
   import { showToast } from '../stores/toast.svelte.js';
@@ -52,8 +53,8 @@
       description = event.description || '';
       nodeId = event.node_id || '';
       location = event.location || '';
-      startsAt = event.starts_at ? event.starts_at.slice(0, 16) : '';
-      endsAt = event.ends_at ? event.ends_at.slice(0, 16) : '';
+      startsAt = toLocalInputValue(event.starts_at);
+      endsAt = toLocalInputValue(event.ends_at);
       recurrence = event.recurrence || '';
       eventNodeStatus = event.node_status || '';
       myNodes = nodesData.items || nodesData || [];
@@ -120,8 +121,8 @@
         description: description.trim() || undefined,
         node_id: nodeId,
         location: location.trim() || undefined,
-        starts_at: new Date(startsAt).toISOString(),
-        ends_at: endsAt ? new Date(endsAt).toISOString() : undefined,
+        starts_at: fromLocalInputValue(startsAt),
+        ends_at: fromLocalInputValue(endsAt),
         recurrence: recurrence || undefined,
       };
       if (isEdit) {
