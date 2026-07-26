@@ -243,10 +243,15 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.platform }}
           cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
 
+      # The digest travels to `manifest` as a FILENAME, so the `sha256:` prefix
+      # has to come off: artifact paths reject a colon (they must stay valid on
+      # Windows). The manifest job re-adds `@sha256:` when it assembles the list.
       - name: Export digest
+        env:
+          digest: ${{ steps.build.outputs.digest }}
         run: |
           mkdir -p /tmp/digests
-          touch "/tmp/digests/${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
 
       - name: Name the digest artifact after the platform
         id: pair
