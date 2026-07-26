@@ -95,6 +95,19 @@ electorate were written in two places. Fixing the duplication is the
 load-bearing change, and the helper's fate can follow it. Left as
 follow-up rather than smuggled in here.
 
+**Amended 2026-07-26 — the nudge is a counting surface too.** The governance
+hub's "N proposals need your vote" counted every open proposal the viewer
+hadn't voted on, with no role or tenure condition at all: a fourth place the
+electorate was described, and the one people actually read. Closing the vote
+gate turned it into a visible dead end — a follower was told two proposals
+needed their vote and the server answered 403 — and a member short of
+`min_voting_tenure_days` got the same round trip. Rather than write the
+condition a fourth time, it now comes from `electorateFilter`, the single
+fragment `eligibleVoters`, `countedBallot`, the vote gate, and the count are
+all built from; the gate's tenure check, which had been its own Go-side date
+parse, is the same fragment now as well. Asking someone to vote is part of the
+same arithmetic as counting them.
+
 **Open, deliberately:** followers can still author proposals
 (`CreateProposal` admits any active membership), while the shipped
 Collaborative operating agreement says "Any member can propose changes
