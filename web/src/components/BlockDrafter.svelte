@@ -14,7 +14,13 @@
 
   // draft: {grid, seams, colors} in quarter-cell units (docs/adr/029).
   // bundle: 1-6 hex fabrics off the wall; slot 0 is the identity color.
-  let { draft = $bindable(), bundle = $bindable() } = $props();
+  // previewLabel: where the small preview is showing the block — a tile on
+  // the quilt, or the quilt's own icon in the switcher (docs/adr/042).
+  let {
+    draft = $bindable(),
+    bundle = $bindable(),
+    previewLabel = 'at quilt size',
+  } = $props();
 
   const CANVAS = 336;
 
@@ -228,10 +234,10 @@
 
     <div class="drafter-side">
       <div class="mini-preview">
-        <svg viewBox="0 0 {CANVAS} {CANVAS}" width="40" height="40" role="img" aria-label="Tile at quilt size">
+        <svg viewBox="0 0 {CANVAS} {CANVAS}" width="40" height="40" role="img" aria-label="Block {previewLabel}">
           {@render pieces(false)}
         </svg>
-        <span class="muted">at quilt size</span>
+        <span class="muted">{previewLabel}</span>
       </div>
 
       <BundlePicker

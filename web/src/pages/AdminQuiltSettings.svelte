@@ -5,11 +5,14 @@
    * zone. Deployment concerns (domain, SMTP, federation) stay in
    * patchwork.yaml and are shown read-only here.
    */
+  import * as d3 from 'd3';
   import { api } from '../lib/api.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import PasskeyNotice from '../components/PasskeyNotice.svelte';
   import { showToast } from '../stores/toast.svelte.js';
   import { applyIdentityChange } from '../stores/quilt.svelte.js';
+  import { renderDraftBlock } from '../lib/quiltBlocks.js';
+  import BlockDrafter from '../components/BlockDrafter.svelte';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
 
@@ -38,11 +41,25 @@
   }
   let savingIdentity = $state(false);
 
-  // Icon
-  let iconBust = $state(0);
-  let uploading = $state(false);
-  let iconError = $state('');
-  let fileInput = $state(null);
+  // Icon (docs/adr/042): drafted in the block drafter, like a patch tile.
+  let iconDraft = $state({ grid: 3, seams: [], colors: {} });
+  let iconBundle = $state(['#039BE6', '#F2EEE4']);
+  let iconSeed = $state('');
+  let savingIcon = $state(false);
+
+  let iconDirty = $derived(JSON.stringify(currentIconDesign()) !== iconSeed);
+
+  function currentIconDesign() {
+    return { block: iconDraft, bundle: iconBundle };
+  }
+
+  // JSON round-trip, not structuredClone: what comes back from the API is
+  // already wrapped in state proxies, which structuredClone refuses.
+  function seedIcon(icon) {
+    iconDraft = JSON.parse(JSON.stringify({ grid: 3, seams: [], colors: {}, ...(icon?.design?.block || {}) }));
+    if (icon?.design?.bundle?.length) iconBundle = [...icon.design.bundle];
+    iconSeed = JSON.stringify(currentIconDesign());
+  }
 
   // Danger zone
   let confirmName = $state('');
@@ -54,8 +71,6 @@
   // finding out at the moment they are trying to get their data out.
   let hasPasskey = $state(true);
   let exporting = $state(false);
-
-  let iconSrc = $derived(`/api/v1/instance/icon${iconBust ? `?t=${iconBust}` : ''}`);
 
   $effect(() => {
     load();
@@ -70,6 +85,7 @@
       name = data.name;
       description = data.description;
       hideAmendedLinings = !!data.hide_amended_linings;
+      seedIcon(data.icon);
     } catch (e) {
       error = e.message;
     }
@@ -92,99 +108,72 @@
     savingIdentity = false;
   }
 
-  function checkImageDimensions(file) {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        resolve({ width: img.naturalWidth, height: img.naturalHeight });
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Could not read the image.'));
-      };
-      img.src = url;
-    });
+  // The fabrics the icon draws with. Slot zero is the quilt's own color;
+  // the last fabric is the ground, matching what the server renders.
+  let iconPalette = $derived.by(() => {
+    const b = iconBundle.length ? iconBundle : ['#039BE6', '#F2EEE4'];
+    return { primary: b[0], secondary: b[1] || b[0], bg: b[b.length - 1], slots: [...b] };
+  });
+
+  const ICON_PREVIEW = 64;
+  const STARTER_THUMB = 44;
+
+  let previewEl = $state(null);
+  let starterEls = $state({});
+
+  function drawIcon(svgEl, size, block, palette) {
+    const svg = d3.select(svgEl);
+    svg.selectAll('*').remove();
+    renderDraftBlock(svg.append('g'), size, block, palette);
   }
 
-  async function handleFile(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    iconError = '';
+  $effect(() => {
+    if (!previewEl) return;
+    void JSON.stringify(iconDraft);
+    void iconPalette;
+    drawIcon(previewEl, ICON_PREVIEW, iconDraft, iconPalette);
+  });
 
-    const c = data.icon_constraints;
-    if (!c.formats.includes(file.type)) {
-      iconError = 'Icon must be a PNG or JPEG image.';
-      return;
+  $effect(() => {
+    const p = iconPalette;
+    for (const s of data?.icon_starters || []) {
+      if (starterEls[s.key]) drawIcon(starterEls[s.key], STARTER_THUMB, s.block, p);
     }
-    if (file.size > c.max_bytes) {
-      iconError = `Icon must be ${Math.round(c.max_bytes / 1024)} KB or smaller.`;
-      return;
-    }
-    try {
-      const { width, height } = await checkImageDimensions(file);
-      if (width !== height) {
-        iconError = `Icon must be square (this one is ${width}×${height}).`;
-        return;
-      }
-      if (width < c.min_px || width > c.max_px) {
-        iconError = `Icon must be between ${c.min_px} and ${c.max_px} pixels.`;
-        return;
-      }
-    } catch (err) {
-      iconError = err.message;
-      return;
-    }
+  });
 
-    uploading = true;
-    try {
-      const res = await fetch('/api/v1/admin/settings/icon', {
-        method: 'PUT',
-        headers: { 'Content-Type': file.type, 'X-Patchwork-Request': 'true' },
-        body: file,
-        credentials: 'same-origin',
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error || `Upload failed (${res.status})`);
-      }
-      data = { ...data, icon: { kind: 'upload', mime: file.type } };
-      iconBust = Date.now();
-      applyIdentityChange();
-      showToast('Quilt icon updated', 'success');
-    } catch (err) {
-      iconError = err.message;
-    }
-    uploading = false;
-    if (fileInput) fileInput.value = '';
+  function startFrom(starter) {
+    iconDraft = JSON.parse(JSON.stringify({ seams: [], colors: {}, ...starter.block }));
   }
 
-  async function removeUpload() {
-    try {
-      await api('admin/settings/icon', { method: 'DELETE' });
-      await load();
-      iconBust = Date.now();
-      applyIdentityChange();
-      showToast('Uploaded icon removed', 'info');
-    } catch (e) {
-      showToast(e.message || 'Failed to remove icon', 'error');
-    }
-  }
-
-  async function chooseDefault(key) {
+  async function saveIcon() {
+    savingIcon = true;
     try {
       const res = await api('admin/settings', {
         method: 'PATCH',
-        body: { icon_default: key },
+        body: { icon_design: currentIconDesign() },
       });
       data = { ...data, icon: res.icon };
-      iconBust = Date.now();
+      iconSeed = JSON.stringify(currentIconDesign());
       applyIdentityChange();
-      showToast('Default icon chosen', 'success');
+      showToast('Quilt icon saved', 'success');
     } catch (e) {
-      showToast(e.message || 'Failed to set icon', 'error');
+      showToast(e.message || 'Failed to save the icon', 'error');
     }
+    savingIcon = false;
+  }
+
+  async function resetIcon() {
+    savingIcon = true;
+    try {
+      const res = await api('admin/settings', { method: 'PATCH', body: { icon_design: null } });
+      data = { ...data, icon: res.icon };
+      seedIcon(res.icon);
+      applyIdentityChange();
+      showToast('Quilt icon reset', 'info');
+    } catch (e) {
+      showToast(e.message || 'Failed to reset the icon', 'error');
+    }
+    savingIcon = false;
   }
 
   /**
@@ -284,57 +273,61 @@
       <div class="settings-card">
         <p class="section-desc">
           Represents this quilt in the quilt switcher and in other people's Connected Quilts.
-          Square PNG or JPEG, {data.icon_constraints.min_px}&ndash;{data.icon_constraints.max_px} px,
-          up to {Math.round(data.icon_constraints.max_bytes / 1024)} KB. 256&times;256 is plenty. It's shown small.
+          Draft it here, in the same drafter patches use for their tiles.
         </p>
 
         <div class="icon-current">
-          <img class="icon-preview" src={iconSrc} alt="Current quilt icon" width="64" height="64" />
+          <svg
+            bind:this={previewEl}
+            class="icon-preview"
+            viewBox="0 0 {ICON_PREVIEW} {ICON_PREVIEW}"
+            width={ICON_PREVIEW}
+            height={ICON_PREVIEW}
+            role="img"
+            aria-label="Quilt icon preview"
+          ></svg>
           <div class="icon-meta">
-            {#if data.icon.kind === 'upload'}
-              <span class="icon-kind">Uploaded image</span>
-              <button class="btn btn-secondary btn-sm" onclick={removeUpload}>Remove upload</button>
-            {:else if data.icon.chosen}
-              <span class="icon-kind">Default block: {data.icon.default_key}</span>
-            {:else}
-              <span class="icon-kind">Assigned block: {data.icon.default_key} (pick one below or upload your own)</span>
-            {/if}
+            <span class="icon-kind">
+              {#if data.icon.chosen}
+                Drafted for this quilt.
+              {:else}
+                Assigned from the quilt's name. Draft your own below.
+              {/if}
+            </span>
+            <div class="icon-actions">
+              <button class="btn btn-primary btn-sm" onclick={saveIcon} disabled={savingIcon || !iconDirty}>
+                {savingIcon ? 'Saving…' : 'Save icon'}
+              </button>
+              {#if data.icon.chosen}
+                <button class="btn btn-secondary btn-sm" onclick={resetIcon} disabled={savingIcon}>
+                  Reset icon
+                </button>
+              {/if}
+            </div>
           </div>
         </div>
 
-        <div class="icon-upload">
-          <label class="btn btn-secondary upload-btn" class:disabled={uploading}>
-            {uploading ? 'Uploading…' : 'Upload icon…'}
-            <input
-              bind:this={fileInput}
-              type="file"
-              accept="image/png,image/jpeg"
-              onchange={handleFile}
-              disabled={uploading}
-              hidden
-            />
-          </label>
-          {#if iconError}
-            <span class="error-text">{iconError}</span>
-          {/if}
-        </div>
-
-        <div class="default-picker">
-          <span class="field-label">Or choose a default block</span>
-          <div class="default-grid">
-            {#each data.default_icons as key (key)}
-              <button
-                class="default-option"
-                class:active={data.icon.kind === 'default' && data.icon.default_key === key}
-                onclick={() => chooseDefault(key)}
-                title={key}
-              >
-                <img src={`/api/v1/instance/icon?block=${key}`} alt={key} width="48" height="48" />
-                <span class="default-name">{key}</span>
+        <div class="starter-picker">
+          <span class="field-label">Start from a block</span>
+          <div class="starter-grid">
+            {#each data.icon_starters as starter (starter.key)}
+              <button class="starter-option" onclick={() => startFrom(starter)} title={starter.name}>
+                <svg
+                  bind:this={starterEls[starter.key]}
+                  viewBox="0 0 {STARTER_THUMB} {STARTER_THUMB}"
+                  width={STARTER_THUMB}
+                  height={STARTER_THUMB}
+                  role="img"
+                  aria-label={starter.name}
+                ></svg>
+                <span class="starter-name">{starter.name}</span>
               </button>
             {/each}
           </div>
+          <span class="field-hint">Starting over replaces what's on the canvas. Nothing is saved until you save.</span>
         </div>
+
+        <BlockDrafter bind:draft={iconDraft} bind:bundle={iconBundle} previewLabel="in the switcher" />
       </div>
     </section>
 
@@ -496,19 +489,17 @@
   }
 
   .icon-preview {
-    width: 64px;
-    height: 64px;
-    border: 1px solid var(--color-border);
-    background: var(--color-bg);
-    object-fit: cover;
+    border: 2px solid var(--lt-thread, var(--color-border));
+    border-radius: 4px;
     flex-shrink: 0;
+    display: block;
   }
 
   .icon-meta {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
   .icon-kind {
@@ -516,40 +507,25 @@
     color: var(--color-text-muted);
   }
 
-  .icon-upload {
+  .icon-actions {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
 
-  .upload-btn {
-    cursor: pointer;
-  }
-
-  .upload-btn.disabled {
-    opacity: 0.6;
-    pointer-events: none;
-  }
-
-  .error-text {
-    color: var(--color-error);
-    font-size: 0.82rem;
-  }
-
-  .default-picker {
+  .starter-picker {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .default-grid {
+  .starter-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
     gap: 0.5rem;
   }
 
-  .default-option {
+  .starter-option {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -562,21 +538,15 @@
     transition: border-color 120ms ease;
   }
 
-  .default-option:hover {
+  .starter-option:hover {
     border-color: var(--color-primary);
   }
 
-  .default-option.active {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 1px var(--color-primary);
+  .starter-option svg {
+    border-radius: 2px;
   }
 
-  .default-option img {
-    width: 48px;
-    height: 48px;
-  }
-
-  .default-name {
+  .starter-name {
     font-size: 0.7rem;
     color: var(--color-text-muted);
     word-break: break-word;

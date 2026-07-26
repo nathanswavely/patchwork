@@ -428,8 +428,6 @@ func main() {
 
 	mux.HandleFunc("GET /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminGetSettings(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminUpdateSettings(db, cfg)))
-	mux.HandleFunc("PUT /api/v1/admin/settings/icon", middleware.AdminRequired(db, handler.AdminUploadIcon(db)))
-	mux.HandleFunc("DELETE /api/v1/admin/settings/icon", middleware.AdminRequired(db, handler.AdminDeleteIcon(db)))
 	mux.HandleFunc("GET /api/v1/admin/legal", middleware.AdminRequired(db, handler.AdminGetLegal(db, cfg)))
 	mux.HandleFunc("PUT /api/v1/admin/legal/{doc}", middleware.AdminRequired(db, handler.AdminUpdateLegal(db)))
 	mux.HandleFunc("DELETE /api/v1/admin/legal/{doc}", middleware.AdminRequired(db, handler.AdminResetLegal(db)))

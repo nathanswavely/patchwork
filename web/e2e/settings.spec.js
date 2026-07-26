@@ -115,6 +115,55 @@ test.describe('Admin — Pages Load', () => {
   }
 });
 
+/**
+ * OWNS: the instance's icon design (instance_settings.icon_design). The
+ * test drafts one and resets it in the same run, so every other spec
+ * still sees the starter block assigned from the quilt's name. No other
+ * spec may assert on the quilt icon.
+ */
+test.describe('Admin — Quilt Icon Designer', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsAdmin(page);
+  });
+
+  test('drafts the quilt icon from a starter block and resets it', async ({ page }) => {
+    await goto(page, '/admin/quilt');
+    await expectNoError(page);
+
+    // No upload path survives (docs/adr/042).
+    await expect(page.locator('input[type="file"]')).toHaveCount(0);
+
+    const preview = page.locator('.icon-preview');
+    await expect(preview).toBeVisible();
+    await expect(preview.locator('polygon').first()).toBeVisible();
+    await expect(page.locator('.starter-option')).not.toHaveCount(0);
+    await expect(page.locator('.drafter-canvas')).toBeVisible();
+
+    const servedBefore = await page.evaluate(() =>
+      fetch('/api/v1/instance/icon?e2e=' + Date.now()).then((r) => r.text()));
+
+    // Nothing to save until something changes.
+    const save = page.getByRole('button', { name: /Save icon/ });
+    await expect(save).toBeDisabled();
+
+    await page.locator('.starter-option', { hasText: 'Flying Geese' }).click();
+    await expect(save).toBeEnabled();
+    await save.click();
+
+    await expect(page.locator('.icon-kind')).toContainText('Drafted for this quilt');
+    const servedAfter = await page.evaluate(() =>
+      fetch('/api/v1/instance/icon?e2e=' + Date.now()).then((r) => r.text()));
+    expect(servedAfter).not.toBe(servedBefore);
+    expect(servedAfter).toContain('<polygon');
+
+    await page.getByRole('button', { name: 'Reset icon' }).click();
+    await expect(page.locator('.icon-kind')).toContainText('Assigned from the quilt');
+    const servedReset = await page.evaluate(() =>
+      fetch('/api/v1/instance/icon?e2e=' + Date.now()).then((r) => r.text()));
+    expect(servedReset).toBe(servedBefore);
+  });
+});
+
 test.describe('Admin — Non-Admin Access', () => {
   test('non-admin user cannot access admin pages', async ({ page }) => {
     await loginAs(page, 'active');
