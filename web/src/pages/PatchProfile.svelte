@@ -240,7 +240,34 @@
       />
     </div>
 
-    <!-- Glimpses: one per room, each its own door -->
+    <!-- Glimpses: one per room, each its own door.
+         About sits first: it says what this patch *is*, and the events
+         under it read differently once you know. ADR 042 originally led
+         with Events on the argument that a stranger off a flyer wants
+         what's on tonight — About is short enough (a link or two and a
+         line of address) that it costs almost no scroll to answer "what
+         am I looking at" first. -->
+    {#if showAbout}
+      <section class="profile-section">
+        <h3 class="section-title static">About</h3>
+        {#if node.website}
+          <a href={node.website} class="about-link" target="_blank" rel="noopener">{extractDomain(node.website)}</a>
+        {/if}
+        {#if node.links && node.links.length > 0}
+          <div class="link-list">
+            {#each node.links as link}
+              <a href={link.url} class="about-link" target="_blank" rel="noopener">
+                {link.label || extractDomain(link.url)}
+              </a>
+            {/each}
+          </div>
+        {/if}
+        {#if node.address}
+          <p class="about-address muted">{node.address}</p>
+        {/if}
+      </section>
+    {/if}
+
     {#if showEvents}
       <section class="profile-section">
         <div class="section-head">
@@ -285,27 +312,6 @@
           </div>
         {:else}
           <p class="glimpse-empty muted">No upcoming events.</p>
-        {/if}
-      </section>
-    {/if}
-
-    {#if showAbout}
-      <section class="profile-section">
-        <h3 class="section-title static">About</h3>
-        {#if node.website}
-          <a href={node.website} class="about-link" target="_blank" rel="noopener">{extractDomain(node.website)}</a>
-        {/if}
-        {#if node.links && node.links.length > 0}
-          <div class="link-list">
-            {#each node.links as link}
-              <a href={link.url} class="about-link" target="_blank" rel="noopener">
-                {link.label || extractDomain(link.url)}
-              </a>
-            {/each}
-          </div>
-        {/if}
-        {#if node.address}
-          <p class="about-address muted">{node.address}</p>
         {/if}
       </section>
     {/if}

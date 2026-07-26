@@ -73,6 +73,26 @@ We decided:
   the workspace's root for members. The two orders serve different
   audiences: a flyer's QR code lands a stranger here, and what a stranger
   wants first is what is happening and where it is.
+
+  > **Revised: the order is now about, events, members, governance.** What
+  > the original order cost was context — a stranger read a list of event
+  > titles before learning whose events they were, which is the one thing
+  > About answers in two links and a line of address.
+  >
+  > The cost is real and worth stating plainly, because the reasoning above
+  > predicted it: on a phone this pushes the Events heading just past the
+  > fold (measured at 829px against an 812px viewport, the first event row
+  > at 881px), where before it opened around 628px. On desktop Events still
+  > opens well above the fold. So the trade is one flick of scroll on
+  > mobile in exchange for knowing whose calendar you are reading — taken
+  > deliberately, not because the conflict was imagined.
+  >
+  > The glance principle stands and the workspace's order is still
+  > deliberately different. If the mobile fold turns out to matter more
+  > than the context does, the fix is to shorten what sits *above* both
+  > sections — the cover band and the description — rather than to swap
+  > these two back.
+
   A glimpse renders when the viewer may **enter that
   room or act in it**, collapsing only when the room is both empty and
   inert for that viewer — otherwise a brand-new patch renders zero doors
