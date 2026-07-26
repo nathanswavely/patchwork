@@ -113,6 +113,19 @@ describe('the event row stacks instead of clipping', () => {
     expect(src).not.toMatch(/\.event-name,\s*\n?\s*\.row-title/);
   });
 
+  // The glimpse order is an ADR 042 decision (revised: about before
+  // events), and nothing pinned it, so it could drift from the record
+  // silently. Leading with About gives the event titles below it an owner,
+  // at the cost of one flick of scroll on a phone — a trade taken
+  // deliberately, see the revision note in ADR 042.
+  it('puts About above Events', () => {
+    const about = src.indexOf('{#if showAbout}');
+    const events = src.indexOf('{#if showEvents}');
+    expect(about).toBeGreaterThan(-1);
+    expect(events).toBeGreaterThan(-1);
+    expect(about).toBeLessThan(events);
+  });
+
   it('shows three events, not the five it used to fetch', () => {
     expect(src).toMatch(/GLIMPSE_EVENTS\s*=\s*3/);
     expect(src).toMatch(/limit=\$\{GLIMPSE_EVENTS\}/);
