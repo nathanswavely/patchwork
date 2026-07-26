@@ -184,6 +184,7 @@ Key endpoints:
 - `POST /api/v1/nodes/{slug}/join` — join or follow a patch (body: `{"role": "follower"}` for follow)
 - `GET /api/v1/users/{username}` — public user profile (visible memberships only)
 - `PATCH /api/v1/users/me/memberships/{nodeId}` — flip a membership's visibility switch
+- `GET /api/v1/events` — **omitting `from` means upcoming.** The list sorts `starts_at` ascending, so an unbounded list would be a patch's *oldest* events; three surfaces headed "upcoming events" shipped that bug at once. Pass `include_past=true` for the whole calendar (workspace calendar, scoped search, "any events yet" probes). An explicit `from` always wins, including one in the past. Date-only `from`/`to` are widened to the instants they mean, in UTC (docs/adr/045)
 - `POST /api/v1/events` — members/admins post directly; anyone else submits for review (`status: pending_review`) per docs/adr/026; trusted contributors (users flag) post directly to unclaimed patches
 - `PATCH /api/v1/events/{id}/review` — approve/reject an event submission (instance admin for unclaimed patches, patch admins for active)
 - `GET /api/v1/admin/event-submissions`, `GET /api/v1/nodes/{slug}/event-submissions` — the two review queues

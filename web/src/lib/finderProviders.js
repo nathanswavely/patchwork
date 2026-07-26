@@ -22,7 +22,9 @@ export function workspaceFinderProvider(slug) {
     const [proposals, docs, events, members] = await Promise.all([
       api(`nodes/${slug}/proposals`).catch(() => null),
       api(`nodes/${slug}/governance`).catch(() => null),
-      api(`events?node_slug=${encodeURIComponent(slug)}`).catch(() => null),
+      // Searching a patch should reach what already happened — you look up
+      // last month's show by name as readily as next month's.
+      api(`events?node_slug=${encodeURIComponent(slug)}&include_past=true`).catch(() => null),
       api(`nodes/${slug}/members`).catch(() => null),
     ]);
 
