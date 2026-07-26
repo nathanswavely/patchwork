@@ -7,7 +7,11 @@
   import { getRemoteFollows } from '../stores/multiQuilt.svelte.js';
   import { sortByDate } from '../lib/multiQuilt.js';
   import { textMatches } from '../lib/textMatch.js';
-  import { formatEventDate as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
+  import {
+    formatEventDate as formatDate,
+    formatEventTime as formatTime,
+    eventDateRange,
+  } from '../lib/datetime.js';
 
   let { quiltScope = 'local' } = $props();
 
@@ -24,47 +28,10 @@
   let customTo = $state('');
   let showCustomPicker = $state(false);
 
-  // Compute date range from preset
-  function getDateRange(preset) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const fmt = (d) => d.toISOString().slice(0, 10);
-
-    switch (preset) {
-      case 'today':
-        return { from: fmt(today), to: fmt(today) };
-      case 'tomorrow': {
-        const tom = new Date(today); tom.setDate(tom.getDate() + 1);
-        return { from: fmt(tom), to: fmt(tom) };
-      }
-      case 'weekend': {
-        const day = today.getDay();
-        const sat = new Date(today); sat.setDate(sat.getDate() + (6 - day));
-        const sun = new Date(sat); sun.setDate(sun.getDate() + 1);
-        return { from: fmt(sat), to: fmt(sun) };
-      }
-      case 'week': {
-        const end = new Date(today); end.setDate(end.getDate() + (6 - today.getDay()));
-        return { from: fmt(today), to: fmt(end) };
-      }
-      case 'nextweek': {
-        const day = today.getDay();
-        const nextMon = new Date(today); nextMon.setDate(nextMon.getDate() + (8 - day));
-        const nextSun = new Date(nextMon); nextSun.setDate(nextSun.getDate() + 6);
-        return { from: fmt(nextMon), to: fmt(nextSun) };
-      }
-      case 'month': {
-        const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        return { from: fmt(today), to: fmt(end) };
-      }
-      case 'custom':
-        return { from: customFrom || fmt(today), to: customTo || '' };
-      default: // 'any'
-        return { from: fmt(today), to: '' };
-    }
-  }
-
-  let dateRange = $derived(getDateRange(datePreset));
+  // The bounds are instants, not bare dates — see eventDateRange. They also
+  // travel to other quilts on the My Quilt path below, where a date string
+  // would have meant that reader's day rather than this one's.
+  let dateRange = $derived(eventDateRange(datePreset, { customFrom, customTo }));
 
   let dateLabel = $derived.by(() => {
     if (datePreset === 'any') return 'Any date';
@@ -113,8 +80,8 @@
     loading = true;
     try {
       const { from, to } = dateRange;
-      let params = `?from=${from}&limit=50`;
-      if (to) params += `&to=${to}`;
+      let params = `?from=${encodeURIComponent(from)}&limit=50`;
+      if (to) params += `&to=${encodeURIComponent(to)}`;
 
       if (patchMap.size === 0) {
         const treeResp = await api('nodes/tree');
@@ -175,8 +142,8 @@
     if (!listCursor) return;
     try {
       const { from, to } = dateRange;
-      let params = `?from=${from}&limit=50&after=${encodeURIComponent(listCursor)}`;
-      if (to) params += `&to=${to}`;
+      let params = `?from=${encodeURIComponent(from)}&limit=50&after=${encodeURIComponent(listCursor)}`;
+      if (to) params += `&to=${encodeURIComponent(to)}`;
       const data = await api(`events${params}`);
       allEvents = [...allEvents, ...(data.items || [])];
       listCursor = data.next_cursor || '';

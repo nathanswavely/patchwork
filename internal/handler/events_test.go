@@ -283,3 +283,103 @@ func TestListEvents_MalformedCursor(t *testing.T) {
 		t.Fatalf("expected malformed cursor to serve the first page (1 event), got %v", items)
 	}
 }
+
+// seedDayFixture lays out one event just before a target day, three inside it
+// (including the very last second), and one just after.
+func seedDayFixture(t *testing.T, db *database.DB, nodeID, userID string) {
+	t.Helper()
+	seedEvent(t, db, nodeID, userID, "day-before", "2026-09-09T20:00:00Z")
+	seedEvent(t, db, nodeID, userID, "morning", "2026-09-10T09:00:00Z")
+	seedEvent(t, db, nodeID, userID, "evening", "2026-09-10T20:00:00Z")
+	seedEvent(t, db, nodeID, userID, "last-second", "2026-09-10T23:59:59Z")
+	seedEvent(t, db, nodeID, userID, "day-after", "2026-09-11T00:00:00Z")
+}
+
+func assertTitles(t *testing.T, got, want []string, context string) {
+	t.Helper()
+	if len(got) != len(want) {
+		t.Fatalf("%s: expected %v, got %v", context, want, got)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("%s: expected %v, got %v", context, want, got)
+		}
+	}
+}
+
+// TestListEvents_DateOnlyBoundsIncludeTheirDay is the regression test for the
+// date filter that returned nothing at all. starts_at holds a full timestamp
+// and the range comparison is lexicographic, so '2026-09-10T20:00:00Z' sorts
+// *after* the bare date '2026-09-10'. A `to` of that date therefore excluded
+// every event on the day it named, and a single-day filter — the web app's
+// Today and Tomorrow presets, where from and to are the same date — could
+// never match anything.
+func TestListEvents_DateOnlyBoundsIncludeTheirDay(t *testing.T) {
+	db := setupTestDB(t)
+	user, _ := createTestUser(t, db, "events-dayrange", "member")
+	node := createTestNode(t, db, user.ID, "Patch A", "patch-a", "open")
+	seedDayFixture(t, db, node, user.ID)
+
+	got := pageThroughEvents(t, db, "from=2026-09-10&to=2026-09-10", 50)
+	assertTitles(t, got, []string{"morning", "evening", "last-second"}, "single-day filter")
+}
+
+// The web app sends instants rather than dates, because its day starts in the
+// reader's zone rather than UTC (docs/adr/045). That path must keep working
+// untouched by the widening above.
+func TestListEvents_InstantBoundsAreHonoured(t *testing.T) {
+	db := setupTestDB(t)
+	user, _ := createTestUser(t, db, "events-instants", "member")
+	node := createTestNode(t, db, user.ID, "Patch A", "patch-a", "open")
+	seedDayFixture(t, db, node, user.ID)
+
+	query := "from=" + url.QueryEscape("2026-09-10T00:00:00.000Z") +
+		"&to=" + url.QueryEscape("2026-09-10T23:59:59Z")
+	got := pageThroughEvents(t, db, query, 50)
+	assertTitles(t, got, []string{"morning", "evening", "last-second"}, "instant bounds")
+
+	// The sharp edge that shaped both bounds, pinned so it is not rediscovered
+	// as a mystery: comparison is text, 'Z' sorts after '.', so a fractional
+	// upper bound drops a zero-fraction timestamp in the same second. The
+	// server cannot paper over this without parsing every bound it is handed;
+	// the real repair is to stop writing two precisions into starts_at at all
+	// (docs/adr/045, "Consequences").
+	query = "from=" + url.QueryEscape("2026-09-10T00:00:00.000Z") +
+		"&to=" + url.QueryEscape("2026-09-10T23:59:59.999Z")
+	got = pageThroughEvents(t, db, query, 50)
+	assertTitles(t, got, []string{"morning", "evening"}, "fractional upper bound")
+
+	// A bound part-way through the day cuts where it says, not at a day edge.
+	query = "from=" + url.QueryEscape("2026-09-10T12:00:00Z") +
+		"&to=" + url.QueryEscape("2026-09-10T21:00:00Z")
+	got = pageThroughEvents(t, db, query, 50)
+	assertTitles(t, got, []string{"evening"}, "partial-day bounds")
+}
+
+// A bare `from` already behaved as that day's first instant; widening it must
+// not change what it selects.
+func TestListEvents_DateOnlyFromIsUnchanged(t *testing.T) {
+	db := setupTestDB(t)
+	user, _ := createTestUser(t, db, "events-from", "member")
+	node := createTestNode(t, db, user.ID, "Patch A", "patch-a", "open")
+	seedDayFixture(t, db, node, user.ID)
+
+	got := pageThroughEvents(t, db, "from=2026-09-10", 50)
+	assertTitles(t, got, []string{"morning", "evening", "last-second", "day-after"}, "open-ended from")
+}
+
+// A bound that is neither a date nor an instant is still compared as text, as
+// it always was. This pins that it stays a well-formed 200 rather than being
+// coerced into some invented day — pageThroughEvents fails on any other code.
+func TestListEvents_MalformedDateBoundStillServes(t *testing.T) {
+	db := setupTestDB(t)
+	user, _ := createTestUser(t, db, "events-malformed", "member")
+	node := createTestNode(t, db, user.ID, "Patch A", "patch-a", "open")
+	seedDayFixture(t, db, node, user.ID)
+
+	// Ten characters, so it survives a length check, but not a calendar date.
+	// Every timestamp sorts before it, so text comparison serves them all.
+	if got := pageThroughEvents(t, db, "to=not-a-date", 50); len(got) != 5 {
+		t.Fatalf("expected a malformed bound to compare as text (5 events), got %v", got)
+	}
+}
