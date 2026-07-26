@@ -44,6 +44,14 @@ const (
 
 	GovernanceDocUpdated   NotificationType = "governance.doc_updated"
 	GovernanceRulesChanged NotificationType = "governance.rules_changed"
+	// GovernanceRulesChangedMidVote is the same edit landing while votes are
+	// open. Those votes keep the terms they opened with (docs/adr/047), so the
+	// new rules do not reach them — which is time-sensitive in a way a routine
+	// rules edit is not, since those votes close. Separate from
+	// GovernanceRulesChanged so it can be muted separately and mailed
+	// separately: preferences key on the type, and email defaults on for high
+	// priority only. The two never both fire for one edit.
+	GovernanceRulesChangedMidVote NotificationType = "governance.rules_changed_midvote"
 	// LiningUpdated fires when a stale lining auto-updates to the current
 	// shipped text (docs/adr/037). Notified, never asked.
 	LiningUpdated NotificationType = "governance.lining_updated"
@@ -124,9 +132,14 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	ProposalComment:      {CategoryProposals, "Comment on a proposal you're in", AudienceParticipants, PriorityNormal},
 	ProposalDeadline:     {CategoryProposals, "Voting ends in 24 hours", AudienceAllMembers, PriorityHigh},
 
-	GovernanceDocUpdated:   {CategoryGovernance, "Document updated", AudienceAllMembers, PriorityNormal},
-	GovernanceRulesChanged: {CategoryGovernance, "Rules changed", AudienceAllMembers, PriorityHigh},
-	LiningUpdated:          {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
+	GovernanceDocUpdated: {CategoryGovernance, "Document updated", AudienceAllMembers, PriorityNormal},
+	// Normal, not high: a patch tuning its own rules is significant but not
+	// time-sensitive, and email defaults on for high priority. Mailing every
+	// member on every config edit is how a whole category gets filtered, and
+	// then the mid-vote notice below gets filtered with it.
+	GovernanceRulesChanged:        {CategoryGovernance, "Rules changed", AudienceAllMembers, PriorityNormal},
+	GovernanceRulesChangedMidVote: {CategoryGovernance, "Rules changed while votes are open", AudienceAllMembers, PriorityHigh},
+	LiningUpdated:                 {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
 	MembershipRequest:     {CategoryMembership, "Membership request pending", AudienceAdminsOnly, PriorityHigh},
@@ -198,7 +211,7 @@ func TypesForCategory(cat Category) []NotificationType {
 	allTypes := []NotificationType{
 		ProposalNew, ProposalVoting, ProposalVoteReceived, ProposalApproved,
 		ProposalRejected, ProposalApplied, ProposalComment, ProposalDeadline,
-		GovernanceDocUpdated, GovernanceRulesChanged, LiningUpdated,
+		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		EventCreated, EventReminder, EventUpdated, EventCancelled,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,

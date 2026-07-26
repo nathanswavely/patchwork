@@ -289,7 +289,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 					governance.DeleteBranch(dataDir, nodeID, branchName)
 					// Same post-merge DB syncs as the other apply paths (docs/adr/011).
 					if req.TargetDoc == "governance-rules.json" || req.TargetDoc == "Governance Rules" {
-						syncRulesAndNotify(db, dataDir, nodeID, user.ID)
+						syncRulesAndNotify(db, dataDir, nodeID, user.ID, id)
 					}
 					syncLiningToDB(db, nodeID, req.TargetDoc, req.ProposedTitle, user.ID)
 				}
@@ -615,7 +615,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 				if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
 					// No actor: resolution is the clock, not a person, so the
 					// notice reaches everyone including the proposal's author.
-					syncRulesAndNotify(db, governance.GetDataDir(), p.NodeID, "")
+					syncRulesAndNotify(db, governance.GetDataDir(), p.NodeID, "", proposalID)
 				}
 				syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
 				// The merge already happened, so there is nothing left for an
@@ -1149,7 +1149,7 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 
 			// Sync rules to DB if this was a rules change.
 			if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
-				syncRulesAndNotify(db, dataDir, p.NodeID, user.ID)
+				syncRulesAndNotify(db, dataDir, p.NodeID, user.ID, proposalID)
 			}
 
 			// Mirror merged markdown docs into governance_docs — the DB is
