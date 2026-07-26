@@ -7,9 +7,17 @@
     approveCount = 0,
     rejectCount = 0,
     abstainCount = 0,
-    memberCount = 0,
-    quorumPercent = 0,
-    threshold = 'majority',
+    // The electorate — the number the server's quorum math divides by
+    // (docs/adr/044). Not the member count: those differ wherever a patch has
+    // a tenure requirement, and showing the wrong one is how a quorum bar
+    // disagrees with the outcome it is supposed to predict.
+    electorateSize = 0,
+    // This vote's terms, fixed when it opened (docs/adr/047). Quorum and
+    // threshold were props before, and the payload never carried them — so
+    // they arrived as 0 and 'majority' for every patch, and a consensus patch
+    // with a 50% quorum was told it needed no quorum and carried by majority.
+    terms = null,
+    openedAt = null,
     userVote = null,
     votingEndsAt = null,
     state: propState = 'voting',
@@ -17,6 +25,12 @@
     canVote = false,
     onVote = () => {},
   } = $props();
+
+  let quorumPercent = $derived(terms?.quorum_percent || 0);
+  let tenureDays = $derived(terms?.min_voting_tenure_days || 0);
+  let threshold = $derived(
+    terms?.amendment_threshold || terms?.decision_method || 'majority'
+  );
 
   let voting = $state(false);
   let showVoters = $state(false);
@@ -33,11 +47,11 @@
 
   let quorumMet = $derived.by(() => {
     if (quorumPercent === 0) return true;
-    if (memberCount === 0) return false;
-    return (totalVotes / memberCount) * 100 >= quorumPercent;
+    if (electorateSize === 0) return false;
+    return (totalVotes / electorateSize) * 100 >= quorumPercent;
   });
 
-  let quorumNeeded = $derived(Math.ceil(memberCount * quorumPercent / 100));
+  let quorumNeeded = $derived(Math.ceil(electorateSize * quorumPercent / 100));
 
   let timeLeft = $derived.by(() => {
     if (!votingEndsAt) return '';
@@ -56,6 +70,18 @@
       consensus: 'Consensus \u2014 no reject votes allowed',
     };
     return explanations[threshold] || threshold;
+  });
+
+  let termsLine = $derived.by(() => {
+    if (!terms) return '';
+    const when = openedAt
+      ? new Date(openedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+      : '';
+    const head = when ? `Rules as of ${when}` : 'Rules fixed when voting opened';
+    if (tenureDays > 0) {
+      return `${head} — voting requires ${tenureDays} days' membership`;
+    }
+    return head;
   });
 
   async function castVote(value) {
@@ -94,7 +120,7 @@
   <div class="quorum-status">
     {#if quorumPercent > 0}
       {#if quorumMet}
-        <span class="quorum-met">Quorum met ({totalVotes} of {memberCount} voted, {quorumPercent}% needed)</span>
+        <span class="quorum-met">Quorum met ({totalVotes} of {electorateSize} voted, {quorumPercent}% needed)</span>
       {:else}
         <span class="quorum-unmet">Quorum not yet met ({totalVotes} of {quorumNeeded} needed)</span>
       {/if}
@@ -140,6 +166,14 @@
 
   <!-- Threshold explanation -->
   <div class="threshold-info muted">{thresholdExplain}</div>
+
+  <!-- The terms this vote is judged by, fixed when it opened (docs/adr/047).
+       Said always, not only when they diverge from the patch's current rules —
+       and it is the only place a tenure requirement appears, so it is also the
+       answer for someone who can see the vote and has no buttons. -->
+  {#if termsLine}
+    <div class="terms-info muted">{termsLine}</div>
+  {/if}
 
   <!-- Voter list -->
   {#if voters.length > 0}
@@ -274,6 +308,11 @@
     background: var(--color-text-muted);
     border-color: var(--color-text-muted);
     color: var(--color-on-muted);
+  }
+
+  .terms-info {
+    margin-top: 0.25rem;
+    font-size: var(--font-size-sm);
   }
 
   .threshold-info {

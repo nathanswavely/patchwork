@@ -211,9 +211,9 @@
               approveCount={proposal.approve_count || 0}
               rejectCount={proposal.reject_count || 0}
               abstainCount={proposal.abstain_count || 0}
-              memberCount={proposal.member_count || 0}
-              quorumPercent={proposal.quorum_percent || 0}
-              threshold={proposal.amendment_threshold || proposal.decision_method || 'majority'}
+              electorateSize={proposal.eligible_voters || 0}
+              terms={proposal.voting_terms}
+              openedAt={proposal.created_at}
               userVote={proposal.my_vote}
               votingEndsAt={proposal.voting_ends_at}
               state={effectiveState}

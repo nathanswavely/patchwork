@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
@@ -70,6 +71,62 @@ func GetTemplate() http.HandlerFunc {
 	}
 }
 
+// countProposalsAwaitingVote counts the open proposals a person may still cast
+// a ballot on: ones they haven't voted on, in whose electorate they stand.
+//
+// Membership is read once — role and tenure are facts about the person, not
+// about any one proposal — but the tenure *requirement* is read per proposal
+// from its own voting terms (docs/adr/047), because a patch that raised the
+// bar has open votes on both sides of the change. `nodeGCJSON` is the patch's
+// live config, used for proposals that carry no terms of their own.
+func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON string) int {
+	var role, status, joinedAt string
+	err := db.QueryRow(
+		"SELECT role, status, joined_at FROM memberships WHERE node_id = ? AND user_id = ?",
+		nodeID, userID,
+	).Scan(&role, &status, &joinedAt)
+	if err != nil || status != "active" || (role != "admin" && role != "member") {
+		return 0
+	}
+	joined, parseErr := time.Parse("2006-01-02T15:04:05.000Z", joinedAt)
+	if parseErr != nil {
+		// An unreadable joined_at can't be shown to clear any requirement.
+		// Only a patch with no tenure rule at all can still count.
+		joined = time.Now().UTC()
+	}
+
+	rows, err := db.Query(
+		`SELECT COALESCE(p.voting_terms,'') FROM proposals p
+		 WHERE p.node_id = ? AND p.status = 'open'
+		 AND NOT EXISTS (SELECT 1 FROM votes v WHERE v.proposal_id = p.id AND v.user_id = ?)`,
+		nodeID, userID,
+	)
+	if err != nil {
+		return 0
+	}
+	defer rows.Close()
+
+	count := 0
+	for rows.Next() {
+		var termsJSON string
+		if rows.Scan(&termsJSON) != nil {
+			continue
+		}
+		if termsJSON == "" || termsJSON == "{}" {
+			termsJSON = nodeGCJSON
+		}
+		var gc model.GovernanceConfig
+		json.Unmarshal([]byte(termsJSON), &gc)
+		if gc.MinVotingTenureDays > 0 {
+			if time.Since(joined) < time.Duration(gc.MinVotingTenureDays)*24*time.Hour {
+				continue
+			}
+		}
+		count++
+	}
+	return count
+}
+
 // GovernanceOverview handles GET /api/v1/nodes/{slug}/governance/overview.
 // Returns a comprehensive governance status for a patch.
 func GovernanceOverview(db *database.DB) http.HandlerFunc {
@@ -134,18 +191,14 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		// was told "2 proposals need your vote" and VoteOnProposal answered
 		// 403: the electorate has to be one set on the nudge too, not just at
 		// the gate (docs/adr/044).
+		//
+		// Each open proposal is judged by the terms it opened with
+		// (docs/adr/047), so this is no longer one question about the patch —
+		// the viewer can be in one vote's electorate and outside another's,
+		// when a tenure requirement changed between them. Ask per proposal.
 		var needsVote int
 		if user := middleware.UserFromContext(r.Context()); user != nil {
-			var gc model.GovernanceConfig
-			json.Unmarshal([]byte(gcJSON), &gc)
-			if inElectorate(db, user.ID, nodeID, gc) {
-				db.QueryRow(
-					`SELECT COUNT(*) FROM proposals p
-					 WHERE p.node_id = ? AND p.status = 'open'
-					 AND NOT EXISTS (SELECT 1 FROM votes v WHERE v.proposal_id = p.id AND v.user_id = ?)`,
-					nodeID, user.ID,
-				).Scan(&needsVote)
-			}
+			needsVote = countProposalsAwaitingVote(db, nodeID, user.ID, gcJSON)
 		}
 
 		// Member count.
