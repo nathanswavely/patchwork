@@ -594,29 +594,32 @@ _Avoid_: board, committee, leadership team, steward (that is quilt-level,
 publicly accountable, and not a permission)
 
 **Seat**:
-A governed admin position on a patch that elects its leadership. Seats
-exist only there; everywhere else admin is a role someone was given, and
-that is the whole story. A seat's holder holds the ordinary admin role —
-there is no permission a seated admin has that an appointed one lacks.
+A governed admin position on a patch whose leadership model is
+meritocratic or elected. A patch that runs on a maintainer has admins and
+no seats, and never meets the word. A seat's holder holds the ordinary
+admin role — there is no permission a seated admin has that an appointed
+one lacks. Seats are not terms: a meritocratic patch has seats that no
+clock runs on.
 _Avoid_: chair, post, slot, council seat (redundant), position
 
 **Term**:
-The period a seat's holder serves before that seat becomes contestable
-again. Distinct from **tenure**, which is how long someone has been a
-member and is what gates voting — a term is about holding power, tenure
-is about having standing to decide. Terms exist to make power
-periodically contestable, which is the promise the Formal charter states
-as "power rotates".
+The clock on a seat — the period its holder serves before that seat
+stands again at the next election. Terms exist only where leadership is
+elected; a meritocratic seat has none. Distinct from **tenure**, which is
+how long someone has been a member and is what gates voting: a term is
+about holding power, tenure is about having standing to decide. Terms are
+what make power periodically contestable, the promise the Formal charter
+states as "power rotates".
 _Avoid_: tenure (that is membership length), mandate, session, cycle
 
 **Lapsed term**:
-A seat whose term has ended while its holder is still serving. The holder
-loses nothing; what changes is who may call the next election for that
-seat — the electorate, not only the admins. Deliberately not a removal: a
-clock must never be able to leave a patch leaderless, and a community
-content with its leadership is not overruled for failing to hold a vote.
-Publicly visible, because a council that has not faced election in years
-should show it.
+A seat whose term has ended while its holder is still serving — because
+the election cycle has not come round, or because it ran and settled
+nothing. The holder loses nothing and keeps serving until a successor is
+elected. Deliberately not a removal: a clock must never be able to leave
+a patch leaderless, and a community content with its leadership is not
+overruled for failing to hold a vote. Publicly visible, because a council
+that has not faced election in years should show it.
 _Avoid_: expired (says the person is invalid), overdue, vacant (it is
 filled), holdover (the mechanism's name, not a word for members)
 
