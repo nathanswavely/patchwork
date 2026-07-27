@@ -307,6 +307,10 @@ func main() {
 
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/leave", middleware.AuthRequired(db, handler.LeaveNode(db)))
+	// Maintainer succession (docs/adr/051). Naming a successor decides who
+	// inherits the patch, so it is step-up gated like the other power moves.
+	mux.HandleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.SetSuccessor(db))))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, handler.ClearSuccessor(db)))
 	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembershipVisibility(db)))
 
 	// Cross-quilt following (docs/adr/024): remote follows and personal

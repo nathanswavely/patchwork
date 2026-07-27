@@ -280,11 +280,17 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Cannot leave if you're the only admin.
+		// Cannot leave if you're the only admin — unless the patch runs on a
+		// maintainer and has named a successor, in which case leaving is what
+		// hands the patch over (docs/adr/051). docs/adr/012 says leaving is a
+		// member right, and this floor has always made that untrue for the one
+		// person nobody can replace; designation is how they earn the exit.
+		// With no successor named the floor holds, because the alternative is
+		// a patch nobody can administer.
 		if memberRole == "admin" {
 			var adminCount int
 			db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'", nodeID).Scan(&adminCount)
-			if adminCount <= 1 {
+			if adminCount <= 1 && !succeedOnDeparture(db, r, nodeID, slug, user.ID) {
 				http.Error(w, `{"error":"cannot leave as the only admin"}`, http.StatusConflict)
 				return
 			}

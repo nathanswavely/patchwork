@@ -5,6 +5,8 @@
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
   import { markGovernanceHubVisited } from '../lib/onboarding.js';
+  import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
+  import PasskeyNotice from './PasskeyNotice.svelte';
   import Skeleton from './Skeleton.svelte';
   import UnlockPanel from './UnlockPanel.svelte';
   import SetupChecklist from './SetupChecklist.svelte';
@@ -39,10 +41,68 @@
     loading = true;
     try {
       overview = await api(`nodes/${slug}/governance/overview`);
+      successorChoice = overview?.successor?.user_id || '';
     } catch {
       overview = null;
     } finally {
       loading = false;
+    }
+  }
+
+  // Succession, maintainer model only (docs/adr/051). A maintainer names who
+  // inherits the patch; meritocratic ratifies a nomination and elected runs a
+  // cycle, so neither sees any of this.
+  let isMaintainerModel = $derived(overview?.rules?.leadership_model === 'maintainer');
+  let successorChoice = $state('');
+  let savingSuccessor = $state(false);
+  let successorError = $state('');
+  let patchMembers = $state([]);
+
+  // A successor has to already be in the patch, and cannot be the person
+  // naming them — the same two conditions the server enforces.
+  let eligibleSuccessors = $derived(
+    patchMembers.filter((m) => (m.role === 'member' || m.role === 'admin') && m.user_id !== getUser()?.id)
+  );
+
+  // Read the passkey state on load so a missing one shows up *before*
+  // someone picks a name and hits a wall they could not see.
+  let hasPasskey = $state(true);
+
+  $effect(() => {
+    if (isAdmin && isMaintainerModel && slug) {
+      loadPatchMembers();
+      stepUpStatus().then((s) => { hasPasskey = s.has_passkey !== false; });
+    }
+  });
+
+  async function loadPatchMembers() {
+    try {
+      const data = await api(`nodes/${slug}/members`);
+      patchMembers = data.items || data || [];
+    } catch {
+      patchMembers = [];
+    }
+  }
+
+  async function saveSuccessor() {
+    savingSuccessor = true;
+    successorError = '';
+    try {
+      if (successorChoice) {
+        // Naming a successor decides who inherits the patch, so the server
+        // asks for a fresh passkey the way promotion does (docs/adr/017).
+        // Clearing is the safe direction and goes through untouched.
+        await withStepUp(() => api(`nodes/${slug}/successor`, { method: 'PUT', body: { user_id: successorChoice } }));
+      } else {
+        await api(`nodes/${slug}/successor`, { method: 'DELETE' });
+      }
+      await loadOverview();
+    } catch (e) {
+      successorError = e instanceof PasskeyRequiredError
+        ? 'Naming a successor needs a passkey. Enroll one in Security settings first.'
+        : e.message || 'Failed to save';
+    } finally {
+      savingSuccessor = false;
     }
   }
 
@@ -167,9 +227,43 @@
             </div>
           {/each}
         </div>
-        {#if rules?.max_admins > 0}
-          <p class="seats-info muted">{overview.admins.length} of {rules.max_admins} seats filled</p>
-        {/if}
+      {/if}
+
+      <!-- Succession, maintainer model only (docs/adr/051). The other two
+           models fill admin seats their own way and this section stays away
+           from them. -->
+      {#if isMaintainerModel}
+        <div class="successor">
+          {#if overview.successor?.user_id}
+            <p class="successor-line">
+              Successor: <strong>{overview.successor.display_name || overview.successor.username}</strong>
+              — if the current admin steps away, the patch passes to them.
+            </p>
+          {:else}
+            <p class="successor-line muted">No successor named.</p>
+          {/if}
+
+          {#if isAdmin}
+            <div class="successor-controls">
+              <select bind:value={successorChoice} disabled={savingSuccessor}>
+                <option value="">Nobody</option>
+                {#each eligibleSuccessors as m}
+                  <option value={m.user_id}>{m.display_name || m.username}</option>
+                {/each}
+              </select>
+              <button class="btn btn-sm" onclick={saveSuccessor} disabled={savingSuccessor || successorChoice === (overview.successor?.user_id || '')}>
+                {savingSuccessor ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+            <PasskeyNotice show={!hasPasskey} action="name a successor" />
+            {#if successorError}
+              <p class="successor-error">{successorError}</p>
+            {/if}
+            <p class="successor-hint muted">
+              Naming a successor is also what lets you leave a patch you run alone.
+            </p>
+          {/if}
+        </div>
       {/if}
     </section>
 
@@ -302,9 +396,38 @@
     font-size: 0.75rem;
   }
 
-  .seats-info {
-    font-size: 0.78rem;
+  .successor {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .successor-line {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .successor-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin-top: 0.5rem;
+  }
+
+  .successor-controls select {
+    flex: 1 1 12rem;
+    min-width: 0;
+  }
+
+  .successor-error {
+    font-size: 0.8rem;
+    color: var(--color-danger, #c0392b);
+    margin: 0.4rem 0 0;
+  }
+
+  .successor-hint {
+    font-size: 0.78rem;
+    margin: 0.4rem 0 0;
   }
 
   .stats-row {

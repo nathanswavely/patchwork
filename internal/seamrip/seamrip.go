@@ -80,6 +80,7 @@ func Tables() []Table {
 			Query: `SELECT id, owner_id, name, slug, description, latitude, longitude,
 				address, website, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
+				designated_successor_id,
 				submitted_by, submission_source, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
@@ -87,6 +88,11 @@ func Tables() []Table {
 				c("website"), c("links"), c("visibility"), c("membership_policy"),
 				c("status"), c("archived_from"), c("appearance"), c("follower_permissions"),
 				c("governance_config"), c("governance_setup_complete"),
+				// A named successor is a governance fact about the patch and
+				// travels with its memberships (docs/adr/051). id() so it is
+				// remapped like every other user reference — a raw user id
+				// from the old instance would point at a stranger here.
+				id("designated_successor_id"),
 				id("submitted_by"), c("submission_source"),
 				c("created_at"), c("updated_at")),
 		},
