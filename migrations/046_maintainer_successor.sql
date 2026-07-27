@@ -1,0 +1,24 @@
+-- Succession follows the leadership model (docs/adr/051).
+--
+-- `leadership_model: "maintainer"` tells members "one person maintains this
+-- patch... and can designate a successor." Designating was not a thing anyone
+-- could do — the field was one of the six docs/adr/049 found stored, rendered
+-- as prose, and read by nothing.
+--
+-- A maintainer patch has no seats and no terms, so the designation belongs on
+-- the node rather than on a seat: one patch, one named successor.
+--
+-- NULL means nobody is designated, which is the honest default and the state
+-- every existing patch is in. The column is only read when the leadership
+-- model is `maintainer`; the other two models have their own mechanics
+-- (meritocratic ratifies a nomination, elected runs a cycle), and the write
+-- path refuses designation on those rather than storing a value nothing will
+-- ever act on.
+--
+-- ON DELETE SET NULL: a deleted account cannot inherit a patch, and a dangling
+-- successor id would be worse than none — the last-admin floor would lift on
+-- the strength of a person who no longer exists. Membership is checked again
+-- at succession time regardless, since leaving the patch voids a designation
+-- without touching this row.
+ALTER TABLE nodes ADD COLUMN designated_successor_id TEXT
+	REFERENCES users(id) ON DELETE SET NULL;

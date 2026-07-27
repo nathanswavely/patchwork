@@ -205,10 +205,24 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		var memberCount int
 		db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin', 'member')", nodeID).Scan(&memberCount)
 
+		// The named successor, on maintainer patches only (docs/adr/051).
+		// Read through designatedSuccessor so a person who has since left the
+		// patch reads as nobody — the same answer the leave path gives, rather
+		// than a name the overview shows and succession would refuse.
+		successor := map[string]string{}
+		if gcLeadership := leadershipModel(db, nodeID); gcLeadership == "maintainer" {
+			if sid := designatedSuccessor(db, nodeID); sid != "" {
+				var username, displayName string
+				db.QueryRow("SELECT username, COALESCE(display_name,'') FROM users WHERE id = ?", sid).Scan(&username, &displayName)
+				successor = map[string]string{"user_id": sid, "username": username, "display_name": displayName}
+			}
+		}
+
 		resp := map[string]interface{}{
 			"rules":              json.RawMessage(gcJSON),
 			"membership_policy":  membershipPolicy,
 			"admins":             admins,
+			"successor":          successor,
 			"member_count":       memberCount,
 			"document_count":     docCount,
 			"open_proposals":     openProposals,
