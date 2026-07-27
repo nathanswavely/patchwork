@@ -59,6 +59,96 @@ func designatedSuccessor(db *database.DB, nodeID string) string {
 	return successorID
 }
 
+// nullIfEmpty keeps an empty foreign key out of the column as NULL rather than
+// "", which no users row will ever match and which the ON DELETE clause cannot
+// clean up.
+func nullIfEmpty(s string) interface{} {
+	if s == "" {
+		return nil
+	}
+	return s
+}
+
+// validateNomination checks a proposal that is about a person rather than a
+// thing — the meritocratic mechanic, where "existing admins nominate from
+// active members and the community ratifies." Returns an error message, empty
+// when the nomination is good.
+//
+// The three conditions are the template's own sentence read literally:
+// existing *admins* nominate (so the author holds admin), from active
+// *members* (so the nominee is one, and a follower never is), and the
+// community *ratifies* (so this is a real vote and not a promotion wearing a
+// proposal's clothes).
+func validateNomination(db *database.DB, nodeID, authorID, nomineeID string) string {
+	if leadershipModel(db, nodeID) != "meritocratic" {
+		return "nominating an admin is the meritocratic model's mechanic; this patch fills admin seats another way"
+	}
+	if !userHasNodeRole(db, authorID, nodeID, "admin") {
+		return "only an admin of this patch can nominate someone for admin"
+	}
+	var role string
+	err := db.QueryRow(
+		"SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		nomineeID, nodeID,
+	).Scan(&role)
+	if err != nil {
+		return "a nominee must be an active member of this patch"
+	}
+	if role == "admin" {
+		return "that person is already an admin of this patch"
+	}
+	if role != "member" {
+		return "a nominee must be an active member of this patch"
+	}
+	return ""
+}
+
+// ratifyNomination promotes the subject of an approved nomination. Called from
+// resolution, because the community ratifying *is* the decision — leaving an
+// admin to "apply" it afterwards would hand admins a veto over the ratification
+// they asked the community for.
+//
+// Membership is re-checked here: a nominee who left the patch between
+// nomination and ratification is not dragged back into it, and one who was
+// promoted by some other path in the meantime is left alone.
+func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
+	if nomineeID == "" || leadershipModel(db, nodeID) != "meritocratic" {
+		return
+	}
+	var role string
+	if err := db.QueryRow(
+		"SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		nomineeID, nodeID,
+	).Scan(&role); err != nil || role != "member" {
+		return
+	}
+	if _, err := db.Exec(
+		"UPDATE memberships SET role = 'admin' WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		nomineeID, nodeID,
+	); err != nil {
+		return
+	}
+
+	// No actor: ratification is the electorate and the clock, not a person, so
+	// the notice reaches everyone including whoever raised the nomination.
+	auth.LogAuditEvent(db, "", "membership.ratified", "membership", nomineeID,
+		`{"node_id":"`+nodeID+`","proposal_id":"`+proposalID+`"}`, "")
+
+	var slug, nodeName string
+	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
+	notify(notifications.Event{
+		Type:     notifications.MembershipRoleChanged,
+		NodeID:   nodeID,
+		NodeSlug: slug,
+		NodeName: nodeName,
+		TargetID: nomineeID,
+		EntityID: proposalID,
+		Title:    "You are now an admin of " + nodeName,
+		Body:     "The community ratified your nomination.",
+		Link:     weblink.Patch(slug),
+	})
+}
+
 // SetSuccessor handles PUT /api/v1/nodes/{slug}/successor.
 func SetSuccessor(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

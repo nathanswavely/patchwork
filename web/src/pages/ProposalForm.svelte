@@ -42,9 +42,40 @@
     { value: 'other', label: 'Other', description: 'Any other proposal that needs community input' },
   ];
 
+  // Nominating an admin, on meritocratic patches only (docs/adr/051). The
+  // community ratifies admins there, so an admin nominates instead of
+  // promoting — the member list refuses a direct promotion.
+  let nomineeId = $state('');
+  let isMeritocratic = $state(false);
+  let nominatable = $state([]);
+  let canNominate = $derived(isAdmin && isMeritocratic);
+
+  $effect(() => {
+    if (slug) loadNominationContext();
+  });
+
+  async function loadNominationContext() {
+    try {
+      const ov = await api(`nodes/${slug}/governance/overview`);
+      isMeritocratic = ov?.rules?.leadership_model === 'meritocratic';
+      if (!isMeritocratic || !isAdmin) return;
+      const data = await api(`nodes/${slug}/members`);
+      // Only plain members can be nominated: an admin already holds the role,
+      // and a follower is not on the ladder.
+      nominatable = (data.items || data || []).filter((m) => m.role === 'member');
+    } catch {
+      isMeritocratic = false;
+      nominatable = [];
+    }
+  }
+
   async function handleSubmit() {
     if (!title.trim()) {
       error = 'Title is required';
+      return;
+    }
+    if (proposalType === 'membership' && canNominate && nomineeId && nominatable.length === 0) {
+      error = 'There is nobody to nominate yet';
       return;
     }
 
@@ -57,6 +88,11 @@
         proposal_type: proposalType,
         duration_hours: durationHours,
       };
+      // Only a membership proposal carries a subject, and only where the
+      // community ratifies admins.
+      if (proposalType === 'membership' && canNominate && nomineeId) {
+        payload.target_user_id = nomineeId;
+      }
       const result = await api(`nodes/${slug}/proposals`, {
         method: 'POST',
         body: payload,
@@ -135,6 +171,28 @@
               </label>
             {/each}
           </div>
+
+          <!-- Nominating for admin (docs/adr/051). Only appears where the
+               community ratifies admins and only for someone who may
+               nominate; everywhere else a membership proposal is ordinary. -->
+          {#if proposalType === 'membership' && canNominate}
+            <div class="nominee-field">
+              <label for="nominee">Nominate for admin</label>
+              {#if nominatable.length > 0}
+                <select id="nominee" bind:value={nomineeId} disabled={submitting}>
+                  <option value="">Nobody — this is an ordinary membership proposal</option>
+                  {#each nominatable as m}
+                    <option value={m.user_id}>{m.display_name || m.username}</option>
+                  {/each}
+                </select>
+                <p class="nominee-hint muted">
+                  If this passes, they become an admin. Nobody has to approve it afterwards.
+                </p>
+              {:else}
+                <p class="nominee-hint muted">There is nobody to nominate yet.</p>
+              {/if}
+            </div>
+          {/if}
         </div>
 
         <div class="field">
@@ -250,6 +308,19 @@
   .preview-pane :global(em) { font-style: italic; }
   .preview-pane :global(ul) { padding-left: 1.5rem; margin: 0.5rem 0; }
   .preview-pane :global(p) { margin: 0.5rem 0; }
+
+  .nominee-field {
+    margin-top: 0.75rem;
+  }
+
+  .nominee-field select {
+    width: 100%;
+  }
+
+  .nominee-hint {
+    font-size: 0.78rem;
+    margin: 0.35rem 0 0;
+  }
 
   .type-radio-group {
     display: flex;

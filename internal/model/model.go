@@ -291,6 +291,11 @@ type Proposal struct {
 	CreatedAt      string  `json:"created_at"`
 	UpdatedAt      string  `json:"updated_at"`
 	TargetDoc      string  `json:"target_doc,omitempty"`
+	// TargetUserID is the person a proposal is *about*, as distinct from
+	// AuthorID, who raised it. Set on a meritocratic nomination
+	// (docs/adr/051); empty on every proposal that decides a thing rather
+	// than a person.
+	TargetUserID   string  `json:"target_user_id,omitempty"`
 	ProposedBranch string  `json:"proposed_branch,omitempty"`
 	ProposedBody   string  `json:"proposed_body,omitempty"`
 	ProposedTitle  string  `json:"proposed_title,omitempty"`

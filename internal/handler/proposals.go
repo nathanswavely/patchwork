@@ -188,6 +188,9 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			ProposedBody  string `json:"proposed_body"`
 			ProposedTitle string `json:"proposed_title"`
 			ChangeSummary string `json:"change_summary"`
+			// The person this proposal is about, as opposed to the author who
+			// raised it. Set on a meritocratic nomination (docs/adr/051).
+			TargetUserID string `json:"target_user_id"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -207,6 +210,20 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"invalid proposal_type"}`, http.StatusBadRequest)
 			return
 		}
+		// A proposal about a person is a nomination, and carries conditions an
+		// ordinary proposal does not (docs/adr/051). Validated before anything
+		// is written, so a refused nomination leaves no record behind.
+		if req.TargetUserID != "" {
+			if req.ProposalType != "membership" {
+				http.Error(w, `{"error":"a proposal about a person must be of type membership"}`, http.StatusBadRequest)
+				return
+			}
+			if msg := validateNomination(db, nodeID, user.ID, req.TargetUserID); msg != "" {
+				http.Error(w, `{"error":"`+msg+`"}`, http.StatusConflict)
+				return
+			}
+		}
+
 		// Load governance config for default duration
 		if req.DurationHours <= 0 {
 			var gcJSON string
@@ -272,8 +289,8 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		// could have changed it — the terms in force at the moment voting
 		// opens. From here the node's rules may move; this vote's may not.
 		_, err := db.Exec(
-			`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, target_doc, proposed_branch, proposed_body, proposed_title, git_sha, base_sha, state, voting_terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEndsAt, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState, gcJSON,
+			`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, target_doc, proposed_branch, proposed_body, proposed_title, git_sha, base_sha, state, voting_terms, target_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEndsAt, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState, gcJSON, nullIfEmpty(req.TargetUserID),
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create proposal"}`, http.StatusInternalServerError)
@@ -538,9 +555,9 @@ func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (
 func resolveProposal(db *database.DB, proposalID string) string {
 	var p model.Proposal
 	err := db.QueryRow(
-		`SELECT id, node_id, author_id, status, proposal_type, COALESCE(target_doc,''), COALESCE(proposed_title,'')
+		`SELECT id, node_id, author_id, status, proposal_type, COALESCE(target_doc,''), COALESCE(proposed_title,''), COALESCE(target_user_id,'')
 		 FROM proposals WHERE id = ?`, proposalID,
-	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.ProposalType, &p.TargetDoc, &p.ProposedTitle)
+	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.ProposalType, &p.TargetDoc, &p.ProposedTitle, &p.TargetUserID)
 	if err != nil || p.Status != "open" {
 		return ""
 	}
@@ -607,6 +624,16 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// approved → in_effect step the state machine describes.
 	db.Exec("UPDATE proposals SET status = ?, state = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", newStatus, newStatus, proposalID)
 
+	// A ratified nomination takes effect on approval (docs/adr/051). There is
+	// no admin "apply" step: the community ratifying is the whole decision,
+	// and leaving it to an admin afterwards would be a veto over the
+	// ratification the admins themselves asked for.
+	if newStatus == "approved" && p.ProposalType == "membership" && p.TargetUserID != "" {
+		ratifyNomination(db, proposalID, p.NodeID, p.TargetUserID)
+		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		db.Exec("UPDATE proposals SET state = 'in_effect', applied_at = ?, updated_at = ? WHERE id = ?", now, now, proposalID)
+	}
+
 	// Auto-apply amendment if approved and configured
 	// liveGC, not gc: the auto-apply switch is a safety valve and takes effect
 	// the moment it is flipped, including for votes already running
@@ -659,14 +686,16 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		proposalID := r.PathValue("id")
 
 		var p model.Proposal
-		var authorName, appliedAt string
+		var authorName, appliedAt, targetUserName string
 		err := db.QueryRow(
 			`SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, COALESCE(p.state,''), COALESCE(p.applied_at,''), p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
-			 COALESCE(p.target_doc,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
-			 COALESCE(u.display_name, u.username) as author_name
+			 COALESCE(p.target_doc,''), COALESCE(p.target_user_id,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
+			 COALESCE(u.display_name, u.username) as author_name,
+			 COALESCE(tu.display_name, tu.username, '') as target_user_name
 			 FROM proposals p LEFT JOIN users u ON u.id = p.author_id
+			 LEFT JOIN users tu ON tu.id = p.target_user_id
 			 WHERE p.id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &authorName)
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.TargetUserID, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &authorName, &targetUserName)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -774,31 +803,36 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		canVote := viewerID != "" && inElectorate(db, viewerID, p.NodeID, gc)
 
 		result := map[string]interface{}{
-			"id":              p.ID,
-			"node_id":         p.NodeID,
-			"author_id":       p.AuthorID,
-			"author_name":     authorName,
-			"title":           p.Title,
-			"body":            p.Body,
-			"status":          p.Status,
-			"proposal_type":   p.ProposalType,
-			"duration_hours":  p.DurationHours,
-			"voting_ends_at":  p.VotingEndsAt,
-			"created_at":      p.CreatedAt,
-			"updated_at":      p.UpdatedAt,
-			"approve_count":   approveCount,
-			"reject_count":    rejectCount,
-			"abstain_count":   abstainCount,
-			"voters":          voters,
-			"my_vote":         myVote,
-			"eligible_voters": eligibleCount,
-			"can_vote":        canVote,
+			"id":          p.ID,
+			"node_id":     p.NodeID,
+			"author_id":   p.AuthorID,
+			"author_name": authorName,
+			// Who the proposal is *about*, when it is about anyone — a
+			// meritocratic nomination (docs/adr/051). Empty on every proposal
+			// that decides a thing rather than a person.
+			"target_user_id":   p.TargetUserID,
+			"target_user_name": targetUserName,
+			"title":            p.Title,
+			"body":             p.Body,
+			"status":           p.Status,
+			"proposal_type":    p.ProposalType,
+			"duration_hours":   p.DurationHours,
+			"voting_ends_at":   p.VotingEndsAt,
+			"created_at":       p.CreatedAt,
+			"updated_at":       p.UpdatedAt,
+			"approve_count":    approveCount,
+			"reject_count":     rejectCount,
+			"abstain_count":    abstainCount,
+			"voters":           voters,
+			"my_vote":          myVote,
+			"eligible_voters":  eligibleCount,
+			"can_vote":         canVote,
 			// The terms this vote is judged by, so the page can say so rather
 			// than leaving a refused voter to guess (docs/adr/047). Fixed when
 			// voting opened — which is created_at, already in this payload.
 			"voting_terms": gc,
-			"state":           p.State,
-			"applied_at":      appliedAt,
+			"state":        p.State,
+			"applied_at":   appliedAt,
 		}
 
 		// Include amendment-specific fields if this is a governance amendment.
