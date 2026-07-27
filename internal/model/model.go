@@ -112,11 +112,15 @@ type GovernanceConfig struct {
 	AmendmentAutoApply  bool   `json:"amendment_auto_apply"`
 	SuccessionPolicy    string `json:"succession_policy"`
 	MinVotingTenureDays int    `json:"min_voting_tenure_days"`
-	LeadershipModel     string `json:"leadership_model,omitempty"`
-	SuccessionMethod    string `json:"succession_method,omitempty"`
-	AdminTermMonths     int    `json:"admin_term_months,omitempty"`
-	MaxAdmins           int    `json:"max_admins,omitempty"`
-	InactivityDays      int    `json:"inactivity_days,omitempty"`
+	// SubjectRecusal bars the person a proposal is *about* from voting on it
+	// — a nomination's nominee (docs/adr/051). A term of the contest, so it
+	// freezes with the rest of the config when voting opens (docs/adr/047).
+	SubjectRecusal   bool   `json:"subject_recusal,omitempty"`
+	LeadershipModel  string `json:"leadership_model,omitempty"`
+	SuccessionMethod string `json:"succession_method,omitempty"`
+	AdminTermMonths  int    `json:"admin_term_months,omitempty"`
+	MaxAdmins        int    `json:"max_admins,omitempty"`
+	InactivityDays   int    `json:"inactivity_days,omitempty"`
 }
 
 // Appearance is a patch's chosen tile appearance on the quilt. Fields are
@@ -170,9 +174,9 @@ type Node struct {
 	// event_count, which is every active event past and future
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
 	// response only; the tree carries the all-time figure.
-	UpcomingEventCount     int                  `json:"upcoming_event_count"`
-	CreatedAt              string               `json:"created_at"`
-	UpdatedAt              string               `json:"updated_at"`
+	UpcomingEventCount int    `json:"upcoming_event_count"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
 }
 
 type ClaimRequest struct {
@@ -278,19 +282,19 @@ type Membership struct {
 }
 
 type Proposal struct {
-	ID             string  `json:"id"`
-	NodeID         string  `json:"node_id"`
-	AuthorID       string  `json:"author_id"`
-	Title          string  `json:"title"`
-	Body           string  `json:"body"`
-	Status         string  `json:"status"`
-	State          string  `json:"state"`
-	ProposalType   string  `json:"proposal_type"`
-	DurationHours  int     `json:"duration_hours"`
-	VotingEndsAt   *string `json:"voting_ends_at,omitempty"`
-	CreatedAt      string  `json:"created_at"`
-	UpdatedAt      string  `json:"updated_at"`
-	TargetDoc      string  `json:"target_doc,omitempty"`
+	ID            string  `json:"id"`
+	NodeID        string  `json:"node_id"`
+	AuthorID      string  `json:"author_id"`
+	Title         string  `json:"title"`
+	Body          string  `json:"body"`
+	Status        string  `json:"status"`
+	State         string  `json:"state"`
+	ProposalType  string  `json:"proposal_type"`
+	DurationHours int     `json:"duration_hours"`
+	VotingEndsAt  *string `json:"voting_ends_at,omitempty"`
+	CreatedAt     string  `json:"created_at"`
+	UpdatedAt     string  `json:"updated_at"`
+	TargetDoc     string  `json:"target_doc,omitempty"`
 	// TargetUserID is the person a proposal is *about*, as distinct from
 	// AuthorID, who raised it. Set on a meritocratic nomination
 	// (docs/adr/051); empty on every proposal that decides a thing rather

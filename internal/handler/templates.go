@@ -96,7 +96,7 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	}
 
 	rows, err := db.Query(
-		`SELECT COALESCE(p.voting_terms,'') FROM proposals p
+		`SELECT COALESCE(p.voting_terms,''), COALESCE(p.target_user_id,'') FROM proposals p
 		 WHERE p.node_id = ? AND p.status = 'open'
 		 AND NOT EXISTS (SELECT 1 FROM votes v WHERE v.proposal_id = p.id AND v.user_id = ?)`,
 		nodeID, userID,
@@ -108,8 +108,8 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 
 	count := 0
 	for rows.Next() {
-		var termsJSON string
-		if rows.Scan(&termsJSON) != nil {
+		var termsJSON, targetUserID string
+		if rows.Scan(&termsJSON, &targetUserID) != nil {
 			continue
 		}
 		if termsJSON == "" || termsJSON == "{}" {
@@ -121,6 +121,13 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 			if time.Since(joined) < time.Duration(gc.MinVotingTenureDays)*24*time.Hour {
 				continue
 			}
+		}
+		// A proposal you are recused from is not awaiting your vote
+		// (docs/adr/051). ADR 044's rule is that the nudge names the same set
+		// the gate does; telling someone two proposals need their vote and
+		// then refusing one of them is the contradiction it was written about.
+		if recusedSubject(db, nodeID, gc, targetUserID) == userID {
+			continue
 		}
 		count++
 	}

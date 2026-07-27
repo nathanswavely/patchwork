@@ -17,6 +17,9 @@ type GovernanceRules struct {
 	AmendmentThreshold  string `json:"amendment_threshold"`
 	AmendmentAutoApply  bool   `json:"amendment_auto_apply"`
 	MinVotingTenureDays int    `json:"min_voting_tenure_days"`
+	// SubjectRecusal bars a proposal's subject from voting on it
+	// (docs/adr/051).
+	SubjectRecusal bool `json:"subject_recusal"`
 
 	// Leadership & succession
 	LeadershipModel  string `json:"leadership_model"`
@@ -40,6 +43,7 @@ func DefaultRules() *GovernanceRules {
 		AmendmentThreshold:  "majority",
 		AmendmentAutoApply:  true,
 		MinVotingTenureDays: 0,
+		SubjectRecusal:      false,
 		LeadershipModel:     "maintainer",
 		SuccessionMethod:    "admin_nominate",
 		SuccessionPolicy:    "longest_tenure",
@@ -98,6 +102,7 @@ func marshalConfig(rules *GovernanceRules) (string, error) {
 		AmendmentAutoApply:  rules.AmendmentAutoApply,
 		SuccessionPolicy:    rules.SuccessionPolicy,
 		MinVotingTenureDays: rules.MinVotingTenureDays,
+		SubjectRecusal:      rules.SubjectRecusal,
 		LeadershipModel:     rules.LeadershipModel,
 		SuccessionMethod:    rules.SuccessionMethod,
 		AdminTermMonths:     rules.AdminTermMonths,

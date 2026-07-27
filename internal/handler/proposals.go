@@ -425,6 +425,15 @@ func mayPropose(db *database.DB, userID, nodeID string) bool {
 // and the governance hub's "needs your vote" count, which must not nudge
 // someone the gate will refuse — asks it here.
 func inElectorate(db *database.DB, userID, nodeID string, gc model.GovernanceConfig) bool {
+	return inElectorateExcept(db, userID, nodeID, gc, "")
+}
+
+// inElectorateExcept is inElectorate with the recused subject taken out, so
+// the gate and the denominator agree (docs/adr/044).
+func inElectorateExcept(db *database.DB, userID, nodeID string, gc model.GovernanceConfig, exceptUserID string) bool {
+	if exceptUserID != "" && userID == exceptUserID {
+		return false
+	}
 	cond, args := electorateFilter("", gc)
 	all := append([]interface{}{nodeID, userID}, args...)
 	var one int
@@ -438,6 +447,17 @@ func inElectorate(db *database.DB, userID, nodeID string, gc model.GovernanceCon
 // enough — are both read off the one electorate condition rather than from a
 // second implementation of it.
 func electorateDenial(db *database.DB, userID, nodeID string, gc model.GovernanceConfig) string {
+	return electorateDenialExcept(db, userID, nodeID, gc, "")
+}
+
+// electorateDenialExcept adds the third answer recusal makes possible: this
+// proposal is about you. It is named separately from the other two because a
+// recused subject is not "not one of us" — they are in the electorate for
+// every other vote, and telling them they are not a member would be false.
+func electorateDenialExcept(db *database.DB, userID, nodeID string, gc model.GovernanceConfig, exceptUserID string) string {
+	if exceptUserID != "" && userID == exceptUserID {
+		return "this patch does not let people vote on proposals about themselves"
+	}
 	if inElectorate(db, userID, nodeID, gc) {
 		return ""
 	}
@@ -524,9 +544,43 @@ func votingTerms(db *database.DB, proposalID, nodeID string) model.GovernanceCon
 //
 // The config passed in should be a proposal's votingTerms, not the node's
 // live config, wherever the answer is about one proposal.
+// recusedSubject returns the person a proposal's own terms bar from voting on
+// it — its subject, when the patch recuses subjects (docs/adr/051).
+//
+// It returns "" when recusal would empty the electorate. Recusal exists to
+// remove a conflicted voter, not to make a vote impossible: with nobody left
+// eligible and a quorum above zero, quorumMet can never be true and the
+// proposal sits open past its window forever — the exact silent-stall failure
+// the comment in resolveProposal describes being fixed once already. A
+// contrived self-vote is the lesser fault, and it is at least a vote that
+// resolves.
+func recusedSubject(db *database.DB, nodeID string, gc model.GovernanceConfig, targetUserID string) string {
+	if !gc.SubjectRecusal || targetUserID == "" {
+		return ""
+	}
+	if remaining, _ := eligibleVotersExcept(db, nodeID, gc, targetUserID); remaining == 0 {
+		return ""
+	}
+	return targetUserID
+}
+
 func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (int, string) {
+	return eligibleVotersExcept(db, nodeID, gc, "")
+}
+
+// eligibleVotersExcept is eligibleVoters with one person left out — the
+// recused subject of the proposal being counted. The exclusion belongs here
+// rather than at the gate alone because ADR 044's rule is that the gate, the
+// denominator, the tally, and the UI all name one set: barring someone from
+// casting while still dividing quorum by them would make a nomination
+// unpassable.
+func eligibleVotersExcept(db *database.DB, nodeID string, gc model.GovernanceConfig, exceptUserID string) (int, string) {
 	cond, tenureArgs := electorateFilter("", gc)
 	args := append([]interface{}{nodeID}, tenureArgs...)
+	if exceptUserID != "" {
+		cond += " AND user_id != ?"
+		args = append(args, exceptUserID)
+	}
 	rows, err := db.Query(`SELECT user_id FROM memberships WHERE node_id = ? AND `+cond, args...)
 	if err != nil {
 		return 0, ""
@@ -588,7 +642,11 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// window and never resolved, silently. ADR 044 called eligibleVoters "the
 	// denominator every quorum calculation divides by"; this is the quorum
 	// calculation, and it wasn't.
-	eligibleCount, _ := eligibleVoters(db, p.NodeID, gc)
+	// The subject of a nomination is out of its own electorate where the
+	// patch recuses subjects (docs/adr/051) — out of the gate and out of this
+	// denominator both, or the vote could not be carried.
+	recused := recusedSubject(db, p.NodeID, gc, p.TargetUserID)
+	eligibleCount, _ := eligibleVotersExcept(db, p.NodeID, gc, recused)
 	totalVotes := approveCount + rejectCount + abstainCount
 	quorumMet := gc.QuorumPercent == 0 || (eligibleCount > 0 && (totalVotes*100/eligibleCount) >= gc.QuorumPercent)
 	if !quorumMet {
@@ -791,7 +849,8 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// (docs/adr/041). Measured against this vote's own terms
 		// (docs/adr/047), so the number matches who the gate will admit.
 		gc := votingTerms(db, proposalID, p.NodeID)
-		eligibleCount, _ := eligibleVoters(db, p.NodeID, gc)
+		recused := recusedSubject(db, p.NodeID, gc, p.TargetUserID)
+		eligibleCount, _ := eligibleVotersExcept(db, p.NodeID, gc, recused)
 
 		// Whether this viewer is in the electorate, answered by the same
 		// condition VoteOnProposal gates on. The page used to work this out in
@@ -800,7 +859,7 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// shown vote buttons and got a 403 on click. Deciding who may vote is
 		// the server's answer to give (docs/adr/044); the client still decides
 		// whether the proposal is in a state that accepts one.
-		canVote := viewerID != "" && inElectorate(db, viewerID, p.NodeID, gc)
+		canVote := viewerID != "" && inElectorateExcept(db, viewerID, p.NodeID, gc, recused)
 
 		result := map[string]interface{}{
 			"id":          p.ID,
@@ -894,6 +953,14 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// and someone who became eligible afterward votes on the next one.
 		gc := votingTerms(db, proposalID, nodeID)
 
+		// Who this proposal is about, if anyone, and whether its terms recuse
+		// them (docs/adr/051). Read from the frozen terms like everything else
+		// that decides the vote: a patch switching recusal on mid-vote does not
+		// retroactively void a ballot already cast (docs/adr/047).
+		var voteTargetUser string
+		db.QueryRow("SELECT COALESCE(target_user_id,'') FROM proposals WHERE id = ?", proposalID).Scan(&voteTargetUser)
+		voteRecused := recusedSubject(db, nodeID, gc, voteTargetUser)
+
 		// Require the vote to come from someone the electorate counts — role
 		// and tenure both, evaluated by the one condition eligibleVoters
 		// counts by, so that who may vote and who is counted can never be two
@@ -909,7 +976,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// authority reaching into an active patch for the far smaller matter
 		// of an event queue. A patch's vote is its own. An instance admin who
 		// is also a member votes as that member, like anyone else.
-		if denial := electorateDenial(db, user.ID, nodeID, gc); denial != "" {
+		if denial := electorateDenialExcept(db, user.ID, nodeID, gc, voteRecused); denial != "" {
 			http.Error(w, `{"error":"`+denial+`"}`, http.StatusForbidden)
 			return
 		}
@@ -953,7 +1020,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// holds space for nobody. An abstain never closes early: it reads
 		// as "not deciding yet" and stays changeable until the window ends.
 		if req.Value != "abstain" {
-			if _, sole := eligibleVoters(db, nodeID, gc); sole == user.ID {
+			if _, sole := eligibleVotersExcept(db, nodeID, gc, voteRecused); sole == user.ID {
 				resolveProposal(db, proposalID)
 			}
 		}

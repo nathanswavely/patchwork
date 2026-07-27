@@ -649,6 +649,17 @@ standing control), so a candidate *runs* for a seat and is never said to
 _Avoid_: nominee (there is no separate nomination step), runner, standing
 for a seat
 
+**Recusal**:
+A patch rule that keeps the person a proposal is *about* from voting on
+it — a nominee sits out their own nomination. Off by default and chosen
+per patch. Recusal is about one proposal, never about the person: they
+remain in the electorate for everything else, and it stands down entirely
+rather than leave a vote with nobody eligible to decide it. Being a term
+of the contest, it freezes when voting opens like every other rule that
+decides an outcome.
+_Avoid_: conflict of interest (names the reason, not the rule),
+abstention (that is a ballot someone chose to cast), self-vote ban
+
 **Ballot**:
 What one person casts in one contest — approve, reject, or abstain on an
 ordinary proposal; the set of candidates they approve in an election. One
