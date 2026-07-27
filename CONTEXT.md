@@ -594,22 +594,24 @@ _Avoid_: board, committee, leadership team, steward (that is quilt-level,
 publicly accountable, and not a permission)
 
 **Seat**:
-A governed admin position on a patch whose leadership model is
-meritocratic or elected. A patch that runs on a maintainer has admins and
-no seats, and never meets the word. A seat's holder holds the ordinary
-admin role — there is no permission a seated admin has that an appointed
-one lacks. Seats are not terms: a meritocratic patch has seats that no
-clock runs on.
+A governed admin position that outlives whoever fills it, holding a term
+end whether occupied or vacant. Seats exist only where leadership is
+elected — they are what a term attaches to, so a patch with no terms has
+admins rather than seats. A seat's holder holds the ordinary admin role;
+there is no permission a seated admin has that an appointed one lacks.
+The Formal charter's "when a seat opens" on a meritocratic patch is a
+figure of speech for "we could use another admin", not this.
 _Avoid_: chair, post, slot, council seat (redundant), position
 
 **Term**:
 The clock on a seat — the period its holder serves before that seat
 stands again. The clock belongs to the seat, not the person: someone
 appointed to a vacancy serves out what remains, so filling a gap can
-never manufacture a fresh mandate. Terms exist only where leadership is
-elected; a meritocratic seat has none. Distinct from **tenure**, which is
-how long someone has been a member and is what gates voting: a term is
-about holding power, tenure is about having standing to decide.
+never manufacture a fresh mandate. Terms and seats arrive together, and
+only under elected leadership; the other two models rotate their admins
+without either. Distinct from **tenure**, which is how long someone has
+been a member and is what gates voting: a term is about holding power,
+tenure is about having standing to decide.
 _Avoid_: tenure (that is membership length), mandate, session
 
 **Election cycle**:
