@@ -49,7 +49,7 @@ several branches are in flight.
 | [044](044-the-electorate-is-one-set.md) | The electorate is one set — the vote gate is the quorum denominator |
 | [046](046-location-is-one-name-first-field.md) | Location is one field, written name-first — the venue/address split rejected |
 | [047](047-a-vote-keeps-the-terms-it-opened-with.md) | A vote keeps the terms it opened with — rules freeze when voting opens *(open question settled by 048)* |
-| [048](048-proposals-are-born-voting.md) | Proposals are born voting — draft and discussion retired |
+| [048](048-proposals-are-born-voting.md) | Proposals are born voting — draft and discussion retired *(amended by 051: elections nominate first)* |
 | [050](050-follower-permissions-gate-taking-part.md) | Follower permissions gate taking part, not reading — only `charters` was ever a read gate |
 
 ## Adopted as design boundaries — implementation is backlog
@@ -59,7 +59,8 @@ several branches are in flight.
 | [012](012-leaving-is-a-member-right.md) | Leaving is a member right — personal export, member seamrip, moved-to pointer |
 | [025](025-global-patchwork-is-an-instance.md) | A global patchwork would be an instance, not a service |
 | [045](045-event-time-belongs-to-the-place.md) | Event time belongs to the place — per-event zone, inherited from the patch |
-| [049](049-patchwork-states-only-what-it-enforces.md) | Patchwork states only what it enforces — six inert governance fields *(the `max_admins` guard shipped; the surface pass is backlog)* |
+| [049](049-patchwork-states-only-what-it-enforces.md) | Patchwork states only what it enforces — six inert governance fields *(the `max_admins` guard is retracted by 051; the surface pass is backlog)* |
+| [051](051-succession-follows-the-leadership-model.md) | Succession follows the leadership model — three models, three mechanics |
 
 ## Proposed — designs on record, not built
 

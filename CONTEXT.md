@@ -584,6 +584,79 @@ _Avoid_: proposal (nothing is proposed to anyone), fast-track (an
 implementation word, not a concept), edit (undersells that it's tracked
 and visible)
 
+**Council**:
+The admin set of a patch that elects its leadership — not a separate body
+and not a fourth role. "An elected council of up to 7 admins" is the
+Formal charter's own phrasing: the council is simply who holds admin,
+chosen by election rather than by appointment. A patch that appoints its
+admins has no council and never sees the word.
+_Avoid_: board, committee, leadership team, steward (that is quilt-level,
+publicly accountable, and not a permission)
+
+**Seat**:
+A governed admin position on a patch whose leadership model is
+meritocratic or elected. A patch that runs on a maintainer has admins and
+no seats, and never meets the word. A seat's holder holds the ordinary
+admin role — there is no permission a seated admin has that an appointed
+one lacks. Seats are not terms: a meritocratic patch has seats that no
+clock runs on.
+_Avoid_: chair, post, slot, council seat (redundant), position
+
+**Term**:
+The clock on a seat — the period its holder serves before that seat
+stands again. The clock belongs to the seat, not the person: someone
+appointed to a vacancy serves out what remains, so filling a gap can
+never manufacture a fresh mandate. Terms exist only where leadership is
+elected; a meritocratic seat has none. Distinct from **tenure**, which is
+how long someone has been a member and is what gates voting: a term is
+about holding power, tenure is about having standing to decide.
+_Avoid_: tenure (that is membership length), mandate, session
+
+**Election cycle**:
+The run of an election from nominations opening to the council being
+seated. A patch's cycles are anchored by nothing configured — adopting
+elected leadership starts the first one, and each cycle after is
+scheduled from when the last seated its council. Distinct from a
+**term**, which is what the seating starts.
+_Avoid_: election season, campaign, the election (when the period rather
+than the contest is meant), annual meeting (there is no meeting)
+
+**Lapsed term**:
+A seat whose term has ended while its holder is still serving — because
+the election cycle has not come round, or because it ran and settled
+nothing. The holder loses nothing and keeps serving until a successor is
+elected. Deliberately not a removal: a clock must never be able to leave
+a patch leaderless, and a community content with its leadership is not
+overruled for failing to hold a vote. Publicly visible, because a council
+that has not faced election in years should show it.
+_Avoid_: expired (says the person is invalid), overdue, vacant (it is
+filled), holdover (the mechanism's name, not a word for members)
+
+**Election**:
+A proposal that fills one or more seats. It is a proposal like any other
+— same electorate, same quorum, same terms fixed when voting opens —
+differing only in what a ballot says and how the result is read: the
+electorate approves as many candidates as it likes, and the most-approved
+take the open seats.
+_Avoid_: race, poll, vote (that is the act of casting), ranked-choice
+(elections approve, they do not rank)
+
+**Candidate**:
+A person named on an election's ballot for a seat. Note the collision:
+**standing** in this glossary is a person's relationship to a patch (see
+standing control), so a candidate *runs* for a seat and is never said to
+"stand" for one.
+_Avoid_: nominee (there is no separate nomination step), runner, standing
+for a seat
+
+**Ballot**:
+What one person casts in one contest — approve, reject, or abstain on an
+ordinary proposal; the set of candidates they approve in an election. One
+ballot per person per contest, always. Distinct from the **tally**, which
+is what the ballots add up to, and from the **electorate**, which is who
+was entitled to cast one.
+_Avoid_: vote (the act of casting), ranking, preference
+
 ## Event sources
 
 **Event source**:
