@@ -604,13 +604,22 @@ _Avoid_: chair, post, slot, council seat (redundant), position
 
 **Term**:
 The clock on a seat — the period its holder serves before that seat
-stands again at the next election. Terms exist only where leadership is
+stands again. The clock belongs to the seat, not the person: someone
+appointed to a vacancy serves out what remains, so filling a gap can
+never manufacture a fresh mandate. Terms exist only where leadership is
 elected; a meritocratic seat has none. Distinct from **tenure**, which is
 how long someone has been a member and is what gates voting: a term is
-about holding power, tenure is about having standing to decide. Terms are
-what make power periodically contestable, the promise the Formal charter
-states as "power rotates".
-_Avoid_: tenure (that is membership length), mandate, session, cycle
+about holding power, tenure is about having standing to decide.
+_Avoid_: tenure (that is membership length), mandate, session
+
+**Election cycle**:
+The run of an election from nominations opening to the council being
+seated. A patch's cycles are anchored by nothing configured — adopting
+elected leadership starts the first one, and each cycle after is
+scheduled from when the last seated its council. Distinct from a
+**term**, which is what the seating starts.
+_Avoid_: election season, campaign, the election (when the period rather
+than the contest is meant), annual meeting (there is no meeting)
 
 **Lapsed term**:
 A seat whose term has ended while its holder is still serving — because

@@ -72,6 +72,39 @@ own description already promises.**
   the one the template already defines: more than half the seats vacant
   triggers an emergency cycle on compressed 7-day phases.
 
+- **The cycle is anchored by nothing configured.** Adopting `elected`
+  leadership starts an election; every cycle after is scheduled from when
+  the last one seated the council. No founding anniversary, no date
+  picked at setup, no instance-wide date — all three were considered and
+  all three require a decision, or inherit an arbitrary date, that has
+  nothing to do with the patch's governance. A patch founded on 24
+  December should not hold elections over the holidays because of it.
+
+  This also settles what adoption does to the sitting admins: they hold
+  over through that first election and either win their seats or do not.
+  Nobody is ejected by a rules change, and nobody collects a twelve-month
+  mandate from one either.
+
+- **The clock belongs to the seat, not the person.** Someone appointed to
+  a mid-term vacancy serves out the remainder, not a fresh term. The
+  argument is integrity rather than tidiness: under fresh terms a council
+  can reset its own clocks — a seat opens, an ally is appointed, and that
+  person holds a full term without ever having faced the electorate at a
+  scheduled cycle. Done repeatedly, the council outruns its own election
+  calendar indefinitely. When the seat carries the term, appointment can
+  fill a gap but can never manufacture a mandate. It also keeps the
+  answer to "when do we next elect?" a single date rather than one per
+  seat.
+
+  `term_ends_at` therefore lives on the seat. Which makes **staggering a
+  policy rather than machinery**: aligned seats share a date, staggered
+  seats differ, and spreading a first cohort is just setting shorter
+  initial dates on some of them — the way real bylaws classify at a first
+  election — after which inheritance keeps the pattern stable by itself.
+  No class entity, no migration, and nothing here forecloses it. Not
+  shipped initially, but only because it is optional, not because it is
+  hard.
+
 - **No clock removes anybody.** Where terms exist, a term ending makes
   the *seat* contestable at the next cycle; the holder keeps serving
   until a successor is elected. "Directors serve until their successors
@@ -187,18 +220,24 @@ thing everywhere. It loses on the spectrum principle: a three-piece band
 would acquire seats it never asked for, and every surface would have to
 explain a structure most patches will never use.
 
+- **Mid-term vacancy under `elected` borrows meritocratic's mechanic**,
+  because the template already says so: "the council may appoint a
+  replacement from active members. The appointment must be ratified by
+  the community within 14 days." That is nomination-plus-ratification,
+  which is the same act meritocratic runs on and the same ordinary
+  proposal. The appointee inherits the seat's remaining term, per above.
+
 ## Open
 
-- **What "annually" anchors to.** Real bylaws say "at the annual
-  meeting"; Patchwork has no meetings. Candidates: the patch's founding
-  anniversary (always exists, needs no decision), a date the patch picks,
-  or a shared instance date.
-- **Whether terms stagger.** Real boards stagger so the body never turns
-  over at once; the templates don't mention it, which means all seats
-  stand together and a council can be wholly replaced by one quorum.
-- **Mid-term vacancy under `elected`** — the template says the council
-  appoints, ratified within 14 days, which is meritocratic's mechanic
-  borrowed. Worth confirming rather than assuming.
+Nothing structural. What remains is implementation detail — the shape of
+the seats table, where the cycle scheduler lives in a single-process
+binary with no queue, and the copy for each of the three models'
+overview sections.
+
+Two things are deliberately deferred rather than undecided: **first-cohort
+staggering** (a policy over the existing schema, addable whenever) and
+**ranked-choice** (rejected for approval voting, and revisitable only
+with a tally members can verify by reading the page).
 
 **Status: adopted as a design boundary — implementation is backlog,
 except the `max_admins` retraction, which is a live fix and ships here.**
