@@ -10,7 +10,6 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
-	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -671,32 +670,14 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				}
 			}
 
-			// Seats are real (docs/adr/049). The governance overview renders
-			// "3 of 7 seats filled" from max_admins, and nothing enforced the
-			// denominator, so "9 of 7" was reachable. This is the only path
-			// that promotes an existing member — patch creation and claim
-			// completion each mint the *first* admin, which no positive cap
-			// can exclude.
-			//
-			// max_admins <= 0 means no cap, matching every read surface. A
-			// patch already over its cap is left alone rather than pruned:
-			// the guard refuses to add a seat, never takes one away, because
-			// removing an admin is not a side effect a settings value gets to
-			// have.
-			if newRole == "admin" && currentRole != "admin" {
-				var gcJSON string
-				db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
-				var gc model.GovernanceConfig
-				json.Unmarshal([]byte(gcJSON), &gc)
-				if gc.MaxAdmins > 0 {
-					var adminCount int
-					db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'", nodeID).Scan(&adminCount)
-					if adminCount >= gc.MaxAdmins {
-						http.Error(w, fmt.Sprintf(`{"error":"all %d admin seats are filled"}`, gc.MaxAdmins), http.StatusConflict)
-						return
-					}
-				}
-			}
+			// No cap on promotion. docs/adr/049 enforced max_admins here and
+			// docs/adr/051 retracts it: how many admins a patch has is a
+			// function of how it governs, not a number it configures, and
+			// max_admins was unreachable anyway — RulesProposalEditor is the
+			// only writer of governance-rules.json and the structured editor
+			// preserves the field without offering a control. Migration 041
+			// had backfilled "max_admins": 3 into nearly every patch, so
+			// enforcing it capped live patches with no way out.
 
 			_, err = db.Exec("UPDATE memberships SET role = ? WHERE id = ?", newRole, memID)
 			if err != nil {

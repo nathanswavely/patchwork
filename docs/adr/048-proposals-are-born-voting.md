@@ -69,6 +69,15 @@ construction and cannot drift apart. 047 landed while this was open; its
 conditional paragraph now carries a pointer here rather than reading as
 work still owed.
 
+*Amended by docs/adr/051: elections are the exception. An election opens
+for nominations and starts voting when they close, so for that one
+proposal type creation and the start of voting do drift, and 047's
+photograph is taken at the transition rather than at INSERT — which is
+what 047 asked for. The claim above holds for every other proposal type.
+051 also explains why this is not the flow retired below: what killed
+`draft` and `discussion` was that nothing governed them, and a nomination
+window has a length, a purpose, and a defined end.*
+
 **Considered and rejected: building the flow.** A draft phase is a real
 thing communities want — a place to circulate wording before the clock
 starts. It is also a governance rule (who sees a draft, how long
