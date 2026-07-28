@@ -22,12 +22,12 @@
   },
   "dependencies": {
     "@fontsource-variable/shantell-sans": "^5.3.0",
-    "@fontsource-variable/space-grotesk": "^5.2.10",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
     "d3": "^7.9.0",
     "diff": "^9.0.0",
     "dompurify": "^3.4.12",
     "leaflet": "^1.9.4",
-    "marked": "^18.0.6",
+    "marked": "^18.0.7",
     "phosphor-svelte": "^3.1.0"
   }
 }
