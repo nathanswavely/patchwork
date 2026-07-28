@@ -36,19 +36,32 @@ We decided **there is no single succession mechanic. A patch picks one
 when it picks a leadership model, and each model gets the mechanic its
 own description already promises.**
 
-| Model | Seats | Terms | How a seat is filled |
+| Model | Seats | Terms | How an admin is made |
 |---|---|---|---|
 | `maintainer` | no | no | the maintainer designates a successor |
-| `meritocratic` | yes | no | admins nominate, the community ratifies |
+| `meritocratic` | no | no | admins nominate, the community ratifies |
 | `elected` | yes | yes | calendared election |
 
-- **Seats and terms are separable.** A seat is a governed admin
-  position; a term is a clock on one. Meritocratic's own copy says "when
-  a seat opens," so it has seats — what it lacks is terms. Getting this
-  wrong is what made the first draft treat every question as an election
-  question. A `maintainer` patch has neither, and a band never meets any
-  of these words. There is no fourth role anywhere: a seat's holder holds
-  the ordinary `admin` role, with no permission an appointed admin lacks.
+- **A seat is the thing a term attaches to, so only `elected` has one.**
+  An earlier revision of this table gave meritocratic seats, on the
+  strength of its own copy saying "when a seat opens." Building it showed
+  that was reading a figure of speech as a data model: with no term and
+  no cap, a meritocratic seat would carry an occupant and nothing else,
+  which is what the membership row already is. "A seat opens" there means
+  a human decided the patch could use another admin — a judgement, not a
+  tracked state. Under `elected` a seat holds a term end, survives its
+  occupants, and can be filled or vacant, and only then is it an entity
+  worth having.
+
+  Terms and seats therefore arrive together rather than being separable
+  as this ADR first claimed. What *is* separable, and what the first
+  draft actually got wrong, is **succession from elections**: two of the
+  three models rotate leadership with no seat, no term, and no ballot
+  between candidates.
+
+  A `maintainer` patch has none of it, and a band never meets any of
+  these words. There is no fourth role anywhere: an admin is an admin,
+  however they got there.
 
 - **Meritocratic ratification needs no new voting machinery.** The admins
   put forward one name and the community votes yes or no — an ordinary
@@ -192,8 +205,9 @@ own description already promises.**
 
 - **`max_admins` is retired as a rule, and the guard from docs/adr/049 is
   retracted.** How many admins a patch has follows from how it governs —
-  seats are created and dissolved by governance act, and the count is
-  however many exist. An instance-level cap was considered and rejected:
+  under `elected`, seats are created and dissolved by governance act and
+  the count is however many exist; under the other two, it is however
+  many people have been designated or ratified. An instance-level cap was considered and rejected:
   every instance setting today governs the instance's own presentation or
   its own discovery surface, and CONTEXT.md is explicit that an instance
   admin "does not override per-patch choices."
@@ -211,7 +225,7 @@ own description already promises.**
 what the first draft assumed and it is the source of every wrong turn in
 it. Three mechanics means three code paths and three sets of copy to keep
 honest — which is how docs/adr/049 happened — but two of the three are
-small, all three share seats as the underlying object, and the
+small, all three end at the same place (someone holds `admin`), and the
 alternative is forcing a band and a coalition through the same ceremony.
 
 **Considered and rejected: seats for every patch, with designation as an

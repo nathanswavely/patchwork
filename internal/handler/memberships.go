@@ -676,6 +676,18 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				}
 			}
 
+			// On a meritocratic patch the community ratifies admins, so an
+			// admin cannot simply make one (docs/adr/051). Without this the
+			// ratification vote is optional, and an optional vote is theatre —
+			// the same "rules on screen are not the rules in force" failure
+			// docs/adr/041 named. Demotion is untouched: nothing about
+			// earning a role says the community must vote to end it, and the
+			// last-admin floor above still applies.
+			if newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "meritocratic" {
+				http.Error(w, `{"error":"this patch ratifies admins by proposal: nominate them instead"}`, http.StatusConflict)
+				return
+			}
+
 			// No cap on promotion. docs/adr/049 enforced max_admins here and
 			// docs/adr/051 retracts it: how many admins a patch has is a
 			// function of how it governs, not a number it configures, and

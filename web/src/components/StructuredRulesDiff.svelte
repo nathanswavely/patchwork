@@ -9,6 +9,7 @@
     amendment_auto_apply: 'Auto-Apply Amendments',
     succession_policy: 'Succession Policy',
     min_voting_tenure_days: 'Min Voting Tenure',
+    subject_recusal: 'Recuse a proposal’s subject',
     membership_policy: 'Membership Policy',
     follower_permissions: 'Follower Permissions',
   };

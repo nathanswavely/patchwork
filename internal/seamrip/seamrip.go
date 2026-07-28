@@ -148,12 +148,15 @@ func Tables() []Table {
 			File: "proposals.json",
 			Name: "proposals",
 			Query: `SELECT id, node_id, author_id, title, body, status, state,
-				proposal_type, duration_hours, voting_ends_at, target_doc,
+				proposal_type, duration_hours, voting_ends_at, target_doc, target_user_id,
 				proposed_title, proposed_body, applied_at, applied_by,
 				created_at, updated_at FROM proposals`,
 			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"),
 				c("body"), c("status"), c("state"), c("proposal_type"),
 				c("duration_hours"), c("voting_ends_at"), c("target_doc"),
+				// The person a nomination is about travels remapped, like
+				// every other user reference (docs/adr/051).
+				id("target_user_id"),
 				c("proposed_title"), c("proposed_body"), c("applied_at"),
 				id("applied_by"), c("created_at"), c("updated_at")),
 		},

@@ -51,6 +51,8 @@
   let autoApply = $state(true);
   let successionPolicy = $state('longest_tenure');
   let minVotingTenureDays = $state(0);
+  // Whether a proposal's subject may vote on it (docs/adr/051).
+  let subjectRecusal = $state(false);
   let membershipPolicy = $state('open');
   let followerEvents = $state(true);
   let followerProposals = $state(true);
@@ -72,6 +74,7 @@
       autoApply = currentRules.amendment_auto_apply ?? true;
       successionPolicy = currentRules.succession_policy || 'longest_tenure';
       minVotingTenureDays = currentRules.min_voting_tenure_days ?? 0;
+      subjectRecusal = currentRules.subject_recusal === true;
       membershipPolicy = currentRules.membership_policy || 'open';
       const fp = currentRules.follower_permissions || {};
       followerEvents = fp.events !== false;
@@ -106,6 +109,7 @@
       rules.amendment_threshold = amendmentThreshold;
       rules.amendment_auto_apply = autoApply;
       rules.min_voting_tenure_days = minVotingTenureDays;
+      rules.subject_recusal = subjectRecusal;
     }
     return rules;
   }
@@ -163,6 +167,20 @@
         <input type="checkbox" bind:checked={autoApply} />
         Auto-Apply Amendments
       </label>
+    </div>
+
+    <!-- Recusal is a term of the contest — it decides who may vote — so it
+         sits with the voting knobs and is hidden under admin-decides like
+         the rest of them (docs/adr/041, docs/adr/051). -->
+    <div class="field checkbox-field">
+      <label>
+        <input type="checkbox" bind:checked={subjectRecusal} />
+        People don't vote on proposals about themselves
+      </label>
+      <p class="recusal-hint muted">
+        Someone nominated for admin sits their own vote out. They stay in the
+        electorate for everything else.
+      </p>
     </div>
   {/if}
 
@@ -244,6 +262,11 @@
   .field input:focus {
     outline: none;
     border-color: var(--color-primary);
+  }
+
+  .recusal-hint {
+    font-size: 0.78rem;
+    margin: 0.3rem 0 0 1.5rem;
   }
 
   .checkbox-field label {

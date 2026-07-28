@@ -1,0 +1,26 @@
+-- Succession follows the leadership model (docs/adr/051), phase 2.
+--
+-- `leadership_model: "meritocratic"` tells members "admins earn their role
+-- through sustained contribution. When a seat opens, existing admins nominate
+-- from active members and the community ratifies." Nominating was not a thing
+-- anyone could do, and ratifying decided nothing: a `membership` proposal has
+-- always been allowed by the proposal_type CHECK, and approving one changed no
+-- roles.
+--
+-- What the proposals table could not say is *who* a proposal is about. Every
+-- person-shaped column on it points at an actor — author_id, applied_by — and
+-- none at a subject. This is the subject.
+--
+-- Deliberately `target_user_id` rather than `nominee_id`: docs/adr/051 also
+-- puts removal-from-seat in scope, which is the same shape pointed the other
+-- way (a proposal about a person, resolved by the electorate). One column
+-- serves both, and naming it for the first use would have meant a second
+-- column saying the same thing.
+--
+-- NULL for every proposal that is not about a person, which is all of them
+-- today. ON DELETE SET NULL: a deleted account cannot be promoted, and a
+-- dangling id would be worse than none — the vote's subject would silently
+-- become a stranger. Membership is re-checked when the vote resolves anyway,
+-- since leaving the patch between nomination and ratification voids it.
+ALTER TABLE proposals ADD COLUMN target_user_id TEXT
+	REFERENCES users(id) ON DELETE SET NULL;
