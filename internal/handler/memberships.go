@@ -676,6 +676,15 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				}
 			}
 
+			// Where admins are chosen elsewhere, Patchwork does not make them
+			// (docs/adr/052). The record of that decision is what promotes,
+			// so a hand-made admin here would be a change with no decision
+			// behind it — and the next attestation would undo it anyway.
+			if newRole == "admin" && currentRole != "admin" && leadershipDecidedElsewhere(db, nodeID) {
+				http.Error(w, `{"error":"this patch chooses its admins elsewhere: record that decision instead"}`, http.StatusConflict)
+				return
+			}
+
 			// On a meritocratic patch the community ratifies admins, so an
 			// admin cannot simply make one (docs/adr/051). Without this the
 			// ratification vote is optional, and an optional vote is theatre —

@@ -51,6 +51,10 @@
   let autoApply = $state(true);
   let successionPolicy = $state('longest_tenure');
   let minVotingTenureDays = $state(0);
+  // Where admins are actually chosen (docs/adr/052). A community whose board
+  // is elected at its annual meeting records that here rather than staging a
+  // vote it does not hold.
+  let leadershipVenue = $state('patchwork');
   // Whether a proposal's subject may vote on it (docs/adr/051).
   let subjectRecusal = $state(false);
   let membershipPolicy = $state('open');
@@ -75,6 +79,7 @@
       successionPolicy = currentRules.succession_policy || 'longest_tenure';
       minVotingTenureDays = currentRules.min_voting_tenure_days ?? 0;
       subjectRecusal = currentRules.subject_recusal === true;
+      leadershipVenue = currentRules.leadership_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
       membershipPolicy = currentRules.membership_policy || 'open';
       const fp = currentRules.follower_permissions || {};
       followerEvents = fp.events !== false;
@@ -91,6 +96,7 @@
     const rules = {
       ...(currentRules || {}),
       decision_method: decisionMethod,
+      leadership_venue: leadershipVenue,
       succession_policy: successionPolicy,
       membership_policy: membershipPolicy,
       follower_permissions: {
@@ -123,6 +129,7 @@
     // Touch all reactive values to track them
     decisionMethod; quorumPercent; votingPeriodHours; amendmentThreshold;
     autoApply; successionPolicy; minVotingTenureDays; membershipPolicy;
+    subjectRecusal; leadershipVenue;
     followerEvents; followerProposals; followerCharters; followerMembers;
     onSave(buildRules());
   });
@@ -183,6 +190,19 @@
       </p>
     </div>
   {/if}
+
+  <div class="field">
+    <label for="re-venue">Where admins are chosen</label>
+    <select id="re-venue" bind:value={leadershipVenue}>
+      <option value="patchwork">In Patchwork</option>
+      <option value="elsewhere">Somewhere else, recorded here</option>
+    </select>
+    <p class="venue-hint muted">
+      Pick the second if your board is elected at a meeting, on paper, or in
+      another tool. Patchwork will stop conducting leadership changes and let
+      an admin record what was decided.
+    </p>
+  </div>
 
   <div class="field">
     <label for="re-succession">Succession Policy</label>
@@ -262,6 +282,11 @@
   .field input:focus {
     outline: none;
     border-color: var(--color-primary);
+  }
+
+  .venue-hint {
+    font-size: 0.78rem;
+    margin: 0.35rem 0 0;
   }
 
   .recusal-hint {

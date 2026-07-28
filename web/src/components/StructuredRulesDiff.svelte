@@ -10,6 +10,7 @@
     succession_policy: 'Succession Policy',
     min_voting_tenure_days: 'Min Voting Tenure',
     subject_recusal: 'Recuse a proposal’s subject',
+    leadership_venue: 'Where admins are chosen',
     membership_policy: 'Membership Policy',
     follower_permissions: 'Follower Permissions',
   };
@@ -19,6 +20,8 @@
     majority: 'Majority vote',
     supermajority: 'Supermajority (2/3)',
     consensus: 'Full consensus',
+    patchwork: 'In Patchwork',
+    elsewhere: 'Somewhere else, recorded here',
     longest_tenure: 'Longest-tenured member',
     instance_admin: 'Instance admin intervenes',
     freeze: 'Patch freezes',

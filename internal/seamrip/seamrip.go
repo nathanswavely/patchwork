@@ -161,6 +161,30 @@ func Tables() []Table {
 				id("applied_by"), c("created_at"), c("updated_at")),
 		},
 		{
+			// A community's record of what it decided elsewhere travels with
+			// it (docs/adr/052) — it is community data in the plainest sense,
+			// and a fork that lost its governance history would lose the only
+			// account of how its leadership was chosen.
+			File: "attestations.json",
+			Name: "attestations",
+			Query: `SELECT id, node_id, kind, decided_at, summary, recorded_by,
+				created_at, supersedes_id FROM attestations`,
+			Columns: cols(id("id"), id("node_id"), c("kind"), c("decided_at"),
+				c("summary"), id("recorded_by"), c("created_at"),
+				id("supersedes_id")),
+		},
+		{
+			File: "attestation_names.json",
+			Name: "attestation_names",
+			Query: `SELECT id, attestation_id, user_id, display_name, position
+				FROM attestation_names`,
+			// user_id is nullable and remapped: an unrealized name has none,
+			// and a realized one must point at the imported person rather than
+			// a stranger with the old instance's id.
+			Columns: cols(id("id"), id("attestation_id"), id("user_id"),
+				c("display_name"), c("position")),
+		},
+		{
 			File:  "votes.json",
 			Name:  "votes",
 			Query: `SELECT id, proposal_id, user_id, value, created_at FROM votes`,

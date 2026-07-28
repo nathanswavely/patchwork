@@ -22,7 +22,9 @@ type GovernanceRules struct {
 	SubjectRecusal bool `json:"subject_recusal"`
 
 	// Leadership & succession
-	LeadershipModel  string `json:"leadership_model"`
+	LeadershipModel string `json:"leadership_model"`
+	// LeadershipVenue: where admins are chosen (docs/adr/052).
+	LeadershipVenue  string `json:"leadership_venue"`
 	SuccessionMethod string `json:"succession_method"`
 	SuccessionPolicy string `json:"succession_policy"`
 	AdminTermMonths  int    `json:"admin_term_months"`
@@ -45,6 +47,7 @@ func DefaultRules() *GovernanceRules {
 		MinVotingTenureDays: 0,
 		SubjectRecusal:      false,
 		LeadershipModel:     "maintainer",
+		LeadershipVenue:     "patchwork",
 		SuccessionMethod:    "admin_nominate",
 		SuccessionPolicy:    "longest_tenure",
 		AdminTermMonths:     0,
@@ -104,6 +107,7 @@ func marshalConfig(rules *GovernanceRules) (string, error) {
 		MinVotingTenureDays: rules.MinVotingTenureDays,
 		SubjectRecusal:      rules.SubjectRecusal,
 		LeadershipModel:     rules.LeadershipModel,
+		LeadershipVenue:     rules.LeadershipVenue,
 		SuccessionMethod:    rules.SuccessionMethod,
 		AdminTermMonths:     rules.AdminTermMonths,
 		MaxAdmins:           rules.MaxAdmins,

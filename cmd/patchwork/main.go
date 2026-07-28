@@ -311,6 +311,13 @@ func main() {
 	// inherits the patch, so it is step-up gated like the other power moves.
 	mux.HandleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.SetSuccessor(db))))
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, handler.ClearSuccessor(db)))
+	// Attestations (docs/adr/052) — decisions a community made somewhere
+	// Patchwork was not. Public to read: the whole value is that the people
+	// who were in the room can check it. Recording one can promote and demote
+	// admins, so it is step-up gated like every other power move.
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/attestations", middleware.AuthOptional(db, handler.ListAttestations(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAttestation(db))))
+	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/attestation-names/{id}", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.LinkAttestationName(db))))
 	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembershipVisibility(db)))
 
 	// Cross-quilt following (docs/adr/024): remote follows and personal

@@ -80,6 +80,9 @@ func nullIfEmpty(s string) interface{} {
 // community *ratifies* (so this is a real vote and not a promotion wearing a
 // proposal's clothes).
 func validateNomination(db *database.DB, nodeID, authorID, nomineeID string) string {
+	if leadershipDecidedElsewhere(db, nodeID) {
+		return "this patch chooses its admins elsewhere: record that decision instead of nominating"
+	}
 	if leadershipModel(db, nodeID) != "meritocratic" {
 		return "nominating an admin is the meritocratic model's mechanic; this patch fills admin seats another way"
 	}
