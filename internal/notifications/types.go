@@ -55,6 +55,14 @@ const (
 	// LiningUpdated fires when a stale lining auto-updates to the current
 	// shipped text (docs/adr/037). Notified, never asked.
 	LiningUpdated NotificationType = "governance.lining_updated"
+	// GovernanceInactivityWarning tells an admin their seat is at risk before
+	// it goes, which is the whole point of the warning: the shipped succession
+	// plan gives them the gap between day 30 and day 60 to answer.
+	GovernanceInactivityWarning NotificationType = "governance.inactivity_warning"
+	// GovernanceSuccessionNeeded reaches instance admins on a patch whose
+	// succession policy asks them to step in — the one policy Patchwork
+	// cannot carry out on its own.
+	GovernanceSuccessionNeeded NotificationType = "governance.succession_needed"
 
 	MembershipJoined      NotificationType = "membership.joined"
 	MembershipRequest     NotificationType = "membership.request"
@@ -140,6 +148,8 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	GovernanceRulesChanged:        {CategoryGovernance, "Rules changed", AudienceAllMembers, PriorityNormal},
 	GovernanceRulesChangedMidVote: {CategoryGovernance, "Rules changed while votes are open", AudienceAllMembers, PriorityHigh},
 	LiningUpdated:                 {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
+	GovernanceInactivityWarning:   {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
+	GovernanceSuccessionNeeded:    {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
 	MembershipRequest:     {CategoryMembership, "Membership request pending", AudienceAdminsOnly, PriorityHigh},
@@ -212,11 +222,13 @@ func TypesForCategory(cat Category) []NotificationType {
 		ProposalNew, ProposalVoting, ProposalVoteReceived, ProposalApproved,
 		ProposalRejected, ProposalApplied, ProposalComment, ProposalDeadline,
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
+		GovernanceInactivityWarning,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		EventCreated, EventReminder, EventUpdated, EventCancelled,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
+		GovernanceSuccessionNeeded,
 		ClaimApproved, ClaimSetupExpiring,
 	}
 	for _, t := range allTypes {
