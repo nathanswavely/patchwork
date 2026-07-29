@@ -12,6 +12,7 @@
   import StructuredRulesDiff from '../components/StructuredRulesDiff.svelte';
   import ProposalStatusBanner from '../components/ProposalStatusBanner.svelte';
   import VoteSection from '../components/VoteSection.svelte';
+  import ElectionPanel from '../components/ElectionPanel.svelte';
   import StickyVoteBar from '../components/StickyVoteBar.svelte';
   const patch = getContext('patch');
   let patchIsAdmin = $derived(patch.value.isAdmin);
@@ -51,6 +52,17 @@
     effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
   );
   let soleVoter = $derived(isVoting && canVote && proposal?.eligible_voters === 1);
+
+  // An election is a proposal that carries candidates (docs/adr/051). Its
+  // ballot is approval over a slate, not approve/reject on a question, so the
+  // ordinary vote section is replaced rather than sitting alongside it.
+  let isElection = $derived(!!proposal?.election_phase);
+  // Nominating is a member act, like raising a proposal — the same gate, and
+  // never a follower's. Not `is_member`, which the node payload sets for
+  // followers too.
+  let canNominate = $derived(
+    patch.value.membershipRole === 'member' || patch.value.membershipRole === 'admin'
+  );
   let hasAmendment = $derived(
     proposal?.target_doc && proposal?.current_doc_content != null && proposal?.proposed_body != null
   );
@@ -199,8 +211,20 @@
           </section>
         {/if}
 
-        <!-- Vote section — a direct change was never voted on -->
-        {#if !isDirectChange && (isVoting || effectiveState === 'approved' || effectiveState === 'in_effect' || effectiveState === 'rejected' || effectiveState === 'passed')}
+        <!-- An election runs its own contest: nominations, then an approval
+             ballot over the slate (docs/adr/051). -->
+        {#if isElection}
+          <ElectionPanel
+            proposal={proposal}
+            canVote={canVote}
+            canNominate={canNominate}
+            onChanged={loadProposal}
+          />
+        {/if}
+
+        <!-- Vote section — a direct change was never voted on, and an election
+             counts approvals over a slate rather than yes/no on a question -->
+        {#if !isElection && !isDirectChange && (isVoting || effectiveState === 'approved' || effectiveState === 'in_effect' || effectiveState === 'rejected' || effectiveState === 'passed')}
           <section class="proposal-section">
             <h2>Vote</h2>
             {#if soleVoter}
@@ -259,8 +283,11 @@
   {/if}
 </div>
 
-<!-- Sticky vote bar — only on overview tab during voting -->
-{#if proposal && isVoting && canVote && activeTab === 'overview'}
+<!-- Sticky vote bar — only on overview tab during voting, and never on an
+     election: approve/reject on a slate is not a question anyone asked, and
+     the bar posts to the ordinary vote endpoint, which would write a ballot
+     an election never counts (docs/adr/051). -->
+{#if proposal && !isElection && isVoting && canVote && activeTab === 'overview'}
   <StickyVoteBar
     proposalId={proposal.id}
     approveCount={proposal.approve_count || 0}
