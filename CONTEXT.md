@@ -584,6 +584,42 @@ _Avoid_: proposal (nothing is proposed to anyone), fast-track (an
 implementation word, not a concept), edit (undersells that it's tracked
 and visible)
 
+**Venue**:
+Where a patch's decisions actually happen — in Patchwork, or somewhere
+Patchwork is not. Declared per patch and asked twice, once of proposals
+and once of leadership, because a community can hold its board election
+in a room and still decide everything else here. A patch with no votes to
+convene for (one that runs on a maintainer) has no leadership venue to
+declare.
+_Avoid_: external (says where it isn't), offline (an AGM on Zoom is not
+offline), integration, source of truth
+
+**Attestation**:
+A record of a decision the community made at a venue that isn't
+Patchwork — an election held at the annual meeting, an amendment carried
+on a show of hands. Its claim is "the membership decided this,
+elsewhere", which is a far larger claim than a **direct change**'s "an
+admin decided this, under rules that allow it", so the two are never
+worded alike. Only offered where the patch has declared that venue:
+somewhere that decides here, attesting would be a way around the vote.
+Corrected only by a later attestation naming the one it corrects, never
+by editing — a record that can be rewritten unseen is worth nothing.
+Patchwork cannot check one, and does not pretend to: it records who
+asserted what, and when, in public.
+_Avoid_: import, sync, manual override, verified (nothing was verified),
+minutes (those are the community's own document)
+
+**Unrealized name**:
+Someone an attestation names who has not joined the patch. The record is
+the community's own statement about itself, so it may name anyone; what
+requires the person to have arrived is the **effect** — holding admin,
+counting toward member count, feeding the quilt's affinity, receiving
+anything. An unrealized name holds none of it and is never quietly
+upgraded: joining is what turns it into the role the record already said
+they held.
+_Avoid_: pending member, ghost admin, placeholder, invited (they may
+never have been)
+
 **Council**:
 The admin set of a patch that elects its leadership — not a separate body
 and not a fourth role. "An elected council of up to 7 admins" is the

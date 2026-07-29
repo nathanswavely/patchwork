@@ -98,6 +98,14 @@ own description already promises.**
   Nobody is ejected by a rules change, and nobody collects a twelve-month
   mandate from one either.
 
+  *Amended by docs/adr/052: this holds where leadership is decided in
+  Patchwork. A patch may declare that its elections happen elsewhere, and
+  there adoption starts nothing — the first attestation supplies the
+  council and its term ends. Written as it stands, this bullet would have
+  opened a needless election for every community arriving with a board it
+  had already elected, which is most of them. The cycle scheduler must
+  likewise not schedule where the venue is elsewhere.*
+
 - **The clock belongs to the seat, not the person.** Someone appointed to
   a mid-term vacancy serves out the remainder, not a fresh term. The
   argument is integrity rather than tidiness: under fresh terms a council

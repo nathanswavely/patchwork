@@ -60,7 +60,8 @@ several branches are in flight.
 | [025](025-global-patchwork-is-an-instance.md) | A global patchwork would be an instance, not a service |
 | [045](045-event-time-belongs-to-the-place.md) | Event time belongs to the place — per-event zone, inherited from the patch |
 | [049](049-patchwork-states-only-what-it-enforces.md) | Patchwork states only what it enforces — six inert governance fields *(the `max_admins` guard is retracted by 051; the surface pass is backlog)* |
-| [051](051-succession-follows-the-leadership-model.md) | Succession follows the leadership model — three models, three mechanics |
+| [051](051-succession-follows-the-leadership-model.md) | Succession follows the leadership model — three models, three mechanics *(amended by 052: adoption is venue-dependent)* |
+| [052](052-decisions-can-happen-elsewhere.md) | Decisions can happen elsewhere, and be recorded here — declared venues, attestation |
 
 ## Proposed — designs on record, not built
 

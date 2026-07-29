@@ -115,8 +115,13 @@ type GovernanceConfig struct {
 	// SubjectRecusal bars the person a proposal is *about* from voting on it
 	// — a nomination's nominee (docs/adr/051). A term of the contest, so it
 	// freezes with the rest of the config when voting opens (docs/adr/047).
-	SubjectRecusal   bool   `json:"subject_recusal,omitempty"`
-	LeadershipModel  string `json:"leadership_model,omitempty"`
+	SubjectRecusal  bool   `json:"subject_recusal,omitempty"`
+	LeadershipModel string `json:"leadership_model,omitempty"`
+	// LeadershipVenue is where admins are actually chosen: "patchwork" (or
+	// empty, the default) or "elsewhere" (docs/adr/052). Where it is
+	// elsewhere, Patchwork conducts nothing and records attestations
+	// instead.
+	LeadershipVenue  string `json:"leadership_venue,omitempty"`
 	SuccessionMethod string `json:"succession_method,omitempty"`
 	AdminTermMonths  int    `json:"admin_term_months,omitempty"`
 	MaxAdmins        int    `json:"max_admins,omitempty"`
