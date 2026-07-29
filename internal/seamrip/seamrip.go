@@ -167,10 +167,10 @@ func Tables() []Table {
 			// account of how its leadership was chosen.
 			File: "attestations.json",
 			Name: "attestations",
-			Query: `SELECT id, node_id, kind, decided_at, summary, recorded_by,
-				created_at, supersedes_id FROM attestations`,
+			Query: `SELECT id, node_id, kind, decided_at, term_ends_at, summary,
+				recorded_by, created_at, supersedes_id FROM attestations`,
 			Columns: cols(id("id"), id("node_id"), c("kind"), c("decided_at"),
-				c("summary"), id("recorded_by"), c("created_at"),
+				c("term_ends_at"), c("summary"), id("recorded_by"), c("created_at"),
 				id("supersedes_id")),
 		},
 		{

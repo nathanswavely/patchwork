@@ -63,10 +63,14 @@ type attestationName struct {
 }
 
 type attestationView struct {
-	ID           string            `json:"id"`
-	NodeID       string            `json:"node_id"`
-	Kind         string            `json:"kind"`
-	DecidedAt    string            `json:"decided_at"`
+	ID        string `json:"id"`
+	NodeID    string `json:"node_id"`
+	Kind      string `json:"kind"`
+	DecidedAt string `json:"decided_at"`
+	// TermEndsAt is when the council this record seated stops serving —
+	// present only on an elected patch, which is the only model with terms
+	// (docs/adr/051). Empty everywhere else.
+	TermEndsAt   string            `json:"term_ends_at,omitempty"`
 	Summary      string            `json:"summary"`
 	RecordedBy   string            `json:"recorded_by"`
 	RecorderName string            `json:"recorder_name"`
@@ -88,7 +92,7 @@ func ListAttestations(db *database.DB) http.HandlerFunc {
 		}
 
 		rows, err := db.Query(
-			`SELECT a.id, a.node_id, a.kind, a.decided_at, a.summary, a.recorded_by,
+			`SELECT a.id, a.node_id, a.kind, a.decided_at, COALESCE(a.term_ends_at,''), a.summary, a.recorded_by,
 			        COALESCE(u.display_name, u.username, ''), a.created_at,
 			        COALESCE(a.supersedes_id,''),
 			        COALESCE((SELECT s.id FROM attestations s WHERE s.supersedes_id = a.id), '')
@@ -105,7 +109,7 @@ func ListAttestations(db *database.DB) http.HandlerFunc {
 		items := []attestationView{}
 		for rows.Next() {
 			var a attestationView
-			if rows.Scan(&a.ID, &a.NodeID, &a.Kind, &a.DecidedAt, &a.Summary, &a.RecordedBy,
+			if rows.Scan(&a.ID, &a.NodeID, &a.Kind, &a.DecidedAt, &a.TermEndsAt, &a.Summary, &a.RecordedBy,
 				&a.RecorderName, &a.CreatedAt, &a.SupersedesID, &a.SupersededBy) != nil {
 				continue
 			}
@@ -162,6 +166,7 @@ func CreateAttestation(db *database.DB) http.HandlerFunc {
 
 		var req struct {
 			DecidedAt    string `json:"decided_at"`
+			TermEndsAt   string `json:"term_ends_at"`
 			Summary      string `json:"summary"`
 			SupersedesID string `json:"supersedes_id"`
 			Names        []struct {
@@ -175,6 +180,16 @@ func CreateAttestation(db *database.DB) http.HandlerFunc {
 		}
 		if strings.TrimSpace(req.DecidedAt) == "" {
 			http.Error(w, `{"error":"decided_at is required: a record of what happened has to say when"}`, http.StatusBadRequest)
+			return
+		}
+
+		// Only an elected patch has terms (docs/adr/051). Storing a date a
+		// maintainer or meritocratic patch will never read is the field-nobody-
+		// reads failure docs/adr/049 was written about, so it is refused rather
+		// than quietly dropped.
+		req.TermEndsAt = strings.TrimSpace(req.TermEndsAt)
+		if req.TermEndsAt != "" && leadershipModel(db, nodeID) != "elected" {
+			http.Error(w, `{"error":"only a patch with elected leadership has terms; this one fills admin seats another way"}`, http.StatusConflict)
 			return
 		}
 
@@ -197,9 +212,10 @@ func CreateAttestation(db *database.DB) http.HandlerFunc {
 
 		id := auth.NewUUIDv7()
 		if _, err := db.Exec(
-			`INSERT INTO attestations (id, node_id, kind, decided_at, summary, recorded_by, supersedes_id)
-			 VALUES (?, ?, 'leadership', ?, ?, ?, ?)`,
-			id, nodeID, strings.TrimSpace(req.DecidedAt), strings.TrimSpace(req.Summary), user.ID, nullIfEmpty(req.SupersedesID),
+			`INSERT INTO attestations (id, node_id, kind, decided_at, term_ends_at, summary, recorded_by, supersedes_id)
+			 VALUES (?, ?, 'leadership', ?, ?, ?, ?, ?)`,
+			id, nodeID, strings.TrimSpace(req.DecidedAt), nullIfEmpty(req.TermEndsAt),
+			strings.TrimSpace(req.Summary), user.ID, nullIfEmpty(req.SupersedesID),
 		); err != nil {
 			http.Error(w, `{"error":"failed to record the decision"}`, http.StatusInternalServerError)
 			return

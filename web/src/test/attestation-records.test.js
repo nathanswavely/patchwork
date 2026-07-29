@@ -103,7 +103,7 @@ describe('GovernanceOverview — a patch that decides elsewhere', () => {
   });
 
   it('shows the records where leadership already renders', () => {
-    expect(src).toMatch(/<AttestationRecords \{slug\} isAdmin=\{isAdmin\} \/>/);
+    expect(src).toContain('<AttestationRecords {slug} isAdmin={isAdmin}');
   });
 });
 
@@ -115,5 +115,36 @@ describe('formatDay — a calendar date has no timezone to shift', () => {
     // of Greenwich — an attestation would name the day before the meeting.
     expect(src).toMatch(/const dateOnly = \/\^\(\\d\{4\}\)-\(\\d\{2\}\)-\(\\d\{2\}\)\$\/\.exec\(iso\)/);
     expect(src).toMatch(/new Date\(Number\(y\), Number\(m\) - 1, Number\(d\)\)/);
+  });
+});
+
+describe('AttestationRecords — terms', () => {
+  const src = source('components/AttestationRecords.svelte');
+
+  it('takes hasTerms as a prop rather than guessing the model', () => {
+    expect(src).toMatch(/let \{ slug = '', isAdmin = false, hasTerms = false \} = \$props\(\)/);
+  });
+
+  it('only sends a term where the model has one', () => {
+    expect(src).toMatch(/term_ends_at: hasTerms && termEndsAt \? termEndsAt : undefined/);
+  });
+
+  it('reads a lapsed term as a calendar date, not a UTC instant', () => {
+    // Same trap as formatDay: a bare YYYY-MM-DD parsed as UTC midnight would
+    // read as lapsed a day early west of Greenwich.
+    expect(src).toContain('const parts = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(t)');
+    expect(src).toContain('new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]))');
+  });
+
+  it('says a lapsed term removes nobody', () => {
+    expect(src).toMatch(/The council serves until a successor is elected/);
+  });
+});
+
+describe('GovernanceOverview — terms belong to elected leadership', () => {
+  const src = source('components/GovernanceOverview.svelte');
+
+  it('passes hasTerms only for the elected model', () => {
+    expect(src).toMatch(/hasTerms=\{overview\?\.rules\?\.leadership_model === 'elected'\}/);
   });
 });

@@ -362,3 +362,84 @@ func TestAttestation_ListIsPublic(t *testing.T) {
 		t.Errorf("expected unrealized names marked as such, got %s", body)
 	}
 }
+
+// Terms on a recorded election (docs/adr/051, docs/adr/052). Only an elected
+// patch has them; the record carries the date because it is the only thing
+// that knows when the council it seated stops serving.
+func TestAttestation_TermEndsAtRecordedOnElected(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "termadmin1", "member")
+	nodeID := elsewhereNode(t, db, admin.ID, "Term One", "term-one") // leadership_model: elected
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	res := recordAttestation(t, db, "term-one", adminToken, map[string]interface{}{
+		"decided_at":   "2026-03-14",
+		"term_ends_at": "2027-03-14",
+		"names":        []map[string]interface{}{{"user_id": admin.ID}},
+	})
+	if res.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", res.Code, res.Body)
+	}
+	var got string
+	db.QueryRow("SELECT COALESCE(term_ends_at,'') FROM attestations WHERE node_id = ?", nodeID).Scan(&got)
+	if got != "2027-03-14" {
+		t.Errorf("expected the term end recorded, got %q", got)
+	}
+
+	// And it reads back, so the page can say when the term runs out.
+	r := authedRequest("GET", "/api/v1/nodes/term-one/attestations", nil, "")
+	w := servePublicMux(t, "GET", "/api/v1/nodes/{slug}/attestations", handler.ListAttestations(db), r)
+	if !strings.Contains(w.Body.String(), `"term_ends_at":"2027-03-14"`) {
+		t.Errorf("expected the term end in the payload, got %s", w.Body.String())
+	}
+}
+
+// A model with no terms is refused the field rather than quietly dropping it —
+// storing a date nothing will read is the failure docs/adr/049 was written
+// about.
+func TestAttestation_TermEndsAtRefusedWithoutElectedLeadership(t *testing.T) {
+	for _, lm := range []string{"maintainer", "meritocratic"} {
+		db := setupTestDB(t)
+		admin, adminToken := createTestUser(t, db, "termadmin_"+lm, "member")
+		nodeID := createTestNode(t, db, admin.ID, "Term "+lm, "term-"+lm, "open")
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
+			`{"decision_method":"majority","leadership_model":"`+lm+`","leadership_venue":"elsewhere"}`, nodeID)
+
+		res := recordAttestation(t, db, "term-"+lm, adminToken, map[string]interface{}{
+			"decided_at":   "2026-03-14",
+			"term_ends_at": "2027-03-14",
+			"names":        []map[string]interface{}{{"user_id": admin.ID}},
+		})
+		if res.Code != http.StatusConflict {
+			t.Errorf("%s: expected 409, got %d: %s", lm, res.Code, res.Body)
+		}
+		var count int
+		db.QueryRow("SELECT COUNT(*) FROM attestations WHERE node_id = ?", nodeID).Scan(&count)
+		if count != 0 {
+			t.Errorf("%s: expected nothing recorded, got %d", lm, count)
+		}
+	}
+}
+
+// A record with no term is still fine on an elected patch — the community may
+// simply not have set one.
+func TestAttestation_TermEndsAtIsOptional(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "termadmin2", "member")
+	nodeID := elsewhereNode(t, db, admin.ID, "Term Two", "term-two")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	res := recordAttestation(t, db, "term-two", adminToken, map[string]interface{}{
+		"decided_at": "2026-03-14",
+		"names":      []map[string]interface{}{{"user_id": admin.ID}},
+	})
+	if res.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", res.Code, res.Body)
+	}
+	var isNull int
+	db.QueryRow("SELECT COUNT(*) FROM attestations WHERE node_id = ? AND term_ends_at IS NULL", nodeID).Scan(&isNull)
+	if isNull != 1 {
+		t.Errorf("expected the term end left NULL rather than empty string, got %d", isNull)
+	}
+}
