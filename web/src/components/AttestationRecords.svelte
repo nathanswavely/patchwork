@@ -7,7 +7,9 @@
   // Decisions a community made somewhere Patchwork was not (docs/adr/052).
   // Shown to everyone: an attestation's whole value is that the people who
   // were in the room can check it.
-  let { slug = '', isAdmin = false } = $props();
+  // `hasTerms` is the elected model only — the one model with terms
+  // (docs/adr/051). Everywhere else the term field is neither shown nor sent.
+  let { slug = '', isAdmin = false, hasTerms = false } = $props();
 
   let records = $state([]);
   let loading = $state(true);
@@ -18,6 +20,20 @@
   // readable — a correction does not erase what it corrects.
   let current = $derived(records.find((r) => !r.superseded_by) || null);
   let earlier = $derived(records.filter((r) => r.superseded_by));
+
+  // A term that has run out does not remove anybody (docs/adr/051): the
+  // council keeps serving until a successor is elected. What it changes is
+  // that the patch is visibly overdue, which is the accountability the
+  // charter's "power rotates" is asking for.
+  let termLapsed = $derived.by(() => {
+    const t = current?.term_ends_at;
+    if (!t) return false;
+    const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
+    const end = parts
+      ? new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]))
+      : new Date(t);
+    return end < new Date();
+  });
 
   $effect(() => {
     if (slug) load();
@@ -48,6 +64,7 @@
 
   let formOpen = $state(false);
   let decidedAt = $state('');
+  let termEndsAt = $state('');
   let summary = $state('');
   let rows = $state([{ userId: '', name: '' }]);
   let correcting = $state('');
@@ -57,12 +74,14 @@
   function openForm(correctID = '') {
     correcting = correctID;
     decidedAt = '';
+    termEndsAt = '';
     summary = '';
     // Correcting starts from what the record already says, so a one-name fix
     // doesn't mean retyping the council.
     const base = correctID ? records.find((r) => r.id === correctID) : null;
     if (base) {
       decidedAt = base.decided_at || '';
+      termEndsAt = base.term_ends_at || '';
       summary = base.summary || '';
       rows = base.names.map((n) => ({ userId: n.user_id || '', name: n.display_name }));
       if (!rows.length) rows = [{ userId: '', name: '' }];
@@ -102,6 +121,7 @@
           method: 'POST',
           body: {
             decided_at: decidedAt,
+            term_ends_at: hasTerms && termEndsAt ? termEndsAt : undefined,
             summary: summary.trim(),
             supersedes_id: correcting || undefined,
             names,
@@ -159,6 +179,15 @@
       <p class="record-head">
         Decided {formatDay(current.decided_at)}{#if current.recorder_name} · recorded by {current.recorder_name}{/if}
       </p>
+      {#if current.term_ends_at}
+        <p class="term-line" class:lapsed={termLapsed}>
+          {#if termLapsed}
+            Term ended {formatDay(current.term_ends_at)}. The council serves until a successor is elected.
+          {:else}
+            Term ends {formatDay(current.term_ends_at)}
+          {/if}
+        </p>
+      {/if}
       {#if current.summary}<p class="record-summary">{current.summary}</p>{/if}
 
       <ul class="names">
@@ -217,6 +246,11 @@
 
         <label for="att-date">When it was decided</label>
         <input id="att-date" type="date" bind:value={decidedAt} disabled={saving} />
+
+        {#if hasTerms}
+          <label for="att-term">When this council's term ends</label>
+          <input id="att-term" type="date" bind:value={termEndsAt} disabled={saving} />
+        {/if}
 
         <label for="att-summary">What happened</label>
         <input id="att-summary" type="text" bind:value={summary} disabled={saving}
@@ -283,6 +317,16 @@
     font-size: 0.82rem;
     margin: 0;
     color: var(--color-text-muted);
+  }
+
+  .term-line {
+    font-size: 0.82rem;
+    margin: 0.2rem 0 0;
+  }
+
+  .term-line.lapsed {
+    color: var(--color-accent, #b8860b);
+    font-weight: 600;
   }
 
   .record-summary {

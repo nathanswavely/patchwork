@@ -1,0 +1,23 @@
+-- Terms on a recorded election (docs/adr/051, docs/adr/052).
+--
+-- An elected patch's council serves a term. Where the election happens
+-- elsewhere and is recorded here, the record is the only thing that knows when
+-- that term runs out — so it carries the date.
+--
+-- One date per record rather than one per name, which is docs/adr/051's
+-- "aligned seats share a date". Staggering is the same schema with different
+-- dates, and it lands per-name when a patch wants it; shipping it now would be
+-- machinery for a policy nobody has asked for.
+--
+-- Deliberately NOT a separate `seats` table yet. docs/adr/051 says a seat is
+-- worth being an entity because it "holds a term end, survives its occupants,
+-- and can be filled or vacant" — and under attestation alone the term end
+-- lives here, the occupants are this record's names, and vacancy is not yet a
+-- concept. A seats table now would be a second place to store what the record
+-- already says, with nothing reading the difference. It earns its keep when
+-- elections fill seats without an attestation.
+--
+-- NULL for every record that is not about a term: a maintainer patch has no
+-- terms, and neither does a meritocratic one (docs/adr/051's table). The write
+-- path refuses the field on those rather than storing a date nothing will read.
+ALTER TABLE attestations ADD COLUMN term_ends_at TEXT;

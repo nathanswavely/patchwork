@@ -248,7 +248,7 @@
           Admins are chosen outside Patchwork. What the community decided is
           recorded below.
         </p>
-        <AttestationRecords {slug} isAdmin={isAdmin} />
+        <AttestationRecords {slug} isAdmin={isAdmin} hasTerms={overview?.rules?.leadership_model === 'elected'} />
       {/if}
 
       <!-- Succession, maintainer model only (docs/adr/051). The other two
