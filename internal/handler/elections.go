@@ -24,6 +24,19 @@ import (
 // amended for. The window is governable (`nomination_days`), which is the
 // whole reason it is allowed to exist where `draft` and `discussion` were not.
 
+// leadershipModelOf reads the model out of a raw governance_config blob, which
+// is how the rules-change path compares before against after.
+func leadershipModelOf(gcJSON string) string {
+	if gcJSON == "" {
+		return ""
+	}
+	var gc model.GovernanceConfig
+	if json.Unmarshal([]byte(gcJSON), &gc) != nil {
+		return ""
+	}
+	return gc.LeadershipModel
+}
+
 // electionNominating reports whether a proposal is an election still taking
 // nominations. Voting has not opened, so no ballot may be cast yet.
 func electionNominating(nominationsCloseAt string) bool {
