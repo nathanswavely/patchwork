@@ -73,7 +73,14 @@ export default defineConfig({
       env: { PATCHWORK_API_PORT: String(API_PORT) },
       url: WEB_URL,
       reuseExistingServer: false,
-      timeout: 10000,
+      // 60s, not 10s: this budget is time-to-first-response, not time-to-listen,
+      // and those are far apart on a cold dependency cache. Vite reports "ready"
+      // in ~2s either way, then blocks the first request while it pre-bundles.
+      // Measured cold on this project: vite 6 answered in 4.7s, vite 8 (rolldown)
+      // in 14.7s. CI is always cold — fresh checkout, `npm ci`, no
+      // node_modules/.vite — so 10s failed there every time while a warm local
+      // run passed.
+      timeout: 60000,
     },
   ],
 });
