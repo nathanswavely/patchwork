@@ -92,6 +92,28 @@ func StartElectionOnAdoption(db *database.DB, nodeID string) {
 		return
 	}
 
+	openElectionFor(db, nodeID, gc, seats)
+}
+
+// electionLeadHours is how long a whole contest takes: the nomination window
+// plus the voting window. A cycle is scheduled so that its *seating* lands one
+// term after the last (docs/adr/051), which means opening it this far ahead of
+// the term end.
+func electionLeadHours(gc model.GovernanceConfig) int {
+	nominationDays := gc.NominationDays
+	if nominationDays <= 0 {
+		nominationDays = 14
+	}
+	duration := gc.DefaultVoteDuration
+	if duration <= 0 {
+		duration = 72
+	}
+	return nominationDays*24 + duration
+}
+
+// openElectionFor creates the contest itself. Shared by adoption and by the
+// recurring cycle, so both open the same thing.
+func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, seats int) string {
 	nominationDays := gc.NominationDays
 	if nominationDays <= 0 {
 		nominationDays = 14
@@ -124,7 +146,7 @@ func StartElectionOnAdoption(db *database.DB, nodeID string) {
 	)
 	if err != nil {
 		log.Printf("election: start for %s: %v", slug, err)
-		return
+		return ""
 	}
 
 	notify(notifications.Event{
@@ -135,6 +157,7 @@ func StartElectionOnAdoption(db *database.DB, nodeID string) {
 		Link:     weblink.Proposal(slug, id),
 	})
 	log.Printf("election: opened for %s, %d seat(s), nominations close %s", slug, seats, nominationsClose)
+	return id
 }
 
 // systemAuthorFor picks an author for a proposal nobody raised. The calendar

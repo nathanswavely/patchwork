@@ -233,4 +233,8 @@ func SweepElections(db *database.DB) {
 		OpenElectionVoting(db, id)
 		resolveElection(db, id)
 	}
+
+	// And open the ones that have come due. Runs after resolution so a council
+	// seated on this pass is not immediately found overdue on the same one.
+	ScheduleDueElections(db)
 }
