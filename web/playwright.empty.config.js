@@ -36,7 +36,9 @@ export default defineConfig({
       // Never reuse: a vite already on this port may proxy to a stale
       // backend. strictPort makes a leftover server a loud failure instead.
       reuseExistingServer: false,
-      timeout: 10000,
+      // 60s for the same reason as the seeded config: the budget covers
+      // pre-bundling, which is ~15s cold on vite 8, and CI is always cold.
+      timeout: 60000,
       env: { PATCHWORK_API_PORT: String(EMPTY_API_PORT) },
     },
   ],
