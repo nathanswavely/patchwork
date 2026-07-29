@@ -7,6 +7,7 @@
   import { markGovernanceHubVisited } from '../lib/onboarding.js';
   import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
   import PasskeyNotice from './PasskeyNotice.svelte';
+  import AttestationRecords from './AttestationRecords.svelte';
   import Skeleton from './Skeleton.svelte';
   import UnlockPanel from './UnlockPanel.svelte';
   import SetupChecklist from './SetupChecklist.svelte';
@@ -53,6 +54,9 @@
   // inherits the patch; meritocratic ratifies a nomination and elected runs a
   // cycle, so neither sees any of this.
   let isMaintainerModel = $derived(overview?.rules?.leadership_model === 'maintainer');
+  // Where this patch actually chooses its admins (docs/adr/052). Elsewhere
+  // means Patchwork conducts nothing and records what the community decided.
+  let leadershipElsewhere = $derived(overview?.rules?.leadership_venue === 'elsewhere');
   let successorChoice = $state('');
   let savingSuccessor = $state(false);
   let successorError = $state('');
@@ -133,6 +137,11 @@
 
   function describeLeadership(rules) {
     if (!rules) return '';
+    // A patch that chooses its admins elsewhere does not run any of these
+    // mechanics, so describing one would be the same false narration
+    // docs/adr/049 was written about. The venue line and the records say what
+    // actually happens.
+    if (rules.leadership_venue === 'elsewhere') return '';
     const models = {
       maintainer: 'One person maintains this patch. They handle day-to-day decisions and can designate a successor.',
       meritocratic: 'Admins earn their role through sustained contribution. When a seat opens, existing admins nominate from active members and the community ratifies.',
@@ -207,7 +216,9 @@
     <!-- Leadership -->
     <section class="overview-section">
       <h3>Leadership: {leadershipLabel(rules?.leadership_model)}</h3>
-      <p class="overview-narrative">{describeLeadership(rules)}</p>
+      {#if describeLeadership(rules)}
+        <p class="overview-narrative">{describeLeadership(rules)}</p>
+      {/if}
 
       {#if overview.admins.length > 0}
         <div class="admin-list">
@@ -229,10 +240,22 @@
         </div>
       {/if}
 
+      <!-- Chosen elsewhere (docs/adr/052): the records are how leadership
+           changes here, so they sit with the admin list rather than on a
+           page of their own. -->
+      {#if leadershipElsewhere}
+        <p class="venue-line muted">
+          Admins are chosen outside Patchwork. What the community decided is
+          recorded below.
+        </p>
+        <AttestationRecords {slug} isAdmin={isAdmin} />
+      {/if}
+
       <!-- Succession, maintainer model only (docs/adr/051). The other two
            models fill admin seats their own way and this section stays away
-           from them. -->
-      {#if isMaintainerModel}
+           from them. A patch that decides elsewhere has no successor to name:
+           the record is what moves the role. -->
+      {#if isMaintainerModel && !leadershipElsewhere}
         <div class="successor">
           {#if overview.successor?.user_id}
             <p class="successor-line">
@@ -394,6 +417,11 @@
 
   .admin-since {
     font-size: 0.75rem;
+  }
+
+  .venue-line {
+    font-size: 0.82rem;
+    margin: 0.6rem 0 0;
   }
 
   .successor {

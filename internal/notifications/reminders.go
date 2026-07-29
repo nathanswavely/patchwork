@@ -39,6 +39,9 @@ func runReminders(n *Notifier) {
 	checkClaimSetupExpiring(n)
 	cleanupOldNotifications(n)
 	ExpireStaleClaims(n.DB)
+	// Seats that went quiet, and the succession that catches a patch they
+	// leave empty (docs/adr/051).
+	SweepInactiveAdmins(n)
 }
 
 // ExpireStaleClaims moves pending claim requests older than 30 days to

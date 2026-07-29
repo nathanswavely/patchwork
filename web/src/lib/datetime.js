@@ -64,6 +64,19 @@ export function formatEventDateLong(iso) {
  */
 export function formatDay(iso) {
   if (!iso) return '';
+  // A bare YYYY-MM-DD is a calendar date, not an instant: it carries no zone,
+  // so there is nothing to convert it *from*. `new Date('2026-03-14')` parses
+  // it as UTC midnight, and west of Greenwich that renders as the 13th — an
+  // attestation recorded for the day of a meeting would name the day before
+  // it. Read the parts directly and let the month name be the only thing the
+  // locale decides.
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (dateOnly) {
+    const [, y, m, d] = dateOnly;
+    return new Date(Number(y), Number(m) - 1, Number(d)).toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric',
+    });
+  }
   return new Date(iso).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
   });
