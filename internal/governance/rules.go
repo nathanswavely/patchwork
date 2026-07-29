@@ -24,7 +24,9 @@ type GovernanceRules struct {
 	// Leadership & succession
 	LeadershipModel string `json:"leadership_model"`
 	// LeadershipVenue: where admins are chosen (docs/adr/052).
-	LeadershipVenue  string `json:"leadership_venue"`
+	LeadershipVenue string `json:"leadership_venue"`
+	// NominationDays: how long an election takes nominations (docs/adr/051).
+	NominationDays   int    `json:"nomination_days"`
 	SuccessionMethod string `json:"succession_method"`
 	SuccessionPolicy string `json:"succession_policy"`
 	AdminTermMonths  int    `json:"admin_term_months"`
@@ -48,12 +50,14 @@ func DefaultRules() *GovernanceRules {
 		SubjectRecusal:      false,
 		LeadershipModel:     "maintainer",
 		LeadershipVenue:     "patchwork",
-		SuccessionMethod:    "admin_nominate",
-		SuccessionPolicy:    "longest_tenure",
-		AdminTermMonths:     0,
-		MaxAdmins:           3,
-		InactivityDays:      90,
-		MembershipPolicy:    "open",
+		// 14 days is the shipped succession plan's own nomination period.
+		NominationDays:   14,
+		SuccessionMethod: "admin_nominate",
+		SuccessionPolicy: "longest_tenure",
+		AdminTermMonths:  0,
+		MaxAdmins:        3,
+		InactivityDays:   90,
+		MembershipPolicy: "open",
 		FollowerPermissions: model.FollowerPermissions{
 			Events:    true,
 			Proposals: true,
@@ -108,6 +112,7 @@ func marshalConfig(rules *GovernanceRules) (string, error) {
 		SubjectRecusal:      rules.SubjectRecusal,
 		LeadershipModel:     rules.LeadershipModel,
 		LeadershipVenue:     rules.LeadershipVenue,
+		NominationDays:      rules.NominationDays,
 		SuccessionMethod:    rules.SuccessionMethod,
 		AdminTermMonths:     rules.AdminTermMonths,
 		MaxAdmins:           rules.MaxAdmins,

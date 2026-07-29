@@ -121,7 +121,13 @@ type GovernanceConfig struct {
 	// empty, the default) or "elsewhere" (docs/adr/052). Where it is
 	// elsewhere, Patchwork conducts nothing and records attestations
 	// instead.
-	LeadershipVenue  string `json:"leadership_venue,omitempty"`
+	LeadershipVenue string `json:"leadership_venue,omitempty"`
+	// NominationDays is how long an election takes nominations before voting
+	// opens (docs/adr/051). This field is why a pre-voting phase is defensible
+	// at all: docs/adr/048 retired `draft` and `discussion` because nothing
+	// said how long they lasted or what ended them, and a window with a
+	// governed length is the counterexample.
+	NominationDays   int    `json:"nomination_days,omitempty"`
 	SuccessionMethod string `json:"succession_method,omitempty"`
 	AdminTermMonths  int    `json:"admin_term_months,omitempty"`
 	MaxAdmins        int    `json:"max_admins,omitempty"`
