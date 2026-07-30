@@ -5,7 +5,7 @@
   import { identityColorForPatch, paletteForPatch, ghostPalette, darken, textOnColor } from '../lib/quiltTheme.js';
   import { renderBlock, renderGhostBlock } from '../lib/quiltBlocks.js';
   import { quiltLayout } from '../lib/quiltLayout.js';
-  import { createMotifElement, createMyPatchStar, createFollowedHeart } from '../lib/patchIcons.js';
+  import { createMotifElement, createMyPatchStar, createFollowedHeart, createUnclaimedMarkGroup } from '../lib/patchIcons.js';
   import { buildRemoteGroups, composeGroupLayouts } from '../lib/quiltRegions.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
   import { textMatches } from '../lib/textMatch.js';
@@ -88,6 +88,16 @@
   // clear this gap stays hidden until a closer zoom.
   const LABEL_GAP = 12;
   const LABEL_FONT = '600 13px "Space Grotesk Variable", system-ui, sans-serif';
+  // Unclaimed mark: an on-screen size, like a name badge, not a share of the
+  // tile — see updateUnclaimedMarks. UNCLAIMED_PX is the diameter it wants,
+  // UNCLAIMED_INSET its gap from the tile's corner, both in canonical units
+  // that the counter-scale turns into screen pixels.
+  const UNCLAIMED_PX = 22;
+  const UNCLAIMED_INSET = 6;
+  // A mark never eats more than this share of the tile it sits on, and below
+  // UNCLAIMED_MIN_PX on screen it's an illegible speck, so it goes.
+  const UNCLAIMED_TILE_SHARE = 0.3;
+  const UNCLAIMED_MIN_PX = 9;
   // Below this container width the quilt is a phone-sized surface.
   const NARROW_VW = 700;
   // How far the ideal tile size may drift from the one on screen before a
@@ -170,6 +180,9 @@
   // Map of patch ID → the badge element on screen for it, so a pan moves badges
   // instead of rebuilding them (see updateLabels).
   let labelEls = new Map();
+  // { g, tile } per unclaimed mark drawn, so the zoom handler can counter-scale
+  // them back to a fixed screen size (see updateUnclaimedMarks).
+  let unclaimedMarks = [];
   // Map of patch ID → { g, shadowDiv, tile, dist, visible } for per-tile animation.
   let tileMap = new Map();
   let layoutBuilt = false;
@@ -660,6 +673,7 @@
 
     const shadowLayer = [];
     const tileGroups = []; // For staggered animation.
+    unclaimedMarks = []; // Re-collected below; the old svg is already gone.
 
     // --- RENDER TILES ---
     for (const tile of pixelTiles) {
@@ -713,26 +727,31 @@
           .attr('stroke', 'var(--lt-thread-heavy)')
           .attr('stroke-width', 1.5);
 
-        // Unclaimed patch icon overlay — small "?" badge in corner.
-        // Deliberately NOT clipped by the tile's raw-edge clipPath: the badge
+        // Unclaimed patch mark (docs/adr/030) — a broken chain link in the
+        // tile's top-right corner.
+        //
+        // Deliberately NOT clipped by the tile's raw-edge clipPath: the mark
         // is a status overlay, not fabric (same as label badges), and a
         // userSpaceOnUse clipPath referenced from this translated group would
         // be evaluated in badge-local space, slicing the circle (issue #14).
-        // The inset scales with tile size so the badge clears the raw edge's
-        // inward wobble (max 1.2% of s) at every size.
+        //
+        // The group is anchored *on* the corner and draws inward, so the zoom
+        // handler can hold it at a fixed screen size by counter-scaling around
+        // that anchor — the corner is the one point that must not drift.
         if (tile.data.is_unclaimed) {
-          const iconSize = Math.max(14, Math.round(s * 0.12));
-          const inset = Math.max(4, Math.round(s * 0.02));
-          const iconG = inner.append('g')
-            .attr('transform', `translate(${s - iconSize - inset}, ${inset})`);
-          iconG.append('circle')
-            .attr('cx', iconSize / 2).attr('cy', iconSize / 2).attr('r', iconSize / 2)
+          const markG = inner.append('g')
+            .attr('class', 'unclaimed-mark')
+            .style('pointer-events', 'none');
+          const c = UNCLAIMED_INSET + UNCLAIMED_PX / 2;
+          markG.append('circle')
+            .attr('cx', -c).attr('cy', c).attr('r', UNCLAIMED_PX / 2)
             .attr('fill', 'rgba(0,0,0,0.55)');
-          iconG.append('text')
-            .attr('x', iconSize / 2).attr('y', iconSize / 2 + 1)
-            .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-            .attr('fill', '#fff').attr('font-size', iconSize * 0.65).attr('font-weight', '700')
-            .text('?');
+          const icon = createUnclaimedMarkGroup(UNCLAIMED_PX * 0.64, '#fff');
+          icon.setAttribute('transform',
+            `translate(${-c - UNCLAIMED_PX * 0.32},${c - UNCLAIMED_PX * 0.32}) ` +
+            icon.getAttribute('transform'));
+          markG.node().appendChild(icon);
+          unclaimedMarks.push({ g: markG, tile });
         }
 
         // Pillow depth + fabric texture overlay div.
@@ -891,6 +910,7 @@
           shadowContainer_ref.style.transformOrigin = '0 0';
         }
         updateLabels();
+        updateUnclaimedMarks();
       });
 
     svgSelection = svg;
@@ -928,6 +948,11 @@
         d3.zoomIdentity.translate(tx, ty).scale(clampedK));
     }
 
+    // The fit above dispatches a zoom event, which sizes the marks — but a
+    // quilt with no non-filler tiles never reaches it, and neither does one
+    // built at identity. Cheap enough to just be sure.
+    updateUnclaimedMarks();
+
     // A filter or search can already be standing when the layout builds —
     // arriving from another discovery surface with tags active (the filter
     // persists, docs/adr/022), or a rebuild after resize. The relayout
@@ -946,7 +971,9 @@
     tooltip.style.display = 'block';
     tooltip.style.left = x + 14 + 'px';
     tooltip.style.top = y - 10 + 'px';
-    const unclaimedTag = data.is_unclaimed ? '<span class="tip-unclaimed">Community added</span>' : '';
+    // Same word as the mark on the tile (CONTEXT.md "Unclaimed mark") — the
+    // chip names the patch's state, not the provenance of what's on it.
+    const unclaimedTag = data.is_unclaimed ? '<span class="tip-unclaimed">Unclaimed</span>' : '';
     tooltip.innerHTML = `
       <strong>${escapeHtml(data.name)}</strong>
       ${unclaimedTag}
@@ -1334,6 +1361,30 @@
       if (labeledPatchIds.has(id)) continue;
       labelEls.delete(id);
       dropLabelElement(el);
+    }
+  }
+
+  /**
+   * Hold every unclaimed mark at a fixed on-screen size, the way a name badge
+   * sits at 13px whatever the zoom. The mark is drawn inside the tile's group,
+   * so it inherits the zoom scale k; dividing it back out is what makes it
+   * static — otherwise a status pip becomes a dinner plate at 6× zoom.
+   *
+   * Each group is anchored on the tile's top-right corner and draws inward, so
+   * scaling around that anchor keeps the mark in its corner at every size.
+   */
+  function updateUnclaimedMarks() {
+    const k = currentTransform.k;
+    for (const { g, tile } of unclaimedMarks) {
+      // Fixed size, except on a tile too small to host one — a mark that
+      // covers a third of its own patch has stopped being an annotation.
+      const px = Math.min(UNCLAIMED_PX, tile.pxSize * k * UNCLAIMED_TILE_SHARE);
+      if (px < UNCLAIMED_MIN_PX) {
+        g.style('display', 'none');
+        continue;
+      }
+      g.style('display', null)
+        .attr('transform', `translate(${tile.pxSize},0) scale(${px / UNCLAIMED_PX / k})`);
     }
   }
 

@@ -54,6 +54,7 @@ import {
   Butterfly,
   Hammer,
   Globe,
+  LinkBreak,
 } from 'phosphor-svelte';
 
 // The curated motif set, keyed by slug (the value stored in
@@ -165,6 +166,23 @@ function buildIconSvg(Component, size, color, weight) {
  */
 export function createMotifElement(patch, size = 12, color = '#fff') {
   return buildIconSvg(motifComponentForPatch(patch), size, color, 'fill');
+}
+
+/**
+ * Status mark for an unclaimed patch (docs/adr/030): a broken chain link —
+ * a patch on the quilt with nobody holding the other end.
+ *
+ * Handed back as a <g>, not the <svg> the other builders return: this one
+ * goes into the quilt canvas, where the parent's transform is what places
+ * and sizes it, and a nested <svg> would need its own x/y plumbed through.
+ * Phosphor draws in a 256-unit box, so the scale brings it down to `size`.
+ */
+export function createUnclaimedMarkGroup(size = 14, color = '#fff') {
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('fill', color);
+  g.setAttribute('transform', `scale(${size / 256})`);
+  g.innerHTML = iconMarkup(LinkBreak, 'bold');
+  return g;
 }
 
 /**
