@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	patchwork "github.com/patchwork-toolkit/patchwork"
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
@@ -180,6 +181,25 @@ func main() {
 	defer reminderCancel()
 	notifications.StartReminderWorker(reminderCtx, notifier)
 
+	// Elections move on a calendar, not on a person (docs/adr/051): nominations
+	// close and voting opens, voting ends and the council is seated. Hourly is
+	// plenty — the windows are days long.
+	electionCtx, electionCancel := context.WithCancel(context.Background())
+	defer electionCancel()
+	go func() {
+		ticker := time.NewTicker(1 * time.Hour)
+		defer ticker.Stop()
+		handler.SweepElections(db)
+		for {
+			select {
+			case <-electionCtx.Done():
+				return
+			case <-ticker.C:
+				handler.SweepElections(db)
+			}
+		}
+	}()
+
 	// Start the event source worker: hourly re-sync of every attached
 	// calendar feed (docs/adr/031).
 	sourceCtx, sourceCancel := context.WithCancel(context.Background())
@@ -315,6 +335,11 @@ func main() {
 	// Patchwork was not. Public to read: the whole value is that the people
 	// who were in the room can check it. Recording one can promote and demote
 	// admins, so it is step-up gated like every other power move.
+	// Elections (docs/adr/051). Nominating is a member act; the ballot is the
+	// set of candidates one person approves, so it is a PUT of the whole set
+	// rather than an append.
+	mux.HandleFunc("POST /api/v1/proposals/{id}/candidates", middleware.AuthRequired(db, handler.AddCandidate(db)))
+	mux.HandleFunc("PUT /api/v1/proposals/{id}/ballot", middleware.AuthRequired(db, handler.CastElectionBallot(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/attestations", middleware.AuthOptional(db, handler.ListAttestations(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAttestation(db))))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/attestation-names/{id}", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.LinkAttestationName(db))))

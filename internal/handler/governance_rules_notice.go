@@ -52,6 +52,15 @@ func syncRulesAndNotify(db *database.DB, dataDir, nodeID, actorID, causedBy stri
 	var slug, name string
 	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &name)
 
+	// Adopting elected leadership starts an election (docs/adr/051). This is
+	// the honest trigger and the only one: nobody calls an election, so the
+	// rules change that makes a patch elected is what opens its first contest.
+	// Idempotent, and silent where the model did not change or the venue is
+	// elsewhere.
+	if leadershipModelOf(before) != "elected" && leadershipModelOf(after) == "elected" {
+		StartElectionOnAdoption(db, nodeID)
+	}
+
 	notifType, body := rulesChangeNotice(db, nodeID, after, causedBy)
 	notify(notifications.Event{
 		Type:     notifType,

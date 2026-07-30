@@ -744,16 +744,18 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		proposalID := r.PathValue("id")
 
 		var p model.Proposal
-		var authorName, appliedAt, targetUserName string
+		var authorName, appliedAt, targetUserName, nominationsCloseAt string
+		var seatsContested int
 		err := db.QueryRow(
 			`SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, COALESCE(p.state,''), COALESCE(p.applied_at,''), p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
 			 COALESCE(p.target_doc,''), COALESCE(p.target_user_id,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
+			 p.seats_contested, COALESCE(p.nominations_close_at,''),
 			 COALESCE(u.display_name, u.username) as author_name,
 			 COALESCE(tu.display_name, tu.username, '') as target_user_name
 			 FROM proposals p LEFT JOIN users u ON u.id = p.author_id
 			 LEFT JOIN users tu ON tu.id = p.target_user_id
 			 WHERE p.id = ?`, proposalID,
-		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.TargetUserID, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &authorName, &targetUserName)
+		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.TargetUserID, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &seatsContested, &nominationsCloseAt, &authorName, &targetUserName)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -871,6 +873,13 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			// that decides a thing rather than a person.
 			"target_user_id":   p.TargetUserID,
 			"target_user_name": targetUserName,
+			// Election fields, empty on every proposal that is not one
+			// (docs/adr/051). The page needs the phase to know whether to show
+			// nominations or a ballot, and both dates to say what happens next.
+			"seats_contested":      seatsContested,
+			"nominations_close_at": nominationsCloseAt,
+			"election_phase":       electionPhase(seatsContested, nominationsCloseAt, p.Status),
+			"candidates":           electionCandidates(db, proposalID, viewerID),
 			"title":            p.Title,
 			"body":             p.Body,
 			"status":           p.Status,

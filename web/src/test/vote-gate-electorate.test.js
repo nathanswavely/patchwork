@@ -36,8 +36,22 @@ describe('ProposalDetail — the vote gate', () => {
   it('gates both vote surfaces on canVote', () => {
     // The section on the page...
     expect(src).toMatch(/<VoteSection[\s\S]*?\{canVote\}/);
-    // ...and the sticky bar, which is a second door to the same act.
-    expect(src).toMatch(/\{#if proposal && isVoting && canVote/);
+    // ...and the sticky bar, which is a second door to the same act. Asserted
+    // on the condition's contents rather than its exact wording: the guard has
+    // gained a term since (elections), and pinning the conjunction made this
+    // fail for a change that kept the gate intact.
+    const stickyGuard = src.split('\n').find((l) => l.includes('{#if proposal') && l.includes('activeTab'));
+    expect(stickyGuard).toBeTruthy();
+    expect(stickyGuard).toMatch(/canVote/);
+    expect(stickyGuard).toMatch(/isVoting/);
+  });
+
+  // An election's ballot is approval over a slate, and the sticky bar posts to
+  // the ordinary vote endpoint — so on an election it would accept a click and
+  // write a row into `votes` that no election ever counts (docs/adr/051).
+  it('keeps the sticky bar off elections, whose ballot it cannot cast', () => {
+    const stickyGuard = src.split('\n').find((l) => l.includes('{#if proposal') && l.includes('activeTab'));
+    expect(stickyGuard).toMatch(/!isElection/);
   });
 
   it('keeps the sole-voter notice behind the same gate', () => {
