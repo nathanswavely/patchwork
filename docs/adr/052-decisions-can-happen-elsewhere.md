@@ -23,7 +23,9 @@ We decided **a patch declares where its decisions happen, and results
 reached elsewhere are attested here.**
 
 - **A venue is declared, and asked twice.** Once of proposals, once of
-  leadership — mirroring the split `GovernanceConfig` already has and
+  leadership *(the proposals half is decided in docs/adr/053, which found
+  it is not the mirror image: what can be attested there is a text a
+  meeting adopted, never the lining and never the rules file)* — mirroring the split `GovernanceConfig` already has and
   docs/adr/051's table is built on. The modal established nonprofit is
   *hybrid*, not external: bylaws often require an annual membership
   meeting to elect a board, with quorum in a room and sometimes a legal
