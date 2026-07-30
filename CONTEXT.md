@@ -1013,6 +1013,15 @@ position on screen; at the viewport edge it clips rather than reshapes.
 _Avoid_: label / quilt label (the Label is the stewardship disclosure),
 pin (retired — docs/adr/027), card, marker
 
+**Unclaimed mark**:
+The broken chain link on a dark disc that marks an unclaimed patch, worn in
+the same corner on a quilt tile and a patch card. Status, not fabric: like a
+name badge it holds a fixed on-screen size whatever the zoom, and it shrinks
+or hides only when the tile is too small to host it. The word it carries is
+"Unclaimed" — the patch's state, not what a visitor should do about it.
+_Avoid_: question mark (retired — read as "unknown", not "unclaimed"),
+badge (that's the name badge), warning, flag
+
 **Palette**:
 A named, pre-cut bundle of fabrics a tile is drawn with (the classic
 album-art sets). A palette is curated, never free-form; it is one kind of

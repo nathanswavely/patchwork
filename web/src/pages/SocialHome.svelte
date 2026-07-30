@@ -1,5 +1,5 @@
 <script>
-  import { Heart, Wrench, UsersThree } from 'phosphor-svelte';
+  import { Heart, Wrench, UsersThree, LinkBreak } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
@@ -343,6 +343,13 @@
             <div class="patch-card" onclick={() => handlePatchCardClick(patch)} role="button" tabindex="0">
               <div class="card-image" style="background: {identityColorForPatch(patch)}">
                 <PatchTile {patch} />
+                <!-- Same mark the quilt tile wears, same corner (docs/adr/030).
+                     The right corner is spoken for by the role/follow chip. -->
+                {#if patch.is_unclaimed}
+                  <span class="card-unclaimed" title="Unclaimed" aria-label="Unclaimed">
+                    <LinkBreak size={13} weight="bold" />
+                  </span>
+                {/if}
                 {#if patch._source}
                   {@const remoteFollowing = !!findRemoteFollow(patch._source, patch.slug)}
                   <button
@@ -570,6 +577,21 @@
     border: none;
     background: var(--color-glass);
     color: var(--color-text);
+  }
+
+  /* Unclaimed mark: matches the quilt tile's — dark disc, white broken link. */
+  .card-unclaimed {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
   }
 
   /* Source chip: which quilt a remote patch lives on (docs/adr/024). */
