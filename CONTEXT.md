@@ -606,6 +606,14 @@ Corrected only by a later attestation naming the one it corrects, never
 by editing — a record that can be rewritten unseen is worth nothing.
 Patchwork cannot check one, and does not pretend to: it records who
 asserted what, and when, in public.
+
+What can be attested is a **text a meeting adopted** — a charter, bylaws,
+an operating agreement — and who a meeting seated. Never the **lining**,
+whose body only a passed amendment proposal changes (docs/adr/037), and
+never the governance rules: those are configuration rather than a text
+anyone adopts, so on a patch that decides elsewhere they move by **direct
+change** instead. That line also closes a hole, since a rules attestation
+could have flipped the very venue that permits attesting.
 _Avoid_: import, sync, manual override, verified (nothing was verified),
 minutes (those are the community's own document)
 

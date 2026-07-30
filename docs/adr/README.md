@@ -61,7 +61,8 @@ several branches are in flight.
 | [045](045-event-time-belongs-to-the-place.md) | Event time belongs to the place — per-event zone, inherited from the patch |
 | [049](049-patchwork-states-only-what-it-enforces.md) | Patchwork states only what it enforces — six inert governance fields *(the `max_admins` guard is retracted by 051; the surface pass is backlog)* |
 | [051](051-succession-follows-the-leadership-model.md) | Succession follows the leadership model — three models, three mechanics *(amended by 052: adoption is venue-dependent)* |
-| [052](052-decisions-can-happen-elsewhere.md) | Decisions can happen elsewhere, and be recorded here — declared venues, attestation |
+| [052](052-decisions-can-happen-elsewhere.md) | Decisions can happen elsewhere, and be recorded here — declared venues, attestation *(proposals half in 053)* |
+| [053](053-amendments-adopted-elsewhere.md) | Amendments adopted elsewhere — prose only, rules by direct change, no ballot |
 
 ## Proposed — designs on record, not built
 
