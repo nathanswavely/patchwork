@@ -350,14 +350,18 @@ func broadcastDocUpdate(db *database.DB, docID string) {
 	if doc.Visibility != "public" {
 		return
 	}
-	go func() {
-		ap.BroadcastToFollowers(db, "node", doc.NodeID, map[string]interface{}{
-			"@context": ap.GovernanceContext(),
-			"type":     "Update",
-			"actor":    ap.NodeAPID(ap.GetDomain(), doc.NodeID),
-			"object":   ap.GovernanceDocToObject(doc, ap.GetDomain()),
-		})
-	}()
+	// Synchronous, unlike the older broadcast sites. BroadcastToFollowers only
+	// writes rows to the outbox queue — the delivery worker does the network —
+	// so a goroutine bought nothing here and cost the gate above its
+	// testability: with the queue write racing the assertion, a test could not
+	// tell "the charter was withheld" from "the goroutine hasn't run yet", and
+	// the first version of that test passed with the gate deleted.
+	ap.BroadcastToFollowers(db, "node", doc.NodeID, map[string]interface{}{
+		"@context": ap.GovernanceContext(),
+		"type":     "Update",
+		"actor":    ap.NodeAPID(ap.GetDomain(), doc.NodeID),
+		"object":   ap.GovernanceDocToObject(doc, ap.GetDomain()),
+	})
 }
 
 // amendmentGroundMoved reports whether a document was attested since a

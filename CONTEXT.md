@@ -624,6 +624,12 @@ never the governance rules: those are configuration rather than a text
 anyone adopts, so on a patch that decides elsewhere they move by **direct
 change** instead. That line also closes a hole, since a rules attestation
 could have flipped the very venue that permits attesting.
+
+What reaches another quilt is the **text**, not the account of how it was
+adopted: an attested charter and a voted one arrive alike, and the record
+of the meeting stays on the patch's own page. Who a meeting seated reaches
+nobody — holding admin is a relationship inside one quilt, and it does not
+travel however it was decided (docs/adr/054).
 _Avoid_: import, sync, manual override, verified (nothing was verified),
 minutes (those are the community's own document)
 
