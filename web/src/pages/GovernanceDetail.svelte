@@ -6,10 +6,12 @@
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
+  import AdoptedElsewhere from '../components/AdoptedElsewhere.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let isMember = $derived(patch.value.isMember);
+  let isAdmin = $derived(patch.value.isAdmin);
   let membershipRole = $derived(patch.value.membershipRole);
 
   let docId = $derived(getParams().id || '');
@@ -94,6 +96,22 @@
         <div class="doc-body">
           <MarkdownRenderer content={doc.body} />
         </div>
+
+        <!-- What a meeting adopted, for a patch that decides elsewhere
+             (docs/adr/053). Never on the lining: the only thing that changes
+             its body is a passed amendment proposal, and that survives every
+             configuration (docs/adr/037). The component renders nothing where
+             it doesn't apply. -->
+        {#if doc.kind !== 'lining'}
+          <AdoptedElsewhere
+            {slug}
+            docId={doc.id}
+            docTitle={doc.title}
+            docFilename={doc.filename}
+            {isAdmin}
+            onRecorded={loadDoc}
+          />
+        {/if}
       </div>
     {/if}
   </div>

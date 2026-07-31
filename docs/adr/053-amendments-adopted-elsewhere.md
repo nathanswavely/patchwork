@@ -124,16 +124,66 @@ a meeting adopted — and nothing else.**
   `DirectEdit`, which already writes a document and its commit without a
   proposal branch, so a missing document is created rather than refused.
 
+## What building it settled
+
+- **A proposal with no ballot needs a state, and it is `elsewhere`.**
+  Not docs/adr/048's retired `discussion`: what killed that was a stage
+  nothing governed, sitting ahead of a vote that would eventually come.
+  Here the vote is not coming, and the venue is the rule that says so.
+  `voting_ends_at` stays NULL, which is what keeps an undecidable
+  proposal from being decided by a clock — `resolveProposal` only runs
+  where there is an end to have passed. The refusal to vote reads the
+  state off the row rather than the patch's current venue, so a patch
+  that flips the venue mid-vote leaves open ballots alone, exactly as
+  docs/adr/047 requires.
+
+- **An amendment attestation is its own table, not a `kind` on
+  `attestations`.** Migration 048 expected the opposite. A leadership
+  attestation is about people — names, a term end, a supersede chain,
+  effect on memberships; this one is about a document — a filename and a
+  body, no names, no term, effect on a charter. One table would have
+  meant a row whose every other column is NULL and a discriminator
+  branching at every read.
+
+- **Excluding the rules file turned out to be structural, as predicted.**
+  An attestation writes `governanceFilename(title)`, which always ends in
+  `.md`, and never calls the rules sync — so no request reaches
+  `governance_config` through this path at all. The explicit check is
+  kept as a guard against slugifying changing, and the test asserts the
+  property (the config does not move) rather than a refusal that cannot
+  currently fire.
+
+- **A bug found on the way in, worth recording because it would have
+  eaten this feature.** `GET /nodes/{slug}/governance/rules` sent a
+  subset of the rule set — no `leadership_model`, no venues, no
+  `subject_recusal`, no terms. The rules editor builds its submission by
+  spreading what it loaded, so those fields never reached it to be spread
+  back, and `SyncRulesToDB` read the resulting file over
+  `DefaultRules()`. Changing a quorum silently reset an elected patch to
+  `maintainer`. `proposal_venue` would have been reset the same way on
+  the first unrelated rules edit. Fixed, with a test written against the
+  marshalled rule set so a future field cannot be forgotten, and the
+  rules diff now names every changed key rather than only the labelled
+  ones.
+
 ## Open
 
 - Whether an attested amendment **federates** as its own activity, or only
   through the governance timeline it shares. docs/adr/052 left the same
-  question for the leadership half; both should be answered together.
+  question for the leadership half; both should be answered together. What
+  ships is the existing document-update broadcast: a public charter that
+  changed reaches the instances holding a copy, whichever venue changed
+  it. That is not the attestation federating — it is the document doing
+  what it already did.
 - The **minute book**: whether Patchwork records decisions that change
   nothing, and if so under what name and what gate. Named here as a
   separate decision rather than an omission.
 - The **advisory poll**, as above.
+- **What ends an `elsewhere` proposal that is never attested.** Today it
+  stays open until withdrawn. Closing it on an attestation of the same
+  document was considered and left out: nothing says the record and the
+  draft are about the same decision, and guessing would close proposals a
+  community was still arguing over.
 
-**Status: adopted as a design boundary — implementation is backlog.**
-Nothing here is built; `proposal_venue` still does not exist, and that
-remains correct until the attestation it gates does.
+**Status: adopted and implemented.** `proposal_venue` gates amendment
+attestation and removes the ballot; migration 051 carries the records.

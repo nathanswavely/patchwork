@@ -57,6 +57,11 @@
   // Where this patch actually chooses its admins (docs/adr/052). Elsewhere
   // means Patchwork conducts nothing and records what the community decided.
   let leadershipElsewhere = $derived(overview?.rules?.leadership_venue === 'elsewhere');
+  // Where this patch decides the things proposals are about (docs/adr/053).
+  // Elsewhere, a rules change is a direct change an admin applies — the rules
+  // file is machine configuration, not a text a meeting adopts — so a member
+  // gets told that rather than a link the server refuses.
+  let proposalsElsewhere = $derived(overview?.rules?.proposal_venue === 'elsewhere');
   let successorChoice = $state('');
   let savingSuccessor = $state(false);
   let successorError = $state('');
@@ -113,6 +118,13 @@
   // Human-readable descriptions.
   function describeDecisionMethod(rules) {
     if (!rules) return '';
+    // A patch that decides its proposals elsewhere runs none of this. Reciting
+    // its quorum and voting period would be docs/adr/049's failure — stating
+    // what isn't enforced — reintroduced by the feature written to end it, and
+    // the venue line below says what actually happens. The rules still exist
+    // and still govern the votes this patch is not holding, which is why they
+    // stay editable and are simply not narrated.
+    if (rules.proposal_venue === 'elsewhere') return '';
     const methods = {
       admin: 'The maintainer makes all decisions for this patch.',
       majority: 'Your patch decides things by majority vote. More than half must agree.',
@@ -201,8 +213,22 @@
     <!-- Decision making -->
     <section class="overview-section">
       <h3>How decisions are made</h3>
-      <p class="overview-narrative">{describeDecisionMethod(rules)}</p>
-      {#if membershipRole === 'admin' && rules?.decision_method === 'admin'}
+      {#if describeDecisionMethod(rules)}
+        <p class="overview-narrative">{describeDecisionMethod(rules)}</p>
+      {/if}
+      {#if proposalsElsewhere}
+        <p class="overview-narrative">
+          Proposals are decided outside Patchwork. They stay open here for
+          discussion, and what the meeting adopts is recorded on the charter.
+        </p>
+        {#if membershipRole === 'admin'}
+          <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
+            Change these rules
+          </a>
+        {:else if canPropose}
+          <p class="venue-line muted">An admin changes these rules directly.</p>
+        {/if}
+      {:else if membershipRole === 'admin' && rules?.decision_method === 'admin'}
         <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>
           Change these rules
         </a>

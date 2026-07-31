@@ -22,6 +22,10 @@
   // migration-016 column and nothing writes them; the "Submit for voting"
   // button that used to promote a draft PATCHed a field the handler drops,
   // and the handler now refuses it by name.
+  //
+  // `elsewhere` is not one of those. It is not a stage ahead of a vote that
+  // will come — it is a patch that holds its votes somewhere else, and
+  // nothing promotes out of it (docs/adr/053).
 
   // Compute effective state from both state and legacy status fields.
   let effectiveState = $derived(propState || (status === 'open' ? 'voting' : status === 'passed' || status === 'approved' ? 'approved' : status));
@@ -84,6 +88,28 @@
     {/if}
   </div>
 
+{:else if effectiveState === 'elsewhere'}
+  <!-- This patch decides its proposals somewhere else (docs/adr/053). The
+       proposal is open — it can be discussed, revised and withdrawn — and has
+       no ballot, because a patch with both would let an admin who disliked
+       where a tally was heading record a meeting result instead. -->
+  <div class="status-banner elsewhere">
+    <p>
+      Open for discussion. This patch decides at meetings, not here, and what
+      it decides gets recorded on the charter afterwards.
+    </p>
+    {#if isAuthor}
+      <div class="banner-actions">
+        <ConfirmAction
+          label="Withdraw this proposal"
+          confirmLabel="Withdraw"
+          variant="danger"
+          onConfirm={handleWithdraw}
+        />
+      </div>
+    {/if}
+  </div>
+
 {:else if effectiveState === 'approved'}
   <div class="status-banner approved-pending">
     <p>The community approved this change. An admin needs to make it official.</p>
@@ -128,6 +154,12 @@
   .voting {
     background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
     border: 1px solid var(--color-primary);
+    color: var(--color-text);
+  }
+
+  .elsewhere {
+    background: var(--color-overlay);
+    border: 1px solid var(--color-border);
     color: var(--color-text);
   }
 

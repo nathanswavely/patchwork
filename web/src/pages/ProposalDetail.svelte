@@ -14,6 +14,7 @@
   import VoteSection from '../components/VoteSection.svelte';
   import ElectionPanel from '../components/ElectionPanel.svelte';
   import StickyVoteBar from '../components/StickyVoteBar.svelte';
+  import { formatDay } from '../lib/datetime.js';
   const patch = getContext('patch');
   let patchIsAdmin = $derived(patch.value.isAdmin);
   let patchIsMember = $derived(patch.value.isMember);
@@ -185,6 +186,20 @@
             <h2>Why this change</h2>
             <div class="proposal-body">
               <MarkdownRenderer content={proposal.body} />
+            </div>
+          </section>
+        {/if}
+
+        <!-- The document this proposal edits was adopted at a meeting after
+             the draft was written, so the diff below compares against a text
+             that has moved (docs/adr/053). An attestation checks no base on
+             purpose — a community's own text should win over a draft — and
+             this is the notice that trade owes the draft's readers. -->
+        {#if proposal.ground_moved}
+          <section class="proposal-section">
+            <div class="ground-moved">
+              This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},
+              after this was drafted. The changes below compare against the older text.
             </div>
           </section>
         {/if}
@@ -411,6 +426,15 @@
     font-size: 0.85rem;
     color: var(--color-text-muted);
     margin-bottom: 0.75rem;
+  }
+
+  .ground-moved {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface));
   }
 
   /* The reviewed document is the section's content — it can't move, so it

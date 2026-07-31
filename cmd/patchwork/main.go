@@ -331,18 +331,21 @@ func main() {
 	// inherits the patch, so it is step-up gated like the other power moves.
 	mux.HandleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.SetSuccessor(db))))
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, handler.ClearSuccessor(db)))
-	// Attestations (docs/adr/052) — decisions a community made somewhere
-	// Patchwork was not. Public to read: the whole value is that the people
-	// who were in the room can check it. Recording one can promote and demote
-	// admins, so it is step-up gated like every other power move.
 	// Elections (docs/adr/051). Nominating is a member act; the ballot is the
 	// set of candidates one person approves, so it is a PUT of the whole set
 	// rather than an append.
 	mux.HandleFunc("POST /api/v1/proposals/{id}/candidates", middleware.AuthRequired(db, handler.AddCandidate(db)))
 	mux.HandleFunc("PUT /api/v1/proposals/{id}/ballot", middleware.AuthRequired(db, handler.CastElectionBallot(db)))
+	// Attestations (docs/adr/052, docs/adr/053) — decisions a community made
+	// somewhere Patchwork was not. Public to read: the whole value is that the
+	// people who were in the room can check it. Recording one moves who runs
+	// the patch or what its charter says, so both are step-up gated like every
+	// other power move.
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/attestations", middleware.AuthOptional(db, handler.ListAttestations(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAttestation(db))))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/attestation-names/{id}", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.LinkAttestationName(db))))
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthOptional(db, handler.ListAmendmentAttestations(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAmendmentAttestation(db))))
 	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembershipVisibility(db)))
 
 	// Cross-quilt following (docs/adr/024): remote follows and personal

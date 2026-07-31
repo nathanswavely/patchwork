@@ -5,6 +5,7 @@
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import GovernanceShell from '../components/GovernanceShell.svelte';
+  import AdoptedElsewhere from '../components/AdoptedElsewhere.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -164,6 +165,14 @@
           {/each}
         </div>
       {/if}
+
+      <!-- Texts a meeting adopted (docs/adr/053). Here as well as on each
+           charter because this is the only place a document Patchwork does
+           not have yet can be named — a meeting can adopt a charter this
+           instance was never templated with, and refusing it would mean a
+           community may only record amendments to documents Patchwork
+           happened to guess at. Renders nothing on a patch that votes here. -->
+      <AdoptedElsewhere {slug} {isAdmin} onRecorded={loadDocs} />
     </div>
   </div>
 {/if}

@@ -224,17 +224,41 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Load governance config for default duration
+		// The rules in force, read once. Everything below decides from this
+		// same photograph — the default duration, whether the ballot exists,
+		// and the terms stored on the row — so nothing can be decided against
+		// a config that moved mid-request.
+		isNodeAdmin := userHasNodeRole(db, user.ID, nodeID, "admin")
+		var gcJSON string
+		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
+		var gc model.GovernanceConfig
+		json.Unmarshal([]byte(gcJSON), &gc)
+
 		if req.DurationHours <= 0 {
-			var gcJSON string
-			db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
-			var gc model.GovernanceConfig
-			json.Unmarshal([]byte(gcJSON), &gc)
 			if gc.DefaultVoteDuration > 0 {
 				req.DurationHours = gc.DefaultVoteDuration
 			} else {
 				req.DurationHours = 72
 			}
+		}
+
+		// Where the patch decides its proposals (docs/adr/053). Elsewhere
+		// removes the ballot and keeps the discussion: a proposal can still be
+		// raised, argued over and revised, and the decision comes back as an
+		// attestation. This is what makes the attestation gate mean anything —
+		// a patch with both would let an admin who disliked where a tally was
+		// heading record a meeting result instead.
+		decidedElsewhere := gc.ProposalVenue == "elsewhere"
+		isRulesDoc := req.TargetDoc == rulesFilename || req.TargetDoc == "Governance Rules"
+
+		// The rules file is not a text a meeting adopts, so it never becomes an
+		// attestation, so a rules proposal on such a patch has no way to ever
+		// be decided. On this patch a rules change is a direct change an admin
+		// applies (docs/adr/041's existing sense), and saying so is better than
+		// accepting a proposal that would sit open forever.
+		if decidedElsewhere && isRulesDoc && !isNodeAdmin {
+			http.Error(w, `{"error":"this patch decides at meetings, and the governance rules are not something a meeting adopts. Ask an admin to apply the change directly (docs/adr/053)."}`, http.StatusConflict)
+			return
 		}
 
 		id := auth.NewUUIDv7()
@@ -263,13 +287,6 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			gitSHA = sha
 		}
 
-		// Determine initial state based on governance config + user role.
-		isNodeAdmin := userHasNodeRole(db, user.ID, nodeID, "admin")
-		var gcJSON string
-		db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
-		var gc model.GovernanceConfig
-		json.Unmarshal([]byte(gcJSON), &gc)
-
 		// Ceremony follows the rules in force (docs/adr/041): only the
 		// admin-decides decision method lets an admin apply directly — a
 		// direct change, born applied. Every voting method votes, admins
@@ -278,9 +295,35 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		initialState := "voting"
 		autoApplyNow := false
 
-		if gc.DecisionMethod == "admin" && isNodeAdmin {
-			initialState = "in_effect"
-			autoApplyNow = true
+		switch {
+		case gc.DecisionMethod == "admin" && isNodeAdmin:
+			initialState, autoApplyNow = "in_effect", true
+
+		case decidedElsewhere && isRulesDoc:
+			// Only an admin reaches here — the refusal above sent everyone
+			// else away. docs/adr/053: on a patch that decides elsewhere a
+			// rules change is a direct change, honest because it claims
+			// nothing about a vote.
+			initialState, autoApplyNow = "in_effect", true
+
+		case decidedElsewhere:
+			// No ballot, and therefore no clock: `voting_ends_at` stays NULL
+			// so nothing resolves this, and `state` says why rather than
+			// leaving a proposal that looks open for voting and refuses every
+			// vote. Not docs/adr/048's retired `discussion` — what killed that
+			// was a stage nothing governed, ahead of a vote that would come;
+			// here the vote is not coming, and the venue is the rule that says
+			// so.
+			initialState = "elsewhere"
+		}
+
+		// A proposal with no ballot has no window either. NULL rather than a
+		// date nothing watches: resolveProposal only runs where there is an
+		// end to have passed, so the absence is what keeps an undecidable
+		// proposal from being decided by a clock.
+		var votingEnds interface{} = votingEndsAt
+		if initialState == "elsewhere" {
+			votingEnds = nil
 		}
 
 		apID := ap.ProposalAPID(ap.GetDomain(), id)
@@ -290,7 +333,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		// opens. From here the node's rules may move; this vote's may not.
 		_, err := db.Exec(
 			`INSERT INTO proposals (id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, ap_id, target_doc, proposed_branch, proposed_body, proposed_title, git_sha, base_sha, state, voting_terms, target_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEndsAt, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState, gcJSON, nullIfEmpty(req.TargetUserID),
+			id, nodeID, user.ID, req.Title, req.Body, "open", req.ProposalType, req.DurationHours, votingEnds, createdAt, createdAt, apID, req.TargetDoc, branchName, req.ProposedBody, req.ProposedTitle, gitSHA, baseSHA, initialState, gcJSON, nullIfEmpty(req.TargetUserID),
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create proposal"}`, http.StatusInternalServerError)
@@ -861,7 +904,14 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// shown vote buttons and got a 403 on click. Deciding who may vote is
 		// the server's answer to give (docs/adr/044); the client still decides
 		// whether the proposal is in a state that accepts one.
-		canVote := viewerID != "" && inElectorateExcept(db, viewerID, p.NodeID, gc, recused)
+		//
+		// A proposal with no ballot answers no: `can_vote` is the gate's own
+		// answer, and the gate refuses this one (docs/adr/053). The page also
+		// hides the vote surfaces on the state, but the two must agree — a
+		// payload saying you may vote on something nothing will accept a vote
+		// for is the contradiction docs/adr/044 was written to end.
+		canVote := viewerID != "" && p.State != "elsewhere" &&
+			inElectorateExcept(db, viewerID, p.NodeID, gc, recused)
 
 		result := map[string]interface{}{
 			"id":          p.ID,
@@ -918,6 +968,13 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 				currentContent, _ := governance.GetDocument(governance.GetDataDir(), p.NodeID, p.TargetDoc)
 				result["current_doc_content"] = currentContent
 			}
+			// Whether this document was adopted elsewhere since the draft was
+			// written, which makes the diff below a comparison against
+			// something that has moved (docs/adr/053).
+			if moved, decidedAt := amendmentGroundMoved(db, p.NodeID, p.TargetDoc, p.CreatedAt, p.Status); moved {
+				result["ground_moved"] = true
+				result["ground_moved_at"] = decidedAt
+			}
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -931,10 +988,10 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 		proposalID := r.PathValue("id")
 
-		// Get proposal's node, status, and voting_ends_at.
-		var nodeID, status string
+		// Get proposal's node, status, state, and voting_ends_at.
+		var nodeID, status, state string
 		var votingEndsAt *string
-		err := db.QueryRow("SELECT node_id, status, voting_ends_at FROM proposals WHERE id = ?", proposalID).Scan(&nodeID, &status, &votingEndsAt)
+		err := db.QueryRow("SELECT node_id, status, COALESCE(state,''), voting_ends_at FROM proposals WHERE id = ?", proposalID).Scan(&nodeID, &status, &state, &votingEndsAt)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -942,6 +999,17 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 
 		if status != "open" {
 			http.Error(w, `{"error":"proposal is not open for voting"}`, http.StatusBadRequest)
+			return
+		}
+
+		// A proposal on a patch that decides elsewhere is open and has no
+		// ballot (docs/adr/053). It is still `status = 'open'` — it can be
+		// discussed and withdrawn — so the state is what refuses here. Read
+		// from the row rather than from the patch's current venue: a patch
+		// that flips the venue does not reach back into proposals already
+		// raised, the same rule docs/adr/047 applies to terms.
+		if state == "elsewhere" {
+			http.Error(w, `{"error":"this patch decides elsewhere; the decision is recorded here after it is made"}`, http.StatusConflict)
 			return
 		}
 

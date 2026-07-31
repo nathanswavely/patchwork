@@ -122,6 +122,12 @@ type GovernanceConfig struct {
 	// elsewhere, Patchwork conducts nothing and records attestations
 	// instead.
 	LeadershipVenue string `json:"leadership_venue,omitempty"`
+	// ProposalVenue is where this patch decides the things proposals are
+	// about: "patchwork" (or empty, the default) or "elsewhere"
+	// (docs/adr/052, docs/adr/053). Elsewhere removes the ballot and keeps
+	// the discussion — a proposal can still be raised and argued over, and
+	// the decision comes back as an amendment attestation.
+	ProposalVenue string `json:"proposal_venue,omitempty"`
 	// NominationDays is how long an election takes nominations before voting
 	// opens (docs/adr/051). This field is why a pre-voting phase is defensible
 	// at all: docs/adr/048 retired `draft` and `discussion` because nothing
