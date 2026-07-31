@@ -177,7 +177,10 @@
   {:else}
     <div class="record">
       <p class="record-head">
-        Decided {formatDay(current.decided_at)}{#if current.recorder_name} · recorded by {current.recorder_name}{/if}
+        <!-- The separator is an expression, not literal leading whitespace:
+             Svelte trims the space at the head of an {#if} body, so this
+             rendered as "Mar 14, 2026· recorded by". -->
+        Decided {formatDay(current.decided_at)}{#if current.recorder_name}{' · '}recorded by {current.recorder_name}{/if}
       </p>
       {#if current.term_ends_at}
         <p class="term-line" class:lapsed={termLapsed}>

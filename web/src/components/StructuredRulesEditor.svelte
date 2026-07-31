@@ -55,6 +55,10 @@
   // is elected at its annual meeting records that here rather than staging a
   // vote it does not hold.
   let leadershipVenue = $state('patchwork');
+  // Where the things proposals are about get decided (docs/adr/053). Elsewhere
+  // removes the ballot and keeps the discussion; what the meeting adopts comes
+  // back as a record on the charter.
+  let proposalVenue = $state('patchwork');
   // Whether a proposal's subject may vote on it (docs/adr/051).
   let subjectRecusal = $state(false);
   let membershipPolicy = $state('open');
@@ -80,6 +84,7 @@
       minVotingTenureDays = currentRules.min_voting_tenure_days ?? 0;
       subjectRecusal = currentRules.subject_recusal === true;
       leadershipVenue = currentRules.leadership_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
+      proposalVenue = currentRules.proposal_venue === 'elsewhere' ? 'elsewhere' : 'patchwork';
       membershipPolicy = currentRules.membership_policy || 'open';
       const fp = currentRules.follower_permissions || {};
       followerEvents = fp.events !== false;
@@ -97,6 +102,7 @@
       ...(currentRules || {}),
       decision_method: decisionMethod,
       leadership_venue: leadershipVenue,
+      proposal_venue: proposalVenue,
       succession_policy: successionPolicy,
       membership_policy: membershipPolicy,
       follower_permissions: {
@@ -129,7 +135,7 @@
     // Touch all reactive values to track them
     decisionMethod; quorumPercent; votingPeriodHours; amendmentThreshold;
     autoApply; successionPolicy; minVotingTenureDays; membershipPolicy;
-    subjectRecusal; leadershipVenue;
+    subjectRecusal; leadershipVenue; proposalVenue;
     followerEvents; followerProposals; followerCharters; followerMembers;
     onSave(buildRules());
   });
@@ -201,6 +207,20 @@
       Pick the second if your board is elected at a meeting, on paper, or in
       another tool. Patchwork will stop conducting leadership changes and let
       an admin record what was decided.
+    </p>
+  </div>
+
+  <div class="field">
+    <label for="re-proposal-venue">Where proposals are decided</label>
+    <select id="re-proposal-venue" bind:value={proposalVenue}>
+      <option value="patchwork">In Patchwork</option>
+      <option value="elsewhere">Somewhere else, recorded here</option>
+    </select>
+    <p class="venue-hint muted">
+      Pick the second if your members decide at meetings. Proposals stay open
+      for discussion and lose the vote buttons, and an admin records the
+      adopted text on the charter afterwards. Rules changes stay a direct
+      change an admin applies.
     </p>
   </div>
 

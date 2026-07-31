@@ -174,6 +174,23 @@ func Tables() []Table {
 				id("supersedes_id")),
 		},
 		{
+			// What a meeting adopted, and the text it adopted (docs/adr/053).
+			// `adopted_body` travels because the fork's git repos do not: the
+			// charter carries only its latest text, so without this the
+			// record of an earlier adoption would arrive empty.
+			File: "amendment_attestations.json",
+			Name: "amendment_attestations",
+			Query: `SELECT id, node_id, doc_id, target_doc, doc_title, decided_at,
+				summary, adopted_body, git_sha, recorded_by, created_at
+				FROM amendment_attestations`,
+			// git_sha is plain, not remapped: it names a commit in the old
+			// instance's repo, which the fork does not have. Kept as the
+			// provenance it is rather than dropped.
+			Columns: cols(id("id"), id("node_id"), id("doc_id"), c("target_doc"),
+				c("doc_title"), c("decided_at"), c("summary"), c("adopted_body"),
+				c("git_sha"), id("recorded_by"), c("created_at")),
+		},
+		{
 			File: "attestation_names.json",
 			Name: "attestation_names",
 			Query: `SELECT id, attestation_id, user_id, display_name, position

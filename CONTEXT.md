@@ -594,6 +594,16 @@ declare.
 _Avoid_: external (says where it isn't), offline (an AGM on Zoom is not
 offline), integration, source of truth
 
+**Open for discussion**:
+What a proposal is on a patch whose proposal **venue** is elsewhere. It
+can be raised, argued over, revised and withdrawn; what it does not have
+is a tally, because a patch with both a ballot and an **attestation**
+would let an admin who disliked where a tally was heading record a
+meeting result instead. The decision comes back as an attestation on the
+charter. Not a draft and not a discussion stage: nothing promotes out of
+it, and no vote is coming (docs/adr/048, docs/adr/053).
+_Avoid_: draft, pending, awaiting vote (none is), informal, unofficial
+
 **Attestation**:
 A record of a decision the community made at a venue that isn't
 Patchwork — an election held at the annual meeting, an amendment carried

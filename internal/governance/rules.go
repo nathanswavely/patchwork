@@ -25,6 +25,10 @@ type GovernanceRules struct {
 	LeadershipModel string `json:"leadership_model"`
 	// LeadershipVenue: where admins are chosen (docs/adr/052).
 	LeadershipVenue string `json:"leadership_venue"`
+	// ProposalVenue: where the things proposals are about get decided
+	// (docs/adr/053). Elsewhere removes the ballot and gates amendment
+	// attestation.
+	ProposalVenue string `json:"proposal_venue"`
 	// NominationDays: how long an election takes nominations (docs/adr/051).
 	NominationDays   int    `json:"nomination_days"`
 	SuccessionMethod string `json:"succession_method"`
@@ -50,6 +54,7 @@ func DefaultRules() *GovernanceRules {
 		SubjectRecusal:      false,
 		LeadershipModel:     "maintainer",
 		LeadershipVenue:     "patchwork",
+		ProposalVenue:       "patchwork",
 		// 14 days is the shipped succession plan's own nomination period.
 		NominationDays:   14,
 		SuccessionMethod: "admin_nominate",
@@ -112,6 +117,7 @@ func marshalConfig(rules *GovernanceRules) (string, error) {
 		SubjectRecusal:      rules.SubjectRecusal,
 		LeadershipModel:     rules.LeadershipModel,
 		LeadershipVenue:     rules.LeadershipVenue,
+		ProposalVenue:       rules.ProposalVenue,
 		NominationDays:      rules.NominationDays,
 		SuccessionMethod:    rules.SuccessionMethod,
 		AdminTermMonths:     rules.AdminTermMonths,

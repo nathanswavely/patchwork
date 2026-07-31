@@ -32,7 +32,16 @@
   // `isAdmin`, which the node payload also sets for instance admins. An
   // instance admin who is a plain member here would have been told "Change
   // applied" while the server opened a vote.
-  let directChange = $derived(membershipRole === 'admin' && currentRules?.decision_method === 'admin');
+  //
+  // A patch that decides its proposals elsewhere is the second case
+  // (docs/adr/053): the rules file is machine configuration, not a text a
+  // meeting adopts, so it never comes back as an attestation and a rules
+  // proposal there would sit open forever. An admin applies it directly; the
+  // server refuses everyone else with the same reason.
+  let directChange = $derived(
+    membershipRole === 'admin' &&
+    (currentRules?.decision_method === 'admin' || currentRules?.proposal_venue === 'elsewhere')
+  );
 
   // Step: 'editing' or 'reviewing'
   let step = $state('editing');

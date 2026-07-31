@@ -95,11 +95,28 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 		joined = time.Now().UTC()
 	}
 
+	// Two kinds of open proposal are not awaiting anyone's vote, and both would
+	// otherwise be counted because `votes` holds no row for them:
+	//
+	//   - A proposal on a patch that decides elsewhere has no ballot at all
+	//     (docs/adr/053). Counting it produces "1 proposal needs your vote"
+	//     pointing at a page with no vote buttons.
+	//   - An election's ballot is rows in `election_ballots`, not `votes`
+	//     (docs/adr/051), so a NOT EXISTS against `votes` is true for every
+	//     election forever — during nominations, when no ballot may be cast,
+	//     and after someone has already approved a slate.
+	//
+	// docs/adr/044's rule is that the nudge names the same set the gate does.
 	rows, err := db.Query(
 		`SELECT COALESCE(p.voting_terms,''), COALESCE(p.target_user_id,'') FROM proposals p
 		 WHERE p.node_id = ? AND p.status = 'open'
+		 AND COALESCE(p.state,'') != 'elsewhere'
+		 AND (p.seats_contested = 0 OR (
+		       p.voting_ends_at IS NOT NULL
+		       AND NOT EXISTS (SELECT 1 FROM election_ballots b
+		                       WHERE b.proposal_id = p.id AND b.voter_id = ?)))
 		 AND NOT EXISTS (SELECT 1 FROM votes v WHERE v.proposal_id = p.id AND v.user_id = ?)`,
-		nodeID, userID,
+		nodeID, userID, userID,
 	)
 	if err != nil {
 		return 0

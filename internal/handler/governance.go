@@ -294,10 +294,17 @@ func GetGovernanceDoc(db *database.DB) http.HandlerFunc {
 		filename := governanceFilename(doc.Title)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"id":         doc.ID,
-			"node_id":    doc.NodeID,
-			"title":      doc.Title,
-			"body":       doc.Body,
+			"id":      doc.ID,
+			"node_id": doc.NodeID,
+			"title":   doc.Title,
+			"body":    doc.Body,
+			// The lining is identified by column, not by title (docs/adr/037),
+			// so the page cannot tell which document it is looking at without
+			// this. It was scanned here and dropped from the payload; the
+			// surfaces that must treat the lining differently were left
+			// guessing from the title, which is exactly what the column exists
+			// to stop.
+			"kind":       doc.Kind,
 			"visibility": doc.Visibility,
 			"version":    doc.Version,
 			"created_by": doc.CreatedBy,
@@ -581,14 +588,36 @@ func GetGovernanceRules(db *database.DB) http.HandlerFunc {
 		var fp model.FollowerPermissions
 		json.Unmarshal([]byte(fpJSON), &fp)
 
+		// Every field, not the subset this endpoint used to send.
+		//
+		// The rules editor builds its submission by spreading what it loaded
+		// here and overwriting the handful of keys it edits — "the rules file
+		// is whole-document, not a patch." That only works if what it loaded
+		// is whole. It wasn't: leadership_model, both venues, subject_recusal,
+		// the term and inactivity numbers and the nomination window were all
+		// omitted, so they never reached the editor to be spread back, and
+		// SyncRulesToDB read the resulting file over DefaultRules(). Changing
+		// a quorum silently reset an elected patch to `maintainer` and a
+		// patch that decides at meetings back to deciding in Patchwork —
+		// governance the community never chose, applied by an edit to
+		// something else.
 		rules := governance.GovernanceRules{
 			DecisionMethod:      gc.DecisionMethod,
 			QuorumPercent:       gc.QuorumPercent,
 			DefaultVoteDuration: gc.DefaultVoteDuration,
 			AmendmentThreshold:  gc.AmendmentThreshold,
 			AmendmentAutoApply:  gc.AmendmentAutoApply,
-			SuccessionPolicy:    gc.SuccessionPolicy,
 			MinVotingTenureDays: gc.MinVotingTenureDays,
+			SubjectRecusal:      gc.SubjectRecusal,
+			LeadershipModel:     gc.LeadershipModel,
+			LeadershipVenue:     gc.LeadershipVenue,
+			ProposalVenue:       gc.ProposalVenue,
+			NominationDays:      gc.NominationDays,
+			SuccessionMethod:    gc.SuccessionMethod,
+			SuccessionPolicy:    gc.SuccessionPolicy,
+			AdminTermMonths:     gc.AdminTermMonths,
+			MaxAdmins:           gc.MaxAdmins,
+			InactivityDays:      gc.InactivityDays,
 			MembershipPolicy:    membershipPolicy,
 			FollowerPermissions: fp,
 		}

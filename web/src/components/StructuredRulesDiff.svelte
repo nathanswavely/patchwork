@@ -11,6 +11,8 @@
     min_voting_tenure_days: 'Min Voting Tenure',
     subject_recusal: 'Recuse a proposal’s subject',
     leadership_venue: 'Where admins are chosen',
+    proposal_venue: 'Where proposals are decided',
+    leadership_model: 'Leadership',
     membership_policy: 'Membership Policy',
     follower_permissions: 'Follower Permissions',
   };
@@ -70,13 +72,26 @@
     return false;
   }
 
-  const ALL_KEYS = Object.keys(LABELS);
+  // Every key either side carries, not just the ones named above. A rules
+  // file holds fields this editor does not edit, and a diff that only knows
+  // its own labels would let one of them change without saying so — which is
+  // the worse half of a governance record: silence that reads as "nothing
+  // else moved". An unlabelled key gets its own name humanized instead.
+  let allKeys = $derived([...new Set([
+    ...Object.keys(LABELS),
+    ...Object.keys(currentRules || {}),
+    ...Object.keys(proposedRules || {}),
+  ])]);
+
+  function label(key) {
+    return LABELS[key] || key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+  }
 
   let changedFields = $derived(
-    ALL_KEYS.filter(key => !deepEqual(currentRules[key], proposedRules[key]))
+    allKeys.filter(key => !deepEqual(currentRules[key], proposedRules[key]))
   );
 
-  let unchangedCount = $derived(ALL_KEYS.length - changedFields.length);
+  let unchangedCount = $derived(allKeys.length - changedFields.length);
 </script>
 
 {#if changedFields.length > 0}
@@ -85,7 +100,7 @@
     <div class="diff-list">
       {#each changedFields as key}
         <div class="diff-row">
-          <span class="diff-label">{LABELS[key]}</span>
+          <span class="diff-label">{label(key)}</span>
           <span class="diff-values">
             <span class="diff-old">{formatValue(key, currentRules[key])}</span>
             <span class="diff-arrow">&rarr;</span>
