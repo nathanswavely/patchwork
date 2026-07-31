@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { docLabel } from '../lib/docLabel.js';
   import { navigate } from '../stores/router.svelte.js';
 
   import { isLoggedIn } from '../stores/auth.svelte.js';
@@ -79,10 +80,6 @@
   // says "applied" rather than "approved".
   function isDirectRow(p) {
     return p.status === 'approved' && !((p.approve_count || 0) + (p.reject_count || 0) + (p.abstain_count || 0));
-  }
-
-  function docLabel(doc) {
-    return doc.replace('.json', '').replace(/-/g, ' ');
   }
 </script>
 

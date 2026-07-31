@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { docLabel } from '../lib/docLabel.js';
   import MarkdownRenderer from './MarkdownRenderer.svelte';
   import Skeleton from './Skeleton.svelte';
 
@@ -134,7 +135,7 @@
                 <div class="doc-item">
                   <button class="doc-toggle" onclick={() => toggleDoc(i)}>
                     <span class="doc-chevron" class:open={expandedDoc === i}>&rsaquo;</span>
-                    <span class="doc-name">{doc.filename.replace('.md', '').replace(/-/g, ' ')}</span>
+                    <span class="doc-name">{docLabel(doc.filename)}</span>
                   </button>
                   {#if expandedDoc === i}
                     <div class="doc-content">

@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { docLabel } from '../lib/docLabel.js';
   import { getParams } from '../stores/router.svelte.js';
   import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
@@ -155,7 +156,7 @@
           <span class="type-badge">{proposal.proposal_type === 'amendment' ? 'Amendment' : proposal.proposal_type}</span>
         {/if}
         {#if proposal.target_doc}
-          <span class="target-badge">to {proposal.target_doc.replace('.json', '').replace(/-/g, ' ')}</span>
+          <span class="target-badge">to {docLabel(proposal.target_doc)}</span>
         {/if}
         <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
         <span class="muted">{new Date(proposal.created_at).toLocaleDateString()}</span>
@@ -208,7 +209,7 @@
         {#if hasAmendment}
           <section class="proposal-section">
             <div class="changes-summary">
-              <span class="muted">This {isDirectChange ? 'change' : 'proposal'} modifies <strong>{proposal.target_doc.replace('.json', '').replace(/-/g, ' ')}</strong></span>
+              <span class="muted">This {isDirectChange ? 'change' : 'proposal'} modifies <strong>{docLabel(proposal.target_doc)}</strong></span>
               <button class="btn-link" onclick={() => activeTab = 'changes'}>View changes</button>
             </div>
           </section>
@@ -272,7 +273,7 @@
             />
           {:else}
             <div class="doc-version-label muted">
-              {proposal.target_doc.replace(/-/g, ' ')}
+              {docLabel(proposal.target_doc)}
             </div>
             <DiffView
               oldText={proposal.current_doc_content}
