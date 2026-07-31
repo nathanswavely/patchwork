@@ -7,12 +7,15 @@
 //
 //   - Included: user profiles (with email and instance role, so a fork can
 //     re-authenticate its people), patches, memberships (the shared-member
-//     overlap that threads and the quilt are inferred from), tags, events
-//     with their provenance, event sources and their skip lists (feed URLs
-//     are quasi-secrets, but the admin seamrip is already a custody
-//     transfer), proposals with raw votes, governance docs, proposal
-//     comments / reactions / revisions, claim requests, and notification
-//     preferences.
+//     overlap that threads and the quilt are inferred from), council seats
+//     and their term ends, tags, events with their provenance, event sources
+//     and their skip lists (feed URLs are quasi-secrets, but the admin
+//     seamrip is already a custody transfer), proposals with the terms they
+//     opened under and their raw votes — approval ballots and candidates
+//     included, since an election's votes are no less raw for being shaped
+//     differently — attestations of what was decided elsewhere, governance
+//     docs, proposal comments / reactions / revisions, claim requests, and
+//     notification preferences.
 //   - Excluded: credentials, sessions, recovery codes, personal feed
 //     secrets, magic/invite/signup links, ActivityPub
 //     keypairs and ap_ids, remote followers and the delivery queue, audit
@@ -111,6 +114,23 @@ func Tables() []Table {
 				c("status"), c("joined_at")),
 		},
 		{
+			// The council's chairs (docs/adr/051). A seat outlives its holder,
+			// and `term_ends_at` is the patch's election calendar: dueness is
+			// derived from it rather than stored, so a fork arriving with no
+			// seats never schedules another election — the safety valve would
+			// have stripped the machinery that rotates leadership. Beside
+			// memberships because that is what a seat is a fact about.
+			//
+			// A vacant seat travels too: holder_id NULL is a chair waiting to
+			// be contested, which the next election needs to know about.
+			File: "seats.json",
+			Name: "seats",
+			Query: `SELECT id, node_id, holder_id, term_ends_at, created_at
+				FROM seats`,
+			Columns: cols(id("id"), id("node_id"), id("holder_id"),
+				c("term_ends_at"), c("created_at")),
+		},
+		{
 			File: "event_sources.json",
 			Name: "event_sources",
 			// Feed URLs (a Google Calendar secret address is one) are
@@ -145,18 +165,59 @@ func Tables() []Table {
 				c("created_at"), c("updated_at")),
 		},
 		{
+			// An event's other patches (docs/adr/032). A link is a mutual
+			// association two sets of admins each consented to — community
+			// data by the same argument memberships are, and both ends already
+			// travel. Only confirmed links: a pending one is invisible
+			// everywhere, and a fork cannot carry a handshake nobody finished.
+			File: "event_links.json",
+			Name: "event_links",
+			Query: `SELECT id, event_id, node_id, status, initiated_by, requested_by,
+				absorb_event_id, created_at, confirmed_at
+				FROM event_links WHERE status = 'confirmed'`,
+			Columns: cols(id("id"), id("event_id"), id("node_id"), c("status"),
+				c("initiated_by"), id("requested_by"), id("absorb_event_id"),
+				c("created_at"), c("confirmed_at")),
+		},
+		{
+			// Doorways to patches on other quilts (docs/adr/032). Stored as
+			// host and slug rather than ids, so they survive a fork pointing at
+			// the same remote patches they always did.
+			File: "event_mentions.json",
+			Name: "event_mentions",
+			Query: `SELECT id, event_id, host, slug, name, created_at
+				FROM event_mentions`,
+			Columns: cols(id("id"), id("event_id"), c("host"), c("slug"),
+				c("name"), c("created_at")),
+		},
+		{
 			File: "proposals.json",
 			Name: "proposals",
 			Query: `SELECT id, node_id, author_id, title, body, status, state,
-				proposal_type, duration_hours, voting_ends_at, target_doc, target_user_id,
+				proposal_type, duration_hours, voting_ends_at, voting_terms,
+				target_doc, target_user_id, seats_contested, nominations_close_at,
 				proposed_title, proposed_body, applied_at, applied_by,
 				created_at, updated_at FROM proposals`,
 			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"),
 				c("body"), c("status"), c("state"), c("proposal_type"),
-				c("duration_hours"), c("voting_ends_at"), c("target_doc"),
+				c("duration_hours"), c("voting_ends_at"),
+				// The rules a vote is judged by, fixed when it opened
+				// (docs/adr/047). Without it a fork's in-flight votes fall back
+				// to the new instance's live config — a vote finishing under
+				// different rules than the ones people cast ballots under,
+				// which is the exact failure the photograph was added to stop.
+				c("voting_terms"),
+				c("target_doc"),
 				// The person a nomination is about travels remapped, like
 				// every other user reference (docs/adr/051).
 				id("target_user_id"),
+				// What makes an election an election (docs/adr/051). A proposal
+				// carrying candidates but `seats_contested = 0` is not read as
+				// an election by anything — electionPhase returns empty, the
+				// panel does not render, and the ballot below it becomes
+				// orphaned rows. def(), because archives written before
+				// migration 050 have neither key.
+				def("seats_contested", 0), c("nominations_close_at"),
 				c("proposed_title"), c("proposed_body"), c("applied_at"),
 				id("applied_by"), c("created_at"), c("updated_at")),
 		},
@@ -207,6 +268,30 @@ func Tables() []Table {
 			Query: `SELECT id, proposal_id, user_id, value, created_at FROM votes`,
 			Columns: cols(id("id"), id("proposal_id"), id("user_id"), c("value"),
 				c("created_at")),
+		},
+		{
+			// Who is standing in an election (docs/adr/051). Before
+			// `election_ballots` below, because a ballot names a candidate and
+			// the FK is enforced at insert.
+			File: "election_candidates.json",
+			Name: "election_candidates",
+			Query: `SELECT id, proposal_id, user_id, created_at
+				FROM election_candidates`,
+			Columns: cols(id("id"), id("proposal_id"), id("user_id"), c("created_at")),
+		},
+		{
+			// An approval ballot is rows rather than a value (docs/adr/051), so
+			// it lives here instead of in `votes`. Same rule either way: ADR 002
+			// travels "proposals with raw votes", and an election's votes are
+			// no less raw for being shaped differently. Without them a forked
+			// election shows a slate and no tally — a governance record that
+			// says a contest happened and cannot say what it decided.
+			File: "election_ballots.json",
+			Name: "election_ballots",
+			Query: `SELECT id, proposal_id, voter_id, candidate_id, created_at
+				FROM election_ballots`,
+			Columns: cols(id("id"), id("proposal_id"), id("voter_id"),
+				id("candidate_id"), c("created_at")),
 		},
 		{
 			File: "proposal_comments.json",
@@ -323,9 +408,11 @@ const ReadmeText = `Patchwork Data Export (Seamrip)
 ===============================
 
 This archive contains the portable data of a Patchwork instance: patches,
-people, memberships, events, event sources (the calendar feeds patches
-pull from), proposals with votes, governance documents and discussion,
-claims, and notification preferences.
+people, memberships, council seats and their terms, events (with the
+patches they are linked to and the calendar feeds they were pulled from),
+proposals with votes — election candidates and approval ballots included
+— records of what was decided elsewhere, governance documents and
+discussion, claims, and notification preferences.
 
 Deliberately NOT included: credentials, sessions, recovery codes,
 invite/magic/signup links, ActivityPub keys and identifiers, remote

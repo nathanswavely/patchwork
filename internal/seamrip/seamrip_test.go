@@ -90,9 +90,31 @@ func seedSource(t *testing.T, db *database.DB) {
 	mustExec(t, db, `INSERT INTO tags (id, name) VALUES (?, 'music')`, tag)
 	mustExec(t, db, `INSERT INTO node_tags (node_id, tag_id) VALUES (?, ?)`, n1, tag)
 
+	ev := nextID()
 	mustExec(t, db,
 		`INSERT INTO events (id, node_id, created_by, title, description, location, starts_at, recurrence, visibility, created_at, updated_at) VALUES (?, ?, ?, 'Show', '', 'Venue', ?, '', 'public', ?, ?)`,
-		nextID(), n1, u1, now, now, now)
+		ev, n1, u1, now, now, now)
+
+	// The show is also n2's (docs/adr/032): a confirmed link, and a doorway to
+	// a band on another quilt.
+	mustExec(t, db,
+		`INSERT INTO event_links (id, event_id, node_id, status, initiated_by, requested_by, confirmed_at)
+		 VALUES (?, ?, ?, 'confirmed', 'owner', ?, ?)`,
+		nextID(), ev, n2, u1, now)
+	mustExec(t, db,
+		`INSERT INTO event_mentions (id, event_id, host, slug, name) VALUES (?, ?, 'other.example', 'the-band', 'The Band')`,
+		nextID(), ev)
+
+	// A second event carrying a link nobody confirmed. A fork cannot carry a
+	// handshake half-finished, and a pending link is invisible everywhere.
+	ev2 := nextID()
+	mustExec(t, db,
+		`INSERT INTO events (id, node_id, created_by, title, description, location, starts_at, recurrence, visibility, created_at, updated_at) VALUES (?, ?, ?, 'Workshop', '', 'Shop', ?, '', 'public', ?, ?)`,
+		ev2, n2, u1, now, now, now)
+	mustExec(t, db,
+		`INSERT INTO event_links (id, event_id, node_id, status, initiated_by, requested_by)
+		 VALUES (?, ?, ?, 'pending', 'linked', ?)`,
+		nextID(), ev2, n1, u2)
 
 	prop := nextID()
 	mustExec(t, db,
@@ -126,6 +148,39 @@ func seedSource(t *testing.T, db *database.DB) {
 	mustExec(t, db,
 		`INSERT INTO notification_preferences (id, user_id, notification_type, channel, enabled) VALUES (?, ?, 'proposal', 'email', 0)`,
 		nextID(), u2)
+
+	// An elected council on n2: two seats with a term end, and the election
+	// that filled them — the proposal, who stood, and who approved whom
+	// (docs/adr/051).
+	seatA, seatB := nextID(), nextID()
+	mustExec(t, db,
+		`INSERT INTO seats (id, node_id, holder_id, term_ends_at, created_at) VALUES (?, ?, ?, '2027-03-01', ?)`,
+		seatA, n2, u1, now)
+	// A vacant chair: it exists, it will be contested, nobody holds it.
+	mustExec(t, db,
+		`INSERT INTO seats (id, node_id, holder_id, term_ends_at, created_at) VALUES (?, ?, NULL, '2027-03-01', ?)`,
+		seatB, n2, now)
+
+	election := nextID()
+	mustExec(t, db,
+		`INSERT INTO proposals (id, node_id, author_id, title, body, status, state, proposal_type,
+		 seats_contested, nominations_close_at, voting_terms, created_at, updated_at)
+		 VALUES (?, ?, ?, 'Council election', '', 'open', 'voting', 'membership', 2, ?,
+		 '{"decision_method":"majority","quorum_percent":40}', ?, ?)`,
+		election, n2, u1, now, now, now)
+	candA, candB := nextID(), nextID()
+	mustExec(t, db,
+		`INSERT INTO election_candidates (id, proposal_id, user_id, created_at) VALUES (?, ?, ?, ?)`,
+		candA, election, u1, now)
+	mustExec(t, db,
+		`INSERT INTO election_candidates (id, proposal_id, user_id, created_at) VALUES (?, ?, ?, ?)`,
+		candB, election, u2, now)
+	// u1 approves both; u2 approves only u1. An approval ballot is rows.
+	for _, b := range []struct{ voter, cand string }{{u1, candA}, {u1, candB}, {u2, candA}} {
+		mustExec(t, db,
+			`INSERT INTO election_ballots (id, proposal_id, voter_id, candidate_id, created_at) VALUES (?, ?, ?, ?, ?)`,
+			nextID(), election, b.voter, b.cand, now)
+	}
 
 	// Things that must NOT travel.
 	mustExec(t, db,
@@ -177,8 +232,10 @@ func TestRoundTrip(t *testing.T) {
 	// Every table round-trips by count.
 	for table, want := range map[string]int{
 		"users": 3, "nodes": 2, "memberships": 5, "tags": 1, "node_tags": 1,
-		"events": 1, "proposals": 1, "votes": 2, "proposal_comments": 2,
+		"events": 2, "proposals": 2, "votes": 2, "proposal_comments": 2,
 		"comment_reactions": 1, "governance_docs": 1, "notification_preferences": 1,
+		"seats": 2, "election_candidates": 2, "election_ballots": 3,
+		"event_links": 1, "event_mentions": 1,
 	} {
 		if got := count(t, dst, "SELECT COUNT(*) FROM "+table); got < want {
 			t.Errorf("%s: got %d rows, want >= %d", table, got, want)
@@ -193,6 +250,64 @@ func TestRoundTrip(t *testing.T) {
 		WHERE m1.role IN ('admin','member') AND m2.role IN ('admin','member')`)
 	if overlap != 4 { // 2 shared users x 2 directed pairs
 		t.Errorf("member overlap lost in seamrip: got %d directed overlap rows, want 4", overlap)
+	}
+
+	// The fork can still hold an election. Dueness is derived from
+	// `seats.term_ends_at` rather than stored (docs/adr/051), so a fork with no
+	// seats never schedules another contest — the safety valve would have
+	// stripped the machinery that rotates leadership.
+	if n := count(t, dst, `SELECT COUNT(*) FROM seats WHERE term_ends_at = '2027-03-01'`); n != 2 {
+		t.Errorf("election calendar lost: got %d seats with a term end, want 2", n)
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM seats WHERE holder_id IS NULL`); n != 1 {
+		t.Errorf("the vacant chair did not travel: got %d, want 1", n)
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM seats s JOIN nodes n ON n.id = s.node_id WHERE n.slug = 'patch-2'`); n != 2 {
+		t.Errorf("seats landed on the wrong patch: got %d on patch-2, want 2", n)
+	}
+
+	// And it is still an election. `seats_contested` is what every read path
+	// branches on; a proposal carrying candidates with zero seats renders as an
+	// ordinary proposal and the slate below it is orphaned rows.
+	if n := count(t, dst, `SELECT COUNT(*) FROM proposals WHERE seats_contested = 2`); n != 1 {
+		t.Errorf("the election stopped being one: got %d proposals with seats contested, want 1", n)
+	}
+
+	// The tally survives, joined through both remapped ends. u1 approved by two
+	// people, u2 by one — a record that says a contest happened must be able to
+	// say what it decided.
+	winner := count(t, dst, `
+		SELECT COUNT(*) FROM election_ballots b
+		JOIN election_candidates c ON c.id = b.candidate_id
+		JOIN users u ON u.id = c.user_id
+		WHERE u.username = 'user1' AND b.proposal_id = c.proposal_id`)
+	if winner != 2 {
+		t.Errorf("approval tally lost: user1 has %d approvals, want 2", winner)
+	}
+
+	// A vote keeps the terms it opened with (docs/adr/047), across a fork too.
+	var terms string
+	dst.QueryRow(`SELECT COALESCE(voting_terms,'') FROM proposals WHERE seats_contested = 2`).Scan(&terms)
+	if terms == "" {
+		t.Error("voting terms lost: the fork would judge an in-flight vote by its own live rules")
+	}
+
+	// An event's other patch survives, joined through both remapped ends
+	// (docs/adr/032) — and only the confirmed one. A pending link is a
+	// handshake nobody finished; a fork cannot carry it.
+	linked := count(t, dst, `
+		SELECT COUNT(*) FROM event_links l
+		JOIN events e ON e.id = l.event_id
+		JOIN nodes n ON n.id = l.node_id
+		WHERE e.title = 'Show' AND n.slug = 'patch-2'`)
+	if linked != 1 {
+		t.Errorf("event link lost: got %d, want 1", linked)
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM event_links WHERE status = 'pending'`); n != 0 {
+		t.Errorf("a pending link traveled: %d", n)
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM event_mentions WHERE host = 'other.example' AND slug = 'the-band'`); n != 1 {
+		t.Errorf("cross-quilt mention lost: got %d, want 1", n)
 	}
 
 	// Comment threading survives with remapped IDs.
@@ -309,5 +424,83 @@ func TestImportPre033Archive(t *testing.T) {
 	}
 	if n := count(t, dst, `SELECT COUNT(*) FROM events WHERE source_occurrence != ''`); n != 0 {
 		t.Errorf("defaulted source_occurrence rows should be '': %d weren't", n)
+	}
+}
+
+// Every table is either exported or deliberately left behind.
+//
+// This is the test that would have caught the elections gap when it was made
+// rather than three PRs later. Migration 050 added `seats`,
+// `election_candidates` and `election_ballots`; nothing failed, because a
+// table absent from Tables() is simply never asked about. The consequence was
+// invisible and severe: dueness is derived from `seats.term_ends_at`, so a
+// forked elected patch silently stopped holding elections — the safety valve
+// stripping the machinery that rotates leadership.
+//
+// A new table now forces a choice. Add it to Tables(), or name it here with
+// the reason it stays behind. Both are fine; not deciding is not.
+func TestEveryTableHasABoundaryDecision(t *testing.T) {
+	db := testDB(t)
+
+	// Instance identity, secrets, and derived state (docs/adr/002). A fresh
+	// instance mints its own on first boot or rebuilds it from what travels.
+	staysBehind := map[string]string{
+		"ap_followers":                "remote followers belong to the old instance's identity",
+		"ap_following":                "same, outbound",
+		"ap_outbox_queue":             "delivery state, not a record of anything",
+		"audit_log":                   "instance operations, not community data",
+		"content_reports":             "moderation history is about the old instance's handling",
+		"credentials":                 "passkeys are bound to the old domain",
+		"edges":                       "retired concept: connections are inferred (CLAUDE.md)",
+		"instance_actor":              "the fork is a different actor",
+		"instance_icon":               "retired by migration 044",
+		"instance_settings":           "the fork sets its own name, policy, and icon",
+		"invite_links":                "single-use URLs pointing at the old domain",
+		"label":                       "instance-level cost transparency, not a patch's data",
+		"label_cost_items":            "same",
+		"label_stewards":              "same",
+		"magic_links":                 "short-lived auth tokens",
+		"neighbor_quilts":             "the fork curates its own neighbors",
+		"notifications":               "in-app rows are read state, regenerated by what travels",
+		"notification_reminders_sent": "dedup state for reminders already sent from the old instance",
+		"recovery_codes":              "secrets",
+		"remote_follows":              "a person's cross-quilt relationships, not the community's",
+		"sessions":                    "secrets",
+		"signup_tokens":               "single-use, domain-bound",
+		"user_quilts":                 "a person's own connected quilts",
+	}
+
+	exported := map[string]bool{}
+	for _, tab := range Tables() {
+		exported[tab.Name] = true
+	}
+
+	rows, err := db.Query(`SELECT name FROM sqlite_master WHERE type = 'table'
+	                       AND name NOT LIKE 'sqlite_%' AND name != 'schema_migrations'`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+
+	var undecided []string
+	for rows.Next() {
+		var name string
+		if rows.Scan(&name) != nil {
+			continue
+		}
+		if exported[name] {
+			if reason, both := staysBehind[name]; both {
+				t.Errorf("%s is both exported and listed as staying behind (%q)", name, reason)
+			}
+			continue
+		}
+		if _, known := staysBehind[name]; !known {
+			undecided = append(undecided, name)
+		}
+	}
+
+	for _, name := range undecided {
+		t.Errorf("table %q has no portability decision: add it to Tables() so it "+
+			"travels with the community, or to staysBehind here with the reason", name)
 	}
 }
