@@ -73,3 +73,61 @@ func electionCandidates(db *database.DB, proposalID, viewerID string) []candidat
 	}
 	return out
 }
+
+// liveElection describes the contest a patch is currently running, for the
+// governance hub. Nil where there isn't one.
+type liveElection struct {
+	ID string `json:"id"`
+	// Phase is 'nominating' or 'voting' — never 'closed', since a resolved
+	// election is history and the hub is about what needs attention now.
+	Phase              string `json:"phase"`
+	Seats              int    `json:"seats"`
+	NominationsCloseAt string `json:"nominations_close_at,omitempty"`
+	VotingEndsAt       string `json:"voting_ends_at,omitempty"`
+	Candidates         int    `json:"candidates"`
+}
+
+// currentElection returns the patch's open contest, if it has one.
+//
+// The hub had no surface for this at all. During a nomination window —
+// typically a fortnight, and the only stretch when standing or putting someone
+// forward is possible — the governance page of a patch whose whole leadership
+// story is elections said nothing about the election. The needs-a-vote banner
+// deliberately stays quiet then (nominations are not a ballot), so quiet was
+// all there was.
+func currentElection(db *database.DB, nodeID string) *liveElection {
+	var e liveElection
+	var status string
+	err := db.QueryRow(
+		`SELECT id, status, seats_contested, COALESCE(nominations_close_at,''), COALESCE(voting_ends_at,'')
+		 FROM proposals
+		 WHERE node_id = ? AND status = 'open' AND seats_contested > 0
+		 ORDER BY created_at DESC LIMIT 1`, nodeID,
+	).Scan(&e.ID, &status, &e.Seats, &e.NominationsCloseAt, &e.VotingEndsAt)
+	if err != nil {
+		return nil
+	}
+	e.Phase = electionPhase(e.Seats, e.NominationsCloseAt, status)
+	if e.Phase == "" || e.Phase == "closed" {
+		return nil
+	}
+	db.QueryRow("SELECT COUNT(*) FROM election_candidates WHERE proposal_id = ?", e.ID).Scan(&e.Candidates)
+	return &e
+}
+
+// nextTermEnd is when this council next faces the electorate: the earliest
+// term end among its seats.
+//
+// Earliest rather than latest because staggered seats come up separately
+// (docs/adr/051 left staggering free by putting the date on the seat), so the
+// next date is the one a member is asking about. Empty where the patch sets no
+// term length — a council serving until the next election, which is a real
+// position rather than an omission.
+func nextTermEnd(db *database.DB, nodeID string) string {
+	var end string
+	db.QueryRow(
+		`SELECT COALESCE(MIN(term_ends_at),'') FROM seats
+		 WHERE node_id = ? AND term_ends_at IS NOT NULL AND term_ends_at != ''`, nodeID,
+	).Scan(&end)
+	return end
+}

@@ -243,7 +243,12 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		}
 
 		resp := map[string]interface{}{
-			"rules":              json.RawMessage(gcJSON),
+			"rules": json.RawMessage(gcJSON),
+			// The contest this patch is running, and when its council next
+			// faces the electorate (docs/adr/051). Both nil/empty on a patch
+			// that does not elect, so the hub renders neither.
+			"election":      currentElection(db, nodeID),
+			"next_term_end": nextTermEnd(db, nodeID),
 			"membership_policy":  membershipPolicy,
 			"admins":             admins,
 			"successor":          successor,

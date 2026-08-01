@@ -141,3 +141,49 @@ describe('StructuredRulesDiff — nothing changes invisibly', () => {
     expect(src).toMatch(/LABELS\[key\] \|\| key\.replace/);
   });
 });
+
+/**
+ * The governance hub can see the election (docs/adr/051).
+ *
+ * The trap this guards: the needs-a-vote banner stays quiet during nominations
+ * on purpose — nominations are not a ballot, and counting one there sends
+ * people to a page with no vote buttons. That left the hub silent for the
+ * whole nomination window, which is the only stretch when standing or putting
+ * someone forward is possible.
+ */
+describe('GovernanceOverview — a live election', () => {
+  const src = source('components/GovernanceOverview.svelte');
+
+  it('takes the contest and the term date from the server, not from dates on hand', () => {
+    expect(src).toMatch(/election = \$derived\(overview\?\.election \|\| null\)/);
+    expect(src).toMatch(/nextTermEnd = \$derived\(overview\?\.next_term_end \|\| ''\)/);
+  });
+
+  it('calls for nominations while they are open, and says how many are standing', () => {
+    expect(src).toMatch(/\{#if election\?\.phase === 'nominating'\}/);
+    expect(src).toMatch(/Nominations are open for \{election\.seats\}/);
+    expect(src).toMatch(/Nobody has stood yet\./);
+  });
+
+  it('asks a member to stand and everyone else only to look', () => {
+    // Standing is a member act, the same gate as raising a proposal. A
+    // follower offered "stand, or put someone forward" gets a 403 on click.
+    expect(src).toMatch(/canPropose \? 'Stand, or put someone forward' : 'See who is standing'/);
+  });
+
+  it('says a ballot is open once nominations close', () => {
+    expect(src).toMatch(/\{#if election\?\.phase === 'voting'\}/);
+    expect(src).toMatch(/A ballot is open for \{election\.seats\}/);
+  });
+
+  it('shows when the next seat comes up, and that a lapsed term removes nobody', () => {
+    expect(src).toMatch(/Next seat comes up \{formatDay\(nextTermEnd\)\}/);
+    expect(src).toMatch(/It serves until a successor is elected\./);
+  });
+
+  it('reads a lapsed term as a calendar date, not a UTC instant', () => {
+    // Same trap as formatDay: a bare YYYY-MM-DD parsed as UTC midnight reads
+    // as lapsed a day early west of Greenwich.
+    expect(src).toContain('const parts = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(nextTermEnd)');
+  });
+});
