@@ -65,10 +65,13 @@ func Tables() []Table {
 		{
 			File: "users.json",
 			Name: "users",
-			Query: `SELECT id, email, username, display_name, bio, avatar_url, role,
+			Query: `SELECT id, email, username, display_name, bio, avatar_url, links, role,
 				suspended_at, created_at, updated_at FROM users WHERE username != '_system'`,
+			// `links` is the same shape as a patch's, and a patch's travelled
+			// while a person's did not (docs/adr/006). A profile arrived on
+			// the fork with its bio and no way to reach anybody.
 			Columns: cols(id("id"), c("email"), c("username"), c("display_name"),
-				c("bio"), c("avatar_url"), c("role"), c("suspended_at"),
+				c("bio"), c("avatar_url"), def("links", "[]"), c("role"), c("suspended_at"),
 				c("created_at"), c("updated_at")),
 		},
 		{
@@ -83,7 +86,7 @@ func Tables() []Table {
 			Query: `SELECT id, owner_id, name, slug, description, latitude, longitude,
 				address, website, image_url, image_alt, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
-				designated_successor_id,
+				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
@@ -101,6 +104,10 @@ func Tables() []Table {
 				// remapped like every other user reference — a raw user id
 				// from the old instance would point at a stranger here.
 				id("designated_successor_id"),
+				// Whether non-members may suggest events here (docs/adr/026):
+				// an admin's choice about their own door, and a patch that had
+				// closed it found it open again on the fork.
+				def("accept_event_suggestions", 1),
 				id("submitted_by"), c("submission_source"),
 				c("created_at"), c("updated_at")),
 		},
@@ -113,10 +120,16 @@ func Tables() []Table {
 		{
 			File: "memberships.json",
 			Name: "memberships",
-			Query: `SELECT id, user_id, node_id, role, status, joined_at
+			Query: `SELECT id, user_id, node_id, role, status, visible, joined_at
 				FROM memberships`,
+			// `visible` is the member's own switch (docs/adr/006), and it
+			// defaults to 1. Leaving it behind meant a fork re-exposed every
+			// membership somebody had chosen to hide — on their profile and
+			// in the patch's public member list at once, since one switch
+			// drives both. A seamrip is the moment that choice matters most:
+			// it is what a community does when its leadership goes sideways.
 			Columns: cols(id("id"), id("user_id"), id("node_id"), c("role"),
-				c("status"), c("joined_at")),
+				c("status"), def("visible", 1), c("joined_at")),
 		},
 		{
 			// The council's chairs (docs/adr/051). A seat outlives its holder,
