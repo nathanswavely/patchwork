@@ -1,7 +1,8 @@
 <script>
-  import { CheckSquare } from 'phosphor-svelte';
+  import { CheckSquare, UsersThree } from 'phosphor-svelte';
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { formatDay } from '../lib/datetime.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, getUser } from '../stores/auth.svelte.js';
   import { markGovernanceHubVisited } from '../lib/onboarding.js';
@@ -62,6 +63,25 @@
   // file is machine configuration, not a text a meeting adopts — so a member
   // gets told that rather than a link the server refuses.
   let proposalsElsewhere = $derived(overview?.rules?.proposal_venue === 'elsewhere');
+
+  // The contest this patch is running, and when its council next faces the
+  // electorate (docs/adr/051). Both come from the server rather than being
+  // worked out here from dates and a status — the same reason `election_phase`
+  // does on the proposal page.
+  let election = $derived(overview?.election || null);
+  let nextTermEnd = $derived(overview?.next_term_end || '');
+
+  // A term that has run out removes nobody: the council serves until a
+  // successor is elected (docs/adr/051). What it changes is that the patch is
+  // visibly overdue, which is the accountability "power rotates" is promising.
+  let termLapsed = $derived.by(() => {
+    if (!nextTermEnd) return false;
+    const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(nextTermEnd);
+    const end = parts
+      ? new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]))
+      : new Date(nextTermEnd);
+    return end < new Date();
+  });
   let successorChoice = $state('');
   let savingSuccessor = $state(false);
   let successorError = $state('');
@@ -210,6 +230,34 @@
       </div>
     {/if}
 
+    <!-- An election taking nominations (docs/adr/051). The needs-a-vote banner
+         above deliberately stays quiet through this phase — nominations are
+         not a ballot — so without this the hub said nothing for the whole
+         fortnight, which is the only stretch when standing is possible. -->
+    {#if election?.phase === 'nominating'}
+      <div class="attention-banner">
+        <span class="attention-icon">
+          <UsersThree size={16} weight="duotone" />
+        </span>
+        <div>
+          <strong>
+            Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}
+          </strong>
+          <span class="banner-detail muted">
+            {election.candidates === 0
+              ? 'Nobody has stood yet.'
+              : `${election.candidates} standing.`}
+            {#if election.nominations_close_at}
+              Closing {formatDay(election.nominations_close_at)}.
+            {/if}
+          </span>
+          <a href="/patches/{slug}/governance/{election.id}" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/${election.id}`); }}>
+            {canPropose ? 'Stand, or put someone forward' : 'See who is standing'} &rarr;
+          </a>
+        </div>
+      </div>
+    {/if}
+
     <!-- Decision making -->
     <section class="overview-section">
       <h3>How decisions are made</h3>
@@ -270,6 +318,33 @@
             </div>
           {/each}
         </div>
+      {/if}
+
+      <!-- When this council next faces the electorate. The rules narration
+           above says terms last N months, which is the policy; this is the
+           date, which is the accountability. Absent on a patch that sets no
+           term length — elected once, then stable, a real position. -->
+      {#if nextTermEnd}
+        <p class="term-line" class:lapsed={termLapsed}>
+          {#if termLapsed}
+            This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.
+          {:else}
+            Next seat comes up {formatDay(nextTermEnd)}.
+          {/if}
+        </p>
+      {/if}
+
+      <!-- The ballot, once nominations have closed. The needs-a-vote banner
+           already carries this for anyone who may vote; this line is for
+           everyone else, so a member outside the electorate still knows the
+           council is being decided this week. -->
+      {#if election?.phase === 'voting'}
+        <p class="term-line">
+          A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.
+          <a href="/patches/{slug}/governance/{election.id}" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/${election.id}`); }}>
+            See the candidates
+          </a>
+        </p>
       {/if}
 
       <!-- Chosen elsewhere (docs/adr/052): the records are how leadership
@@ -449,6 +524,23 @@
 
   .admin-since {
     font-size: 0.75rem;
+  }
+
+  .term-line {
+    font-size: 0.82rem;
+    margin: 0.6rem 0 0;
+    color: var(--color-text-muted);
+  }
+
+  .term-line.lapsed {
+    color: var(--color-accent, #b8860b);
+    font-weight: 600;
+  }
+
+  .banner-detail {
+    display: block;
+    font-size: 0.82rem;
+    margin-bottom: 0.15rem;
   }
 
   .venue-line {

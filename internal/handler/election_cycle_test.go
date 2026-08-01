@@ -1,9 +1,11 @@
 package handler_test
 
 import (
+	"net/http"
 	"testing"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
@@ -159,5 +161,96 @@ func TestCycle_FailedElectionGetsABreather(t *testing.T) {
 	handler.ScheduleDueElections(db)
 	if got := openElectionCount(t, db, nodeID); got != 1 {
 		t.Errorf("expected a retry once the breather passed, got %d open", got)
+	}
+}
+
+// The governance hub can see the contest the patch is running (docs/adr/051).
+//
+// It could not. The needs-a-vote banner deliberately stays quiet during
+// nominations — nominations are not a ballot — so through the whole window,
+// the only stretch when standing is possible, the governance page of a patch
+// whose entire leadership story is elections said nothing about the election.
+func TestGovernanceOverview_SurfacesTheLiveElection(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "hubelec", "member")
+	nodeID := electedNode(t, db, admin.ID, "Hub Elec", "hub-elec", 0, 12)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	overview := func() map[string]interface{} {
+		r := authedRequest("GET", "/api/v1/nodes/hub-elec/governance/overview", nil, adminToken)
+		w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/governance/overview",
+			handler.GovernanceOverview(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+		}
+		return decodeJSON(t, w)
+	}
+
+	// Before any contest: nothing to say, and the hub must not invent one.
+	if got := overview()["election"]; got != nil {
+		t.Errorf("expected no election, got %v", got)
+	}
+
+	id := openElection(t, db, nodeID)
+	el, ok := overview()["election"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected the open contest in the payload, got %v", overview()["election"])
+	}
+	if el["id"] != id {
+		t.Errorf("expected the running election, got %v", el["id"])
+	}
+	if el["phase"] != "nominating" {
+		t.Errorf("expected phase=nominating, got %v", el["phase"])
+	}
+	if el["candidates"] != float64(0) {
+		t.Errorf("expected nobody standing yet, got %v", el["candidates"])
+	}
+
+	// Once nominations close and the ballot opens, the phase moves with it.
+	closeNominations(t, db, id)
+	if !handler.OpenElectionVoting(db, id) {
+		t.Fatal("expected voting to open")
+	}
+	el, _ = overview()["election"].(map[string]interface{})
+	if el["phase"] != "voting" {
+		t.Errorf("expected phase=voting, got %v", el["phase"])
+	}
+
+	// A resolved election is history; the hub is about what needs attention.
+	db.Exec("UPDATE proposals SET status = 'approved' WHERE id = ?", id)
+	if got := overview()["election"]; got != nil {
+		t.Errorf("a closed election must not sit on the hub, got %v", got)
+	}
+}
+
+// When the council next faces the electorate — the date behind "terms last 12
+// months", which is policy rather than accountability.
+func TestGovernanceOverview_ShowsWhenTheNextSeatComesUp(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "hubterm", "member")
+	nodeID := electedNode(t, db, admin.ID, "Hub Term", "hub-term", 0, 12)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	read := func() interface{} {
+		r := authedRequest("GET", "/api/v1/nodes/hub-term/governance/overview", nil, adminToken)
+		w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/governance/overview",
+			handler.GovernanceOverview(db), r)
+		return decodeJSON(t, w)["next_term_end"]
+	}
+
+	if got := read(); got != "" {
+		t.Errorf("a patch with no seats has no term date, got %v", got)
+	}
+
+	// Staggered seats: the answer is the earliest, because that is the one a
+	// member is asking about (docs/adr/051 put the date on the seat precisely
+	// so they need not share it).
+	db.Exec(`INSERT INTO seats (id, node_id, holder_id, term_ends_at) VALUES (?, ?, ?, '2028-03-01')`,
+		auth.NewUUIDv7(), nodeID, admin.ID)
+	db.Exec(`INSERT INTO seats (id, node_id, holder_id, term_ends_at) VALUES (?, ?, NULL, '2027-03-01')`,
+		auth.NewUUIDv7(), nodeID)
+
+	if got := read(); got != "2027-03-01" {
+		t.Errorf("expected the earliest term end, got %v", got)
 	}
 }
