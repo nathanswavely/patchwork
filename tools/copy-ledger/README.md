@@ -1,0 +1,121 @@
+# Copy ledger
+
+Who wrote the words a visitor reads.
+
+Much of Patchwork was built with AI assistance, and much of its copy was
+drafted that way too. This tool exists to replace those drafts with a
+person's writing, and — the harder half — to keep them replaced.
+
+The ledger records one decision per string. It is checked in, because the
+ledger **is** the transparency claim: a file anyone can diff beats a
+paragraph asserting the copy is human. Where a draft was replaced, both
+texts are kept.
+
+## The loop
+
+```sh
+make copy-sync      # read the source, fold new strings into the ledger
+make copy-review    # write, at localhost:5175
+make copy-apply     # dry run: show what would change in source
+make copy-apply APPLY=1
+make copy-stats     # progress
+make copy-report    # render copy/REPORT.md for publishing
+```
+
+`make copy-check` is the CI gate. It runs on every PR.
+
+## The four decisions
+
+Every string is one of:
+
+| Status | Means |
+|---|---|
+| `unreviewed` | A model drafted it and nobody has looked. The default. |
+| `rewritten` | You wrote a replacement; `copy-apply` hasn't written it yet. |
+| `human` | The text in source is a person's words. |
+| `ai-fine` | Deliberately left as drafted — mechanical, not voice-bearing. |
+
+`ai-fine` is not a loophole, it's the honest option for "Failed to load
+comments". Spending a Saturday rewriting error toasts buys nothing; saying
+so out loud costs nothing. The report counts them separately from `human`,
+so the published number never overstates the case.
+
+## The ratchet
+
+This is the point of the tool. Rewriting 1,869 strings by hand is a finite
+job; keeping them rewritten is not, because the next AI-assisted session
+adds forty more and the claim quietly stops being true.
+
+So `copy-check` fails CI when a string enters the source with no decision
+recorded. The existing backlog is grandfathered — `ledger.baseline` holds
+the IDs accepted as debt on day one — so the gate blocks **new** copy only.
+It is not a wall in front of the cleanup.
+
+When the backlog reaches zero, set `"strict": true` in the ledger and the
+gate starts failing on any unreviewed string at all.
+
+## Review UI
+
+`make copy-review` serves a local page on `127.0.0.1:5175`. It is not part
+of the Patchwork binary, not embedded, not served by the app — a workbench
+that runs on your machine and ships to nobody.
+
+Paragraphs sort first: 266 of them carry most of the voice, against 1,190
+two-word labels that mostly need a glance.
+
+| Key | |
+|---|---|
+| `j` / `k` | next / previous |
+| `e` | edit |
+| `⌘↵` | save your version |
+| `h` | already my words |
+| `a` | leave as drafted |
+| `⌘K` | search |
+
+It warns if your rewrite drops a `{placeholder}` the original interpolated.
+
+## How writeback stays safe
+
+Every occurrence stores the **verbatim** source substring it came from.
+Writeback finds that exact substring or reports drift and changes nothing —
+no fuzzy matching, no offset guessing. If one of an entry's nine
+occurrences has drifted, none of the nine are touched: a sentence that
+reads differently in nine places is worse than one nobody has rewritten
+yet.
+
+It also refuses text that would break the syntax it lands in — a `{` in
+Svelte markup, a quote that would close a Go string literal, a newline in
+an HTML attribute — and tells you which entry and why, rather than
+producing a file that doesn't compile.
+
+Writeback edits source files. Run it on a clean tree and read the diff.
+
+## Scope
+
+In: Svelte markup and copy-bearing attributes (`placeholder`, `title`,
+`aria-label`, `alt`), sentence-shaped strings in Svelte/JS, prose in the Go
+files that ship text (the lining, legal defaults, governance templates,
+notification and email bodies), and the Markdown a newcomer actually reads.
+
+Out, on purpose:
+
+- **`docs/adr/`** — ~50k words of decision records. Engineering reasoning,
+  not the project's voice. Drafted with AI assistance and left that way.
+- **`CODE_OF_CONDUCT.md`** — the Contributor Covenant. Rewriting a standard
+  text to sound like us would defeat the point of adopting a standard text.
+- **Embedded JSON** in `defaults.go` — `governance-rules.json` templates are
+  machine configuration, which this project already treats as a different
+  kind of thing (docs/adr/053).
+- Source comments, tests, commit messages.
+
+`copy-report` prints these exclusions alongside the numbers. A coverage
+claim that hides its own scope is the thing this tool is meant to avoid.
+
+Scope lives in `scope.js` and is a policy decision, not a technical one.
+
+## False positives
+
+The string filters over-collect on purpose. A false positive costs one
+keystroke to mark `ai-fine` forever; a false negative is copy that silently
+never gets reviewed. If you see something odd in the queue, that's the
+trade working as intended.
