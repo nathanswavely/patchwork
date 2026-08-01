@@ -14,8 +14,19 @@
     rejectCount = 0,
     directChange = false,
     canVote = false,
+    // An election's phase, empty on every other proposal (docs/adr/051). An
+    // election row carries state 'voting' from the moment it is created, so
+    // without this the banner announces an open vote through the whole
+    // nomination window — over a panel correctly saying nominations close in
+    // two weeks, and with an empty time-left leaving "Voting is open. .".
+    electionPhase = '',
     onStateChange = () => {},
   } = $props();
+
+  // An election has no author in the ordinary sense — the calendar opened it,
+  // and `systemAuthorFor` named an admin because the record needed a name. So
+  // it is never withdrawable, and the server refuses it too.
+  let mayWithdraw = $derived(isAuthor && !electionPhase);
 
   // A proposal opens for voting when it is created (docs/adr/048), so there
   // are no `draft` or `discussion` branches here. The states exist in the
@@ -43,8 +54,12 @@
   // "Cast your vote below" only when there is a vote below. A viewer outside
   // the electorate has the buttons hidden, and an instruction pointing at
   // nothing is the same dead end one sentence over (docs/adr/044).
+  //
+  // `timeLeft` is guarded too: an election has no voting_ends_at until
+  // nominations close, and the unguarded template rendered "Voting is open. ."
   let votingLine = $derived(
-    `Voting is open. ${timeLeft}.` + (canVote ? ' Cast your vote below.' : '')
+    (timeLeft ? `Voting is open. ${timeLeft}.` : 'Voting is open.') +
+      (canVote ? ' Cast your vote below.' : '')
   );
 
   let applying = $state(false);
@@ -73,10 +88,29 @@
   }
 </script>
 
-{#if effectiveState === 'voting'}
+{#if electionPhase === 'nominating'}
+  <!-- An election is born carrying state 'voting' because that is where it is
+       headed, not where it is (docs/adr/051). Until nominations close there is
+       no ballot and no clock, so the phase decides this branch, not the
+       state. -->
+  <div class="status-banner voting">
+    <p>Nominations are open. Voting starts when they close.</p>
+    {#if mayWithdraw}
+      <div class="banner-actions">
+        <ConfirmAction
+          label="Withdraw this proposal"
+          confirmLabel="Withdraw"
+          variant="danger"
+          onConfirm={handleWithdraw}
+        />
+      </div>
+    {/if}
+  </div>
+
+{:else if effectiveState === 'voting'}
   <div class="status-banner voting">
     <p>{votingLine}</p>
-    {#if isAuthor}
+    {#if mayWithdraw}
       <div class="banner-actions">
         <ConfirmAction
           label="Withdraw this proposal"
@@ -98,7 +132,7 @@
       Open for discussion. This patch decides at meetings, not here, and what
       it decides gets recorded on the charter afterwards.
     </p>
-    {#if isAuthor}
+    {#if mayWithdraw}
       <div class="banner-actions">
         <ConfirmAction
           label="Withdraw this proposal"

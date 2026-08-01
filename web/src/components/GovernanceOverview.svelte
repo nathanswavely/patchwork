@@ -259,7 +259,13 @@
               </div>
               <div class="admin-info">
                 <span class="admin-name">{admin.display_name || admin.username}</span>
-                <span class="admin-since muted">Admin since {formatDate(admin.joined_at)}</span>
+                <!-- `joined_at` is when this person joined the patch, in
+                     whatever role they joined as — not when they became an
+                     admin, which nothing records. Labelled "Admin since" it
+                     read as a governed fact and was routinely false: a member
+                     of eight months elected to the council this morning was
+                     shown as an admin since eight months ago. -->
+                <span class="admin-since muted">Member since {formatDate(admin.joined_at)}</span>
               </div>
             </div>
           {/each}

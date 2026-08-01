@@ -141,7 +141,13 @@ func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, 
 		 VALUES (?, ?, ?, ?, ?, 'open', 'voting', 'membership', ?, ?, ?, ?, ?)`,
 		id, nodeID, systemAuthorFor(db, nodeID),
 		"Council election",
-		"Nominations are open. Any member may stand, or put someone forward.",
+		// Phase-neutral on purpose. A body is written once and read forever,
+		// so anything phase-specific here becomes a lie the moment the phase
+		// moves — "Nominations are open" sat directly above an open ballot for
+		// the whole voting window, and would have sat above the result after
+		// that. The panel below it is the phase-aware surface and says which
+		// stage this is, with its dates.
+		"This patch elects its admins. Nominations open first, then the ballot.",
 		duration, created, created, seats, nominationsClose,
 	)
 	if err != nil {
