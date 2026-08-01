@@ -172,7 +172,12 @@ type Node struct {
 	Longitude        *float64    `json:"longitude,omitempty"`
 	Address          string      `json:"address"`
 	Website          string      `json:"website"`
-	Links            []NodeLink  `json:"links"`
+	// ImageURL is a reference, never bytes (docs/adr/007): the browser fetches
+	// it from wherever the patch keeps it. ImageAlt is required alongside, and
+	// is what remains when the bytes go.
+	ImageURL string     `json:"image_url"`
+	ImageAlt string     `json:"image_alt"`
+	Links    []NodeLink `json:"links"`
 	Visibility       string      `json:"visibility"`
 	MembershipPolicy string      `json:"membership_policy"`
 	Appearance       *Appearance `json:"appearance,omitempty"`
@@ -224,6 +229,9 @@ type Event struct {
 	EndsAt      *string  `json:"ends_at,omitempty"`
 	Recurrence  string   `json:"recurrence"`
 	Visibility  string   `json:"visibility"`
+	// A flyer or a show photo, held wherever the patch keeps it (docs/adr/007).
+	ImageURL string `json:"image_url"`
+	ImageAlt string `json:"image_alt"`
 	// Status is 'active' or 'pending_review' (docs/adr/026). Pending
 	// events are submissions awaiting whoever owns the calendar; they
 	// never appear in public listings and never federate.

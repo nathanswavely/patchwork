@@ -52,6 +52,12 @@ several branches are in flight.
 | [048](048-proposals-are-born-voting.md) | Proposals are born voting — draft and discussion retired *(amended by 051: elections nominate first)* |
 | [050](050-follower-permissions-gate-taking-part.md) | Follower permissions gate taking part, not reading — only `charters` was ever a read gate |
 
+## Partly implemented
+
+| # | Decision |
+|---|----------|
+| [007](007-media-references-not-bytes.md) | Media: the instance stores references, patches own their bytes *(the reference half ships — pasted URLs with required alt text, migration 052; the presigned upload half needs a bucket and does not)* |
+
 ## Adopted as design boundaries — implementation is backlog
 
 | # | Decision |
@@ -70,7 +76,6 @@ several branches are in flight.
 
 | # | Decision |
 |---|----------|
-| [007](007-media-references-not-bytes.md) | Media: the instance stores references, patches own their bytes |
 | [008](008-ledger-and-commons.md) | The ledger and the commons — earmarked contributions, not stored value |
 | [019](019-self-hosted-mail-spike.md) | Self-hosted mail sidecar — spike plan |
 

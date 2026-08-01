@@ -193,6 +193,14 @@
       {/if}
     </div>
 
+    <!-- The flyer, held wherever the patch keeps it (docs/adr/007). The
+         browser fetches it directly; nothing here proxies bytes. `alt` is
+         required at the form, so it is always something to read when the
+         host stops serving the file. -->
+    {#if event.image_url}
+      <img class="event-image" src={event.image_url} alt={event.image_alt} loading="lazy" />
+    {/if}
+
     {#if event.description}
       <p class="description">{event.description}</p>
     {/if}
@@ -325,5 +333,15 @@
     font-size: 0.92rem;
     line-height: 1.6;
     white-space: pre-wrap;
+  }
+
+  /* A flyer is whatever shape the patch uploaded somewhere else, so the
+     height is unconstrained and the width is the measure. Nothing crops. */
+  .event-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin: 1rem 0;
   }
 </style>

@@ -84,7 +84,7 @@
   let showGovernance = $derived(
     canSeeGovernance && (governanceDocs.length > 0 || recentProposals.length > 0 || hasStanding || isAdmin)
   );
-  let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address);
+  let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address || !!node?.image_url);
 
   async function loadClaimState() {
     try {
@@ -250,6 +250,12 @@
     {#if showAbout}
       <section class="profile-section">
         <h3 class="section-title static">About</h3>
+        <!-- The patch's own picture, held wherever it keeps it
+             (docs/adr/007). Above the links because it answers "what am I
+             looking at" faster than a domain name does. -->
+        {#if node.image_url}
+          <img class="patch-image" src={node.image_url} alt={node.image_alt} loading="lazy" />
+        {/if}
         {#if node.website}
           <a href={node.website} class="about-link" target="_blank" rel="noopener">{extractDomain(node.website)}</a>
         {/if}
@@ -693,6 +699,14 @@
   }
 
   /* About */
+  .patch-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin-bottom: 0.75rem;
+  }
+
   .about-link {
     display: block;
     font-size: 0.88rem;

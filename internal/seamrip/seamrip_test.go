@@ -86,6 +86,11 @@ func seedSource(t *testing.T, db *database.DB) {
 			nextID(), m.user, m.node, m.role, now)
 	}
 
+	// A patch's image is a URL it owns, so the reference travels even though
+	// the bytes were never the instance's to move (docs/adr/007).
+	mustExec(t, db,
+		`UPDATE nodes SET image_url = 'https://cdn.example/patch-1.jpg', image_alt = 'The storefront' WHERE id = ?`, n1)
+
 	tag := nextID()
 	mustExec(t, db, `INSERT INTO tags (id, name) VALUES (?, 'music')`, tag)
 	mustExec(t, db, `INSERT INTO node_tags (node_id, tag_id) VALUES (?, ?)`, n1, tag)
@@ -308,6 +313,14 @@ func TestRoundTrip(t *testing.T) {
 	}
 	if n := count(t, dst, `SELECT COUNT(*) FROM event_mentions WHERE host = 'other.example' AND slug = 'the-band'`); n != 1 {
 		t.Errorf("cross-quilt mention lost: got %d, want 1", n)
+	}
+
+	// The image reference travels with its description. Both, or the fork
+	// arrives with a picture nobody can read (docs/adr/007).
+	var imgURL, imgAlt string
+	dst.QueryRow(`SELECT image_url, image_alt FROM nodes WHERE slug = 'patch-1'`).Scan(&imgURL, &imgAlt)
+	if imgURL != "https://cdn.example/patch-1.jpg" || imgAlt != "The storefront" {
+		t.Errorf("image reference lost: url=%q alt=%q", imgURL, imgAlt)
 	}
 
 	// Comment threading survives with remapped IDs.

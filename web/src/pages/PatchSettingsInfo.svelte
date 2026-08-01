@@ -127,6 +127,43 @@
     patch.value.reload();
   }
 
+  // The image pair (docs/adr/007). Seeded from the node and sent in one PATCH,
+  // because neither half is valid without the other.
+  let imageUrl = $state('');
+  let imageAlt = $state('');
+  let imageSeeded = $state('');
+  let savingImage = $state(false);
+  let imageError = $state('');
+
+  $effect(() => {
+    if (node?.id && imageSeeded !== node.id) {
+      imageUrl = node.image_url || '';
+      imageAlt = node.image_alt || '';
+      imageSeeded = node.id;
+    }
+  });
+
+  let imageDirty = $derived(
+    imageUrl.trim() !== (node?.image_url || '') || imageAlt.trim() !== (node?.image_alt || '')
+  );
+
+  async function saveImage() {
+    savingImage = true;
+    imageError = '';
+    try {
+      await api(`nodes/${slug}`, {
+        method: 'PATCH',
+        body: { image_url: imageUrl.trim(), image_alt: imageAlt.trim() },
+      });
+      showToast('Saved', 'success');
+      patch.value.reload();
+    } catch (e) {
+      imageError = e.message || 'Could not save the image';
+    } finally {
+      savingImage = false;
+    }
+  }
+
   // Patch visibility. Each option carries the consequence, not just the word:
   // "Private" alone reads like a promise the patch page can't keep.
   const visibilityOptions = [
@@ -285,6 +322,29 @@
     placeholder="https://..."
   />
 
+  <!-- The image and its description save together, unlike every other field
+       here. They are only valid as a pair (docs/adr/007), so two separate
+       inline edits would force you to write the description first and refuse
+       the address until you had — backwards, and unexplained at the point of
+       refusal. -->
+  <div class="image-section">
+    <span class="image-label">Image</span>
+    <input type="url" bind:value={imageUrl} disabled={savingImage} placeholder="https://..." />
+    {#if imageUrl.trim()}
+      <input type="text" bind:value={imageAlt} disabled={savingImage} placeholder="Describe the image" />
+    {/if}
+    <p class="image-hint muted">
+      Link a picture you already have online. Patchwork points at it and never
+      keeps a copy, so it stays yours.
+    </p>
+    {#if imageError}<p class="image-error">{imageError}</p>{/if}
+    {#if imageDirty}
+      <button class="btn btn-sm btn-primary" onclick={saveImage} disabled={savingImage}>
+        {savingImage ? 'Saving...' : 'Save image'}
+      </button>
+    {/if}
+  </div>
+
   <!-- Visibility. The old control was a bare Public/Private select, which
        named a state without saying what it does — and said nothing about the
        one thing admins asked: whether it covers the patch's documents too
@@ -427,6 +487,46 @@
 <style>
   .settings-info {
     max-width: var(--pw-measure-narrow);
+  }
+
+  .image-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .image-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  .image-section input {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-family: inherit;
+  }
+
+  .image-hint {
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .image-error {
+    font-size: 0.8rem;
+    color: var(--color-danger, #c0392b);
+    margin: 0;
+  }
+
+  .image-section .btn {
+    align-self: flex-start;
   }
 
   .links-section {

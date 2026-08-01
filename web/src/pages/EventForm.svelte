@@ -20,6 +20,11 @@
   let startsAt = $state('');
   let endsAt = $state('');
   let recurrence = $state('');
+  // A flyer or show photo, held wherever the patch already keeps it
+  // (docs/adr/007). The description is required alongside it, and the server
+  // refuses the pair without one.
+  let imageUrl = $state('');
+  let imageAlt = $state('');
 
   let myNodes = $state([]);
   let lockedNode = $state(null);
@@ -53,6 +58,8 @@
       description = event.description || '';
       nodeId = event.node_id || '';
       location = event.location || '';
+      imageUrl = event.image_url || '';
+      imageAlt = event.image_alt || '';
       startsAt = toLocalInputValue(event.starts_at);
       endsAt = toLocalInputValue(event.ends_at);
       recurrence = event.recurrence || '';
@@ -124,6 +131,8 @@
         starts_at: fromLocalInputValue(startsAt),
         ends_at: fromLocalInputValue(endsAt),
         recurrence: recurrence || undefined,
+        image_url: imageUrl.trim(),
+        image_alt: imageAlt.trim(),
       };
       if (isEdit) {
         const result = await api(`events/${eventId}`, { method: 'PATCH', body });
@@ -229,6 +238,29 @@
           <input id="location" type="text" bind:value={location} placeholder="Where is this happening?" disabled={submitting} />
         </div>
 
+        <div class="field">
+          <label for="image-url">Image address</label>
+          <input id="image-url" type="url" bind:value={imageUrl} disabled={submitting} placeholder="https://..." />
+          <p class="image-hint muted">
+            Link a flyer or photo you already have online. Patchwork points at
+            it and never keeps a copy.
+          </p>
+        </div>
+
+        <!-- The description only appears once there is something to describe.
+             Asking for alt text beside an empty address is a field with no
+             referent. -->
+        {#if imageUrl.trim()}
+          <div class="field">
+            <label for="image-alt">Describe the image</label>
+            <input id="image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Flyer for the March show" />
+            <p class="image-hint muted">
+              Read aloud by screen readers, and shown if the image stops
+              loading.
+            </p>
+          </div>
+        {/if}
+
         <div class="field-row">
           <div class="field">
             <label for="starts-at">Starts At <span class="required">*</span></label>
@@ -287,6 +319,12 @@
   .pending-confirm h2 {
     font-size: 1.1rem;
     margin-bottom: 0.35rem;
+  }
+
+  .image-hint {
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin: 0.3rem 0 0;
   }
 
   .field {
