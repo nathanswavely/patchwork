@@ -1440,20 +1440,6 @@
           "kind": "go-doc-block",
           "raw": "## Amendments",
           "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 139,
-          "kind": "go-doc-block",
-          "raw": "## Amendments",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 176,
-          "kind": "go-doc-block",
-          "raw": "## Amendments",
-          "quote": null
         }
       ]
     },
@@ -3555,9 +3541,9 @@
       "text": "This patch, like every patch on the quilt, starts by agreeing to the lining. If a patch changes this lining, the change is recorded and public. Its members operate with autonomy as long as they maintain the following commitment:",
       "words": 39,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3573,9 +3559,9 @@
       "text": "## Keep each other safe",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3591,9 +3577,9 @@
       "text": "This is an antifascist space. Nobody is harmed, excluded, or diminished for who they are: not for race, ethnicity, gender, sexuality, disability, age, religion, immigration status, or class. We regulate actions, not identity. Tolerance is a social contract, and whoever organizes to end it for others isn't owed a place in it. Any organizing that ranks people by any of those lines, scapegoats minorities, or promotes xenophobia is prohibited. No fascist or white-supremacist organizing, recruiting, or symbols, no matter how politely they're dressed. A space that tolerates hate turns into a space for hate.",
       "words": 94,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3609,9 +3595,9 @@
       "text": "## Good faith",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3627,9 +3613,9 @@
       "text": "We accept that argument and debate are an essential part of community building, but personal attacks are prohibited. We do our best to follow through on our word, and if we can't, we communicate clearly. We leave people and places a little better than we found them, and we do the good that's ours to do.",
       "words": 56,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3645,9 +3631,9 @@
       "text": "## Don't look away",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3663,9 +3649,9 @@
       "text": "If someone is being harmed, we say something, and if the patch itself is the problem, we escalate. Reporting isn't snitching, and we don't assume it's someone else's problem.",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3681,9 +3667,9 @@
       "text": "## Prohibited behavior",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
@@ -3699,359 +3685,15 @@
       "text": "Harassment, threats, or hate speech. Outing people, or passing along what they told you in confidence. Contact that keeps coming after someone says stop. Any of these can result in user removal, and a patch that shelters such users will risk removal as well.",
       "words": 44,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
-      "note": null,
+      "note": "Written by the maintainer; AI used only to find reference material. Confirmed 2026-08-01.",
       "occurrences": [
         {
           "file": "internal/governance/lining.go",
           "line": 104,
           "kind": "go-doc-block",
           "raw": "Harassment, threats, or hate speech. Outing people, or passing along what they told you in confidence. Contact that keeps coming after someone says stop. Any of these can result in user removal, and a patch that shelters such users will risk removal as well.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "24ef4f3c41f3",
-      "text": "This is the lining — the baseline that holds this patchwork together. Every patch on this quilt agrees to these standards. Individual patches can build on top of them, but they can't override them.",
-      "words": 34,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 110,
-          "kind": "go-doc-block",
-          "raw": "This is the lining — the baseline that holds this patchwork together. Every patch on this quilt agrees to these standards. Individual patches can build on top of them, but they can't override them.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "476f5f092045",
-      "text": "## Our Commitment",
-      "words": 3,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 112,
-          "kind": "go-doc-block",
-          "raw": "## Our Commitment",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 149,
-          "kind": "go-doc-block",
-          "raw": "## Our Commitment",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b30da9f48258",
-      "text": "This patchwork is antifascist by design. We are dedicated to providing a welcoming, inclusive, and safe space for everyone — regardless of race, ethnicity, gender identity, sexual orientation, disability, age, religion, immigration status, or socioeconomic background.",
-      "words": 36,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 114,
-          "kind": "go-doc-block",
-          "raw": "This patchwork is antifascist by design. We are dedicated to providing a welcoming, inclusive, and safe space for everyone — regardless of race, ethnicity, gender identity, sexual orientation, disability, age, religion, immigration status, or socioeconomic background.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "115986159147",
-      "text": "## Expected Behavior",
-      "words": 3,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 116,
-          "kind": "go-doc-block",
-          "raw": "## Expected Behavior",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 153,
-          "kind": "go-doc-block",
-          "raw": "## Expected Behavior",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "66c1b382448a",
-      "text": "- **Treat every person with dignity and respect.** Disagreements are natural; personal attacks are not. - **Participate in good faith.** Contribute constructively to the communities you join. - **Support the communities you're part of.** Show up, follow through, and help when you can. - **Report harmful behavior.** If you see something that violates these standards, tell a patch admin or instance admin. Don't ignore it.",
-      "words": 65,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 118,
-          "kind": "go-doc-block",
-          "raw": "- **Treat every person with dignity and respect.** Disagreements are natural; personal attacks are not.\n- **Participate in good faith.** Contribute constructively to the communities you join.\n- **Support the communities you're part of.** Show up, follow through, and help when you can.\n- **Report harmful behavior.** If you see something that violates these standards, tell a patch admin or instance admin. Don't ignore it.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "635105dce007",
-      "text": "## Unacceptable Behavior",
-      "words": 3,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 123,
-          "kind": "go-doc-block",
-          "raw": "## Unacceptable Behavior",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 160,
-          "kind": "go-doc-block",
-          "raw": "## Unacceptable Behavior",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "889fa7f8c018",
-      "text": "- Discrimination, harassment, or hate speech of any kind - Threats, intimidation, or deliberate disruption - Sharing others' private information without consent - Sustained unwelcome contact after being asked to stop - Using this infrastructure to organize against the humanity of other people",
-      "words": 43,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 125,
-          "kind": "go-doc-block",
-          "raw": "- Discrimination, harassment, or hate speech of any kind\n- Threats, intimidation, or deliberate disruption\n- Sharing others' private information without consent\n- Sustained unwelcome contact after being asked to stop\n- Using this infrastructure to organize against the humanity of other people",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 162,
-          "kind": "go-doc-block",
-          "raw": "- Discrimination, harassment, or hate speech of any kind\n- Threats, intimidation, or deliberate disruption\n- Sharing others' private information without consent\n- Sustained unwelcome contact after being asked to stop\n- Using this infrastructure to organize against the humanity of other people",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "140f2b2db87e",
-      "text": "## Enforcement",
-      "words": 2,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 131,
-          "kind": "go-doc-block",
-          "raw": "## Enforcement",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 168,
-          "kind": "go-doc-block",
-          "raw": "## Enforcement",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "40db8f09071c",
-      "text": "Patch admins may warn, temporarily suspend, or permanently remove members who violate these standards. Instance admins may take action on patches that fail to enforce these standards.",
-      "words": 27,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 133,
-          "kind": "go-doc-block",
-          "raw": "Patch admins may warn, temporarily suspend, or permanently remove members who violate these standards. Instance admins may take action on patches that fail to enforce these standards.",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 170,
-          "kind": "go-doc-block",
-          "raw": "Patch admins may warn, temporarily suspend, or permanently remove members who violate these standards. Instance admins may take action on patches that fail to enforce these standards.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "0e7d3360c919",
-      "text": "## The Right to Seamrip",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 135,
-          "kind": "go-doc-block",
-          "raw": "## The Right to Seamrip",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 172,
-          "kind": "go-doc-block",
-          "raw": "## The Right to Seamrip",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "58641f929916",
-      "text": "Any group can take the tools, the governance docs, and the data, and start their own quilt. This isn't destructive — it's the immune system. The threat of seamripping keeps the organization honest.",
-      "words": 33,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 137,
-          "kind": "go-doc-block",
-          "raw": "Any group can take the tools, the governance docs, and the data, and start their own quilt. This isn't destructive — it's the immune system. The threat of seamripping keeps the organization honest.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "233adc0999d8",
-      "text": "These standards can be amended through the governance process. Proposed changes require community review and a supermajority vote at the instance level.",
-      "words": 22,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 141,
-          "kind": "go-doc-block",
-          "raw": "These standards can be amended through the governance process. Proposed changes require community review and a supermajority vote at the instance level.",
-          "quote": null
-        },
-        {
-          "file": "internal/governance/lining.go",
-          "line": 178,
-          "kind": "go-doc-block",
-          "raw": "These standards can be amended through the governance process. Proposed changes require community review and a supermajority vote at the instance level.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "404b6b6f5c1b",
-      "text": "This is the lining, the baseline that holds this patchwork together. Every patch on this quilt agrees to these standards. Individual patches can build on top of them, but they can't override them.",
-      "words": 33,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 147,
-          "kind": "go-doc-block",
-          "raw": "This is the lining, the baseline that holds this patchwork together. Every patch on this quilt agrees to these standards. Individual patches can build on top of them, but they can't override them.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e53c62c7a655",
-      "text": "This patchwork is antifascist by design. Everyone gets a welcoming and safe place here, regardless of race, ethnicity, gender identity, sexual orientation, disability, age, religion, immigration status, or socioeconomic background.",
-      "words": 30,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 151,
-          "kind": "go-doc-block",
-          "raw": "This patchwork is antifascist by design. Everyone gets a welcoming and safe place here, regardless of race, ethnicity, gender identity, sexual orientation, disability, age, religion, immigration status, or socioeconomic background.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "aa914d2c1d89",
-      "text": "- **Treat every person with dignity and respect.** Disagree all you want. Personal attacks are out of bounds. - **Participate in good faith.** Contribute constructively to the communities you join. - **Support the communities you're part of.** Show up, follow through, and help when you can. - **Report harmful behavior.** If you see something that violates these standards, tell a patch admin or instance admin. Don't ignore it.",
-      "words": 68,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 155,
-          "kind": "go-doc-block",
-          "raw": "- **Treat every person with dignity and respect.** Disagree all you want. Personal attacks are out of bounds.\n- **Participate in good faith.** Contribute constructively to the communities you join.\n- **Support the communities you're part of.** Show up, follow through, and help when you can.\n- **Report harmful behavior.** If you see something that violates these standards, tell a patch admin or instance admin. Don't ignore it.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "439fe6c3bea7",
-      "text": "Any group can take the tools, the governance docs, and the data, and start their own quilt. That's the immune system working. The threat of seamripping keeps the organization honest.",
-      "words": 30,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/governance/lining.go",
-          "line": 174,
-          "kind": "go-doc-block",
-          "raw": "Any group can take the tools, the governance docs, and the data, and start their own quilt. That's the immune system working. The threat of seamripping keeps the organization honest.",
           "quote": null
         }
       ]

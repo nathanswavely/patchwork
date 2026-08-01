@@ -87,6 +87,52 @@ function cmdStats() {
   console.log('');
 }
 
+// ---------------------------------------------------------------- decide ---
+
+// Bulk decisions, for when a whole file's copy has one answer: `--status
+// human --file internal/governance/lining.go`. It only ever moves entries
+// OUT of `unreviewed` unless --force, so re-running can't quietly undo work
+// done string-by-string in the UI.
+function cmdDecide() {
+  const val = (name) => {
+    const i = argv.indexOf(`--${name}`);
+    return i === -1 ? null : argv[i + 1];
+  };
+  const status = val('status');
+  const file = val('file');
+  const tier = val('tier');
+  const note = val('note');
+
+  if (!STATUSES.includes(status)) {
+    console.error(`--status must be one of: ${STATUSES.join(', ')}`);
+    process.exit(1);
+  }
+  if (!file && !tier) {
+    console.error('refusing to touch every entry — pass --file and/or --tier');
+    process.exit(1);
+  }
+
+  const ledger = load();
+  const hit = ledger.entries.filter((e) =>
+    (!file || e.occurrences.some((o) => o.file === file)) &&
+    (!tier || e.tier === tier) &&
+    (flag('force') || e.status === 'unreviewed'));
+
+  if (!hit.length) { console.log('Nothing matched.'); return; }
+
+  console.log(`${hit.length} entries · ${hit.reduce((n, e) => n + e.words, 0).toLocaleString()} words → ${status}`);
+  for (const e of hit.slice(0, 8)) console.log(`  ${DIM}${e.text.slice(0, 76)}${OFF}`);
+  if (hit.length > 8) console.log(`  ${DIM}…and ${hit.length - 8} more${OFF}`);
+
+  if (!flag('apply')) {
+    console.log(`\n${YEL}dry run${OFF} — re-run with ${GREEN}--apply${OFF} to record.`);
+    return;
+  }
+  for (const e of hit) { e.status = status; if (note) e.note = note; }
+  save(ledger);
+  console.log(`\n${GREEN}recorded.${OFF}`);
+}
+
 // ----------------------------------------------------------------- apply ---
 
 function cmdApply() {
@@ -211,6 +257,12 @@ function cmdReport() {
   lines.push('- `docs/adr/` — architecture decision records. Engineering reasoning, not');
   lines.push('  the project\'s voice; drafted with AI assistance and left that way.');
   lines.push('- `CODE_OF_CONDUCT.md` — the Contributor Covenant, an external standard text.');
+  lines.push('- The retired lining drafts in `internal/governance/lining.go`');
+  lines.push('  (`legacyLiningOriginal`, `legacyLiningHumanized`). These are earlier,');
+  lines.push('  AI-drafted versions of the baseline charter, kept in the binary as');
+  lines.push('  hash-matched records so that patches still carrying them are recognised');
+  lines.push('  and healed on startup (docs/adr/037). They are frozen byte-for-byte and');
+  lines.push('  deliberately not rewritten — editing one would strand every patch on it.');
   lines.push('- Source comments, tests, commit messages.');
   lines.push('');
   lines.push(`## Replaced drafts (${replaced.length})`);
@@ -236,12 +288,13 @@ function cmdReport() {
 // ------------------------------------------------------------------------ ---
 
 const COMMANDS = {
-  sync: cmdSync, stats: cmdStats, apply: cmdApply, check: cmdCheck, report: cmdReport,
+  sync: cmdSync, stats: cmdStats, apply: cmdApply, check: cmdCheck,
+  report: cmdReport, decide: cmdDecide,
   review: async () => { await import('./serve.js'); },
 };
 
 if (!COMMANDS[cmd]) {
-  console.error('usage: node tools/copy-ledger/cli.js <sync|stats|review|apply|check|report>');
+  console.error('usage: node tools/copy-ledger/cli.js <sync|stats|review|decide|apply|check|report>');
   process.exit(1);
 }
 await COMMANDS[cmd]();

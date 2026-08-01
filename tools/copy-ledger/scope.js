@@ -43,6 +43,22 @@ const MD_FILES = [
   'CONTRIBUTING.md',
 ];
 
+// Go constants whose text is frozen by contract and must never be rewritten.
+//
+// These are not "copy we decided to keep" — they are hash-matched historical
+// records. `AutoUpdateLinings` classifies a patch's lining by comparing it
+// against these exact bytes to decide whether it is stale and should heal
+// (docs/adr/037, internal/governance/lining.go). Change one character and
+// every patch still carrying that text stops being recognised, silently
+// stops healing, and starts wearing an "Amended lining" badge it never
+// earned. So they are kept out of the queue entirely: you cannot rewrite
+// what the tool never offers you. `copy-report` lists them as excluded
+// rather than pretending they don't exist.
+export const FROZEN_GO_CONSTS = new Set([
+  'legacyLiningOriginal',
+  'legacyLiningHumanized',
+]);
+
 // Substrings that mark a Svelte/JS file as machinery rather than voice.
 const SKIP_PATH = [
   '/node_modules/', '/dist/', '.test.js', '.spec.js', '/e2e/',

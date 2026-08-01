@@ -16,7 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { REPO_ROOT, sourceFiles } from './scope.js';
+import { REPO_ROOT, sourceFiles, FROZEN_GO_CONSTS } from './scope.js';
 
 // Attributes whose values a person reads.
 const COPY_ATTRS = ['placeholder', 'title', 'aria-label', 'alt', 'aria-description'];
@@ -47,6 +47,16 @@ export function tierFor(text) {
   if (n < 6) return 'label';
   if (n < 16) return 'helper';
   return 'prose';
+}
+
+/**
+ * Is the raw string starting at `index` assigned to a frozen constant?
+ * Looks back for the `const NAME = ` that introduces it.
+ */
+function isFrozen(src, index) {
+  const before = src.slice(Math.max(0, index - 200), index);
+  const decl = before.match(/(?:const|var)\s+(\w+)\s*(?:=|string\s*=)\s*$/);
+  return !!decl && FROZEN_GO_CONSTS.has(decl[1]);
 }
 
 /**
@@ -179,6 +189,7 @@ function extractGo(file, src) {
   while ((m = rawRe.exec(clean)) !== null) {
     const body = m[1];
     if (!/[A-Za-z]{3}/.test(body)) continue;
+    if (isFrozen(clean, m.index)) continue;   // hash-matched record, never rewritten
     const base = m.index + 1;
     if (isData(body)) continue;   // embedded JSON/config, not prose
     if (body.length > 200) {

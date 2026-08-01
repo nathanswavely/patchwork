@@ -22,6 +22,16 @@ make copy-stats     # progress
 make copy-report    # render copy/REPORT.md for publishing
 ```
 
+For a file whose copy has one answer, decide it in bulk instead:
+
+```sh
+node tools/copy-ledger/cli.js decide --status human \
+  --file internal/governance/lining.go --note "why" --apply
+```
+
+It only moves entries out of `unreviewed` (unless `--force`), so re-running
+can't quietly undo work done string-by-string in the UI. Dry run by default.
+
 `make copy-check` is the CI gate. It runs on every PR.
 
 ## The four decisions
@@ -106,6 +116,14 @@ Out, on purpose:
 - **Embedded JSON** in `defaults.go` — `governance-rules.json` templates are
   machine configuration, which this project already treats as a different
   kind of thing (docs/adr/053).
+- **Frozen constants** (`FROZEN_GO_CONSTS` in `scope.js`) — the retired
+  lining drafts. They are AI-drafted, and they stay that way on purpose:
+  `AutoUpdateLinings` identifies a patch's lining by matching these exact
+  bytes to decide whether it is stale and should heal (docs/adr/037). Editing
+  one character strands every patch still carrying that text — it stops
+  healing and wears an "Amended lining" badge it never earned. They are kept
+  out of the queue entirely rather than trusted to a `note`, because you
+  cannot mistakenly rewrite what the tool never offers you.
 - Source comments, tests, commit messages.
 
 `copy-report` prints these exclusions alongside the numbers. A coverage
