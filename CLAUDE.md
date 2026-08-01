@@ -83,6 +83,12 @@ in the same commit — `git mv` so history survives, then sweep `*.md`, `*.go`,
 Numbers are never reused once merged: `migrations/006` is intentionally
 absent, and a retired ADR keeps its number and gets a status line.
 
+### Verifying frontend changes
+
+There is no Svelte render library in this project — every frontend test asserts against **source text**, so the suite cannot catch a rendering bug. Run the app and read the page for anything user-visible. In one session four of five browser checks found real defects the green suite had missed, including a page reciting a voting mechanic its patch does not run.
+
+Two gotchas that recurred: Svelte trims whitespace at the head of an `{#if}` body, so `{formatDay(d)}{#if x} · more{/if}` renders as "2026· more" — use `{' · '}` as an expression. And an endpoint whose payload a form spreads back into a submission must send **every** field, or the ones it drops get silently reset.
+
 ## Data Model
 
 ### Core Principle: Flat Patches, Inferred Connections
@@ -114,6 +120,26 @@ Three relationships a person can have with a patch:
 | **Follower** | Interested observer | Sees events in feed, gets notified, no voting rights |
 
 Following is frictionless: anyone can follow any public patch regardless of membership policy.
+
+On an `elected` patch, admin is additionally seated: a **seat** holds the role for a term. See "Governance: Leadership, Succession, and Venue" below.
+
+### Governance: Leadership, Succession, and Venue (docs/adr/051, 052, 053)
+
+**How admins are made** follows `leadership_model` — three models, three mechanics, and Patchwork runs exactly the one the patch names:
+
+| Model | Seats | Terms | How an admin is made |
+|---|---|---|---|
+| `maintainer` | no | no | designates a successor (`nodes.designated_successor_id`) |
+| `meritocratic` | no | no | admins nominate (`proposals.target_user_id`), community ratifies |
+| `elected` | yes | yes | calendared election, approval voting over a slate |
+
+A **seat** (`seats` table) is a governed admin position that outlives its holder; `seats.term_ends_at` is the patch's election calendar. Dueness is *derived* from it, never stored — one fact in one place, and what makes staggering a policy rather than machinery. An election is a proposal carrying candidates (`seats_contested > 0`), the one proposal not born voting: it takes nominations first, then votes. **Holdover** is the rule for every way an election can settle nothing — no candidates, quorum unmet, nobody approved — the sitting council stays. No clock ever removes anybody.
+
+**Where decisions happen** is declared per patch and asked twice: `leadership_venue` and `proposal_venue`, each `patchwork` (default) or `elsewhere`. Elsewhere, Patchwork conducts nothing and records an **attestation** instead — a community's statement that it decided this at a venue Patchwork was not. Two kinds: leadership (`attestations` + `attestation_names`) and amendment (`amendment_attestations`). The record may name anyone; the effect lands only on members.
+
+`proposal_venue: elsewhere` removes the ballot and keeps the discussion — a proposal is born `state = 'elsewhere'` with `voting_ends_at` NULL, so nothing resolves it on a clock. The two halves only work together: a patch with both a tally and an attestation would let an admin who disliked where a tally was heading record a meeting result instead.
+
+**Never attestable:** the lining (docs/adr/037 — checked by `kind`, not by title) and `governance-rules.json`, which is machine configuration rather than a text anyone adopts. Excluding the rules file closes a two-step route around the leadership gate. On an elsewhere patch a rules change is a **direct change** an admin applies.
 
 ### Inferred Threads & Placement Affinity
 
@@ -196,6 +222,11 @@ Key endpoints:
 - `GET /api/v1/instance/icon` — the public quilt icon, rendered to SVG from the drafted design (docs/adr/043); an instance that has drafted none wears a starter block assigned from its name
 - `GET|PATCH /api/v1/admin/settings`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, the icon design (`icon_design`: a drafted block plus its fabrics; `null` clears it), danger-zone wipe (docs/adr/014, docs/adr/043)
 - `GET /api/v1/legal/{privacy|terms}` — public legal documents: shipped defaults or admin overrides, rendered at /privacy and /terms; admin editing via `GET /api/v1/admin/legal` + `PUT|DELETE /api/v1/admin/legal/{doc}` (docs/adr/028)
+- `PUT|DELETE /api/v1/nodes/{slug}/successor` — maintainer succession (docs/adr/051); step-up gated
+- `POST /api/v1/proposals/{id}/candidates`, `PUT /api/v1/proposals/{id}/ballot` — elections: standing is a member act, the ballot is a PUT of the whole approved set (approval voting replaces wholesale)
+- `GET|POST /api/v1/nodes/{slug}/attestations`, `PATCH /api/v1/nodes/{slug}/attestation-names/{id}` — leadership decided elsewhere (docs/adr/052); public read, step-up write
+- `GET|POST /api/v1/nodes/{slug}/amendment-attestations` — texts a meeting adopted (docs/adr/053); replaces the whole charter, checks no base
+- `GET /api/v1/nodes/{slug}/governance/rules` — **sends the whole rule set, and must.** The editor builds its submission by spreading what it loaded, so a field this drops is a field the next unrelated rules edit resets to its default
 
 ## Multi-Quilt / Cross-Quilt Following (docs/adr/024)
 
@@ -274,6 +305,8 @@ was verified 2026-07-13.
 
 The seamrip mechanism is a governance safety valve: if a community's leadership goes sideways, members can fork the data to a new instance. The portability boundary (what travels, what stays) is defined once in `internal/seamrip` and documented in docs/adr/002 — memberships travel, so the fork keeps its inferred threads; keys, sessions, and AP identity do not.
 
+**Adding a table means deciding whether it travels.** `TestEveryTableHasABoundaryDecision` requires every table in the schema to be either in `Tables()` or in an explicit stays-behind list with a reason — a new table fails the build until someone chooses. This exists because migration 050's `seats` silently didn't travel, and since election dueness is derived from `seats.term_ends_at`, a forked elected patch stopped holding elections forever.
+
 ## Key Principles
 
 - Single-process. No Redis, no queues, no workers.
@@ -297,6 +330,10 @@ Nobody will manually create a "thread" between two patches — that's admin busy
 ### Why follower role (replacing moderator)
 
 The admin/member/follower model maps directly to proven open source governance: maintainer/contributor/user. A band has 200 followers (fans) and 3 admins (bandmates). A venue has 500 followers and 15 active members. The moderator role was just an admin with fewer permissions — not a distinct relationship. Follower is a distinct relationship: interested observer with no voting rights but notification access.
+
+### Why succession follows the leadership model
+
+A patch's charter already tells members how admins are made — the three `leadership_model` values each promise a different mechanic. Before docs/adr/051 all three promised and none delivered. One universal mechanic was considered and rejected: an annual meeting suits a co-op and not a band, and picking one would have made two of the three descriptions lies. The first draft invented ad-hoc election-calling with an anti-griefing nomination filter; it was thrown out as over-clever. Small community governance is a solved problem — calendared elections, holdover, and a designated successor are the boring answers, and they are the ones shipped.
 
 ### Why governance is a spectrum, not a type
 

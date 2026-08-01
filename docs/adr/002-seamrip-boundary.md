@@ -36,6 +36,32 @@ convenience, not a privacy boundary. The README inside the archive says so.
 Import rewrites every ID (old→new map saved to `id_map.json`), maps the
 sentinel unclaimed-patch owner to itself, and preserves all relationships.
 
+## Amendment, 2026-07-31: the boundary is now enforced, not just written
+
+Three tables added by migration 050 (`seats`, `election_candidates`,
+`election_ballots`) never reached this list, and the omission was silent
+in the worst way. Election dueness is derived from `seats.term_ends_at`
+rather than stored (docs/adr/051), so a fork arrived with no seats and
+**never scheduled another election** — the safety valve stripping the
+machinery that rotates leadership. The election proposals travelled, so
+the record said a contest had happened and could not say what it decided.
+
+Two more columns were missing for the same reason: `seats_contested`,
+without which a proposal carrying candidates is not read as an election
+by anything, and `voting_terms`, without which a fork's in-flight votes
+finish under the *new* instance's rules rather than the ones people cast
+ballots under (docs/adr/047). Event links and cross-quilt mentions
+(docs/adr/032) were absent too; both are community data by the same
+argument memberships are, and both now travel — confirmed links only,
+since a fork cannot carry a handshake nobody finished.
+
+The fix that matters is not the entries, it is
+`TestEveryTableHasABoundaryDecision`: every table in the schema must be
+either in `Tables()` or in an explicit stays-behind list with a reason.
+A new table now fails the build until someone decides. "Community data
+travels" was a sentence in this ADR that nothing checked, which is how it
+went three releases without holding.
+
 ## Known gap
 
 Git-backed governance repos (linings in `internal/governance`) do not
