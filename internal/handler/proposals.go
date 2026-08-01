@@ -1145,7 +1145,8 @@ func WithdrawProposal(db *database.DB) http.HandlerFunc {
 		proposalID := r.PathValue("id")
 
 		var authorID, nodeID, currentStatus string
-		err := db.QueryRow("SELECT author_id, node_id, status FROM proposals WHERE id = ?", proposalID).Scan(&authorID, &nodeID, &currentStatus)
+		var seatsContested int
+		err := db.QueryRow("SELECT author_id, node_id, status, seats_contested FROM proposals WHERE id = ?", proposalID).Scan(&authorID, &nodeID, &currentStatus, &seatsContested)
 		if err != nil {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
@@ -1153,6 +1154,24 @@ func WithdrawProposal(db *database.DB) http.HandlerFunc {
 
 		if currentStatus != "open" {
 			http.Error(w, `{"error":"can only withdraw open proposals"}`, http.StatusBadRequest)
+			return
+		}
+
+		// Nobody calls an election and nobody closes one (docs/adr/051). The
+		// calendar opens it, and `systemAuthorFor` names the longest-standing
+		// admin as its author only because a record needs one — that is a
+		// stand-in for the calendar, not somebody who raised a proposal, and it
+		// must not carry an author's power to take it back.
+		//
+		// Left open this was a live bypass, not a cosmetic button. Any admin
+		// could withdraw the contest; `scheduleFor` opens one whenever none is
+		// open and the council is due, so the next sweep reopened it with a
+		// fresh nomination window — and `status = 'withdrawn'` is not
+		// 'rejected', so the anti-retry breather never applied either. A
+		// council facing an election it might lose could withdraw it on every
+		// pass and hold its seats forever, with holdover doing the rest.
+		if seatsContested > 0 {
+			http.Error(w, `{"error":"an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)"}`, http.StatusConflict)
 			return
 		}
 

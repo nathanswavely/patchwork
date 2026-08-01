@@ -145,6 +145,7 @@
       rejectCount={proposal.reject_count || 0}
       directChange={isDirectChange}
       {canVote}
+      electionPhase={proposal.election_phase || ''}
       onStateChange={handleStateChange}
     />
 

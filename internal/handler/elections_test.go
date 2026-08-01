@@ -345,3 +345,60 @@ func TestElection_BallotReplacesRatherThanAccumulates(t *testing.T) {
 		t.Errorf("expected the ballot replaced, got %d approvals", rows)
 	}
 }
+
+// An election cannot be withdrawn. Nobody calls one and nobody closes one
+// (docs/adr/051).
+//
+// This was a live bypass rather than a stray button. `systemAuthorFor` names
+// the longest-standing admin as an election's author because the record needs
+// one — a stand-in for the calendar, not somebody who raised a proposal — and
+// WithdrawProposal let an author (or any patch admin) take it back. Since
+// `scheduleFor` opens a contest whenever none is open and the council is due,
+// the next sweep reopened it with a *fresh* nomination window; and because
+// 'withdrawn' is not 'rejected', the anti-retry breather never applied. A
+// council facing an election it might lose could withdraw on every pass and
+// keep its seats indefinitely, with holdover doing the rest.
+func TestElection_CannotBeWithdrawn(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "elecw", "member")
+	nodeID := electedNode(t, db, admin.ID, "Elec Withdraw", "elec-withdraw", 0, 12)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	id := openElection(t, db, nodeID)
+
+	// The author is the admin the calendar stood in for, so this is the most
+	// privileged caller there is for this record.
+	var authorID string
+	db.QueryRow("SELECT author_id FROM proposals WHERE id = ?", id).Scan(&authorID)
+	if authorID != admin.ID {
+		t.Fatalf("fixture: expected the sitting admin as stand-in author, got %q", authorID)
+	}
+
+	r := authedRequest("DELETE", "/api/v1/proposals/"+id, nil, adminToken)
+	w := serveMux(t, db, "DELETE", "/api/v1/proposals/{id}", handler.WithdrawProposal(db), r)
+	if w.Code != http.StatusConflict {
+		t.Errorf("expected the withdrawal refused with 409, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var status string
+	db.QueryRow("SELECT status FROM proposals WHERE id = ?", id).Scan(&status)
+	if status != "open" {
+		t.Errorf("the contest must still be running, got status %q", status)
+	}
+
+	// An ordinary proposal on the same patch is still withdrawable — the guard
+	// is about elections, not about this patch or this person.
+	body := map[string]interface{}{"title": "Something else", "proposal_type": "action"}
+	pr := authedRequest("POST", "/api/v1/nodes/elec-withdraw/proposals", body, adminToken)
+	pw := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), pr)
+	if pw.Code != http.StatusCreated {
+		t.Fatalf("fixture: expected 201, got %d: %s", pw.Code, pw.Body.String())
+	}
+	ordinary := decodeJSON(t, pw)["id"].(string)
+
+	dr := authedRequest("DELETE", "/api/v1/proposals/"+ordinary, nil, adminToken)
+	dw := serveMux(t, db, "DELETE", "/api/v1/proposals/{id}", handler.WithdrawProposal(db), dr)
+	if dw.Code != http.StatusOK {
+		t.Errorf("an ordinary proposal is still withdrawable, got %d: %s", dw.Code, dw.Body.String())
+	}
+}

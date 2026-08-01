@@ -141,3 +141,60 @@ describe('StructuredRulesDiff — nothing changes invisibly', () => {
     expect(src).toMatch(/LABELS\[key\] \|\| key\.replace/);
   });
 });
+
+/**
+ * An election's banner (docs/adr/051).
+ *
+ * The trap: an election row carries `state = 'voting'` from the moment the
+ * calendar creates it, because that is where it is headed — not where it is.
+ * A banner reading the state announced an open vote for the whole two-week
+ * nomination window, directly above a panel correctly saying nominations
+ * close on the 15th, and with no voting_ends_at it rendered the empty time
+ * as "Voting is open. . Cast your vote below."
+ *
+ * The phase is the truth; the state is the destination.
+ */
+describe('ProposalStatusBanner — an election in nominations', () => {
+  const src = source('components/ProposalStatusBanner.svelte');
+
+  it('branches on the phase before the state', () => {
+    expect(src).toMatch(/\{#if electionPhase === 'nominating'\}/);
+    expect(src).toMatch(/Nominations are open\. Voting starts when they close\./);
+    // The phase branch has to come first, or the state branch swallows it.
+    expect(src.indexOf("electionPhase === 'nominating'")).toBeLessThan(
+      src.indexOf("effectiveState === 'voting'")
+    );
+  });
+
+  it('never renders an empty time-left as a bare full stop', () => {
+    expect(src).toMatch(/timeLeft \? `Voting is open\. \$\{timeLeft\}\.` : 'Voting is open\.'/);
+  });
+
+  it('offers no withdrawal on an election, whoever the record names as author', () => {
+    // `systemAuthorFor` names the longest-standing admin because the record
+    // needs a name — a stand-in for the calendar, not somebody who raised a
+    // proposal. Nobody calls an election and nobody closes one.
+    expect(src).toMatch(/mayWithdraw = \$derived\(isAuthor && !electionPhase\)/);
+    expect(src).not.toMatch(/\{#if isAuthor\}/);
+  });
+});
+
+describe('ProposalDetail — what it hands the banner', () => {
+  const src = source('pages/ProposalDetail.svelte');
+
+  it('passes the election phase, or the banner cannot tell the two apart', () => {
+    expect(src).toMatch(/electionPhase=\{proposal\.election_phase \|\| ''\}/);
+  });
+});
+
+describe('GovernanceOverview — what "since" means', () => {
+  const src = source('components/GovernanceOverview.svelte');
+
+  it('does not claim an admin-since date nothing records', () => {
+    // joined_at is when someone joined the patch, in whatever role. Under an
+    // "Admin since" label it read as a governed fact and was routinely false:
+    // a member of eight months elected this morning showed eight months.
+    expect(src).toMatch(/Member since \{formatDate\(admin\.joined_at\)\}/);
+    expect(src).not.toMatch(/Admin since \{formatDate/);
+  });
+});
