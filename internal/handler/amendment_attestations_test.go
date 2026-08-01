@@ -314,3 +314,76 @@ func TestAmendmentAttestation_RequiresWhenAndWhat(t *testing.T) {
 		t.Errorf("a refused record must not touch the charter, got %q", body)
 	}
 }
+
+// A community correcting Patchwork's stale copy of a members-only charter
+// publishes nothing (docs/adr/054).
+//
+// This is the load-bearing property of the federation decision, and the only
+// part of it worth a test — the federation itself is one line of pre-existing
+// code. An attestation is the one write path that can *create* a governance
+// document, so it is also the one that could invent a public charter out of a
+// meeting nobody outside the patch was at. It cannot: a document born of a
+// first attestation is members-only (docs/adr/036), and the broadcast is gated
+// on the charter already being public.
+func TestAmendmentAttestation_MembersOnlyCharterFederatesNothing(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "amfed1", "member")
+	nodeID := proposalsElsewhereNode(t, db, admin.ID, "Am Fed", "am-fed")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	// A public patch with a remote follower — everything delivery needs, so a
+	// silent outbox means the gate held rather than that nothing was wired up.
+	db.Exec(`UPDATE nodes SET visibility = 'public' WHERE id = ?`, nodeID)
+	db.Exec(`INSERT INTO ap_followers (id, local_actor_type, local_actor_id, remote_actor_id, remote_inbox, accepted)
+	         VALUES (?, 'node', ?, 'https://remote.example/ap/instance', 'https://remote.example/ap/inbox', 1)`,
+		auth.NewUUIDv7(), nodeID)
+
+	members := seedDoc(t, db, nodeID, admin.ID, "House Rules", "Old text", "charter")
+	if res := recordAdoption(t, db, "am-fed", adminToken, map[string]interface{}{
+		"doc_id": members, "decided_at": "2026-03-14", "adopted_body": "What the meeting adopted",
+	}); res.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", res.Code, res.Body)
+	}
+
+	var queued int
+	db.QueryRow("SELECT COUNT(*) FROM ap_outbox_queue").Scan(&queued)
+	if queued != 0 {
+		t.Errorf("a members-only charter reached the wire: %d queued activities", queued)
+	}
+
+	// The other half, and the half that makes the first half mean anything: a
+	// public charter *does* reach the wire through the same call. Without this
+	// the test above passes for a broadcast that never happens at all — which
+	// is exactly what it did when the queue write was still racing it.
+	public := seedDoc(t, db, nodeID, admin.ID, "Charter", "Old text", "charter")
+	db.Exec(`UPDATE governance_docs SET visibility = 'public' WHERE id = ?`, public)
+	if res := recordAdoption(t, db, "am-fed", adminToken, map[string]interface{}{
+		"doc_id": public, "decided_at": "2026-03-14", "adopted_body": "Adopted at the meeting",
+	}); res.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", res.Code, res.Body)
+	}
+	db.QueryRow("SELECT COUNT(*) FROM ap_outbox_queue").Scan(&queued)
+	if queued != 1 {
+		t.Fatalf("a public charter must federate: %d queued activities, want 1", queued)
+	}
+
+	// And a document this instance never had is born members-only, so a first
+	// attestation cannot publish a text by creating it. Measured as "no new
+	// activity" against the row the public charter just queued, not as zero.
+	before := queued
+	res := recordAdoption(t, db, "am-fed", adminToken, map[string]interface{}{
+		"title": "Operating Agreement", "decided_at": "2026-03-14", "adopted_body": "Section 1.",
+	})
+	if res.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", res.Code, res.Body)
+	}
+	var visibility string
+	db.QueryRow("SELECT visibility FROM governance_docs WHERE node_id = ? AND title = ?",
+		nodeID, "Operating Agreement").Scan(&visibility)
+	if visibility != "members" {
+		t.Errorf("a charter created by attestation must be members-only, got %q", visibility)
+	}
+	db.QueryRow("SELECT COUNT(*) FROM ap_outbox_queue").Scan(&queued)
+	if queued != before {
+		t.Errorf("creating a charter by attestation reached the wire: %d queued, want %d", queued, before)
+	}
+}

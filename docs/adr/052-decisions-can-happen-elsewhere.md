@@ -141,8 +141,12 @@ reached elsewhere are attested here.**
 - The exact fields of an attestation record, and how an unrealized name
   is stored so it can never be mistaken for a membership row.
 - Whether unrealized names expire, or sit indefinitely.
-- Whether an attestation federates as its own activity or only through
-  the governance timeline it already shares.
+- ~~Whether an attestation federates as its own activity or only through
+  the governance timeline it already shares.~~ **Answered by
+  docs/adr/054:** only through its objects, which for the leadership half
+  means not at all — memberships never federate (docs/adr/006), and
+  federating attested councils but not elected ones would shape the
+  federation surface by venue.
 - Whether a member — not only an admin — may raise an attestation for the
   patch to confirm. Recording is a secretary's job and admins are the
   obvious holders of it, but a community whose secretary is not an admin

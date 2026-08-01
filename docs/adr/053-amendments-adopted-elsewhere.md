@@ -168,13 +168,14 @@ a meeting adopted — and nothing else.**
 
 ## Open
 
-- Whether an attested amendment **federates** as its own activity, or only
-  through the governance timeline it shares. docs/adr/052 left the same
-  question for the leadership half; both should be answered together. What
-  ships is the existing document-update broadcast: a public charter that
-  changed reaches the instances holding a copy, whichever venue changed
-  it. That is not the attestation federating — it is the document doing
-  what it already did.
+- ~~Whether an attested amendment **federates** as its own activity, or
+  only through the governance timeline it shares.~~ **Answered by
+  docs/adr/054:** only through its object, which is what already ships —
+  the document-update broadcast, gated on the charter being public. The
+  cost, accepted there: provenance does not cross the wire, so a remote
+  reader cannot tell an attested amendment from a voted one. Objects
+  blend, places don't (docs/adr/024); how a text was adopted is a
+  property of the place.
 - The **minute book**: whether Patchwork records decisions that change
   nothing, and if so under what name and what gate. Named here as a
   separate decision rather than an omission.
