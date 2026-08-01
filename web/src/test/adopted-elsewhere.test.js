@@ -287,3 +287,57 @@ describe('GovernanceShell — the record is reachable', () => {
     expect(src).toMatch(/label: 'Record', href: `\/patches\/\$\{slug\}\/governance\/record`/);
   });
 });
+
+/**
+ * An image is a reference, never bytes (docs/adr/007).
+ *
+ * The traps: an http address is blocked by every browser as mixed content on
+ * an https page, so it is a picture nobody will ever see; and a missing
+ * description leaves nothing to read when somebody else's host stops serving
+ * the file, which for a remote reference happens more often than for bytes we
+ * kept. The pair is what the server validates, so the forms have to send it
+ * as a pair too.
+ */
+describe('Patch settings — the image and its description', () => {
+  const src = source('pages/PatchSettingsInfo.svelte');
+
+  it('saves both halves in one request, unlike every other field here', () => {
+    // Two separate inline edits would force the description to be written
+    // first and refuse the address until it was.
+    expect(src).toMatch(/body: \{ image_url: imageUrl\.trim\(\), image_alt: imageAlt\.trim\(\) \}/);
+  });
+
+  it('asks for a description only once there is something to describe', () => {
+    expect(src).toMatch(/\{#if imageUrl\.trim\(\)\}/);
+  });
+
+  it('says the bytes stay the patch own', () => {
+    expect(src).toMatch(/never\s*\n?\s*keeps a copy/);
+  });
+});
+
+describe('Event form — the flyer', () => {
+  const src = source('pages/EventForm.svelte');
+
+  it('sends the pair on create and edit', () => {
+    expect(src).toMatch(/image_url: imageUrl\.trim\(\)/);
+    expect(src).toMatch(/image_alt: imageAlt\.trim\(\)/);
+    expect(src).toMatch(/imageUrl = event\.image_url \|\| ''/);
+  });
+});
+
+describe('Where an image renders', () => {
+  it('shows the flyer above the event description, with its alt text', () => {
+    const src = source('pages/EventDetail.svelte');
+    expect(src).toMatch(/<img class="event-image" src=\{event\.image_url\} alt=\{event\.image_alt\}/);
+    expect(src).toMatch(/loading="lazy"/);
+  });
+
+  it('shows the patch image in About, and opens About when it is the only thing there', () => {
+    const src = source('pages/PatchProfile.svelte');
+    expect(src).toMatch(/<img class="patch-image" src=\{node\.image_url\} alt=\{node\.image_alt\}/);
+    // Without this a patch whose only About content is a picture renders no
+    // About section at all, and the picture is invisible.
+    expect(src).toMatch(/showAbout = \$derived\(.*!!node\?\.image_url\)/);
+  });
+});

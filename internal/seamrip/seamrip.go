@@ -81,14 +81,19 @@ func Tables() []Table {
 			File: "nodes.json",
 			Name: "nodes",
 			Query: `SELECT id, owner_id, name, slug, description, latitude, longitude,
-				address, website, links, visibility, membership_policy, status, archived_from, appearance,
+				address, website, image_url, image_alt, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id,
 				submitted_by, submission_source, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"), c("address"),
-				c("website"), c("links"), c("visibility"), c("membership_policy"),
+				c("website"),
+				// A patch's image is a URL it owns, so it travels like any
+				// other field (docs/adr/007). The bytes were never ours to
+				// move, which is what makes this the easy case.
+				def("image_url", ""), def("image_alt", ""),
+				c("links"), c("visibility"), c("membership_policy"),
 				c("status"), c("archived_from"), c("appearance"), c("follower_permissions"),
 				c("governance_config"), c("governance_setup_complete"),
 				// A named successor is a governance fact about the patch and
@@ -155,12 +160,14 @@ func Tables() []Table {
 			Name: "events",
 			Query: `SELECT id, node_id, created_by, title, description, location,
 				latitude, longitude, starts_at, ends_at, recurrence, visibility,
+				image_url, image_alt,
 				source_id, source_uid, source_occurrence,
 				created_at, updated_at FROM events
 				WHERE removed_at IS NULL AND status = 'active'`,
 			Columns: cols(id("id"), id("node_id"), id("created_by"), c("title"),
 				c("description"), c("location"), c("latitude"), c("longitude"),
 				c("starts_at"), c("ends_at"), c("recurrence"), c("visibility"),
+				def("image_url", ""), def("image_alt", ""),
 				id("source_id"), c("source_uid"), def("source_occurrence", ""),
 				c("created_at"), c("updated_at")),
 		},

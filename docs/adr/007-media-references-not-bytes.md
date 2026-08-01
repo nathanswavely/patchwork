@@ -1,6 +1,8 @@
 # ADR 007: Media — the instance stores references, patches own their bytes
 
-Date: 2026-07-13. Status: proposed.
+Date: 2026-07-13. Status: **partly implemented** — the reference half ships
+(migration 052); the presigned upload half does not. See the amendment at
+the end.
 
 ## Context
 
@@ -74,3 +76,56 @@ the bucket directly. Nothing new federates.
 - UI coinage for media: deliberately none, following the "Person"
   precedent — the textile vocabulary is for community structures, not
   artifacts. Photos are photos.
+
+## Amendment, 2026-08-01: the reference half, without the bucket
+
+Everything above still stands. What shipped is the half of it that needs
+no infrastructure: `nodes.image_url` / `image_alt` and the same pair on
+`events`, set by pasting a URL to something the patch already hosts.
+
+The reason for splitting it this way is that the decision above has a
+dependency the instance operator has to satisfy before any of it is
+useful — an S3-compatible account, configured, paid for. Meanwhile an
+arts-scene instance had no flyers and no show photos at all, and
+`users.avatar_url` had been holding a remote reference since migration
+001. The model was already here. Only the convenience was missing.
+
+When the presigned flow lands it becomes a way to *produce* one of these
+URLs. Same column, same reference row, same delist. Nothing to migrate.
+
+**What the reference half gets right on its own:**
+
+- The binary still never touches bytes. It never fetches the image
+  either: the browser does, straight from wherever the patch keeps it.
+- Alt text is required whenever a URL is set, which is the a11y baseline
+  and the graceful remnant. It matters more here than it would with a
+  bucket we control, because these references die more often.
+- `https` only. A patch page served over TLS that pulls an image over
+  plain http gets it blocked as mixed content, so an http URL is a
+  picture nobody will ever see. Refused at the form rather than blank on
+  every visitor's screen.
+- A `data:` URI is refused, which is the same rule as the ADR's first
+  line: it would put the bytes in SQLite.
+- **Delist works**, as `remove_image` on a report. It clears the
+  reference and leaves the patch and the event alone — proportionate in
+  the way `reset_appearance` is, and the antifascist baseline is
+  unenforceable against media without it.
+- Reference rows travel in a seamrip, and for a pasted URL the "fork
+  re-homes them or accepts the loss" caveat does not apply at all: the
+  bytes were never the instance's.
+
+**What it gets wrong, or at least differently:**
+
+- **An arbitrary URL is not a bucket the patch controls.** Rendering it
+  tells that host every viewer's IP, and a tracking pixel is
+  indistinguishable from a flyer. This is already true of
+  `users.avatar_url`, so it is consistent rather than new, but the ADR
+  above never had to think about it because a presigned bucket URL points
+  somewhere the patch chose deliberately. Worth revisiting if the
+  reference model outlives the upload one.
+- **No size cap is enforceable.** The ADR caps at presign time. Here
+  there is no presign, and a patch can link a 20MB photograph. The cost
+  lands on visitors' bandwidth rather than the instance's, which is the
+  right party by this ADR's own argument, but it is not a cap.
+- **Federation is untouched.** AP attachments were named above as
+  carrying URLs; nothing here adds them. A remote instance sees no image.

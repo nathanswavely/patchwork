@@ -258,6 +258,23 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 					)
 					auth.LogAuditEvent(db, user.ID, "admin.node_update", "node", rpt.EntityID, `{"action":"reset_appearance"}`, clientIP(r))
 				}
+
+			case "remove_image":
+				// The instance embeds an image it does not host (docs/adr/007),
+				// so removing the reference is the whole of the remedy
+				// available here — the bytes stay wherever the patch put them.
+				// Proportionate in the same way reset_appearance is: it takes
+				// down one picture rather than the patch or the event behind
+				// it, and the antifascist baseline is unenforceable against
+				// media without it.
+				switch rpt.EntityType {
+				case "node":
+					db.Exec(`UPDATE nodes SET image_url = '', image_alt = '', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, rpt.EntityID)
+					auth.LogAuditEvent(db, user.ID, "admin.node_update", "node", rpt.EntityID, `{"action":"remove_image"}`, clientIP(r))
+				case "event":
+					db.Exec(`UPDATE events SET image_url = '', image_alt = '', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, rpt.EntityID)
+					auth.LogAuditEvent(db, user.ID, "admin.event_update", "event", rpt.EntityID, `{"action":"remove_image"}`, clientIP(r))
+				}
 			}
 		}
 
