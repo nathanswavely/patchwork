@@ -13,6 +13,7 @@
     { label: 'Overview', href: `/patches/${slug}/governance` },
     { label: 'Documents', href: `/patches/${slug}/governance/docs` },
     { label: 'Proposals', href: `/patches/${slug}/governance/proposals` },
+    { label: 'Record', href: `/patches/${slug}/governance/record` },
   ]);
 </script>
 

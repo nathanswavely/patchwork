@@ -176,9 +176,14 @@ a meeting adopted — and nothing else.**
   reader cannot tell an attested amendment from a voted one. Objects
   blend, places don't (docs/adr/024); how a text was adopted is a
   property of the place.
-- The **minute book**: whether Patchwork records decisions that change
-  nothing, and if so under what name and what gate. Named here as a
-  separate decision rather than an omission.
+- ~~The **minute book**: whether Patchwork records decisions that change
+  nothing, and if so under what name and what gate.~~ **Answered by
+  docs/adr/055:** the gap was a reading gap rather than a writing one.
+  Patchwork already held every decision a patch had made and showed none
+  of them in order, so the Record assembles from what exists instead of
+  storing anything. Recording decisions Patchwork had no part in stays
+  unbuilt, and the name stays away from "minutes" — CONTEXT.md reserved
+  that for the community's own document before this was asked.
 - The **advisory poll**, as above.
 - **What ends an `elsewhere` proposal that is never attested.** Today it
   stays open until withdrawn. Closing it on an attestation of the same

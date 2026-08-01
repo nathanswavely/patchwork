@@ -502,6 +502,10 @@ func main() {
 	// Governance templates + overview.
 	mux.HandleFunc("GET /api/v1/templates/{id}", handler.GetTemplate())
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/overview", middleware.AuthOptional(db, handler.GovernanceOverview(db)))
+	// What the patch has decided, in order (docs/adr/055). Assembled from
+	// proposals and attestations rather than stored, so it needs no auth of
+	// its own beyond what those already carry.
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/record", middleware.AuthOptional(db, handler.GovernanceRecord(db)))
 
 	// Federation surface — honor the federation.enabled config toggle.
 	// Keypair/ap_id backfill above stays unconditional so enabling later

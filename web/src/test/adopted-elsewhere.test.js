@@ -243,3 +243,47 @@ describe('GovernanceOverview — a live election', () => {
     expect(src).toContain('const parts = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(nextTermEnd)');
   });
 });
+
+/**
+ * What a patch has decided, in order (docs/adr/055).
+ *
+ * The record assembles from proposals and attestations rather than storing
+ * anything, so the tests worth having are about what it claims. The sharp one:
+ * an outcome is written when a vote resolves and never moves, while a tally is
+ * recomputed on every read and drops ballots from people who have since left
+ * (docs/adr/044). Put side by side they contradict each other, and on the
+ * first seeded patch they did: "Did not carry. 2 for, 1 against."
+ */
+describe('GovernanceRecord — what it claims', () => {
+  const src = source('pages/GovernanceRecord.svelte');
+
+  it('states the outcome without a tally that can disagree with it', () => {
+    expect(src).toMatch(/Carried by a vote\./);
+    expect(src).toMatch(/Put to a vote and did not carry\./);
+    expect(src).not.toMatch(/for, .*against/);
+    expect(src).not.toMatch(/e\.approve/);
+  });
+
+  it('says an election that settled nothing left the council in place', () => {
+    // Holdover removes nobody (docs/adr/051). "Rejected" would read as the
+    // community turning somebody down.
+    expect(src).toMatch(/Settled nothing\. The council kept serving\./);
+  });
+
+  it('names who applied a direct change, since no vote stands behind it', () => {
+    expect(src).toMatch(/Applied by \$\{e\.actor\}/);
+  });
+
+  it('tells an empty record from a broken one', () => {
+    expect(src).toMatch(/Nothing settled yet\./);
+    expect(src).toMatch(/Could not load the record/);
+  });
+});
+
+describe('GovernanceShell — the record is reachable', () => {
+  const src = source('components/GovernanceShell.svelte');
+
+  it('sits in the governance nav beside proposals', () => {
+    expect(src).toMatch(/label: 'Record', href: `\/patches\/\$\{slug\}\/governance\/record`/);
+  });
+});

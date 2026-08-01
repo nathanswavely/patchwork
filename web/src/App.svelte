@@ -43,6 +43,7 @@
   import ProposalForm from './pages/ProposalForm.svelte';
   import ProposalDetail from './pages/ProposalDetail.svelte';
   import GovernanceList from './pages/GovernanceList.svelte';
+  import GovernanceRecord from './pages/GovernanceRecord.svelte';
   import GovernanceDetail from './pages/GovernanceDetail.svelte';
   import GovernanceEdit from './pages/GovernanceEdit.svelte';
   import GovernanceVersionHistory from './pages/GovernanceVersionHistory.svelte';
@@ -148,6 +149,7 @@
   addRoute('/patches/:slug/governance/docs/:id', 'governanceDocDetail');
   addRoute('/patches/:slug/governance/docs', 'governanceDocs');
   addRoute('/patches/:slug/governance/proposals', 'governanceProposals');
+  addRoute('/patches/:slug/governance/record', 'governanceRecord');
   addRoute('/patches/:slug/governance/:id', 'governanceProposal');
   addRoute('/patches/:slug/governance', 'governanceHub');
   addRoute('/patches/:slug/members', 'patchMembers');
@@ -226,6 +228,7 @@
   const patchShellRoutes = new Set([
     'claimPatch',
     'governanceHub', 'governanceProposals', 'governanceProposalNew', 'governanceProposal',
+    'governanceRecord',
     'governanceDocs', 'governanceDocNew', 'governanceDocDetail', 'governanceDocHistory', 'governanceDocPropose', 'governanceRulesPropose',
     'patchMembers', 'patchEvents',
     'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsSources', 'patchSettingsNotifications', 'patchSettingsVerification', 'patchSettingsDanger',
@@ -518,6 +521,8 @@
           <ProposalForm />
         {:else if routeName === 'governanceProposal'}
           <ProposalDetail />
+        {:else if routeName === 'governanceRecord'}
+          <GovernanceRecord />
         {:else if routeName === 'governanceDocs'}
           <GovernanceList />
         {:else if routeName === 'governanceDocNew'}
