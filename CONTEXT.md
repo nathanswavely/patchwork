@@ -633,6 +633,18 @@ travel however it was decided (docs/adr/054).
 _Avoid_: import, sync, manual override, verified (nothing was verified),
 minutes (those are the community's own document)
 
+**Record**:
+What a patch has settled, in order — every **proposal** that closed, every
+**direct change**, every election, and every **attestation** of something a
+meeting decided. Assembled from those rather than kept as its own thing, so
+it can never disagree with the pages it links to (docs/adr/055). Only
+settled things: an open proposal is an argument in progress, and the
+proposals list is already where those live. Public to read, like the
+proposals it draws from.
+_Avoid_: minutes (those are the community's own document), log, audit trail
+(that is the instance's, not the patch's), history (too close to a
+document's version history), timeline
+
 **Unrealized name**:
 Someone an attestation names who has not joined the patch. The record is
 the community's own statement about itself, so it may name anyone; what
