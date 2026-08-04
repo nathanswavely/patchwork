@@ -13,7 +13,7 @@ import path from 'node:path';
 import { REPO_ROOT, LEDGER_PATH } from './scope.js';
 import { load, save, sync, stats, STATUSES } from './ledger.js';
 import { writeback } from './writeback.js';
-import { writeDrafts, pullDrafts, pruneDrafts } from './drafts.js';
+import { writeDrafts, pullDrafts, pruneDrafts, DRAFT_DIR } from './drafts.js';
 
 const [cmd, ...argv] = process.argv.slice(2);
 const flag = (name) => argv.includes(`--${name}`);
@@ -102,7 +102,7 @@ function cmdDraft() {
 
   if (r.skippedDirty.length) {
     console.log(`${YEL}skipped — these drafts hold writing that isn't recorded yet:${OFF}`);
-    for (const f of r.skippedDirty) console.log(`  copy/drafts/${f}.md`);
+    for (const f of r.skippedDirty) console.log(`  ${path.join(DRAFT_DIR, `${f}.md`)}`);
     console.log(`${DIM}Run \`make copy-pull\` first, or pass --force to overwrite.${OFF}\n`);
   }
   if (!r.files.length) {

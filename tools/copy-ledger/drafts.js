@@ -17,7 +17,18 @@ import path from 'node:path';
 import { REPO_ROOT } from './scope.js';
 import { collapse } from './extract.js';
 
-export const DRAFT_DIR = path.join(REPO_ROOT, 'copy', 'drafts');
+// Where drafts live. Defaults to copy/drafts/ inside this repo, but the
+// drafts are just ID-keyed files — nothing ties them to the repo they
+// describe. Point COPY_DRAFTS_DIR at a checkout of a separate (private)
+// repo and the working copy stays out of the public tree entirely:
+//
+//   export COPY_DRAFTS_DIR=~/src/patchwork-copy/drafts
+//
+// The public repo then only ever sees finished copy changes and the
+// ledger entry recording who wrote them — never the half-written middle.
+export const DRAFT_DIR = process.env.COPY_DRAFTS_DIR
+  ? path.resolve(process.env.COPY_DRAFTS_DIR)
+  : path.join(REPO_ROOT, 'copy', 'drafts');
 
 // Kinds whose newlines are meaningful (Markdown lists, indented prose).
 const BLOCK_KINDS = new Set(['md-block', 'go-doc-block']);

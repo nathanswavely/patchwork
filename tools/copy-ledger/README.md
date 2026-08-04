@@ -46,9 +46,27 @@ page of work and all 1,853 strings at once. `copy-draft` refuses to
 overwrite a draft holding writing you haven't pulled yet, and `copy-pull`
 deletes draft files once every string in them is decided.
 
-If you edit drafts on the branch in GitHub, the commit is **yours** —
-which makes `git blame` a second, independent record of who wrote the
-copy. The ledger says so; the history proves it.
+### Keeping drafts out of this repo
+
+Drafts are half-written work, and this is a public repo. `/copy/drafts/`
+is gitignored here, and `COPY_DRAFTS_DIR` points the tool at a checkout
+of somewhere else — a small private repo is the intended shape:
+
+```sh
+export COPY_DRAFTS_DIR=~/src/patchwork-copy/drafts
+make copy-draft FILE=README.md   # writes there instead
+#  …commit in patchwork-copy, edit on GitHub from anywhere…
+make copy-pull                   # reads from there
+```
+
+Nothing ties a draft to the repo it describes — they're ID-keyed files,
+and the ID is all `copy-pull` needs. Patchwork sees only the finished
+copy change and the ledger entry recording who wrote it; the drafts, the
+false starts and the three-versions-of-a-sentence stay private.
+
+If the private repo is where you edit, the commits there are **yours** —
+so `git blame` on it becomes a second, independent record of who wrote
+the copy. The ledger asserts it; that history proves it.
 
 ## Bulk decisions
 
