@@ -22,6 +22,36 @@ make copy-stats     # progress
 make copy-report    # render copy/REPORT.md for publishing
 ```
 
+## Reviewing without a server
+
+The UI needs a machine to serve it and a browser that can reach that
+machine, which rules out most of the places writing actually happens. So
+the queue also comes out as Markdown:
+
+```sh
+make copy-draft FILE=README.md   # → copy/drafts/README.md.md
+#  …edit it anywhere: GitHub's web editor, a laptop, a phone…
+make copy-pull                   # read your writing back into the ledger
+make copy-apply APPLY=1          # write it into source
+```
+
+Each string sits between `<!-- copy:ID -->` markers. Edit the text
+between them; leave a block alone and it's skipped, so three strings and
+come back is a fine way to work. Replace a whole block with `@mine` if
+the words are already yours, or `@fine` to leave a draft in place on
+purpose.
+
+`FILE=` scopes it to one source file, which is the difference between a
+page of work and all 1,853 strings at once. `copy-draft` refuses to
+overwrite a draft holding writing you haven't pulled yet, and `copy-pull`
+deletes draft files once every string in them is decided.
+
+If you edit drafts on the branch in GitHub, the commit is **yours** —
+which makes `git blame` a second, independent record of who wrote the
+copy. The ledger says so; the history proves it.
+
+## Bulk decisions
+
 For a file whose copy has one answer, decide it in bulk instead:
 
 ```sh

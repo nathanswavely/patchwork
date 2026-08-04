@@ -95,9 +95,15 @@ function isMarkupNoise(chunk) {
   return false;
 }
 
+// Kinds whose line breaks carry meaning. Collapsing a Markdown list to one
+// line turns four bullets into one paragraph, and writeback would then put
+// that flattened line back into the file. HTML and string literals have no
+// such structure, so those stay collapsed.
+const BLOCK_KINDS = new Set(['md-block', 'go-doc-block']);
+
 function pushHit(hits, { file, raw, index, src, kind, quote }) {
-  const text = collapse(raw);
-  if (!text) return;
+  const text = BLOCK_KINDS.has(kind) ? raw.replace(/\s+$/, '') : collapse(raw);
+  if (!collapse(text)) return;
   hits.push({ file, raw, text, line: lineAt(src, index), kind, quote: quote || null });
 }
 

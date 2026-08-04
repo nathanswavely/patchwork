@@ -22,7 +22,7 @@
     },
     {
       "id": "cf772c809c08",
-      "text": "Thanks for looking under the hood. Patchwork is young and run by a single maintainer, so issues and pull requests are genuinely useful — including small ones (docs, error copy, test gaps).",
+      "text": "Thanks for looking under the hood. Patchwork is young and run by a single\nmaintainer, so issues and pull requests are genuinely useful — including\nsmall ones (docs, error copy, test gaps).",
       "words": 32,
       "tier": "prose",
       "status": "unreviewed",
@@ -76,7 +76,7 @@
     },
     {
       "id": "2847694929a8",
-      "text": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN` to an absolute path to send it somewhere else — useful on Windows, where the firewall keys its rule to the executable's full path, so a per-worktree binary prompts as a new program every time. Pointing every worktree at one path means approving once. The tradeoff: worktrees then share a binary and can't run servers simultaneously.",
+      "text": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else — useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously.",
       "words": 66,
       "tier": "prose",
       "status": "unreviewed",
@@ -148,7 +148,7 @@
     },
     {
       "id": "87fac1aace0f",
-      "text": "- `CONTEXT.md` — the vocabulary glossary. Backend code uses generic terms (node, event, proposal); the UI speaks textile (patch, quilt, charter, thread). Code, database columns, and API endpoints always use the backend terms; only UI copy translates. - `docs/adr/` — design decisions, indexed by status in [docs/adr/README.md](docs/adr/README.md). If a change contradicts an accepted ADR, the PR should either follow the ADR or include a new one. - `CLAUDE.md` — orientation for coding agents. If you work with one, point it there; if you don't, you can ignore it.",
+      "text": "- `CONTEXT.md` — the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks textile (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- `docs/adr/` — design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- `CLAUDE.md` — orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it.",
       "words": 88,
       "tier": "prose",
       "status": "unreviewed",
@@ -184,7 +184,7 @@
     },
     {
       "id": "d373f492a212",
-      "text": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs, ISO 8601 TEXT timestamps. - Behavior changes come with tests. The e2e suite is the backbone — regression tests reference the issue or ADR that motivated them. - The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be suspicious of dependencies.",
+      "text": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone —\n  regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies.",
       "words": 66,
       "tier": "prose",
       "status": "unreviewed",
@@ -220,7 +220,7 @@
     },
     {
       "id": "8af650267498",
-      "text": "Both are sequentially numbered and both can be claimed by branches that can't see each other. Before claiming a number, check what's in flight, not just what's on disk:",
+      "text": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
       "words": 29,
       "tier": "prose",
       "status": "unreviewed",
@@ -238,7 +238,7 @@
     },
     {
       "id": "47c85b859e87",
-      "text": "Numbers are never reused. A retired ADR keeps its number and gains a status line; `migrations/006` is intentionally absent.",
+      "text": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
       "words": 19,
       "tier": "prose",
       "status": "unreviewed",
@@ -274,7 +274,7 @@
     },
     {
       "id": "bd54cef84d08",
-      "text": "Welcome — much of Patchwork is built that way. Two rules: disclose it (keep the `Co-Authored-By` trailer your tool adds), and review what you submit. You are the author of your PR; \"the model wrote it\" is not a review process.",
+      "text": "Welcome — much of Patchwork is built that way. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process.",
       "words": 41,
       "tier": "prose",
       "status": "unreviewed",
@@ -346,7 +346,7 @@
     },
     {
       "id": "d622d84b0f3c",
-      "text": "This page is for community organizers deciding whether Patchwork fits them. It assumes no technical background. If you already know you want to deploy one and how, go straight to [DEPLOYMENT.md](DEPLOYMENT.md).",
+      "text": "This page is for community organizers deciding whether Patchwork fits\nthem. It assumes no technical background. If you already know you want\nto deploy one and how, go straight to [DEPLOYMENT.md](DEPLOYMENT.md).",
       "words": 31,
       "tier": "prose",
       "status": "unreviewed",
@@ -382,7 +382,7 @@
     },
     {
       "id": "d7e25c19bea7",
-      "text": "Patchwork is a platform for the communities of one place. A city, a scene, a region. Every group on it is a **patch**: a band, a venue, a book club, a mutual aid network, all equal. Together the patches form a **quilt**, a live picture of your community where groups that share people sit closer together, because shared people are what connection actually is.",
+      "text": "Patchwork is a platform for the communities of one place. A city, a\nscene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together the patches form a\n**quilt**, a live picture of your community where groups that share\npeople sit closer together, because shared people are what connection\nactually is.",
       "words": 64,
       "tier": "prose",
       "status": "unreviewed",
@@ -400,7 +400,7 @@
     },
     {
       "id": "a70df35cec6d",
-      "text": "Nobody sells ads here. No algorithm decides what anyone sees. The software is open source, and each quilt runs on a machine its own community controls, administered by a person that community can name.",
+      "text": "Nobody sells ads here. No algorithm decides what anyone sees. The\nsoftware is open source, and each quilt runs on a machine its own\ncommunity controls, administered by a person that community can name.",
       "words": 34,
       "tier": "prose",
       "status": "unreviewed",
@@ -418,7 +418,7 @@
     },
     {
       "id": "b30d91c53b31",
-      "text": "It helps to know up front what Patchwork is a poor fit for. It is not a social network you post on all day, and there is no company behind it, so nobody hosts it for you. Someone in your community has to hold it, and that requirement is the design working as intended, since a community that runs its own infrastructure answers to nobody upstream.",
+      "text": "It helps to know up front what Patchwork is a poor fit for. It is not a\nsocial network you post on all day, and there is no company behind it,\nso nobody hosts it for you. Someone in your community has to hold it,\nand that requirement is the design working as intended, since a\ncommunity that runs its own infrastructure answers to nobody upstream.",
       "words": 66,
       "tier": "prose",
       "status": "unreviewed",
@@ -472,7 +472,7 @@
     },
     {
       "id": "9486c96406f3",
-      "text": "**A steward.** Every quilt names at least one person publicly accountable for how it runs. That's the Label, a page on every quilt stating who stewards it, what it depends on, and what it costs. If nobody in your community will be named, you are not ready yet, and it costs nothing to learn that now.",
+      "text": "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. That's the Label, a page on every quilt\nstating who stewards it, what it depends on, and what it costs. If\nnobody in your community will be named, you are not ready yet, and it\ncosts nothing to learn that now.",
       "words": 56,
       "tier": "prose",
       "status": "unreviewed",
@@ -490,7 +490,7 @@
     },
     {
       "id": "e4216163223a",
-      "text": "**A baseline you inherit.** Every patch on every quilt starts from the lining, a shared community-standards baseline that ships with Patchwork and includes an anti-discrimination floor. The lining is the project's statement of the bare minimum a quilt should be. Patches can amend their copy, but amendments are public and visibly marked. If your organization's values conflict with the lining, Patchwork is the wrong tool for you.",
+      "text": "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, Patchwork is the wrong\ntool for you.",
       "words": 67,
       "tier": "prose",
       "status": "unreviewed",
@@ -508,7 +508,7 @@
     },
     {
       "id": "121d1ae15012",
-      "text": "**Judgment, occasionally.** Stewards handle reports, review the odd event submission, and once in a while deal with a patch or person acting in bad faith. The software gives you the levers. Pulling them is human work. Expect a few hours a month once things settle, more during launch.",
+      "text": "**Judgment, occasionally.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software gives you the levers. Pulling them is\nhuman work. Expect a few hours a month once things settle, more during\nlaunch.",
       "words": 48,
       "tier": "prose",
       "status": "unreviewed",
@@ -544,7 +544,7 @@
     },
     {
       "id": "afb2ed4e3e0c",
-      "text": "A machine, a domain name, and optionally email sending. Patchwork is one small program that runs happily on a five-dollar-a-month virtual server or a Raspberry Pi on a shelf, and a domain runs ten to twenty dollars a year. Sign-in links can go out over email, but Patchwork works without it: admins can hand out invite links over Signal or on paper, and you can add email whenever you want it.",
+      "text": "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it.",
       "words": 71,
       "tier": "prose",
       "status": "unreviewed",
@@ -562,7 +562,7 @@
     },
     {
       "id": "f5c3ca80920f",
-      "text": "That is the whole bill. Your quilt's Label states your actual numbers to your community, so the people who benefit can help carry them.",
+      "text": "That is the whole bill. Your quilt's Label states your actual numbers\nto your community, so the people who benefit can help carry them.",
       "words": 24,
       "tier": "prose",
       "status": "unreviewed",
@@ -598,7 +598,7 @@
     },
     {
       "id": "03eecba7e607",
-      "text": "The honest first answer is someone technical in your community. Deployment is a well-worn path with Docker, one config file, and automatic HTTPS, roughly an afternoon for anyone who has run a web service before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map.",
+      "text": "The honest first answer is someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map.",
       "words": 39,
       "tier": "prose",
       "status": "unreviewed",
@@ -616,7 +616,7 @@
     },
     {
       "id": "8ab89afd8726",
-      "text": "The careful second answer is you. If you can rent a small server and follow a guide patiently, the path is documented end to end, and the software is deliberately boring to operate. One process. One database file. Backups are copying a file.",
+      "text": "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is deliberately boring to operate. One process. One database\nfile. Backups are copying a file.",
       "words": 43,
       "tier": "prose",
       "status": "unreviewed",
@@ -634,7 +634,7 @@
     },
     {
       "id": "6bd222f1b784",
-      "text": "If neither fits, open an issue on the project repository and ask. The people who build Patchwork would rather help a real community launch than ship another feature.",
+      "text": "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would rather help a real community launch\nthan ship another feature.",
       "words": 28,
       "tier": "prose",
       "status": "unreviewed",
@@ -670,7 +670,7 @@
     },
     {
       "id": "2ed32e2b4d1e",
-      "text": "Trust in any one person, including whoever runs your quilt, is never load-bearing here. The software is open source, so no company can shut it down or start charging rent. Every quilt's data can be exported and stood up again elsewhere, an act the vocabulary here calls a seamrip: if leadership goes sideways, the community takes its patches, its people, and its history somewhere new. Costs and dependencies sit on the public Label, so \"who pays for this and what do they control\" has a published answer. Stewards stay honest because leaving is real, and once you hold the keys that pressure applies to you too.",
+      "text": "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a seamrip:\nif leadership goes sideways, the community takes its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too.",
       "words": 106,
       "tier": "prose",
       "status": "unreviewed",
@@ -706,7 +706,7 @@
     },
     {
       "id": "e1423ed91a5c",
-      "text": "Browse a living quilt first if you can. The reference instance serves the arts scene of Lancaster, Pennsylvania. When you're ready to try the software on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The [README](../README.md) covers the technical shape of the project.",
+      "text": "Browse a living quilt first if you can. The reference instance serves\nthe arts scene of Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project.",
       "words": 39,
       "tier": "prose",
       "status": "unreviewed",
@@ -1050,7 +1050,7 @@
     },
     {
       "id": "9fc41714c847",
-      "text": "- Any member can propose something by submitting a proposal. - Proposals are open for 3 days. Majority vote wins. - No quorum requirement. If you care, vote. - The admins (maintainers) handle day-to-day decisions that don't need a vote.",
+      "text": "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. If you care, vote.\n- The admins (maintainers) handle day-to-day decisions that don't need a vote.",
       "words": 40,
       "tier": "prose",
       "status": "unreviewed",
@@ -1093,7 +1093,7 @@
     },
     {
       "id": "c813ce938089",
-      "text": "- Anyone can join. This patch is open. - Members can vote on proposals and participate fully. - Followers can see what we're up to without participating in governance. - Admins manage the patch, approve changes, and keep things running.",
+      "text": "- Anyone can join. This patch is open.\n- Members can vote on proposals and participate fully.\n- Followers can see what we're up to without participating in governance.\n- Admins manage the patch, approve changes, and keep things running.",
       "words": 40,
       "tier": "prose",
       "status": "unreviewed",
@@ -1129,7 +1129,7 @@
     },
     {
       "id": "030fea55774d",
-      "text": "- You can leave at any time. No hard feelings. - If you want to take the pattern and start something new, seamrip it.",
+      "text": "- You can leave at any time. No hard feelings.\n- If you want to take the pattern and start something new, seamrip it.",
       "words": 24,
       "tier": "prose",
       "status": "unreviewed",
@@ -1165,7 +1165,7 @@
     },
     {
       "id": "684794ab72d3",
-      "text": "- Any member can propose changes to this document through a proposal. - Changes pass by majority vote.",
+      "text": "- Any member can propose changes to this document through a proposal.\n- Changes pass by majority vote.",
       "words": 18,
       "tier": "prose",
       "status": "unreviewed",
@@ -1262,7 +1262,7 @@
     },
     {
       "id": "a405c6fecf67",
-      "text": "- **Followers** are community members who stay informed. They can attend events and observe governance. - **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance. - **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
+      "text": "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
       "words": 53,
       "tier": "prose",
       "status": "unreviewed",
@@ -1370,7 +1370,7 @@
     },
     {
       "id": "2b43f0972b2a",
-      "text": "- **Day-to-day decisions**: Admins handle routine operations. - **Proposals**: Any member can submit a proposal for community decisions. - **Voting period**: 7 days for most proposals. - **Quorum**: 25% of active members must participate for a vote to be valid. - **Passing threshold**: Simple majority for most decisions. Supermajority (2/3) for amendments to governance documents.",
+      "text": "- **Day-to-day decisions**: Admins handle routine operations.\n- **Proposals**: Any member can submit a proposal for community decisions.\n- **Voting period**: 7 days for most proposals.\n- **Quorum**: 25% of active members must participate for a vote to be valid.\n- **Passing threshold**: Simple majority for most decisions. Supermajority (2/3) for amendments to governance documents.",
       "words": 55,
       "tier": "prose",
       "status": "unreviewed",
@@ -1388,7 +1388,7 @@
     },
     {
       "id": "0f70468538b4",
-      "text": "- Membership requires approval. Apply and an admin will review your request. - Members who haven't participated in 60 days may be contacted about their status. - Admins inactive for 60 days will be asked to step down or re-engage.",
+      "text": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
       "words": 40,
       "tier": "prose",
       "status": "unreviewed",
@@ -1570,7 +1570,7 @@
     },
     {
       "id": "1a1e9a0c23ae",
-      "text": "All income (dues, grants, donations, event revenue, sales) is recorded with: - Amount - Source - Date - Purpose or restriction (if any)",
+      "text": "All income (dues, grants, donations, event revenue, sales) is recorded with:\n- Amount\n- Source\n- Date\n- Purpose or restriction (if any)",
       "words": 23,
       "tier": "prose",
       "status": "unreviewed",
@@ -1613,7 +1613,7 @@
     },
     {
       "id": "60494e01b450",
-      "text": "All spending is recorded with: - Amount - Recipient - Date - What it was for - Who approved it",
+      "text": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- What it was for\n- Who approved it",
       "words": 20,
       "tier": "prose",
       "status": "unreviewed",
@@ -1649,7 +1649,7 @@
     },
     {
       "id": "254ed4bfb8fd",
-      "text": "- **Under $50**: Any admin can approve. - **$50–$500**: Requires two admin approvals. - **Over $500**: Requires a proposal and community vote.",
+      "text": "- **Under $50**: Any admin can approve.\n- **$50–$500**: Requires two admin approvals.\n- **Over $500**: Requires a proposal and community vote.",
       "words": 22,
       "tier": "prose",
       "status": "unreviewed",
@@ -1886,7 +1886,7 @@
     },
     {
       "id": "6f344fd3f261",
-      "text": "If mediation doesn't work, submit a formal complaint to the admins. Include: - What happened (specific actions, not character judgments) - When it happened - What resolution you're seeking",
+      "text": "If mediation doesn't work, submit a formal complaint to the admins. Include:\n- What happened (specific actions, not character judgments)\n- When it happened\n- What resolution you're seeking",
       "words": 29,
       "tier": "prose",
       "status": "unreviewed",
@@ -2134,7 +2134,7 @@
     },
     {
       "id": "9ad5c8610783",
-      "text": "- **Transparency**: All decisions, finances, and governance are public to members. - **Accountability**: Power rotates. No one stays in charge indefinitely. - **Inclusion**: We actively work to include voices that are typically excluded. - **Self-determination**: We govern ourselves. We don't answer to external authorities that don't share our values. - **Right to seamrip**: Any group can take our patterns and build their own quilt.",
+      "text": "- **Transparency**: All decisions, finances, and governance are public to members.\n- **Accountability**: Power rotates. No one stays in charge indefinitely.\n- **Inclusion**: We actively work to include voices that are typically excluded.\n- **Self-determination**: We govern ourselves. We don't answer to external authorities that don't share our values.\n- **Right to seamrip**: Any group can take our patterns and build their own quilt.",
       "words": 64,
       "tier": "prose",
       "status": "unreviewed",
@@ -2350,7 +2350,7 @@
     },
     {
       "id": "cd0358347943",
-      "text": "### 1.1 Council Elections Elections are held annually. All members who have been active for at least 30 days are eligible to vote.",
+      "text": "### 1.1 Council Elections\nElections are held annually. All members who have been active for at least 30 days are eligible to vote.",
       "words": 23,
       "tier": "prose",
       "status": "unreviewed",
@@ -2368,7 +2368,7 @@
     },
     {
       "id": "09630d9d6198",
-      "text": "### 1.2 Nominations Any member may nominate themselves or another member for a council seat. Nominations open 14 days before the election and close 7 days before.",
+      "text": "### 1.2 Nominations\nAny member may nominate themselves or another member for a council seat. Nominations open 14 days before the election and close 7 days before.",
       "words": 27,
       "tier": "prose",
       "status": "unreviewed",
@@ -2386,7 +2386,7 @@
     },
     {
       "id": "b1838fa8e8c9",
-      "text": "### 1.3 Voting Elections use ranked-choice voting. Each member ranks candidates in order of preference. Voting is open for 14 days.",
+      "text": "### 1.3 Voting\nElections use ranked-choice voting. Each member ranks candidates in order of preference. Voting is open for 14 days.",
       "words": 21,
       "tier": "prose",
       "status": "unreviewed",
@@ -2404,7 +2404,7 @@
     },
     {
       "id": "e443e222af46",
-      "text": "### 1.4 Term Limits Council members serve 12-month terms. There is no limit on the number of terms, but consecutive terms require re-election.",
+      "text": "### 1.4 Term Limits\nCouncil members serve 12-month terms. There is no limit on the number of terms, but consecutive terms require re-election.",
       "words": 23,
       "tier": "prose",
       "status": "unreviewed",
@@ -2440,7 +2440,7 @@
     },
     {
       "id": "66a91857974e",
-      "text": "### 2.1 Quorum A majority of council members must be present (or voting) for council decisions.",
+      "text": "### 2.1 Quorum\nA majority of council members must be present (or voting) for council decisions.",
       "words": 16,
       "tier": "prose",
       "status": "unreviewed",
@@ -2458,7 +2458,7 @@
     },
     {
       "id": "d176fbf77c31",
-      "text": "### 2.2 Decision Making The council operates by consensus when possible. If consensus cannot be reached within a reasonable timeframe, decisions fall back to a supermajority (2/3) vote of council members.",
+      "text": "### 2.2 Decision Making\nThe council operates by consensus when possible. If consensus cannot be reached within a reasonable timeframe, decisions fall back to a supermajority (2/3) vote of council members.",
       "words": 31,
       "tier": "prose",
       "status": "unreviewed",
@@ -2476,7 +2476,7 @@
     },
     {
       "id": "8bf7f508b0ae",
-      "text": "### 2.3 Removal A council member can be removed by a supermajority vote of the full membership. A removal proposal requires signatures from at least 10% of active members to be considered.",
+      "text": "### 2.3 Removal\nA council member can be removed by a supermajority vote of the full membership. A removal proposal requires signatures from at least 10% of active members to be considered.",
       "words": 32,
       "tier": "prose",
       "status": "unreviewed",
@@ -2512,7 +2512,7 @@
     },
     {
       "id": "dd4f98ee41e0",
-      "text": "### 3.1 Joining New members must be approved by a council member. Approval should be granted to anyone who commits to the community standards and participates in good faith.",
+      "text": "### 3.1 Joining\nNew members must be approved by a council member. Approval should be granted to anyone who commits to the community standards and participates in good faith.",
       "words": 29,
       "tier": "prose",
       "status": "unreviewed",
@@ -2530,7 +2530,7 @@
     },
     {
       "id": "e4034401a496",
-      "text": "### 3.2 Voting Rights Voting rights activate after 30 days of active membership. This ensures voters have context for the decisions they're making.",
+      "text": "### 3.2 Voting Rights\nVoting rights activate after 30 days of active membership. This ensures voters have context for the decisions they're making.",
       "words": 23,
       "tier": "prose",
       "status": "unreviewed",
@@ -2548,7 +2548,7 @@
     },
     {
       "id": "80526fa5d297",
-      "text": "### 3.3 Leaving Members may leave at any time. Membership data is retained for 30 days in case of return.",
+      "text": "### 3.3 Leaving\nMembers may leave at any time. Membership data is retained for 30 days in case of return.",
       "words": 20,
       "tier": "prose",
       "status": "unreviewed",
@@ -2584,7 +2584,7 @@
     },
     {
       "id": "0b1c70453295",
-      "text": "### 4.1 Proposing Amendments Any member can propose an amendment to these bylaws or any governance document by submitting a proposal.",
+      "text": "### 4.1 Proposing Amendments\nAny member can propose an amendment to these bylaws or any governance document by submitting a proposal.",
       "words": 21,
       "tier": "prose",
       "status": "unreviewed",
@@ -2602,7 +2602,7 @@
     },
     {
       "id": "a0cd8f7fc385",
-      "text": "### 4.2 Review Period Amendment proposals are open for 14 days. Discussion and voting run over that same window: comment on the proposal, and change your vote, at any point before it closes.",
+      "text": "### 4.2 Review Period\nAmendment proposals are open for 14 days. Discussion and voting run over\nthat same window: comment on the proposal, and change your vote, at any\npoint before it closes.",
       "words": 33,
       "tier": "prose",
       "status": "unreviewed",
@@ -2620,7 +2620,7 @@
     },
     {
       "id": "23c1e1ae2851",
-      "text": "### 4.3 Approval Amendments to the bylaws require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
+      "text": "### 4.3 Approval\nAmendments to the bylaws require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
       "words": 22,
       "tier": "prose",
       "status": "unreviewed",
@@ -2638,7 +2638,7 @@
     },
     {
       "id": "13f6470dd037",
-      "text": "### 4.4 Implementation Approved amendments are not auto-applied. A council member must review and merge the change to ensure consistency with other governance documents.",
+      "text": "### 4.4 Implementation\nApproved amendments are not auto-applied. A council member must review and merge the change to ensure consistency with other governance documents.",
       "words": 24,
       "tier": "prose",
       "status": "unreviewed",
@@ -2674,7 +2674,7 @@
     },
     {
       "id": "eeb0150012ba",
-      "text": "### 5.1 Dissolution This patch may be dissolved by a consensus vote of the membership with at least 50% quorum.",
+      "text": "### 5.1 Dissolution\nThis patch may be dissolved by a consensus vote of the membership with at least 50% quorum.",
       "words": 20,
       "tier": "prose",
       "status": "unreviewed",
@@ -2692,7 +2692,7 @@
     },
     {
       "id": "45eeae50cbac",
-      "text": "### 5.2 Seamrip Any group of members may seamrip (take the governance documents, tools, and their data) and start a new patch. This is a right the parent patch must facilitate in good faith.",
+      "text": "### 5.2 Seamrip\nAny group of members may seamrip (take the governance documents, tools, and their data) and start a new patch. This is a right the parent patch must facilitate in good faith.",
       "words": 34,
       "tier": "prose",
       "status": "unreviewed",
@@ -2710,7 +2710,7 @@
     },
     {
       "id": "a6fe3b622524",
-      "text": "### 5.3 Assets Upon dissolution, remaining assets are distributed as determined by the final membership vote. If no consensus is reached, assets are donated to a community organization chosen by the council.",
+      "text": "### 5.3 Assets\nUpon dissolution, remaining assets are distributed as determined by the final membership vote. If no consensus is reached, assets are donated to a community organization chosen by the council.",
       "words": 32,
       "tier": "prose",
       "status": "unreviewed",
@@ -2746,7 +2746,7 @@
     },
     {
       "id": "5868fcccad7e",
-      "text": "All income (dues, grants, donations, event revenue, sponsorships, sales) is recorded with: - Amount - Source - Date received - Purpose or restriction (if any) - Council member who acknowledged receipt",
+      "text": "All income (dues, grants, donations, event revenue, sponsorships, sales) is recorded with:\n- Amount\n- Source\n- Date received\n- Purpose or restriction (if any)\n- Council member who acknowledged receipt",
       "words": 31,
       "tier": "prose",
       "status": "unreviewed",
@@ -2764,7 +2764,7 @@
     },
     {
       "id": "a98392793be8",
-      "text": "All spending is recorded with: - Amount - Recipient - Date - Description of what it was for - Which council member approved it - Budget line item it falls under",
+      "text": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- Description of what it was for\n- Which council member approved it\n- Budget line item it falls under",
       "words": 31,
       "tier": "prose",
       "status": "unreviewed",
@@ -2800,7 +2800,7 @@
     },
     {
       "id": "f54bfeb6d60b",
-      "text": "| Amount | Required Approval | |--------|------------------| | Under $100 | Any council member | | $100–$1,000 | Two council members | | $1,000–$5,000 | Council vote (majority) | | Over $5,000 | Community vote (proposal) |",
+      "text": "| Amount | Required Approval |\n|--------|------------------|\n| Under $100 | Any council member |\n| $100–$1,000 | Two council members |\n| $1,000–$5,000 | Council vote (majority) |\n| Over $5,000 | Community vote (proposal) |",
       "words": 37,
       "tier": "prose",
       "status": "unreviewed",
@@ -2890,7 +2890,7 @@
     },
     {
       "id": "927f08a6dd67",
-      "text": "- Monthly financial summaries posted to governance docs - Annual comprehensive report with review - Any member can request details on any transaction at any time",
+      "text": "- Monthly financial summaries posted to governance docs\n- Annual comprehensive report with review\n- Any member can request details on any transaction at any time",
       "words": 26,
       "tier": "prose",
       "status": "unreviewed",
@@ -3034,7 +3034,7 @@
     },
     {
       "id": "90a71fd7a4d7",
-      "text": "The mediator: - Meets separately with each party - Facilitates a joint conversation - Helps identify common ground and next steps - Documents the agreement (shared only with involved parties)",
+      "text": "The mediator:\n- Meets separately with each party\n- Facilitates a joint conversation\n- Helps identify common ground and next steps\n- Documents the agreement (shared only with involved parties)",
       "words": 30,
       "tier": "prose",
       "status": "unreviewed",
@@ -3070,7 +3070,7 @@
     },
     {
       "id": "09ca4a46ec93",
-      "text": "If mediation does not resolve the conflict, a formal grievance may be filed with the council. The grievance must include: - Specific actions that caused harm - Dates and context - Steps already taken to resolve - Requested resolution",
+      "text": "If mediation does not resolve the conflict, a formal grievance may be filed with the council. The grievance must include:\n- Specific actions that caused harm\n- Dates and context\n- Steps already taken to resolve\n- Requested resolution",
       "words": 39,
       "tier": "prose",
       "status": "unreviewed",
@@ -3178,7 +3178,7 @@
     },
     {
       "id": "2c1d5fe3d9e8",
-      "text": "- Verbal or written warning - Required mediation or training - Temporary suspension (with defined end date) - Permanent removal (requires council vote, appealable to membership)",
+      "text": "- Verbal or written warning\n- Required mediation or training\n- Temporary suspension (with defined end date)\n- Permanent removal (requires council vote, appealable to membership)",
       "words": 26,
       "tier": "prose",
       "status": "unreviewed",
@@ -3322,7 +3322,7 @@
     },
     {
       "id": "70363062c718",
-      "text": "### Schedule Council elections are held annually. The election timeline: - **Day 1–14**: Nomination period. Any member can nominate themselves or another member. - **Day 15–28**: Campaign/discussion period. Candidates share their vision. - **Day 29–42**: Voting period (14 days). Ranked-choice voting. - **Day 43**: Results announced. New council seated.",
+      "text": "### Schedule\nCouncil elections are held annually. The election timeline:\n- **Day 1–14**: Nomination period. Any member can nominate themselves or another member.\n- **Day 15–28**: Campaign/discussion period. Candidates share their vision.\n- **Day 29–42**: Voting period (14 days). Ranked-choice voting.\n- **Day 43**: Results announced. New council seated.",
       "words": 49,
       "tier": "prose",
       "status": "unreviewed",
@@ -3340,7 +3340,7 @@
     },
     {
       "id": "a07fa212228e",
-      "text": "### Transition Outgoing council members have 7 days to transfer responsibilities, access, and context to incoming members. A transition document is published to governance docs.",
+      "text": "### Transition\nOutgoing council members have 7 days to transfer responsibilities, access, and context to incoming members. A transition document is published to governance docs.",
       "words": 25,
       "tier": "prose",
       "status": "unreviewed",
@@ -3376,7 +3376,7 @@
     },
     {
       "id": "24e2434e484e",
-      "text": "### Single Vacancy If one council seat becomes vacant mid-term, the council may appoint a replacement from active members. The appointment must be ratified by the community within 14 days.",
+      "text": "### Single Vacancy\nIf one council seat becomes vacant mid-term, the council may appoint a replacement from active members. The appointment must be ratified by the community within 14 days.",
       "words": 30,
       "tier": "prose",
       "status": "unreviewed",
@@ -3394,7 +3394,7 @@
     },
     {
       "id": "e7a59983041e",
-      "text": "### Multiple Vacancies If more than half the council seats are vacant, an emergency election is triggered immediately using the regular election process with compressed timelines (7 days each phase instead of 14).",
+      "text": "### Multiple Vacancies\nIf more than half the council seats are vacant, an emergency election is triggered immediately using the regular election process with compressed timelines (7 days each phase instead of 14).",
       "words": 33,
       "tier": "prose",
       "status": "unreviewed",
@@ -3412,7 +3412,7 @@
     },
     {
       "id": "abaf019727a5",
-      "text": "### Total Vacancy If all council seats are vacant (the \"bus factor\" scenario), the three longest-tenured active members become interim admins. They must initiate an emergency election within 7 days.",
+      "text": "### Total Vacancy\nIf all council seats are vacant (the \"bus factor\" scenario), the three longest-tenured active members become interim admins. They must initiate an emergency election within 7 days.",
       "words": 30,
       "tier": "prose",
       "status": "unreviewed",
@@ -3448,7 +3448,7 @@
     },
     {
       "id": "6c707c126d7c",
-      "text": "### Detection Council members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
+      "text": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
       "words": 19,
       "tier": "prose",
       "status": "unreviewed",
@@ -3466,7 +3466,7 @@
     },
     {
       "id": "bd770537db58",
-      "text": "### Process - Day 30: Notification sent to inactive council member. - Day 45: If no response, the council discusses the situation. - Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
+      "text": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
       "words": 37,
       "tier": "prose",
       "status": "unreviewed",
@@ -3923,7 +3923,7 @@
     },
     {
       "id": "7691ddfaf8ff",
-      "text": "- Other servers keep their own copies under their own policies. Deleting something here sends a deletion notice, but this site cannot force another server to honor it. - When you follow a patch on another quilt, the follow is relayed through this site's shared service account rather than your own identity, so your name never appears in a remote follower list.",
+      "text": "- Other servers keep their own copies under their own policies. Deleting something here sends a deletion notice, but this site cannot force another server to honor it.\n- When you follow a patch on another quilt, the follow is relayed through this site's shared service account rather than your own identity, so your name never appears in a remote follower list.",
       "words": 62,
       "tier": "prose",
       "status": "unreviewed",
@@ -4427,7 +4427,7 @@
     },
     {
       "id": "78e794674319",
-      "text": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it. - No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts. - Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
+      "text": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it.\n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
       "words": 111,
       "tier": "prose",
       "status": "unreviewed",
@@ -4751,7 +4751,7 @@
     },
     {
       "id": "9ced04e64f7f",
-      "text": "SELECT m.id, m.user_id, MAX(COALESCE(act.at, m.joined_at)) AS last_at FROM memberships m LEFT JOIN ( SELECT v.user_id, p.node_id, v.created_at AS at FROM votes v JOIN proposals p ON p.id = v.proposal_id UNION ALL SELECT author_id, node_id, created_at FROM proposals UNION ALL SELECT c.author_id, p2.node_id, c.created_at FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id ) act ON act.user_id = m.user_id AND act.node_id = m.node_id WHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active' GROUP BY m.id, m.user_id",
+      "text": "SELECT m.id, m.user_id, MAX(COALESCE(act.at, m.joined_at)) AS last_at\n\t\tFROM memberships m\n\t\tLEFT JOIN (\n\t\t\tSELECT v.user_id, p.node_id, v.created_at AS at FROM votes v\n\t\t\t  JOIN proposals p ON p.id = v.proposal_id\n\t\t\tUNION ALL\n\t\t\tSELECT author_id, node_id, created_at FROM proposals\n\t\t\tUNION ALL\n\t\t\tSELECT c.author_id, p2.node_id, c.created_at\n\t\t\t  FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id\n\t\t) act ON act.user_id = m.user_id AND act.node_id = m.node_id\n\t\tWHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'\n\t\tGROUP BY m.id, m.user_id",
       "words": 79,
       "tier": "prose",
       "status": "unreviewed",
@@ -5017,7 +5017,7 @@
     },
     {
       "id": "9f4e565fdf09",
-      "text": "SELECT p.id, p.title, p.node_id, n.slug, n.name FROM proposals p JOIN nodes n ON n.id = p.node_id AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL WHERE p.status = 'open' AND p.voting_ends_at > ? AND p.voting_ends_at <= ? AND p.id NOT IN ( SELECT entity_id FROM notification_reminders_sent WHERE entity_type = 'proposal' AND reminder_type = 'deadline' )",
+      "text": "SELECT p.id, p.title, p.node_id, n.slug, n.name\n\t\t FROM proposals p\n\t\t JOIN nodes n ON n.id = p.node_id\n\t\t\tAND n.status IN ('active','unclaimed') AND n.removed_at IS NULL\n\t\t WHERE p.status = 'open'\n\t\t   AND p.voting_ends_at > ?\n\t\t   AND p.voting_ends_at <= ?\n\t\t   AND p.id NOT IN (\n\t\t     SELECT entity_id FROM notification_reminders_sent\n\t\t     WHERE entity_type = 'proposal' AND reminder_type = 'deadline'\n\t\t   )",
       "words": 54,
       "tier": "prose",
       "status": "unreviewed",
@@ -5096,7 +5096,7 @@
     },
     {
       "id": "dee3c36f9bff",
-      "text": "SELECT e.id, e.title, e.node_id, n.slug, n.name FROM events e JOIN nodes n ON n.id = e.node_id AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL WHERE e.starts_at > ? AND e.starts_at <= ? AND e.removed_at IS NULL AND e.status = 'active' AND e.id NOT IN ( SELECT entity_id FROM notification_reminders_sent WHERE entity_type = 'event' AND reminder_type = 'reminder' )",
+      "text": "SELECT e.id, e.title, e.node_id, n.slug, n.name\n\t\t FROM events e\n\t\t JOIN nodes n ON n.id = e.node_id\n\t\t\tAND n.status IN ('active','unclaimed') AND n.removed_at IS NULL\n\t\t WHERE e.starts_at > ?\n\t\t   AND e.starts_at <= ?\n\t\t   AND e.removed_at IS NULL\n\t\t   AND e.status = 'active'\n\t\t   AND e.id NOT IN (\n\t\t     SELECT entity_id FROM notification_reminders_sent\n\t\t     WHERE entity_type = 'event' AND reminder_type = 'reminder'\n\t\t   )",
       "words": 58,
       "tier": "prose",
       "status": "unreviewed",
@@ -5150,7 +5150,7 @@
     },
     {
       "id": "6d929c690cc9",
-      "text": "SELECT cr.id, cr.user_id, cr.setup_expires_at, n.id, n.slug, n.name FROM claim_requests cr JOIN nodes n ON n.id = cr.node_id AND n.status = 'unclaimed' AND n.removed_at IS NULL WHERE cr.status = 'approved' AND cr.setup_expires_at IS NOT NULL AND cr.setup_expires_at > ? AND cr.setup_expires_at <= ?",
+      "text": "SELECT cr.id, cr.user_id, cr.setup_expires_at, n.id, n.slug, n.name\n\t\t FROM claim_requests cr\n\t\t JOIN nodes n ON n.id = cr.node_id AND n.status = 'unclaimed' AND n.removed_at IS NULL\n\t\t WHERE cr.status = 'approved'\n\t\t   AND cr.setup_expires_at IS NOT NULL\n\t\t   AND cr.setup_expires_at > ?\n\t\t   AND cr.setup_expires_at <= ?",
       "words": 42,
       "tier": "prose",
       "status": "unreviewed",
@@ -5978,7 +5978,7 @@
     },
     {
       "id": "3605a4dcdc8b",
-      "text": "**Be the Pattern.** Open-source, self-hostable community organizing infrastructure. One small server, one SQLite file, a whole local scene.",
+      "text": "**Be the Pattern.** Open-source, self-hostable community organizing\ninfrastructure. One small server, one SQLite file, a whole local scene.",
       "words": 18,
       "tier": "prose",
       "status": "unreviewed",
@@ -5996,7 +5996,7 @@
     },
     {
       "id": "1f460c5d9b56",
-      "text": "Patchwork is a living map of the communities in your area. Every band, venue, collective, co-op, and club is a **patch**. Patches fit together into a **quilt**: a visualization of your scene where groups that share people sit closer together. Real communities connect through the people who show up to both, so that's what the layout reflects.",
+      "text": "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. Real communities connect through the people who show up\nto both, so that's what the layout reflects.",
       "words": 57,
       "tier": "prose",
       "status": "unreviewed",
@@ -6014,7 +6014,7 @@
     },
     {
       "id": "5aaa4c0a0893",
-      "text": "No algorithms, no ads, no engagement mechanics, no data harvesting. Patchwork is run by your neighbors, for your neighbors. If that ever stops being true, the community can take its data and walk — see [Seamrip](#seamrip-export--import) below.",
+      "text": "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can take its data and walk — see\n[Seamrip](#seamrip-export--import) below.",
       "words": 37,
       "tier": "prose",
       "status": "unreviewed",
@@ -6050,7 +6050,7 @@
     },
     {
       "id": "c490921f71b5",
-      "text": "- **The quilt.** A D3 treemap of every public patch, sized by activity and placed by member overlap. Zoom in, filter by tag, search, click through to any community. The same data also drives a Leaflet street map. - **Patches.** Every group gets a profile: description, links, location, members, events, governance documents. Membership comes in three honest roles: **admin** runs it, **member** participates and votes, **follower** watches and gets notified. A band with three admins and two hundred followers fits. So does a consensus-run co-op. - **Events.** Patches host events. People find them on the quilt, the map, and in their feeds. - **Governance, when you want it.** Proposals run on a real state machine (voting → approved → in effect), with threaded discussion alongside the vote, revisions, and vote tallies. Governance documents (*charters*) keep full version history and diffs, mirrored into per-patch **git repositories**. A band never has to touch any of it. A coalition can run itself entirely on it. Every new patch ships with the quilt's baseline lining — anti-discrimination included. - **No-password auth.** Invite links (no email server needed), magic links (if you configure SMTP), and passkeys for returning users. - **Seamrip.** The governance safety valve. Any admin can export the whole community as plain JSON: people, patches, memberships, events, proposals, votes, governance history. Anyone can import that into a fresh instance with every relationship intact. If leadership goes sideways, the community forks and keeps going. Power stays with the people in the quilt. - **Multi-quilt and federation.** The web app can merge several Patchwork instances into one view. An optional ActivityPub layer (HTTP signatures, WebFinger, inbox/outbox) lets quilts talk to the fediverse.",
+      "text": "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining — anti-discrimination\n  included.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse.",
       "words": 277,
       "tier": "prose",
       "status": "unreviewed",
@@ -6086,7 +6086,7 @@
     },
     {
       "id": "e2ad3fbfeff2",
-      "text": "Local scenes organize on rented land: platform groups, chat apps, and spreadsheets that can vanish, get throttled, or get sold overnight. Patchwork bets the other way. It's community infrastructure you own, simple enough to run on a Raspberry Pi and honest enough to walk away from. The governance model mirrors how open source already works: followers become members become admins, and the whole ladder is visible to everyone.",
+      "text": "Local scenes organize on rented land: platform groups, chat apps, and\nspreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nbets the other way. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone.",
       "words": 68,
       "tier": "prose",
       "status": "unreviewed",
@@ -6104,7 +6104,7 @@
     },
     {
       "id": "0e329defa0ca",
-      "text": "The reference instance maps the Lancaster, PA arts scene, but Patchwork is white-label from day one. Any community can deploy its own quilt.",
+      "text": "The reference instance maps the Lancaster, PA arts scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt.",
       "words": 23,
       "tier": "prose",
       "status": "unreviewed",
@@ -6176,7 +6176,7 @@
     },
     {
       "id": "24ec91872d44",
-      "text": "`make seed` (and `make seed-force` to wipe and re-seed) load a dense fictional dataset — patches across the governance spectrum (open collectives, approval-required co-ops, invite-only bands), events, proposals mid-vote, unclaimed venues awaiting claim. Every person and organization in it is invented; only the geography is real (docs/adr/009). It exists for local dev, the e2e suite, and evaluating Patchwork — never seed a real instance (the seeder refuses if it sees a database with real users).",
+      "text": "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork — never seed a real instance (the seeder refuses if it sees a\ndatabase with real users).",
       "words": 75,
       "tier": "prose",
       "status": "unreviewed",
@@ -6194,7 +6194,7 @@
     },
     {
       "id": "83d11af956d1",
-      "text": "The seed also creates long-lived dev sessions so you can experience the instance from any rung of the contributor ladder. Paste one of these in your browser console, then reload:",
+      "text": "The seed also creates long-lived dev sessions so you can experience the\ninstance from any rung of the contributor ladder. Paste one of these in\nyour browser console, then reload:",
       "words": 30,
       "tier": "prose",
       "status": "unreviewed",
@@ -6230,7 +6230,7 @@
     },
     {
       "id": "0d54a9f06c8b",
-      "text": "Everything lives in one SQLite file (`data/patchwork.db`) plus a `data/` directory of governance git repos. Back those up and you've backed up the community.",
+      "text": "Everything lives in one SQLite file (`data/patchwork.db`) plus a `data/`\ndirectory of governance git repos. Back those up and you've backed up the\ncommunity.",
       "words": 24,
       "tier": "prose",
       "status": "unreviewed",
@@ -6266,7 +6266,7 @@
     },
     {
       "id": "a7ca5da18090",
-      "text": "One file: `patchwork.yaml`. Instance identity, geography for the map, SMTP (optional: invite links and passkeys work without it), feature-module hints, community submissions, multi-quilt CORS, and the federation toggle. See `patchwork.yaml.example` for the annotated version.",
+      "text": "One file: `patchwork.yaml`. Instance identity, geography for the map, SMTP\n(optional: invite links and passkeys work without it), feature-module hints,\ncommunity submissions, multi-quilt CORS, and the federation toggle. See\n`patchwork.yaml.example` for the annotated version.",
       "words": 34,
       "tier": "prose",
       "status": "unreviewed",
@@ -6302,7 +6302,7 @@
     },
     {
       "id": "abb2005b0226",
-      "text": "Admins can also download the archive from the dashboard (`GET /api/v1/admin/export`). What travels and what deliberately doesn't (credentials, keys, federation identity) is documented in `docs/adr/002-seamrip-boundary.md`.",
+      "text": "Admins can also download the archive from the dashboard\n(`GET /api/v1/admin/export`). What travels and what deliberately doesn't\n(credentials, keys, federation identity) is documented in\n`docs/adr/002-seamrip-boundary.md`.",
       "words": 25,
       "tier": "prose",
       "status": "unreviewed",
@@ -6338,7 +6338,7 @@
     },
     {
       "id": "c712c2456300",
-      "text": "- Single process, single binary, no external services. Runs on a Pi 4. - SQLite with WAL. Cursor pagination. UUIDv7 IDs. - Config over code. Communities customize via `patchwork.yaml`. - Flat patches, no hierarchies. Connections are inferred, never drawn. - Governance is a spectrum, not a type. - Antifascist by design: the default lining includes an anti-discrimination baseline. - The exit is part of the product (seamrip).",
+      "text": "- Single process, single binary, no external services. Runs on a Pi 4.\n- SQLite with WAL. Cursor pagination. UUIDv7 IDs.\n- Config over code. Communities customize via `patchwork.yaml`.\n- Flat patches, no hierarchies. Connections are inferred, never drawn.\n- Governance is a spectrum, not a type.\n- Antifascist by design: the default lining includes an anti-discrimination\n  baseline.\n- The exit is part of the product (seamrip).",
       "words": 67,
       "tier": "prose",
       "status": "unreviewed",
@@ -6374,7 +6374,7 @@
     },
     {
       "id": "81c24e890a63",
-      "text": "Beta. Backend and frontend test suites are green (Go tests, 55 unit tests, 213 Playwright e2e tests). Design decisions are recorded in `docs/adr/` (`docs/adr/README.md` is the index).",
+      "text": "Beta. Backend and frontend test suites are green (Go tests, 55 unit tests,\n213 Playwright e2e tests). Design decisions are recorded in `docs/adr/`\n(`docs/adr/README.md` is the index).",
       "words": 27,
       "tier": "prose",
       "status": "unreviewed",
@@ -6410,7 +6410,7 @@
     },
     {
       "id": "dd83849acfb7",
-      "text": "Backend vocabulary is generic (nodes, events, proposals). The UI speaks textile (patches, quilts, charters). The mapping lives in `CONTEXT.md`; design decisions live in `docs/adr/`; `CLAUDE.md` orients coding agents.",
+      "text": "Backend vocabulary is generic (nodes, events, proposals). The UI speaks\ntextile (patches, quilts, charters). The mapping lives in\n`CONTEXT.md`; design decisions live in `docs/adr/`; `CLAUDE.md` orients\ncoding agents.",
       "words": 28,
       "tier": "prose",
       "status": "unreviewed",
@@ -6446,7 +6446,7 @@
     },
     {
       "id": "bd3051907791",
-      "text": "Patchwork has one maintainer, working heavily with Claude Code — AI-assisted commits say so in their trailers, and every change is reviewed before merge. The test suites and the ADR record in `docs/adr/` are what keep that workflow honest, and they apply to human and AI-written code alike.",
+      "text": "Patchwork has one maintainer, working heavily with Claude Code —\nAI-assisted commits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike.",
       "words": 48,
       "tier": "prose",
       "status": "unreviewed",
@@ -6482,7 +6482,7 @@
     },
     {
       "id": "ab0ef434f2c0",
-      "text": "Issues and pull requests are welcome — [CONTRIBUTING.md](CONTRIBUTING.md) has the dev setup and conventions. The project follows a [code of conduct](CODE_OF_CONDUCT.md). Security issues go through [SECURITY.md](SECURITY.md), never the public tracker.",
+      "text": "Issues and pull requests are welcome — [CONTRIBUTING.md](CONTRIBUTING.md)\nhas the dev setup and conventions. The project follows a\n[code of conduct](CODE_OF_CONDUCT.md). Security issues go through\n[SECURITY.md](SECURITY.md), never the public tracker.",
       "words": 30,
       "tier": "prose",
       "status": "unreviewed",
@@ -6518,7 +6518,7 @@
     },
     {
       "id": "76a321ffaef1",
-      "text": "Patchwork is free software under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). The license fits the project's ethos. Anyone can self-host, study, and seamrip (fork) it, and anyone who runs a modified Patchwork as a service has to offer their changes back to the communities using it.",
+      "text": "Patchwork is free software under the [GNU Affero General Public License\nv3.0](LICENSE) (AGPL-3.0). The license fits the project's ethos. Anyone can\nself-host, study, and seamrip (fork) it, and anyone who runs a modified\nPatchwork as a service has to offer their changes back to the communities\nusing it.",
       "words": 48,
       "tier": "prose",
       "status": "unreviewed",
@@ -36012,22 +36012,6 @@
     "3c6f29c1abf1",
     "abe6c2d1ce2d",
     "5a0788152817",
-    "24ef4f3c41f3",
-    "476f5f092045",
-    "b30da9f48258",
-    "115986159147",
-    "66c1b382448a",
-    "635105dce007",
-    "889fa7f8c018",
-    "140f2b2db87e",
-    "40db8f09071c",
-    "0e7d3360c919",
-    "58641f929916",
-    "233adc0999d8",
-    "404b6b6f5c1b",
-    "e53c62c7a655",
-    "aa914d2c1d89",
-    "439fe6c3bea7",
     "aa5cdb23d79a",
     "20a7399c6ad4",
     "34e5d76c4438",

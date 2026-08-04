@@ -13,6 +13,7 @@ import path from 'node:path';
 import { REPO_ROOT, LEDGER_PATH } from './scope.js';
 import { load, save, sync, stats, STATUSES } from './ledger.js';
 import { writeback } from './writeback.js';
+import { writeDrafts, pullDrafts, pruneDrafts } from './drafts.js';
 
 const [cmd, ...argv] = process.argv.slice(2);
 const flag = (name) => argv.includes(`--${name}`);
@@ -85,6 +86,56 @@ function cmdStats() {
     for (const [file, words] of top) console.log(`    ${String(words).padStart(5)}  ${file}`);
   }
   console.log('');
+}
+
+// ------------------------------------------------------------ draft/pull ---
+
+function cmdDraft() {
+  const val = (name) => {
+    const i = argv.indexOf(`--${name}`);
+    return i === -1 ? null : argv[i + 1];
+  };
+  const ledger = load();
+  const r = writeDrafts(ledger, {
+    file: val('file'), tier: val('tier'), force: flag('force'),
+  });
+
+  if (r.skippedDirty.length) {
+    console.log(`${YEL}skipped — these drafts hold writing that isn't recorded yet:${OFF}`);
+    for (const f of r.skippedDirty) console.log(`  copy/drafts/${f}.md`);
+    console.log(`${DIM}Run \`make copy-pull\` first, or pass --force to overwrite.${OFF}\n`);
+  }
+  if (!r.files.length) {
+    if (!r.skippedDirty.length) console.log('Nothing left to draft.');
+    return;
+  }
+  for (const f of r.files) console.log(`  ${f}`);
+  console.log(`\n${GREEN}${r.files.length} file${r.files.length === 1 ? '' : 's'}${OFF} · ${r.entries} strings.`);
+  console.log(`${DIM}Edit them anywhere, then: make copy-pull${OFF}`);
+}
+
+function cmdPull() {
+  const ledger = load();
+  const r = pullDrafts(ledger);
+
+  if (!r.files) { console.log('No drafts. Run `make copy-draft` first.'); return; }
+
+  save(ledger);
+  const bits = [];
+  if (r.recorded) bits.push(`${r.recorded} rewritten`);
+  if (r.mine) bits.push(`${r.mine} marked yours`);
+  if (r.fine) bits.push(`${r.fine} left as drafted`);
+  console.log(bits.length ? `${GREEN}${bits.join(' · ')}${OFF}` : 'No changes found in the drafts.');
+  if (r.unchanged) console.log(`${DIM}${r.unchanged} untouched${OFF}`);
+
+  if (r.unknown.length) {
+    console.log(`\n${YEL}${r.unknown.length} marker${r.unknown.length === 1 ? '' : 's'} matched no ledger entry${OFF}`);
+    console.log(`${DIM}The source changed under the draft. Re-run \`make copy-sync\` and re-draft.${OFF}`);
+  }
+
+  const pruned = pruneDrafts(load());
+  if (pruned.length) console.log(`${DIM}cleared ${pruned.length} finished draft file(s)${OFF}`);
+  if (r.recorded) console.log(`\nNext: ${GREEN}make copy-apply${OFF} (dry run), then ${GREEN}APPLY=1${OFF}.`);
 }
 
 // ---------------------------------------------------------------- decide ---
@@ -289,12 +340,12 @@ function cmdReport() {
 
 const COMMANDS = {
   sync: cmdSync, stats: cmdStats, apply: cmdApply, check: cmdCheck,
-  report: cmdReport, decide: cmdDecide,
+  report: cmdReport, decide: cmdDecide, draft: cmdDraft, pull: cmdPull,
   review: async () => { await import('./serve.js'); },
 };
 
 if (!COMMANDS[cmd]) {
-  console.error('usage: node tools/copy-ledger/cli.js <sync|stats|review|decide|apply|check|report>');
+  console.error('usage: node tools/copy-ledger/cli.js <sync|stats|review|draft|pull|decide|apply|check|report>');
   process.exit(1);
 }
 await COMMANDS[cmd]();
