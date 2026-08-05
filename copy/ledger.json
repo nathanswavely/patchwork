@@ -21,11 +21,11 @@
       ]
     },
     {
-      "id": "cf772c809c08",
-      "text": "Thanks for looking under the hood. Patchwork is young and run by a single\nmaintainer, so issues and pull requests are genuinely useful — including\nsmall ones (docs, error copy, test gaps).",
-      "words": 32,
+      "id": "1481409021b1",
+      "text": "If you see any issues or have any ideas, please reach out! I'm building Patchwork as a labor of love, and there are many things that I may have missed. There may also be security concerns that I in my front-end focused experienced missed. Please feel free to PR, big or small.",
+      "words": 52,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33,10 +33,11 @@
           "file": "CONTRIBUTING.md",
           "line": 3,
           "kind": "md-block",
-          "raw": "Thanks for looking under the hood. Patchwork is young and run by a single\nmaintainer, so issues and pull requests are genuinely useful — including\nsmall ones (docs, error copy, test gaps).",
+          "raw": "If you see any issues or have any ideas, please reach out! I'm building Patchwork as a labor of love, and there are many things that I may have missed. There may also be security concerns that I in my front-end focused experienced missed. Please feel free to PR, big or small.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Thanks for looking under the hood. Patchwork is young and run by a single\nmaintainer, so issues and pull requests are genuinely useful — including\nsmall ones (docs, error copy, test gaps)."
     },
     {
       "id": "0754b41cb967",
@@ -49,7 +50,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 7,
+          "line": 5,
           "kind": "md-block",
           "raw": "## Dev setup",
           "quote": null
@@ -67,7 +68,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 9,
+          "line": 7,
           "kind": "md-block",
           "raw": "Requirements: Go 1.25+, Node 20+.",
           "quote": null
@@ -75,22 +76,23 @@
       ]
     },
     {
-      "id": "2847694929a8",
-      "text": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else — useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously.",
-      "words": 66,
+      "id": "de31e0f2567f",
+      "text": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else. This is useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously.",
+      "words": 67,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 18,
+          "line": 16,
           "kind": "md-block",
-          "raw": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else — useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously.",
+          "raw": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else. This is useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else — useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously."
     },
     {
       "id": "38f8a1577942",
@@ -103,7 +105,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 25,
+          "line": 23,
           "kind": "md-block",
           "raw": "Before opening a PR:",
           "quote": null
@@ -121,7 +123,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 32,
+          "line": 30,
           "kind": "md-block",
           "raw": "CI runs the same suites plus `go vet`, `govulncheck`, and npm audit.",
           "quote": null
@@ -139,7 +141,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 34,
+          "line": 32,
           "kind": "md-block",
           "raw": "## Finding your way around",
           "quote": null
@@ -147,22 +149,23 @@
       ]
     },
     {
-      "id": "87fac1aace0f",
-      "text": "- `CONTEXT.md` — the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks textile (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- `docs/adr/` — design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- `CLAUDE.md` — orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it.",
-      "words": 88,
+      "id": "4b77026b0b0e",
+      "text": "- CONTEXT.md: the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks \"textile\" (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- docs/adr/: design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- CLAUDE.md: orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it.",
+      "words": 85,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 36,
+          "line": 34,
           "kind": "md-block",
-          "raw": "- `CONTEXT.md` — the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks textile (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- `docs/adr/` — design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- `CLAUDE.md` — orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it.",
+          "raw": "- CONTEXT.md: the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks \"textile\" (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- docs/adr/: design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- CLAUDE.md: orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "- `CONTEXT.md` — the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks textile (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- `docs/adr/` — design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- `CLAUDE.md` — orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it."
     },
     {
       "id": "4b73eb9e9b05",
@@ -175,7 +178,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 46,
+          "line": 44,
           "kind": "md-block",
           "raw": "## Conventions",
           "quote": null
@@ -183,22 +186,23 @@
       ]
     },
     {
-      "id": "d373f492a212",
-      "text": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone —\n  regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies.",
-      "words": 66,
+      "id": "7518fa307305",
+      "text": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone.\n  Regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies.",
+      "words": 65,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 48,
+          "line": 46,
           "kind": "md-block",
-          "raw": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone —\n  regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies.",
+          "raw": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone.\n  Regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone —\n  regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies."
     },
     {
       "id": "7ec757d00280",
@@ -211,7 +215,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 56,
+          "line": 54,
           "kind": "md-block",
           "raw": "## ADR and migration numbers",
           "quote": null
@@ -223,13 +227,13 @@
       "text": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 58,
+          "line": 56,
           "kind": "md-block",
           "raw": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
           "quote": null
@@ -241,13 +245,13 @@
       "text": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 67,
+          "line": 65,
           "kind": "md-block",
           "raw": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
           "quote": null
@@ -265,7 +269,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 70,
+          "line": 68,
           "kind": "md-block",
           "raw": "## AI-assisted contributions",
           "quote": null
@@ -273,22 +277,23 @@
       ]
     },
     {
-      "id": "bd54cef84d08",
-      "text": "Welcome — much of Patchwork is built that way. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process.",
+      "id": "67c60e997b9f",
+      "text": "Acceptable. Much of Patchwork is built via AI coding. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process.",
       "words": 41,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 72,
+          "line": 70,
           "kind": "md-block",
-          "raw": "Welcome — much of Patchwork is built that way. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process.",
+          "raw": "Acceptable. Much of Patchwork is built via AI coding. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Welcome — much of Patchwork is built that way. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process."
     },
     {
       "id": "523123590d49",
@@ -301,7 +306,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 77,
+          "line": 75,
           "kind": "md-block",
           "raw": "## Security issues",
           "quote": null
@@ -319,7 +324,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 79,
+          "line": 77,
           "kind": "md-block",
           "raw": "Never through the public tracker — see [SECURITY.md](SECURITY.md).",
           "quote": null
@@ -349,7 +354,7 @@
       "text": "This page is for community organizers deciding whether Patchwork fits\nthem. It assumes no technical background. If you already know you want\nto deploy one and how, go straight to [DEPLOYMENT.md](DEPLOYMENT.md).",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -381,11 +386,11 @@
       ]
     },
     {
-      "id": "d7e25c19bea7",
-      "text": "Patchwork is a platform for the communities of one place. A city, a\nscene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together the patches form a\n**quilt**, a live picture of your community where groups that share\npeople sit closer together, because shared people are what connection\nactually is.",
-      "words": 64,
+      "id": "d0c49db724c2",
+      "text": "Patchwork is a hyper-local platform. A city, a\nlocal-scene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together, the patches form a\n**quilt.**",
+      "words": 37,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -393,46 +398,49 @@
           "file": "docs/START-A-QUILT.md",
           "line": 9,
           "kind": "md-block",
-          "raw": "Patchwork is a platform for the communities of one place. A city, a\nscene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together the patches form a\n**quilt**, a live picture of your community where groups that share\npeople sit closer together, because shared people are what connection\nactually is.",
+          "raw": "Patchwork is a hyper-local platform. A city, a\nlocal-scene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together, the patches form a\n**quilt.**",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Patchwork is a platform for the communities of one place. A city, a\nscene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together the patches form a\n**quilt**, a live picture of your community where groups that share\npeople sit closer together, because shared people are what connection\nactually is."
     },
     {
-      "id": "a70df35cec6d",
-      "text": "Nobody sells ads here. No algorithm decides what anyone sees. The\nsoftware is open source, and each quilt runs on a machine its own\ncommunity controls, administered by a person that community can name.",
-      "words": 34,
+      "id": "58e47221b1db",
+      "text": "This platform is not ad supported by default (and if your admin starts including ads, you have the right to \"seamrip.\" There are also no personalized algorithms.  The\nsoftware is open source, and each quilt runs on a machine its own community controls, administered by a person or persons that community can name and shame.",
+      "words": 55,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 16,
+          "line": 14,
           "kind": "md-block",
-          "raw": "Nobody sells ads here. No algorithm decides what anyone sees. The\nsoftware is open source, and each quilt runs on a machine its own\ncommunity controls, administered by a person that community can name.",
+          "raw": "This platform is not ad supported by default (and if your admin starts including ads, you have the right to \"seamrip.\" There are also no personalized algorithms.  The\nsoftware is open source, and each quilt runs on a machine its own community controls, administered by a person or persons that community can name and shame.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Nobody sells ads here. No algorithm decides what anyone sees. The\nsoftware is open source, and each quilt runs on a machine its own\ncommunity controls, administered by a person that community can name."
     },
     {
-      "id": "b30d91c53b31",
-      "text": "It helps to know up front what Patchwork is a poor fit for. It is not a\nsocial network you post on all day, and there is no company behind it,\nso nobody hosts it for you. Someone in your community has to hold it,\nand that requirement is the design working as intended, since a\ncommunity that runs its own infrastructure answers to nobody upstream.",
+      "id": "5be3a2e684f2",
+      "text": "It helps to know up front what Patchwork is a poor fit for. It is not designed to be a social network you post on all day, and there is no company behind it, so someone (or someones) in your community has to hold it, and that requirement is the design working as intended, since a community that runs its own infrastructure answers to nobody upstream.",
       "words": 66,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 20,
+          "line": 17,
           "kind": "md-block",
-          "raw": "It helps to know up front what Patchwork is a poor fit for. It is not a\nsocial network you post on all day, and there is no company behind it,\nso nobody hosts it for you. Someone in your community has to hold it,\nand that requirement is the design working as intended, since a\ncommunity that runs its own infrastructure answers to nobody upstream.",
+          "raw": "It helps to know up front what Patchwork is a poor fit for. It is not designed to be a social network you post on all day, and there is no company behind it, so someone (or someones) in your community has to hold it, and that requirement is the design working as intended, since a community that runs its own infrastructure answers to nobody upstream.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "It helps to know up front what Patchwork is a poor fit for. It is not a\nsocial network you post on all day, and there is no company behind it,\nso nobody hosts it for you. Someone in your community has to hold it,\nand that requirement is the design working as intended, since a\ncommunity that runs its own infrastructure answers to nobody upstream."
     },
     {
       "id": "500dde93a0f8",
@@ -445,7 +453,7 @@
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 26,
+          "line": 19,
           "kind": "md-block",
           "raw": "## What running a quilt asks of you",
           "quote": null
@@ -463,7 +471,7 @@
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 28,
+          "line": 21,
           "kind": "md-block",
           "raw": "Be honest with yourself about this part first.",
           "quote": null
@@ -471,58 +479,61 @@
       ]
     },
     {
-      "id": "9486c96406f3",
-      "text": "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. That's the Label, a page on every quilt\nstating who stewards it, what it depends on, and what it costs. If\nnobody in your community will be named, you are not ready yet, and it\ncosts nothing to learn that now.",
-      "words": 56,
+      "id": "43446cf6a27b",
+      "text": "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. There is a page on every quilt called \"the label\"\nthat identifies who stewards it, what it depends on, and what it costs.",
+      "words": 38,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 30,
+          "line": 23,
           "kind": "md-block",
-          "raw": "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. That's the Label, a page on every quilt\nstating who stewards it, what it depends on, and what it costs. If\nnobody in your community will be named, you are not ready yet, and it\ncosts nothing to learn that now.",
+          "raw": "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. There is a page on every quilt called \"the label\"\nthat identifies who stewards it, what it depends on, and what it costs.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. That's the Label, a page on every quilt\nstating who stewards it, what it depends on, and what it costs. If\nnobody in your community will be named, you are not ready yet, and it\ncosts nothing to learn that now."
     },
     {
-      "id": "e4216163223a",
-      "text": "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, Patchwork is the wrong\ntool for you.",
-      "words": 67,
+      "id": "65fad549986f",
+      "text": "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, find or build a different tool.",
+      "words": 66,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 36,
+          "line": 27,
           "kind": "md-block",
-          "raw": "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, Patchwork is the wrong\ntool for you.",
+          "raw": "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, find or build a different tool.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, Patchwork is the wrong\ntool for you."
     },
     {
-      "id": "121d1ae15012",
-      "text": "**Judgment, occasionally.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software gives you the levers. Pulling them is\nhuman work. Expect a few hours a month once things settle, more during\nlaunch.",
-      "words": 48,
+      "id": "669ea0aa6414",
+      "text": "**Judgment when necessary.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software provides the levers for governance and hierarchy, because community on the internet is impossible without them. Exercising those levers is human work. Being a steward will require time devoted to community building. If it is too much, find partners or hand off to someone else.",
+      "words": 73,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 44,
+          "line": 34,
           "kind": "md-block",
-          "raw": "**Judgment, occasionally.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software gives you the levers. Pulling them is\nhuman work. Expect a few hours a month once things settle, more during\nlaunch.",
+          "raw": "**Judgment when necessary.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software provides the levers for governance and hierarchy, because community on the internet is impossible without them. Exercising those levers is human work. Being a steward will require time devoted to community building. If it is too much, find partners or hand off to someone else.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "**Judgment, occasionally.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software gives you the levers. Pulling them is\nhuman work. Expect a few hours a month once things settle, more during\nlaunch."
     },
     {
       "id": "fe5269f31d36",
@@ -535,7 +546,7 @@
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 50,
+          "line": 38,
           "kind": "md-block",
           "raw": "## What it costs",
           "quote": null
@@ -543,40 +554,42 @@
       ]
     },
     {
-      "id": "afb2ed4e3e0c",
-      "text": "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it.",
-      "words": 71,
+      "id": "1e9a1386eb8f",
+      "text": "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it if you're comfortable building out the infra.",
+      "words": 78,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 52,
+          "line": 40,
           "kind": "md-block",
-          "raw": "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it.",
+          "raw": "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it if you're comfortable building out the infra.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it."
     },
     {
-      "id": "f5c3ca80920f",
-      "text": "That is the whole bill. Your quilt's Label states your actual numbers\nto your community, so the people who benefit can help carry them.",
-      "words": 24,
+      "id": "f9c632b150d3",
+      "text": "Your quilt's label provides an opportunity for you to be transparent about costs with your community. Full description of expenses is recommended.",
+      "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 59,
+          "line": 47,
           "kind": "md-block",
-          "raw": "That is the whole bill. Your quilt's Label states your actual numbers\nto your community, so the people who benefit can help carry them.",
+          "raw": "Your quilt's label provides an opportunity for you to be transparent about costs with your community. Full description of expenses is recommended.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "That is the whole bill. Your quilt's Label states your actual numbers\nto your community, so the people who benefit can help carry them."
     },
     {
       "id": "0f668b576c32",
@@ -589,7 +602,7 @@
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 62,
+          "line": 49,
           "kind": "md-block",
           "raw": "## Ways to get one running",
           "quote": null
@@ -597,58 +610,61 @@
       ]
     },
     {
-      "id": "03eecba7e607",
-      "text": "The honest first answer is someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map.",
-      "words": 39,
+      "id": "9dec395cda91",
+      "text": "The honest first answer is to find someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map.",
+      "words": 41,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 64,
+          "line": 51,
           "kind": "md-block",
-          "raw": "The honest first answer is someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map.",
+          "raw": "The honest first answer is to find someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The honest first answer is someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map."
     },
     {
-      "id": "8ab89afd8726",
-      "text": "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is deliberately boring to operate. One process. One database\nfile. Backups are copying a file.",
-      "words": 43,
+      "id": "b01a3c2df6a9",
+      "text": "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is well documented. You may need to do some googling and troubleshooting, but self-hosting is possible.",
+      "words": 44,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 69,
+          "line": 56,
           "kind": "md-block",
-          "raw": "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is deliberately boring to operate. One process. One database\nfile. Backups are copying a file.",
+          "raw": "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is well documented. You may need to do some googling and troubleshooting, but self-hosting is possible.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is deliberately boring to operate. One process. One database\nfile. Backups are copying a file."
     },
     {
-      "id": "6bd222f1b784",
-      "text": "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would rather help a real community launch\nthan ship another feature.",
-      "words": 28,
+      "id": "2e17b652e875",
+      "text": "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would love to help you get started.",
+      "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 74,
+          "line": 60,
           "kind": "md-block",
-          "raw": "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would rather help a real community launch\nthan ship another feature.",
+          "raw": "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would love to help you get started.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would rather help a real community launch\nthan ship another feature."
     },
     {
       "id": "5d278f0153c7",
@@ -661,7 +677,7 @@
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 78,
+          "line": 63,
           "kind": "md-block",
           "raw": "## The promises that keep it honest",
           "quote": null
@@ -669,22 +685,23 @@
       ]
     },
     {
-      "id": "2ed32e2b4d1e",
-      "text": "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a seamrip:\nif leadership goes sideways, the community takes its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too.",
-      "words": 106,
+      "id": "41abba2466ce",
+      "text": "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's public data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a \"seamrip.\"\nIf leadership goes sideways, the community can take its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards will be pressured to stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too.",
+      "words": 112,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 80,
+          "line": 65,
           "kind": "md-block",
-          "raw": "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a seamrip:\nif leadership goes sideways, the community takes its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too.",
+          "raw": "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's public data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a \"seamrip.\"\nIf leadership goes sideways, the community can take its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards will be pressured to stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a seamrip:\nif leadership goes sideways, the community takes its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too."
     },
     {
       "id": "2f169370e270",
@@ -697,7 +714,7 @@
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 90,
+          "line": 75,
           "kind": "md-block",
           "raw": "## Where to go next",
           "quote": null
@@ -705,22 +722,23 @@
       ]
     },
     {
-      "id": "e1423ed91a5c",
-      "text": "Browse a living quilt first if you can. The reference instance serves\nthe arts scene of Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project.",
-      "words": 39,
+      "id": "ab81ac65ea72",
+      "text": "Browse a living quilt first if you can. The reference instance serves Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project.",
+      "words": 35,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "docs/START-A-QUILT.md",
-          "line": 92,
+          "line": 77,
           "kind": "md-block",
-          "raw": "Browse a living quilt first if you can. The reference instance serves\nthe arts scene of Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project.",
+          "raw": "Browse a living quilt first if you can. The reference instance serves Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Browse a living quilt first if you can. The reference instance serves\nthe arts scene of Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project."
     },
     {
       "id": "632c245387b6",
@@ -1013,11 +1031,11 @@
       ]
     },
     {
-      "id": "ea0b4b46a435",
-      "text": "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead. We keep things simple.",
-      "words": 25,
+      "id": "8bfbe04fd5d7",
+      "text": "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead.",
+      "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1025,10 +1043,11 @@
           "file": "internal/governance/defaults.go",
           "line": 230,
           "kind": "go-doc-block",
-          "raw": "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead. We keep things simple.",
+          "raw": "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead. We keep things simple."
     },
     {
       "id": "594331814679",
@@ -1049,11 +1068,11 @@
       ]
     },
     {
-      "id": "9fc41714c847",
-      "text": "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. If you care, vote.\n- The admins (maintainers) handle day-to-day decisions that don't need a vote.",
-      "words": 40,
+      "id": "840f0d074781",
+      "text": "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. \n- The admins (maintainers) handle day-to-day decisions that don't need a vote.",
+      "words": 36,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1061,10 +1080,11 @@
           "file": "internal/governance/defaults.go",
           "line": 234,
           "kind": "go-doc-block",
-          "raw": "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. If you care, vote.\n- The admins (maintainers) handle day-to-day decisions that don't need a vote.",
+          "raw": "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. \n- The admins (maintainers) handle day-to-day decisions that don't need a vote.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. If you care, vote.\n- The admins (maintainers) handle day-to-day decisions that don't need a vote."
     },
     {
       "id": "3ceb70c6e49c",
@@ -1096,7 +1116,7 @@
       "text": "- Anyone can join. This patch is open.\n- Members can vote on proposals and participate fully.\n- Followers can see what we're up to without participating in governance.\n- Admins manage the patch, approve changes, and keep things running.",
       "words": 40,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1128,11 +1148,11 @@
       ]
     },
     {
-      "id": "030fea55774d",
-      "text": "- You can leave at any time. No hard feelings.\n- If you want to take the pattern and start something new, seamrip it.",
-      "words": 24,
+      "id": "446c9da5f54d",
+      "text": "- You can leave at any time.\n- If you want to take the pattern and start something new, seamrip it.",
+      "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1140,10 +1160,11 @@
           "file": "internal/governance/defaults.go",
           "line": 248,
           "kind": "go-doc-block",
-          "raw": "- You can leave at any time. No hard feelings.\n- If you want to take the pattern and start something new, seamrip it.",
+          "raw": "- You can leave at any time.\n- If you want to take the pattern and start something new, seamrip it.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "- You can leave at any time. No hard feelings.\n- If you want to take the pattern and start something new, seamrip it."
     },
     {
       "id": "87115ec29d1e",
@@ -1168,7 +1189,7 @@
       "text": "- Any member can propose changes to this document through a proposal.\n- Changes pass by majority vote.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1211,7 +1232,7 @@
       "text": "This patch exists to serve our community through shared space, resources, and collective decision-making. We believe that the people who do the work should have a voice in how things run.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1247,7 +1268,7 @@
       "text": "We follow a meritocratic model inspired by open source communities. Authority is earned through sustained contribution, not elected or inherited.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1265,7 +1286,7 @@
       "text": "- **Followers** are community members who stay informed. They can attend events and observe governance.\n- **Members** have demonstrated commitment to the patch. They can vote on proposals and participate in governance.\n- **Admins** are experienced members who have been nominated by existing admins and ratified by the community. They manage day-to-day operations.",
       "words": 53,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1301,7 +1322,7 @@
       "text": "Existing admins may nominate any active member for an admin role. The nomination is posted as a proposal. The community has 7 days to discuss and vote. A majority of active members must approve.",
       "words": 34,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1337,7 +1358,7 @@
       "text": "Admins can step down at any time. When an admin steps down, remaining admins nominate a successor from active members.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1373,7 +1394,7 @@
       "text": "- **Day-to-day decisions**: Admins handle routine operations.\n- **Proposals**: Any member can submit a proposal for community decisions.\n- **Voting period**: 7 days for most proposals.\n- **Quorum**: 25% of active members must participate for a vote to be valid.\n- **Passing threshold**: Simple majority for most decisions. Supermajority (2/3) for amendments to governance documents.",
       "words": 55,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1391,7 +1412,7 @@
       "text": "- Membership requires approval. Apply and an admin will review your request.\n- Members who haven't participated in 60 days may be contacted about their status.\n- Admins inactive for 60 days will be asked to step down or re-engage.",
       "words": 40,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1448,7 +1469,7 @@
       "text": "Any member can propose changes to this operating agreement. Amendments require a supermajority (2/3) vote with 25% quorum.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1530,7 +1551,7 @@
       "text": "Money is where trust dies in community. Every dollar in and every dollar out should be visible to every member, in real records anyone can open at any time. Nobody should have to wait for a treasurer's report at a meeting.",
       "words": 41,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1573,7 +1594,7 @@
       "text": "All income (dues, grants, donations, event revenue, sales) is recorded with:\n- Amount\n- Source\n- Date\n- Purpose or restriction (if any)",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1616,7 +1637,7 @@
       "text": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- What it was for\n- Who approved it",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1652,7 +1673,7 @@
       "text": "- **Under $50**: Any admin can approve.\n- **$50–$500**: Requires two admin approvals.\n- **Over $500**: Requires a proposal and community vote.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1713,7 +1734,7 @@
       "text": "A financial summary is posted monthly and is always accessible to members. Anyone can ask questions about any transaction at any time.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1770,11 +1791,11 @@
       ]
     },
     {
-      "id": "b46764fc7142",
-      "text": "Conflict is normal. How we handle it is what matters. This process exists so that disagreements don't fester into fractures.",
-      "words": 20,
+      "id": "c93efe428c27",
+      "text": "Conflict is not desired, but it is expected. This process exists so that disagreements don't become schisms.",
+      "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1782,10 +1803,11 @@
           "file": "internal/governance/defaults.go",
           "line": 346,
           "kind": "go-doc-block",
-          "raw": "Conflict is normal. How we handle it is what matters. This process exists so that disagreements don't fester into fractures.",
+          "raw": "Conflict is not desired, but it is expected. This process exists so that disagreements don't become schisms.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Conflict is normal. How we handle it is what matters. This process exists so that disagreements don't fester into fractures."
     },
     {
       "id": "6af8d530a053",
@@ -1810,7 +1832,7 @@
       "text": "If you have an issue with someone, talk to them directly first. Most conflicts come from misunderstanding, not malice. Be specific about what happened and what you need.",
       "words": 28,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1853,7 +1875,7 @@
       "text": "If direct conversation doesn't resolve it, ask a neutral member or admin to mediate. The mediator's job is to listen to both sides and help find common ground, not to judge.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1889,7 +1911,7 @@
       "text": "If mediation doesn't work, submit a formal complaint to the admins. Include:\n- What happened (specific actions, not character judgments)\n- When it happened\n- What resolution you're seeking",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1943,7 +1965,7 @@
       "text": "If you disagree with the admin's resolution, you can escalate to a community review. The situation is presented (with identities protected where possible) as a proposal. The community votes on the resolution.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1986,7 +2008,7 @@
       "text": "Depending on severity: warning, temporary suspension, permanent removal. Violations of the community standards (the lining) may result in immediate action.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2025,11 +2047,11 @@
       ]
     },
     {
-      "id": "23c7d8626dd1",
-      "text": "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions use anonymized descriptions.",
-      "words": 21,
+      "id": "7a468140239f",
+      "text": "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions should use anonymized descriptions.",
+      "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2037,10 +2059,11 @@
           "file": "internal/governance/defaults.go",
           "line": 375,
           "kind": "go-doc-block",
-          "raw": "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions use anonymized descriptions.",
+          "raw": "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions should use anonymized descriptions.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions use anonymized descriptions."
     },
     {
       "id": "0413531ed46c",
@@ -2083,7 +2106,7 @@
       "text": "This charter establishes the governance framework for this patch. It is the foundational document that defines our mission, structure, and principles. All other governance documents build on this charter.",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2101,7 +2124,7 @@
       "text": "We exist to serve our community through collective organizing, shared resources, and transparent self-governance. We believe that the people who build the culture should govern the culture.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2137,7 +2160,7 @@
       "text": "- **Transparency**: All decisions, finances, and governance are public to members.\n- **Accountability**: Power rotates. No one stays in charge indefinitely.\n- **Inclusion**: We actively work to include voices that are typically excluded.\n- **Self-determination**: We govern ourselves. We don't answer to external authorities that don't share our values.\n- **Right to seamrip**: Any group can take our patterns and build their own quilt.",
       "words": 64,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2191,7 +2214,7 @@
       "text": "This patch is governed by an elected council of up to 7 admins. The council handles day-to-day decisions, facilitates community governance, and is accountable to the membership.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2227,7 +2250,7 @@
       "text": "Members are the foundation. They vote on proposals, elect the council, and can propose amendments to any governance document. Membership requires approval and a 30-day tenure before voting rights activate.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2299,7 +2322,7 @@
       "text": "This patch is part of a larger patchwork. We agree to uphold the community standards (the lining) and to participate in good faith with other patches on the quilt.",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2353,7 +2376,7 @@
       "text": "### 1.1 Council Elections\nElections are held annually. All members who have been active for at least 30 days are eligible to vote.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2371,7 +2394,7 @@
       "text": "### 1.2 Nominations\nAny member may nominate themselves or another member for a council seat. Nominations open 14 days before the election and close 7 days before.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2389,7 +2412,7 @@
       "text": "### 1.3 Voting\nElections use ranked-choice voting. Each member ranks candidates in order of preference. Voting is open for 14 days.",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2407,7 +2430,7 @@
       "text": "### 1.4 Term Limits\nCouncil members serve 12-month terms. There is no limit on the number of terms, but consecutive terms require re-election.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2443,7 +2466,7 @@
       "text": "### 2.1 Quorum\nA majority of council members must be present (or voting) for council decisions.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2461,7 +2484,7 @@
       "text": "### 2.2 Decision Making\nThe council operates by consensus when possible. If consensus cannot be reached within a reasonable timeframe, decisions fall back to a supermajority (2/3) vote of council members.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2479,7 +2502,7 @@
       "text": "### 2.3 Removal\nA council member can be removed by a supermajority vote of the full membership. A removal proposal requires signatures from at least 10% of active members to be considered.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2515,7 +2538,7 @@
       "text": "### 3.1 Joining\nNew members must be approved by a council member. Approval should be granted to anyone who commits to the community standards and participates in good faith.",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2533,7 +2556,7 @@
       "text": "### 3.2 Voting Rights\nVoting rights activate after 30 days of active membership. This ensures voters have context for the decisions they're making.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2551,7 +2574,7 @@
       "text": "### 3.3 Leaving\nMembers may leave at any time. Membership data is retained for 30 days in case of return.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2587,7 +2610,7 @@
       "text": "### 4.1 Proposing Amendments\nAny member can propose an amendment to these bylaws or any governance document by submitting a proposal.",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2605,7 +2628,7 @@
       "text": "### 4.2 Review Period\nAmendment proposals are open for 14 days. Discussion and voting run over\nthat same window: comment on the proposal, and change your vote, at any\npoint before it closes.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2623,7 +2646,7 @@
       "text": "### 4.3 Approval\nAmendments to the bylaws require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2641,7 +2664,7 @@
       "text": "### 4.4 Implementation\nApproved amendments are not auto-applied. A council member must review and merge the change to ensure consistency with other governance documents.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2677,7 +2700,7 @@
       "text": "### 5.1 Dissolution\nThis patch may be dissolved by a consensus vote of the membership with at least 50% quorum.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2695,7 +2718,7 @@
       "text": "### 5.2 Seamrip\nAny group of members may seamrip (take the governance documents, tools, and their data) and start a new patch. This is a right the parent patch must facilitate in good faith.",
       "words": 34,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2713,7 +2736,7 @@
       "text": "### 5.3 Assets\nUpon dissolution, remaining assets are distributed as determined by the final membership vote. If no consensus is reached, assets are donated to a community organization chosen by the council.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2731,7 +2754,7 @@
       "text": "Every dollar in and every dollar out is recorded and visible to every member. Transparency here is structural, written into the rules rather than left to whoever happens to hold the books. This document establishes the rules for how money moves through this patch.",
       "words": 44,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2749,7 +2772,7 @@
       "text": "All income (dues, grants, donations, event revenue, sponsorships, sales) is recorded with:\n- Amount\n- Source\n- Date received\n- Purpose or restriction (if any)\n- Council member who acknowledged receipt",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2767,7 +2790,7 @@
       "text": "All spending is recorded with:\n- Amount\n- Recipient\n- Date\n- Description of what it was for\n- Which council member approved it\n- Budget line item it falls under",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2803,7 +2826,7 @@
       "text": "| Amount | Required Approval |\n|--------|------------------|\n| Under $100 | Any council member |\n| $100–$1,000 | Two council members |\n| $1,000–$5,000 | Council vote (majority) |\n| Over $5,000 | Community vote (proposal) |",
       "words": 37,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2839,7 +2862,7 @@
       "text": "The council proposes an annual budget as a proposal. The budget must be approved by a majority vote with 50% quorum. Mid-year budget amendments follow the same process.",
       "words": 28,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2875,7 +2898,7 @@
       "text": "An annual financial review is conducted by a member who is not on the council. The review is published to all members.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2893,7 +2916,7 @@
       "text": "- Monthly financial summaries posted to governance docs\n- Annual comprehensive report with review\n- Any member can request details on any transaction at any time",
       "words": 26,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2929,7 +2952,7 @@
       "text": "This patch is committed to resolving conflicts fairly, transparently, and with respect for all involved. This process exists to protect people, not to punish them.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2965,7 +2988,7 @@
       "text": "This process applies to conflicts between members, between members and admins, and between patches. It does not replace legal processes where applicable.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3001,7 +3024,7 @@
       "text": "Parties are encouraged to resolve conflicts directly. Be specific about actions and impacts, not character judgments.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3019,7 +3042,7 @@
       "text": "If direct resolution fails, either party may request mediation. A neutral mediator is selected from a pool of trained members or, if none are available, an admin not involved in the conflict.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3037,7 +3060,7 @@
       "text": "The mediator:\n- Meets separately with each party\n- Facilitates a joint conversation\n- Helps identify common ground and next steps\n- Documents the agreement (shared only with involved parties)",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3073,7 +3096,7 @@
       "text": "If mediation does not resolve the conflict, a formal grievance may be filed with the council. The grievance must include:\n- Specific actions that caused harm\n- Dates and context\n- Steps already taken to resolve\n- Requested resolution",
       "words": 39,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3127,7 +3150,7 @@
       "text": "If either party disagrees with the council's resolution, they may appeal to the full membership. The appeal is presented as a proposal with identities protected where possible. The community votes on the resolution.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3163,7 +3186,7 @@
       "text": "In cases of immediate safety concern, any admin may take emergency action (temporary suspension) without waiting for the full process. Emergency actions must be reviewed by the council within 48 hours.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3181,7 +3204,7 @@
       "text": "- Verbal or written warning\n- Required mediation or training\n- Temporary suspension (with defined end date)\n- Permanent removal (requires council vote, appealable to membership)",
       "words": 26,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3199,7 +3222,7 @@
       "text": "All conflict resolution proceedings are confidential. Public communications use anonymized descriptions. Participants may share their own experience but should not share others' private information.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3235,7 +3258,7 @@
       "text": "Records of formal grievances are maintained by the council for 2 years. They are accessible only to current council members and the involved parties.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3289,7 +3312,7 @@
       "text": "Power must rotate. This document ensures that leadership transitions are planned, transparent, and don't depend on any single person.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3325,7 +3348,7 @@
       "text": "### Schedule\nCouncil elections are held annually. The election timeline:\n- **Day 1–14**: Nomination period. Any member can nominate themselves or another member.\n- **Day 15–28**: Campaign/discussion period. Candidates share their vision.\n- **Day 29–42**: Voting period (14 days). Ranked-choice voting.\n- **Day 43**: Results announced. New council seated.",
       "words": 49,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3343,7 +3366,7 @@
       "text": "### Transition\nOutgoing council members have 7 days to transfer responsibilities, access, and context to incoming members. A transition document is published to governance docs.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3379,7 +3402,7 @@
       "text": "### Single Vacancy\nIf one council seat becomes vacant mid-term, the council may appoint a replacement from active members. The appointment must be ratified by the community within 14 days.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3397,7 +3420,7 @@
       "text": "### Multiple Vacancies\nIf more than half the council seats are vacant, an emergency election is triggered immediately using the regular election process with compressed timelines (7 days each phase instead of 14).",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3415,7 +3438,7 @@
       "text": "### Total Vacancy\nIf all council seats are vacant (the \"bus factor\" scenario), the three longest-tenured active members become interim admins. They must initiate an emergency election within 7 days.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3451,7 +3474,7 @@
       "text": "### Detection\nCouncil members who have not participated in governance (votes, proposals, discussions) for 30 consecutive days are contacted.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3469,7 +3492,7 @@
       "text": "### Process\n- Day 30: Notification sent to inactive council member.\n- Day 45: If no response, the council discusses the situation.\n- Day 60: If still inactive, the seat is declared vacant and succession procedures begin.",
       "words": 37,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3505,7 +3528,7 @@
       "text": "If a group of members seamrips to create a new patch, they carry their governance documents with them. The original patch's succession plan continues to operate independently.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3523,7 +3546,7 @@
       "text": "Changes to the succession plan require consensus. If consensus cannot be reached, a supermajority (2/3) with 50% quorum is required.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3703,7 +3726,7 @@
       "text": "*This is the default privacy policy that ships with the Patchwork software. It describes what the software actually does. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
       "words": 39,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3746,7 +3769,7 @@
       "text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.",
       "words": 77,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3778,11 +3801,11 @@
       ]
     },
     {
-      "id": "89823d27cd0f",
-      "text": "**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.",
-      "words": 57,
+      "id": "0a292742b030",
+      "text": "**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.",
+      "words": 59,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3790,17 +3813,18 @@
           "file": "internal/handler/legal_defaults.go",
           "line": 30,
           "kind": "go-doc-block",
-          "raw": "**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.",
+          "raw": "**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
     },
     {
       "id": "504ce87098e5",
       "text": "**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3818,7 +3842,7 @@
       "text": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.",
       "words": 49,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3854,7 +3878,7 @@
       "text": "Profiles are public pages showing your username, display name, bio, avatar, and whichever memberships you have chosen to show. Each membership has its own visibility switch, and you hold it. The same switch controls both your profile and the patch's public member list, so the two never disagree. A membership you hide stays visible to that patch's admins and members inside the patch workspace, since the people you organize with can already see you in the room. The list of patches you follow never appears on your profile.",
       "words": 88,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3908,7 +3932,7 @@
       "text": "This site can speak ActivityPub, the protocol behind Mastodon and similar networks. With federation enabled, public content can be copied to other servers when someone there follows a patch here. That covers patch profiles, public events, and public posts. Two things to understand:",
       "words": 43,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3926,7 +3950,7 @@
       "text": "- Other servers keep their own copies under their own policies. Deleting something here sends a deletion notice, but this site cannot force another server to honor it.\n- When you follow a patch on another quilt, the follow is relayed through this site's shared service account rather than your own identity, so your name never appears in a remote follower list.",
       "words": 62,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3944,7 +3968,7 @@
       "text": "Membership records never federate. What leaves this server is only what was already public on it.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3980,7 +4004,7 @@
       "text": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4016,7 +4040,7 @@
       "text": "Sign-in links and any notifications you turn on go out through the email server this site's stewards configured. Email always passes through the providers involved on both ends, yours and this site's.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4052,7 +4076,7 @@
       "text": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.",
       "words": 74,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4088,7 +4112,7 @@
       "text": "Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.",
       "words": 63,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4124,7 +4148,7 @@
       "text": "This site is not directed at children under 13, and nobody under 13 may create an account.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4160,7 +4184,7 @@
       "text": "If this policy changes, the change shows up on this page. The software keeps no hidden version of it. What you read here is what the site operates under.",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4196,7 +4220,7 @@
       "text": "The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4214,7 +4238,7 @@
       "text": "*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4228,11 +4252,11 @@
       ]
     },
     {
-      "id": "827c9519b86e",
-      "text": "Be someone your community would vouch for. What you post stays yours, the stewards can moderate the site, and nobody here promises uptime. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
-      "words": 45,
+      "id": "a60653383fb5",
+      "text": "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
+      "words": 52,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4240,10 +4264,11 @@
           "file": "internal/handler/legal_defaults.go",
           "line": 83,
           "kind": "go-doc-block",
-          "raw": "Be someone your community would vouch for. What you post stays yours, the stewards can moderate the site, and nobody here promises uptime. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
+          "raw": "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Be someone your community would vouch for. What you post stays yours, the stewards can moderate the site, and nobody here promises uptime. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data."
     },
     {
       "id": "b4bdc62f88de",
@@ -4264,11 +4289,11 @@
       ]
     },
     {
-      "id": "60941c0c622a",
-      "text": "Every group here is a patch, and the patches govern themselves. People are the only thing connecting them: nothing on this site ranks what you see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
-      "words": 39,
+      "id": "87eb79b54eea",
+      "text": "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
+      "words": 43,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4276,10 +4301,11 @@
           "file": "internal/handler/legal_defaults.go",
           "line": 89,
           "kind": "go-doc-block",
-          "raw": "Every group here is a patch, and the patches govern themselves. People are the only thing connecting them: nothing on this site ranks what you see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
+          "raw": "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Every group here is a patch, and the patches govern themselves. People are the only thing connecting them: nothing on this site ranks what you see or competes for your attention. [What is Patchwork?](/about) explains how the place works."
     },
     {
       "id": "44474d4c2d7f",
@@ -4304,7 +4330,7 @@
       "text": "You must be at least 13 years old to have an account. Accounts are for people. Bots and automated posters don't get one.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4340,7 +4366,7 @@
       "text": "Sign-in is by email links and passkeys, so there is no password to guard. The email account and devices you use to sign in are still your responsibility, and what happens through your account is yours to answer for. Don't share access to your account or use someone else's.",
       "words": 49,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4376,7 +4402,7 @@
       "text": "What you post is yours, and you keep every right you already had. So the site can function, you give {quilt_name} permission to store your content, show it to the people it's addressed to, and, where federation applies to public content, pass it along to other servers that follow this one. The same permission covers the seamrip: if this community exports its data to continue elsewhere, public content and membership records go with it, as described in the privacy policy. Anything you post publicly can be seen, copied, and shared the way public things on the internet are, and you agree to that too.",
       "words": 104,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4426,11 +4452,11 @@
       ]
     },
     {
-      "id": "78e794674319",
-      "text": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it.\n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
-      "words": 111,
+      "id": "53763017a812",
+      "text": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
+      "words": 98,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4438,17 +4464,18 @@
           "file": "internal/handler/legal_defaults.go",
           "line": 107,
           "kind": "go-doc-block",
-          "raw": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it.\n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
+          "raw": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it.\n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say."
     },
     {
       "id": "8185e141e8f0",
       "text": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4484,7 +4511,7 @@
       "text": "The stewards can remove content, restrict accounts, or close accounts that violate this agreement, without prior notice where they judge that necessary to protect people or the site. Posting content that infringes someone else's copyright will, if repeated, cost you your account. To report copyright infringement or any other abuse, contact the stewards through the [Label](/label).",
       "words": 56,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4520,7 +4547,7 @@
       "text": "Disagreement is not a violation. Patchwork keeps governance visible and makes leaving real: any member can export what they can already see, and a community can seamrip itself to new stewards. The [Label](/label) explains how this site is run, what it costs, and where the exit is.",
       "words": 47,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4556,7 +4583,7 @@
       "text": "Volunteers run this site on real hardware, with no promise of uptime, availability, or permanence. It is provided **as is**, without warranty of any kind. To the fullest extent permitted by law, the stewards are not liable for damages arising from your use of the site or from content other people post, so back up anything you can't afford to lose.",
       "words": 61,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4592,7 +4619,7 @@
       "text": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.",
       "words": 48,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4682,7 +4709,7 @@
       "text": "<p><a href=\"%s\" style=\"display: inline-block; padding: 10px 20px; background: #5B21B6; color: #fff; text-decoration: none; border-radius: 4px; font-size: 14px;\">View in Patchwork</a></p>",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4718,7 +4745,7 @@
       "text": "<p style=\"font-size: 12px; color: #999;\">You received this because you're a member of %s on %s. <a href=\"%s\" style=\"color: #999;\">Manage notification preferences</a></p>",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4912,7 +4939,7 @@
       "text": "The seat was vacant for inactivity. You are still a member and can take part again at any time.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4930,7 +4957,7 @@
       "text": "Its last admin seat was vacated for inactivity, and its succession policy asks an instance admin to step in.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5002,7 +5029,7 @@
       "text": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing members.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5977,11 +6004,11 @@
       ]
     },
     {
-      "id": "3605a4dcdc8b",
-      "text": "**Be the Pattern.** Open-source, self-hostable community organizing\ninfrastructure. One small server, one SQLite file, a whole local scene.",
-      "words": 18,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "b51ab59caa0a",
+      "text": "Open-source, self-hostable networking and community organizing\ninfrastructure.",
+      "words": 7,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5989,17 +6016,18 @@
           "file": "README.md",
           "line": 3,
           "kind": "md-block",
-          "raw": "**Be the Pattern.** Open-source, self-hostable community organizing\ninfrastructure. One small server, one SQLite file, a whole local scene.",
+          "raw": "Open-source, self-hostable networking and community organizing\ninfrastructure.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "**Be the Pattern.** Open-source, self-hostable community organizing\ninfrastructure. One small server, one SQLite file, a whole local scene."
     },
     {
-      "id": "1f460c5d9b56",
-      "text": "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. Real communities connect through the people who show up\nto both, so that's what the layout reflects.",
-      "words": 57,
+      "id": "0a87bec2f682",
+      "text": "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. The layout and visibility of the patches are determined \nby shared connections, not by personalized algorithms.",
+      "words": 56,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6007,17 +6035,18 @@
           "file": "README.md",
           "line": 6,
           "kind": "md-block",
-          "raw": "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. Real communities connect through the people who show up\nto both, so that's what the layout reflects.",
+          "raw": "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. The layout and visibility of the patches are determined \nby shared connections, not by personalized algorithms.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. Real communities connect through the people who show up\nto both, so that's what the layout reflects."
     },
     {
-      "id": "5aaa4c0a0893",
-      "text": "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can take its data and walk — see\n[Seamrip](#seamrip-export--import) below.",
-      "words": 37,
+      "id": "d09f5c31ac9d",
+      "text": "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can fork its data. See\n[Seamrip](#seamrip-export--import) below.",
+      "words": 34,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6025,10 +6054,11 @@
           "file": "README.md",
           "line": 12,
           "kind": "md-block",
-          "raw": "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can take its data and walk — see\n[Seamrip](#seamrip-export--import) below.",
+          "raw": "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can fork its data. See\n[Seamrip](#seamrip-export--import) below.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can take its data and walk — see\n[Seamrip](#seamrip-export--import) below."
     },
     {
       "id": "31ab8384b003",
@@ -6049,11 +6079,11 @@
       ]
     },
     {
-      "id": "c490921f71b5",
-      "text": "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining — anti-discrimination\n  included.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse.",
-      "words": 277,
+      "id": "bdc84519fe8c",
+      "text": "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group and/or entity gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining, including an anti-discrimination\n  agreement.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse.",
+      "words": 280,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6061,10 +6091,11 @@
           "file": "README.md",
           "line": 19,
           "kind": "md-block",
-          "raw": "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining — anti-discrimination\n  included.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse.",
+          "raw": "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group and/or entity gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining, including an anti-discrimination\n  agreement.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining — anti-discrimination\n  included.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse."
     },
     {
       "id": "eca2d9280fc7",
@@ -6085,11 +6116,11 @@
       ]
     },
     {
-      "id": "e2ad3fbfeff2",
-      "text": "Local scenes organize on rented land: platform groups, chat apps, and\nspreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nbets the other way. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone.",
-      "words": 68,
+      "id": "f17cfc7d5bc3",
+      "text": "Currently, local scenes organize on technology operated by oligarchs, paid for with personal data, and built to serve an attention economy.\nGroups, chat apps, and spreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nis providing a competing path. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and (hopefully) honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone.",
+      "words": 84,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6097,17 +6128,18 @@
           "file": "README.md",
           "line": 49,
           "kind": "md-block",
-          "raw": "Local scenes organize on rented land: platform groups, chat apps, and\nspreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nbets the other way. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone.",
+          "raw": "Currently, local scenes organize on technology operated by oligarchs, paid for with personal data, and built to serve an attention economy.\nGroups, chat apps, and spreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nis providing a competing path. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and (hopefully) honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Local scenes organize on rented land: platform groups, chat apps, and\nspreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nbets the other way. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone."
     },
     {
-      "id": "0e329defa0ca",
-      "text": "The reference instance maps the Lancaster, PA arts scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt.",
-      "words": 23,
+      "id": "6340d1f6ac94",
+      "text": "The reference instance maps the Lancaster, PA scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt.",
+      "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6115,10 +6147,11 @@
           "file": "README.md",
           "line": 56,
           "kind": "md-block",
-          "raw": "The reference instance maps the Lancaster, PA arts scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt.",
+          "raw": "The reference instance maps the Lancaster, PA scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The reference instance maps the Lancaster, PA arts scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt."
     },
     {
       "id": "ebaf70c948e2",
@@ -6175,11 +6208,11 @@
       ]
     },
     {
-      "id": "24ec91872d44",
-      "text": "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork — never seed a real instance (the seeder refuses if it sees a\ndatabase with real users).",
-      "words": 75,
+      "id": "a2e45828828c",
+      "text": "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork. Never seed a real instance (the seeder refuses if it sees a\ndatabase with real users).",
+      "words": 74,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6187,17 +6220,18 @@
           "file": "README.md",
           "line": 76,
           "kind": "md-block",
-          "raw": "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork — never seed a real instance (the seeder refuses if it sees a\ndatabase with real users).",
+          "raw": "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork. Never seed a real instance (the seeder refuses if it sees a\ndatabase with real users).",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork — never seed a real instance (the seeder refuses if it sees a\ndatabase with real users)."
     },
     {
       "id": "83d11af956d1",
       "text": "The seed also creates long-lived dev sessions so you can experience the\ninstance from any rung of the contributor ladder. Paste one of these in\nyour browser console, then reload:",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6233,7 +6267,7 @@
       "text": "Everything lives in one SQLite file (`data/patchwork.db`) plus a `data/`\ndirectory of governance git repos. Back those up and you've backed up the\ncommunity.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6269,7 +6303,7 @@
       "text": "One file: `patchwork.yaml`. Instance identity, geography for the map, SMTP\n(optional: invite links and passkeys work without it), feature-module hints,\ncommunity submissions, multi-quilt CORS, and the federation toggle. See\n`patchwork.yaml.example` for the annotated version.",
       "words": 34,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6305,7 +6339,7 @@
       "text": "Admins can also download the archive from the dashboard\n(`GET /api/v1/admin/export`). What travels and what deliberately doesn't\n(credentials, keys, federation identity) is documented in\n`docs/adr/002-seamrip-boundary.md`.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6341,7 +6375,7 @@
       "text": "- Single process, single binary, no external services. Runs on a Pi 4.\n- SQLite with WAL. Cursor pagination. UUIDv7 IDs.\n- Config over code. Communities customize via `patchwork.yaml`.\n- Flat patches, no hierarchies. Connections are inferred, never drawn.\n- Governance is a spectrum, not a type.\n- Antifascist by design: the default lining includes an anti-discrimination\n  baseline.\n- The exit is part of the product (seamrip).",
       "words": 67,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6377,7 +6411,7 @@
       "text": "Beta. Backend and frontend test suites are green (Go tests, 55 unit tests,\n213 Playwright e2e tests). Design decisions are recorded in `docs/adr/`\n(`docs/adr/README.md` is the index).",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6413,7 +6447,7 @@
       "text": "Backend vocabulary is generic (nodes, events, proposals). The UI speaks\ntextile (patches, quilts, charters). The mapping lives in\n`CONTEXT.md`; design decisions live in `docs/adr/`; `CLAUDE.md` orients\ncoding agents.",
       "words": 28,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6445,11 +6479,11 @@
       ]
     },
     {
-      "id": "bd3051907791",
-      "text": "Patchwork has one maintainer, working heavily with Claude Code —\nAI-assisted commits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike.",
-      "words": 48,
+      "id": "f3d1a6b2d874",
+      "text": "Patchwork has one maintainer, working heavily with Claude Code. AI-assisted \ncommits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike.",
+      "words": 47,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6457,10 +6491,11 @@
           "file": "README.md",
           "line": 158,
           "kind": "md-block",
-          "raw": "Patchwork has one maintainer, working heavily with Claude Code —\nAI-assisted commits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike.",
+          "raw": "Patchwork has one maintainer, working heavily with Claude Code. AI-assisted \ncommits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Patchwork has one maintainer, working heavily with Claude Code —\nAI-assisted commits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike."
     },
     {
       "id": "47964f2d9e2f",
@@ -6485,7 +6520,7 @@
       "text": "Issues and pull requests are welcome — [CONTRIBUTING.md](CONTRIBUTING.md)\nhas the dev setup and conventions. The project follows a\n[code of conduct](CODE_OF_CONDUCT.md). Security issues go through\n[SECURITY.md](SECURITY.md), never the public tracker.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6521,7 +6556,7 @@
       "text": "Patchwork is free software under the [GNU Affero General Public License\nv3.0](LICENSE) (AGPL-3.0). The license fits the project's ethos. Anyone can\nself-host, study, and seamrip (fork) it, and anyone who runs a modified\nPatchwork as a service has to offer their changes back to the communities\nusing it.",
       "words": 48,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7141,7 +7176,7 @@
       "text": "This replaces the whole document. Paste it as it now reads, not just the part that changed — Patchwork's copy is being corrected, not amended.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7594,7 +7629,7 @@
       "text": "Anyone already here takes up the role. Anyone not here yet is recorded by name and holds nothing until they join.",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9951,7 +9986,7 @@
       "text": "Admins earn their role through sustained contribution. When a seat opens, existing admins nominate from active members and the community ratifies.",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10005,7 +10040,7 @@
       "text": "{overview.needs_vote} proposal{overview.needs_vote > 1 ? 's' : ''} need{overview.needs_vote === 1 ? 's' : ''} your vote",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10091,11 +10126,11 @@
       ]
     },
     {
-      "id": "529b73311c2f",
-      "text": "Proposals are decided outside Patchwork. They stay open here for discussion, and what the meeting adopts is recorded on the charter.",
-      "words": 21,
+      "id": "1de95613cc0e",
+      "text": "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.",
+      "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10103,10 +10138,11 @@
           "file": "web/src/components/GovernanceOverview.svelte",
           "line": 269,
           "kind": "markup",
-          "raw": "Proposals are decided outside Patchwork. They stay open here for\n          discussion, and what the meeting adopts is recorded on the charter.",
+          "raw": "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Proposals are decided outside Patchwork. They stay open here for discussion, and what the meeting adopts is recorded on the charter."
     },
     {
       "id": "27a10815a090",
@@ -10119,14 +10155,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 273,
+          "line": 272,
           "kind": "markup",
           "raw": "{ e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>\n            Change these rules",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 280,
+          "line": 279,
           "kind": "markup",
           "raw": "{ e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>\n          Change these rules",
           "quote": null
@@ -10144,7 +10180,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 277,
+          "line": 276,
           "kind": "markup",
           "raw": "An admin changes these rules directly.",
           "quote": null
@@ -10162,7 +10198,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 284,
+          "line": 283,
           "kind": "markup",
           "raw": "{ e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>\n          Propose a change to these rules",
           "quote": null
@@ -10180,7 +10216,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 292,
+          "line": 291,
           "kind": "markup",
           "raw": "Leadership: {leadershipLabel(rules?.leadership_model)}",
           "quote": null
@@ -10198,7 +10234,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 316,
+          "line": 315,
           "kind": "markup",
           "raw": "Member since {formatDate(admin.joined_at)}",
           "quote": null
@@ -10216,7 +10252,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 343,
+          "line": 342,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -10234,7 +10270,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 344,
+          "line": 343,
           "kind": "markup",
           "raw": "{ e.preventDefault(); navigate(`/patches/${slug}/governance/${election.id}`); }}>\n            See the candidates",
           "quote": null
@@ -10252,7 +10288,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 355,
+          "line": 354,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -10270,7 +10306,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 369,
+          "line": 368,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -10288,7 +10324,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 370,
+          "line": 369,
           "kind": "markup",
           "raw": "— if the current admin steps away, the patch passes to them.",
           "quote": null
@@ -10306,7 +10342,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 373,
+          "line": 372,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -10324,7 +10360,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 379,
+          "line": 378,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -10342,7 +10378,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 393,
+          "line": 392,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -10360,7 +10396,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 402,
+          "line": 401,
           "kind": "markup",
           "raw": "{ e.preventDefault(); navigate(`/patches/${slug}/governance/docs`); }}>\n        {overview.document_count} document{overview.document_count !== 1 ? 's' : ''}",
           "quote": null
@@ -10378,14 +10414,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 405,
+          "line": 404,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 409,
+          "line": 408,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -10473,7 +10509,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 406,
+          "line": 405,
           "kind": "markup",
           "raw": "{ e.preventDefault(); navigate(`/patches/${slug}/governance/proposals`); }}>\n        {overview.open_proposals} open proposal{overview.open_proposals !== 1 ? 's' : ''}",
           "quote": null
@@ -10491,7 +10527,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 410,
+          "line": 409,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -10584,7 +10620,7 @@
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 73,
+          "line": 72,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
@@ -10592,11 +10628,11 @@
       ]
     },
     {
-      "id": "acbc29904d91",
-      "text": "Every tile is a real group, placed near the groups it shares people with. No ads, no algorithm. Run by people here.",
-      "words": 22,
+      "id": "3d3751ea38b0",
+      "text": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
+      "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10604,10 +10640,11 @@
           "file": "web/src/components/IntroCard.svelte",
           "line": 60,
           "kind": "markup",
-          "raw": "Every tile is a real group, placed near the groups it shares\n        people with. No ads, no algorithm. Run by people here.",
+          "raw": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Every tile is a real group, placed near the groups it shares people with. No ads, no algorithm. Run by people here."
     },
     {
       "id": "e45beba922fb",
@@ -10620,14 +10657,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 64,
+          "line": 63,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 74,
+          "line": 73,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -10659,7 +10696,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 65,
+          "line": 64,
           "kind": "markup",
           "raw": "Join",
           "quote": null
@@ -10677,7 +10714,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 71,
+          "line": 70,
           "kind": "markup",
           "raw": "I'll lurk for now",
           "quote": null
@@ -10695,7 +10732,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 75,
+          "line": 74,
           "kind": "markup",
           "raw": "&times;",
           "quote": null
@@ -10727,7 +10764,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 75,
+          "line": 74,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -11143,7 +11180,7 @@
       "text": "Click the map to drop the marker, then drag it to adjust. Place it as precisely or as loosely as you like. Nothing is saved until you hit Save location.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11258,7 +11295,7 @@
       "text": "To {action} you'll be asked to confirm with a passkey, and you don't have one enrolled yet.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12151,7 +12188,7 @@
       "text": "Open for discussion. This patch decides at meetings, not here, and what it decides gets recorded on the charter afterwards.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12277,7 +12314,7 @@
       "text": "No patches match your {filterTags.length > 0 && searchQuery.trim() ? 'search and filter' : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12600,7 +12637,7 @@
       "text": "Reports go to the instance admins, who review them against the community lining.{entityName ? ` You're reporting ${entityName}.` : ''}",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [

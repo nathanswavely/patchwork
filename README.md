@@ -1,17 +1,17 @@
 # Patchwork
 
-**Be the Pattern.** Open-source, self-hostable community organizing
-infrastructure. One small server, one SQLite file, a whole local scene.
+Open-source, self-hostable networking and community organizing
+infrastructure.
 
 Patchwork is a living map of the communities in your area. Every band,
 venue, collective, co-op, and club is a **patch**. Patches fit together into
 a **quilt**: a visualization of your scene where groups that share people
-sit closer together. Real communities connect through the people who show up
-to both, so that's what the layout reflects.
+sit closer together. The layout and visibility of the patches are determined 
+by shared connections, not by personalized algorithms.
 
 No algorithms, no ads, no engagement mechanics, no data harvesting.
 Patchwork is run by your neighbors, for your neighbors. If that ever stops
-being true, the community can take its data and walk — see
+being true, the community can fork its data. See
 [Seamrip](#seamrip-export--import) below.
 
 ## What it does
@@ -19,7 +19,7 @@ being true, the community can take its data and walk — see
 - **The quilt.** A D3 treemap of every public patch, sized by activity and
   placed by member overlap. Zoom in, filter by tag, search, click through to
   any community. The same data also drives a Leaflet street map.
-- **Patches.** Every group gets a profile: description, links, location,
+- **Patches.** Every group and/or entity gets a profile: description, links, location,
   members, events, governance documents. Membership comes in three honest
   roles: **admin** runs it, **member** participates and votes, **follower**
   watches and gets notified. A band with three admins and two hundred
@@ -31,8 +31,8 @@ being true, the community can take its data and walk — see
   vote, revisions, and vote tallies. Governance documents (*charters*) keep full version
   history and diffs, mirrored into per-patch **git repositories**. A band
   never has to touch any of it. A coalition can run itself entirely on it.
-  Every new patch ships with the quilt's baseline lining — anti-discrimination
-  included.
+  Every new patch ships with the quilt's baseline lining, including an anti-discrimination
+  agreement.
 - **No-password auth.** Invite links (no email server needed), magic links
   (if you configure SMTP), and passkeys for returning users.
 - **Seamrip.** The governance safety valve. Any admin can export the whole
@@ -46,14 +46,14 @@ being true, the community can take its data and walk — see
 
 ## Why it exists
 
-Local scenes organize on rented land: platform groups, chat apps, and
-spreadsheets that can vanish, get throttled, or get sold overnight. Patchwork
-bets the other way. It's community infrastructure you own, simple enough to
-run on a Raspberry Pi and honest enough to walk away from. The governance
+Currently, local scenes organize on technology operated by oligarchs, paid for with personal data, and built to serve an attention economy.
+Groups, chat apps, and spreadsheets that can vanish, get throttled, or get sold overnight. Patchwork
+is providing a competing path. It's community infrastructure you own, simple enough to
+run on a Raspberry Pi and (hopefully) honest enough to walk away from. The governance
 model mirrors how open source already works: followers become members become
 admins, and the whole ladder is visible to everyone.
 
-The reference instance maps the Lancaster, PA arts scene, but Patchwork is
+The reference instance maps the Lancaster, PA scene, but Patchwork is
 white-label from day one. Any community can deploy its own quilt.
 
 ## Quickstart
@@ -79,7 +79,7 @@ collectives, approval-required co-ops, invite-only bands), events,
 proposals mid-vote, unclaimed venues awaiting claim. Every person and
 organization in it is invented; only the geography is real
 (docs/adr/009). It exists for local dev, the e2e suite, and evaluating
-Patchwork — never seed a real instance (the seeder refuses if it sees a
+Patchwork. Never seed a real instance (the seeder refuses if it sees a
 database with real users).
 
 The seed also creates long-lived dev sessions so you can experience the
@@ -155,8 +155,8 @@ coding agents.
 
 ## How it's built
 
-Patchwork has one maintainer, working heavily with Claude Code —
-AI-assisted commits say so in their trailers, and every change is reviewed
+Patchwork has one maintainer, working heavily with Claude Code. AI-assisted 
+commits say so in their trailers, and every change is reviewed
 before merge. The test suites and the ADR record in `docs/adr/` are what
 keep that workflow honest, and they apply to human and AI-written code
 alike.
