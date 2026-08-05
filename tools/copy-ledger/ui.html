@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copy review — Patchwork</title>
+<style>
+  :root {
+    --bg:#14161a; --panel:#1b1e24; --line:#2a2f38; --ink:#e6e8ec; --dim:#8b93a1;
+    --accent:#7ab8a0; --warn:#d9a55f; --bad:#d97070; --ok:#7ab87a;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink); height:100vh;
+    display:flex; flex-direction:column;
+    font:15px/1.55 ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+  header { border-bottom:1px solid var(--line); padding:10px 16px; flex:none; }
+  .row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .bar { flex:1; min-width:160px; height:8px; background:var(--line); border-radius:4px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:var(--accent); width:0; transition:width .25s; }
+  .muted { color:var(--dim); font-size:13px; }
+  select, input[type=search] {
+    background:var(--panel); color:var(--ink); border:1px solid var(--line);
+    border-radius:6px; padding:5px 8px; font:inherit; font-size:13px;
+  }
+  main { flex:1; display:grid; grid-template-columns:340px 1fr; min-height:0; }
+  #queue { border-right:1px solid var(--line); overflow-y:auto; }
+  #queue button {
+    display:block; width:100%; text-align:left; background:none; color:inherit;
+    border:0; border-bottom:1px solid var(--line); padding:9px 12px; cursor:pointer;
+    font:inherit; font-size:13px;
+  }
+  #queue button:hover { background:#1f232a; }
+  #queue button[aria-current=true] { background:#232833; box-shadow:inset 3px 0 0 var(--accent); }
+  #queue .t { display:block; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #queue .m { display:block; color:var(--dim); font-size:11px; font-family:var(--mono); margin-top:2px; }
+  #detail { overflow-y:auto; padding:20px 24px 64px; }
+  .tag {
+    display:inline-block; font-size:11px; padding:1px 7px; border-radius:99px;
+    border:1px solid var(--line); color:var(--dim); font-family:var(--mono);
+  }
+  .tag.prose { color:var(--accent); border-color:var(--accent); }
+  .tag.human { color:var(--ok); border-color:var(--ok); }
+  .tag.unreviewed { color:var(--warn); border-color:var(--warn); }
+  .tag.rewritten { color:var(--accent); border-color:var(--accent); }
+  blockquote {
+    margin:14px 0; padding:12px 16px; background:var(--panel);
+    border-left:3px solid var(--line); border-radius:0 6px 6px 0; white-space:pre-wrap;
+  }
+  textarea {
+    width:100%; min-height:130px; background:var(--panel); color:var(--ink);
+    border:1px solid var(--line); border-radius:8px; padding:12px;
+    font:inherit; line-height:1.55; resize:vertical;
+  }
+  textarea:focus { outline:2px solid var(--accent); outline-offset:-1px; }
+  .actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .actions button {
+    background:var(--panel); color:var(--ink); border:1px solid var(--line);
+    border-radius:7px; padding:7px 13px; font:inherit; font-size:13px; cursor:pointer;
+  }
+  .actions button:hover { border-color:var(--accent); }
+  .actions button.primary { background:var(--accent); color:#12211c; border-color:var(--accent); font-weight:600; }
+  .actions kbd {
+    font-family:var(--mono); font-size:10px; opacity:.65; margin-left:5px;
+    border:1px solid currentColor; border-radius:3px; padding:0 3px;
+  }
+  pre.ctx {
+    background:#101216; border:1px solid var(--line); border-radius:8px;
+    padding:10px 12px; overflow-x:auto; font-family:var(--mono); font-size:12px;
+    line-height:1.6; color:var(--dim); margin:8px 0 0;
+  }
+  pre.ctx b { color:var(--ink); font-weight:600; }
+  h3 { font-size:12px; text-transform:uppercase; letter-spacing:.07em; color:var(--dim);
+       margin:26px 0 6px; font-weight:600; }
+  .occ { font-family:var(--mono); font-size:12px; color:var(--dim); margin:2px 0; }
+  .flash { position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
+           background:var(--panel); border:1px solid var(--line); border-radius:8px;
+           padding:9px 16px; font-size:13px; opacity:0; transition:opacity .2s; pointer-events:none; }
+  .flash.on { opacity:1; }
+  .warn { color:var(--warn); font-size:13px; margin-top:8px; }
+  .empty { color:var(--dim); text-align:center; padding:64px 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="row">
+    <strong style="font-size:14px">Copy review</strong>
+    <div class="bar"><i id="progress"></i></div>
+    <span class="muted" id="counts">loading…</span>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <select id="fStatus">
+      <option value="unreviewed">Unreviewed</option>
+      <option value="">All</option>
+      <option value="rewritten">Rewritten (pending apply)</option>
+      <option value="human">Human</option>
+      <option value="ai-fine">Left as drafted</option>
+    </select>
+    <select id="fTier">
+      <option value="">Every tier</option>
+      <option value="prose">Paragraphs (16+ words)</option>
+      <option value="helper">Helper text (6–15)</option>
+      <option value="label">Labels (2–5)</option>
+    </select>
+    <select id="fFile"><option value="">Every file</option></select>
+    <input type="search" id="fText" placeholder="Search copy…  ⌘K" style="flex:1;min-width:140px">
+    <span class="muted" id="qcount"></span>
+  </div>
+</header>
+
+<main>
+  <div id="queue"></div>
+  <div id="detail"><div class="empty">Loading…</div></div>
+</main>
+
+<div class="flash" id="flash"></div>
+
+<script type="module">
+const $ = (s) => document.querySelector(s);
+let entries = [], view = [], cursor = 0, statsData = null;
+
+const api = async (p, opts) => {
+  const r = await fetch(p, { headers: { 'Content-Type': 'application/json' }, ...opts });
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || r.statusText);
+  return r.json();
+};
+
+function flash(msg) {
+  const f = $('#flash');
+  f.textContent = msg; f.classList.add('on');
+  clearTimeout(flash._t);
+  flash._t = setTimeout(() => f.classList.remove('on'), 1600);
+}
+
+function applyStats(s) {
+  statsData = s;
+  $('#progress').style.width = (s.total ? (s.done / s.total) * 100 : 100) + '%';
+  $('#counts').textContent =
+    `${s.done}/${s.total} decided · ${s.byStatus.unreviewed} to go · ${s.byStatus.rewritten} pending apply`;
+}
+
+async function loadAll() {
+  const d = await api('/api/ledger');
+  entries = d.entries;
+  applyStats(d.stats);
+
+  const files = [...new Set(entries.flatMap((e) => e.occurrences.map((o) => o.file)))].sort();
+  const sel = $('#fFile');
+  const keep = sel.value;
+  sel.innerHTML = '<option value="">Every file</option>' +
+    files.map((f) => `<option value="${f}">${f.replace(/^web\/src\//, '')}</option>`).join('');
+  sel.value = keep;
+
+  refilter();
+}
+
+function refilter(keepId) {
+  const st = $('#fStatus').value, tier = $('#fTier').value;
+  const file = $('#fFile').value, q = $('#fText').value.trim().toLowerCase();
+
+  view = entries.filter((e) =>
+    (!st || e.status === st) &&
+    (!tier || e.tier === tier) &&
+    (!file || e.occurrences.some((o) => o.file === file)) &&
+    (!q || e.text.toLowerCase().includes(q)));
+
+  // Paragraphs first: they carry the most voice per unit of effort.
+  const rank = { prose: 0, helper: 1, label: 2 };
+  view.sort((a, b) => rank[a.tier] - rank[b.tier] ||
+    a.occurrences[0].file.localeCompare(b.occurrences[0].file) ||
+    a.occurrences[0].line - b.occurrences[0].line);
+
+  $('#qcount').textContent = `${view.length} shown`;
+  const i = keepId ? view.findIndex((e) => e.id === keepId) : -1;
+  cursor = i >= 0 ? i : Math.min(cursor, Math.max(0, view.length - 1));
+  renderQueue(); renderDetail();
+}
+
+function renderQueue() {
+  const q = $('#queue');
+  q.innerHTML = '';
+  view.forEach((e, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-current', i === cursor);
+    const t = document.createElement('span'); t.className = 't'; t.textContent = e.text;
+    const m = document.createElement('span'); m.className = 'm';
+    m.textContent = `${e.tier} · ${e.words}w · ${e.occurrences[0].file.split('/').pop()}:${e.occurrences[0].line}` +
+      (e.occurrences.length > 1 ? ` +${e.occurrences.length - 1}` : '');
+    b.append(t, m);
+    b.onclick = () => { cursor = i; renderQueue(); renderDetail(); };
+    q.append(b);
+  });
+  q.querySelector('[aria-current=true]')?.scrollIntoView({ block: 'nearest' });
+}
+
+async function renderDetail() {
+  const d = $('#detail');
+  const e = view[cursor];
+  if (!e) {
+    d.innerHTML = '<div class="empty">Nothing matches these filters.<br><span class="muted">Change the status filter to see decided copy.</span></div>';
+    return;
+  }
+
+  d.innerHTML = '';
+  const head = document.createElement('div'); head.className = 'row';
+  for (const [cls, txt] of [[e.tier, e.tier], [e.status, e.status], ['', `${e.words} words`],
+                            ['', `${e.occurrences.length} place${e.occurrences.length === 1 ? '' : 's'}`]]) {
+    const s = document.createElement('span'); s.className = `tag ${cls}`; s.textContent = txt; head.append(s);
+  }
+  d.append(head);
+
+  const bq = document.createElement('blockquote'); bq.textContent = e.text; d.append(bq);
+
+  if (e.previous_ai_text) {
+    const h = document.createElement('h3'); h.textContent = 'Replaced draft';
+    const p = document.createElement('blockquote');
+    p.style.opacity = '.6'; p.textContent = e.previous_ai_text;
+    d.append(h, p);
+  }
+
+  const h1 = document.createElement('h3'); h1.textContent = 'Your version';
+  const ta = document.createElement('textarea');
+  ta.id = 'editor';
+  ta.value = e.replacement ?? e.text;
+  d.append(h1, ta);
+
+  const warn = document.createElement('div'); warn.className = 'warn'; d.append(warn);
+  const checkPlaceholders = () => {
+    const want = [...e.text.matchAll(/\{[^{}]+\}/g)].map((m) => m[0]);
+    const missing = want.filter((p) => !ta.value.includes(p));
+    warn.textContent = missing.length
+      ? `Careful: the original interpolates ${missing.join(', ')} — dropping it will break the rendered text.`
+      : '';
+  };
+  ta.addEventListener('input', checkPlaceholders);
+  checkPlaceholders();
+
+  const acts = document.createElement('div'); acts.className = 'actions';
+  const mk = (label, key, cls, fn) => {
+    const b = document.createElement('button');
+    if (cls) b.className = cls;
+    b.append(document.createTextNode(label));
+    if (key) { const k = document.createElement('kbd'); k.textContent = key; b.append(k); }
+    b.onclick = fn; acts.append(b); return b;
+  };
+  mk('Save my version', '⌘↵', 'primary', () => saveRewrite(e, ta.value));
+  mk('Already mine', 'h', '', () => setStatus(e, 'human'));
+  mk('Leave as drafted', 'a', '', () => setStatus(e, 'ai-fine'));
+  mk('Skip', 'j', '', () => move(1));
+  d.append(acts);
+
+  const h2 = document.createElement('h3'); h2.textContent = 'Where it appears';
+  d.append(h2);
+  for (const o of e.occurrences) {
+    const p = document.createElement('div'); p.className = 'occ';
+    p.textContent = `${o.file}:${o.line}  ·  ${o.kind}`;
+    d.append(p);
+  }
+
+  const o0 = e.occurrences[0];
+  try {
+    const { context } = await api(`/api/context?file=${encodeURIComponent(o0.file)}&line=${o0.line}`);
+    if (context && view[cursor]?.id === e.id) {
+      const h4 = document.createElement('h3'); h4.textContent = 'In context';
+      const pre = document.createElement('pre'); pre.className = 'ctx';
+      context.lines.forEach((ln, i) => {
+        const n = context.from + i;
+        const el = n === o0.line ? document.createElement('b') : document.createElement('span');
+        el.textContent = `${String(n).padStart(4)}  ${ln}\n`;
+        pre.append(el);
+      });
+      d.append(h4, pre);
+    }
+  } catch { /* context is a nicety; never block review on it */ }
+}
+
+async function persist(e, body) {
+  const r = await api('/api/decide', { method: 'POST', body: JSON.stringify({ id: e.id, ...body }) });
+  Object.assign(e, r.entry);
+  applyStats(r.stats);
+}
+
+async function saveRewrite(e, text) {
+  const next = text.trim();
+  if (!next) return flash('Empty — nothing saved.');
+  if (next === e.text) { await setStatus(e, 'human'); return; }
+  await persist(e, { status: 'rewritten', replacement: next });
+  flash('Saved. Run `make copy-apply` to write it into source.');
+  advance(e);
+}
+
+async function setStatus(e, status) {
+  await persist(e, { status, replacement: null });
+  flash(status === 'human' ? 'Marked as your words.' : 'Left as drafted.');
+  advance(e);
+}
+
+function advance(e) {
+  const showing = $('#fStatus').value;
+  // When filtering the queue by status, a decided entry leaves the list and
+  // the cursor should hold its place rather than jump.
+  if (showing && e.status !== showing) refilter();
+  else { move(1); renderQueue(); }
+}
+
+function move(d) {
+  if (!view.length) return;
+  cursor = Math.max(0, Math.min(view.length - 1, cursor + d));
+  renderQueue(); renderDetail();
+}
+
+for (const id of ['#fStatus', '#fTier', '#fFile']) $(id).onchange = () => refilter();
+$('#fText').oninput = () => refilter();
+
+addEventListener('keydown', (ev) => {
+  const editing = document.activeElement?.tagName === 'TEXTAREA';
+  if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter' && editing) {
+    ev.preventDefault(); saveRewrite(view[cursor], $('#editor').value); return;
+  }
+  if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === 'k') {
+    ev.preventDefault(); $('#fText').focus(); return;
+  }
+  if (ev.key === 'Escape') { document.activeElement?.blur?.(); return; }
+  if (editing || ev.target.tagName === 'INPUT' || ev.target.tagName === 'SELECT') return;
+  if (ev.key === 'j' || ev.key === 'ArrowDown') { ev.preventDefault(); move(1); }
+  else if (ev.key === 'k' || ev.key === 'ArrowUp') { ev.preventDefault(); move(-1); }
+  else if (ev.key === 'e' || ev.key === 'Enter') { ev.preventDefault(); $('#editor')?.focus(); }
+  else if (ev.key === 'h') { ev.preventDefault(); setStatus(view[cursor], 'human'); }
+  else if (ev.key === 'a') { ev.preventDefault(); setStatus(view[cursor], 'ai-fine'); }
+});
+
+loadAll().catch((e) => { $('#detail').innerHTML = `<div class="empty">${e.message}</div>`; });
+</script>
+</body>
+</html>

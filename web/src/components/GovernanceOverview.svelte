@@ -266,8 +266,7 @@
       {/if}
       {#if proposalsElsewhere}
         <p class="overview-narrative">
-          Proposals are decided outside Patchwork. They stay open here for
-          discussion, and what the meeting adopts is recorded on the charter.
+          Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.
         </p>
         {#if membershipRole === 'admin'}
           <a class="section-action" href="/patches/{slug}/governance/rules/propose" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}>

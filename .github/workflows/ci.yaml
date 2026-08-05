@@ -67,6 +67,14 @@ jobs:
       - name: Frontend unit tests
         run: cd web && npx vitest run
 
+      # The copy ratchet (tools/copy-ledger). Fails when a string a visitor
+      # can read entered the source without anyone recording who wrote it.
+      # The existing backlog is grandfathered via the ledger's baseline, so
+      # this gates new copy only — it is not a wall in front of the cleanup.
+      # Needs no dependencies: the tool is plain Node with no imports.
+      - name: Copy provenance ledger
+        run: make copy-check
+
       # go.mod's `go` directive carries a full patch version on purpose: setup-go
       # installs it exactly, so a bare `go 1.25` would hand CI a toolchain with
       # every stdlib CVE patched since .0 still live. govulncheck below enforces it.

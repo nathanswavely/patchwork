@@ -227,13 +227,13 @@ const operatingAgreementCasual = `# Operating Agreement
 
 ## Who We Are
 
-This patch is a group of people who share a common interest and want to coordinate without a lot of overhead. We keep things simple.
+This patch is a group of people who share a common interest and want to coordinate without a lot of overhead.
 
 ## How We Make Decisions
 
 - Any member can propose something by submitting a proposal.
 - Proposals are open for 3 days. Majority vote wins.
-- No quorum requirement. If you care, vote.
+- No quorum requirement. 
 - The admins (maintainers) handle day-to-day decisions that don't need a vote.
 
 ## Membership
@@ -245,7 +245,7 @@ This patch is a group of people who share a common interest and want to coordina
 
 ## Leaving
 
-- You can leave at any time. No hard feelings.
+- You can leave at any time.
 - If you want to take the pattern and start something new, seamrip it.
 
 ## Changing This Agreement
@@ -343,7 +343,7 @@ const conflictResolution = `# Conflict Resolution
 
 ## Principle
 
-Conflict is normal. How we handle it is what matters. This process exists so that disagreements don't fester into fractures.
+Conflict is not desired, but it is expected. This process exists so that disagreements don't become schisms.
 
 ## Step 1: Direct Conversation
 
@@ -372,7 +372,7 @@ Depending on severity: warning, temporary suspension, permanent removal. Violati
 
 ## Confidentiality
 
-Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions use anonymized descriptions.
+Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions should use anonymized descriptions.
 `
 
 // ============================================================
