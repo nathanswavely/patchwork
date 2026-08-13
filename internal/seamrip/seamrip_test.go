@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"strings"
 	"testing"
 
 	patchwork "github.com/patchwork-toolkit/patchwork"
@@ -90,6 +91,13 @@ func seedSource(t *testing.T, db *database.DB) {
 	// the bytes were never the instance's to move (docs/adr/007).
 	mustExec(t, db,
 		`UPDATE nodes SET image_url = 'https://cdn.example/patch-1.jpg', image_alt = 'The storefront' WHERE id = ?`, n1)
+
+	// Choices a fork must not silently reverse: a member who hid a membership
+	// (docs/adr/006), a patch that closed its door to event suggestions
+	// (docs/adr/026), and a person's profile links.
+	mustExec(t, db, `UPDATE memberships SET visible = 0 WHERE user_id = ? AND node_id = ?`, u2, n1)
+	mustExec(t, db, `UPDATE nodes SET accept_event_suggestions = 0 WHERE id = ?`, n2)
+	mustExec(t, db, `UPDATE users SET links = '[{"url":"https://example.com","label":"Site"}]' WHERE id = ?`, u1)
 
 	tag := nextID()
 	mustExec(t, db, `INSERT INTO tags (id, name) VALUES (?, 'music')`, tag)
@@ -323,6 +331,32 @@ func TestRoundTrip(t *testing.T) {
 		t.Errorf("image reference lost: url=%q alt=%q", imgURL, imgAlt)
 	}
 
+	// A hidden membership stays hidden. `visible` defaults to 1, so leaving it
+	// behind re-exposed it — on the profile and in the patch's public member
+	// list at once, since one switch drives both (docs/adr/006). A seamrip is
+	// when that choice matters most: it is what a community does when its
+	// leadership goes sideways.
+	var hidden int
+	dst.QueryRow(`SELECT COUNT(*) FROM memberships m JOIN users u ON u.id = m.user_id
+	              WHERE u.username = 'user2' AND m.visible = 0`).Scan(&hidden)
+	if hidden != 1 {
+		t.Errorf("a hidden membership was re-exposed by the fork: got %d hidden, want 1", hidden)
+	}
+
+	// A patch that closed its door to event suggestions keeps it closed.
+	var accepts int
+	dst.QueryRow(`SELECT accept_event_suggestions FROM nodes WHERE slug = 'patch-2'`).Scan(&accepts)
+	if accepts != 0 {
+		t.Error("a patch that refused event suggestions found the door open again")
+	}
+
+	// Profile links travel, the way a patch's already did.
+	var links string
+	dst.QueryRow(`SELECT COALESCE(links,'') FROM users WHERE username = 'user1'`).Scan(&links)
+	if !strings.Contains(links, "example.com") {
+		t.Errorf("profile links lost: %q", links)
+	}
+
 	// Comment threading survives with remapped IDs.
 	threaded := count(t, dst, `
 		SELECT COUNT(*) FROM proposal_comments c
@@ -515,5 +549,114 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 	for _, name := range undecided {
 		t.Errorf("table %q has no portability decision: add it to Tables() so it "+
 			"travels with the community, or to staysBehind here with the reason", name)
+	}
+}
+
+// Every column of an exported table is either exported or deliberately left
+// behind.
+//
+// TestEveryTableHasABoundaryDecision catches a whole table nobody decided
+// about. It does not catch a column, and a column is how this has actually
+// gone wrong twice: `seats_contested` reached the schema without reaching
+// Tables(), so a forked election arrived carrying candidates and no seats to
+// contest; and a careless edit dropped `website` and `links` out of the nodes
+// column list, which no test noticed because the table was still there.
+//
+// Adding a column to an exported table now fails here until someone says which
+// side of the boundary it falls on.
+func TestEveryColumnHasABoundaryDecision(t *testing.T) {
+	db := testDB(t)
+
+	// Per table, the columns that deliberately do not travel: instance
+	// identity, secrets, fetch state, retired columns, and rows the export
+	// already filters out (docs/adr/002).
+	staysBehind := map[string]map[string]string{
+		"users": {
+			"private_key":          "ActivityPub keypair; a fork mints its own on first boot",
+			"public_key":           "same",
+			"ap_id":                "names an actor on the old domain",
+			"ap_type":              "same",
+			"feed_secret_hash":     "a personal calendar URL secret",
+			"trusted_contributor":  "one instance's judgement about a person, not the community's",
+			"hide_amended_linings": "a per-user discovery filter, not community data",
+			"start_on_my_quilt":    "a per-user landing preference",
+			"last_seen_at":         "derived, and rebuilt by using the fork",
+		},
+		"nodes": {
+			"ap_id":               "names an actor on the old domain",
+			"ap_type":             "same",
+			"private_key":         "ActivityPub keypair",
+			"public_key":          "same",
+			"removed_at":          "the export filters these rows out",
+			"verification_domain": "vetted by the old instance's claim review (docs/adr/030)",
+			"theme":               "retired: replaced by appearance in migration 018",
+			"parent_id":           "retired: patches are flat (docs/adr/009)",
+			"node_type":           "retired with the container/leaf split (docs/adr/009)",
+		},
+		"events": {
+			"ap_id":      "names an object on the old domain",
+			"ap_type":    "same",
+			"removed_at": "the export filters these rows out",
+			"status":     "the export takes active events only",
+		},
+		"proposals": {
+			"ap_id":           "names an object on the old domain",
+			"ap_type":         "same",
+			"proposed_branch": "a git branch in a repo that does not travel (docs/adr/002 known gap)",
+			"git_sha":         "a commit in that repo",
+			"base_sha":        "same",
+		},
+		"votes":             {"ap_id": "names an object on the old domain"},
+		"proposal_comments": {"ap_id": "names an object on the old domain"},
+		"event_sources": {
+			"status":          "fetch state; the fork re-syncs every feed from scratch",
+			"last_fetch_at":   "same",
+			"last_success_at": "same",
+			"last_error":      "same",
+			"etag":            "an HTTP cache validator for the old instance's last fetch",
+			"last_modified":   "same",
+		},
+		"claim_requests": {
+			"verification_token":     "a secret the old instance issued (docs/adr/002 says claims travel minus these)",
+			"email":                  "contact for that instance's review, not the patch's data",
+			"email_token_expires_at": "expiry of a token that did not travel",
+			"email_send_count":       "rate-limit state for the old instance",
+			"email_window_start":     "same",
+			"setup_expires_at":       "a deadline set by the old instance's review",
+		},
+		"memberships": {"join_message": "written to that instance's admins during review, not to the fork's"},
+	}
+
+	for _, tab := range Tables() {
+		exported := map[string]bool{}
+		for _, col := range tab.Columns {
+			exported[col.Name] = true
+		}
+
+		rows, err := db.Query(`SELECT name FROM pragma_table_info(?)`, tab.Name)
+		if err != nil {
+			t.Errorf("%s: %v", tab.Name, err)
+			continue
+		}
+		var undecided []string
+		for rows.Next() {
+			var col string
+			if rows.Scan(&col) != nil {
+				continue
+			}
+			if exported[col] {
+				continue
+			}
+			if _, known := staysBehind[tab.Name][col]; known {
+				continue
+			}
+			undecided = append(undecided, col)
+		}
+		rows.Close()
+
+		for _, col := range undecided {
+			t.Errorf("%s.%s has no portability decision: add it to that table's Columns "+
+				"so it travels, or to staysBehind here with the reason", tab.Name, col)
+		}
 	}
 }
