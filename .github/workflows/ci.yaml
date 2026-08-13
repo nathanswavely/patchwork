@@ -75,6 +75,12 @@ jobs:
       - name: Copy provenance ledger
         run: make copy-check
 
+      # The ledger has two review surfaces (the local UI and Markdown drafts),
+      # and the rule keeping them from overwriting each other is not visible in
+      # any output — so it is tested rather than remembered.
+      - name: Copy ledger draft safety
+        run: make copy-test
+
       # go.mod's `go` directive carries a full patch version on purpose: setup-go
       # installs it exactly, so a bare `go 1.25` would hand CI a toolchain with
       # every stdlib CVE patched since .0 still live. govulncheck below enforces it.

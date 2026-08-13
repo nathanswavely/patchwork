@@ -18,7 +18,7 @@ make copy-sync      # read the source, fold new strings into the ledger
 make copy-review    # write, at localhost:5175
 make copy-apply     # dry run: show what would change in source
 make copy-apply APPLY=1
-make copy-stats     # progress
+make copy-stats     # progress, and what's checked out as a draft
 make copy-report    # render copy/REPORT.md for publishing
 ```
 
@@ -46,6 +46,55 @@ page of work and all 1,853 strings at once. `copy-draft` refuses to
 overwrite a draft holding writing you haven't pulled yet, and `copy-pull`
 deletes draft files once every string in them is decided.
 
+## One file, one surface at a time
+
+**While a draft of a file exists, decide that file in the draft.** A draft
+is a checkout. The review UI and the Markdown drafts write to the same
+ledger and know nothing about each other's sessions, so a file being
+decided in both at once is a file whose two halves are about to disagree.
+
+Entry ids are derived from the text. Rewriting a string in the UI gives it
+a new id, and the `<!-- copy:… -->` marker in the draft — which names the
+old one — now points at nothing. Your writing in that block has no entry
+left to land on.
+
+The tool holds the line in three places rather than trusting anyone to
+remember:
+
+- `copy-review` **refuses** a decision on a string that is checked out in a
+  draft, naming the file. You can override it in the dialog; it is a
+  guardrail, not a lock. It also lists the outstanding drafts across the
+  top of the page.
+- `copy-stats` lists what is checked out, how much of it holds writing you
+  haven't pulled, and how many markers have already gone stale — the state
+  is visible *before* a writing session, not discovered after one.
+- `copy-pull` skips any block you didn't write in, even when the ledger has
+  moved on since. An untouched block carries no decision, so it never makes
+  one. This is the property that keeps a crossed session a papercut rather
+  than lost work, and `make copy-test` guards it.
+
+### If it happened anyway
+
+```sh
+make copy-pull REDRAFT=1
+```
+
+That re-syncs the ledger, saves any writing whose marker has gone stale to
+`<file>.orphaned.txt` beside the draft, and re-cuts the affected drafts
+against the current source. Blocks whose writing already reached the source
+are recognised and left alone — a marker goes stale when the work
+*finishes*, too. Then paste anything from the rescue file into the fresh
+draft and carry on.
+
+`make copy-pull` without `REDRAFT=1` reports the same state and changes
+nothing.
+
+Alongside the drafts, `.rendered.json` records what each block looked like
+when it was written out. That is how "did you write in this block?" stays
+answerable after the ledger has moved. Commit it with the drafts; delete it
+and the tool falls back to guessing from the ledger, which is exactly the
+guess that goes wrong when it matters.
+
 ### Keeping drafts out of this repo
 
 Drafts are half-written work, and this is a public repo. `/copy/drafts/`
@@ -60,7 +109,8 @@ make copy-pull                   # reads from there
 ```
 
 Nothing ties a draft to the repo it describes — they're ID-keyed files,
-and the ID is all `copy-pull` needs. Patchwork sees only the finished
+and the ID is all `copy-pull` needs. Anything that inspects drafts goes
+through `DRAFT_DIR` in `drafts.js`; nothing assumes `copy/drafts/`. Patchwork sees only the finished
 copy change and the ledger entry recording who wrote it; the drafts, the
 false starts and the three-versions-of-a-sentence stay private.
 
@@ -80,7 +130,8 @@ node tools/copy-ledger/cli.js decide --status human \
 It only moves entries out of `unreviewed` (unless `--force`), so re-running
 can't quietly undo work done string-by-string in the UI. Dry run by default.
 
-`make copy-check` is the CI gate. It runs on every PR.
+`make copy-check` is the CI gate. It runs on every PR, alongside
+`make copy-test`, which guards the draft rules above.
 
 ## The four decisions
 
@@ -130,7 +181,9 @@ two-word labels that mostly need a glance.
 | `a` | leave as drafted |
 | `⌘K` | search |
 
-It warns if your rewrite drops a `{placeholder}` the original interpolated.
+It warns if your rewrite drops a `{placeholder}` the original interpolated,
+and refuses a string that is checked out in a draft (see "One file, one
+surface at a time").
 
 ## How writeback stays safe
 
