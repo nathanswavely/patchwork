@@ -76,6 +76,42 @@
       ]
     },
     {
+      "id": "9d2d8fa96fb7",
+      "text": "Every workflow here goes through `make`, and Windows ships none. If you have\nMinGW-w64 — WinLibs installs it, and you likely already do, since cgo needs\ngcc — you already have make under another name: `mingw32-make.exe`. Put a\n`make.cmd` on your PATH and the documented commands work verbatim:",
+      "words": 48,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": "Written by hand for the Windows make note.",
+      "occurrences": [
+        {
+          "file": "CONTRIBUTING.md",
+          "line": 16,
+          "kind": "md-block",
+          "raw": "Every workflow here goes through `make`, and Windows ships none. If you have\nMinGW-w64 — WinLibs installs it, and you likely already do, since cgo needs\ngcc — you already have make under another name: `mingw32-make.exe`. Put a\n`make.cmd` on your PATH and the documented commands work verbatim:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e2fb2e9dbf63",
+      "text": "WSL is the other route if you'd rather; the smoke test already runs that way.",
+      "words": 15,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
+      "note": "Written by hand for the Windows make note.",
+      "occurrences": [
+        {
+          "file": "CONTRIBUTING.md",
+          "line": 26,
+          "kind": "md-block",
+          "raw": "WSL is the other route if you'd rather; the smoke test already runs that way.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "de31e0f2567f",
       "text": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else. This is useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously.",
       "words": 67,
@@ -86,7 +122,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 16,
+          "line": 28,
           "kind": "md-block",
           "raw": "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else. This is useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously.",
           "quote": null
@@ -105,7 +141,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 23,
+          "line": 35,
           "kind": "md-block",
           "raw": "Before opening a PR:",
           "quote": null
@@ -123,7 +159,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 30,
+          "line": 42,
           "kind": "md-block",
           "raw": "CI runs the same suites plus `go vet`, `govulncheck`, and npm audit.",
           "quote": null
@@ -141,7 +177,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 32,
+          "line": 44,
           "kind": "md-block",
           "raw": "## Finding your way around",
           "quote": null
@@ -159,7 +195,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 34,
+          "line": 46,
           "kind": "md-block",
           "raw": "- CONTEXT.md: the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks \"textile\" (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- docs/adr/: design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- CLAUDE.md: orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it.",
           "quote": null
@@ -178,7 +214,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 44,
+          "line": 56,
           "kind": "md-block",
           "raw": "## Conventions",
           "quote": null
@@ -196,7 +232,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 46,
+          "line": 58,
           "kind": "md-block",
           "raw": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone.\n  Regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies.",
           "quote": null
@@ -215,7 +251,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 54,
+          "line": 66,
           "kind": "md-block",
           "raw": "## ADR and migration numbers",
           "quote": null
@@ -233,7 +269,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 56,
+          "line": 68,
           "kind": "md-block",
           "raw": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
           "quote": null
@@ -251,7 +287,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 65,
+          "line": 77,
           "kind": "md-block",
           "raw": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
           "quote": null
@@ -269,7 +305,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 68,
+          "line": 80,
           "kind": "md-block",
           "raw": "## AI-assisted contributions",
           "quote": null
@@ -287,7 +323,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 70,
+          "line": 82,
           "kind": "md-block",
           "raw": "Acceptable. Much of Patchwork is built via AI coding. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process.",
           "quote": null
@@ -306,7 +342,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 75,
+          "line": 87,
           "kind": "md-block",
           "raw": "## Security issues",
           "quote": null
@@ -324,7 +360,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 77,
+          "line": 89,
           "kind": "md-block",
           "raw": "Never through the public tracker — see [SECURITY.md](SECURITY.md).",
           "quote": null
