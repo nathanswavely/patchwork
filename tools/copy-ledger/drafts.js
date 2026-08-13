@@ -145,7 +145,14 @@ function normalize(text, entry) {
 
 /** Parse one draft file into {id, text} blocks. */
 function readDraft(abs) {
-  const src = fs.readFileSync(abs, 'utf8');
+  // Normalize to LF before matching. BLOCK_RE anchors on a bare \n, so a
+  // CRLF draft matches zero blocks and pull reports "No changes found" —
+  // a whole writing session dropped with no error. Drafts are prose, so a
+  // CR is never meaningful; stripping here also keeps interior ones out of
+  // the replacement text, which writeback would carry into source files.
+  // This repo's .gitattributes can't help: COPY_DRAFTS_DIR usually points
+  // at a checkout of a different repo.
+  const src = fs.readFileSync(abs, 'utf8').replace(/\r\n/g, '\n');
   const out = [];
   let m;
   BLOCK_RE.lastIndex = 0;
