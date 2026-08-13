@@ -183,6 +183,40 @@ function extractJs(file, src) {
 
 // -------------------------------------------------------------------- Go ---
 
+/**
+ * API error bodies: `{"error":"..."}` handed to http.Error.
+ *
+ * These need their own pass because neither pass around them can see them.
+ * The raw-string pass skips the whole literal as embedded data (it starts
+ * with `{`), and the interpreted-string pass never runs inside a backtick
+ * literal — and would reject these anyway, since it requires a capital first
+ * letter while 366 of the 367 in this repo start lowercase, by the convention
+ * that API messages read as fragments rather than sentences.
+ *
+ * A visitor reads them. The SPA renders the `error` field into toasts and
+ * inline form errors, so a refusal like "add a short description of the
+ * image" is copy in exactly the sense the ledger means. It went uncounted
+ * because the Go scope was a list of prose files and no handler was on it.
+ *
+ * Only the message is captured, never the JSON around it: `raw` is the
+ * message substring, so writeback replaces the words and leaves the wrapper
+ * intact.
+ */
+function extractGoErrors(file, src) {
+  const hits = [];
+  const clean = blank(blank(src, /\/\*[\s\S]*?\*\//g), /(^|[^:])\/\/[^\n]*/g);
+  const errRe = /`\{"error":"((?:[^"\\`])*)"\}`/g;
+  let m;
+  while ((m = errRe.exec(clean)) !== null) {
+    const val = m[1];
+    if (!/[A-Za-z]{3}/.test(val) || !/\s/.test(val)) continue;
+    pushHit(hits, {
+      file, raw: val, index: m.index + '`{"error":"'.length, src, kind: 'go-error-body',
+    });
+  }
+  return hits;
+}
+
 function extractGo(file, src) {
   const hits = [];
   const clean = blank(blank(src, /\/\*[\s\S]*?\*\//g), /(^|[^:])\/\/[^\n]*/g);
@@ -209,6 +243,8 @@ function extractGo(file, src) {
       pushHit(hits, { file, raw: body, index: base, src, kind: 'go-raw-string' });
     }
   }
+
+  hits.push(...extractGoErrors(file, src));
 
   // Interpreted strings: struct fields (Description, BestFor), notification
   // titles, email subjects.
@@ -274,7 +310,19 @@ function extractMd(file, src) {
 
 const EXTRACTORS = {
   svelte: extractSvelte, js: extractJs, go: extractGo, md: extractMd,
+  // Handlers come in for their API error messages and nothing else — their
+  // other strings are SQL, log lines and column names.
+  'go-errors': extractGoErrors,
 };
+
+/**
+ * Hits from one source, without touching disk. Exported so a test can hand
+ * the extractor a few lines instead of asserting against the repo, which
+ * would make every test a hostage to whatever the handlers happen to say.
+ */
+export function extractOne(file, lang, src) {
+  return EXTRACTORS[lang](file, src);
+}
 
 /** Every hit across every in-scope file, unmerged. */
 export function extractAll() {

@@ -206,7 +206,26 @@ Writeback edits source files. Run it on a clean tree and read the diff.
 In: Svelte markup and copy-bearing attributes (`placeholder`, `title`,
 `aria-label`, `alt`), sentence-shaped strings in Svelte/JS, prose in the Go
 files that ship text (the lining, legal defaults, governance templates,
-notification and email bodies), and the Markdown a newcomer actually reads.
+notification and email bodies), the Markdown a newcomer actually reads, and
+the API error messages in `internal/handler`.
+
+Those last ones were missed for a while, and the miss is worth describing
+because it will happen again in some other shape. The Go scope was a list of
+prose files, so no handler was on it; and even once one is, the message is
+invisible to both existing passes — it lives inside a backtick literal, which
+the raw-string pass skips as embedded JSON, and it starts lowercase, which the
+interpreted-string pass rejects as not sentence-shaped. 366 of the 367 in this
+repo start lowercase. So the extractor has a pass of its own for
+`{"error":"..."}`, taking the message and nothing around it, and handlers come
+into scope for that pass alone — their other strings are SQL, log lines and
+column names.
+
+A visitor reads these: the SPA renders the `error` field into toasts and
+inline form errors, so a refusal reaches somebody at the moment it matters
+most to them. Some of the 361 are plumbing a well-behaved client never
+triggers (`invalid proposal_type`), and they come in anyway, on this tool's
+usual bet that a false positive costs one keystroke while a false negative is
+a string nobody ever reviews.
 
 Out, on purpose:
 

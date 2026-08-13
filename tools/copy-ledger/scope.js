@@ -32,6 +32,20 @@ const GO_FILES = [
   'internal/notifications/inactivity.go',
 ];
 
+// Every handler, for its API error messages alone.
+//
+// A directory rather than a list, because the messages are spread across
+// forty-odd files and a list would go stale the first time somebody adds a
+// handler — which is how they came to be uncounted in the first place. The
+// extractor takes only `{"error":"..."}` bodies from these files, so adding
+// the tree does not drag in log lines, SQL, or the rest of the Go source.
+//
+// They are copy: the SPA renders the `error` field into toasts and inline
+// form errors, so a refusal like "add a short description of the image" is
+// read by a visitor at the moment it matters most to them — when something
+// they tried did not work.
+const GO_ERROR_DIRS = ['internal/handler'];
+
 // Markdown a newcomer actually reads. ADRs are excluded (see note above).
 //
 // CODE_OF_CONDUCT.md is deliberately absent: it is the Contributor Covenant,
@@ -88,6 +102,15 @@ export function sourceFiles() {
   }
   for (const rel of GO_FILES) {
     if (fs.existsSync(path.join(REPO_ROOT, rel))) out.push({ file: rel, lang: 'go' });
+  }
+  const already = new Set(GO_FILES);
+  for (const dir of GO_ERROR_DIRS) {
+    for (const abs of walk(path.join(REPO_ROOT, dir))) {
+      const rel = path.relative(REPO_ROOT, abs).split(path.sep).join('/');
+      if (!rel.endsWith('.go') || rel.endsWith('_test.go')) continue;
+      if (already.has(rel)) continue;   // already in scope for its prose
+      out.push({ file: rel, lang: 'go-errors' });
+    }
   }
   for (const rel of MD_FILES) {
     if (fs.existsSync(path.join(REPO_ROOT, rel))) out.push({ file: rel, lang: 'md' });
