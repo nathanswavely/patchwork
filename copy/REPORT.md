@@ -5,20 +5,20 @@ visitor-readable string in this repository and records who wrote it.
 
 | | strings | words |
 |---|---:|---:|
-| Written by a person | 9 | 277 |
+| Written by a person | 169 | 6,207 |
 | Left as drafted, deliberately | 0 | |
-| Not yet reviewed | 1844 | |
-| **Total** | **1853** | **15,468** |
+| Not yet reviewed | 1810 | |
+| **Total** | **1979** | **16,190** |
 
-Human-authored or deliberately accepted: **0%** of strings.
+Human-authored or deliberately accepted: **9%** of strings.
 
 ## By tier
 
 | Tier | Decided | Total |
 |---|---:|---:|
-| Paragraphs (16+ words) | 5 | 255 |
-| Helper text (6–15 words) | 0 | 413 |
-| Labels (2–5 words) | 4 | 1185 |
+| Paragraphs (16+ words) | 163 | 257 |
+| Helper text (6–15 words) | 2 | 422 |
+| Labels (2–5 words) | 4 | 1300 |
 
 ## Out of scope
 
@@ -33,6 +33,118 @@ Human-authored or deliberately accepted: **0%** of strings.
   deliberately not rewritten — editing one would strand every patch on it.
 - Source comments, tests, commit messages.
 
-## Replaced drafts (0)
+## Replaced drafts (37)
 
-_None yet._
+Where a model's draft was replaced by a person, both are kept.
+
+- `CONTRIBUTING.md`
+  - draft: "Thanks for looking under the hood. Patchwork is young and run by a single\nmaintainer, so issues and pull requests are genuinely useful — including\nsmall ones (docs, error copy, test gaps)."
+  - now: "If you see any issues or have any ideas, please reach out! I'm building Patchwork as a labor of love, and there are many things that I may have missed. There may also be security concerns that I in my front-end focused experienced missed. Please feel free to PR, big or small."
+- `CONTRIBUTING.md`
+  - draft: "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else — useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously."
+  - now: "`make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`\nto an absolute path to send it somewhere else. This is useful on Windows, where\nthe firewall keys its rule to the executable's full path, so a per-worktree\nbinary prompts as a new program every time. Pointing every worktree at one\npath means approving once. The tradeoff: worktrees then share a binary and\ncan't run servers simultaneously."
+- `CONTRIBUTING.md`
+  - draft: "- `CONTEXT.md` — the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks textile (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- `docs/adr/` — design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- `CLAUDE.md` — orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it."
+  - now: "- CONTEXT.md: the vocabulary glossary. Backend code uses generic terms\n  (node, event, proposal); the UI speaks \"textile\" (patch, quilt, charter,\n  thread). Code, database columns, and API endpoints always use the\n  backend terms; only UI copy translates.\n- docs/adr/: design decisions, indexed by status in\n  [docs/adr/README.md](docs/adr/README.md). If a change contradicts an\n  accepted ADR, the PR should either follow the ADR or include a new one.\n- CLAUDE.md: orientation for coding agents. If you work with one, point\n  it there; if you don't, you can ignore it."
+- `CONTRIBUTING.md`
+  - draft: "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone —\n  regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies."
+  - now: "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone.\n  Regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies."
+- `CONTRIBUTING.md`
+  - draft: "Welcome — much of Patchwork is built that way. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process."
+  - now: "Acceptable. Much of Patchwork is built via AI coding. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process."
+- `docs/START-A-QUILT.md`
+  - draft: "Patchwork is a platform for the communities of one place. A city, a\nscene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together the patches form a\n**quilt**, a live picture of your community where groups that share\npeople sit closer together, because shared people are what connection\nactually is."
+  - now: "Patchwork is a hyper-local platform. A city, a\nlocal-scene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together, the patches form a\n**quilt.**"
+- `docs/START-A-QUILT.md`
+  - draft: "Nobody sells ads here. No algorithm decides what anyone sees. The\nsoftware is open source, and each quilt runs on a machine its own\ncommunity controls, administered by a person that community can name."
+  - now: "This platform is not ad supported by default (and if your admin starts including ads, you have the right to \"seamrip.\" There are also no personalized algorithms.  The\nsoftware is open source, and each quilt runs on a machine its own community controls, administered by a person or persons that community can name and shame."
+- `docs/START-A-QUILT.md`
+  - draft: "It helps to know up front what Patchwork is a poor fit for. It is not a\nsocial network you post on all day, and there is no company behind it,\nso nobody hosts it for you. Someone in your community has to hold it,\nand that requirement is the design working as intended, since a\ncommunity that runs its own infrastructure answers to nobody upstream."
+  - now: "It helps to know up front what Patchwork is a poor fit for. It is not designed to be a social network you post on all day, and there is no company behind it, so someone (or someones) in your community has to hold it, and that requirement is the design working as intended, since a community that runs its own infrastructure answers to nobody upstream."
+- `docs/START-A-QUILT.md`
+  - draft: "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. That's the Label, a page on every quilt\nstating who stewards it, what it depends on, and what it costs. If\nnobody in your community will be named, you are not ready yet, and it\ncosts nothing to learn that now."
+  - now: "**A steward.** Every quilt names at least one person publicly\naccountable for how it runs. There is a page on every quilt called \"the label\"\nthat identifies who stewards it, what it depends on, and what it costs."
+- `docs/START-A-QUILT.md`
+  - draft: "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, Patchwork is the wrong\ntool for you."
+  - now: "**A baseline you inherit.** Every patch on every quilt starts from the\nlining, a shared community-standards baseline that ships with Patchwork\nand includes an anti-discrimination floor. The lining is the project's\nstatement of the bare minimum a quilt should be. Patches can amend\ntheir copy, but amendments are public and visibly marked. If your\norganization's values conflict with the lining, find or build a different tool."
+- `docs/START-A-QUILT.md`
+  - draft: "**Judgment, occasionally.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software gives you the levers. Pulling them is\nhuman work. Expect a few hours a month once things settle, more during\nlaunch."
+  - now: "**Judgment when necessary.** Stewards handle reports, review the odd\nevent submission, and once in a while deal with a patch or person\nacting in bad faith. The software provides the levers for governance and hierarchy, because community on the internet is impossible without them. Exercising those levers is human work. Being a steward will require time devoted to community building. If it is too much, find partners or hand off to someone else."
+- `docs/START-A-QUILT.md`
+  - draft: "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it."
+  - now: "A machine, a domain name, and optionally email sending. Patchwork is\none small program that runs happily on a five-dollar-a-month virtual\nserver or a Raspberry Pi on a shelf, and a domain runs ten to twenty\ndollars a year. Sign-in links can go out over email, but Patchwork\nworks without it: admins can hand out invite links over Signal or on\npaper, and you can add email whenever you want it if you're comfortable building out the infra."
+- `docs/START-A-QUILT.md`
+  - draft: "That is the whole bill. Your quilt's Label states your actual numbers\nto your community, so the people who benefit can help carry them."
+  - now: "Your quilt's label provides an opportunity for you to be transparent about costs with your community. Full description of expenses is recommended."
+- `docs/START-A-QUILT.md`
+  - draft: "The honest first answer is someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map."
+  - now: "The honest first answer is to find someone technical in your community.\nDeployment is a well-worn path with Docker, one config file, and\nautomatic HTTPS, roughly an afternoon for anyone who has run a web\nservice before. [DEPLOYMENT.md](DEPLOYMENT.md) is the map."
+- `docs/START-A-QUILT.md`
+  - draft: "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is deliberately boring to operate. One process. One database\nfile. Backups are copying a file."
+  - now: "The careful second answer is you. If you can rent a small server and\nfollow a guide patiently, the path is documented end to end, and the\nsoftware is well documented. You may need to do some googling and troubleshooting, but self-hosting is possible."
+- `docs/START-A-QUILT.md`
+  - draft: "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would rather help a real community launch\nthan ship another feature."
+  - now: "If neither fits, open an issue on the project repository and ask. The\npeople who build Patchwork would love to help you get started."
+- `docs/START-A-QUILT.md`
+  - draft: "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a seamrip:\nif leadership goes sideways, the community takes its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too."
+  - now: "Trust in any one person, including whoever runs your quilt, is never\nload-bearing here. The software is open source, so no company can shut\nit down or start charging rent. Every quilt's public data can be exported and\nstood up again elsewhere, an act the vocabulary here calls a \"seamrip.\"\nIf leadership goes sideways, the community can take its patches, its\npeople, and its history somewhere new. Costs and dependencies sit on\nthe public Label, so \"who pays for this and what do they control\" has a\npublished answer. Stewards will be pressured to stay honest because leaving is real, and\nonce you hold the keys that pressure applies to you too."
+- `docs/START-A-QUILT.md`
+  - draft: "Browse a living quilt first if you can. The reference instance serves\nthe arts scene of Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project."
+  - now: "Browse a living quilt first if you can. The reference instance serves Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project."
+- `internal/governance/defaults.go`
+  - draft: "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead. We keep things simple."
+  - now: "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead."
+- `internal/governance/defaults.go`
+  - draft: "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. If you care, vote.\n- The admins (maintainers) handle day-to-day decisions that don't need a vote."
+  - now: "- Any member can propose something by submitting a proposal.\n- Proposals are open for 3 days. Majority vote wins.\n- No quorum requirement. \n- The admins (maintainers) handle day-to-day decisions that don't need a vote."
+- `internal/governance/defaults.go`
+  - draft: "- You can leave at any time. No hard feelings.\n- If you want to take the pattern and start something new, seamrip it."
+  - now: "- You can leave at any time.\n- If you want to take the pattern and start something new, seamrip it."
+- `internal/governance/defaults.go`
+  - draft: "Conflict is normal. How we handle it is what matters. This process exists so that disagreements don't fester into fractures."
+  - now: "Conflict is not desired, but it is expected. This process exists so that disagreements don't become schisms."
+- `internal/governance/defaults.go`
+  - draft: "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions use anonymized descriptions."
+  - now: "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions should use anonymized descriptions."
+- `internal/handler/legal_defaults.go`
+  - draft: "**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
+  - now: "**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
+- `internal/handler/legal_defaults.go`
+  - draft: "Be someone your community would vouch for. What you post stays yours, the stewards can moderate the site, and nobody here promises uptime. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data."
+  - now: "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data."
+- `internal/handler/legal_defaults.go`
+  - draft: "Every group here is a patch, and the patches govern themselves. People are the only thing connecting them: nothing on this site ranks what you see or competes for your attention. [What is Patchwork?](/about) explains how the place works."
+  - now: "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works."
+- `internal/handler/legal_defaults.go`
+  - draft: "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it.\n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say."
+  - now: "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say."
+- `README.md`
+  - draft: "**Be the Pattern.** Open-source, self-hostable community organizing\ninfrastructure. One small server, one SQLite file, a whole local scene."
+  - now: "Open-source, self-hostable networking and community organizing\ninfrastructure."
+- `README.md`
+  - draft: "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. Real communities connect through the people who show up\nto both, so that's what the layout reflects."
+  - now: "Patchwork is a living map of the communities in your area. Every band,\nvenue, collective, co-op, and club is a **patch**. Patches fit together into\na **quilt**: a visualization of your scene where groups that share people\nsit closer together. The layout and visibility of the patches are determined \nby shared connections, not by personalized algorithms."
+- `README.md`
+  - draft: "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can take its data and walk — see\n[Seamrip](#seamrip-export--import) below."
+  - now: "No algorithms, no ads, no engagement mechanics, no data harvesting.\nPatchwork is run by your neighbors, for your neighbors. If that ever stops\nbeing true, the community can fork its data. See\n[Seamrip](#seamrip-export--import) below."
+- `README.md`
+  - draft: "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining — anti-discrimination\n  included.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse."
+  - now: "- **The quilt.** A D3 treemap of every public patch, sized by activity and\n  placed by member overlap. Zoom in, filter by tag, search, click through to\n  any community. The same data also drives a Leaflet street map.\n- **Patches.** Every group and/or entity gets a profile: description, links, location,\n  members, events, governance documents. Membership comes in three honest\n  roles: **admin** runs it, **member** participates and votes, **follower**\n  watches and gets notified. A band with three admins and two hundred\n  followers fits. So does a consensus-run co-op.\n- **Events.** Patches host events. People find them on the quilt, the\n  map, and in their feeds.\n- **Governance, when you want it.** Proposals run on a real state machine\n  (voting → approved → in effect), with threaded discussion alongside the\n  vote, revisions, and vote tallies. Governance documents (*charters*) keep full version\n  history and diffs, mirrored into per-patch **git repositories**. A band\n  never has to touch any of it. A coalition can run itself entirely on it.\n  Every new patch ships with the quilt's baseline lining, including an anti-discrimination\n  agreement.\n- **No-password auth.** Invite links (no email server needed), magic links\n  (if you configure SMTP), and passkeys for returning users.\n- **Seamrip.** The governance safety valve. Any admin can export the whole\n  community as plain JSON: people, patches, memberships, events, proposals,\n  votes, governance history. Anyone can import that into a fresh instance\n  with every relationship intact. If leadership goes sideways, the community\n  forks and keeps going. Power stays with the people in the quilt.\n- **Multi-quilt and federation.** The web app can merge several Patchwork\n  instances into one view. An optional ActivityPub layer (HTTP signatures,\n  WebFinger, inbox/outbox) lets quilts talk to the fediverse."
+- `README.md`
+  - draft: "Local scenes organize on rented land: platform groups, chat apps, and\nspreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nbets the other way. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone."
+  - now: "Currently, local scenes organize on technology operated by oligarchs, paid for with personal data, and built to serve an attention economy.\nGroups, chat apps, and spreadsheets that can vanish, get throttled, or get sold overnight. Patchwork\nis providing a competing path. It's community infrastructure you own, simple enough to\nrun on a Raspberry Pi and (hopefully) honest enough to walk away from. The governance\nmodel mirrors how open source already works: followers become members become\nadmins, and the whole ladder is visible to everyone."
+- `README.md`
+  - draft: "The reference instance maps the Lancaster, PA arts scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt."
+  - now: "The reference instance maps the Lancaster, PA scene, but Patchwork is\nwhite-label from day one. Any community can deploy its own quilt."
+- `README.md`
+  - draft: "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork — never seed a real instance (the seeder refuses if it sees a\ndatabase with real users)."
+  - now: "`make seed` (and `make seed-force` to wipe and re-seed) load a dense\nfictional dataset — patches across the governance spectrum (open\ncollectives, approval-required co-ops, invite-only bands), events,\nproposals mid-vote, unclaimed venues awaiting claim. Every person and\norganization in it is invented; only the geography is real\n(docs/adr/009). It exists for local dev, the e2e suite, and evaluating\nPatchwork. Never seed a real instance (the seeder refuses if it sees a\ndatabase with real users)."
+- `README.md`
+  - draft: "Patchwork has one maintainer, working heavily with Claude Code —\nAI-assisted commits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike."
+  - now: "Patchwork has one maintainer, working heavily with Claude Code. AI-assisted \ncommits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike."
+- `web/src/components/GovernanceOverview.svelte`
+  - draft: "Proposals are decided outside Patchwork. They stay open here for discussion, and what the meeting adopts is recorded on the charter."
+  - now: "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter."
+- `web/src/components/IntroCard.svelte`
+  - draft: "Every tile is a real group, placed near the groups it shares people with. No ads, no algorithm. Run by people here."
+  - now: "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here."

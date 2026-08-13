@@ -52,6 +52,16 @@ export function encodeFor(kind, quote, text) {
     return { value: escaped };
   }
 
+  // A message inside `{"error":"..."}`. It sits in a Go raw string, so a
+  // backtick is impossible, and it sits inside JSON, so a quote has to be
+  // escaped for the body to still parse. A backslash would land in the JSON
+  // as an escape it did not ask for, so it is refused rather than doubled.
+  if (kind === 'go-error-body') {
+    if (text.includes('`')) return { problem: 'a Go raw string cannot contain a backtick' };
+    if (text.includes('\\')) return { problem: 'an API error message cannot contain a backslash' };
+    return { value: text.replace(/"/g, '\\"') };
+  }
+
   if (kind === 'go-raw-string' || kind === 'go-doc-block') {
     if (text.includes('`')) return { problem: 'a Go raw string cannot contain a backtick' };
     return { value: text };
