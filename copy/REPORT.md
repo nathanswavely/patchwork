@@ -5,21 +5,21 @@ visitor-readable string in this repository and records who wrote it.
 
 | | strings | words |
 |---|---:|---:|
-| Written by a person | 169 | 6,207 |
-| Left as drafted, deliberately | 820 | 1,791 |
-| Not yet reviewed | 974 | 7,779 |
-| Written, not yet applied to source | 1 | 18 |
+| Written by a person | 174 | 6,318 |
+| Left as drafted, deliberately | 831 | 2,025 |
+| Not yet reviewed | 937 | 6,925 |
+| Written, not yet applied to source | 22 | 527 |
 | **Total** | **1964** | **15,795** |
 
-Human-authored or deliberately accepted: **50%** of strings.
+Human-authored or deliberately accepted: **51%** of strings.
 
 ## By tier
 
 | Tier | Decided | Total |
 |---|---:|---:|
-| Paragraphs (16+ words) | 165 | 248 |
-| Helper text (6–15 words) | 2 | 416 |
-| Labels (2–5 words) | 822 | 1300 |
+| Paragraphs (16+ words) | 179 | 248 |
+| Helper text (6–15 words) | 3 | 416 |
+| Labels (2–5 words) | 823 | 1300 |
 
 ## Out of scope
 

@@ -354,8 +354,8 @@
       "text": "Never through the public tracker — see [SECURITY.md](SECURITY.md).",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Never through the public tracker. See [SECURITY.md](SECURITY.md).",
       "note": null,
       "occurrences": [
         {
@@ -781,8 +781,8 @@
       "text": "Just a listing. You run it, no overhead.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "No overhead. You're the only one running it.",
       "note": null,
       "occurrences": [
         {
@@ -831,8 +831,8 @@
       "text": "Small crew, lightweight process. Majority rules.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Small group. Majority rules.",
       "note": null,
       "occurrences": [
         {
@@ -874,7 +874,7 @@
       "text": "Small collectives, meetups, studios (5–20 people)",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -892,8 +892,8 @@
       "text": "Open community, structured process. Earn trust through contribution.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Open community, structured process. Trust builds through contribution.",
       "note": null,
       "occurrences": [
         {
@@ -15564,8 +15564,8 @@
       "text": "Click an anchor, then a second anchor, to sew a seam. Seams split every piece they cross.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Click two anchors to sew a seam. Seams split every piece they cross.",
       "note": null,
       "occurrences": [
         {
@@ -17866,7 +17866,7 @@
       "text": "I'll lurk for now",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20032,8 +20032,8 @@
       "text": "Run by real people. Yours to seamrip if it ever comes to that.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Run by real people and open source. Feel free to build your own if you don't like this one.",
       "note": null,
       "occurrences": [
         {
@@ -20772,7 +20772,7 @@
       "text": "Someone nominated for admin sits their own vote out. They stay in the electorate for everything else.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20790,7 +20790,7 @@
       "text": "Pick the second if your board is elected at a meeting, on paper, or in another tool. Patchwork will stop conducting leadership changes and let an admin record what was decided.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20808,7 +20808,7 @@
       "text": "Pick the second if your members decide at meetings. Proposals stay open for discussion and lose the vote buttons, and an admin records the adopted text on the charter afterwards. Rules changes stay a direct change an admin applies.",
       "words": 39,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21681,7 +21681,7 @@
       "text": "Not counted: cast by someone who has since left this patch or is no longer a member.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22774,8 +22774,8 @@
       "text": "Every group here is a patch. A band, a venue, a collective, a coalition. Patches are equals: none is a subcategory of another, and none owns another.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
       "note": null,
       "occurrences": [
         {
@@ -22792,8 +22792,8 @@
       "text": "Following any public patch takes one click. Joining is for people who want to belong: members vote on proposals, appear on the member list, and help run the place.",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "You can follow any public patch with one click. \"Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
       "note": null,
       "occurrences": [
         {
@@ -22810,8 +22810,8 @@
       "text": "The quilt places patches near the other patches they share people with. When two tiles sit close, real people move between those groups. Nobody arranges the layout by hand.",
       "words": 29,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
       "note": null,
       "occurrences": [
         {
@@ -22828,7 +22828,7 @@
       "text": "Events come from the patches you follow or join. Your feed is built from those connections and nothing else.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22882,7 +22882,7 @@
       "text": "No algorithm decides what you see. The quilt and your feed follow the connections you actually have.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22986,8 +22986,8 @@
       "text": "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
       "note": null,
       "occurrences": [
         {
@@ -23584,8 +23584,8 @@
       "text": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead — the patches you're part of and follow. You can always move between them from the switcher.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
       "note": null,
       "occurrences": [
         {
@@ -23663,7 +23663,7 @@
       "text": "Keeps patches that changed the shared community standards out of your quilt, search, map, and event feed. Direct links still work.",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23699,7 +23699,7 @@
       "text": "A calendar feed of every event on your My Quilt, for your calendar app. The address is a secret. Anyone who has it can read your feed.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23850,7 +23850,7 @@
       "text": "as one of its stewards. That listing belongs to you, and you can unlist yourself any time.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24048,7 +24048,7 @@
       "text": "Archived patches are hidden everywhere but nothing is erased. Members, events, and history stay intact. Restoring returns a patch to what it was before, without notifying anyone.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24084,7 +24084,7 @@
       "text": "/{node.slug} · archived {formatDate(node.archived_at)} · {node.member_count} {node.member_count === 1 ? 'member' : 'members'}, {node.follower_count} {node.follower_count === 1 ? 'follower' : 'followers'}",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25338,8 +25338,8 @@
       "text": "The page that tells people who runs this quilt and what it costs to keep up. Publishes to /label, readable without an account.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account.",
       "note": null,
       "occurrences": [
         {
@@ -25374,8 +25374,8 @@
       "text": "You need at least one listed steward before this can publish. Somebody has to put their name on it.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "You need at least one listed steward before this can publish.",
       "note": null,
       "occurrences": [
         {
@@ -25428,8 +25428,8 @@
       "text": "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation instead, because a listing belongs to the person in it. A handle is plenty. No legal names.",
       "words": 41,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation.",
       "note": null,
       "occurrences": [
         {
@@ -25507,8 +25507,8 @@
       "text": "Introduce yourself. Say why this quilt exists and what you spend to keep it going, in whatever voice you'd actually use out loud. Markdown works.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Introduce yourself. Say why this quilt exists and feel free to include your spend for transparency. Format with markdown.",
       "note": null,
       "occurrences": [
         {
@@ -25665,8 +25665,8 @@
       "text": "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old. Use the why field to explain your choices, like picking Hetzner over a hyperscaler. You can also skip this and talk costs in the prose, though then there's no total and no staleness warning.",
       "words": 62,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old.",
       "note": null,
       "occurrences": [
         {
@@ -25899,8 +25899,8 @@
       "text": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely, so keep it just as honest.",
       "words": 42,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely.",
       "note": null,
       "occurrences": [
         {
@@ -25935,7 +25935,7 @@
       "text": "The default that ships with Patchwork. It fills in this quilt's name by itself and starts with a note saying it's the default. Saving any edit removes that note along with it.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26115,7 +26115,7 @@
       "text": "visitor, including people without accounts. Neighboring is a public statement that your community stands beside theirs. People connect their own quilts privately on top of this list.",
       "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32225,8 +32225,8 @@
       "text": "Nobody has written this quilt's Label yet. When they do, you'll see who runs the place and what it costs to keep up.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Nobody has written this quilt's Label yet.",
       "note": null,
       "occurrences": [
         {
@@ -32387,8 +32387,8 @@
       "text": "Real people run this, and real people sometimes run things badly. So the exit is built in: any member can export what they can already see and start the community over somewhere else, under different stewards. Nobody has to ask first.",
       "words": 41,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.",
       "note": null,
       "occurrences": [
         {
@@ -32549,8 +32549,8 @@
       "text": "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is marked.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge.",
       "note": null,
       "occurrences": [
         {
@@ -33301,7 +33301,7 @@
       "text": "Times are read in your timezone. Rows matching an event already on the calendar are skipped, so re-uploading a corrected file is safe.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36520,8 +36520,8 @@
       "text": "Nobody — this is an ordinary membership proposal",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "Nobody. This is an ordinary membership proposal",
       "note": null,
       "occurrences": [
         {
