@@ -7,18 +7,18 @@ visitor-readable string in this repository and records who wrote it.
 |---|---:|---:|
 | Written by a person | 169 | 6,207 |
 | Left as drafted, deliberately | 0 | |
-| Not yet reviewed | 2047 | |
-| **Total** | **2216** | **17,463** |
+| Not yet reviewed | 1810 | |
+| **Total** | **1979** | **16,190** |
 
-Human-authored or deliberately accepted: **8%** of strings.
+Human-authored or deliberately accepted: **9%** of strings.
 
 ## By tier
 
 | Tier | Decided | Total |
 |---|---:|---:|
-| Paragraphs (16+ words) | 163 | 258 |
-| Helper text (6–15 words) | 2 | 527 |
-| Labels (2–5 words) | 4 | 1431 |
+| Paragraphs (16+ words) | 163 | 257 |
+| Helper text (6–15 words) | 2 | 422 |
+| Labels (2–5 words) | 4 | 1300 |
 
 ## Out of scope
 

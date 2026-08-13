@@ -87,3 +87,68 @@ test('a backtick or backslash is refused rather than written', () => {
   assert.ok(encodeFor('go-error-body', null, 'use `make dev`').problem);
   assert.ok(encodeFor('go-error-body', null, 'a path like C:\\Users').problem);
 });
+
+// ------------------------------------------------------- conditional text ---
+
+// Text inside a conditional is still text.
+//
+// The text-node scan stops at the next `<`, so an element wrapping an
+// `{#if}` hands the extractor one chunk with the directives inside it — and
+// the noise filter rejected any chunk containing `{#`, which is right about
+// the directive and wrong about the sentences either side of it. A term line
+// reading "This council's term ended … / Next seat comes up …" lost both
+// branches at once and neither was ever offered for review.
+
+const IFELSE = [
+  '<p class="term-line">',
+  '  {#if termLapsed}',
+  "    This council's term ended {formatDay(end)}. It serves until a successor is elected.",
+  '  {:else}',
+  '    Next seat comes up {formatDay(end)}.',
+  '  {/if}',
+  '</p>',
+].join('\n');
+
+function markupHits(src) {
+  return extractOne('web/src/components/X.svelte', 'svelte', src)
+    .filter((h) => h.kind === 'markup');
+}
+
+test('both branches of a conditional are offered, and the directives are not', () => {
+  const texts = markupHits(IFELSE).map((h) => h.text);
+  assert.equal(texts.length, 2);
+  assert.ok(texts.some((t) => t.startsWith("This council's term ended")));
+  assert.ok(texts.some((t) => t.startsWith('Next seat comes up')));
+  assert.ok(!texts.some((t) => /\{[#:/]/.test(t)), 'a directive was claimed as copy');
+});
+
+test('each branch is an exact, unique substring so writeback can find it', () => {
+  for (const h of markupHits(IFELSE)) {
+    assert.equal(IFELSE.split(h.raw).length - 1, 1, `not unique in source: ${h.raw}`);
+  }
+});
+
+test('an expression inside the copy survives, nested ones included', () => {
+  // One expression, not two: a single strip pass removes `${name}` and leaves
+  // the outer braces, which then reads as unbalanced code. This exact string
+  // is human-written in the repo and was being thrown away.
+  const src = "<p>\n  Reports go to the admins.{name ? ` You're reporting ${name}.` : ''}\n</p>";
+  const texts = markupHits(src).map((h) => h.text);
+  assert.equal(texts.length, 1);
+  assert.ok(texts[0].startsWith('Reports go to the admins.'));
+});
+
+test('attribute residue is refused rather than filed as copy', () => {
+  // An attribute holding a `>` leaves the scan mid-tag: `onclick={() => {`
+  // ends the "tag" early, so the chunk runs `} title="x">Close` and the label
+  // is welded to the code in front of it.
+  //
+  // Neither version recovers "Close" — that needs a real parser, and this
+  // asserts the reachable property instead: the fragment is refused. Before,
+  // it was accepted, and `} title="x">Close` sat in the queue as a string
+  // somebody was expected to rewrite.
+  const src = '<button onclick={() => { open = false; }} title="x">Close</button>';
+  for (const h of markupHits(src)) {
+    assert.ok(!/[{}]|=>|="/.test(h.text), `code filed as copy: ${h.text}`);
+  }
+});

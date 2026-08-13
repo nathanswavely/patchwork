@@ -84,9 +84,66 @@ function lineAt(src, index) {
 }
 
 /** Is this chunk Svelte control flow or a bare expression rather than prose? */
+// A block directive: {#if …}, {:else}, {/each}. Not copy, and not a boundary
+// the text-node regex knows about — it stops at the next `<`, so an element
+// wrapping a conditional yields one chunk with the directives inside it.
+const BLOCK_DIRECTIVE = /\{[#:/][^{}]*\}/g;
+
+/**
+ * Split a text-node chunk at its block directives, keeping each segment's
+ * offset within the chunk so writeback still points at real source.
+ *
+ * Everything a conditional wraps used to be discarded: `isMarkupNoise`
+ * rejected any chunk containing `{#`, which is correct about the directive
+ * and wrong about the sentences either side of it. A term line reading
+ * "This council's term ended … / Next seat comes up …" lost both branches at
+ * once, and neither was ever offered for review.
+ */
+function splitOnDirectives(chunk) {
+  const out = [];
+  let last = 0;
+  for (const m of chunk.matchAll(BLOCK_DIRECTIVE)) {
+    if (m.index > last) out.push({ text: chunk.slice(last, m.index), offset: last });
+    last = m.index + m[0].length;
+  }
+  if (last < chunk.length) out.push({ text: chunk.slice(last), offset: last });
+  return out;
+}
+
+// Residue of an attribute or an expression rather than a text node.
+//
+// The text-node regex stops at the next `<`, so an attribute containing a `>`
+// — `onclick={() => {}}`, an arrow, a template literal — leaves the scan
+// mid-tag, and the "text" after it is really code. Blanket-rejecting every
+// chunk with a block directive hid most of that by accident; once directives
+// stop discarding their neighbours it has to be named.
+//
+// Tested against the chunk with balanced `{…}` expressions already removed,
+// never the raw chunk. A backtick or a brace *inside* an expression is
+// ordinary interpolated copy — "…against the community lining.{entityName ?
+// ` You're reporting ${entityName}.` : ''}" is a human-written string in this
+// repo, and matching on the raw chunk threw it away.
+const ATTR_RESIDUE = /[{}]|=>|="|\/>|`/;
+
+/**
+ * The chunk with its `{…}` expressions removed — to a fixed point, so nested
+ * ones go too. A single pass strips only the innermost group and leaves the
+ * outer braces, which reads as unbalanced code to anything checking after it:
+ * `{entityName ? ` … ${entityName}.` : ''}` is one expression, not two.
+ */
+function stripExpressions(chunk) {
+  let out = chunk;
+  for (;;) {
+    const next = out.replace(/\{[^{}]*\}/g, '');
+    if (next === out) return out;
+    out = next;
+  }
+}
+
 function isMarkupNoise(chunk) {
   if (/\{[#:/]/.test(chunk)) return true;             // {#if} {:else} {/each}
-  const literal = chunk.replace(/\{[^{}]*\}/g, '').trim();
+  const literal = stripExpressions(chunk).trim();
+  if (ATTR_RESIDUE.test(literal)) return true;        // attribute or JS, not text
   if (!literal) return true;                           // pure interpolation
   const words = literal.split(/\s+/).filter((w) => /[A-Za-z]{2}/.test(w));
   if (words.length < 1) return true;
@@ -121,16 +178,23 @@ function extractSvelte(file, src) {
   const textNode = />([^<]+)</g;
   let m;
   while ((m = textNode.exec(markup)) !== null) {
-    const raw = m[1];
-    if (!collapse(raw) || isMarkupNoise(raw)) continue;
-    // Trim surrounding whitespace out of `raw` so writeback preserves layout.
-    const lead = raw.match(/^\s*/)[0].length;
-    const trail = raw.match(/\s*$/)[0].length;
-    const inner = raw.slice(lead, raw.length - trail);
-    if (!inner) continue;
-    pushHit(hits, {
-      file, raw: inner, index: m.index + 1 + lead, src, kind: 'markup',
-    });
+    const chunk = m[1];
+    if (!collapse(chunk)) continue;
+    // One segment when there is no conditional, several when there is — each
+    // still an exact substring of the source, so writeback lands where the
+    // words actually are.
+    for (const seg of splitOnDirectives(chunk)) {
+      const raw = seg.text;
+      if (!collapse(raw) || isMarkupNoise(raw)) continue;
+      // Trim surrounding whitespace out of `raw` so writeback preserves layout.
+      const lead = raw.match(/^\s*/)[0].length;
+      const trail = raw.match(/\s*$/)[0].length;
+      const inner = raw.slice(lead, raw.length - trail);
+      if (!inner) continue;
+      pushHit(hits, {
+        file, raw: inner, index: m.index + 1 + seg.offset + lead, src, kind: 'markup',
+      });
+    }
   }
 
   // Copy-bearing attributes with static values.
