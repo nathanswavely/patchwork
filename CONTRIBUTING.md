@@ -13,6 +13,18 @@ make dev        # Go backend + Vite dev server with hot reload
 make seed       # optional demo data (fictional; see docs/adr/009)
 ```
 
+Every workflow here goes through `make`, and Windows ships none. If you have
+MinGW-w64 — WinLibs installs it, and you likely already do, since cgo needs
+gcc — you already have make under another name: `mingw32-make.exe`. Put a
+`make.cmd` on your PATH and the documented commands work verbatim:
+
+```bat
+@echo off
+mingw32-make.exe %*
+```
+
+WSL is the other route if you'd rather; the smoke test already runs that way.
+
 `make build` writes the server binary to `./patchwork`. Set `PATCHWORK_BIN`
 to an absolute path to send it somewhere else. This is useful on Windows, where
 the firewall keys its rule to the executable's full path, so a per-worktree
