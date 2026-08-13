@@ -240,9 +240,7 @@
     <section class="pw-section">
       <h2>When you open Patchwork</h2>
       <p class="muted profile-hint">
-        Patchwork opens on the whole quilt. Switch this on to start on My
-        Quilt instead — the patches you're part of and follow. You can
-        always move between them from the switcher.
+        Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.
       </p>
       <label class="toggle-row">
         <input

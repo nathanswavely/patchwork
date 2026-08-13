@@ -81,10 +81,7 @@
   <header class="page-head">
     <h1>Legal documents</h1>
     <p class="muted">
-      The privacy policy and user agreement, public at /privacy and /terms
-      and linked from every signup form. Patchwork ships honest defaults
-      that describe what the software actually does. Anything you write
-      here replaces the default entirely, so keep it just as honest.
+      The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely.
     </p>
   </header>
 

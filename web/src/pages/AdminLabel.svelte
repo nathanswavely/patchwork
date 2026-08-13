@@ -168,8 +168,7 @@
   <div class="page-header">
     <h1>The Label</h1>
     <p class="muted">
-      The page that tells people who runs this quilt and what it costs to
-      keep up. Publishes to /label, readable without an account.
+      Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account.
     </p>
   </div>
 
@@ -188,7 +187,6 @@
               Anyone can read the Label, signed in or not.
             {:else if listedCount === 0}
               You need at least one listed steward before this can publish.
-              Somebody has to put their name on it.
             {:else}
               Ready to publish whenever you are.
             {/if}
@@ -209,10 +207,7 @@
       <h2>Stewards</h2>
       <div class="settings-card">
         <p class="section-desc">
-          The people who answer for this quilt, by name. Add yourself and
-          you appear right away. Add anyone else and they get an invitation
-          instead, because a listing belongs to the person in it. A handle
-          is plenty. No legal names.
+          The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation.
         </p>
         {#each stewards as s (s.id)}
           <div class="steward-row">
@@ -247,9 +242,7 @@
       <h2>In your own words</h2>
       <div class="settings-card">
         <p class="section-desc">
-          Introduce yourself. Say why this quilt exists and what you spend
-          to keep it going, in whatever voice you'd actually use out loud.
-          Markdown works.
+          Introduce yourself. Say why this quilt exists and feel free to include your spend for transparency. Format with markdown.
         </p>
         <textarea class="prose-input" bind:value={prose} rows="10"
           placeholder="Hi, I run this quilt. Here's why…"></textarea>
@@ -292,12 +285,7 @@
       <h2>What this runs on</h2>
       <div class="settings-card">
         <p class="section-desc">
-          List what you pay and when you last checked each number, and the
-          page can show readers a monthly total and warn them when a figure
-          gets old. Use the why field to explain your choices, like picking
-          Hetzner over a hyperscaler. You can also skip this and talk costs
-          in the prose, though then there's no total and no staleness
-          warning.
+          List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old.
         </p>
         <label class="field currency-field">
           <span class="field-label">Currency</span>

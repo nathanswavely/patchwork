@@ -43,8 +43,7 @@
     <div class="label-empty">
       <h1>No Label yet</h1>
       <p class="muted">
-        Nobody has written this quilt's Label yet. When they do, you'll see
-        who runs the place and what it costs to keep up.
+        Nobody has written this quilt's Label yet.
       </p>
     </div>
   {:else}
@@ -151,10 +150,7 @@
     <section class="the-door">
       <h2><Scissors size={18} weight="duotone" /> If you don't like how this is run</h2>
       <p>
-        Real people run this, and real people sometimes run things badly.
-        So the exit is built in: any member can export what they can
-        already see and start the community over somewhere else, under
-        different stewards. Nobody has to ask first.
+        Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.
       </p>
     </section>
   {/if}

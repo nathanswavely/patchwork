@@ -180,7 +180,7 @@
               <label for="nominee">Nominate for admin</label>
               {#if nominatable.length > 0}
                 <select id="nominee" bind:value={nomineeId} disabled={submitting}>
-                  <option value="">Nobody — this is an ordinary membership proposal</option>
+                  <option value="">Nobody. This is an ordinary membership proposal</option>
                   {#each nominatable as m}
                     <option value={m.user_id}>{m.display_name || m.username}</option>
                   {/each}

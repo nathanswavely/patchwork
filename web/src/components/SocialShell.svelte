@@ -442,7 +442,7 @@
           About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running
         </p>
       {/if}
-      <p class="label-sheet-line muted-line">Run by real people. Yours to seamrip if it ever comes to that.</p>
+      <p class="label-sheet-line muted-line">Run by real people and open source. Feel free to build your own if you don't like this one.</p>
       <a
         href="/label"
         class="label-sheet-link"

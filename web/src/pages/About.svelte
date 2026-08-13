@@ -81,19 +81,13 @@
   <section class="about-section">
     <h2>How it works</h2>
     <p>
-      Every group here is a patch. A band, a venue, a collective, a
-      coalition. Patches are equals: none is a subcategory of another,
-      and none owns another.
+      Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.
     </p>
     <p>
-      Following any public patch takes one click. Joining is for people
-      who want to belong: members vote on proposals, appear on the member
-      list, and help run the place.
+      You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.
     </p>
     <p>
-      The quilt places patches near the other patches they share people
-      with. When two tiles sit close, real people move between those
-      groups. Nobody arranges the layout by hand.
+      The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.
     </p>
     <p>
       Events come from the patches you follow or join. Your feed is built
@@ -112,8 +106,7 @@
         a shared community-standards baseline. Amendments to it are public.
       </li>
       <li>
-        Leaving is built in. A community can export its data and stand up
-        again under new stewards, which is called a seamrip here. The
+        "Leaving" is totally fine and affordances for it are built in. It's called a "Seamrip." A community can export its data and stand up again under new stewards The
         <a href="/label">Label</a> says where the door is.
       </li>
     </ul>

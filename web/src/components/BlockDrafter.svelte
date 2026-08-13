@@ -250,7 +250,7 @@
 
   <p class="muted drafter-hint">
     {#if tool === 'sew'}
-      Click an anchor, then a second anchor, to sew a seam. Seams split every piece they cross.
+      Click two anchors to sew a seam. Seams split every piece they cross.
     {:else if tool === 'color'}
       Click a piece to color it with fabric {selectedSlot + 1}.
     {:else}

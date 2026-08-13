@@ -350,22 +350,23 @@
       ]
     },
     {
-      "id": "97afa7c400dc",
-      "text": "Never through the public tracker — see [SECURITY.md](SECURITY.md).",
-      "words": 8,
+      "id": "894316bf7f3b",
+      "text": "Never through the public tracker. See [SECURITY.md](SECURITY.md).",
+      "words": 7,
       "tier": "helper",
-      "status": "rewritten",
-      "replacement": "Never through the public tracker. See [SECURITY.md](SECURITY.md).",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
           "line": 89,
           "kind": "md-block",
-          "raw": "Never through the public tracker — see [SECURITY.md](SECURITY.md).",
+          "raw": "Never through the public tracker. See [SECURITY.md](SECURITY.md).",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Never through the public tracker — see [SECURITY.md](SECURITY.md)."
     },
     {
       "id": "0ac511c6684a",
@@ -777,29 +778,23 @@
       "previous_ai_text": "Browse a living quilt first if you can. The reference instance serves\nthe arts scene of Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project."
     },
     {
-      "id": "632c245387b6",
-      "text": "Just a listing. You run it, no overhead.",
+      "id": "69e2b37220f0",
+      "text": "No overhead. You're the only one running it.",
       "words": 8,
       "tier": "helper",
-      "status": "rewritten",
-      "replacement": "No overhead. You're the only one running it.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
           "line": 22,
           "kind": "go-string",
-          "raw": "Just a listing. You run it, no overhead.",
+          "raw": "No overhead. You're the only one running it.",
           "quote": "\""
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 115,
-          "kind": "js-string",
-          "raw": "Just a listing. You run it, no overhead.",
-          "quote": "'"
         }
-      ]
+      ],
+      "previous_ai_text": "Just a listing. You run it, no overhead."
     },
     {
       "id": "c4c7ec9a3a9f",
@@ -827,29 +822,30 @@
       ]
     },
     {
-      "id": "d8b0d7fbff78",
-      "text": "Small crew, lightweight process. Majority rules.",
-      "words": 6,
-      "tier": "helper",
-      "status": "rewritten",
-      "replacement": "Small group. Majority rules.",
+      "id": "3f70f9ba2072",
+      "text": "Small group. Majority rules.",
+      "words": 4,
+      "tier": "label",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
           "line": 30,
           "kind": "go-string",
-          "raw": "Small crew, lightweight process. Majority rules.",
+          "raw": "Small group. Majority rules.",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
           "line": 116,
           "kind": "js-string",
-          "raw": "Small crew, lightweight process. Majority rules.",
+          "raw": "Small group. Majority rules.",
           "quote": "'"
         }
-      ]
+      ],
+      "previous_ai_text": "Small crew, lightweight process. Majority rules."
     },
     {
       "id": "b53a99482549",
@@ -888,29 +884,30 @@
       ]
     },
     {
-      "id": "971c6798a0f4",
-      "text": "Open community, structured process. Earn trust through contribution.",
+      "id": "c5f6d3322bb9",
+      "text": "Open community, structured process. Trust builds through contribution.",
       "words": 8,
       "tier": "helper",
-      "status": "rewritten",
-      "replacement": "Open community, structured process. Trust builds through contribution.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/governance/defaults.go",
           "line": 38,
           "kind": "go-string",
-          "raw": "Open community, structured process. Earn trust through contribution.",
+          "raw": "Open community, structured process. Trust builds through contribution.",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
           "line": 117,
           "kind": "js-string",
-          "raw": "Open community, structured process. Earn trust through contribution.",
+          "raw": "Open community, structured process. Trust builds through contribution.",
           "quote": "'"
         }
-      ]
+      ],
+      "previous_ai_text": "Open community, structured process. Earn trust through contribution."
     },
     {
       "id": "0148e1a21348",
@@ -7988,22 +7985,23 @@
       ]
     },
     {
-      "id": "b577b4a4ac2c",
-      "text": "this event comes from an event source — edit it in the source calendar, or detach it first",
-      "words": 18,
+      "id": "d6b552b304ce",
+      "text": "this event comes from an event source. Edit it in the source calendar, or detach it first",
+      "words": 17,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "this event comes from an event source. Edit it in the source calendar, or detach it first",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/events.go",
           "line": 444,
           "kind": "go-error-body",
-          "raw": "this event comes from an event source — edit it in the source calendar, or detach it first",
+          "raw": "this event comes from an event source. Edit it in the source calendar, or detach it first",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this event comes from an event source — edit it in the source calendar, or detach it first"
     },
     {
       "id": "723b6465403e",
@@ -15560,22 +15558,23 @@
       ]
     },
     {
-      "id": "c144ebb9aada",
-      "text": "Click an anchor, then a second anchor, to sew a seam. Seams split every piece they cross.",
-      "words": 17,
-      "tier": "prose",
-      "status": "rewritten",
-      "replacement": "Click two anchors to sew a seam. Seams split every piece they cross.",
+      "id": "98ce150766e2",
+      "text": "Click two anchors to sew a seam. Seams split every piece they cross.",
+      "words": 13,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
           "line": 253,
           "kind": "markup",
-          "raw": "Click an anchor, then a second anchor, to sew a seam. Seams split every piece they cross.",
+          "raw": "Click two anchors to sew a seam. Seams split every piece they cross.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Click an anchor, then a second anchor, to sew a seam. Seams split every piece they cross."
     },
     {
       "id": "2a2d68ed4356",
@@ -18176,7 +18175,7 @@
         },
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 52,
+          "line": 51,
           "kind": "markup",
           "raw": "The Label",
           "quote": null
@@ -18287,7 +18286,7 @@
         },
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 118,
+          "line": 117,
           "kind": "markup",
           "raw": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
           "quote": null
@@ -20028,22 +20027,23 @@
       ]
     },
     {
-      "id": "82de23f3bcea",
-      "text": "Run by real people. Yours to seamrip if it ever comes to that.",
-      "words": 13,
-      "tier": "helper",
-      "status": "rewritten",
-      "replacement": "Run by real people and open source. Feel free to build your own if you don't like this one.",
+      "id": "ee032aeb93a3",
+      "text": "Run by real people and open source. Feel free to build your own if you don't like this one.",
+      "words": 19,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
           "line": 445,
           "kind": "markup",
-          "raw": "Run by real people. Yours to seamrip if it ever comes to that.",
+          "raw": "Run by real people and open source. Feel free to build your own if you don't like this one.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Run by real people. Yours to seamrip if it ever comes to that."
     },
     {
       "id": "b1ae867aaa75",
@@ -20989,14 +20989,14 @@
         },
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 226,
+          "line": 221,
           "kind": "attr:title",
           "raw": "Remove",
           "quote": "\""
         },
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 317,
+          "line": 305,
           "kind": "attr:title",
           "raw": "Remove",
           "quote": "\""
@@ -22770,58 +22770,61 @@
       ]
     },
     {
-      "id": "19096e065e9d",
-      "text": "Every group here is a patch. A band, a venue, a collective, a coalition. Patches are equals: none is a subcategory of another, and none owns another.",
-      "words": 27,
+      "id": "d2ae93869c90",
+      "text": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
+      "words": 22,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "Every group here is a patch. A band, a venue, a collective, a\r\n      coalition. Patches are equals: none is a subcategory of another,\r\n      and none owns another.",
+          "raw": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Every group here is a patch. A band, a venue, a collective, a coalition. Patches are equals: none is a subcategory of another, and none owns another."
     },
     {
-      "id": "8c22e097b878",
-      "text": "Following any public patch takes one click. Joining is for people who want to belong: members vote on proposals, appear on the member list, and help run the place.",
-      "words": 29,
+      "id": "6c8a45e92e93",
+      "text": "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
+      "words": 31,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "You can follow any public patch with one click. \"Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 89,
+          "line": 87,
           "kind": "markup",
-          "raw": "Following any public patch takes one click. Joining is for people\r\n      who want to belong: members vote on proposals, appear on the member\r\n      list, and help run the place.",
+          "raw": "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Following any public patch takes one click. Joining is for people who want to belong: members vote on proposals, appear on the member list, and help run the place."
     },
     {
-      "id": "9cd38a0bd12a",
-      "text": "The quilt places patches near the other patches they share people with. When two tiles sit close, real people move between those groups. Nobody arranges the layout by hand.",
-      "words": 29,
+      "id": "729773f00c76",
+      "text": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
+      "words": 25,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 94,
+          "line": 90,
           "kind": "markup",
-          "raw": "The quilt places patches near the other patches they share people\r\n      with. When two tiles sit close, real people move between those\r\n      groups. Nobody arranges the layout by hand.",
+          "raw": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The quilt places patches near the other patches they share people with. When two tiles sit close, real people move between those groups. Nobody arranges the layout by hand."
     },
     {
       "id": "8a3591cbe67c",
@@ -22834,7 +22837,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 99,
+          "line": 93,
           "kind": "markup",
           "raw": "Events come from the patches you follow or join. Your feed is built\r\n      from those connections and nothing else.",
           "quote": null
@@ -22852,7 +22855,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 105,
+          "line": 99,
           "kind": "markup",
           "raw": "What makes it different",
           "quote": null
@@ -22870,7 +22873,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 107,
+          "line": 101,
           "kind": "markup",
           "raw": "No ads, and nothing here is for sale.",
           "quote": null
@@ -22888,7 +22891,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 108,
+          "line": 102,
           "kind": "markup",
           "raw": "No algorithm decides what you see. The quilt and your feed follow the connections you actually have.",
           "quote": null
@@ -22906,7 +22909,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 109,
+          "line": 103,
           "kind": "markup",
           "raw": "Run by named people in this community, with the costs stated in the open.",
           "quote": null
@@ -22924,7 +22927,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 111,
+          "line": 105,
           "kind": "markup",
           "raw": "Every patch starts from",
           "quote": null
@@ -22949,7 +22952,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 111,
+          "line": 105,
           "kind": "markup",
           "raw": "the lining",
           "quote": null
@@ -22974,7 +22977,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 111,
+          "line": 105,
           "kind": "markup",
           "raw": ",\r\n        a shared community-standards baseline. Amendments to it are public.",
           "quote": null
@@ -22982,22 +22985,23 @@
       ]
     },
     {
-      "id": "25778c5480d4",
-      "text": "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The",
-      "words": 24,
+      "id": "d96dd4d9fddb",
+      "text": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
+      "words": 29,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 115,
+          "line": 109,
           "kind": "markup",
-          "raw": "Leaving is built in. A community can export its data and stand up\r\n        again under new stewards, which is called a seamrip here. The",
+          "raw": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The"
     },
     {
       "id": "0e66373f45dc",
@@ -23010,7 +23014,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 117,
+          "line": 110,
           "kind": "markup",
           "raw": "Label",
           "quote": null
@@ -23035,7 +23039,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 117,
+          "line": 110,
           "kind": "markup",
           "raw": "says where the door is.",
           "quote": null
@@ -23053,7 +23057,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 126,
+          "line": 119,
           "kind": "markup",
           "raw": "Join {instanceName}",
           "quote": null
@@ -23078,7 +23082,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 132,
+          "line": 125,
           "kind": "markup",
           "raw": "Patchwork is open source. Start your own quilt &rarr;",
           "quote": null
@@ -23580,22 +23584,23 @@
       ]
     },
     {
-      "id": "841373a015cd",
-      "text": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead — the patches you're part of and follow. You can always move between them from the switcher.",
-      "words": 32,
-      "tier": "prose",
-      "status": "rewritten",
-      "replacement": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
+      "id": "1fc2e26ba133",
+      "text": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
+      "words": 15,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 243,
           "kind": "markup",
-          "raw": "Patchwork opens on the whole quilt. Switch this on to start on My\r\n        Quilt instead — the patches you're part of and follow. You can\r\n        always move between them from the switcher.",
+          "raw": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead — the patches you're part of and follow. You can always move between them from the switcher."
     },
     {
       "id": "28024e1b69fc",
@@ -23608,7 +23613,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 254,
+          "line": 252,
           "kind": "markup",
           "raw": "Start on My Quilt",
           "quote": null
@@ -23626,7 +23631,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 259,
+          "line": 257,
           "kind": "markup",
           "raw": "Discovery",
           "quote": null
@@ -23644,7 +23649,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 267,
+          "line": 265,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -23669,7 +23674,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 270,
+          "line": 268,
           "kind": "markup",
           "raw": "Keeps patches that changed the shared community standards out of your\r\n        quilt, search, map, and event feed. Direct links still work.",
           "quote": null
@@ -23687,7 +23692,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 276,
+          "line": 274,
           "kind": "markup",
           "raw": "Personal feed",
           "quote": null
@@ -23705,7 +23710,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 278,
+          "line": 276,
           "kind": "markup",
           "raw": "A calendar feed of every event on your My Quilt, for your calendar\r\n        app. The address is a secret. Anyone who has it can read your feed.",
           "quote": null
@@ -23723,7 +23728,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 284,
+          "line": 282,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -23748,7 +23753,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 287,
+          "line": 285,
           "kind": "markup",
           "raw": "Copy it now. This address won't be shown again, and regenerating\r\n          replaces it.",
           "quote": null
@@ -23766,7 +23771,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 294,
+          "line": 292,
           "kind": "markup",
           "raw": "Regenerate address",
           "quote": null
@@ -23784,7 +23789,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 297,
+          "line": 295,
           "kind": "markup",
           "raw": "Disable",
           "quote": null
@@ -23802,7 +23807,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 301,
+          "line": 299,
           "kind": "markup",
           "raw": "Create feed",
           "quote": null
@@ -23820,7 +23825,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 309,
+          "line": 307,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -23838,7 +23843,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 312,
+          "line": 310,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -23856,7 +23861,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 313,
+          "line": 311,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\r\n            unlist yourself any time.",
           "quote": null
@@ -23874,7 +23879,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 318,
+          "line": 316,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -23892,7 +23897,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 320,
+          "line": 318,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\r\n            take it back later.",
           "quote": null
@@ -23910,7 +23915,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 325,
+          "line": 323,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -23928,7 +23933,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 327,
+          "line": 325,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -23946,7 +23951,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 343,
+          "line": 341,
           "kind": "markup",
           "raw": "Decline",
           "quote": null
@@ -25334,22 +25339,23 @@
       ]
     },
     {
-      "id": "058974a3b978",
-      "text": "The page that tells people who runs this quilt and what it costs to keep up. Publishes to /label, readable without an account.",
-      "words": 23,
+      "id": "51b5ad8bf6c5",
+      "text": "Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account.",
+      "words": 22,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
           "line": 171,
           "kind": "markup",
-          "raw": "The page that tells people who runs this quilt and what it costs to\r\n      keep up. Publishes to /label, readable without an account.",
+          "raw": "Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The page that tells people who runs this quilt and what it costs to keep up. Publishes to /label, readable without an account."
     },
     {
       "id": "129bf7b616ca",
@@ -25362,7 +25368,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 188,
+          "line": 187,
           "kind": "markup",
           "raw": "Anyone can read the Label, signed in or not.",
           "quote": null
@@ -25370,22 +25376,23 @@
       ]
     },
     {
-      "id": "98ddfa438432",
-      "text": "You need at least one listed steward before this can publish. Somebody has to put their name on it.",
-      "words": 19,
-      "tier": "prose",
-      "status": "rewritten",
-      "replacement": "You need at least one listed steward before this can publish.",
+      "id": "c0eaf46da1d3",
+      "text": "You need at least one listed steward before this can publish.",
+      "words": 11,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 190,
+          "line": 189,
           "kind": "markup",
-          "raw": "You need at least one listed steward before this can publish.\r\n              Somebody has to put their name on it.",
+          "raw": "You need at least one listed steward before this can publish.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "You need at least one listed steward before this can publish. Somebody has to put their name on it."
     },
     {
       "id": "066557b6c218",
@@ -25398,7 +25405,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 193,
+          "line": 191,
           "kind": "markup",
           "raw": "Ready to publish whenever you are.",
           "quote": null
@@ -25416,7 +25423,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 209,
+          "line": 207,
           "kind": "markup",
           "raw": "Stewards",
           "quote": null
@@ -25424,22 +25431,23 @@
       ]
     },
     {
-      "id": "0ca7c8085e02",
-      "text": "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation instead, because a listing belongs to the person in it. A handle is plenty. No legal names.",
-      "words": 41,
+      "id": "a50adade64e8",
+      "text": "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation.",
+      "words": 24,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 212,
+          "line": 210,
           "kind": "markup",
-          "raw": "The people who answer for this quilt, by name. Add yourself and\r\n          you appear right away. Add anyone else and they get an invitation\r\n          instead, because a listing belongs to the person in it. A handle\r\n          is plenty. No legal names.",
+          "raw": "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation instead, because a listing belongs to the person in it. A handle is plenty. No legal names."
     },
     {
       "id": "16f78a7d6317",
@@ -25452,7 +25460,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 234,
+          "line": 229,
           "kind": "attr:placeholder",
           "raw": "username",
           "quote": "\""
@@ -25477,7 +25485,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 239,
+          "line": 234,
           "kind": "markup",
           "raw": "Add steward",
           "quote": null
@@ -25495,7 +25503,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 247,
+          "line": 242,
           "kind": "markup",
           "raw": "In your own words",
           "quote": null
@@ -25503,22 +25511,23 @@
       ]
     },
     {
-      "id": "102ec17b12bd",
-      "text": "Introduce yourself. Say why this quilt exists and what you spend to keep it going, in whatever voice you'd actually use out loud. Markdown works.",
-      "words": 25,
+      "id": "ea8f35a7312a",
+      "text": "Introduce yourself. Say why this quilt exists and feel free to include your spend for transparency. Format with markdown.",
+      "words": 19,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "Introduce yourself. Say why this quilt exists and feel free to include your spend for transparency. Format with markdown.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 250,
+          "line": 245,
           "kind": "markup",
-          "raw": "Introduce yourself. Say why this quilt exists and what you spend\r\n          to keep it going, in whatever voice you'd actually use out loud.\r\n          Markdown works.",
+          "raw": "Introduce yourself. Say why this quilt exists and feel free to include your spend for transparency. Format with markdown.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Introduce yourself. Say why this quilt exists and what you spend to keep it going, in whatever voice you'd actually use out loud. Markdown works."
     },
     {
       "id": "abd31e4ee1c7",
@@ -25531,7 +25540,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 258,
+          "line": 251,
           "kind": "markup",
           "raw": "Support link",
           "quote": null
@@ -25549,7 +25558,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 259,
+          "line": 252,
           "kind": "attr:placeholder",
           "raw": "https://ko-fi.com/… (optional)",
           "quote": "\""
@@ -25567,7 +25576,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 262,
+          "line": 255,
           "kind": "markup",
           "raw": "Feedback link",
           "quote": null
@@ -25585,7 +25594,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 263,
+          "line": 256,
           "kind": "attr:placeholder",
           "raw": "https://… (optional)",
           "quote": "\""
@@ -25603,14 +25612,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 268,
+          "line": 261,
           "kind": "markup",
           "raw": "Seamripped from",
           "quote": null
         },
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 142,
+          "line": 141,
           "kind": "markup",
           "raw": "Seamripped from",
           "quote": null
@@ -25628,7 +25637,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 277,
+          "line": 270,
           "kind": "markup",
           "raw": "Worth keeping if the history is friendly. Remove it if it\r\n              isn't.",
           "quote": null
@@ -25646,14 +25655,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 292,
+          "line": 285,
           "kind": "markup",
           "raw": "What this runs on",
           "quote": null
         },
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 93,
+          "line": 92,
           "kind": "markup",
           "raw": "What this runs on",
           "quote": null
@@ -25661,22 +25670,23 @@
       ]
     },
     {
-      "id": "9e5a7d6be24f",
-      "text": "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old. Use the why field to explain your choices, like picking Hetzner over a hyperscaler. You can also skip this and talk costs in the prose, though then there's no total and no staleness warning.",
-      "words": 62,
+      "id": "1dcf31d37704",
+      "text": "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old.",
+      "words": 28,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 295,
+          "line": 288,
           "kind": "markup",
-          "raw": "List what you pay and when you last checked each number, and the\r\n          page can show readers a monthly total and warn them when a figure\r\n          gets old. Use the why field to explain your choices, like picking\r\n          Hetzner over a hyperscaler. You can also skip this and talk costs\r\n          in the prose, though then there's no total and no staleness\r\n          warning.",
+          "raw": "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old. Use the why field to explain your choices, like picking Hetzner over a hyperscaler. You can also skip this and talk costs in the prose, though then there's no total and no staleness warning."
     },
     {
       "id": "3ac1a9ec4fa7",
@@ -25689,7 +25699,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 303,
+          "line": 291,
           "kind": "markup",
           "raw": "Currency",
           "quote": null
@@ -25707,7 +25717,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 304,
+          "line": 292,
           "kind": "attr:placeholder",
           "raw": "USD",
           "quote": "\""
@@ -25725,7 +25735,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 309,
+          "line": 297,
           "kind": "attr:placeholder",
           "raw": "Service (e.g. Hetzner CX22)",
           "quote": "\""
@@ -25743,7 +25753,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 310,
+          "line": 298,
           "kind": "attr:placeholder",
           "raw": "What for (e.g. the server)",
           "quote": "\""
@@ -25761,7 +25771,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 313,
+          "line": 301,
           "kind": "markup",
           "raw": "/month",
           "quote": null
@@ -25779,7 +25789,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 314,
+          "line": 302,
           "kind": "markup",
           "raw": "/year",
           "quote": null
@@ -25797,7 +25807,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 316,
+          "line": 304,
           "kind": "attr:title",
           "raw": "When this figure was stated or last reviewed",
           "quote": "\""
@@ -25815,7 +25825,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 322,
+          "line": 310,
           "kind": "attr:placeholder",
           "raw": "Why this one? (cheap, EU-based, no contract)",
           "quote": "\""
@@ -25833,7 +25843,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLabel.svelte",
-          "line": 327,
+          "line": 315,
           "kind": "markup",
           "raw": "Add line",
           "quote": null
@@ -25895,22 +25905,23 @@
       ]
     },
     {
-      "id": "fdb4d9ce4c54",
-      "text": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely, so keep it just as honest.",
-      "words": 42,
+      "id": "1c7775310a5a",
+      "text": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely.",
+      "words": 36,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The privacy policy and user agreement, public at /privacy and /terms\r\n      and linked from every signup form. Patchwork ships honest defaults\r\n      that describe what the software actually does. Anything you write\r\n      here replaces the default entirely, so keep it just as honest.",
+          "raw": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely, so keep it just as honest."
     },
     {
       "id": "4533ed5bc3fb",
@@ -25923,7 +25934,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 117,
+          "line": 114,
           "kind": "markup",
           "raw": "Custom text, last saved {current.updated_at?.slice(0, 10) || 'recently'}.",
           "quote": null
@@ -25941,7 +25952,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 121,
+          "line": 118,
           "kind": "markup",
           "raw": "The default that ships with Patchwork. It fills in this quilt's\r\n            name by itself and starts with a note saying it's the default.\r\n            Saving any edit removes that note along with it.",
           "quote": null
@@ -25959,7 +25970,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 127,
+          "line": 124,
           "kind": "markup",
           "raw": "View public page",
           "quote": null
@@ -25977,7 +25988,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 138,
+          "line": 135,
           "kind": "markup",
           "raw": "Markdown. Links like [the Label](/label) work.",
           "quote": null
@@ -25995,7 +26006,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminLegal.svelte",
-          "line": 151,
+          "line": 148,
           "kind": "markup",
           "raw": "Unsaved changes",
           "quote": null
@@ -32221,22 +32232,23 @@
       ]
     },
     {
-      "id": "bf0173ed9f35",
-      "text": "Nobody has written this quilt's Label yet. When they do, you'll see who runs the place and what it costs to keep up.",
-      "words": 23,
-      "tier": "prose",
-      "status": "rewritten",
-      "replacement": "Nobody has written this quilt's Label yet.",
+      "id": "bb860d6b49d4",
+      "text": "Nobody has written this quilt's Label yet.",
+      "words": 7,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
           "line": 46,
           "kind": "markup",
-          "raw": "Nobody has written this quilt's Label yet. When they do, you'll see\r\n        who runs the place and what it costs to keep up.",
+          "raw": "Nobody has written this quilt's Label yet.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Nobody has written this quilt's Label yet. When they do, you'll see who runs the place and what it costs to keep up."
     },
     {
       "id": "1df269e16c69",
@@ -32249,7 +32261,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 53,
+          "line": 52,
           "kind": "markup",
           "raw": "How {instanceName} is run",
           "quote": null
@@ -32267,7 +32279,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 55,
+          "line": 54,
           "kind": "markup",
           "raw": "Quilts carry a label on the back that says who made them and when.\r\n        This is ours.",
           "quote": null
@@ -32285,7 +32297,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 98,
+          "line": 97,
           "kind": "markup",
           "raw": "These figures haven't been reviewed since {label.stated_on}.\r\n              They may be out of date.",
           "quote": null
@@ -32303,7 +32315,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 119,
+          "line": 118,
           "kind": "markup",
           "raw": "The stewards typed these numbers in themselves. Nobody audits this.",
           "quote": null
@@ -32321,7 +32333,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 129,
+          "line": 128,
           "kind": "markup",
           "raw": "Support this quilt",
           "quote": null
@@ -32339,7 +32351,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 134,
+          "line": 133,
           "kind": "markup",
           "raw": "Send feedback",
           "quote": null
@@ -32357,7 +32369,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 144,
+          "line": 143,
           "kind": "markup",
           "raw": ".\r\n        This quilt started as a fork of it.",
           "quote": null
@@ -32375,7 +32387,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 152,
+          "line": 151,
           "kind": "markup",
           "raw": "If you don't like how this is run",
           "quote": null
@@ -32383,22 +32395,23 @@
       ]
     },
     {
-      "id": "0151948c3788",
-      "text": "Real people run this, and real people sometimes run things badly. So the exit is built in: any member can export what they can already see and start the community over somewhere else, under different stewards. Nobody has to ask first.",
-      "words": 41,
+      "id": "891bf6e1f5c3",
+      "text": "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.",
+      "words": 36,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 154,
+          "line": 153,
           "kind": "markup",
-          "raw": "Real people run this, and real people sometimes run things badly.\r\n        So the exit is built in: any member can export what they can\r\n        already see and start the community over somewhere else, under\r\n        different stewards. Nobody has to ask first.",
+          "raw": "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Real people run this, and real people sometimes run things badly. So the exit is built in: any member can export what they can already see and start the community over somewhere else, under different stewards. Nobody has to ask first."
     },
     {
       "id": "3d2301d732a7",
@@ -32545,22 +32558,23 @@
       ]
     },
     {
-      "id": "e7479a34dc1f",
-      "text": "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is marked.",
-      "words": 24,
+      "id": "a093328f4d6b",
+      "text": "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge.",
+      "words": 28,
       "tier": "prose",
-      "status": "rewritten",
-      "replacement": "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge.",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/Lining.svelte",
           "line": 47,
           "kind": "markup",
-          "raw": "The shared baseline every patch on this quilt starts from. A patch\r\n        can amend its copy. Amendments are public, and the patch is\r\n        marked.",
+          "raw": "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is marked."
     },
     {
       "id": "53a7230e6942",
@@ -36516,22 +36530,23 @@
       ]
     },
     {
-      "id": "3f3fc5255b3f",
-      "text": "Nobody — this is an ordinary membership proposal",
-      "words": 8,
+      "id": "f7827c596e4f",
+      "text": "Nobody. This is an ordinary membership proposal",
+      "words": 7,
       "tier": "helper",
-      "status": "rewritten",
-      "replacement": "Nobody. This is an ordinary membership proposal",
+      "status": "human",
+      "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
           "line": 183,
           "kind": "markup",
-          "raw": "Nobody — this is an ordinary membership proposal",
+          "raw": "Nobody. This is an ordinary membership proposal",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Nobody — this is an ordinary membership proposal"
     },
     {
       "id": "94625348ed54",

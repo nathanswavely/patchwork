@@ -5,21 +5,20 @@ visitor-readable string in this repository and records who wrote it.
 
 | | strings | words |
 |---|---:|---:|
-| Written by a person | 174 | 6,318 |
+| Written by a person | 196 | 6,734 |
 | Left as drafted, deliberately | 831 | 2,025 |
 | Not yet reviewed | 937 | 6,925 |
-| Written, not yet applied to source | 22 | 527 |
-| **Total** | **1964** | **15,795** |
+| **Total** | **1964** | **15,684** |
 
-Human-authored or deliberately accepted: **51%** of strings.
+Human-authored or deliberately accepted: **52%** of strings.
 
 ## By tier
 
 | Tier | Decided | Total |
 |---|---:|---:|
-| Paragraphs (16+ words) | 179 | 248 |
-| Helper text (6–15 words) | 3 | 416 |
-| Labels (2–5 words) | 823 | 1300 |
+| Paragraphs (16+ words) | 192 | 245 |
+| Helper text (6–15 words) | 11 | 418 |
+| Labels (2–5 words) | 824 | 1301 |
 
 ## Out of scope
 
@@ -34,7 +33,7 @@ Human-authored or deliberately accepted: **51%** of strings.
   deliberately not rewritten — editing one would strand every patch on it.
 - Source comments, tests, commit messages.
 
-## Replaced drafts (37)
+## Replaced drafts (59)
 
 Where a model's draft was replaced by a person, both are kept.
 
@@ -53,6 +52,9 @@ Where a model's draft was replaced by a person, both are kept.
 - `CONTRIBUTING.md`
   - draft: "Welcome — much of Patchwork is built that way. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process."
   - now: "Acceptable. Much of Patchwork is built via AI coding. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process."
+- `CONTRIBUTING.md`
+  - draft: "Never through the public tracker — see [SECURITY.md](SECURITY.md)."
+  - now: "Never through the public tracker. See [SECURITY.md](SECURITY.md)."
 - `docs/START-A-QUILT.md`
   - draft: "Patchwork is a platform for the communities of one place. A city, a\nscene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together the patches form a\n**quilt**, a live picture of your community where groups that share\npeople sit closer together, because shared people are what connection\nactually is."
   - now: "Patchwork is a hyper-local platform. A city, a\nlocal-scene, a region. Every group on it is a **patch**: a band, a venue, a\nbook club, a mutual aid network, all equal. Together, the patches form a\n**quilt.**"
@@ -93,6 +95,15 @@ Where a model's draft was replaced by a person, both are kept.
   - draft: "Browse a living quilt first if you can. The reference instance serves\nthe arts scene of Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project."
   - now: "Browse a living quilt first if you can. The reference instance serves Lancaster, Pennsylvania. When you're ready to try the\nsoftware on a server, read [DEPLOYMENT.md](DEPLOYMENT.md). The\n[README](../README.md) covers the technical shape of the project."
 - `internal/governance/defaults.go`
+  - draft: "Just a listing. You run it, no overhead."
+  - now: "No overhead. You're the only one running it."
+- `internal/governance/defaults.go`
+  - draft: "Small crew, lightweight process. Majority rules."
+  - now: "Small group. Majority rules."
+- `internal/governance/defaults.go`
+  - draft: "Open community, structured process. Earn trust through contribution."
+  - now: "Open community, structured process. Trust builds through contribution."
+- `internal/governance/defaults.go`
   - draft: "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead. We keep things simple."
   - now: "This patch is a group of people who share a common interest and want to coordinate without a lot of overhead."
 - `internal/governance/defaults.go`
@@ -107,6 +118,9 @@ Where a model's draft was replaced by a person, both are kept.
 - `internal/governance/defaults.go`
   - draft: "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions use anonymized descriptions."
   - now: "Details of conflicts are shared only with the people directly involved and those handling the resolution. Public discussions should use anonymized descriptions."
+- `internal/handler/events.go`
+  - draft: "this event comes from an event source — edit it in the source calendar, or detach it first"
+  - now: "this event comes from an event source. Edit it in the source calendar, or detach it first"
 - `internal/handler/legal_defaults.go`
   - draft: "**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
   - now: "**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
@@ -143,9 +157,60 @@ Where a model's draft was replaced by a person, both are kept.
 - `README.md`
   - draft: "Patchwork has one maintainer, working heavily with Claude Code —\nAI-assisted commits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike."
   - now: "Patchwork has one maintainer, working heavily with Claude Code. AI-assisted \ncommits say so in their trailers, and every change is reviewed\nbefore merge. The test suites and the ADR record in `docs/adr/` are what\nkeep that workflow honest, and they apply to human and AI-written code\nalike."
+- `web/src/components/BlockDrafter.svelte`
+  - draft: "Click an anchor, then a second anchor, to sew a seam. Seams split every piece they cross."
+  - now: "Click two anchors to sew a seam. Seams split every piece they cross."
 - `web/src/components/GovernanceOverview.svelte`
   - draft: "Proposals are decided outside Patchwork. They stay open here for discussion, and what the meeting adopts is recorded on the charter."
   - now: "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter."
 - `web/src/components/IntroCard.svelte`
   - draft: "Every tile is a real group, placed near the groups it shares people with. No ads, no algorithm. Run by people here."
   - now: "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here."
+- `web/src/components/SocialShell.svelte`
+  - draft: "Run by real people. Yours to seamrip if it ever comes to that."
+  - now: "Run by real people and open source. Feel free to build your own if you don't like this one."
+- `web/src/pages/About.svelte`
+  - draft: "Every group here is a patch. A band, a venue, a collective, a coalition. Patches are equals: none is a subcategory of another, and none owns another."
+  - now: "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another."
+- `web/src/pages/About.svelte`
+  - draft: "Following any public patch takes one click. Joining is for people who want to belong: members vote on proposals, appear on the member list, and help run the place."
+  - now: "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch."
+- `web/src/pages/About.svelte`
+  - draft: "The quilt places patches near the other patches they share people with. When two tiles sit close, real people move between those groups. Nobody arranges the layout by hand."
+  - now: "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups."
+- `web/src/pages/About.svelte`
+  - draft: "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The"
+  - now: "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The"
+- `web/src/pages/AccountSettings.svelte`
+  - draft: "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead — the patches you're part of and follow. You can always move between them from the switcher."
+  - now: "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead."
+- `web/src/pages/AdminLabel.svelte`
+  - draft: "The page that tells people who runs this quilt and what it costs to keep up. Publishes to /label, readable without an account."
+  - now: "Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account."
+- `web/src/pages/AdminLabel.svelte`
+  - draft: "You need at least one listed steward before this can publish. Somebody has to put their name on it."
+  - now: "You need at least one listed steward before this can publish."
+- `web/src/pages/AdminLabel.svelte`
+  - draft: "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation instead, because a listing belongs to the person in it. A handle is plenty. No legal names."
+  - now: "The people who answer for this quilt, by name. Add yourself and you appear right away. Add anyone else and they get an invitation."
+- `web/src/pages/AdminLabel.svelte`
+  - draft: "Introduce yourself. Say why this quilt exists and what you spend to keep it going, in whatever voice you'd actually use out loud. Markdown works."
+  - now: "Introduce yourself. Say why this quilt exists and feel free to include your spend for transparency. Format with markdown."
+- `web/src/pages/AdminLabel.svelte`
+  - draft: "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old. Use the why field to explain your choices, like picking Hetzner over a hyperscaler. You can also skip this and talk costs in the prose, though then there's no total and no staleness warning."
+  - now: "List what you pay and when you last checked each number, and the page can show readers a monthly total and warn them when a figure gets old."
+- `web/src/pages/AdminLegal.svelte`
+  - draft: "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely, so keep it just as honest."
+  - now: "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely."
+- `web/src/pages/Label.svelte`
+  - draft: "Nobody has written this quilt's Label yet. When they do, you'll see who runs the place and what it costs to keep up."
+  - now: "Nobody has written this quilt's Label yet."
+- `web/src/pages/Label.svelte`
+  - draft: "Real people run this, and real people sometimes run things badly. So the exit is built in: any member can export what they can already see and start the community over somewhere else, under different stewards. Nobody has to ask first."
+  - now: "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards."
+- `web/src/pages/Lining.svelte`
+  - draft: "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is marked."
+  - now: "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge."
+- `web/src/pages/ProposalForm.svelte`
+  - draft: "Nobody — this is an ordinary membership proposal"
+  - now: "Nobody. This is an ordinary membership proposal"

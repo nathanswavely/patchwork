@@ -19,7 +19,7 @@ func TemplateList() []TemplateInfo {
 		{
 			ID:          "minimal",
 			Name:        "Minimal",
-			Description: "Just a listing. You run it, no overhead.",
+			Description: "No overhead. You're the only one running it.",
 			Leadership:  "Maintainer",
 			BestFor:     "Bands, solo artists, pop-up projects",
 			Documents:   []string{"community-standards.md"},
@@ -27,7 +27,7 @@ func TemplateList() []TemplateInfo {
 		{
 			ID:          "casual",
 			Name:        "Casual",
-			Description: "Small crew, lightweight process. Majority rules.",
+			Description: "Small group. Majority rules.",
 			Leadership:  "Maintainer → Meritocratic",
 			BestFor:     "Small collectives, meetups, studios (5–20 people)",
 			Documents:   []string{"community-standards.md", "operating-agreement.md"},
@@ -35,7 +35,7 @@ func TemplateList() []TemplateInfo {
 		{
 			ID:          "collaborative",
 			Name:        "Collaborative",
-			Description: "Open community, structured process. Earn trust through contribution.",
+			Description: "Open community, structured process. Trust builds through contribution.",
 			Leadership:  "Meritocratic",
 			BestFor:     "Venues, co-ops, makerspaces, community radio (20–100 people)",
 			Documents:   []string{"community-standards.md", "operating-agreement.md", "financial-transparency.md", "conflict-resolution.md"},

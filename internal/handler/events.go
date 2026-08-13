@@ -441,7 +441,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		// they are read-only here — change them in the source calendar,
 		// or detach this one to make it an ordinary local event.
 		if sourceID != nil {
-			http.Error(w, `{"error":"this event comes from an event source — edit it in the source calendar, or detach it first"}`, http.StatusForbidden)
+			http.Error(w, `{"error":"this event comes from an event source. Edit it in the source calendar, or detach it first"}`, http.StatusForbidden)
 			return
 		}
 		var nodeStatus string
