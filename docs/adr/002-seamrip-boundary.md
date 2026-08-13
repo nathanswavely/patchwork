@@ -62,6 +62,37 @@ A new table now fails the build until someone decides. "Community data
 travels" was a sentence in this ADR that nothing checked, which is how it
 went three releases without holding.
 
+## Amendment, 2026-08-01: the boundary is checked per column, not per table
+
+The table-level check added above catches a whole table nobody decided
+about. It does not catch a *column*, and a column is how this keeps going
+wrong: `seats_contested` reached the schema without reaching `Tables()`,
+and a careless edit later dropped `website` and `links` out of the nodes
+column list with nothing noticing, because the table was still listed.
+
+`TestEveryColumnHasABoundaryDecision` now requires every column of every
+exported table to be either in that table's `Columns` or in an explicit
+stays-behind list with a reason. Writing that list found three columns
+that had silently not been travelling:
+
+- **`memberships.visible`** — the member's own visibility switch
+  (docs/adr/006), defaulting to 1. A fork **re-exposed every membership
+  somebody had chosen to hide**, on their profile and in the patch's
+  public member list at once, since one switch drives both. This is the
+  one that matters: a seamrip is what a community does when its
+  leadership goes sideways, which is exactly when a member's choice to
+  stay unlisted is most likely to be the thing they care about. The
+  mechanism meant to protect people was quietly undoing one of their
+  protections.
+- **`nodes.accept_event_suggestions`** — an admin's choice about their
+  own door (docs/adr/026). A patch that had closed it found it open on
+  the fork.
+- **`users.links`** — profile links, the same shape as a patch's, which
+  did travel. A profile arrived with its bio and no way to reach anybody.
+
+All three now travel, with `def()` fallbacks so archives written before
+this import unchanged.
+
 ## Known gap
 
 Git-backed governance repos (linings in `internal/governance`) do not
