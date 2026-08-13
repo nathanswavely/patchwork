@@ -1,4 +1,5 @@
-.PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate
+.PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate \
+        copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check copy-report
 
 # Where `make build` writes the server binary. Override via the environment to
 # build every worktree to one stable path — on Windows the firewall keys its
@@ -42,3 +43,36 @@ test-e2e:
 # (i.e. an image update). Needs docker + curl. See docs/DEPLOYMENT.md.
 smoke-recreate:
 	bash scripts/smoke-recreate.sh
+
+# --- Copy ledger -----------------------------------------------------------
+# Who wrote the words a visitor reads. See tools/copy-ledger/README.md.
+# `copy-check` runs in CI; the rest are for writing.
+
+copy-sync:
+	node tools/copy-ledger/cli.js sync
+
+copy-stats:
+	node tools/copy-ledger/cli.js stats
+
+copy-review:
+	node tools/copy-ledger/cli.js review
+
+# Review as Markdown instead, for anywhere the local UI can't reach —
+# GitHub's web editor, a laptop on a train, a phone. `FILE=` scopes it to
+# one source file so you get a page of work rather than all of it.
+copy-draft:
+	node tools/copy-ledger/cli.js draft $(if $(FILE),--file $(FILE),) $(if $(TIER),--tier $(TIER),)
+
+copy-pull:
+	node tools/copy-ledger/cli.js pull
+
+# Dry run by default — writeback edits source, so it shows you the plan
+# first. `make copy-apply APPLY=1` writes.
+copy-apply:
+	node tools/copy-ledger/cli.js apply $(if $(APPLY),--apply,)
+
+copy-check:
+	node tools/copy-ledger/cli.js check
+
+copy-report:
+	node tools/copy-ledger/cli.js report

@@ -58,3 +58,9 @@ test-results/
 web/test-results/
 web/playwright-report/
 web/e2e-empty/.session.json
+
+# Copy-ledger working drafts. The ledger and the finished copy belong in
+# this repo; the half-written middle does not. Point COPY_DRAFTS_DIR at a
+# separate (private) checkout to edit them from anywhere — see
+# tools/copy-ledger/README.md.
+/copy/drafts/

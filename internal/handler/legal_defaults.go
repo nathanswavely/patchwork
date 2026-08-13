@@ -27,7 +27,7 @@ Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analy
 
 ## What this site collects
 
-**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.
+**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.
 
 **Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.
 
@@ -80,13 +80,13 @@ const defaultUserAgreement = `*This is the default user agreement that ships wit
 
 ## The short version
 
-Be someone your community would vouch for. What you post stays yours, the stewards can moderate the site, and nobody here promises uptime. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.
+Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.
 
 ## What this is
 
 {quilt_name} is a community site run by the people named on the [Label](/label), called the stewards from here on, using the open-source Patchwork software. Nobody operates it as a company or a commercial service. Creating an account or using the site means you agree to what's on this page.
 
-Every group here is a patch, and the patches govern themselves. People are the only thing connecting them: nothing on this site ranks what you see or competes for your attention. [What is Patchwork?](/about) explains how the place works.
+Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.
 
 ## Who can join
 
@@ -104,7 +104,7 @@ What you post is yours, and you keep every right you already had. So the site ca
 
 These rules apply everywhere on this site:
 
-- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it.
+- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. 
 - No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.
 - Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.
 
