@@ -65,9 +65,26 @@ function isFrozen(src, index) {
  * author's voice to rewrite — it is machine configuration, which this
  * project already treats as a different kind of thing (docs/adr/053).
  */
+// A query, not a sentence. Two signals rather than one: an opening verb and
+// a clause keyword somewhere after it.
+//
+// One signal is not enough even here. "Select a patch" and "Update your event
+// details." are real copy in this repo, and a bare `^SELECT|^UPDATE` throws
+// both away. Requiring FROM/WHERE/VALUES after the verb keeps the sentences
+// and drops the statements.
+// `INSERT OR IGNORE INTO` and `INSERT OR REPLACE INTO` are SQLite's conflict
+// forms and this codebase uses them; a bare `INSERT INTO` misses both.
+const SQL_OPENS = /^\s*(SELECT|INSERT(\s+OR\s+\w+)?\s+INTO|REPLACE\s+INTO|UPDATE|DELETE\s+FROM|WITH|CREATE\s+(TABLE|INDEX)|ALTER\s+TABLE|PRAGMA)\b/i;
+const SQL_CLAUSE = /\b(FROM|WHERE|VALUES|SET|JOIN|GROUP\s+BY|ORDER\s+BY|LIMIT|ON\s+CONFLICT)\b/i;
+
 function isData(body) {
   const t = body.trim();
   if (/^[[{]/.test(t)) return true;
+  // SQL. The JSON test above only knows about a leading `[` or `{`, so a
+  // query walked straight past it: 17 statements were sitting in the review
+  // queue as prose, including a 79-word SELECT somebody was being asked to
+  // rewrite in the project's voice.
+  if (SQL_OPENS.test(t) && SQL_CLAUSE.test(t)) return true;
   const kv = (t.match(/"[\w.-]+"\s*:/g) || []).length;
   return kv >= 3;
 }

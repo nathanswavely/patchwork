@@ -86,4 +86,4 @@ review process.
 
 ## Security issues
 
-Never through the public tracker — see [SECURITY.md](SECURITY.md).
+Never through the public tracker. See [SECURITY.md](SECURITY.md).

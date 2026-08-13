@@ -240,13 +240,21 @@ function cmdDecide() {
   const file = val('file');
   const tier = val('tier');
   const note = val('note');
+  // `--tier label` is everything under six words, which is coarser than the
+  // line a person actually wants to draw. "Cancel" and "Nominations close in
+  // two weeks" are both labels by tier and are not the same decision.
+  const maxWords = val('max-words') ? Number(val('max-words')) : null;
+  if (maxWords !== null && !Number.isInteger(maxWords)) {
+    console.error('--max-words takes a whole number');
+    process.exit(1);
+  }
 
   if (!STATUSES.includes(status)) {
     console.error(`--status must be one of: ${STATUSES.join(', ')}`);
     process.exit(1);
   }
-  if (!file && !tier) {
-    console.error('refusing to touch every entry — pass --file and/or --tier');
+  if (!file && !tier && maxWords === null) {
+    console.error('refusing to touch every entry — pass --file, --tier and/or --max-words');
     process.exit(1);
   }
 
@@ -254,6 +262,7 @@ function cmdDecide() {
   const hit = ledger.entries.filter((e) =>
     (!file || e.occurrences.some((o) => o.file === file)) &&
     (!tier || e.tier === tier) &&
+    (maxWords === null || e.words < maxWords) &&
     (flag('force') || e.status === 'unreviewed'));
 
   if (!hit.length) { console.log('Nothing matched.'); return; }
@@ -373,9 +382,20 @@ function cmdReport() {
   lines.push('');
   lines.push('| | strings | words |');
   lines.push('|---|---:|---:|');
-  lines.push(`| Written by a person | ${s.byStatus.human} | ${s.wordsDone.toLocaleString()} |`);
-  lines.push(`| Left as drafted, deliberately | ${s.byStatus['ai-fine']} | |`);
-  lines.push(`| Not yet reviewed | ${s.byStatus.unreviewed} | |`);
+  // Each row's own words. This printed `wordsDone` — human plus ai-fine —
+  // against "Written by a person", so every accepted draft was counted as
+  // somebody's writing. Invisible while nothing was ai-fine; the moment 818
+  // labels were accepted it overstated human authorship by 1,791 words.
+  lines.push(`| Written by a person | ${s.byStatus.human} | ${s.wordsByStatus.human.toLocaleString()} |`);
+  lines.push(`| Left as drafted, deliberately | ${s.byStatus['ai-fine']} | ${s.wordsByStatus['ai-fine'].toLocaleString()} |`);
+  lines.push(`| Not yet reviewed | ${s.byStatus.unreviewed} | ${s.wordsByStatus.unreviewed.toLocaleString()} |`);
+  // Only while somebody is mid-flight. Usually zero, and a permanent row for
+  // a transient state is noise — but without it the column silently fails to
+  // add up, which is a bad property for a table whose whole job is to be
+  // checkable.
+  if (s.byStatus.rewritten) {
+    lines.push(`| Written, not yet applied to source | ${s.byStatus.rewritten} | ${s.wordsByStatus.rewritten.toLocaleString()} |`);
+  }
   lines.push(`| **Total** | **${s.total}** | **${s.words.toLocaleString()}** |`);
   lines.push('');
   lines.push(`Human-authored or deliberately accepted: **${pct(s.done, s.total)}** of strings.`);

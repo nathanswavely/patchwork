@@ -44,9 +44,7 @@
     <header class="lining-header">
       <h1>{lining.title}</h1>
       <p class="lining-standfirst muted">
-        The shared baseline every patch on this quilt starts from. A patch
-        can amend its copy. Amendments are public, and the patch is
-        marked.
+        The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge.
       </p>
     </header>
     <MarkdownRenderer content={lining.body} />

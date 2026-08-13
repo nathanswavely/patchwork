@@ -112,9 +112,9 @@
   let previewTemplate = $state('');
 
   const templates = [
-    { id: 'minimal', name: 'Minimal', desc: 'Just a listing. You run it, no overhead.', leadership: 'Maintainer', bestFor: 'Bands, solo artists, pop-up projects' },
-    { id: 'casual', name: 'Casual', desc: 'Small crew, lightweight process. Majority rules.', leadership: 'Maintainer', bestFor: 'Small collectives, meetups, studios (5\u201320 people)' },
-    { id: 'collaborative', name: 'Collaborative', desc: 'Open community, structured process. Earn trust through contribution.', leadership: 'Meritocratic', bestFor: 'Venues, co-ops, makerspaces (20\u2013100 people)' },
+    { id: 'minimal', name: 'Minimal', desc: 'No overhead. You\'re the only one running it.', leadership: 'Maintainer', bestFor: 'Bands, solo artists, pop-up projects' },
+    { id: 'casual', name: 'Casual', desc: 'Small group. Majority rules.', leadership: 'Maintainer', bestFor: 'Small collectives, meetups, studios (5\u201320 people)' },
+    { id: 'collaborative', name: 'Collaborative', desc: 'Open community, structured process. Trust builds through contribution.', leadership: 'Meritocratic', bestFor: 'Venues, co-ops, makerspaces (20\u2013100 people)' },
     { id: 'formal', name: 'Formal', desc: 'Coalition-scale governance. Elected council, term limits, full accountability.', leadership: 'Elected Council', bestFor: 'Arts districts, coalitions (100+ people)' },
   ];
 

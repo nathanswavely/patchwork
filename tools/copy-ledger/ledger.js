@@ -75,12 +75,18 @@ export function sync(existing = load()) {
 
 export function stats(ledger) {
   const byStatus = Object.fromEntries(STATUSES.map((s) => [s, 0]));
+  // Words per status, not just counts. `wordsDone` lumps human in with
+  // ai-fine, which is the right number for a progress bar and the wrong one
+  // for a provenance claim — the report printed it beside "Written by a
+  // person" and overstated human authorship by every accepted draft.
+  const wordsByStatus = Object.fromEntries(STATUSES.map((s) => [s, 0]));
   const byTier = { label: { done: 0, total: 0 }, helper: { done: 0, total: 0 }, prose: { done: 0, total: 0 } };
   let words = 0;
   let wordsDone = 0;
 
   for (const e of ledger.entries) {
     byStatus[e.status] = (byStatus[e.status] || 0) + 1;
+    wordsByStatus[e.status] = (wordsByStatus[e.status] || 0) + e.words;
     const done = e.status === 'human' || e.status === 'ai-fine';
     byTier[e.tier].total++;
     if (done) byTier[e.tier].done++;
@@ -90,7 +96,7 @@ export function stats(ledger) {
 
   const total = ledger.entries.length;
   const done = byStatus.human + byStatus['ai-fine'];
-  return { total, done, pending: total - done, byStatus, byTier, words, wordsDone };
+  return { total, done, pending: total - done, byStatus, wordsByStatus, byTier, words, wordsDone };
 }
 
 /** Apply one review decision to an entry, in place. Returns the entry. */

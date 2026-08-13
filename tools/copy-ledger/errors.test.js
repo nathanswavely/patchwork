@@ -152,3 +152,46 @@ test('attribute residue is refused rather than filed as copy', () => {
     assert.ok(!/[{}]|=>|="/.test(h.text), `code filed as copy: ${h.text}`);
   }
 });
+
+// --------------------------------------------------------------- SQL, not ---
+
+// A query is not copy, and a sentence that opens like one still is.
+//
+// The data test only knew about JSON — a leading `[` or `{` — so queries in
+// the notification files walked past it and sat in the review queue as prose.
+// One was a 79-word SELECT somebody was being asked to rewrite in the
+// project's voice.
+//
+// The correction has to be careful in the other direction: "Select a patch"
+// and "Update your event details." are real copy here, so an opening verb
+// alone cannot be the signal.
+
+const withSQL = (q) => `package notifications\n\nfunc F() {\n\tdb.Query(\`${q}\`)\n}`;
+
+test('a query is not offered as copy', () => {
+  const queries = [
+    'SELECT id, name FROM nodes WHERE slug = ?',
+    "INSERT OR IGNORE INTO reminders_sent (id, kind) VALUES (?, 'x')",
+    'UPDATE memberships SET role = ? WHERE user_id = ?',
+    'DELETE FROM sessions WHERE expires_at < ?',
+  ];
+  for (const q of queries) {
+    const hits = extractOne('internal/notifications/x.go', 'go', withSQL(q));
+    assert.equal(hits.length, 0, `claimed as copy: ${q}`);
+  }
+});
+
+test('a sentence that opens like a query is still copy', () => {
+  // The verb alone is not the signal; the clause keyword after it is.
+  const src = [
+    'package governance',
+    '',
+    'var Copy = []string{',
+    '\t"Select a patch to continue.",',
+    '\t"Update your event details.",',
+    '}',
+  ].join('\n');
+  const texts = extractOne('internal/governance/defaults.go', 'go', src).map((h) => h.text);
+  assert.ok(texts.includes('Select a patch to continue.'));
+  assert.ok(texts.includes('Update your event details.'));
+});
