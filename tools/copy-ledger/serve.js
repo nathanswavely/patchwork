@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { REPO_ROOT } from './scope.js';
 import { load, save, stats, decide } from './ledger.js';
 import { writeback } from './writeback.js';
+import { outstandingDrafts, draftDirLabel } from './drafts.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.COPY_LEDGER_PORT || 5175);
@@ -50,6 +51,25 @@ function context(file, line, span = 4) {
   return { from: from + 1, lines: lines.slice(from, to) };
 }
 
+/**
+ * What is checked out elsewhere, in the shape the page needs: which files,
+ * and which entry ids they hold. The UI can't decide a string honestly
+ * without knowing it is already being decided somewhere else.
+ */
+function draftState(ledger) {
+  const files = outstandingDrafts(ledger);
+  const checkedOut = {};
+  for (const d of files) for (const id of d.ids) checkedOut[id] = d.rel;
+  return {
+    dir: draftDirLabel(),
+    files: files.map((d) => ({
+      source: d.source, rel: d.rel, blocks: d.blocks,
+      written: d.dirty.length, stale: d.stale.length,
+    })),
+    checkedOut,
+  };
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
 
@@ -62,7 +82,10 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'GET' && url.pathname === '/api/ledger') {
       const ledger = load();
-      return json(res, 200, { entries: ledger.entries, stats: stats(ledger), strict: !!ledger.strict });
+      return json(res, 200, {
+        entries: ledger.entries, stats: stats(ledger), strict: !!ledger.strict,
+        drafts: draftState(ledger),
+      });
     }
 
     if (req.method === 'GET' && url.pathname === '/api/context') {
@@ -73,10 +96,23 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'POST' && url.pathname === '/api/decide') {
-      const { id, status, replacement, note } = await readBody(req);
+      const { id, status, replacement, note, force } = await readBody(req);
       const ledger = load();
       const entry = ledger.entries.find((e) => e.id === id);
       if (!entry) return json(res, 404, { error: 'no such entry' });
+
+      // This string is checked out in a draft somewhere. Deciding it here
+      // rewrites it, which retires its id, which orphans the marker holding
+      // whatever is being written on the other surface. One file, one place.
+      const held = force ? null : outstandingDrafts(ledger).find((d) => d.ids.includes(id));
+      if (held) {
+        return json(res, 409, {
+          error: `checked out in ${held.rel}`,
+          code: 'checked-out',
+          draft: { rel: held.rel, source: held.source },
+        });
+      }
+
       decide(entry, { status, replacement, note });
       save(ledger);
       return json(res, 200, { entry, stats: stats(ledger) });

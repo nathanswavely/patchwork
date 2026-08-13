@@ -81,6 +81,19 @@
   .flash.on { opacity:1; }
   .warn { color:var(--warn); font-size:13px; margin-top:8px; }
   .empty { color:var(--dim); text-align:center; padding:64px 20px; }
+  #drafts {
+    display:none; margin-top:8px; padding:7px 11px; font-size:13px;
+    border:1px solid var(--warn); border-left-width:3px; border-radius:0 6px 6px 0;
+    color:var(--warn); background:#241f16;
+  }
+  #drafts.on { display:block; }
+  #drafts b { font-weight:600; }
+  #drafts code { font-family:var(--mono); font-size:12px; }
+  #drafts .files { color:var(--dim); }
+  .heldout {
+    margin:12px 0 0; padding:10px 14px; font-size:13px; color:var(--warn);
+    border:1px solid var(--warn); border-radius:8px; background:#241f16;
+  }
 </style>
 </head>
 <body>
@@ -109,6 +122,7 @@
     <input type="search" id="fText" placeholder="Search copy…  ⌘K" style="flex:1;min-width:140px">
     <span class="muted" id="qcount"></span>
   </div>
+  <div id="drafts"></div>
 </header>
 
 <main>
@@ -120,11 +134,16 @@
 
 <script type="module">
 const $ = (s) => document.querySelector(s);
-let entries = [], view = [], cursor = 0, statsData = null;
+let entries = [], view = [], cursor = 0, statsData = null, drafts = { checkedOut: {}, files: [] };
 
 const api = async (p, opts) => {
   const r = await fetch(p, { headers: { 'Content-Type': 'application/json' }, ...opts });
-  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || r.statusText);
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    const err = new Error(body.error || r.statusText);
+    err.body = body;
+    throw err;
+  }
   return r.json();
 };
 
@@ -142,10 +161,35 @@ function applyStats(s) {
     `${s.done}/${s.total} decided · ${s.byStatus.unreviewed} to go · ${s.byStatus.rewritten} pending apply`;
 }
 
+// A file being decided here and in a draft at the same time is how the two
+// surfaces diverge: deciding a string here retires its id, and the marker
+// holding your draft writing then matches nothing. Say so before the session,
+// not after it.
+function showDrafts(d) {
+  drafts = d || { checkedOut: {}, files: [] };
+  const el = $('#drafts');
+  el.textContent = '';
+  el.classList.toggle('on', drafts.files.length > 0);
+  if (!drafts.files.length) return;
+
+  const n = drafts.files.length;
+  const head = document.createElement('div');
+  head.innerHTML = `<b>${n} file${n === 1 ? '' : 's'} checked out as draft${n === 1 ? '' : 's'}</b> — ` +
+    `decide ${n === 1 ? 'it' : 'them'} in the draft, then <code>make copy-pull</code>. ` +
+    `Deciding one of these strings here orphans what you write there.`;
+  const files = document.createElement('div');
+  files.className = 'files';
+  files.textContent = drafts.files.map((f) =>
+    `${f.source} (${f.blocks} strings${f.written ? `, ${f.written} written` : ''}${f.stale ? `, ${f.stale} stale` : ''})`
+  ).join(' · ');
+  el.append(head, files);
+}
+
 async function loadAll() {
   const d = await api('/api/ledger');
   entries = d.entries;
   applyStats(d.stats);
+  showDrafts(d.drafts);
 
   const files = [...new Set(entries.flatMap((e) => e.occurrences.map((o) => o.file)))].sort();
   const sel = $('#fFile');
@@ -214,6 +258,17 @@ async function renderDetail() {
 
   const bq = document.createElement('blockquote'); bq.textContent = e.text; d.append(bq);
 
+  const heldIn = drafts.checkedOut[e.id];
+  if (heldIn) {
+    const held = document.createElement('div');
+    held.className = 'heldout';
+    const where = document.createElement('code'); where.textContent = heldIn;
+    held.append('This string is checked out in ', where, '. Write it there and ' +
+      'run make copy-pull — a decision here retires its marker, and whatever ' +
+      'is in that block loses its home.');
+    d.append(held);
+  }
+
   if (e.previous_ai_text) {
     const h = document.createElement('h3'); h.textContent = 'Replaced draft';
     const p = document.createElement('blockquote');
@@ -277,23 +332,41 @@ async function renderDetail() {
   } catch { /* context is a nicety; never block review on it */ }
 }
 
+// Returns false when the server refused because the string is checked out in
+// a draft and you decided not to override.
 async function persist(e, body) {
-  const r = await api('/api/decide', { method: 'POST', body: JSON.stringify({ id: e.id, ...body }) });
+  let r;
+  try {
+    r = await api('/api/decide', { method: 'POST', body: JSON.stringify({ id: e.id, ...body }) });
+  } catch (err) {
+    if (err.body?.code !== 'checked-out') throw err;
+    const where = err.body.draft.rel;
+    const ok = confirm(
+      `"${e.text.slice(0, 90)}"\n\nis checked out in ${where}.\n\n` +
+      `Deciding it here retires its marker, so anything written in that block ` +
+      `will have nowhere to go when you run make copy-pull.\n\n` +
+      `Decide it here anyway?`);
+    if (!ok) { flash(`Left for ${err.body.draft.source}.`); return false; }
+    r = await api('/api/decide', {
+      method: 'POST', body: JSON.stringify({ id: e.id, ...body, force: true }),
+    });
+  }
   Object.assign(e, r.entry);
   applyStats(r.stats);
+  return true;
 }
 
 async function saveRewrite(e, text) {
   const next = text.trim();
   if (!next) return flash('Empty — nothing saved.');
   if (next === e.text) { await setStatus(e, 'human'); return; }
-  await persist(e, { status: 'rewritten', replacement: next });
+  if (!await persist(e, { status: 'rewritten', replacement: next })) return;
   flash('Saved. Run `make copy-apply` to write it into source.');
   advance(e);
 }
 
 async function setStatus(e, status) {
-  await persist(e, { status, replacement: null });
+  if (!await persist(e, { status, replacement: null })) return;
   flash(status === 'human' ? 'Marked as your words.' : 'Left as drafted.');
   advance(e);
 }

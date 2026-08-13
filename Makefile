@@ -1,5 +1,6 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate \
-        copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check copy-report
+        copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
+        copy-test copy-report
 
 # Where `make build` writes the server binary. Override via the environment to
 # build every worktree to one stable path — on Windows the firewall keys its
@@ -63,8 +64,10 @@ copy-review:
 copy-draft:
 	node tools/copy-ledger/cli.js draft $(if $(FILE),--file $(FILE),) $(if $(TIER),--tier $(TIER),)
 
+# `REDRAFT=1` re-cuts any draft whose markers no longer match the source,
+# saving writing that has nowhere to land first.
 copy-pull:
-	node tools/copy-ledger/cli.js pull
+	node tools/copy-ledger/cli.js pull $(if $(REDRAFT),--redraft,)
 
 # Dry run by default — writeback edits source, so it shows you the plan
 # first. `make copy-apply APPLY=1` writes.
@@ -73,6 +76,11 @@ copy-apply:
 
 copy-check:
 	node tools/copy-ledger/cli.js check
+
+# Guards the rule that makes two review surfaces safe: an untouched draft
+# block never writes back over a decision made in the UI since.
+copy-test:
+	node --test tools/copy-ledger/drafts.test.js
 
 copy-report:
 	node tools/copy-ledger/cli.js report

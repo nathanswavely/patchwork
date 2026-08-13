@@ -13,7 +13,10 @@ import path from 'node:path';
 import { REPO_ROOT, LEDGER_PATH } from './scope.js';
 import { load, save, sync, stats, STATUSES } from './ledger.js';
 import { writeback } from './writeback.js';
-import { writeDrafts, pullDrafts, pruneDrafts, DRAFT_DIR } from './drafts.js';
+import {
+  writeDrafts, pullDrafts, pruneDrafts, outstandingDrafts, rescueOrphans,
+  draftDirLabel, label,
+} from './drafts.js';
 
 const [cmd, ...argv] = process.argv.slice(2);
 const flag = (name) => argv.includes(`--${name}`);
@@ -85,7 +88,40 @@ function cmdStats() {
     console.log(`\n  ${DIM}most unreviewed words:${OFF}`);
     for (const [file, words] of top) console.log(`    ${String(words).padStart(5)}  ${file}`);
   }
+
+  reportOutstanding(ledger, '  ');
   console.log('');
+}
+
+// Which files are checked out as drafts, and what shape they're in. Printed
+// before a writing session rather than discovered after one: a file being
+// decided in two places at once is the state this reports, and the whole
+// point is to see it while it is still a choice.
+function reportOutstanding(ledger, pad = '') {
+  const drafts = outstandingDrafts(ledger);
+  if (!drafts.length) return drafts;
+
+  console.log(`\n${pad}${YEL}checked out as drafts${OFF} ${DIM}(${draftDirLabel()})${OFF}`);
+  for (const d of drafts) {
+    const notes = [];
+    if (d.dirty.length) notes.push(`${d.dirty.length} written, not pulled`);
+    if (d.stale.length) notes.push(`${RED}${d.stale.length} stale${OFF}`);
+    if (d.orphanedWriting.length) notes.push(`${RED}${d.orphanedWriting.length} holding writing${OFF}`);
+    const rest = d.blocks - d.dirty.length - d.stale.length;
+    if (rest) notes.push(`${DIM}${rest} untouched${OFF}`);
+    console.log(`${pad}  ${d.source} ${DIM}·${OFF} ${notes.join(` ${DIM}·${OFF} `)}`);
+  }
+
+  const stale = drafts.filter((d) => d.stale.length);
+  const atRisk = drafts.filter((d) => d.orphanedWriting.length);
+  if (stale.length) {
+    console.log(`\n${pad}${DIM}A stale marker names a string the source no longer has — it was decided${OFF}`);
+    console.log(`${pad}${DIM}in the review UI, or the source moved. ${OFF}${GREEN}make copy-pull REDRAFT=1${OFF}${DIM} re-cuts${OFF}`);
+    console.log(`${pad}${DIM}those files${atRisk.length ? ', saving the writing that has nowhere to land' : ''}.${OFF}`);
+  } else {
+    console.log(`\n${pad}${DIM}Decide these files in the drafts, not in \`make copy-review\`.${OFF}`);
+  }
+  return drafts;
 }
 
 // ------------------------------------------------------------ draft/pull ---
@@ -102,7 +138,7 @@ function cmdDraft() {
 
   if (r.skippedDirty.length) {
     console.log(`${YEL}skipped — these drafts hold writing that isn't recorded yet:${OFF}`);
-    for (const f of r.skippedDirty) console.log(`  ${path.join(DRAFT_DIR, `${f}.md`)}`);
+    for (const f of r.skippedDirty) console.log(`  ${draftDirLabel()}/${f}.md`);
     console.log(`${DIM}Run \`make copy-pull\` first, or pass --force to overwrite.${OFF}\n`);
   }
   if (!r.files.length) {
@@ -128,14 +164,65 @@ function cmdPull() {
   console.log(bits.length ? `${GREEN}${bits.join(' · ')}${OFF}` : 'No changes found in the drafts.');
   if (r.unchanged) console.log(`${DIM}${r.unchanged} untouched${OFF}`);
 
-  if (r.unknown.length) {
-    console.log(`\n${YEL}${r.unknown.length} marker${r.unknown.length === 1 ? '' : 's'} matched no ledger entry${OFF}`);
-    console.log(`${DIM}The source changed under the draft. Re-run \`make copy-sync\` and re-draft.${OFF}`);
+  const { removed, kept } = pruneDrafts(load());
+  if (removed.length) console.log(`${DIM}cleared ${removed.length} finished draft file(s)${OFF}`);
+
+  if (r.unknown.length) reportStale(r, kept);
+  if (r.recorded) console.log(`\nNext: ${GREEN}make copy-apply${OFF} (dry run), then ${GREEN}APPLY=1${OFF}.`);
+}
+
+// Markers with no entry behind them. The source moved while the draft was
+// out — usually because the same strings were decided in the review UI. The
+// fix is mechanical, so `REDRAFT=1` does it rather than describing it.
+function reportStale(r, kept) {
+  const files = [...new Set(r.unknown.map((u) => u.file))];
+  const landed = r.unknown.filter((u) => u.landed);
+  const written = r.unknown.filter((u) => u.touched !== false && !u.landed);
+
+  console.log(`\n${YEL}${r.unknown.length} marker${r.unknown.length === 1 ? '' : 's'} matched no ledger entry${OFF}`);
+  console.log(`${DIM}in ${files.join(', ')} — the source changed under the draft.${OFF}`);
+  if (landed.length) {
+    console.log(`${DIM}${landed.length} of them already landed in source — nothing owed there.${OFF}`);
+  }
+  if (written.length) {
+    console.log(`${RED}${written.length} of them hold writing${OFF} ${DIM}that has no entry left to land on.${OFF}`);
+  }
+  if (kept.length) {
+    console.log(`${DIM}kept ${kept.length} draft file(s) that would otherwise have been cleared.${OFF}`);
   }
 
-  const pruned = pruneDrafts(load());
-  if (pruned.length) console.log(`${DIM}cleared ${pruned.length} finished draft file(s)${OFF}`);
-  if (r.recorded) console.log(`\nNext: ${GREEN}make copy-apply${OFF} (dry run), then ${GREEN}APPLY=1${OFF}.`);
+  if (!flag('redraft')) {
+    console.log(`\nRe-cut those files against the current source:`);
+    console.log(`  ${GREEN}make copy-pull REDRAFT=1${OFF}   ${DIM}# sync, save any orphaned writing, re-draft${OFF}`);
+    return;
+  }
+
+  // Re-sync first: the markers are stale precisely because the ledger's view
+  // of the source is older than the source itself.
+  const { ledger: fresh } = sync(load());
+  save(fresh);
+
+  const rescued = rescueOrphans(fresh, files);
+  for (const f of rescued) console.log(`\n${YEL}saved orphaned writing →${OFF} ${f}`);
+
+  const before = outstandingDrafts(fresh).filter((d) => files.includes(d.source));
+  const out = [];
+  for (const file of files) out.push(...writeDrafts(load(), { file, force: true }).files);
+
+  if (out.length) {
+    console.log(`\n${GREEN}re-drafted${OFF} ${out.length} file${out.length === 1 ? '' : 's'}:`);
+    for (const f of out) console.log(`  ${f}`);
+  }
+
+  // A draft nothing re-cut holds only decided or vanished strings. Its writing
+  // is rescued above, so leaving it on disk only leaves something that looks
+  // like live work.
+  for (const d of before) {
+    if (out.includes(label(d.path))) continue;
+    if (!fs.existsSync(d.path)) continue;
+    fs.unlinkSync(d.path);
+    console.log(`${DIM}cleared ${d.rel} — nothing in it is still waiting on a decision${OFF}`);
+  }
 }
 
 // ---------------------------------------------------------------- decide ---
