@@ -1,3 +1,36 @@
+# Line endings: LF everywhere, including Windows working copies.
+#
+# Git for Windows ships core.autocrlf=true as a system default, so without
+# this every Windows checkout gets CRLF. Several things in this repo read
+# their own source files back and match on exact text, and CRLF breaks all
+# of them in ways that look like tool bugs rather than config:
+#
+#   - tools/copy-ledger writeback is exact-match-or-refuse: each occurrence
+#     stores the verbatim source substring and copy-apply finds that text or
+#     changes nothing. Every multi-line string misses on a CRLF checkout.
+#     Seen for real on 2026-08-13 — 30 of 37 rewrites blocked with "source
+#     drifted", and the 7 that landed were the single-line ones.
+#   - tools/copy-ledger/drafts.js parses draft blocks with a marker regex
+#     anchored on a bare LF. A CRLF draft matches zero blocks, so copy-pull
+#     says "No changes found" and drops a whole writing session silently.
+#   - The frontend suite asserts against source text (there is no Svelte
+#     render library here), so a stray CR is a failing test with a confusing
+#     message.
+#
+# This is a no-op for content: every one of the repo's tracked blobs is
+# already LF, and the repo has no binary files and no .bat/.cmd/.ps1 that
+# would want CRLF. All this changes is what lands in the working copy.
+#
+# Prefer this over listing the file types copy-ledger happens to touch
+# today. The ledger already spans .svelte, .go, .md and .js, and the day
+# copy moves into a type nobody remembered to list, the failure comes back
+# wearing the same misleading costume.
+* text=auto eol=lf
+
+# The two that bled, kept explicit. `text` is unconditional where
+# `text=auto` defers to git's binary heuristic, and a wrong guess on either
+# of these is expensive.
+
 # Shell scripts must stay LF even on Windows checkouts (core.autocrlf=true
 # would give them CRLF, which breaks bash — including running the smoke test
 # through WSL).
