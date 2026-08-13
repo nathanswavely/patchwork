@@ -2,3 +2,9 @@
 # would give them CRLF, which breaks bash — including running the smoke test
 # through WSL).
 *.sh text eol=lf
+
+# The copy ledger is written by tools/copy-ledger, which emits LF. On a
+# core.autocrlf=true checkout git hands it back CRLF, so every run leaves
+# the file "modified" with an empty diff — noise at exactly the moment
+# copy-apply asks you to read a diff.
+copy/ledger.json text eol=lf
