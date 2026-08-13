@@ -4800,7 +4800,7 @@
       "text": "the adopted text is required: a record of an adopted text has to carry the text",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7992,8 +7992,8 @@
       "text": "this event comes from an event source — edit it in the source calendar, or detach it first",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
+      "status": "rewritten",
+      "replacement": "this event comes from an event source. Edit it in the source calendar, or detach it first",
       "note": null,
       "occurrences": [
         {
@@ -10942,7 +10942,7 @@
       "text": "this patch decides at meetings, and the governance rules are not something a meeting adopts. Ask an admin to apply the change directly (docs/adr/053).",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12938,121 +12938,6 @@
       ]
     },
     {
-      "id": "740951be7740",
-      "text": "SELECT id, slug, name, COALESCE(governance_config,'{}') FROM nodes WHERE status = 'active' AND removed_at IS NULL",
-      "words": 15,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 41,
-          "kind": "go-raw-string",
-          "raw": "SELECT id, slug, name, COALESCE(governance_config,'{}')\n\t                       FROM nodes WHERE status = 'active' AND removed_at IS NULL",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "9ced04e64f7f",
-      "text": "SELECT m.id, m.user_id, MAX(COALESCE(act.at, m.joined_at)) AS last_at\n\t\tFROM memberships m\n\t\tLEFT JOIN (\n\t\t\tSELECT v.user_id, p.node_id, v.created_at AS at FROM votes v\n\t\t\t  JOIN proposals p ON p.id = v.proposal_id\n\t\t\tUNION ALL\n\t\t\tSELECT author_id, node_id, created_at FROM proposals\n\t\t\tUNION ALL\n\t\t\tSELECT c.author_id, p2.node_id, c.created_at\n\t\t\t  FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id\n\t\t) act ON act.user_id = m.user_id AND act.node_id = m.node_id\n\t\tWHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'\n\t\tGROUP BY m.id, m.user_id",
-      "words": 79,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 79,
-          "kind": "go-doc-block",
-          "raw": "SELECT m.id, m.user_id, MAX(COALESCE(act.at, m.joined_at)) AS last_at\n\t\tFROM memberships m\n\t\tLEFT JOIN (\n\t\t\tSELECT v.user_id, p.node_id, v.created_at AS at FROM votes v\n\t\t\t  JOIN proposals p ON p.id = v.proposal_id\n\t\t\tUNION ALL\n\t\t\tSELECT author_id, node_id, created_at FROM proposals\n\t\t\tUNION ALL\n\t\t\tSELECT c.author_id, p2.node_id, c.created_at\n\t\t\t  FROM proposal_comments c JOIN proposals p2 ON p2.id = c.proposal_id\n\t\t) act ON act.user_id = m.user_id AND act.node_id = m.node_id\n\t\tWHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'\n\t\tGROUP BY m.id, m.user_id",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d52c72d75b03",
-      "text": "DELETE FROM notification_reminders_sent WHERE entity_type = 'membership' AND entity_id = ? AND reminder_type = 'inactivity_warning'",
-      "words": 15,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 118,
-          "kind": "go-raw-string",
-          "raw": "DELETE FROM notification_reminders_sent\n\t\t\t         WHERE entity_type = 'membership' AND entity_id = ? AND reminder_type = 'inactivity_warning'",
-          "quote": null
-        },
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 167,
-          "kind": "go-raw-string",
-          "raw": "DELETE FROM notification_reminders_sent\n\t           WHERE entity_type = 'membership' AND entity_id = ? AND reminder_type = 'inactivity_warning'",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "76c50fc01273",
-      "text": "SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'",
-      "words": 16,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 127,
-          "kind": "go-raw-string",
-          "raw": "SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ac1184a91895",
-      "text": "SELECT COUNT(*) FROM notification_reminders_sent WHERE entity_type = 'membership' AND entity_id = ? AND reminder_type = 'inactivity_warning'",
-      "words": 16,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 136,
-          "kind": "go-raw-string",
-          "raw": "SELECT COUNT(*) FROM notification_reminders_sent\n\t               WHERE entity_type = 'membership' AND entity_id = ? AND reminder_type = 'inactivity_warning'",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e48171ee87d3",
-      "text": "INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type) VALUES (?, 'membership', ?, 'inactivity_warning')",
-      "words": 14,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 141,
-          "kind": "go-raw-string",
-          "raw": "INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type)\n\t           VALUES (?, 'membership', ?, 'inactivity_warning')",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "3da6ef17c5c2",
       "text": "Your admin seat in",
       "words": 4,
@@ -13096,24 +12981,6 @@
       ]
     },
     {
-      "id": "19cde2fac71f",
-      "text": "UPDATE memberships SET role = 'member' WHERE id = ? AND role = 'admin' AND status = 'active'",
-      "words": 18,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 160,
-          "kind": "go-raw-string",
-          "raw": "UPDATE memberships SET role = 'member' WHERE id = ? AND role = 'admin' AND status = 'active'",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "6c225e8e59f6",
       "text": "The seat was vacant for inactivity. You are still a member and can take part again at any time.",
       "words": 19,
@@ -13146,42 +13013,6 @@
           "kind": "go-string",
           "raw": "Its last admin seat was vacated for inactivity, and its succession policy asks an instance admin to step in.",
           "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "4a179913dff3",
-      "text": "SELECT id, user_id FROM memberships WHERE node_id = ? AND role = 'member' AND status = 'active' ORDER BY joined_at ASC",
-      "words": 21,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 220,
-          "kind": "go-raw-string",
-          "raw": "SELECT id, user_id FROM memberships\n\t                         WHERE node_id = ? AND role = 'member' AND status = 'active'\n\t                         ORDER BY joined_at ASC",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "98b0f13287ae",
-      "text": "UPDATE memberships SET role = 'admin' WHERE id = ?",
-      "words": 10,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/inactivity.go",
-          "line": 245,
-          "kind": "go-raw-string",
-          "raw": "UPDATE memberships SET role = 'admin' WHERE id = ?",
-          "quote": null
         }
       ]
     },
@@ -13222,24 +13053,6 @@
       ]
     },
     {
-      "id": "9f4e565fdf09",
-      "text": "SELECT p.id, p.title, p.node_id, n.slug, n.name\n\t\t FROM proposals p\n\t\t JOIN nodes n ON n.id = p.node_id\n\t\t\tAND n.status IN ('active','unclaimed') AND n.removed_at IS NULL\n\t\t WHERE p.status = 'open'\n\t\t   AND p.voting_ends_at > ?\n\t\t   AND p.voting_ends_at <= ?\n\t\t   AND p.id NOT IN (\n\t\t     SELECT entity_id FROM notification_reminders_sent\n\t\t     WHERE entity_type = 'proposal' AND reminder_type = 'deadline'\n\t\t   )",
-      "words": 54,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 74,
-          "kind": "go-doc-block",
-          "raw": "SELECT p.id, p.title, p.node_id, n.slug, n.name\n\t\t FROM proposals p\n\t\t JOIN nodes n ON n.id = p.node_id\n\t\t\tAND n.status IN ('active','unclaimed') AND n.removed_at IS NULL\n\t\t WHERE p.status = 'open'\n\t\t   AND p.voting_ends_at > ?\n\t\t   AND p.voting_ends_at <= ?\n\t\t   AND p.id NOT IN (\n\t\t     SELECT entity_id FROM notification_reminders_sent\n\t\t     WHERE entity_type = 'proposal' AND reminder_type = 'deadline'\n\t\t   )",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "f079699744e4",
       "text": "Voting ends soon:",
       "words": 3,
@@ -13272,49 +13085,6 @@
           "kind": "go-string",
           "raw": "Less than 24 hours to vote on this proposal.",
           "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "d41a3c245ad6",
-      "text": "INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type) VALUES (?, ?, ?, ?)",
-      "words": 14,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 113,
-          "kind": "go-raw-string",
-          "raw": "INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type) VALUES (?, ?, ?, ?)",
-          "quote": null
-        },
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 165,
-          "kind": "go-raw-string",
-          "raw": "INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type) VALUES (?, ?, ?, ?)",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "dee3c36f9bff",
-      "text": "SELECT e.id, e.title, e.node_id, n.slug, n.name\n\t\t FROM events e\n\t\t JOIN nodes n ON n.id = e.node_id\n\t\t\tAND n.status IN ('active','unclaimed') AND n.removed_at IS NULL\n\t\t WHERE e.starts_at > ?\n\t\t   AND e.starts_at <= ?\n\t\t   AND e.removed_at IS NULL\n\t\t   AND e.status = 'active'\n\t\t   AND e.id NOT IN (\n\t\t     SELECT entity_id FROM notification_reminders_sent\n\t\t     WHERE entity_type = 'event' AND reminder_type = 'reminder'\n\t\t   )",
-      "words": 58,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 126,
-          "kind": "go-doc-block",
-          "raw": "SELECT e.id, e.title, e.node_id, n.slug, n.name\n\t\t FROM events e\n\t\t JOIN nodes n ON n.id = e.node_id\n\t\t\tAND n.status IN ('active','unclaimed') AND n.removed_at IS NULL\n\t\t WHERE e.starts_at > ?\n\t\t   AND e.starts_at <= ?\n\t\t   AND e.removed_at IS NULL\n\t\t   AND e.status = 'active'\n\t\t   AND e.id NOT IN (\n\t\t     SELECT entity_id FROM notification_reminders_sent\n\t\t     WHERE entity_type = 'event' AND reminder_type = 'reminder'\n\t\t   )",
-          "quote": null
         }
       ]
     },
@@ -13355,42 +13125,6 @@
       ]
     },
     {
-      "id": "6d929c690cc9",
-      "text": "SELECT cr.id, cr.user_id, cr.setup_expires_at, n.id, n.slug, n.name\n\t\t FROM claim_requests cr\n\t\t JOIN nodes n ON n.id = cr.node_id AND n.status = 'unclaimed' AND n.removed_at IS NULL\n\t\t WHERE cr.status = 'approved'\n\t\t   AND cr.setup_expires_at IS NOT NULL\n\t\t   AND cr.setup_expires_at > ?\n\t\t   AND cr.setup_expires_at <= ?",
-      "words": 42,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 184,
-          "kind": "go-doc-block",
-          "raw": "SELECT cr.id, cr.user_id, cr.setup_expires_at, n.id, n.slug, n.name\n\t\t FROM claim_requests cr\n\t\t JOIN nodes n ON n.id = cr.node_id AND n.status = 'unclaimed' AND n.removed_at IS NULL\n\t\t WHERE cr.status = 'approved'\n\t\t   AND cr.setup_expires_at IS NOT NULL\n\t\t   AND cr.setup_expires_at > ?\n\t\t   AND cr.setup_expires_at <= ?",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "fe11fdf3dbc2",
-      "text": "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = ? AND link = ?",
-      "words": 16,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 208,
-          "kind": "go-raw-string",
-          "raw": "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = ? AND link = ?",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "a44ccf7c9b77",
       "text": "Your approved claim on",
       "words": 4,
@@ -13423,24 +13157,6 @@
           "kind": "go-string",
           "raw": "January 2, 2006",
           "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "ca61b59b0ccf",
-      "text": "DELETE FROM notifications WHERE created_at < ?",
-      "words": 7,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 242,
-          "kind": "go-raw-string",
-          "raw": "DELETE FROM notifications WHERE created_at < ?",
-          "quote": null
         }
       ]
     },

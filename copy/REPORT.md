@@ -5,10 +5,10 @@ visitor-readable string in this repository and records who wrote it.
 
 | | strings | words |
 |---|---:|---:|
-| Written by a person | 169 | 6,207 |
-| Left as drafted, deliberately | 0 | |
-| Not yet reviewed | 1810 | |
-| **Total** | **1979** | **16,190** |
+| Written by a person | 169 | 6,247 |
+| Left as drafted, deliberately | 2 | |
+| Not yet reviewed | 1792 | |
+| **Total** | **1964** | **15,795** |
 
 Human-authored or deliberately accepted: **9%** of strings.
 
@@ -16,8 +16,8 @@ Human-authored or deliberately accepted: **9%** of strings.
 
 | Tier | Decided | Total |
 |---|---:|---:|
-| Paragraphs (16+ words) | 163 | 257 |
-| Helper text (6–15 words) | 2 | 422 |
+| Paragraphs (16+ words) | 165 | 248 |
+| Helper text (6–15 words) | 2 | 416 |
 | Labels (2–5 words) | 4 | 1300 |
 
 ## Out of scope
