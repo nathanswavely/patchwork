@@ -109,6 +109,31 @@ We decided:
   why `CONTEXT.md`'s Workspace entry already lists "manage area" under
   *Avoid*.
 
+  > **Amended: Settings gets a named door in the header, for admins.**
+  > "One glimpse per room, and the heading is the door" covers every room
+  > that has something to preview. Settings has nothing — a patch's own
+  > configuration is not a thing to show the street — so the one room only
+  > its admins can enter was the one room this page could not reach. In
+  > practice they left the page entirely: out to the dashboard, down the
+  > patch list, in through `Manage` there — the exact bolted-on door this
+  > ADR removed, still load-bearing one surface over. The overflow's
+  > `Workspace view` did technically get them inside, but a `⋯` menu is
+  > where this ADR files acts that are *rare*, and an admin reaching their
+  > own settings is not rare.
+  >
+  > The door is the rule's own test applied, not an exception to it:
+  > `Settings` names a room, which is why the paragraph above named it as
+  > the label that passes. It rides the cover's top-right corner beside the
+  > overflow, rendered on `is_admin` — the same flag that decides the
+  > workspace's Settings tab, so instance admins get it on any patch,
+  > exactly as they get the tab. It is not in the relationship row, which
+  > still holds only standing and the next rung, and it changes nothing
+  > for anyone who doesn't run the patch.
+  >
+  > What was rejected in this ADR stays rejected: a door named for the
+  > *container*, in the primary slot, shown to people who cannot use it.
+  > This is one named room, in the corner, for the people who own it.
+
 - **State belongs in the header; acts belong beside what they act on.**
   The unclaimed state becomes a header notice that states the fact and
   carries the claim inside it, following the Amended lining badge's

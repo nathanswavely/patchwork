@@ -9,6 +9,11 @@
    * surfaces that own them; they used to open a modal, which made every
    * glance terminate in a dialog.
    *
+   * Settings is the one room without a glimpse — there is nothing about a
+   * patch's own configuration to show the street — so it gets a named door
+   * in the header for the people who run the patch. It passes ADR 042's
+   * test where `Manage` failed: it names a room, not the container.
+   *
    * The one control on the page is the relationship row. State (unclaimed,
    * amended lining) is worn in the header; acts sit beside the thing they
    * act on; rare acts live in the overflow.
@@ -20,6 +25,7 @@
   import PatchCover from '../components/PatchCover.svelte';
   import PatchRelationship from '../components/PatchRelationship.svelte';
   import PatchOverflow from '../components/PatchOverflow.svelte';
+  import { GearSix } from 'phosphor-svelte';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
   import { formatEventDate, formatEventTime, upcomingFrom } from '../lib/datetime.js';
@@ -188,7 +194,23 @@
             {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events
           </p>
         </div>
-        <div class="cover-overflow">
+        <div class="cover-actions">
+          <!-- The room that has no glimpse. Every other workspace surface is
+               entered through the section that previews it, but there is
+               nothing about a patch's own settings to preview, so the people
+               who run the patch would otherwise have to leave the page to
+               get at it. `Settings` names a room, which is the test a door
+               on this page has to pass (docs/adr/042). -->
+          {#if isAdmin}
+            <a
+              class="cover-settings"
+              href="/patches/{slug}/settings"
+              onclick={go(`/patches/${slug}/settings`)}
+            >
+              <GearSix size={15} weight="duotone" />
+              <span>Settings</span>
+            </a>
+          {/if}
           <PatchOverflow {slug} {node} {isAdmin} {isUnclaimed} {hasStanding} />
         </div>
       </div>
@@ -452,23 +474,49 @@
     width: 100%;
   }
 
-  /* The overflow rides the cover's top-right corner: present, never
+  /* The header's acts ride the cover's top-right corner: present, never
      competing with the name. */
-  .cover-overflow {
+  .cover-actions {
     position: absolute;
     top: 6px;
     right: 6px;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
     color: #fff;
   }
 
-  .cover-overflow :global(.overflow-trigger) {
+  .cover-actions :global(.overflow-trigger) {
     color: rgba(255, 255, 255, 0.9);
   }
 
-  .cover-overflow :global(.overflow-trigger):hover {
+  .cover-actions :global(.overflow-trigger):hover {
     color: #fff;
     background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Carries its own scrim: the corner sits at the pale end of the cover
+     gradient, and a bundle can put near-white fabric directly under it. */
+  .cover-settings {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: var(--radius);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 150ms ease;
+  }
+
+  .cover-settings:hover {
+    background: rgba(0, 0, 0, 0.65);
+    text-decoration: none;
   }
 
   .profile-name {
