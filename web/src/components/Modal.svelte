@@ -81,6 +81,11 @@
 
   .modal-content {
     background: var(--color-surface);
+    /* A modal paints its own surface, so it must set its own text color:
+       it renders where it was mounted, and a mount point over cover art
+       (`.cover-actions`, which set color: #fff) left uncolored text white
+       on a light surface. The subscribe modal shipped invisible in light mode. */
+    color: var(--color-text);
     border-radius: var(--radius);
     box-shadow: 0 8px 32px var(--color-shadow);
     max-width: 560px;

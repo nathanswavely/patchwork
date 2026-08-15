@@ -484,20 +484,27 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    color: #fff;
   }
 
+  /* Colored on the trigger itself, never on this container: the overflow
+     lives here (docs/adr/042), Svelte renders its modals where they are
+     declared, and a color set on the container is inherited by every
+     uncolored string inside them. That is how the subscribe modal
+     shipped white-on-cream. */
   .cover-actions :global(.overflow-trigger) {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--color-on-fabric-muted);
   }
 
   .cover-actions :global(.overflow-trigger):hover {
-    color: #fff;
-    background: rgba(0, 0, 0, 0.3);
+    color: var(--color-on-fabric);
+    background: var(--color-fabric-scrim-soft);
   }
 
   /* Carries its own scrim: the corner sits at the pale end of the cover
-     gradient, and a bundle can put near-white fabric directly under it. */
+     gradient, and a bundle can put near-white fabric directly under it.
+     The pad is heavier than --color-fabric-scrim-soft and lighter than
+     --color-fabric-scrim, tuned by eye for a pill this small; it stays a
+     literal rather than bending either token to fit one element. */
   .cover-settings {
     display: inline-flex;
     align-items: center;
@@ -506,7 +513,7 @@
     font-size: 0.8rem;
     font-weight: 600;
     line-height: 1.4;
-    color: #fff;
+    color: var(--color-on-fabric);
     background: rgba(0, 0, 0, 0.45);
     border-radius: var(--radius);
     text-decoration: none;
@@ -523,7 +530,7 @@
     font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 0.1rem;
-    color: #fff;
+    color: var(--color-on-fabric);
     /* Two layers: a tight halo that survives a near-white fabric, plus a
        softer lift. The scrim carries most of the contrast, but a pale
        bundle leaves the top of a wrapped title with little else. */
@@ -534,7 +541,7 @@
   .profile-stats {
     font-size: 0.88rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--color-on-fabric-muted);
     text-shadow: 0 0 4px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.5);
     margin-bottom: 0;
   }

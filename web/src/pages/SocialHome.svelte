@@ -590,8 +590,8 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.55);
-    color: #fff;
+    background: var(--color-fabric-scrim);
+    color: var(--color-on-fabric);
   }
 
   /* Source chip: which quilt a remote patch lives on (docs/adr/024). */

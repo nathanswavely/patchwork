@@ -53,6 +53,34 @@
   --pw-measure-narrow: 54ch;
   --pw-measure: 66ch;
   --pw-measure-wide: 90ch;
+
+  /* ---- Ink on fabric ----
+     Ink and marks that sit on a patch's OWN fabric — cover art, quilt
+     tiles, the block drafter's canvas — rather than on a theme surface.
+
+     They live in :root and not in the two theme blocks on purpose: what
+     is underneath them is a member-chosen fabric under a scrim, never
+     --color-bg, so they must NOT flip with the UI theme. Reaching for
+     --color-text here inverts the ink and it disappears; that is the bug
+     that hid the subscribe modal, where a container's raw #fff leaked
+     into an unrelated modal by inheritance.
+
+     Every surface drawn over a bundle draws from these. Nothing else
+     should carry a raw color literal. */
+
+  /* Light ink, the scrim beneath it doing the contrast work. */
+  --color-on-fabric: #ffffff;
+  --color-on-fabric-muted: rgba(255, 255, 255, 0.92);
+
+  /* Dark pad laid behind light ink so it survives a pale fabric. Two
+     weights: the chip/badge pad, and a lighter one for hover states. */
+  --color-fabric-scrim: rgba(0, 0, 0, 0.55);
+  --color-fabric-scrim-soft: rgba(0, 0, 0, 0.3);
+
+  /* Dark marks drawn ON fabric — drafter seams and anchors — and the
+     hairline grid under them, which must stay quieter than a seam. */
+  --color-fabric-mark: rgba(0, 0, 0, 0.55);
+  --color-fabric-rule: rgba(0, 0, 0, 0.18);
 }
 
 /* Touch targets: small buttons are finger-sized on coarse pointers. */
