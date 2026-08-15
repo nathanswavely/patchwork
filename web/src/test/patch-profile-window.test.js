@@ -89,6 +89,13 @@ describe('PatchProfile', () => {
     }
   });
 
+  it('gives the room with no glimpse a named door, for admins only', () => {
+    // Settings previews nothing, so it cannot be entered through a glimpse
+    // the way every other room is. The door names the room, which is the
+    // test docs/adr/042 set — `Manage` named the container and failed it.
+    expect(src).toMatch(/\{#if isAdmin\}[\s\S]{0,400}href="\/patches\/\{slug\}\/settings"[\s\S]{0,200}>Settings</);
+  });
+
   it('shows the members glimpse the page never had (docs/adr/006)', () => {
     expect(src).toMatch(/api\(`nodes\/\$\{slug\}\/members\?limit=\d+`\)/);
     expect(src).toContain('class="member-list"');

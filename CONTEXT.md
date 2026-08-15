@@ -358,10 +358,12 @@ Read at a glance: cover, description, and a glimpse of each of the
 patch's surfaces. Deliberately not the workspace and deliberately without
 the workspace's tab row; a person with standing enters through the
 glimpses themselves — each one both a preview of a room and the way into
-it — rather than through a door named for the container. The single
-exception is the overflow's "Workspace view", a fallback that exists
-because it costs nothing, not because the glimpses need it. Paired with a
-person's Profile, which does the same job for a person.
+it — rather than through a door named for the container. Two named doors
+sit in the header rather than in a glimpse: "Settings", shown to the
+patch's admins because that room has nothing to preview and so can have no
+glimpse of its own, and the overflow's "Workspace view", a fallback that
+exists because it costs nothing, not because the glimpses need it. Paired
+with a person's Profile, which does the same job for a person.
 _Avoid_: patch page (too vague — every /patches/:slug/* URL is one), patch
 home, landing page, lobby
 
