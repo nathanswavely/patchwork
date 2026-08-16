@@ -98,6 +98,67 @@ test.describe('Discovery — Sidebar Navigation', () => {
   });
 });
 
+test.describe('Discovery — Search keyboard behaviour', () => {
+  test('Enter takes the first result when there is one', async ({ page }) => {
+    await page.goto('/');
+    const searchInput = page.locator('.finder-input');
+    await searchInput.click();
+    await searchInput.fill('Lancaster');
+    const first = page.locator('.finder-item').first();
+    await expect(first).toHaveClass(/active/);
+    await first.locator('.finder-item-label').textContent();
+    await searchInput.press('Enter');
+    await expect(page.locator('.finder-results')).toBeHidden();
+    expect(new URL(page.url()).pathname).not.toBe('/');
+  });
+
+  test('Enter on a zero-result query stays put — the suggest row is opt-in', async ({ page }) => {
+    // The suggest row is never preselected: Enter is how people submit a
+    // search, and it used to leave for the submission form unannounced.
+    await page.goto('/');
+    const searchInput = page.locator('.finder-input');
+    await searchInput.click();
+    await searchInput.fill('zzzzqqqq');
+    await expect(page.locator('.finder-empty')).toContainText('No matches');
+    const suggest = page.locator('.finder-action');
+    await expect(suggest).toContainText('Suggest');
+    await expect(suggest).not.toHaveClass(/active/);
+
+    await searchInput.press('Enter');
+    await page.waitForTimeout(300);
+    expect(new URL(page.url()).pathname).toBe('/');
+
+    // Still reachable deliberately.
+    await suggest.click();
+    await expect(page).toHaveURL(/\/submit\?name=zzzzqqqq/);
+  });
+});
+
+test.describe('Discovery — Mobile search takeover', () => {
+  test.use({ viewport: { width: 390, height: 780 } });
+
+  test('the shelf search button opens the panel on the first tap', async ({ page }) => {
+    // The tap that mounts the takeover is still bubbling toward window when
+    // Svelte flushes the finder in; it must not close the panel autofocus
+    // just opened, or typing looks dead until you tap the field again.
+    await page.goto('/');
+    await page.locator('.rail-search').click();
+    const input = page.locator('.mobile-search-bar .finder-input');
+    await expect(input).toBeFocused();
+    await input.pressSequentially('Lanc');
+    await expect(page.locator('.mobile-search-bar .finder-results')).toBeVisible();
+  });
+
+  test('tapping away closes the takeover', async ({ page }) => {
+    await page.goto('/events');
+    await page.locator('.rail-search').click();
+    await expect(page.locator('.mobile-search-bar')).toBeVisible();
+    await page.locator('.date-filter-btn').click();
+    await expect(page.locator('.mobile-search-bar')).toBeHidden();
+    expect(new URL(page.url()).pathname).toBe('/events');
+  });
+});
+
 test.describe('Discovery — Workspace Switcher', () => {
   test('logged out — switcher shows instance only, no My Quilt option', async ({ page }) => {
     await page.goto('/');

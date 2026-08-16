@@ -43,6 +43,14 @@
   let activeIndex = $state(-1);
   let inputEl = $state(null);
 
+  // When a shell mounts this in response to a tap (the mobile search
+  // takeover), that tap is still propagating toward window while Svelte
+  // flushes us in — so the outside-click listener below sees the very
+  // gesture that opened us and closes the panel autofocus just opened. The
+  // field keeps focus, so it reads as "typing does nothing until I tap the
+  // field again". Anything that started before we existed isn't ours.
+  const mountedAt = performance.now();
+
   async function ensureLoaded() {
     if (items !== null || loading) return;
     loading = true;
@@ -133,9 +141,13 @@
     }
   }
 
+  // Preselect the first result so Enter takes the obvious match — but never
+  // preselect the bottom row. On a zero-result query it is the only row, so
+  // preselecting it turned Enter (the key people press to submit a search)
+  // into a silent departure for the submission form. Arrow to it or tap it.
   $effect(() => {
     void query;
-    activeIndex = navLength > 0 ? 0 : -1;
+    activeIndex = results.length > 0 ? 0 : -1;
   });
 
   $effect(() => {
@@ -152,6 +164,7 @@
   }
 
   function onWindowClick(e) {
+    if (e.timeStamp < mountedAt) return;
     if (open && !e.target.closest('.finder')) open = false;
   }
 </script>
