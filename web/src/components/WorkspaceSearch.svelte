@@ -19,6 +19,27 @@
    *    true consumes it and closes the dropdown.
    *  - variant="takeover": renders inside the mobile search takeover, where
    *    the default desktop-only media hide must not apply.
+   *
+   * Picker extras, for callers choosing a thing rather than going to it:
+   *  - onSelect: replaces navigation — the chosen item is handed back
+   *    instead of being followed. An item may also carry disabled:true,
+   *    which shows it and refuses it (a patch that isn't accepting event
+   *    suggestions is worth seeing; silence would read as "not here").
+   *  - alwaysSuggest: keeps the bottom row on screen even when results
+   *    exist. Discovery deliberately hides it until a query matches
+   *    nothing — there, it is how someone learns their group isn't here —
+   *    but a picker whose whole job is choosing a patch should always
+   *    offer making one.
+   *  - variant="picker": a form field in a page rather than the bar's
+   *    search — rectangular, no magnifying glass, no '/' badge, and a
+   *    dropdown free to be wider than the field it hangs off. The bar's
+   *    posture assumes a 420px field: pinned to a narrow one, the flex
+   *    row collapses every result's name to an ellipsis and leaves only
+   *    its description showing.
+   *  - shortcut={false}: gives up the '/' focus key. Several pickers on a
+   *    page would otherwise all bind it and fight over the global bar's.
+   *    Implied by variant="picker" — a slash shortcut into one of nine
+   *    fields on a page means nothing.
    */
   import { navigate } from '../stores/router.svelte.js';
   import { fold } from '../lib/textMatch.js';
@@ -34,7 +55,12 @@
     intercept = null,
     variant = 'bar',
     autofocus = false,
+    onSelect = null,
+    alwaysSuggest = false,
+    shortcut = true,
   } = $props();
+
+  let isPicker = $derived(variant === 'picker');
 
   let query = $state('');
   let open = $state(false);
@@ -75,7 +101,9 @@
   // past the last. Exactly one can ever show: with results, the action row
   // narrows; with none, the suggest row offers the only useful move left.
   // Both gate on their own callback so workspace/admin callers are untouched.
-  let hasSuggest = $derived(!!onSuggest && !!query.trim() && !loading && results.length === 0);
+  let hasSuggest = $derived(
+    !!onSuggest && !!query.trim() && !loading && (alwaysSuggest || results.length === 0),
+  );
   let hasAction = $derived(!!onAction && !!query.trim() && results.length > 0);
   let navLength = $derived(results.length + (hasAction || hasSuggest ? 1 : 0));
 
@@ -111,8 +139,13 @@
   });
 
   function select(item) {
+    if (item.disabled) return;
     open = false;
     query = '';
+    if (onSelect) {
+      onSelect(item);
+      return;
+    }
     navigate(item.href);
   }
 
@@ -155,6 +188,7 @@
   });
 
   function onWindowKeydown(e) {
+    if (!shortcut || isPicker) return;
     if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
       const tag = document.activeElement?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
@@ -171,8 +205,10 @@
 
 <svelte:window onkeydown={onWindowKeydown} onclick={onWindowClick} />
 
-<div class="finder" class:finder-takeover={variant === 'takeover'}>
-  <span class="finder-icon"><MagnifyingGlass size={15} weight="duotone" /></span>
+<div class="finder" class:finder-takeover={variant === 'takeover'} class:finder-picker={isPicker}>
+  {#if !isPicker}
+    <span class="finder-icon"><MagnifyingGlass size={15} weight="duotone" /></span>
+  {/if}
   <input
     bind:this={inputEl}
     class="finder-input"
@@ -184,7 +220,7 @@
     onclick={onFocus}
     onkeydown={onKeydown}
   />
-  {#if variant !== 'takeover'}
+  {#if variant !== 'takeover' && !isPicker}
     <kbd class="finder-kbd">/</kbd>
   {/if}
 
@@ -202,6 +238,8 @@
               <button
                 class="finder-item"
                 class:active={results.indexOf(item) === activeIndex}
+                class:finder-item-disabled={item.disabled}
+                disabled={item.disabled}
                 onclick={() => select(item)}
               >
                 <span class="finder-item-label">{item.label}</span>
@@ -321,6 +359,13 @@
     color: var(--color-text-muted);
   }
 
+  /* Shown but refused: a patch that isn't accepting suggestions is worth
+     seeing, and hiding it would read as "not on this quilt". */
+  .finder-item-disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+
   .finder-item {
     display: flex;
     align-items: baseline;
@@ -372,11 +417,66 @@
     max-width: none;
   }
 
+  /* Picker variant: an ordinary form field, and a dropdown that sizes to
+     its content rather than to the field. */
+  .finder.finder-picker {
+    max-width: none;
+    height: auto;
+    padding: 0;
+    border: none;
+    background: none;
+    border-radius: 0;
+  }
+
+  .finder-picker .finder-input {
+    width: 100%;
+    height: 34px;
+    padding: 0 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  /* Right-anchored, so a dropdown wider than its field grows inward
+     rather than off the page — a picker sits at the end of its row, and
+     the room is always to its left. */
+  .finder-picker .finder-results {
+    left: auto;
+    right: 0;
+    min-width: min(26rem, 90vw);
+    max-width: calc(100vw - 2rem);
+  }
+
+  /* Stacked, so a name is never the half that ellipsises away. */
+  .finder-picker .finder-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1px;
+  }
+
+  .finder-picker .finder-item-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   /* Mobile: the bar's search hides — the shelf's search button opens the
-     takeover, which hosts the takeover variant instead. */
+     takeover, which hosts the takeover variant instead. A picker is a
+     field inside a page, with no takeover to fall back to, so it stays. */
   @media (max-width: 768px) {
-    .finder:not(.finder-takeover) {
+    .finder:not(.finder-takeover):not(.finder-picker) {
       display: none;
+    }
+
+    /* Narrow: the field is already as wide as the row, so the dropdown
+       simply matches it. Nothing to grow into, and a wider panel would
+       only be a panel hanging off the screen. */
+    .finder-picker .finder-results {
+      left: 0;
+      right: 0;
+      min-width: 0;
+      max-width: none;
     }
   }
 </style>

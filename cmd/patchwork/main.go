@@ -323,6 +323,16 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/event-sources/{id}", middleware.AuthRequired(db, handler.DeleteEventSource(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources/{id}/sync", middleware.AuthRequired(db, handler.SyncEventSource(db)))
 	mux.HandleFunc("POST /api/v1/events/{id}/detach", middleware.AuthRequired(db, handler.DetachEvent(db)))
+
+	// Aggregators and the crosswalk (docs/adr/056). The node-scoped
+	// routes are the door for a patch's own admins; mapping an active
+	// patch is deliberately not an instance-admin power.
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/aggregator-names", middleware.AuthRequired(db, handler.ListAggregatorNames(db)))
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/crosswalk", middleware.AuthRequired(db, handler.ListCrosswalk(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/crosswalk", middleware.AuthRequired(db, handler.CreateCrosswalkEntry(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/crosswalk/{id}", middleware.AuthRequired(db, handler.DeleteCrosswalkEntry(db)))
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/aggregator-holds", middleware.AuthRequired(db, handler.ListAggregatorHolds(db)))
+	mux.HandleFunc("POST /api/v1/aggregator-holds/{id}/decide", middleware.AuthRequired(db, handler.DecideAggregatorHold(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/events/bulk", middleware.AuthRequired(db, handler.BulkCreateEvents(db)))
 
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
@@ -464,6 +474,16 @@ func main() {
 	mux.HandleFunc("GET /api/v1/admin/neighbor-quilts", middleware.AdminRequired(db, handler.AdminListNeighborQuilts(db)))
 	mux.HandleFunc("POST /api/v1/admin/neighbor-quilts", middleware.AdminRequired(db, handler.AdminAddNeighborQuilt(db)))
 	mux.HandleFunc("DELETE /api/v1/admin/neighbor-quilts/{id}", middleware.AdminRequired(db, handler.AdminDeleteNeighborQuilt(db)))
+
+	mux.HandleFunc("GET /api/v1/admin/aggregators", middleware.AdminRequired(db, handler.AdminListAggregators(db)))
+	mux.HandleFunc("POST /api/v1/admin/aggregators", middleware.AdminRequired(db, handler.AdminCreateAggregator(db)))
+	mux.HandleFunc("PATCH /api/v1/admin/aggregators/{id}", middleware.AdminRequired(db, handler.AdminUpdateAggregator(db)))
+	mux.HandleFunc("DELETE /api/v1/admin/aggregators/{id}", middleware.AdminRequired(db, handler.AdminDeleteAggregator(db)))
+	mux.HandleFunc("POST /api/v1/admin/aggregators/{id}/sync", middleware.AdminRequired(db, handler.AdminSyncAggregator(db)))
+	mux.HandleFunc("GET /api/v1/admin/aggregator-names", middleware.AdminRequired(db, handler.AdminListUnroutedNames(db)))
+	mux.HandleFunc("POST /api/v1/admin/aggregator-names/ignore", middleware.AdminRequired(db, handler.AdminIgnoreName(db, true)))
+	mux.HandleFunc("POST /api/v1/admin/aggregator-names/unignore", middleware.AdminRequired(db, handler.AdminIgnoreName(db, false)))
+	mux.HandleFunc("GET /api/v1/admin/aggregator-listings", middleware.AdminRequired(db, handler.AdminListNameListings(db)))
 
 	mux.HandleFunc("GET /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminGetSettings(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminUpdateSettings(db, cfg)))

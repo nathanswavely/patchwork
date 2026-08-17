@@ -149,16 +149,54 @@ func Tables() []Table {
 				c("term_ends_at"), c("created_at")),
 		},
 		{
+			File: "aggregators.json",
+			Name: "aggregators",
+			// Ahead of event_sources: a crosswalk entry references its
+			// aggregator, and Import retries only within a table.
+			//
+			// paused is exported as 1, not as it stands: a fork inherits
+			// the crosswalk's labour but not the decision to let an
+			// outside feed write onto its patches (docs/adr/056). The new
+			// steward attaches it themselves, or it never fetches.
+			Query: `SELECT id, name, type, url, added_by, 1 AS paused,
+				created_at, updated_at FROM aggregators`,
+			Columns: cols(id("id"), c("name"), c("type"), c("url"),
+				id("added_by"), c("paused"), c("created_at"), c("updated_at")),
+		},
+		{
 			File: "event_sources.json",
 			Name: "event_sources",
 			// Feed URLs (a Google Calendar secret address is one) are
 			// quasi-secrets; the admin seamrip is already a custody
 			// transfer (docs/adr/012), so they travel. Fetch state stays
 			// behind — the fork re-syncs from scratch.
-			Query: `SELECT id, node_id, type, url, added_by, created_at,
-				updated_at FROM event_sources`,
+			Query: `SELECT id, node_id, type, url, added_by, aggregator_id, name_key,
+				suggests, created_at, updated_at FROM event_sources`,
+			// aggregator_id + name_key make a row a crosswalk entry
+			// (docs/adr/056). They travel because the crosswalk is dozens
+			// of names mapped by hand — community labour, and the reason
+			// seamrip exists. What does not travel is the standing to act
+			// on them: the aggregator arrives paused.
+			//
+			// suggests travels with them and must: losing it would turn
+			// every suggesting entry into a publishing one, and the fork
+			// would publish onto patches that only ever agreed to be
+			// asked.
 			Columns: cols(id("id"), id("node_id"), c("type"), c("url"),
-				id("added_by"), c("created_at"), c("updated_at")),
+				id("added_by"), id("aggregator_id"), c("name_key"),
+				def("suggests", 0), c("created_at"), c("updated_at")),
+		},
+		{
+			File: "aggregator_ignored_names.json",
+			Name: "aggregator_ignored_names",
+			// Judging that "PA" names no organization is the same act of
+			// curation as judging that "Binns Park" does, so it travels
+			// with the crosswalk (docs/adr/056). A fork that lost it
+			// would re-derive the same list by hand.
+			Query: `SELECT aggregator_id, name_key, ignored_by, created_at
+				FROM aggregator_ignored_names`,
+			Columns: cols(id("aggregator_id"), c("name_key"), id("ignored_by"),
+				c("created_at")),
 		},
 		{
 			File: "event_source_skips.json",

@@ -219,6 +219,23 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 			broadcastEventCreate(db, full, e.NodeID)
 
 		case "reject":
+			// A submission that came from a feed must be skip-listed
+			// before it is deleted, or the next sync re-inserts it and
+			// the same rejection is owed forever (docs/adr/031's skip
+			// list, applied to the suggestion path of docs/adr/056).
+			var srcID, srcUID *string
+			var srcOccurrence string
+			if err := db.QueryRow(
+				`SELECT source_id, source_uid, source_occurrence FROM events WHERE id = ?`, eventID,
+			).Scan(&srcID, &srcUID, &srcOccurrence); err == nil && srcID != nil && srcUID != nil {
+				if _, err := db.Exec(
+					`INSERT OR IGNORE INTO event_source_skips (source_id, uid, occurrence) VALUES (?, ?, ?)`,
+					*srcID, *srcUID, srcOccurrence,
+				); err != nil {
+					http.Error(w, `{"error":"failed to reject event"}`, http.StatusInternalServerError)
+					return
+				}
+			}
 			if _, err := db.Exec("DELETE FROM events WHERE id = ?", eventID); err != nil {
 				http.Error(w, `{"error":"failed to reject event"}`, http.StatusInternalServerError)
 				return

@@ -38,13 +38,21 @@ func StartWorker(ctx context.Context, db *database.DB, notifier *notifications.N
 }
 
 func syncAll(ctx context.Context, db *database.DB, notifier *notifications.Notifier) {
+	// Aggregators first: each fetches once and then routes its own
+	// crosswalk entries, so doing them ahead of the ordinary sources
+	// keeps a crosswalk entry from being reconciled twice a tick
+	// (docs/adr/056).
+	syncAggregators(ctx, db, notifier)
+
 	// Sources on archived or removed patches lie dormant: no fetch, no
 	// imports. The row survives, so a patch restored to 'active' resumes
-	// syncing on the next tick with no extra bookkeeping.
+	// syncing on the next tick with no extra bookkeeping. Crosswalk
+	// entries are excluded — their aggregator just routed them.
 	rows, err := db.Query(
 		`SELECT es.id FROM event_sources es
 		 JOIN nodes n ON n.id = es.node_id
-			AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`)
+			AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
+		 WHERE es.aggregator_id IS NULL`)
 	if err != nil {
 		log.Printf("eventsource: list sources: %v", err)
 		return
@@ -69,6 +77,38 @@ func syncAll(ctx context.Context, db *database.DB, notifier *notifications.Notif
 			// Already recorded on the source row; the log line is for
 			// the operator tailing the server.
 			log.Printf("eventsource: sync %s: %v", id, err)
+		}
+	}
+}
+
+// syncAggregators fetches every aggregator and routes what it carries.
+// Paused ones are included on purpose: SyncAggregator skips their fetch
+// and still routes off cached listings, because pausing stops the feed,
+// not the patches that already consented to it (docs/adr/056).
+func syncAggregators(ctx context.Context, db *database.DB, notifier *notifications.Notifier) {
+	rows, err := db.Query(`SELECT id FROM aggregators`)
+	if err != nil {
+		log.Printf("eventsource: list aggregators: %v", err)
+		return
+	}
+	var ids []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			log.Printf("eventsource: scan aggregator: %v", err)
+			return
+		}
+		ids = append(ids, id)
+	}
+	rows.Close()
+
+	for _, id := range ids {
+		if ctx.Err() != nil {
+			return
+		}
+		if err := SyncAggregator(ctx, db, notifier, id); err != nil {
+			log.Printf("eventsource: sync aggregator %s: %v", id, err)
 		}
 	}
 }

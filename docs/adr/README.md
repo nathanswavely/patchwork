@@ -51,6 +51,7 @@ several branches are in flight.
 | [047](047-a-vote-keeps-the-terms-it-opened-with.md) | A vote keeps the terms it opened with — rules freeze when voting opens *(open question settled by 048)* |
 | [048](048-proposals-are-born-voting.md) | Proposals are born voting — draft and discussion retired *(amended by 051: elections nominate first)* |
 | [050](050-follower-permissions-gate-taking-part.md) | Follower permissions gate taking part, not reading — only `charters` was ever a read gate |
+| [056](056-aggregators-own-nothing-the-crosswalk-is-the-review.md) | Aggregators own nothing; the crosswalk is the review — one feed, many patches, consent per name |
 
 ## Partly implemented
 
