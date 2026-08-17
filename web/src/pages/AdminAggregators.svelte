@@ -104,7 +104,7 @@
         method: 'POST',
         body: { name: newName.trim(), url: newUrl.trim() },
       });
-      showToast('Feed attached. Nothing arrives until you map a name.');
+      showToast('Feed attached. Make sure you map any names to get the events flowing.');
       newName = '';
       newUrl = '';
       await load();

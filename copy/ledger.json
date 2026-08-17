@@ -4753,7 +4753,7 @@
       "text": "failed to list aggregators",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4771,7 +4771,7 @@
       "text": "name and url are required",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4796,7 +4796,7 @@
       "text": "url must be http(s)",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4828,7 +4828,7 @@
       "text": "this feed is already attached",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4853,7 +4853,7 @@
       "text": "invalid request",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4871,7 +4871,7 @@
       "text": "aggregator not found",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4917,7 +4917,7 @@
       "text": "failed to update aggregator",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4935,7 +4935,7 @@
       "text": "failed to remove aggregator",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4953,7 +4953,7 @@
       "text": "this aggregator just synced. Try again in a minute.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4971,7 +4971,7 @@
       "text": "failed to load aggregator",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4989,7 +4989,7 @@
       "text": "failed to list unrouted names",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5007,7 +5007,7 @@
       "text": "aggregator_id and name_key are required",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5039,7 +5039,7 @@
       "text": "failed to record that",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5057,7 +5057,7 @@
       "text": "failed to list listings",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5240,7 +5240,7 @@
       "text": "failed to list aggregator names",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5258,7 +5258,7 @@
       "text": "failed to list crosswalk entries",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5276,7 +5276,7 @@
       "text": "this patch isn't accepting event suggestions. Only its own admins can map it.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5294,7 +5294,7 @@
       "text": "this aggregator is not carrying that name",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5312,7 +5312,7 @@
       "text": "this patch already answers to the maximum number of aggregator names",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5330,7 +5330,7 @@
       "text": "that name is already mapped",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5348,7 +5348,7 @@
       "text": "failed to load crosswalk entry",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5366,7 +5366,7 @@
       "text": "failed to create crosswalk entry",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5384,7 +5384,7 @@
       "text": "crosswalk entry not found",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5402,7 +5402,7 @@
       "text": "failed to unmap",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5420,7 +5420,7 @@
       "text": "failed to list holds",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5445,7 +5445,7 @@
       "text": "decision must be same or different",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5463,7 +5463,7 @@
       "text": "hold not found",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5481,7 +5481,7 @@
       "text": "failed to record decision",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5499,7 +5499,7 @@
       "text": "this listing is no longer in the feed",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5517,7 +5517,7 @@
       "text": "failed to create event",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5542,7 +5542,7 @@
       "text": "failed to clear hold",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15848,21 +15848,21 @@
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 256,
+          "line": 255,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 319,
+          "line": 318,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 390,
+          "line": 389,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -24724,7 +24724,7 @@
       "text": "Failed to record that",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24745,11 +24745,11 @@
       ]
     },
     {
-      "id": "f0af929a8967",
-      "text": "Feed attached. Nothing arrives until you map a name.",
-      "words": 9,
+      "id": "87894b9d92a5",
+      "text": "Feed attached. Make sure you map any names to get the events flowing.",
+      "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24760,14 +24760,15 @@
           "raw": "Feed attached. Nothing arrives until you map a name.",
           "quote": "'"
         }
-      ]
+      ],
+      "previous_ai_text": "Feed attached. Nothing arrives until you map a name."
     },
     {
       "id": "af69ae5e7834",
       "text": "Failed to attach feed.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24785,7 +24786,7 @@
       "text": "Feed removed. Mapped patches kept their events.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24853,7 +24854,7 @@
       "text": "Unclaimed, events publish",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24871,7 +24872,7 @@
       "text": "Accepts suggestions, events await review",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24889,7 +24890,7 @@
       "text": "Not accepting suggestions",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24907,7 +24908,7 @@
       "text": "Failed to map",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24925,7 +24926,7 @@
       "text": "Aggregators",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24939,11 +24940,11 @@
       ]
     },
     {
-      "id": "86f1b358ad39",
-      "text": "Calendars that list events they don't run, like a city or chamber of commerce calendar. Nothing arrives until you map a name to a patch, and that mapping stands.",
-      "words": 29,
+      "id": "16ee3122abc7",
+      "text": "Add a feed here if you have a calendar link that doesn't belong to a specific patch. Things like city or chamber of commerce calendars.",
+      "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24951,7 +24952,7 @@
           "file": "web/src/pages/AdminAggregators.svelte",
           "line": 248,
           "kind": "markup",
-          "raw": "Calendars that list events they don't run, like a city or chamber of\n    commerce calendar. Nothing arrives until you map a name to a patch, and\n    that mapping stands.",
+          "raw": "Add a feed here if you have a calendar link that doesn't belong to a\n    specific patch. Things like city or chamber of commerce calendars.",
           "quote": null
         }
       ]
@@ -24961,13 +24962,13 @@
       "text": "Feeds",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 254,
+          "line": 253,
           "kind": "markup",
           "raw": "Feeds",
           "quote": null
@@ -24979,13 +24980,13 @@
       "text": "No feeds attached.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 258,
+          "line": 257,
           "kind": "markup",
           "raw": "No feeds attached.",
           "quote": null
@@ -24997,13 +24998,13 @@
       "text": "First fetch in progress…",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 267,
+          "line": 266,
           "kind": "markup",
           "raw": "First fetch in progress…",
           "quote": null
@@ -25015,13 +25016,13 @@
       "text": "Fetch failed{agg.last_error ? `: ${agg.last_error}` : ''}",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 269,
+          "line": 268,
           "kind": "markup",
           "raw": "Fetch failed{agg.last_error ? `: ${agg.last_error}` : ''}",
           "quote": null
@@ -25033,13 +25034,13 @@
       "text": "{agg.listing_count} {agg.listing_count === 1 ? 'listing' : 'listings'} {' · '}{agg.mapped_count} routed",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 271,
+          "line": 270,
           "kind": "markup",
           "raw": "{agg.listing_count} {agg.listing_count === 1 ? 'listing' : 'listings'}\n                  {' · '}{agg.mapped_count} routed",
           "quote": null
@@ -25051,13 +25052,13 @@
       "text": "{' · '}fetched {relTime(agg.last_success_at)}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 273,
+          "line": 272,
           "kind": "markup",
           "raw": "{' · '}fetched {relTime(agg.last_success_at)}",
           "quote": null
@@ -25069,13 +25070,13 @@
       "text": "paused",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 275,
+          "line": 274,
           "kind": "markup",
           "raw": "paused",
           "quote": null
@@ -25087,13 +25088,13 @@
       "text": "Visit Lancaster City",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 296,
+          "line": 295,
           "kind": "attr:placeholder",
           "raw": "Visit Lancaster City",
           "quote": "\""
@@ -25105,13 +25106,13 @@
       "text": "https://…/calendar.ics",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 297,
+          "line": 296,
           "kind": "attr:placeholder",
           "raw": "https://…/calendar.ics",
           "quote": "\""
@@ -25123,13 +25124,13 @@
       "text": "Attach a feed to see the names it carries.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 321,
+          "line": 320,
           "kind": "markup",
           "raw": "Attach a feed to see the names it carries.",
           "quote": null
@@ -25141,13 +25142,13 @@
       "text": "Hidden from this list only. Patch admins still see every name in their own picker.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 329,
+          "line": 328,
           "kind": "markup",
           "raw": "Hidden from this list only. Patch admins still see every name in\n        their own picker.",
           "quote": null
@@ -25155,19 +25156,19 @@
       ]
     },
     {
-      "id": "a1ff7c7a94f9",
-      "text": "Commonest first. Not everything here is an organization, so ignore what isn't.",
-      "words": 12,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "086977167437",
+      "text": "Names found in your feeds show up here, and you can map them to patches on your quilt.",
+      "words": 18,
+      "tier": "prose",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 332,
+          "line": 331,
           "kind": "markup",
-          "raw": "Commonest first. Not everything here is an organization, so ignore\n        what isn't.",
+          "raw": "Names found in your feeds show up here, and you can map them to\n        patches on your quilt.",
           "quote": null
         }
       ]
@@ -25177,13 +25178,13 @@
       "text": "Find a patch…",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 359,
+          "line": 358,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -25195,13 +25196,13 @@
       "text": "View on {hostOf(l.url)} ↗",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 403,
+          "line": 402,
           "kind": "markup",
           "raw": "View on {hostOf(l.url)} ↗",
           "quote": null
@@ -36924,7 +36925,7 @@
       "text": "Failed to load event sources",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36942,7 +36943,7 @@
       "text": "Failed to attach feed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36978,7 +36979,7 @@
       "text": "Failed to remove event source",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36996,7 +36997,7 @@
       "text": "Failed to map name",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37014,7 +37015,7 @@
       "text": "Stopped. Its events are yours to edit now.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37032,7 +37033,7 @@
       "text": "Failed to unmap",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37050,7 +37051,7 @@
       "text": "Kept yours",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37068,7 +37069,7 @@
       "text": "Added as a separate event",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37086,7 +37087,7 @@
       "text": "Calendar feeds this patch pulls events from. Paste an ICS address (a Google Calendar's secret address, the calendar feed from your website) or an events page from Squarespace, Humanitix, and similar sites. Imported events publish directly and stay in step with the feed.",
       "words": 43,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37104,7 +37105,7 @@
       "text": "First sync in progress…",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37122,7 +37123,7 @@
       "text": "Sync failed{source.last_error ? `: ${source.last_error}` : ''}",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37158,7 +37159,7 @@
       "text": "No event sources yet.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37194,7 +37195,7 @@
       "text": "Removing a source keeps past events and removes upcoming imported ones.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37212,7 +37213,7 @@
       "text": "Possible duplicates",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37230,7 +37231,7 @@
       "text": "Each of these lands at the same time as an event you already have. Yours is the one showing.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37248,7 +37249,7 @@
       "text": "Yours:",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37266,7 +37267,7 @@
       "text": "Listing calendars",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37284,7 +37285,7 @@
       "text": "Calendars that list events across the community, like the city calendar. Answering to a name brings every event filed under it here from now on. Anything an admin points at you waits in your review queue first. Stop any of them here.",
       "words": 42,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37302,7 +37303,7 @@
       "text": "Suggests into your review queue",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37320,7 +37321,7 @@
       "text": ", set up by {entry.added_by_name}",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37338,7 +37339,7 @@
       "text": "{entry.pending_count} waiting",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37356,7 +37357,7 @@
       "text": "{' · '}{entry.event_count} approved",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37374,7 +37375,7 @@
       "text": "{' · '}updated {relTime(entry.last_success_at)}",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37392,7 +37393,7 @@
       "text": "No listing calendars are carrying a name this patch could answer to.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
