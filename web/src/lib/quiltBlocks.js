@@ -120,13 +120,16 @@ function sawtoothStar(g, s, p) {
 }
 
 function railFence(g, s, p) {
-  const w = s / 3;
-  // 3 diagonal stripes.
-  g.append('polygon').attr('points', `0,0 ${w},0 0,${s}`).attr('fill', p.primary);
-  g.append('polygon').attr('points', `${w},0 ${2*w},0 0,${s} 0,${s * 2/3}`).attr('fill', p.bg);
-  g.append('polygon').attr('points', `${2*w},0 ${s},0 ${s},${s/3} 0,${s}`).attr('fill', p.secondary);
-  g.append('polygon').attr('points', `${s},${s/3} ${s},${2*s/3} ${w},${s} 0,${s}`).attr('fill', p.bg);
-  g.append('polygon').attr('points', `${s},${2*s/3} ${s},${s} ${2*w},${s}`).attr('fill', p.primary);
+  // 5 diagonal stripes of equal width: the bands between x + y = k·2s/5.
+  // Cutting them all from that one family is what makes them tile the
+  // square — an earlier draft mixed two families and left a bare wedge in
+  // the bottom-right corner, where the canvas showed through the block.
+  const u = s / 5;
+  g.append('polygon').attr('points', `0,0 ${2*u},0 0,${2*u}`).attr('fill', p.primary);
+  g.append('polygon').attr('points', `${2*u},0 ${4*u},0 0,${4*u} 0,${2*u}`).attr('fill', p.bg);
+  g.append('polygon').attr('points', `${4*u},0 ${s},0 ${s},${u} ${u},${s} 0,${s} 0,${4*u}`).attr('fill', p.secondary);
+  g.append('polygon').attr('points', `${s},${u} ${s},${3*u} ${3*u},${s} ${u},${s}`).attr('fill', p.bg);
+  g.append('polygon').attr('points', `${s},${3*u} ${s},${s} ${3*u},${s}`).attr('fill', p.primary);
 }
 
 function logCabin(g, s, p) {
@@ -237,15 +240,47 @@ export function renderDraftBlock(group, size, draft, palette) {
   const scale = size / (4 * draft.grid);
   const colorFor = (slot) => slots[slot] ?? slots[slot % slots.length];
   group.append('rect').attr('width', size).attr('height', size).attr('fill', palette.bg);
+
+  // One <path> per fabric, every piece cut from that fabric a subpath of
+  // it. Pieces are computed per cell, so a shape spanning cells arrives
+  // here as several faces that abut exactly — drawn as separate elements
+  // they each cover half of the pixel their shared edge lands in, and the
+  // ground below shows through as a hairline. That drew a grid over every
+  // block whose cell walls didn't land on whole pixels. Filling one path
+  // rasterizes the whole region at once, so an edge interior to it isn't
+  // an edge at all.
+  const byFabric = new Map();
   for (const { r, c, faces } of facesForDraft(draft)) {
     const cellSlots = draft.colors?.[`${r},${c}`] || [];
     faces.forEach((poly, i) => {
-      group
-        .append('polygon')
-        .attr('points', poly.map(([x, y]) => `${x * scale},${y * scale}`).join(' '))
-        .attr('fill', colorFor(cellSlots[i] ?? 0));
+      const color = colorFor(cellSlots[i] ?? 0);
+      const d = `M${poly.map(([x, y]) => `${x * scale},${y * scale}`).join('L')}Z`;
+      const cut = byFabric.get(color);
+      if (cut) cut.push(d);
+      else byFabric.set(color, [d]);
     });
   }
+  for (const [color, cuts] of byFabric) {
+    group.append('path').attr('d', cuts.join('')).attr('fill', color);
+  }
+  sealSeams(group);
+}
+
+/**
+ * Hide the hairline of whatever lies under a block where two pieces of
+ * *different* fabric meet: each covers part of the boundary pixel, so the
+ * ground shows through in the remainder. Outlining every piece in its own
+ * fill grows it by half a stroke, enough to close the gap; the stroke is
+ * non-scaling so it stays a hairline at any tile size or zoom, and the
+ * shift it costs the seam is always under a pixel.
+ */
+function sealSeams(group) {
+  group
+    .selectAll('rect, polygon, path')
+    .attr('stroke', function () { return this.getAttribute('fill'); })
+    .attr('stroke-width', 1)
+    .attr('stroke-linejoin', 'round')
+    .attr('vector-effect', 'non-scaling-stroke');
 }
 
 /**
@@ -272,11 +307,12 @@ export function renderBlock(group, size, patchId, palette, appearance = null) {
 
   const block = appearance?.block;
   if (block && typeof block === 'object' && isValidDraft(block)) {
-    renderDraftBlock(blockG, size, block, palette);
+    renderDraftBlock(blockG, size, block, palette); // seals its own seams
     return;
   }
 
   BLOCKS[getBlockIndex(patchId, appearance)].render(blockG, size, palette);
+  sealSeams(blockG);
 }
 
 /**
@@ -286,4 +322,5 @@ export function renderGhostBlock(group, size, index, palette) {
   const blockIdx = index % BLOCKS.length;
   const blockG = group.append('g').attr('opacity', 0.15);
   BLOCKS[blockIdx].render(blockG, size, palette);
+  sealSeams(blockG);
 }

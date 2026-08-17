@@ -95,7 +95,7 @@ func TestQuiltIconIsDrafted(t *testing.T) {
 	if w.Code != http.StatusOK || w.Header().Get("Content-Type") != "image/svg+xml" {
 		t.Fatalf("assigned icon: code %d, type %q", w.Code, w.Header().Get("Content-Type"))
 	}
-	if !strings.Contains(w.Body.String(), "<polygon") {
+	if !strings.Contains(w.Body.String(), "<path") {
 		t.Fatal("assigned icon has no pieces")
 	}
 	assigned := w.Body.String()

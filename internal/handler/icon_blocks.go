@@ -352,11 +352,17 @@ func renderIconSVG(d iconDesign, brandColor string) string {
 	}
 
 	scale := float64(iconCanvas) / float64(4*block.Grid)
-	var b strings.Builder
-	b.WriteString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Quilt icon">`)
-	// Ground: the pieces tile the whole square, so this only shows if a
-	// future grid ever left a gap.
-	fmt.Fprintf(&b, `<rect width="96" height="96" fill="%s"/>`, fabric(len(fabrics)-1))
+
+	// Cut every piece, gathered by the fabric it is cut from. Pieces are
+	// computed per cell, so one shape spanning cells arrives as several
+	// faces that abut exactly; drawn as separate elements they each cover
+	// half of the pixel their shared edge lands in and the ground shows
+	// through between them as a hairline — a grid over the icon at any
+	// size where cell walls miss whole pixels. Filling one path per fabric
+	// rasterizes each region once, so its interior edges aren't edges.
+	// The frontend renderer does the same (web/src/lib/quiltBlocks.js).
+	cuts := map[string]*strings.Builder{}
+	order := make([]string, 0, len(fabrics))
 	for r := 0; r < block.Grid; r++ {
 		for c := 0; c < block.Grid; c++ {
 			slots := block.Colors[fmt.Sprintf("%d,%d", r, c)]
@@ -365,18 +371,41 @@ func renderIconSVG(d iconDesign, brandColor string) string {
 				if i < len(slots) {
 					slot = slots[i]
 				}
-				b.WriteString(`<polygon points="`)
-				for j, p := range face {
-					if j > 0 {
-						b.WriteByte(' ')
-					}
-					b.WriteString(svgNum(p.X * scale))
-					b.WriteByte(',')
-					b.WriteString(svgNum(p.Y * scale))
+				f := fabric(slot)
+				d, ok := cuts[f]
+				if !ok {
+					d = &strings.Builder{}
+					cuts[f] = d
+					order = append(order, f)
 				}
-				fmt.Fprintf(&b, `" fill="%s"/>`, fabric(slot))
+				for j, p := range face {
+					if j == 0 {
+						d.WriteByte('M')
+					} else {
+						d.WriteByte('L')
+					}
+					d.WriteString(svgNum(p.X * scale))
+					d.WriteByte(',')
+					d.WriteString(svgNum(p.Y * scale))
+				}
+				d.WriteByte('Z')
 			}
 		}
+	}
+
+	var b strings.Builder
+	b.WriteString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Quilt icon">`)
+	// Ground: the pieces tile the whole square, so this only shows if a
+	// future grid ever left a gap.
+	fmt.Fprintf(&b, `<rect width="96" height="96" fill="%s"/>`, fabric(len(fabrics)-1))
+	// Each region is outlined in its own fabric so the ground can't show
+	// through where two *different* fabrics meet either: the outline grows
+	// a region by half a hairline, which closes the gap and costs the seam
+	// under a pixel of position. Non-scaling, so it stays a hairline at
+	// favicon size and at full width alike.
+	for _, f := range order {
+		fmt.Fprintf(&b, `<path d="%s" fill="%s" stroke="%s" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`,
+			cuts[f].String(), f, f)
 	}
 	b.WriteString(`</svg>`)
 	return b.String()

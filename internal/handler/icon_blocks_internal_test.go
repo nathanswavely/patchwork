@@ -120,8 +120,14 @@ func TestRenderIconSVG(t *testing.T) {
 	if !strings.HasPrefix(svg, "<svg ") || !strings.HasSuffix(svg, "</svg>") {
 		t.Fatalf("not an SVG document: %.60s", svg)
 	}
-	if strings.Count(svg, "<polygon") != 8 {
-		t.Errorf("pinwheel drew %d polygons, want 8", strings.Count(svg, "<polygon"))
+	// All eight pieces are cut, but gathered into one path per fabric —
+	// pieces of one fabric drawn separately show the ground through the
+	// hairline between them (see renderIconSVG).
+	if got := strings.Count(svg, "Z"); got != 8 {
+		t.Errorf("pinwheel cut %d pieces, want 8", got)
+	}
+	if got := strings.Count(svg, "<path"); got != 2 {
+		t.Errorf("pinwheel drew %d paths, want one per fabric (2)", got)
 	}
 	for _, want := range []string{"#112233", "#445566"} {
 		if !strings.Contains(svg, want) {
