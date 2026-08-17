@@ -492,6 +492,8 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 	// Instance identity, secrets, and derived state (docs/adr/002). A fresh
 	// instance mints its own on first boot or rebuilds it from what travels.
 	staysBehind := map[string]string{
+		"aggregator_holds":            "undecided duplicate questions; they re-arise on the fork's first routing pass (docs/adr/056)",
+		"aggregator_listings":         "the cache of one fetch, rebuilt when the fork's steward resumes the aggregator",
 		"ap_followers":                "remote followers belong to the old instance's identity",
 		"ap_following":                "same, outbound",
 		"ap_outbox_queue":             "delivery state, not a record of anything",
@@ -608,6 +610,14 @@ func TestEveryColumnHasABoundaryDecision(t *testing.T) {
 		},
 		"votes":             {"ap_id": "names an object on the old domain"},
 		"proposal_comments": {"ap_id": "names an object on the old domain"},
+		"aggregators": {
+			"status":          "fetch state; the fork re-syncs from scratch",
+			"last_fetch_at":   "same",
+			"last_success_at": "same",
+			"last_error":      "same",
+			"etag":            "an HTTP cache validator for the old instance's last fetch",
+			"last_modified":   "same",
+		},
 		"event_sources": {
 			"status":          "fetch state; the fork re-syncs every feed from scratch",
 			"last_fetch_at":   "same",

@@ -46,7 +46,9 @@ func scanEventSources(db *database.DB, nodeID string) ([]model.EventSource, erro
 		 s.last_fetch_at, s.last_success_at, s.last_error,
 		 (SELECT COUNT(*) FROM events e WHERE e.source_id = s.id AND e.removed_at IS NULL),
 		 s.created_at, s.updated_at
-		 FROM event_sources s WHERE s.node_id = ? ORDER BY s.created_at`, nodeID)
+		 FROM event_sources s
+		 WHERE s.node_id = ? AND s.aggregator_id IS NULL
+		 ORDER BY s.created_at`, nodeID)
 	if err != nil {
 		return nil, err
 	}
@@ -123,8 +125,11 @@ func CreateEventSource(db *database.DB) http.HandlerFunc {
 			}
 		}
 
+		// Crosswalk entries don't count against the feed budget: they
+		// cost no fetch, and a venue that answers to four spellings on
+		// the city calendar hasn't spent four of its own feeds.
 		var count int
-		db.QueryRow(`SELECT COUNT(*) FROM event_sources WHERE node_id = ?`, nodeID).Scan(&count)
+		db.QueryRow(`SELECT COUNT(*) FROM event_sources WHERE node_id = ? AND aggregator_id IS NULL`, nodeID).Scan(&count)
 		if count >= maxSourcesPerNode {
 			http.Error(w, `{"error":"this patch already has the maximum number of event sources"}`, http.StatusConflict)
 			return

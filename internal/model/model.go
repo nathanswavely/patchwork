@@ -287,6 +287,95 @@ type EventSource struct {
 	EventCount    int     `json:"event_count"`
 	CreatedAt     string  `json:"created_at"`
 	UpdatedAt     string  `json:"updated_at"`
+	// AggregatorID and NameKey are set when this source is a crosswalk
+	// entry — one name inside an aggregator rather than a feed of its own
+	// (docs/adr/056). AggregatorName is joined for display.
+	AggregatorID   *string `json:"aggregator_id,omitempty"`
+	NameKey        *string `json:"name_key,omitempty"`
+	AggregatorName string  `json:"aggregator_name,omitempty"`
+	DisplayName    string  `json:"display_name,omitempty"`
+	// Suggests marks a crosswalk entry that routes into this patch's
+	// review queue rather than publishing (docs/adr/056). AddedByName
+	// says who pointed it here, which is the whole of why a patch can
+	// see entries it did not make.
+	Suggests    bool   `json:"suggests,omitempty"`
+	AddedByName string `json:"added_by_name,omitempty"`
+	// PendingCount is how many of its items are waiting in the queue.
+	PendingCount int `json:"pending_count"`
+}
+
+// Aggregator is an instance-level feed that lists events it does not own
+// (docs/adr/056). It owns nothing, has no tile, and creates no event
+// until a crosswalk entry addresses one.
+type Aggregator struct {
+	ID            string  `json:"id"`
+	Name          string  `json:"name"`
+	Type          string  `json:"type"`
+	URL           string  `json:"url"`
+	AddedBy       string  `json:"added_by"`
+	Paused        bool    `json:"paused"`
+	Status        string  `json:"status"`
+	LastFetchAt   *string `json:"last_fetch_at,omitempty"`
+	LastSuccessAt *string `json:"last_success_at,omitempty"`
+	LastError     *string `json:"last_error,omitempty"`
+	// ListingCount is what the last successful fetch carried;
+	// MappedCount and UnroutedCount split it by whether a crosswalk
+	// entry addresses the name.
+	ListingCount  int    `json:"listing_count"`
+	MappedCount   int    `json:"mapped_count"`
+	UnroutedCount int    `json:"unrouted_count"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
+// UnroutedName is one name an aggregator's listings carry that no
+// crosswalk entry addresses. Unrouted is a resting state, not a queue:
+// "PA" and "3rd floor atrium" are names that should never be mapped.
+type UnroutedName struct {
+	AggregatorID   string `json:"aggregator_id"`
+	AggregatorName string `json:"aggregator_name"`
+	NameKey        string `json:"name_key"`
+	DisplayName    string `json:"display_name"`
+	Count          int    `json:"count"`
+	// NextStartsAt is the soonest listing under this name — enough for an
+	// admin to tell a live venue from a name that appeared once in 2019.
+	NextStartsAt string   `json:"next_starts_at"`
+	SampleTitles []string `json:"sample_titles"`
+	// Ignored marks a name judged to mean no organization. Set only on
+	// the ignored listing; the working list excludes them.
+	Ignored bool `json:"ignored,omitempty"`
+}
+
+// AggregatorListing is one item as its feed published it, shown when an
+// admin opens a name to decide what it means (docs/adr/056). Never an
+// event — a listing becomes one only where a crosswalk entry routes it.
+type AggregatorListing struct {
+	UID         string  `json:"uid"`
+	Occurrence  string  `json:"occurrence"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Location    string  `json:"location"`
+	StartsAt    string  `json:"starts_at"`
+	EndsAt      *string `json:"ends_at,omitempty"`
+	URL         string  `json:"url,omitempty"`
+}
+
+// AggregatorHold is a listing withheld because the patch already has an
+// event at that instant (docs/adr/056). The patch's own event wins until
+// one of its admins says the two are different.
+type AggregatorHold struct {
+	ID            string `json:"id"`
+	SourceID      string `json:"source_id"`
+	NodeID        string `json:"node_id"`
+	UID           string `json:"uid"`
+	Occurrence    string `json:"occurrence"`
+	RivalEventID  string `json:"rival_event_id"`
+	RivalTitle    string `json:"rival_title"`
+	Title         string `json:"title"`
+	Location      string `json:"location"`
+	StartsAt      string `json:"starts_at"`
+	AggregatorName string `json:"aggregator_name"`
+	CreatedAt      string `json:"created_at"`
 }
 
 type Membership struct {

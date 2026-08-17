@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,7 +17,9 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
-// Source is one event_sources row, loaded fresh at sync time.
+// Source is one event_sources row, loaded fresh at sync time. It also
+// carries an aggregator row where the two overlap, so the fetch-and-
+// detect path can serve both (docs/adr/056).
 type Source struct {
 	ID            string
 	NodeID        string
@@ -26,6 +29,15 @@ type Source struct {
 	Etag          sql.NullString
 	LastModified  sql.NullString
 	LastSuccessAt sql.NullString
+	// AggregatorID and NameKey make this row a crosswalk entry rather
+	// than a feed of its own: its items come from the aggregator's
+	// cached listings under NameKey, and it never fetches anything.
+	AggregatorID sql.NullString
+	NameKey      sql.NullString
+	// Suggests routes into the patch's review queue rather than
+	// publishing (docs/adr/056). The patch opened its door to
+	// suggestions; it did not adopt the feed.
+	Suggests bool
 }
 
 // sourceLocks serializes syncs per source: the hourly worker and a
@@ -45,10 +57,11 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 
 	var src Source
 	err := db.QueryRow(
-		`SELECT id, node_id, type, url, added_by, etag, last_modified, last_success_at
-		 FROM event_sources WHERE id = ?`, sourceID,
+		`SELECT id, node_id, type, url, added_by, etag, last_modified, last_success_at,
+		 aggregator_id, name_key, suggests FROM event_sources WHERE id = ?`, sourceID,
 	).Scan(&src.ID, &src.NodeID, &src.Type, &src.URL, &src.AddedBy,
-		&src.Etag, &src.LastModified, &src.LastSuccessAt)
+		&src.Etag, &src.LastModified, &src.LastSuccessAt,
+		&src.AggregatorID, &src.NameKey, &src.Suggests)
 	if err != nil {
 		return fmt.Errorf("load source: %w", err)
 	}
@@ -71,12 +84,44 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 	return nil
 }
 
-// loadItems fetches and parses a source according to its type. An 'ics'
-// source whose document doesn't parse gets one shot at being read as a
-// Squarespace events page — "paste the calendar's address" shouldn't
-// require knowing which kind of address it is. A successful detection
-// is persisted, so later syncs go straight to the JSON view.
+// loadItems supplies a source's desired items. A crosswalk entry takes
+// them from the aggregator's cached listings and fetches nothing — the
+// aggregator already fetched, once, for all of its entries
+// (docs/adr/056). Everything else fetches its own feed, and a successful
+// type detection is persisted so later syncs skip the probes.
 func loadItems(ctx context.Context, db *database.DB, src *Source) ([]Item, *fetchResult, error) {
+	if src.AggregatorID.Valid {
+		items, err := listingsFor(db, src.AggregatorID.String, src.NameKey.String)
+		if err != nil {
+			return nil, nil, err
+		}
+		return items, &fetchResult{}, nil
+	}
+
+	declared := src.Type
+	items, result, err := loadItemsFor(ctx, src)
+	if err != nil {
+		return nil, nil, err
+	}
+	if src.Type != declared {
+		if _, err := db.Exec(
+			`UPDATE event_sources SET type = ?, updated_at = ? WHERE id = ?`,
+			src.Type, nowStamp(), src.ID,
+		); err != nil {
+			return nil, nil, fmt.Errorf("persist detected type: %w", err)
+		}
+	}
+	return items, result, nil
+}
+
+// loadItemsFor fetches and parses according to src.Type. An 'ics' source
+// whose document doesn't parse gets one shot at being read as schema.org
+// markup and then as a Squarespace events page — "paste the calendar's
+// address" shouldn't require knowing which kind of address it is. A
+// successful detection is written to src.Type; persisting it belongs to
+// the caller, because sources and aggregators keep it in different
+// tables.
+func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error) {
 	now := time.Now().UTC()
 
 	if src.Type == "squarespace" {
@@ -119,12 +164,6 @@ func loadItems(ctx context.Context, db *database.DB, src *Source) ([]Item, *fetc
 	// Not ICS. The page is already in hand, so the JSON-LD probe is
 	// free: any schema.org Event markup makes this a jsonld source.
 	if ldItems, ldErr := ParseJSONLD(result.Body, now); ldErr == nil {
-		if _, err := db.Exec(
-			`UPDATE event_sources SET type = 'jsonld', updated_at = ? WHERE id = ?`,
-			nowStamp(), src.ID,
-		); err != nil {
-			return nil, nil, fmt.Errorf("persist detected type: %w", err)
-		}
 		src.Type = "jsonld"
 		return ldItems, result, nil
 	}
@@ -144,12 +183,6 @@ func loadItems(ctx context.Context, db *database.DB, src *Source) ([]Item, *fetc
 	ssItems, err := ParseSquarespace(ssResult.Body, now)
 	if err != nil {
 		return nil, nil, icsErr
-	}
-	if _, err := db.Exec(
-		`UPDATE event_sources SET type = 'squarespace', updated_at = ? WHERE id = ?`,
-		nowStamp(), src.ID,
-	); err != nil {
-		return nil, nil, fmt.Errorf("persist detected type: %w", err)
 	}
 	src.Type = "squarespace"
 	return ssItems, ssResult, nil
@@ -253,6 +286,29 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		return err
 	}
 
+	// Listings already held as possible duplicates are decided-pending,
+	// not undecided: re-checking them every hour would re-hold what an
+	// admin is already looking at (docs/adr/056).
+	held := map[string]bool{}
+	if src.AggregatorID.Valid {
+		rows, err = db.Query(`SELECT uid, occurrence FROM aggregator_holds WHERE source_id = ?`, src.ID)
+		if err != nil {
+			return fmt.Errorf("load holds: %w", err)
+		}
+		for rows.Next() {
+			var uid, occ string
+			if err := rows.Scan(&uid, &occ); err != nil {
+				rows.Close()
+				return err
+			}
+			held[Key(uid, occ)] = true
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			return err
+		}
+	}
+
 	desired := map[string]Item{}
 	for _, it := range items {
 		k := Key(it.UID, it.Occurrence)
@@ -305,6 +361,62 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 			continue
 		}
 
+		if held[k] {
+			continue
+		}
+
+		// A suggesting entry needs no duplicate hold: every item it
+		// brings already stops at a human, and a reviewer looking at a
+		// show they already have will reject it (docs/adr/056).
+		if src.Suggests {
+			id := auth.NewUUIDv7()
+			apID := ap.EventAPID(ap.GetDomain(), id)
+			if _, err := tx.Exec(
+				`INSERT INTO events (id, node_id, created_by, title, description, location,
+				 latitude, longitude, starts_at, ends_at, recurrence, visibility, status,
+				 ap_id, source_id, source_uid, source_occurrence)
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'pending_review', ?, ?, ?, ?)`,
+				id, src.NodeID, src.AddedBy, it.Title, it.Description, it.Location,
+				it.Latitude, it.Longitude, it.StartsAt, it.EndsAt, apID,
+				src.ID, it.UID, it.Occurrence,
+			); err != nil {
+				return fmt.Errorf("insert suggestion: %w", err)
+			}
+			// Deliberately not announced and never broadcast: a pending
+			// event is not news, and never federates (docs/adr/026).
+			continue
+		}
+
+		// A listing arriving on a patch that already has an event at that
+		// instant is held, never guessed at (docs/adr/056). Titles are
+		// not compared — the city writes "Music Friday hosted by Music
+		// For Everyone" where the venue writes "Music Friday" — so the
+		// collision signal is the start instant alone, and the patch's
+		// own event wins until one of its admins says otherwise.
+		if src.AggregatorID.Valid {
+			var rivalID string
+			err := tx.QueryRow(
+				`SELECT id FROM events WHERE node_id = ? AND starts_at = ?
+				 AND removed_at IS NULL AND (source_id IS NULL OR source_id != ?)
+				 ORDER BY created_at LIMIT 1`,
+				src.NodeID, it.StartsAt, src.ID,
+			).Scan(&rivalID)
+			if err == nil {
+				if _, err := tx.Exec(
+					`INSERT OR IGNORE INTO aggregator_holds
+					 (id, source_id, node_id, uid, occurrence, rival_event_id, title, location, starts_at)
+					 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+					auth.NewUUIDv7(), src.ID, src.NodeID, it.UID, it.Occurrence,
+					rivalID, it.Title, it.Location, it.StartsAt,
+				); err != nil {
+					return fmt.Errorf("hold listing: %w", err)
+				}
+				continue
+			} else if err != sql.ErrNoRows {
+				return fmt.Errorf("check for duplicate: %w", err)
+			}
+		}
+
 		id := auth.NewUUIDv7()
 		apID := ap.EventAPID(ap.GetDomain(), id)
 		_, err := tx.Exec(
@@ -342,6 +454,20 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		}
 		if _, err := tx.Exec(`DELETE FROM events WHERE id = ?`, prev.ID); err != nil {
 			return fmt.Errorf("delete event %s: %w", prev.ID, err)
+		}
+	}
+
+	// A held listing the feed no longer carries is not a question anymore.
+	for k := range held {
+		if _, ok := desired[k]; ok {
+			continue
+		}
+		uid, occ, _ := strings.Cut(k, "\x00")
+		if _, err := tx.Exec(
+			`DELETE FROM aggregator_holds WHERE source_id = ? AND uid = ? AND occurrence = ?`,
+			src.ID, uid, occ,
+		); err != nil {
+			return fmt.Errorf("drop stale hold: %w", err)
 		}
 	}
 

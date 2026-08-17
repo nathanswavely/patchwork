@@ -48,6 +48,10 @@ type Item struct {
 	Longitude   *float64
 	StartsAt    string
 	EndsAt      *string
+	// URL is the feed's own page for this listing, where it publishes
+	// one. Carried for aggregators, which show it to the admin deciding
+	// what a name means (docs/adr/056); ordinary event sources ignore it.
+	URL string
 }
 
 // Key identifies an item within one source. NUL can't appear in either
@@ -229,6 +233,15 @@ func itemFromEvent(e *ical.Event, uid, occurrence string) (*Item, time.Time, boo
 		Description: description,
 		Location:    location,
 		StartsAt:    start.UTC().Format(time.RFC3339),
+	}
+	// The feed's own page for this event. Only aggregators surface it
+	// (docs/adr/056): deciding whether a name means an organization
+	// often needs the listing as its publisher wrote it, and no summary
+	// substitutes for that.
+	if u, err := e.Props.URI(ical.PropURL); err == nil && u != nil {
+		if s := u.String(); strings.HasPrefix(s, "http://") || strings.HasPrefix(s, "https://") {
+			it.URL = s
+		}
 	}
 	if end, err := e.DateTimeEnd(time.UTC); err == nil && end.After(start) {
 		s := end.UTC().Format(time.RFC3339)

@@ -3825,6 +3825,41 @@
           "quote": null
         },
         {
+          "file": "internal/handler/aggregators.go",
+          "line": 448,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 510,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 538,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 622,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 657,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
           "file": "internal/handler/amendment_attestations.go",
           "line": 94,
           "kind": "go-error-body",
@@ -3924,28 +3959,28 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 74,
+          "line": 76,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 99,
+          "line": 101,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 173,
+          "line": 178,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 210,
+          "line": 215,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4043,21 +4078,21 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 557,
+          "line": 558,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 822,
+          "line": 823,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 974,
+          "line": 975,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4406,14 +4441,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 677,
+          "line": 678,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 834,
+          "line": 835,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4596,7 +4631,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 931,
+          "line": 932,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -4709,6 +4744,813 @@
           "line": 243,
           "kind": "go-error-body",
           "raw": "failed to list audit log",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0c103fc938ce",
+      "text": "failed to list aggregators",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 109,
+          "kind": "go-error-body",
+          "raw": "failed to list aggregators",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ad5a623760f0",
+      "text": "name and url are required",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 129,
+          "kind": "go-error-body",
+          "raw": "name and url are required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 135,
+          "kind": "go-error-body",
+          "raw": "name and url are required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1a2d57b56d5f",
+      "text": "url must be http(s)",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 140,
+          "kind": "go-error-body",
+          "raw": "url must be http(s)",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 148,
+          "kind": "go-error-body",
+          "raw": "url must be http(s)",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 123,
+          "kind": "go-error-body",
+          "raw": "url must be http(s)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c1450f946b40",
+      "text": "this feed is already attached",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 157,
+          "kind": "go-error-body",
+          "raw": "this feed is already attached",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 144,
+          "kind": "go-error-body",
+          "raw": "this feed is already attached",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8daf3a877523",
+      "text": "invalid request",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 183,
+          "kind": "go-error-body",
+          "raw": "invalid request",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d6daea18cd5e",
+      "text": "aggregator not found",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 189,
+          "kind": "go-error-body",
+          "raw": "aggregator not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 221,
+          "kind": "go-error-body",
+          "raw": "aggregator not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 242,
+          "kind": "go-error-body",
+          "raw": "aggregator not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 270,
+          "kind": "go-error-body",
+          "raw": "aggregator not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 557,
+          "kind": "go-error-body",
+          "raw": "aggregator not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "750278dc38c8",
+      "text": "failed to update aggregator",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 197,
+          "kind": "go-error-body",
+          "raw": "failed to update aggregator",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "11ee843bdbe8",
+      "text": "failed to remove aggregator",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 225,
+          "kind": "go-error-body",
+          "raw": "failed to remove aggregator",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a1839cd35857",
+      "text": "this aggregator just synced. Try again in a minute.",
+      "words": 9,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 247,
+          "kind": "go-error-body",
+          "raw": "this aggregator just synced. Try again in a minute.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "642cfefa1be0",
+      "text": "failed to load aggregator",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 259,
+          "kind": "go-error-body",
+          "raw": "failed to load aggregator",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b3146bfc51d9",
+      "text": "failed to list unrouted names",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 343,
+          "kind": "go-error-body",
+          "raw": "failed to list unrouted names",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5de56690d53d",
+      "text": "aggregator_id and name_key are required",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 371,
+          "kind": "go-error-body",
+          "raw": "aggregator_id and name_key are required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 410,
+          "kind": "go-error-body",
+          "raw": "aggregator_id and name_key are required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 551,
+          "kind": "go-error-body",
+          "raw": "aggregator_id and name_key are required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f3b2a1a91484",
+      "text": "failed to record that",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 386,
+          "kind": "go-error-body",
+          "raw": "failed to record that",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "59db18af24a8",
+      "text": "failed to list listings",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 419,
+          "kind": "go-error-body",
+          "raw": "failed to list listings",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 429,
+          "kind": "go-error-body",
+          "raw": "failed to list listings",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c2b9267d4384",
+      "text": "insufficient permissions",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 452,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 514,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 626,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 661,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 725,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/comments.go",
+          "line": 340,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 80,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 105,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 182,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 219,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 281,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_submissions.go",
+          "line": 110,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_submissions.go",
+          "line": 170,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_submissions.go",
+          "line": 175,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/events.go",
+          "line": 468,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/events.go",
+          "line": 589,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 521,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 829,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 981,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/proposals.go",
+          "line": 1182,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/proposals.go",
+          "line": 1236,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2b4def00e189",
+      "text": "failed to list aggregator names",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 460,
+          "kind": "go-error-body",
+          "raw": "failed to list aggregator names",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3d0d0864fd96",
+      "text": "failed to list crosswalk entries",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 519,
+          "kind": "go-error-body",
+          "raw": "failed to list crosswalk entries",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "da6a525d1a09",
+      "text": "this patch isn't accepting event suggestions. Only its own admins can map it.",
+      "words": 13,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 542,
+          "kind": "go-error-body",
+          "raw": "this patch isn't accepting event suggestions. Only its own admins can map it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0837570b8734",
+      "text": "this aggregator is not carrying that name",
+      "words": 7,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 565,
+          "kind": "go-error-body",
+          "raw": "this aggregator is not carrying that name",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6e4e797c7b30",
+      "text": "this patch already answers to the maximum number of aggregator names",
+      "words": 11,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 572,
+          "kind": "go-error-body",
+          "raw": "this patch already answers to the maximum number of aggregator names",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "91901b685b22",
+      "text": "that name is already mapped",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 586,
+          "kind": "go-error-body",
+          "raw": "that name is already mapped",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fd8d41ec433a",
+      "text": "failed to load crosswalk entry",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 598,
+          "kind": "go-error-body",
+          "raw": "failed to load crosswalk entry",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "636cd2c97a86",
+      "text": "failed to create crosswalk entry",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 609,
+          "kind": "go-error-body",
+          "raw": "failed to create crosswalk entry",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0bceb9b80747",
+      "text": "crosswalk entry not found",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 635,
+          "kind": "go-error-body",
+          "raw": "crosswalk entry not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d297d37597ed",
+      "text": "failed to unmap",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 639,
+          "kind": "go-error-body",
+          "raw": "failed to unmap",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f777a5e6e76a",
+      "text": "failed to list holds",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 674,
+          "kind": "go-error-body",
+          "raw": "failed to list holds",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 685,
+          "kind": "go-error-body",
+          "raw": "failed to list holds",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b900431a00e5",
+      "text": "decision must be same or different",
+      "words": 6,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 710,
+          "kind": "go-error-body",
+          "raw": "decision must be same or different",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "807e152ea472",
+      "text": "hold not found",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 721,
+          "kind": "go-error-body",
+          "raw": "hold not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4a8234889432",
+      "text": "failed to record decision",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 734,
+          "kind": "go-error-body",
+          "raw": "failed to record decision",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cf69e237ffd5",
+      "text": "this listing is no longer in the feed",
+      "words": 8,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 747,
+          "kind": "go-error-body",
+          "raw": "this listing is no longer in the feed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f3025c798d72",
+      "text": "failed to create event",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 760,
+          "kind": "go-error-body",
+          "raw": "failed to create event",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/events.go",
+          "line": 364,
+          "kind": "go-error-body",
+          "raw": "failed to create event",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bbfc849e5d0d",
+      "text": "failed to clear hold",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 766,
+          "kind": "go-error-body",
+          "raw": "failed to clear hold",
           "quote": null
         }
       ]
@@ -4882,7 +5724,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 546,
+          "line": 547,
           "kind": "go-error-body",
           "raw": "slug required",
           "quote": null
@@ -4992,7 +5834,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 268,
+          "line": 273,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6771,129 +7613,6 @@
       ]
     },
     {
-      "id": "c2b9267d4384",
-      "text": "insufficient permissions",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/handler/comments.go",
-          "line": 340,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 78,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 103,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 177,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 214,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 276,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_submissions.go",
-          "line": 110,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_submissions.go",
-          "line": 170,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_submissions.go",
-          "line": 175,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/events.go",
-          "line": 468,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/events.go",
-          "line": 589,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/memberships.go",
-          "line": 521,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/nodes.go",
-          "line": 828,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/nodes.go",
-          "line": 980,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/proposals.go",
-          "line": 1182,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/proposals.go",
-          "line": 1236,
-          "kind": "go-error-body",
-          "raw": "insufficient permissions",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "f00042aa09e9",
       "text": "failed to delete comment",
       "words": 4,
@@ -7468,14 +8187,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 83,
+          "line": 85,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 150,
+          "line": 155,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
@@ -7493,27 +8212,9 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 111,
+          "line": 113,
           "kind": "go-error-body",
           "raw": "url is required",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "1a2d57b56d5f",
-      "text": "url must be http(s)",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 121,
-          "kind": "go-error-body",
-          "raw": "url must be http(s)",
           "quote": null
         }
       ]
@@ -7529,27 +8230,9 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 129,
+          "line": 134,
           "kind": "go-error-body",
           "raw": "this patch already has the maximum number of event sources",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "c1450f946b40",
-      "text": "this feed is already attached",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 139,
-          "kind": "go-error-body",
-          "raw": "this feed is already attached",
           "quote": null
         }
       ]
@@ -7565,7 +8248,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 161,
+          "line": 166,
           "kind": "go-error-body",
           "raw": "failed to create event source",
           "quote": null
@@ -7583,21 +8266,21 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 185,
+          "line": 190,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 222,
+          "line": 227,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 248,
+          "line": 253,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
@@ -7615,7 +8298,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 193,
+          "line": 198,
           "kind": "go-error-body",
           "raw": "failed to remove event source",
           "quote": null
@@ -7633,7 +8316,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 227,
+          "line": 232,
           "kind": "go-error-body",
           "raw": "this source just synced — try again in a minute",
           "quote": null
@@ -7651,7 +8334,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 238,
+          "line": 243,
           "kind": "go-error-body",
           "raw": "failed to sync",
           "quote": null
@@ -7669,7 +8352,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 272,
+          "line": 277,
           "kind": "go-error-body",
           "raw": "this event is not attached to an event source",
           "quote": null
@@ -7687,14 +8370,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 285,
+          "line": 290,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 293,
+          "line": 298,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
@@ -7773,7 +8456,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_submissions.go",
-          "line": 223,
+          "line": 235,
+          "kind": "go-error-body",
+          "raw": "failed to reject event",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_submissions.go",
+          "line": 240,
           "kind": "go-error-body",
           "raw": "failed to reject event",
           "quote": null
@@ -7962,24 +8652,6 @@
           "line": 350,
           "kind": "go-error-body",
           "raw": "this patch does not accept event suggestions",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "f3025c798d72",
-      "text": "failed to create event",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/events.go",
-          "line": 364,
-          "kind": "go-error-body",
-          "raw": "failed to create event",
           "quote": null
         }
       ]
@@ -10666,7 +11338,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 681,
+          "line": 682,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -10705,7 +11377,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 739,
+          "line": 740,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -10723,14 +11395,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 863,
+          "line": 864,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 870,
+          "line": 871,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -10748,7 +11420,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 881,
+          "line": 882,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -10766,7 +11438,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 943,
+          "line": 944,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -10784,7 +11456,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 988,
+          "line": 989,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -14473,21 +15145,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 460,
+          "line": 462,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 504,
+          "line": 508,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 553,
+          "line": 557,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -14505,21 +15177,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 461,
+          "line": 463,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 505,
+          "line": 509,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 554,
+          "line": 558,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -14537,7 +15209,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 642,
+          "line": 646,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -14555,7 +15227,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 643,
+          "line": 647,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -14591,7 +15263,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 30,
+          "line": 31,
           "kind": "js-string",
           "raw": "Audit Log",
           "quote": "'"
@@ -14623,7 +15295,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 53,
+          "line": 54,
           "kind": "attr:placeholder",
           "raw": "Search administration…",
           "quote": "\""
@@ -14777,7 +15449,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 390,
+          "line": 412,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -15170,6 +15842,27 @@
         {
           "file": "web/src/components/AttestationRecords.svelte",
           "line": 174,
+          "kind": "markup",
+          "raw": "Loading…",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 256,
+          "kind": "markup",
+          "raw": "Loading…",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 319,
+          "kind": "markup",
+          "raw": "Loading…",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 390,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -16957,7 +17650,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 125,
+          "line": 201,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -17709,7 +18402,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 359,
+          "line": 381,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -18331,7 +19024,7 @@
           "file": "web/src/components/MapLocationPicker.svelte",
           "line": 122,
           "kind": "markup",
-          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\r\n    precisely or as loosely as you like. Nothing is saved until you hit\r\n    Save location.",
+          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n    precisely or as loosely as you like. Nothing is saved until you hit\n    Save location.",
           "quote": null
         }
       ]
@@ -18428,7 +19121,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -18464,7 +19157,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
         }
       ]
@@ -18849,7 +19542,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 125,
+          "line": 131,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -18917,7 +19610,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 171,
+          "line": 177,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -20871,7 +21564,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 280,
+          "line": 302,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -20946,7 +21639,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 330,
+          "line": 352,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -21511,6 +22204,13 @@
           "kind": "attr:title",
           "raw": "Settings",
           "quote": "\""
+        },
+        {
+          "file": "web/src/pages/PatchProfile.svelte",
+          "line": 211,
+          "kind": "markup",
+          "raw": "Settings",
+          "quote": null
         }
       ]
     },
@@ -21705,7 +22405,7 @@
       "occurrences": [
         {
           "file": "web/src/components/WorkspaceSearch.svelte",
-          "line": 181,
+          "line": 230,
           "kind": "markup",
           "raw": "Searching…",
           "quote": null
@@ -21723,7 +22423,7 @@
       "occurrences": [
         {
           "file": "web/src/components/WorkspaceSearch.svelte",
-          "line": 184,
+          "line": 233,
           "kind": "markup",
           "raw": "No matches in this context",
           "quote": null
@@ -22075,7 +22775,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 116,
+          "line": 192,
           "kind": "markup",
           "raw": "Event Sources",
           "quote": null
@@ -22764,7 +23464,7 @@
           "file": "web/src/pages/About.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "is a Patchwork: a home the\r\n      communities here run for themselves, on their own machine.",
+          "raw": "is a Patchwork: a home the\n      communities here run for themselves, on their own machine.",
           "quote": null
         }
       ]
@@ -22839,7 +23539,7 @@
           "file": "web/src/pages/About.svelte",
           "line": 93,
           "kind": "markup",
-          "raw": "Events come from the patches you follow or join. Your feed is built\r\n      from those connections and nothing else.",
+          "raw": "Events come from the patches you follow or join. Your feed is built\n      from those connections and nothing else.",
           "quote": null
         }
       ]
@@ -22979,7 +23679,7 @@
           "file": "web/src/pages/About.svelte",
           "line": 105,
           "kind": "markup",
-          "raw": ",\r\n        a shared community-standards baseline. Amendments to it are public.",
+          "raw": ",\n        a shared community-standards baseline. Amendments to it are public.",
           "quote": null
         }
       ]
@@ -23191,6 +23891,13 @@
         {
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 95,
+          "kind": "js-string",
+          "raw": "Failed to remove",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 124,
           "kind": "js-string",
           "raw": "Failed to remove",
           "quote": "'"
@@ -23676,7 +24383,7 @@
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 268,
           "kind": "markup",
-          "raw": "Keeps patches that changed the shared community standards out of your\r\n        quilt, search, map, and event feed. Direct links still work.",
+          "raw": "Keeps patches that changed the shared community standards out of your\n        quilt, search, map, and event feed. Direct links still work.",
           "quote": null
         }
       ]
@@ -23712,7 +24419,7 @@
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 276,
           "kind": "markup",
-          "raw": "A calendar feed of every event on your My Quilt, for your calendar\r\n        app. The address is a secret. Anyone who has it can read your feed.",
+          "raw": "A calendar feed of every event on your My Quilt, for your calendar\n        app. The address is a secret. Anyone who has it can read your feed.",
           "quote": null
         }
       ]
@@ -23755,7 +24462,7 @@
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 285,
           "kind": "markup",
-          "raw": "Copy it now. This address won't be shown again, and regenerating\r\n          replaces it.",
+          "raw": "Copy it now. This address won't be shown again, and regenerating\n          replaces it.",
           "quote": null
         }
       ]
@@ -23863,7 +24570,7 @@
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 311,
           "kind": "markup",
-          "raw": "as one of its stewards. That listing belongs to you, and you can\r\n            unlist yourself any time.",
+          "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
         }
       ]
@@ -23899,7 +24606,7 @@
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 318,
           "kind": "markup",
-          "raw": "as a steward. Nothing appears until you accept, and you can\r\n            take it back later.",
+          "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
         }
       ]
@@ -24008,6 +24715,495 @@
           "line": 78,
           "kind": "markup",
           "raw": "Activity from your patches will show up here.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1753f0f2cd2c",
+      "text": "Failed to record that",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 85,
+          "kind": "js-string",
+          "raw": "Failed to record that",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 156,
+          "kind": "js-string",
+          "raw": "Failed to record that",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "f0af929a8967",
+      "text": "Feed attached. Nothing arrives until you map a name.",
+      "words": 9,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 107,
+          "kind": "js-string",
+          "raw": "Feed attached. Nothing arrives until you map a name.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "af69ae5e7834",
+      "text": "Failed to attach feed.",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 112,
+          "kind": "js-string",
+          "raw": "Failed to attach feed.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "70472090e048",
+      "text": "Feed removed. Mapped patches kept their events.",
+      "words": 7,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 121,
+          "kind": "js-string",
+          "raw": "Feed removed. Mapped patches kept their events.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8eb4917bbe54",
+      "text": "Failed to update",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 136,
+          "kind": "js-string",
+          "raw": "Failed to update",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminLabel.svelte",
+          "line": 162,
+          "kind": "js-string",
+          "raw": "Failed to update",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "abf3e80b5b4c",
+      "text": "Sync failed",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 145,
+          "kind": "js-string",
+          "raw": "Sync failed",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 99,
+          "kind": "js-string",
+          "raw": "Sync failed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "89db3347ac20",
+      "text": "Unclaimed, events publish",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 163,
+          "kind": "js-string",
+          "raw": "Unclaimed, events publish",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "5e13e396677b",
+      "text": "Accepts suggestions, events await review",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 165,
+          "kind": "js-string",
+          "raw": "Accepts suggestions, events await review",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "9dc70207783c",
+      "text": "Not accepting suggestions",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 166,
+          "kind": "js-string",
+          "raw": "Not accepting suggestions",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "0ffbfb438613",
+      "text": "Failed to map",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 194,
+          "kind": "js-string",
+          "raw": "Failed to map",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "bc6706b666a4",
+      "text": "Aggregators",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 246,
+          "kind": "markup",
+          "raw": "Aggregators",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "86f1b358ad39",
+      "text": "Calendars that list events they don't run, like a city or chamber of commerce calendar. Nothing arrives until you map a name to a patch, and that mapping stands.",
+      "words": 29,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 248,
+          "kind": "markup",
+          "raw": "Calendars that list events they don't run, like a city or chamber of\n    commerce calendar. Nothing arrives until you map a name to a patch, and\n    that mapping stands.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "06a7b164556d",
+      "text": "Feeds",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 254,
+          "kind": "markup",
+          "raw": "Feeds",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0d145ad8998b",
+      "text": "No feeds attached.",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 258,
+          "kind": "markup",
+          "raw": "No feeds attached.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a18b4cfad30d",
+      "text": "First fetch in progress…",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 267,
+          "kind": "markup",
+          "raw": "First fetch in progress…",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cdc03f862f73",
+      "text": "Fetch failed{agg.last_error ? `: ${agg.last_error}` : ''}",
+      "words": 7,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 269,
+          "kind": "markup",
+          "raw": "Fetch failed{agg.last_error ? `: ${agg.last_error}` : ''}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "32f31f229c26",
+      "text": "{agg.listing_count} {agg.listing_count === 1 ? 'listing' : 'listings'} {' · '}{agg.mapped_count} routed",
+      "words": 12,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 271,
+          "kind": "markup",
+          "raw": "{agg.listing_count} {agg.listing_count === 1 ? 'listing' : 'listings'}\n                  {' · '}{agg.mapped_count} routed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "881538ccf58c",
+      "text": "{' · '}fetched {relTime(agg.last_success_at)}",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 273,
+          "kind": "markup",
+          "raw": "{' · '}fetched {relTime(agg.last_success_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a7a9dc5bcf71",
+      "text": "paused",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 275,
+          "kind": "markup",
+          "raw": "paused",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ef7a7be9f715",
+      "text": "Visit Lancaster City",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 296,
+          "kind": "attr:placeholder",
+          "raw": "Visit Lancaster City",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "3982cd10966c",
+      "text": "https://…/calendar.ics",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 297,
+          "kind": "attr:placeholder",
+          "raw": "https://…/calendar.ics",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "8315b6dd7686",
+      "text": "Attach a feed to see the names it carries.",
+      "words": 9,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 321,
+          "kind": "markup",
+          "raw": "Attach a feed to see the names it carries.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4c78bb8f4ac4",
+      "text": "Hidden from this list only. Patch admins still see every name in their own picker.",
+      "words": 15,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 329,
+          "kind": "markup",
+          "raw": "Hidden from this list only. Patch admins still see every name in\n        their own picker.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a1ff7c7a94f9",
+      "text": "Commonest first. Not everything here is an organization, so ignore what isn't.",
+      "words": 12,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 332,
+          "kind": "markup",
+          "raw": "Commonest first. Not everything here is an organization, so ignore\n        what isn't.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "67d1f5373be9",
+      "text": "Find a patch…",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 359,
+          "kind": "attr:placeholder",
+          "raw": "Find a patch…",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "37b3201ba875",
+      "text": "View on {hostOf(l.url)} ↗",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 403,
+          "kind": "markup",
+          "raw": "View on {hostOf(l.url)} ↗",
           "quote": null
         }
       ]
@@ -25321,24 +26517,6 @@
       ]
     },
     {
-      "id": "8eb4917bbe54",
-      "text": "Failed to update",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminLabel.svelte",
-          "line": 162,
-          "kind": "js-string",
-          "raw": "Failed to update",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "51b5ad8bf6c5",
       "text": "Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account.",
       "words": 22,
@@ -25639,7 +26817,7 @@
           "file": "web/src/pages/AdminLabel.svelte",
           "line": 270,
           "kind": "markup",
-          "raw": "Worth keeping if the history is friendly. Remove it if it\r\n              isn't.",
+          "raw": "Worth keeping if the history is friendly. Remove it if it\n              isn't.",
           "quote": null
         }
       ]
@@ -25954,7 +27132,7 @@
           "file": "web/src/pages/AdminLegal.svelte",
           "line": 118,
           "kind": "markup",
-          "raw": "The default that ships with Patchwork. It fills in this quilt's\r\n            name by itself and starts with a note saying it's the default.\r\n            Saving any edit removes that note along with it.",
+          "raw": "The default that ships with Patchwork. It fills in this quilt's\n            name by itself and starts with a note saying it's the default.\n            Saving any edit removes that note along with it.",
           "quote": null
         }
       ]
@@ -26134,7 +27312,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
+          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -27385,7 +28563,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -29832,7 +31010,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 292,
+          "line": 314,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -31829,7 +33007,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -31972,14 +33150,14 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 151,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         }
       ]
@@ -32281,7 +33459,7 @@
           "file": "web/src/pages/Label.svelte",
           "line": 54,
           "kind": "markup",
-          "raw": "Quilts carry a label on the back that says who made them and when.\r\n        This is ours.",
+          "raw": "Quilts carry a label on the back that says who made them and when.\n        This is ours.",
           "quote": null
         }
       ]
@@ -32299,7 +33477,7 @@
           "file": "web/src/pages/Label.svelte",
           "line": 97,
           "kind": "markup",
-          "raw": "These figures haven't been reviewed since {label.stated_on}.\r\n              They may be out of date.",
+          "raw": "These figures haven't been reviewed since {label.stated_on}.\n              They may be out of date.",
           "quote": null
         }
       ]
@@ -32371,7 +33549,7 @@
           "file": "web/src/pages/Label.svelte",
           "line": 143,
           "kind": "markup",
-          "raw": ".\r\n        This quilt started as a fork of it.",
+          "raw": ".\n        This quilt started as a fork of it.",
           "quote": null
         }
       ]
@@ -32516,7 +33694,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -32945,7 +34123,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
           "quote": null
         }
       ]
@@ -34165,7 +35343,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 351,
+          "line": 373,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -34226,7 +35404,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 173,
+          "line": 179,
           "kind": "markup",
           "raw": "Back to Quilt",
           "quote": null
@@ -34244,7 +35422,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 188,
+          "line": 194,
           "kind": "markup",
           "raw": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
           "quote": null
@@ -34262,7 +35440,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 205,
+          "line": 227,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
           "quote": null
@@ -34280,7 +35458,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 207,
+          "line": 229,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -34298,7 +35476,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 209,
+          "line": 231,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -34316,7 +35494,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 211,
+          "line": 233,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -34334,7 +35512,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 211,
+          "line": 233,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -34352,7 +35530,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 223,
+          "line": 245,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -34370,7 +35548,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 225,
+          "line": 247,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -34388,7 +35566,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 252,
+          "line": 274,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -34406,7 +35584,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 320,
+          "line": 342,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -34534,7 +35712,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -34624,7 +35802,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -35752,7 +36930,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 30,
+          "line": 42,
           "kind": "js-string",
           "raw": "Failed to load event sources",
           "quote": "'"
@@ -35770,7 +36948,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 62,
+          "line": 74,
           "kind": "js-string",
           "raw": "Failed to attach feed",
           "quote": "'"
@@ -35788,7 +36966,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 71,
+          "line": 83,
           "kind": "js-string",
           "raw": "Event source removed",
           "quote": "'"
@@ -35806,7 +36984,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 74,
+          "line": 86,
           "kind": "js-string",
           "raw": "Failed to remove event source",
           "quote": "'"
@@ -35814,19 +36992,91 @@
       ]
     },
     {
-      "id": "abf3e80b5b4c",
-      "text": "Sync failed",
-      "words": 2,
+      "id": "bc3decf7e705",
+      "text": "Failed to map name",
+      "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 87,
+          "line": 133,
           "kind": "js-string",
-          "raw": "Sync failed",
+          "raw": "Failed to map name",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "9630aa7b0cc0",
+      "text": "Stopped. Its events are yours to edit now.",
+      "words": 8,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 142,
+          "kind": "js-string",
+          "raw": "Stopped. Its events are yours to edit now.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "cbb23e59525b",
+      "text": "Failed to unmap",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 145,
+          "kind": "js-string",
+          "raw": "Failed to unmap",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "32fa7719bd4b",
+      "text": "Kept yours",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 153,
+          "kind": "js-string",
+          "raw": "Kept yours",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4ec59787b9c8",
+      "text": "Added as a separate event",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 153,
+          "kind": "js-string",
+          "raw": "Added as a separate event",
           "quote": "'"
         }
       ]
@@ -35842,9 +37092,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 118,
+          "line": 194,
           "kind": "markup",
-          "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\r\n    Google Calendar's secret address, the calendar feed from your website)\r\n    or an events page from Squarespace, Humanitix, and similar sites.\r\n    Imported events publish directly and stay in step with the feed.",
+          "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\n    Google Calendar's secret address, the calendar feed from your website)\n    or an events page from Squarespace, Humanitix, and similar sites.\n    Imported events publish directly and stay in step with the feed.",
           "quote": null
         }
       ]
@@ -35860,7 +37110,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 136,
+          "line": 212,
           "kind": "markup",
           "raw": "First sync in progress…",
           "quote": null
@@ -35878,7 +37128,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 138,
+          "line": 214,
           "kind": "markup",
           "raw": "Sync failed{source.last_error ? `: ${source.last_error}` : ''}",
           "quote": null
@@ -35896,7 +37146,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 142,
+          "line": 218,
           "kind": "markup",
           "raw": "· synced {relTime(source.last_success_at)}",
           "quote": null
@@ -35914,7 +37164,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 164,
+          "line": 240,
           "kind": "markup",
           "raw": "No event sources yet.",
           "quote": null
@@ -35932,7 +37182,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 170,
+          "line": 246,
           "kind": "attr:placeholder",
           "raw": "https://calendar.google.com/calendar/ical/…/basic.ics",
           "quote": "\""
@@ -35950,9 +37200,207 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 179,
+          "line": 255,
           "kind": "markup",
           "raw": "Removing a source keeps past events and removes upcoming imported ones.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a4304564a7b9",
+      "text": "Possible duplicates",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 260,
+          "kind": "markup",
+          "raw": "Possible duplicates",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "447f21a1a9c3",
+      "text": "Each of these lands at the same time as an event you already have. Yours is the one showing.",
+      "words": 19,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 262,
+          "kind": "markup",
+          "raw": "Each of these lands at the same time as an event you already have.\n      Yours is the one showing.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1ea389f8eef5",
+      "text": "Yours:",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 270,
+          "kind": "markup",
+          "raw": "Yours:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0ab3eb10efcc",
+      "text": "Listing calendars",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 293,
+          "kind": "markup",
+          "raw": "Listing calendars",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b0c311021cc5",
+      "text": "Calendars that list events across the community, like the city calendar. Answering to a name brings every event filed under it here from now on. Anything an admin points at you waits in your review queue first. Stop any of them here.",
+      "words": 42,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 295,
+          "kind": "markup",
+          "raw": "Calendars that list events across the community, like the city calendar.\n    Answering to a name brings every event filed under it here from now on.\n    Anything an admin points at you waits in your review queue first. Stop\n    any of them here.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a0a37054b7ec",
+      "text": "Suggests into your review queue",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 310,
+          "kind": "markup",
+          "raw": "Suggests into your review queue",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a96bef09339e",
+      "text": ", set up by {entry.added_by_name}",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 310,
+          "kind": "markup",
+          "raw": ", set up by {entry.added_by_name}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "712b86f71930",
+      "text": "{entry.pending_count} waiting",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 313,
+          "kind": "markup",
+          "raw": "{entry.pending_count} waiting",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f370bdeb6c6c",
+      "text": "{' · '}{entry.event_count} approved",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 316,
+          "kind": "markup",
+          "raw": "{' · '}{entry.event_count} approved",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8c83df5c2400",
+      "text": "{' · '}updated {relTime(entry.last_success_at)}",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 319,
+          "kind": "markup",
+          "raw": "{' · '}updated {relTime(entry.last_success_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f42bbff71ec9",
+      "text": "No listing calendars are carrying a name this patch could answer to.",
+      "words": 12,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 362,
+          "kind": "markup",
+          "raw": "No listing calendars are carrying a name this patch could answer to.",
           "quote": null
         }
       ]
@@ -36042,7 +37490,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -36114,7 +37562,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
           "quote": null
         }
       ]
@@ -37759,7 +39207,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
           "quote": null
         }
       ]
@@ -37903,7 +39351,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
           "quote": null
         }
       ]
@@ -37921,7 +39369,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
           "quote": null
         }
       ]
@@ -37975,7 +39423,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
           "quote": null
         }
       ]
@@ -38029,7 +39477,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
           "quote": null
         }
       ]
@@ -38155,7 +39603,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 129,
           "kind": "markup",
-          "raw": "No account was created yet. Request a new sign-in link and\r\n          you'll be right back here.",
+          "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
           "quote": null
         }
       ]
@@ -38209,7 +39657,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 174,
           "kind": "markup",
-          "raw": ". Pick the name\r\n          you'll go by here. It becomes your profile address, so it\r\n          can't change later.",
+          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
           "quote": null
         }
       ]

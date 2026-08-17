@@ -760,7 +760,8 @@ until detached. An unreachable feed never removes anything; only a
 successful fetch that no longer carries an event cancels it. The UI may
 say "feed" informally.
 _Avoid_: calendar sync (implies two-way), import (a one-time act; a
-source is standing), integration (vague), crawler
+source is standing), integration (vague), crawler, aggregator (that is
+the instance-level thing that owns nothing)
 
 **Detach**:
 The explicit act of cutting one imported event loose from its event
@@ -768,6 +769,56 @@ source: it becomes an ordinary local event — editable, deletable, no
 longer synced — and the source ignores it from then on. The escape hatch
 that lets imported events stay read-only without trapping admins.
 _Avoid_: unlink, unsync, override
+
+**Aggregator**:
+An instance-level feed that lists events it does not own — a city tourism
+calendar, a chamber of commerce, an alt-weekly, a county parks
+department. One feed, many patches: that fan-out is the whole difference
+from an event source, which is one feed a patch's own admins attached to
+themselves. An aggregator owns nothing, has no tile on the quilt, and
+creates no event until a crosswalk entry addresses one. Attached by the
+instance admin, and its standing is ADR 026's trusted-contributor grant
+made non-human: it may place events on unclaimed patches, and reaches an
+active patch only where that patch's own admins have mapped it
+(docs/adr/056).
+_Avoid_: aggregator patch (it is not a patch and has no tile), city
+calendar (one instance's example, not the concept), scraper, directory
+
+**Crosswalk**:
+The table mapping a name in an aggregator's listings to a patch — events
+that say Binns Park belong to Binns Park. Several names may point at one
+patch (a venue is misspelled and re-addressed constantly), matching is
+exact on the normalized first field of the location (docs/adr/046), and
+it is never fuzzy: a wrong match puts a stranger's event on your
+calendar. An entry is a standing consent rather than an approval — made
+once, it addresses every listing that name will ever carry. The instance
+admin maps unclaimed patches, and may point a name at a claimed patch
+only where it accepts event suggestions — that entry **suggests**: what
+it brings waits in the patch's review queue and publishes nothing until
+its own admins approve. A patch mapping itself publishes directly, which
+is the only standing consent. Every entry pointing at a patch is visible
+in its settings, names whoever set it up, and can be stopped there.
+_Avoid_: routing rule (reads as plumbing; a crosswalk is curated),
+mapping table (backend flavour), alias, matcher
+
+**Listing**:
+One item in an aggregator's feed — deliberately not an event, because it
+may never become one. A listing whose name carries no crosswalk entry is
+**unrouted**. Opening a name shows its listings as the feed published
+them, including a link out to the publisher's own page: whether a name
+means an organization is not answerable from the name alone.
+_Avoid_: submission (a person makes those, docs/adr/026), pending event
+(it is not an event yet), unmatched (names what failed, not what it is)
+
+**Ignore**:
+Setting a name aside as meaning no organization — "PA", "Downtown", a
+room number. It hides the name from the instance admin's own list and
+nowhere else: a patch's picker still offers every unmapped name, because
+whether a patch answers to one is that patch's judgement (docs/adr/056).
+Reversible, and it touches no listings — the name is set aside, not
+deleted.
+_Avoid_: reject, dismiss, hide (each implies the name is gone rather
+than set aside), blocklist
 
 **Event upload**:
 A one-time batch of events from a spreadsheet (CSV), previewed row by
