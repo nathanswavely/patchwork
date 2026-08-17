@@ -135,7 +135,7 @@ test.describe('Admin — Quilt Icon Designer', () => {
 
     const preview = page.locator('.icon-preview');
     await expect(preview).toBeVisible();
-    await expect(preview.locator('polygon').first()).toBeVisible();
+    await expect(preview.locator('path').first()).toBeVisible();
     await expect(page.locator('.starter-option')).not.toHaveCount(0);
     await expect(page.locator('.drafter-canvas')).toBeVisible();
 
@@ -174,7 +174,7 @@ test.describe('Admin — Quilt Icon Designer', () => {
       fetch('/api/v1/instance/icon?e2e=' + Date.now()).then((r) => r.text()));
     expect(servedAfter.toLowerCase(), `${wall[fresh].label} reached the served icon`).toContain(wall[fresh].hex);
     expect(servedAfter).not.toBe(servedBefore);
-    expect(servedAfter).toContain('<polygon');
+    expect(servedAfter).toContain('<path');
 
     await page.getByRole('button', { name: 'Reset icon' }).click();
     await expect(page.locator('.icon-kind')).toContainText('Assigned from the quilt');

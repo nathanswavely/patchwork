@@ -146,9 +146,20 @@
           onkeydown={() => {}}
         />
       {:else}
+        <!-- The preview shows the block as the quilt will draw it, so it
+             seals its seams the way the quilt renderer does: without the
+             matching outline, abutting pieces each cover half the pixel
+             their shared edge lands in and the page shows through as a
+             grid (web/src/lib/quiltBlocks.js). The drafting canvas above
+             keeps its separate pieces — they're the click targets, and it
+             draws the grid on purpose. -->
         <polygon
           points={poly.map(([x, y]) => `${x * unit},${y * unit}`).join(' ')}
           fill={pieceFill(cell.r, cell.c, i)}
+          stroke={pieceFill(cell.r, cell.c, i)}
+          stroke-width="1"
+          stroke-linejoin="round"
+          vector-effect="non-scaling-stroke"
         />
       {/if}
     {/each}
