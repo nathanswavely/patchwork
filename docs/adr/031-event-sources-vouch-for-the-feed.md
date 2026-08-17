@@ -77,7 +77,10 @@ page embedding schema.org Event markup (Humanitix host pages were the
 motivating case). Detection is automatic and ordered by cost: a pasted
 address that isn't ICS is probed for Event JSON-LD in the body already
 fetched (free), then for a Squarespace JSON view (one extra fetch);
-a successful detection is persisted.
+a successful detection is persisted. **ADR 056** draws the line these two
+stopped at: a vendor type is allowed only where the vendor fixes the
+schema, and sites that fix nothing get an adapter outside the binary
+publishing ICS at a URL.
 - **Vendor APIs (Google Calendar API, Eventbrite API).** OAuth apps, API
   keys, per-vendor adapters, and terms-of-service exposure — for data the
   same vendors already publish as ICS.
