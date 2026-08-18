@@ -15,6 +15,13 @@
    * software) and must be findable without an account. Absent in
    * workspaces and the admin panel by construction: only SocialShell
    * mounts this.
+   *
+   * "About Patchwork" also renders regardless, and stands where a second
+   * link to the Label ("yours to seamrip") used to: the sidebar's "What is
+   * Patchwork?" entry is anonymous-only (docs/adr/040), so signing in used
+   * to close the last standing path to /about. Orientation belongs in the
+   * same register as the attribution line, and the Label already has its
+   * own link one item over.
    */
   import { navigate } from '../stores/router.svelte.js';
   import { getInstanceName } from '../stores/quilt.svelte.js';
@@ -54,13 +61,11 @@
       <a href="/label" onclick={goLabel}>The Label</a>
     {/if}
     <span class="strip-sep">&middot;</span>
+    <a href="/about" onclick={(e) => goTo(e, '/about')}>About Patchwork</a>
+    <span class="strip-sep">&middot;</span>
     <a href="/privacy" onclick={(e) => goTo(e, '/privacy')}>Privacy</a>
     <span class="strip-sep">&middot;</span>
     <a href="/terms" onclick={(e) => goTo(e, '/terms')}>Terms</a>
-    {#if label?.published}
-      <span class="strip-sep">&middot;</span>
-      <a href="/label" onclick={goLabel} class="strip-seamrip">yours to seamrip</a>
-    {/if}
   </div>
 {:else}
   <footer class="label-footer">
@@ -74,13 +79,11 @@
         <a href="/label" onclick={goLabel}>The Label</a>
         <span class="strip-sep">&middot;</span>
       {/if}
+      <a href="/about" onclick={(e) => goTo(e, '/about')}>About Patchwork</a>
+      <span class="strip-sep">&middot;</span>
       <a href="/privacy" onclick={(e) => goTo(e, '/privacy')}>Privacy</a>
       <span class="strip-sep">&middot;</span>
       <a href="/terms" onclick={(e) => goTo(e, '/terms')}>Terms</a>
-      {#if label?.published}
-        <span class="strip-sep">&middot;</span>
-        <a href="/label" onclick={goLabel}>yours to seamrip</a>
-      {/if}
     </span>
   </footer>
 {/if}

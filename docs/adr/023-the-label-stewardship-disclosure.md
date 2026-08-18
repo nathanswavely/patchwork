@@ -120,10 +120,14 @@ most important reader has no account — someone deciding whether to join,
 or comparing quilts. Anything behind auth fails its main job. It is
 linked from a slim attribution strip in the shell, overlaid on the quilt
 and map views in the register of a map's terms-and-attribution line
-(quilt name · stewarded by @handle · the Label · seamrip) and rendered as
-an ordinary footer elsewhere — **one component with two densities, not
-two footers**, since ADR 005 rejected its alternatives partly for forking
-one bar into two implementations. The strip obeys the takeover rule: like
+(quilt name · stewarded by @handle · the Label · About Patchwork) and
+rendered as an ordinary footer elsewhere — **one component with two
+densities, not two footers**, since ADR 005 rejected its alternatives
+partly for forking one bar into two implementations. That last slot was
+originally a second link to the Label ("yours to seamrip"); it now goes
+to `/about`, because the sidebar's "What is Patchwork?" entry is
+anonymous-only (ADR 040) and signing in otherwise closed the last
+standing path to the About page. The strip obeys the takeover rule: like
 the discovery rail, it does not exist inside workspaces or the admin
 panel, because the Label is an instance concept and a workspace is a
 patch context. Also linked from the user menu and from each entry in

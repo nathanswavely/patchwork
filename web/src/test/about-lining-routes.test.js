@@ -52,6 +52,21 @@ describe('The sidebar exposes "What is Patchwork?" to anonymous visitors', () =>
   });
 });
 
+describe('The footer keeps a standing path to /about after sign-in', () => {
+  const footer = source('components/LabelFooter.svelte');
+
+  it('links to /about from both densities, ungated', () => {
+    // The sidebar entry above is anonymous-only, so this is the only
+    // standing path once you sign in — it must not sit inside the
+    // `label?.published` branches the Label links live in.
+    const aboutLinks = footer.match(/href="\/about"[\s\S]*?>About Patchwork</g) || [];
+    expect(aboutLinks).toHaveLength(2); // overlay strip + page footer
+    // Gated the way the legal links are — which is to say, not at all.
+    const gatedBlocks = footer.match(/\{#if label\?\.published\}[\s\S]*?\{\/if\}/g) || [];
+    for (const block of gatedBlocks) expect(block).not.toContain('/about');
+  });
+});
+
 describe('SocialShell mounts the intro card', () => {
   const shell = source('components/SocialShell.svelte');
 
