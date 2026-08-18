@@ -12,6 +12,9 @@ import { writeback } from './writeback.js';
 import { outstandingDrafts, draftDirLabel } from './drafts.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
+// An explicit COPY_LEDGER_PORT is a request and is honoured or fails loudly;
+// the built-in default is only a preference (see the listen block below).
+const PORT_REQUESTED = !!process.env.COPY_LEDGER_PORT;
 const PORT = Number(process.env.COPY_LEDGER_PORT || 5175);
 
 function json(res, code, body) {
@@ -136,7 +139,31 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`\n  Copy review  →  \x1b[36mhttp://localhost:${PORT}\x1b[0m`);
+
+function announce() {
+  const { port } = server.address();
+  console.log(`\n  Copy review  →  \x1b[36mhttp://localhost:${port}\x1b[0m`);
   console.log(`  \x1b[2mEdits save to copy/ledger.json as you go. Ctrl-C when done.\x1b[0m\n`);
+}
+
+// Windows reserves moving port ranges for Hyper-V and WSL, so a port that
+// worked yesterday starts refusing with EACCES rather than EADDRINUSE, and
+// the ranges creep: 5041-5340 swallowed this default and two of the vite
+// ports beside it. Asking the OS for any free port and printing what we got
+// beats hand-editing a number every time the ranges shift. An explicit
+// COPY_LEDGER_PORT is a request, so it fails loudly instead.
+server.once('error', (err) => {
+  const takeable = err.code === 'EACCES' || err.code === 'EADDRINUSE';
+  if (PORT_REQUESTED || !takeable) {
+    console.error(`\n  Cannot listen on 127.0.0.1:${PORT} — ${err.code}.\n`);
+    process.exit(1);
+  }
+  console.log(`  \x1b[2m${PORT} is unavailable (${err.code}); asking for any free port.\x1b[0m`);
+  server.once('error', (e) => {
+    console.error(`\n  Cannot start the review server — ${e.code}.\n`);
+    process.exit(1);
+  });
+  server.listen(0, '127.0.0.1', announce);
 });
+
+server.listen(PORT, '127.0.0.1', announce);
