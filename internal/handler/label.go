@@ -154,13 +154,19 @@ func GetLabel(db *database.DB) http.HandlerFunc {
 		prose, supportURL, feedbackURL, currency, fromName, fromURL, published, ok := loadLabelRow(db)
 		w.Header().Set("Content-Type", "application/json")
 		if !ok || !published {
-			json.NewEncoder(w).Encode(map[string]any{"published": false})
+			json.NewEncoder(w).Encode(map[string]any{"published": false, "version": Version})
 			return
 		}
 		items := loadCostItems(db)
 		total, oldest, stale := costSummary(items)
 		json.NewEncoder(w).Encode(map[string]any{
-			"published":            true,
+			"published": true,
+			// The build this quilt is running. A version is materials, and
+			// the Label is where a quilt says what it is made of — it is
+			// also what somebody reading the door would be forking
+			// (docs/adr/023). Stamped at build time; "dev" outside a
+			// release image.
+			"version":              Version,
 			"prose":                prose,
 			"support_url":          supportURL,
 			"feedback_url":         feedbackURL,

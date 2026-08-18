@@ -4399,28 +4399,28 @@
         },
         {
           "file": "internal/handler/label.go",
-          "line": 260,
+          "line": 266,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 375,
+          "line": 381,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 448,
+          "line": 454,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 534,
+          "line": 540,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -9266,14 +9266,14 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 266,
+          "line": 272,
           "kind": "go-error-body",
           "raw": "failed to save label",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 274,
+          "line": 280,
           "kind": "go-error-body",
           "raw": "failed to save label",
           "quote": null
@@ -9291,7 +9291,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 282,
+          "line": 288,
           "kind": "go-error-body",
           "raw": "prose must be 20000 characters or fewer",
           "quote": null
@@ -9309,7 +9309,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 291,
+          "line": 297,
           "kind": "go-error-body",
           "raw": "support link must be an http(s) URL",
           "quote": null
@@ -9327,7 +9327,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 300,
+          "line": 306,
           "kind": "go-error-body",
           "raw": "feedback link must be an http(s) URL",
           "quote": null
@@ -9345,7 +9345,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 310,
+          "line": 316,
           "kind": "go-error-body",
           "raw": "currency must be a 3-letter code",
           "quote": null
@@ -9363,7 +9363,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 327,
+          "line": 333,
           "kind": "go-error-body",
           "raw": "seamripped-from link must be an http(s) URL",
           "quote": null
@@ -9381,7 +9381,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 342,
+          "line": 348,
           "kind": "go-error-body",
           "raw": "the Label needs at least one listed steward before it can publish",
           "quote": null
@@ -9399,7 +9399,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 347,
+          "line": 353,
           "kind": "go-error-body",
           "raw": "failed to publish",
           "quote": null
@@ -9417,7 +9417,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 353,
+          "line": 359,
           "kind": "go-error-body",
           "raw": "failed to unpublish",
           "quote": null
@@ -9435,7 +9435,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 379,
+          "line": 385,
           "kind": "go-error-body",
           "raw": "too many cost items",
           "quote": null
@@ -9453,7 +9453,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 386,
+          "line": 392,
           "kind": "go-error-body",
           "raw": "every cost item needs a service name",
           "quote": null
@@ -9471,7 +9471,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 390,
+          "line": 396,
           "kind": "go-error-body",
           "raw": "amounts cannot be negative",
           "quote": null
@@ -9489,7 +9489,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 394,
+          "line": 400,
           "kind": "go-error-body",
           "raw": "period must be monthly or yearly",
           "quote": null
@@ -9507,7 +9507,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 398,
+          "line": 404,
           "kind": "go-error-body",
           "raw": "stated_on must be a YYYY-MM-DD date",
           "quote": null
@@ -9525,28 +9525,28 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 408,
+          "line": 414,
           "kind": "go-error-body",
           "raw": "failed to save costs",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 413,
+          "line": 419,
           "kind": "go-error-body",
           "raw": "failed to save costs",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 421,
+          "line": 427,
           "kind": "go-error-body",
           "raw": "failed to save costs",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 426,
+          "line": 432,
           "kind": "go-error-body",
           "raw": "failed to save costs",
           "quote": null
@@ -9564,7 +9564,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 456,
+          "line": 462,
           "kind": "go-error-body",
           "raw": "no such user",
           "quote": null
@@ -9582,7 +9582,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 468,
+          "line": 474,
           "kind": "go-error-body",
           "raw": "that person is already on the stewards list",
           "quote": null
@@ -9600,7 +9600,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 485,
+          "line": 491,
           "kind": "go-error-body",
           "raw": "failed to remove steward",
           "quote": null
@@ -9618,7 +9618,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 489,
+          "line": 495,
           "kind": "go-error-body",
           "raw": "no such steward",
           "quote": null
@@ -9636,7 +9636,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 540,
+          "line": 546,
           "kind": "go-error-body",
           "raw": "you are not on the stewards list",
           "quote": null
@@ -9654,7 +9654,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 547,
+          "line": 553,
           "kind": "go-error-body",
           "raw": "blurb must be 200 characters or fewer",
           "quote": null
@@ -9672,14 +9672,14 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 551,
+          "line": 557,
           "kind": "go-error-body",
           "raw": "failed to save",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 561,
+          "line": 567,
           "kind": "go-error-body",
           "raw": "failed to save",
           "quote": null
@@ -9697,7 +9697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 580,
+          "line": 586,
           "kind": "go-error-body",
           "raw": "failed to remove listing",
           "quote": null
@@ -16207,7 +16207,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 161,
+          "line": 172,
           "kind": "markup",
           "raw": "Grid",
           "quote": null
@@ -16225,7 +16225,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 179,
+          "line": 190,
           "kind": "markup",
           "raw": "{draft.seams.length} of {SEAM_BUDGET} seams",
           "quote": null
@@ -16243,7 +16243,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 190,
+          "line": 201,
           "kind": "attr:aria-label",
           "raw": "Block drafting canvas",
           "quote": "\""
@@ -16261,7 +16261,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 253,
+          "line": 264,
           "kind": "markup",
           "raw": "Click two anchors to sew a seam. Seams split every piece they cross.",
           "quote": null
@@ -16280,7 +16280,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 255,
+          "line": 266,
           "kind": "markup",
           "raw": "Click a piece to color it with fabric {selectedSlot + 1}.",
           "quote": null
@@ -16298,7 +16298,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 257,
+          "line": 268,
           "kind": "markup",
           "raw": "Click a seam to unpick it. Pieces keep their fabric where they survive.",
           "quote": null
@@ -18979,7 +18979,7 @@
         },
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 117,
+          "line": 118,
           "kind": "markup",
           "raw": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
           "quote": null
@@ -22832,7 +22832,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 184,
+          "line": 187,
           "kind": "js-string",
           "raw": "Ohio Star",
           "quote": "'"
@@ -22850,7 +22850,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 185,
+          "line": 188,
           "kind": "js-string",
           "raw": "Broken Dishes",
           "quote": "'"
@@ -22868,7 +22868,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 186,
+          "line": 189,
           "kind": "js-string",
           "raw": "Flying Geese",
           "quote": "'"
@@ -22886,7 +22886,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 187,
+          "line": 190,
           "kind": "js-string",
           "raw": "Four Patch",
           "quote": "'"
@@ -22904,7 +22904,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 188,
+          "line": 191,
           "kind": "js-string",
           "raw": "Nine Patch",
           "quote": "'"
@@ -22922,7 +22922,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 190,
+          "line": 193,
           "kind": "js-string",
           "raw": "Sawtooth Star",
           "quote": "'"
@@ -22940,7 +22940,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 191,
+          "line": 194,
           "kind": "js-string",
           "raw": "Rail Fence",
           "quote": "'"
@@ -22958,7 +22958,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltBlocks.js",
-          "line": 192,
+          "line": 195,
           "kind": "js-string",
           "raw": "Log Cabin",
           "quote": "'"
@@ -24757,7 +24757,7 @@
           "file": "web/src/pages/AdminAggregators.svelte",
           "line": 107,
           "kind": "js-string",
-          "raw": "Feed attached. Nothing arrives until you map a name.",
+          "raw": "Feed attached. Make sure you map any names to get the events flowing.",
           "quote": "'"
         }
       ],
@@ -26798,7 +26798,7 @@
         },
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 141,
+          "line": 145,
           "kind": "markup",
           "raw": "Seamripped from",
           "quote": null
@@ -33476,7 +33476,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 97,
+          "line": 98,
           "kind": "markup",
           "raw": "These figures haven't been reviewed since {label.stated_on}.\n              They may be out of date.",
           "quote": null
@@ -33494,9 +33494,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 118,
+          "line": 119,
           "kind": "markup",
           "raw": "The stewards typed these numbers in themselves. Nobody audits this.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d42f27cfa3c6",
+      "text": "Running Patchwork {label.version}.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Label.svelte",
+          "line": 123,
+          "kind": "markup",
+          "raw": "Running Patchwork {label.version}.",
           "quote": null
         }
       ]
@@ -33512,7 +33530,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 128,
+          "line": 132,
           "kind": "markup",
           "raw": "Support this quilt",
           "quote": null
@@ -33530,7 +33548,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 133,
+          "line": 137,
           "kind": "markup",
           "raw": "Send feedback",
           "quote": null
@@ -33548,7 +33566,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 143,
+          "line": 147,
           "kind": "markup",
           "raw": ".\n        This quilt started as a fork of it.",
           "quote": null
@@ -33566,7 +33584,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 151,
+          "line": 155,
           "kind": "markup",
           "raw": "If you don't like how this is run",
           "quote": null
@@ -33584,7 +33602,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 153,
+          "line": 157,
           "kind": "markup",
           "raw": "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.",
           "quote": null
