@@ -86,10 +86,11 @@
       </section>
     {/if}
 
-    <!-- What this runs on -->
-    {#if items.length > 0}
-      <section class="costs">
-        <h2>What this runs on</h2>
+    <!-- What this runs on. Ungated: the software is a material whether or
+         not the stewards have typed in what the services cost. -->
+    <section class="costs">
+      <h2>What this runs on</h2>
+      {#if items.length > 0}
         {#if label.stale}
           <div class="stale-banner">
             <Clock size={16} weight="duotone" />
@@ -117,8 +118,11 @@
           <span>About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running</span>
           <span class="cost-honesty muted">The stewards typed these numbers in themselves. Nobody audits this.</span>
         </div>
-      </section>
-    {/if}
+      {/if}
+      {#if label.version}
+        <p class="runs-on-version muted">Running Patchwork {label.version}.</p>
+      {/if}
+    </section>
 
     <!-- Support & feedback -->
     {#if label.support_url || label.feedback_url}
@@ -328,6 +332,11 @@
   .cost-honesty {
     font-size: 0.8rem;
     font-weight: 400;
+  }
+
+  .runs-on-version {
+    font-size: 0.8rem;
+    margin: 12px 0 0;
   }
 
   .label-links {
