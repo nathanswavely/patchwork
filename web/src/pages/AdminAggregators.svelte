@@ -16,6 +16,7 @@
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import Modal from '../components/Modal.svelte';
   import WorkspaceSearch from '../components/WorkspaceSearch.svelte';
+  import { patchPickerProvider } from '../lib/finderProviders.js';
 
   let aggregators = $state([]);
   let names = $state([]);
@@ -152,29 +153,21 @@
   // patch is held in trust so its events publish; a claimed patch that
   // accepts suggestions gets a review queue; one that doesn't is shown
   // and refused, since hiding it would read as "not on this quilt".
-  async function patchProvider() {
-    try {
-      const data = await api('nodes?limit=200');
-      return (data.items || []).map((n) => {
-        const unclaimed = n.status === 'unclaimed';
-        const open = n.accept_event_suggestions;
-        return {
-          type: unclaimed
-            ? 'Unclaimed, events publish'
-            : open
-              ? 'Accepts suggestions, events await review'
-              : 'Not accepting suggestions',
-          label: n.name,
-          sublabel: n.description ? n.description.slice(0, 60) : '',
-          href: `/patches/${n.slug}`,
-          slug: n.slug,
-          disabled: !unclaimed && !open,
-          suggests: !unclaimed && open,
-        };
-      });
-    } catch {
-      return [];
-    }
+  function patchProvider() {
+    return patchPickerProvider((n) => {
+      const unclaimed = n.status === 'unclaimed';
+      const open = n.accept_event_suggestions;
+      return {
+        type: unclaimed
+          ? 'Unclaimed, events publish'
+          : open
+            ? 'Accepts suggestions, events await review'
+            : 'Not accepting suggestions',
+        sublabel: n.description ? n.description.slice(0, 60) : '',
+        disabled: !unclaimed && !open,
+        suggests: !unclaimed && open,
+      };
+    });
   }
 
   async function mapTo(name, patch) {

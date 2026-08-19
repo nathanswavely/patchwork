@@ -35,10 +35,14 @@ owner/linked binary, no schema changes, no new notification type.
 
 Two properties survive verbatim:
 
-- **Worth nothing on active patches.** A trusted contributor gets no
-  standing on a claimed patch's event, on either side. The glossary's
-  "orthogonal to patch roles: not a rung between member and admin" is
-  still true.
+- **Worth nothing on active patches.** The standing attaches to the
+  *patch*, not to the event: a trusted contributor speaks for a patch
+  while it is unclaimed and never once it is claimed, on either side of
+  the handshake. So they may also propose an unclaimed patch onto a
+  claimed patch's event — they know the touring band played the venue —
+  and the venue's own admins still confirm it. What they never get is
+  standing over a claimed patch. The glossary's "orthogonal to patch
+  roles: not a rung between member and admin" is still true.
 - **A link never lands without the other side's hand on it.** Where the
   other side is a claimed patch, its own admins still confirm. Where it is
   another unclaimed patch, the hand is the same hand that already holds

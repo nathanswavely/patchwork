@@ -38,6 +38,16 @@ export function isAdmin() {
 }
 
 /**
+ * Whether the user holds the trusted-contributor grant (docs/adr/026):
+ * an instance-level grant that reaches unclaimed patches only. Not a rung
+ * between member and admin — never use it to widen anything on a claimed
+ * patch.
+ */
+export function isTrustedContributor() {
+  return user?.trusted_contributor === true;
+}
+
+/**
  * Called after auth succeeds. Fetches user profile.
  */
 export async function login() {
