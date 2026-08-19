@@ -25,6 +25,16 @@ import (
 // link handshake. Speaking for a patch is admin territory: patch admins
 // on active patches, the instance admin everywhere (who holds unclaimed
 // patches' calendars in trust — docs/adr/031).
+//
+// Plus one seam (docs/adr/057): a trusted contributor speaks for a patch
+// while that patch is unclaimed. An unclaimed patch has no admins by
+// definition, so without this the person who recorded a community event
+// is shown no link control at all — the events with the least
+// institutional attention would be the only ones that can never be
+// linked. This is the same seam the grant already runs along for events
+// (docs/adr/026) and for aggregators (docs/adr/056), and it stops at the
+// same place: on a claimed patch the grant is worth nothing, on either
+// side of the handshake.
 func userSpeaksForNode(db *database.DB, user *model.User, nodeID string) bool {
 	if user == nil {
 		return false
@@ -32,7 +42,18 @@ func userSpeaksForNode(db *database.DB, user *model.User, nodeID string) bool {
 	if user.Role == "admin" {
 		return true
 	}
-	return userHasNodeRole(db, user.ID, nodeID, "admin")
+	if userHasNodeRole(db, user.ID, nodeID, "admin") {
+		return true
+	}
+	return user.TrustedContributor && nodeIsUnclaimed(db, nodeID)
+}
+
+// nodeIsUnclaimed reports whether a patch is still unclaimed — held in
+// trust rather than run by its own organization (docs/adr/030).
+func nodeIsUnclaimed(db *database.DB, nodeID string) bool {
+	var status string
+	db.QueryRow("SELECT status FROM nodes WHERE id = ? AND removed_at IS NULL", nodeID).Scan(&status)
+	return status == "unclaimed"
 }
 
 // linkTargetNode resolves the request's target — a slug or a pasted

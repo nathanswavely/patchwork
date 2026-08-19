@@ -1,5 +1,8 @@
 # Event links: one owner, two consents
 
+Status: accepted; amended by ADR 057 (standing is no longer admins-only —
+a trusted contributor speaks for a patch while it is unclaimed).
+
 A band and a venue are both patches, and a gig belongs to both — but
 `events.node_id` is singular, so today the second patch either duplicates
 the event or goes without. The fix must also survive events that arrive

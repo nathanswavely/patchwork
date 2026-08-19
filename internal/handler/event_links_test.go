@@ -359,3 +359,71 @@ func TestEventLinkFeedAndCascade(t *testing.T) {
 		t.Fatalf("deleted event still in band feed")
 	}
 }
+
+// docs/adr/057: the grant reaches unclaimed patches, so a trusted
+// contributor may link a community-submitted event — the case that
+// previously had nobody but the instance admin to act on it, since an
+// unclaimed patch has no admins by definition.
+func TestEventLinkTrustedContributorOnUnclaimed(t *testing.T) {
+	db := setupTestDB(t)
+	siteAdmin, _ := createTestUser(t, db, "site-admin", "admin")
+	scout, scoutToken := createTestUser(t, db, "scout", "member")
+	makeTrusted(t, db, scout.ID)
+
+	venueID := createTestNode(t, db, siteAdmin.ID, "Old Mill", "old-mill", "open")
+	makeUnclaimed(t, db, venueID)
+	bandID := createTestNode(t, db, siteAdmin.ID, "Cool Band", "cool-band", "invite_only")
+	makeUnclaimed(t, db, bandID)
+
+	eventID := insertActiveEvent(t, db, venueID, scout.ID, "Mill Show")
+
+	// Speaks for both sides — both patches are unclaimed — so the
+	// handshake completes itself, as it does for anyone adminning both.
+	w, l := requestLink(t, db, scoutToken, eventID, "cool-band", "")
+	if w.Code != 201 || l.Status != "confirmed" {
+		t.Fatalf("trusted contributor link between unclaimed patches: code=%d status=%q body=%s",
+			w.Code, l.Status, w.Body.String())
+	}
+	if got := linkStatusInDB(t, db, eventID, bandID); got != "confirmed" {
+		t.Fatalf("link status in db = %q, want confirmed", got)
+	}
+}
+
+// The grant attaches to the patch, not the event: claimed on either side
+// means no standing. Without the flag there is no standing anywhere.
+func TestEventLinkTrustedContributorStopsAtClaimed(t *testing.T) {
+	db := setupTestDB(t)
+	siteAdmin, _ := createTestUser(t, db, "site-admin", "admin")
+	venueAdmin, _ := createTestUser(t, db, "venue-admin", "member")
+	scout, scoutToken := createTestUser(t, db, "scout", "member")
+	makeTrusted(t, db, scout.ID)
+	stranger, strangerToken := createTestUser(t, db, "stranger", "member")
+	_ = stranger
+
+	// Both patches claimed and run by someone else.
+	venueID := createTestNode(t, db, venueAdmin.ID, "The Selvage", "the-selvage", "open")
+	createTestMembership(t, db, venueAdmin.ID, venueID, "admin", "active")
+	bandID := createTestNode(t, db, venueAdmin.ID, "Cool Band", "cool-band", "invite_only")
+	createTestMembership(t, db, venueAdmin.ID, bandID, "admin", "active")
+
+	eventID := insertActiveEvent(t, db, venueID, venueAdmin.ID, "Selvage Show")
+
+	if w, _ := requestLink(t, db, scoutToken, eventID, "cool-band", ""); w.Code != 403 {
+		t.Fatalf("trusted contributor between two claimed patches: code=%d, want 403", w.Code)
+	}
+	if w, _ := requestLink(t, db, strangerToken, eventID, "cool-band", ""); w.Code != 403 {
+		t.Fatalf("ungranted member: code=%d, want 403", w.Code)
+	}
+
+	// But an unclaimed patch onto a claimed patch's event is the grant
+	// working as designed — the venue's own admins still confirm it.
+	touringID := createTestNode(t, db, siteAdmin.ID, "Touring Act", "touring-act", "open")
+	makeUnclaimed(t, db, touringID)
+	w, l := requestLink(t, db, scoutToken, eventID, "touring-act", "")
+	if w.Code != 201 || l.Status != "pending" {
+		t.Fatalf("unclaimed onto claimed event: code=%d status=%q body=%s", w.Code, l.Status, w.Body.String())
+	}
+	if w := confirmLink(t, db, scoutToken, eventID, touringID, ""); w.Code != 403 {
+		t.Fatalf("trusted contributor self-confirming the claimed side: code=%d, want 403", w.Code)
+	}
+}

@@ -34,7 +34,7 @@ several branches are in flight.
 | [029](029-drafted-blocks-are-inline-appearance-data.md) | Drafted blocks are inline appearance data, not entities |
 | [030](030-claims-are-assertions-not-reservations.md) | Claims are assertions, not reservations |
 | [031](031-event-sources-vouch-for-the-feed.md) | Event sources: vouch for the feed, not each event |
-| [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents |
+| [032](032-event-links-one-owner-two-consents.md) | Event links: one owner, two consents *(amended by 057: trusted contributors speak for unclaimed patches)* |
 | [033](033-search-is-a-dropdown-narrowing-is-explicit.md) | Search is a dropdown; narrowing is explicit |
 | [034](034-archive-keeps-its-gravity.md) | Archive keeps its gravity — restore is an instance-admin action |
 | [035](035-scope-lives-in-the-url.md) | Scope lives in the URL — My Quilt is `/my`, the whole quilt stays at `/` |
@@ -52,6 +52,7 @@ several branches are in flight.
 | [048](048-proposals-are-born-voting.md) | Proposals are born voting — draft and discussion retired *(amended by 051: elections nominate first)* |
 | [050](050-follower-permissions-gate-taking-part.md) | Follower permissions gate taking part, not reading — only `charters` was ever a read gate |
 | [056](056-aggregators-own-nothing-the-crosswalk-is-the-review.md) | Aggregators own nothing; the crosswalk is the review — one feed, many patches, consent per name |
+| [057](057-the-grant-reaches-unclaimed-patches.md) | The trusted-contributor grant reaches unclaimed patches — links too, not just events *(amends 032)* |
 
 ## Partly implemented
 

@@ -156,3 +156,46 @@ export function discoveryFinderProvider() {
     return items;
   };
 }
+
+/**
+ * The patch picker's corpus (CONTEXT.md "Patch picker"): every public
+ * patch on the quilt, active and unclaimed alike.
+ *
+ * Paginated, deliberately. The listing caps `limit` at 100 server-side
+ * (parsePaginationParams), so a single large-limit request is a silent
+ * truncation — and a picker that truncates doesn't degrade, it lies: the
+ * missing patch reads as "not on this quilt", which is exactly the
+ * reading that sends someone to the suggest row to create a duplicate of
+ * a patch that already exists.
+ *
+ * `decorate(node)` supplies what the surface's question needs — the
+ * group heading, the sublabel, whether the row is refused — because the
+ * corpus is shared but the question isn't: routing an aggregator name
+ * cares about `accept_event_suggestions` (docs/adr/056), proposing an
+ * event link cares about who is already linked (docs/adr/032). Returning
+ * null from decorate drops the row.
+ */
+export async function patchPickerProvider(decorate) {
+  const nodes = [];
+  let after = '';
+  try {
+    // Bounded against a cursor that never advances: 20 pages is 2000
+    // patches, well past community scale and short of a hung tab.
+    for (let page = 0; page < 20; page++) {
+      const data = await api(`nodes?limit=100${after ? `&after=${encodeURIComponent(after)}` : ''}`);
+      const items = data.items || [];
+      nodes.push(...items);
+      if (!data.next_cursor || items.length === 0) break;
+      after = data.next_cursor;
+    }
+  } catch {
+    // Partial beats empty: a picker over the pages that did arrive still
+    // finds most patches, where an empty corpus finds none.
+  }
+  const items = [];
+  for (const n of nodes) {
+    const row = decorate(n);
+    if (row) items.push({ label: n.name, href: `/patches/${n.slug}`, slug: n.slug, ...row });
+  }
+  return items;
+}
