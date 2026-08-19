@@ -265,9 +265,22 @@ panel: users, reports, submissions. Never instance-wide people: people
 appear only where a context legitimizes the result (a workspace's
 members, the admin panel's users) — people are discovered through
 patches. Code artifacts keep the older "finder" naming (WorkspaceSearch,
-finderProviders); prose does not.
+finderProviders); prose does not. Shares its implementation with the patch
+picker, and is not one: search goes somewhere, a picker fills in a field.
 _Avoid_: finder, scoped finder (renamed), search index, command palette,
 global search
+
+**Patch picker**:
+A form field that chooses a patch from the quilt's public set — typed
+into, resolved by choosing, and it goes nowhere: the chosen patch becomes
+a value in whatever the surface is about to do. Used wherever something
+must be pointed at a patch: routing an aggregator's name through a
+crosswalk entry (docs/adr/056), and proposing an event link (docs/adr/032).
+A patch it will not accept is shown and refused with the reason rather than
+hidden — absence would read as "not on this quilt". Not search, though it
+is the same dropdown: search's corpus follows the context you are standing
+in, a picker's follows the question the field is asking.
+_Avoid_: patch finder, patch search, patch selector, autocomplete, typeahead
 
 **Admin panel**:
 The instance admin surface at /admin. Gets the same full-screen takeover
