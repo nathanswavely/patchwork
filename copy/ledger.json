@@ -5820,14 +5820,14 @@
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 131,
+          "line": 152,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 343,
+          "line": 364,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -7828,7 +7828,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 125,
+          "line": 146,
           "kind": "go-error-body",
           "raw": "target is required",
           "quote": null
@@ -7846,7 +7846,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 135,
+          "line": 156,
           "kind": "go-error-body",
           "raw": "only active events can be linked",
           "quote": null
@@ -7864,7 +7864,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 147,
+          "line": 168,
           "kind": "go-error-body",
           "raw": "only this patch's admins can add a mention",
           "quote": null
@@ -7882,7 +7882,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 155,
+          "line": 176,
           "kind": "go-error-body",
           "raw": "already mentioned",
           "quote": null
@@ -7900,7 +7900,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 166,
+          "line": 187,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -7932,7 +7932,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 170,
+          "line": 191,
           "kind": "go-error-body",
           "raw": "an event is already on its own patch",
           "quote": null
@@ -7950,7 +7950,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 176,
+          "line": 197,
           "kind": "go-error-body",
           "raw": "only admins of either patch can link",
           "quote": null
@@ -7968,14 +7968,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 195,
+          "line": 216,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 364,
+          "line": 385,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
@@ -7993,14 +7993,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 199,
+          "line": 220,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 368,
+          "line": 389,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
@@ -8018,7 +8018,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 221,
+          "line": 242,
           "kind": "go-error-body",
           "raw": "link already exists",
           "quote": null
@@ -8036,14 +8036,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 333,
+          "line": 354,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 409,
+          "line": 430,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
@@ -8061,7 +8061,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 337,
+          "line": 358,
           "kind": "go-error-body",
           "raw": "link is already confirmed",
           "quote": null
@@ -8079,7 +8079,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 353,
+          "line": 374,
           "kind": "go-error-body",
           "raw": "only the other patch's admins can confirm",
           "quote": null
@@ -8097,7 +8097,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 379,
+          "line": 400,
           "kind": "go-error-body",
           "raw": "failed to confirm link",
           "quote": null
@@ -8115,7 +8115,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 414,
+          "line": 435,
           "kind": "go-error-body",
           "raw": "only admins of either patch can remove a link",
           "quote": null
@@ -8133,7 +8133,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 419,
+          "line": 440,
           "kind": "go-error-body",
           "raw": "failed to remove link",
           "quote": null
@@ -8151,7 +8151,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 444,
+          "line": 465,
           "kind": "go-error-body",
           "raw": "mention not found",
           "quote": null
@@ -8169,7 +8169,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 448,
+          "line": 469,
           "kind": "go-error-body",
           "raw": "only this patch's admins can remove a mention",
           "quote": null
@@ -15848,21 +15848,21 @@
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 255,
+          "line": 248,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 318,
+          "line": 311,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 389,
+          "line": 382,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -16646,6 +16646,13 @@
           "quote": null
         },
         {
+          "file": "web/src/components/EventLinks.svelte",
+          "line": 365,
+          "kind": "markup",
+          "raw": "Cancel",
+          "quote": null
+        },
+        {
           "file": "web/src/components/InlineEdit.svelte",
           "line": 87,
           "kind": "markup",
@@ -16992,6 +16999,24 @@
       ]
     },
     {
+      "id": "0ae02d50a0b8",
+      "text": "Unclaimed patches",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Group heading in the patch picker, matching the aggregator picker's existing headings.",
+      "occurrences": [
+        {
+          "file": "web/src/components/EventLinks.svelte",
+          "line": 91,
+          "kind": "js-string",
+          "raw": "Unclaimed patches",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "81b26cbf3b19",
       "text": "Mention added",
       "words": 2,
@@ -17002,7 +17027,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 77,
+          "line": 177,
           "kind": "js-string",
           "raw": "Mention added",
           "quote": "'"
@@ -17020,7 +17045,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 77,
+          "line": 177,
           "kind": "js-string",
           "raw": "Link requested",
           "quote": "'"
@@ -17038,7 +17063,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 84,
+          "line": 181,
           "kind": "js-string",
           "raw": "Failed to request link",
           "quote": "'"
@@ -17056,7 +17081,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 120,
+          "line": 217,
           "kind": "js-string",
           "raw": "Failed to confirm link",
           "quote": "'"
@@ -17074,7 +17099,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 129,
+          "line": 226,
           "kind": "js-string",
           "raw": "Request removed",
           "quote": "'"
@@ -17092,7 +17117,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 132,
+          "line": 229,
           "kind": "js-string",
           "raw": "Failed to remove link",
           "quote": "'"
@@ -17117,7 +17142,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 141,
+          "line": 238,
           "kind": "js-string",
           "raw": "Failed to remove mention",
           "quote": "'"
@@ -17135,7 +17160,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 150,
+          "line": 247,
           "kind": "markup",
           "raw": "with",
           "quote": null
@@ -17153,7 +17178,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 158,
+          "line": 255,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -17178,7 +17203,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 172,
+          "line": 269,
           "kind": "attr:title",
           "raw": "Remove mention",
           "quote": "\""
@@ -17196,7 +17221,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 185,
+          "line": 282,
           "kind": "markup",
           "raw": "Waiting for",
           "quote": null
@@ -17214,7 +17239,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 185,
+          "line": 282,
           "kind": "markup",
           "raw": "to confirm this link",
           "quote": null
@@ -17232,7 +17257,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 187,
+          "line": 284,
           "kind": "markup",
           "raw": "asked to link to this event",
           "quote": null
@@ -17250,14 +17275,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 194,
+          "line": 291,
           "kind": "markup",
           "raw": "Keep all my events",
           "quote": null
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 225,
+          "line": 328,
           "kind": "markup",
           "raw": "Keep all my events",
           "quote": null
@@ -17275,14 +17300,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 196,
+          "line": 293,
           "kind": "markup",
           "raw": "Replace \"{d.title}\"",
           "quote": null
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 227,
+          "line": 330,
           "kind": "markup",
           "raw": "Replace \"{d.title}\"",
           "quote": null
@@ -17300,7 +17325,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 201,
+          "line": 298,
           "kind": "markup",
           "raw": "Confirm",
           "quote": null
@@ -17315,38 +17340,45 @@
       ]
     },
     {
-      "id": "c402b1dbf4ae",
-      "text": "Patch name or pasted patch link",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "2aa0df8d0fde",
+      "text": "Choose a different patch",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Tooltip on the staged target's clear button.",
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 218,
-          "kind": "attr:placeholder",
-          "raw": "Patch name or pasted patch link",
+          "line": 322,
+          "kind": "attr:title",
+          "raw": "Choose a different patch",
           "quote": "\""
         }
       ]
     },
     {
-      "id": "59f03d642b41",
-      "text": "Request",
-      "words": 1,
+      "id": "67d1f5373be9",
+      "text": "Find a patch…",
+      "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 231,
-          "kind": "markup",
-          "raw": "Request",
-          "quote": null
+          "line": 341,
+          "kind": "attr:placeholder",
+          "raw": "Find a patch…",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 351,
+          "kind": "attr:placeholder",
+          "raw": "Find a patch…",
+          "quote": "\""
         }
       ]
     },
@@ -17361,7 +17393,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 237,
+          "line": 370,
           "kind": "markup",
           "raw": "Link a patch",
           "quote": null
@@ -18296,27 +18328,6 @@
         },
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 51,
-          "kind": "markup",
-          "raw": "&middot;",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/LabelFooter.svelte",
-          "line": 53,
-          "kind": "markup",
-          "raw": "&middot;",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/LabelFooter.svelte",
-          "line": 56,
-          "kind": "markup",
-          "raw": "&middot;",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/LabelFooter.svelte",
           "line": 58,
           "kind": "markup",
           "raw": "&middot;",
@@ -18324,28 +18335,49 @@
         },
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 61,
+          "line": 60,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 75,
+          "line": 63,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 78,
+          "line": 65,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 81,
+          "line": 67,
+          "kind": "markup",
+          "raw": "&middot;",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/LabelFooter.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "&middot;",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/LabelFooter.svelte",
+          "line": 83,
+          "kind": "markup",
+          "raw": "&middot;",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/LabelFooter.svelte",
+          "line": 85,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -18822,7 +18854,7 @@
       "occurrences": [
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 52,
+          "line": 59,
           "kind": "markup",
           "raw": "stewarded by {stewardLine}",
           "quote": null
@@ -18840,14 +18872,14 @@
       "occurrences": [
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 54,
+          "line": 61,
           "kind": "markup",
           "raw": "The Label",
           "quote": null
         },
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 74,
+          "line": 79,
           "kind": "markup",
           "raw": "The Label",
           "quote": null
@@ -18876,31 +18908,6 @@
       ]
     },
     {
-      "id": "4a17fd00a32f",
-      "text": "yours to seamrip",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/LabelFooter.svelte",
-          "line": 62,
-          "kind": "markup",
-          "raw": "yours to seamrip",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/LabelFooter.svelte",
-          "line": 82,
-          "kind": "markup",
-          "raw": "yours to seamrip",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "ba1c714146ad",
       "text": "{instanceName} is stewarded by {stewardLine}",
       "words": 5,
@@ -18911,7 +18918,7 @@
       "occurrences": [
         {
           "file": "web/src/components/LabelFooter.svelte",
-          "line": 68,
+          "line": 73,
           "kind": "markup",
           "raw": "{instanceName} is stewarded by {stewardLine}",
           "quote": null
@@ -23897,7 +23904,7 @@
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 124,
+          "line": 125,
           "kind": "js-string",
           "raw": "Failed to remove",
           "quote": "'"
@@ -24730,7 +24737,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 85,
+          "line": 86,
           "kind": "js-string",
           "raw": "Failed to record that",
           "quote": "'"
@@ -24755,7 +24762,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 107,
+          "line": 108,
           "kind": "js-string",
           "raw": "Feed attached. Make sure you map any names to get the events flowing.",
           "quote": "'"
@@ -24774,7 +24781,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 112,
+          "line": 113,
           "kind": "js-string",
           "raw": "Failed to attach feed.",
           "quote": "'"
@@ -24792,7 +24799,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 121,
+          "line": 122,
           "kind": "js-string",
           "raw": "Feed removed. Mapped patches kept their events.",
           "quote": "'"
@@ -24810,7 +24817,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 136,
+          "line": 137,
           "kind": "js-string",
           "raw": "Failed to update",
           "quote": "'"
@@ -24835,7 +24842,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 145,
+          "line": 146,
           "kind": "js-string",
           "raw": "Sync failed",
           "quote": "'"
@@ -24860,7 +24867,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 163,
+          "line": 162,
           "kind": "js-string",
           "raw": "Unclaimed, events publish",
           "quote": "'"
@@ -24878,7 +24885,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 165,
+          "line": 164,
           "kind": "js-string",
           "raw": "Accepts suggestions, events await review",
           "quote": "'"
@@ -24896,7 +24903,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 166,
+          "line": 165,
           "kind": "js-string",
           "raw": "Not accepting suggestions",
           "quote": "'"
@@ -24914,7 +24921,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 194,
+          "line": 187,
           "kind": "js-string",
           "raw": "Failed to map",
           "quote": "'"
@@ -24932,7 +24939,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 246,
+          "line": 239,
           "kind": "markup",
           "raw": "Aggregators",
           "quote": null
@@ -24950,7 +24957,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 248,
+          "line": 241,
           "kind": "markup",
           "raw": "Add a feed here if you have a calendar link that doesn't belong to a\n    specific patch. Things like city or chamber of commerce calendars.",
           "quote": null
@@ -24968,7 +24975,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 253,
+          "line": 246,
           "kind": "markup",
           "raw": "Feeds",
           "quote": null
@@ -24986,7 +24993,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 257,
+          "line": 250,
           "kind": "markup",
           "raw": "No feeds attached.",
           "quote": null
@@ -25004,7 +25011,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 266,
+          "line": 259,
           "kind": "markup",
           "raw": "First fetch in progress…",
           "quote": null
@@ -25022,7 +25029,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 268,
+          "line": 261,
           "kind": "markup",
           "raw": "Fetch failed{agg.last_error ? `: ${agg.last_error}` : ''}",
           "quote": null
@@ -25040,7 +25047,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 270,
+          "line": 263,
           "kind": "markup",
           "raw": "{agg.listing_count} {agg.listing_count === 1 ? 'listing' : 'listings'}\n                  {' · '}{agg.mapped_count} routed",
           "quote": null
@@ -25058,7 +25065,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 272,
+          "line": 265,
           "kind": "markup",
           "raw": "{' · '}fetched {relTime(agg.last_success_at)}",
           "quote": null
@@ -25076,7 +25083,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 274,
+          "line": 267,
           "kind": "markup",
           "raw": "paused",
           "quote": null
@@ -25094,7 +25101,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 295,
+          "line": 288,
           "kind": "attr:placeholder",
           "raw": "Visit Lancaster City",
           "quote": "\""
@@ -25112,7 +25119,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 296,
+          "line": 289,
           "kind": "attr:placeholder",
           "raw": "https://…/calendar.ics",
           "quote": "\""
@@ -25130,7 +25137,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 320,
+          "line": 313,
           "kind": "markup",
           "raw": "Attach a feed to see the names it carries.",
           "quote": null
@@ -25148,7 +25155,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 328,
+          "line": 321,
           "kind": "markup",
           "raw": "Hidden from this list only. Patch admins still see every name in\n        their own picker.",
           "quote": null
@@ -25166,28 +25173,10 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 331,
+          "line": 324,
           "kind": "markup",
           "raw": "Names found in your feeds show up here, and you can map them to\n        patches on your quilt.",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "67d1f5373be9",
-      "text": "Find a patch…",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 358,
-          "kind": "attr:placeholder",
-          "raw": "Find a patch…",
-          "quote": "\""
         }
       ]
     },
@@ -25202,7 +25191,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 402,
+          "line": 395,
           "kind": "markup",
           "raw": "View on {hostOf(l.url)} ↗",
           "quote": null
@@ -40801,7 +40790,51 @@
       ]
     }
   ],
-  "retired": [],
+  "retired": [
+    {
+      "id": "59f03d642b41",
+      "text": "Request",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/EventLinks.svelte",
+          "line": 231,
+          "kind": "markup",
+          "raw": "Request",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4a17fd00a32f",
+      "text": "yours to seamrip",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/LabelFooter.svelte",
+          "line": 62,
+          "kind": "markup",
+          "raw": "yours to seamrip",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/LabelFooter.svelte",
+          "line": 82,
+          "kind": "markup",
+          "raw": "yours to seamrip",
+          "quote": null
+        }
+      ]
+    }
+  ],
   "baseline": [
     "7f5b7dd12a51",
     "0754b41cb967",
