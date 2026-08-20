@@ -419,13 +419,13 @@
   }
 
   .badge-suspended {
-    background: #fdf2f2;
+    background: var(--color-danger-bg);
     color: var(--color-error);
     border-color: var(--color-error);
   }
 
   .badge-active {
-    background: #f0faf3;
+    background: var(--color-success-bg);
     color: var(--color-success);
     border-color: var(--color-success);
   }

@@ -333,13 +333,13 @@
   }
 
   .gridline {
-    stroke: rgba(0, 0, 0, 0.18);
+    stroke: var(--color-fabric-rule);
     stroke-width: 1;
     pointer-events: none;
   }
 
   .seam-line {
-    stroke: rgba(0, 0, 0, 0.55);
+    stroke: var(--color-fabric-mark);
     stroke-width: 1.5;
     stroke-dasharray: 5 3;
     pointer-events: none;
@@ -361,7 +361,7 @@
 
   .anchor {
     fill: var(--color-surface);
-    stroke: rgba(0, 0, 0, 0.6);
+    stroke: var(--color-fabric-mark);
     stroke-width: 1.25;
     cursor: pointer;
   }
@@ -372,7 +372,7 @@
 
   .anchor.pending {
     fill: var(--color-primary);
-    stroke: #fff;
+    stroke: var(--color-on-fabric);
   }
 
   .drafter-side {

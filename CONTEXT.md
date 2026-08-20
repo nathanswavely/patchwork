@@ -1225,3 +1225,39 @@ tile (card banners, the motif corner mark's disc). Always the patch's
 palette primary.
 Distinct from tag colors, which color tags, not patches.
 _Avoid_: brand color, accent
+
+**Ink on fabric**:
+Anything drawn over a patch's own fabric rather than over a theme surface
+— the cover's name and stats, the unclaimed mark's disc, the block
+drafter's seams and grid. (The mark is status and not fabric, but it is
+still drawn on fabric, so it takes its ink from here.)
+Ink on fabric does not belong to the light/dark theme and must not flip
+with it: what is underneath is a member-chosen bundle under a scrim, never
+`--color-bg`. So the tokens live in `:root`, not in the two theme blocks,
+and they are where these colors are named — stylesheets reach for the
+token, not the literal:
+`--color-on-fabric` and `-muted` are the light ink, primary and secondary;
+`--color-fabric-scrim` and `-soft` are the dark pad laid behind that ink so
+it survives a pale fabric; `--color-fabric-mark` is a dark mark drawn on
+fabric (drafter seams and anchors); `--color-fabric-rule` is the grid
+beneath them, which must stay quieter than a seam.
+
+Two rules follow, and both were bugs before they were rules. Reaching for
+`--color-text` over fabric inverts the ink and it vanishes in one theme.
+And ink is set on the element that draws it, never on a container — a
+`color` on a wrapper is inherited by everything mounted inside it,
+including modals that have nothing to do with the cover (the subscribe
+modal shipped white-on-cream this way). A component that paints its own
+surface sets its own text color.
+
+The name badge is the deliberate exception: it sits on fabric but wears the
+`--color-label-*` family, which does flip with the theme. A badge earns its
+contrast by being a frosted pill in the reader's own theme rather than
+white ink under a scrim, so it stays legible at a size where a scrim would
+swallow the tile beneath it.
+Two literals survive on purpose. The Settings pill's pad is tuned between
+`-scrim` and `-scrim-soft` for a pill that small, and the quilt canvas
+draws its marks from JS, which passes a fill rather than reading a custom
+property. Neither is license for a new one in a stylesheet.
+_Avoid_: white / #fff (write the token), overlay text, on-cover (fabric is
+the material; the cover is only one place it is shown), theme color
