@@ -5,7 +5,7 @@
   import { identityColorForPatch, paletteForPatch, ghostPalette, darken, textOnColor } from '../lib/quiltTheme.js';
   import { renderBlock, renderGhostBlock } from '../lib/quiltBlocks.js';
   import { quiltLayout } from '../lib/quiltLayout.js';
-  import { createMotifElement, createMyPatchStar, createFollowedHeart, createUnclaimedMarkGroup } from '../lib/patchIcons.js';
+  import { createMotifGroup, createMyPatchStarGroup, createFollowedHeartGroup, createUnclaimedMarkGroup } from '../lib/patchIcons.js';
   import { buildRemoteGroups, composeGroupLayouts } from '../lib/quiltRegions.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
   import { textMatches } from '../lib/textMatch.js';
@@ -85,19 +85,39 @@
   // constant text cap, no tie to tile size or screen position.
   const LABEL_TEXT_MAX = 140;
   // Minimum visible quilt between placed badges; a rival badge that can't
-  // clear this gap stays hidden until a closer zoom.
-  const LABEL_GAP = 12;
+  // clear this gap stays hidden until a closer zoom. Sized by eye against a
+  // dense quilt: a name-only pill is ~65px narrower than the old motif-and-
+  // role one, so at the pre-corner-mark gap of 12 many more badges cleared
+  // collision and the quilt went back to being papered in them.
+  const LABEL_GAP = 32;
   const LABEL_FONT = '600 13px "Space Grotesk Variable", system-ui, sans-serif';
-  // Unclaimed mark: an on-screen size, like a name badge, not a share of the
-  // tile — see updateUnclaimedMarks. UNCLAIMED_PX is the diameter it wants,
-  // UNCLAIMED_INSET its gap from the tile's corner, both in canonical units
+  // Corner marks: an on-screen size, like a name badge, not a share of the
+  // tile — see updateCornerMarks. MARK_PX is the diameter one wants,
+  // MARK_INSET its gap from the tile's corner, both in canonical units
   // that the counter-scale turns into screen pixels.
-  const UNCLAIMED_PX = 22;
-  const UNCLAIMED_INSET = 6;
+  const MARK_PX = 22;
+  const MARK_INSET = 6;
   // A mark never eats more than this share of the tile it sits on, and below
-  // UNCLAIMED_MIN_PX on screen it's an illegible speck, so it goes.
-  const UNCLAIMED_TILE_SHARE = 0.3;
-  const UNCLAIMED_MIN_PX = 9;
+  // MARK_MIN_PX on screen it's an illegible speck, so it goes. The share cap
+  // is load-bearing now that two marks share the top edge: at LABEL_MIN_PX a
+  // pair of full-size discs plus their insets would not fit on the tile.
+  const MARK_TILE_SHARE = 0.3;
+  const MARK_MIN_PX = 9;
+  // The glyph inside a disc, and how far the shadow circle sits down-right of
+  // it (matching --lt-shadow-x/y, so the light direction agrees with the
+  // rest of the quilt).
+  const MARK_GLYPH_PX = MARK_PX * 0.64;
+  const MARK_SHADOW_OFFSET = 1;
+  // Status marks (unclaimed, role) wear a neutral disc; identity (the motif)
+  // wears the patch's own color. See CONTEXT.md "Corner mark".
+  const MARK_STATUS_FILL = 'rgba(0,0,0,0.55)';
+  // Where each slot's group anchors on the tile (a fraction of the tile's
+  // side) and which way it draws inward from there.
+  const MARK_CORNERS = {
+    tl: { ax: 0, ay: 0, sx: 1, sy: 1 },
+    tr: { ax: 1, ay: 0, sx: -1, sy: 1 },
+    br: { ax: 1, ay: 1, sx: -1, sy: -1 },
+  };
   // Below this container width the quilt is a phone-sized surface.
   const NARROW_VW = 700;
   // How far the ideal tile size may drift from the one on screen before a
@@ -180,9 +200,11 @@
   // Map of patch ID → the badge element on screen for it, so a pan moves badges
   // instead of rebuilding them (see updateLabels).
   let labelEls = new Map();
-  // { g, tile } per unclaimed mark drawn, so the zoom handler can counter-scale
-  // them back to a fixed screen size (see updateUnclaimedMarks).
-  let unclaimedMarks = [];
+  // Patch ID → { tile, inner, role, slots } for every tile wearing corner
+  // marks, so the zoom handler can counter-scale them back to a fixed screen
+  // size and the myPatchRoles effect can add or drop the role slot in place
+  // (see updateCornerMarks).
+  let cornerMarks = new Map();
   // Map of patch ID → { g, shadowDiv, tile, dist, visible } for per-tile animation.
   let tileMap = new Map();
   let layoutBuilt = false;
@@ -257,6 +279,21 @@
     const slug = selectedPatchSlug;
     untrack(() => {
       if (placedTiles.length > 0) updateLabels();
+    });
+  });
+
+  // Keep the role corner marks honest. The role mark lives on the tile now,
+  // built once during the tile loop, so joining or following a patch would
+  // leave it stale until the next full rebuild — updateLabels' __role
+  // comparison used to be the only thing catching that, back when the mark
+  // was part of the name badge.
+  $effect(() => {
+    const roles = myPatchRoles;
+    const scope = quiltScope;
+    untrack(() => {
+      if (cornerMarks.size === 0) return;
+      for (const entry of cornerMarks.values()) syncRoleMark(entry);
+      updateCornerMarks();
     });
   });
 
@@ -673,7 +710,7 @@
 
     const shadowLayer = [];
     const tileGroups = []; // For staggered animation.
-    unclaimedMarks = []; // Re-collected below; the old svg is already gone.
+    cornerMarks = new Map(); // Re-collected below; the old svg is already gone.
 
     // --- RENDER TILES ---
     for (const tile of pixelTiles) {
@@ -727,31 +764,25 @@
           .attr('stroke', 'var(--lt-thread-heavy)')
           .attr('stroke-width', 1.5);
 
-        // Unclaimed patch mark (docs/adr/030) — a broken chain link in the
-        // tile's top-right corner.
-        //
-        // Deliberately NOT clipped by the tile's raw-edge clipPath: the mark
-        // is a status overlay, not fabric (same as label badges), and a
-        // userSpaceOnUse clipPath referenced from this translated group would
-        // be evaluated in badge-local space, slicing the circle (issue #14).
-        //
-        // The group is anchored *on* the corner and draws inward, so the zoom
-        // handler can hold it at a fixed screen size by counter-scaling around
-        // that anchor — the corner is the one point that must not drift.
-        if (tile.data.is_unclaimed) {
-          const markG = inner.append('g')
-            .attr('class', 'unclaimed-mark')
-            .style('pointer-events', 'none');
-          const c = UNCLAIMED_INSET + UNCLAIMED_PX / 2;
-          markG.append('circle')
-            .attr('cx', -c).attr('cy', c).attr('r', UNCLAIMED_PX / 2)
-            .attr('fill', 'rgba(0,0,0,0.55)');
-          const icon = createUnclaimedMarkGroup(UNCLAIMED_PX * 0.64, '#fff');
-          icon.setAttribute('transform',
-            `translate(${-c - UNCLAIMED_PX * 0.32},${c - UNCLAIMED_PX * 0.32}) ` +
-            icon.getAttribute('transform'));
-          markG.node().appendChild(icon);
-          unclaimedMarks.push({ g: markG, tile });
+        // Corner marks (CONTEXT.md "Corner mark"). A static hero has no room
+        // for them and no zoom to reveal them at — same reason it draws no
+        // name badges (docs/adr/040).
+        if (interactive) {
+          const entry = { tile, inner, role: undefined, slots: new Map() };
+          cornerMarks.set(tile.data.id, entry);
+          // Identity: the patch's motif on its own color, on every tile —
+          // the quilt says what its patches are at zoom levels where no name
+          // badge survives a collision.
+          const identity = identityColorForPatch(tile.data);
+          drawCornerMark(entry, 'motif', 'tl', identity,
+            createMotifGroup(tile.data, MARK_GLYPH_PX, textOnColor(identity)));
+          // Status: unclaimed (docs/adr/030) — a broken chain link, a patch
+          // on the quilt with nobody holding the other end.
+          if (tile.data.is_unclaimed) {
+            drawCornerMark(entry, 'unclaimed', 'tr', MARK_STATUS_FILL,
+              createUnclaimedMarkGroup(MARK_GLYPH_PX, '#fff'));
+          }
+          syncRoleMark(entry);
         }
 
         // Pillow depth + fabric texture overlay div.
@@ -910,7 +941,7 @@
           shadowContainer_ref.style.transformOrigin = '0 0';
         }
         updateLabels();
-        updateUnclaimedMarks();
+        updateCornerMarks();
       });
 
     svgSelection = svg;
@@ -951,7 +982,7 @@
     // The fit above dispatches a zoom event, which sizes the marks — but a
     // quilt with no non-filler tiles never reaches it, and neither does one
     // built at identity. Cheap enough to just be sure.
-    updateUnclaimedMarks();
+    updateCornerMarks();
 
     // A filter or search can already be standing when the layout builds —
     // arriving from another discovery surface with tags active (the filter
@@ -1153,23 +1184,16 @@
   }
 
   // Build one badge. Everything in here is fixed for as long as the patch's data
-  // and the viewer's role in it are: the motif is an svg per badge and there are
-  // six listeners to bind, which is why updateLabels reuses these rather than
-  // building a fresh set on every zoom tick.
+  // and the viewer's role in it are: there are six listeners to bind, which is
+  // why updateLabels reuses these rather than building a fresh set on every
+  // zoom tick.
+  //
+  // The badge is a name and nothing else — the motif and the role mark are
+  // corner marks on the tile itself now, where they show on every tile rather
+  // than only the ones that win a label collision.
   function createLabelElement(tile, textW, lines, role) {
     const label = document.createElement('div');
     label.className = 'patch-label lt-vellum';
-
-    // Layered motif badge: white outline → colored bg → motif.
-    // Identity color: the patch's palette primary, matching its tile.
-    const badge = document.createElement('div');
-    badge.className = 'label-badge lt-resin lt-resin-tinted';
-    badge.style.background = identityColorForPatch(tile.data);
-
-    const icon = createMotifElement(tile.data, 16, '#fff');
-    icon.setAttribute('class', 'label-icon');
-    badge.appendChild(icon);
-    label.appendChild(badge);
 
     // Text: name only, 2-line ellipsis. Wrapped names get an explicit
     // width — the measured balanced width — so the pill hugs the text
@@ -1183,22 +1207,6 @@
     }
     nameSpan.textContent = tile.data.name || '';
     label.appendChild(nameSpan);
-
-    // Role mark (CONTEXT.md): star = belonging (admin/member), never a
-    // follow. A followed-only patch gets a small filled heart instead.
-    if (role === 'admin' || role === 'member') {
-      const star = document.createElement('span');
-      star.className = 'my-patch-star';
-      star.title = role === 'admin' ? 'Admin' : 'Member';
-      star.appendChild(createMyPatchStar(12));
-      label.appendChild(star);
-    } else if (role === 'follower') {
-      const heart = document.createElement('span');
-      heart.className = 'my-patch-heart';
-      heart.title = 'Following';
-      heart.appendChild(createFollowedHeart(12));
-      label.appendChild(heart);
-    }
 
     // Label hover → tooltip + click → select patch.
     const tileData = tile.data;
@@ -1233,8 +1241,9 @@
     }, { passive: true });
 
     // What the badge was built from, so a later pass can tell whether it still
-    // matches (both are compared by identity — a refetch hands out new data
-    // objects, and joining a patch changes the role mark).
+    // matches (compared by identity — a refetch hands out new data objects).
+    // __role no longer changes what the badge draws; it stays as a reuse
+    // marker so nothing built under one relationship outlives it.
     label.__data = tile.data;
     label.__role = role;
     return label;
@@ -1292,15 +1301,15 @@
       if (screenX < -150 || screenX > vw + 150 ||
           screenY < -50 || screenY > vh + 50) continue;
 
-      // Exact pill footprint from the measured name: motif badge (26) +
-      // gap (6) + text + padding (3+8) + borders (2×2), plus the role mark
-      // when the viewer has one here.
+      // Exact pill footprint from the measured name: text + padding (6+6) +
+      // borders (2×2). Nothing else is in the pill — motif and role mark are
+      // corner marks on the tile.
       const name = tile.data.name || '';
       const { textW, lines } = measureBadgeText(name);
       const role = quiltScope === 'local' ? myPatchRoles.get(tile.data.slug) : undefined;
-      const labelW = 26 + 6 + textW + 15 + (role ? 18 : 0);
-      // Height: padding (3+3) + borders (2×2) + max(badge 26, lines × 17).
-      const labelH = 10 + Math.max(26, lines * 17);
+      const labelW = textW + 16;
+      // Height: padding (3+3) + borders (2×2) + lines × 17.
+      const labelH = 10 + lines * 17;
 
       // Collision check against already-placed labels. Placed rects are
       // stored inflated by LABEL_GAP, so a rival only lands when there is
@@ -1365,26 +1374,108 @@
   }
 
   /**
-   * Hold every unclaimed mark at a fixed on-screen size, the way a name badge
-   * sits at 13px whatever the zoom. The mark is drawn inside the tile's group,
-   * so it inherits the zoom scale k; dividing it back out is what makes it
-   * static — otherwise a status pip becomes a dinner plate at 6× zoom.
+   * Draw one corner mark: a disc in a tile corner carrying a glyph.
    *
-   * Each group is anchored on the tile's top-right corner and draws inward, so
-   * scaling around that anchor keeps the mark in its corner at every size.
+   * Deliberately NOT clipped by the tile's raw-edge clipPath: a mark is a
+   * status overlay, not fabric (same as label badges), and a userSpaceOnUse
+   * clipPath referenced from this translated group would be evaluated in
+   * badge-local space, slicing the circle (issue #14).
+   *
+   * The group is anchored *on* its corner and draws inward, so
+   * updateCornerMarks can hold it at a fixed screen size by counter-scaling
+   * around that anchor — the corner is the one point that must not drift.
    */
-  function updateUnclaimedMarks() {
+  function drawCornerMark(entry, slot, corner, discFill, glyph) {
+    const { ax, ay, sx, sy } = MARK_CORNERS[corner];
+    const g = entry.inner.append('g')
+      .attr('class', `corner-mark corner-mark-${slot}`)
+      .style('pointer-events', 'none');
+    const cx = sx * (MARK_INSET + MARK_PX / 2);
+    const cy = sy * (MARK_INSET + MARK_PX / 2);
+
+    // Drop shadow drawn as an offset circle rather than a CSS filter: these
+    // transforms are rewritten on every zoom tick, up to three per tile across
+    // the whole quilt, and for a flat circle an offset circle *is* the shadow
+    // at zero compositor cost. Hardcoded black in both themes, like the tile's
+    // own pillow shadow — --lt-shadow-color inverts with the theme because it
+    // is built for chrome on the page canvas, and on arbitrary fabric a pale
+    // halo either disappears or reads as a glow.
+    g.append('circle')
+      .attr('cx', cx + MARK_SHADOW_OFFSET).attr('cy', cy + MARK_SHADOW_OFFSET)
+      .attr('r', MARK_PX / 2)
+      .attr('fill', 'rgba(0,0,0,0.28)');
+
+    // Seam ring, the same stroke the tile's edge wears. Not decorative: the
+    // identity color IS the palette primary and the block is drawn from that
+    // same palette, so a fair number of tiles have primary fabric directly
+    // under this corner and the disc would otherwise vanish into itself.
+    // (No resin dome highlight — that is a pill-scale effect, and these are
+    // too small to carry it.)
+    g.append('circle')
+      .attr('cx', cx).attr('cy', cy).attr('r', MARK_PX / 2)
+      .attr('fill', discFill)
+      .attr('stroke', 'var(--lt-thread-heavy)')
+      .attr('stroke-width', 1.5);
+
+    glyph.setAttribute('transform',
+      `translate(${cx - MARK_GLYPH_PX / 2},${cy - MARK_GLYPH_PX / 2}) ` +
+      glyph.getAttribute('transform'));
+    g.node().appendChild(glyph);
+
+    entry.slots.set(slot, { g, corner });
+  }
+
+  /**
+   * Bring a tile's role slot in line with the viewer's current relationship to
+   * that patch: gold star for belonging (admin/member), red heart for a follow,
+   * nothing otherwise. Adds and removes the slot, so a join or a follow lands
+   * without a relayout — the role mark used to live on the name badge, where
+   * updateLabels' __role comparison was the only thing rebuilding it.
+   */
+  function syncRoleMark(entry) {
+    const role = quiltScope === 'local' ? myPatchRoles.get(entry.tile.data.slug) : undefined;
+    if (entry.role === role && entry.slots.has('role') === !!role) return;
+    entry.role = role;
+    const existing = entry.slots.get('role');
+    if (existing) {
+      existing.g.remove();
+      entry.slots.delete('role');
+    }
+    if (role === 'admin' || role === 'member') {
+      drawCornerMark(entry, 'role', 'br', MARK_STATUS_FILL,
+        createMyPatchStarGroup(MARK_GLYPH_PX));
+    } else if (role === 'follower') {
+      drawCornerMark(entry, 'role', 'br', MARK_STATUS_FILL,
+        createFollowedHeartGroup(MARK_GLYPH_PX));
+    }
+  }
+
+  /**
+   * Hold every corner mark at a fixed on-screen size, the way a name badge
+   * sits at 13px whatever the zoom. Marks are drawn inside the tile's group,
+   * so they inherit the zoom scale k; dividing it back out is what makes them
+   * static — otherwise a status pip becomes a dinner plate at 6× zoom.
+   */
+  function updateCornerMarks() {
     const k = currentTransform.k;
-    for (const { g, tile } of unclaimedMarks) {
-      // Fixed size, except on a tile too small to host one — a mark that
-      // covers a third of its own patch has stopped being an annotation.
-      const px = Math.min(UNCLAIMED_PX, tile.pxSize * k * UNCLAIMED_TILE_SHARE);
-      if (px < UNCLAIMED_MIN_PX) {
-        g.style('display', 'none');
-        continue;
+    for (const { tile, slots } of cornerMarks.values()) {
+      // One size for every slot on this tile, so a tile's marks appear and
+      // vanish together — sizing them slot by slot leaves zoom levels where a
+      // tile wears a heart but no motif. Fixed, except on a tile too small to
+      // host a mark: one covering a third of its own patch has stopped being
+      // an annotation.
+      const px = Math.min(MARK_PX, tile.pxSize * k * MARK_TILE_SHARE);
+      const hidden = px < MARK_MIN_PX;
+      for (const { g, corner } of slots.values()) {
+        if (hidden) {
+          g.style('display', 'none');
+          continue;
+        }
+        const { ax, ay } = MARK_CORNERS[corner];
+        g.style('display', null)
+          .attr('transform',
+            `translate(${ax * tile.pxSize},${ay * tile.pxSize}) scale(${px / MARK_PX / k})`);
       }
-      g.style('display', null)
-        .attr('transform', `translate(${tile.pxSize},0) scale(${px / UNCLAIMED_PX / k})`);
     }
   }
 
@@ -1597,15 +1688,6 @@
 {/if}
 
 <style>
-  .my-patch-star,
-  .my-patch-heart {
-    display: inline-flex;
-    align-items: center;
-    flex-shrink: 0;
-    margin-left: 3px;
-    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
-  }
-
   .canvas-container {
     position: absolute;
     inset: 0;
@@ -1667,7 +1749,7 @@
     width: max-content;
     transform: translate(-50%, -50%);
     color: var(--color-label-text);
-    padding: 3px 8px 3px 3px;
+    padding: 3px 6px;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 600;
@@ -1677,7 +1759,8 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    text-align: center;
     line-height: 1.3;
     border: 2px solid var(--lt-thread);
     font-family: 'Space Grotesk Variable', system-ui, sans-serif;
@@ -1701,20 +1784,6 @@
   :global(.patch-label.selected) {
     font-weight: 700;
     border-color: var(--color-primary);
-  }
-
-  :global(.patch-label .label-badge) {
-    flex-shrink: 0;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* lt-resin handles border-radius, dome highlight, and depth */
-  }
-
-  :global(.patch-label .label-icon) {
-    filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));
   }
 
   :global(.patch-label .label-name) {

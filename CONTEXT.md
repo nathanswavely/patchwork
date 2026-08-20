@@ -359,10 +359,11 @@ visibility (it is per-membership, not per-profile)
 **Role mark**:
 The icon that carries a person's relationship to a patch, used the same
 way everywhere the relationship shows: heart = follower, three users =
-member, wrench = admin. The quilt name badge's star means belonging — patches
-where the person is a member or admin — never a follow; a followed patch
-is marked with the heart. Where space allows, the mark is paired with its
-word rather than standing alone.
+member, wrench = admin. On a quilt tile the relationship is a corner mark
+in the bottom-right, and the star there means belonging — patches where the
+person is a member or admin — never a follow; a followed patch is marked
+with the heart. Where space allows, the mark is paired with its word rather
+than standing alone.
 _Avoid_: star for follows, favorite, bookmark, owner (as a role name)
 
 **Patch profile**:
@@ -1098,21 +1099,40 @@ A patch as rendered in the quilt: its palette, block, and rotation.
 _Avoid_: square, cell
 
 **Name badge**:
-The pill floating over a tile that names its patch: motif on the identity
-color, the patch's name, and the viewer's role mark where one applies.
-Badges reveal progressively as tiles earn on-screen room, and where badges
-would crowd, the larger tile's wins — the rest wait for a closer zoom. A
-badge's shape comes from its name alone, never from its tile's size or its
-position on screen; at the viewport edge it clips rather than reshapes.
+The pill floating over a tile that names its patch — the name, centered,
+and nothing else; what a patch *is* and how the viewer stands with it are
+corner marks on the tile itself. Badges reveal progressively as tiles earn
+on-screen room, and where badges would crowd, the larger tile's wins — the
+rest wait for a closer zoom. A badge's shape comes from its name alone,
+never from its tile's size or its position on screen; at the viewport edge
+it clips rather than reshapes.
 _Avoid_: label / quilt label (the Label is the stewardship disclosure),
 pin (retired — docs/adr/027), card, marker
 
+**Corner mark**:
+A small disc a quilt tile wears in one of its corners, carrying one glyph.
+Three of them, one per corner and one job each: the **motif** (top-left)
+says what the patch is, the **unclaimed mark** (top-right) and the viewer's
+**role mark** (bottom-right) say how it stands. Identity wears the patch's
+own identity color; status wears a neutral dark disc — so a tile's own color
+never means "unclaimed" and a status disc never claims to be the patch's.
+Every disc carries a seam ring and a drop shadow, because a mark sits on
+arbitrary fabric and an identity disc is often the very color underneath it.
+Status, not fabric: like a name badge a corner mark holds a fixed on-screen
+size whatever the zoom, and it is never clipped by the tile's raw edge. One
+size is computed per tile and shared by all of its marks, so a tile's marks
+appear and vanish together; they shrink, then go, when the tile is too small
+to host them. The motif is worn by every tile, at every zoom a mark survives
+— which is how the quilt still says what its patches are where no name badge
+fits. A static hero miniature wears none of them, the same way it wears no
+name badges.
+_Avoid_: pip, chip, badge (that's the name badge), overlay
+
 **Unclaimed mark**:
 The broken chain link on a dark disc that marks an unclaimed patch, worn in
-the same corner on a quilt tile and a patch card. Status, not fabric: like a
-name badge it holds a fixed on-screen size whatever the zoom, and it shrinks
-or hides only when the tile is too small to host it. The word it carries is
-"Unclaimed" — the patch's state, not what a visitor should do about it.
+the same corner on a quilt tile (where it is one of the three corner marks)
+and on a patch card. The word it carries is "Unclaimed" — the patch's state,
+not what a visitor should do about it.
 _Avoid_: question mark (retired — read as "unknown", not "unclaimed"),
 badge (that's the name badge), warning, flag
 
@@ -1184,8 +1204,8 @@ mode.
 _Avoid_: color scheme, custom palette (a palette is pre-cut by definition)
 
 **Motif**:
-The small mark shown beside a patch's name (quilt name badges, patch
-cards). Chosen from a curated set; unset means it is derived from the
+The small mark that stands for a patch: its top-left corner mark on a quilt
+tile, and beside its name on a patch card. Chosen from a curated set; unset means it is derived from the
 patch's tags — each tag in the vocabulary may carry a motif, and the
 patch's first motif-bearing tag wins — falling back to the quilt mark.
 Motifs are marks, never uploaded images. Backend key: `icon`.
@@ -1201,6 +1221,7 @@ _Avoid_: theme, style, customization (as a noun), tile settings
 
 **Identity color**:
 The single color that represents a patch anywhere it isn't drawn as a full
-tile (card banners, quilt name badges). Always the patch's palette primary.
+tile (card banners, the motif corner mark's disc). Always the patch's
+palette primary.
 Distinct from tag colors, which color tags, not patches.
 _Avoid_: brand color, accent

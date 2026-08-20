@@ -1,6 +1,6 @@
 /**
- * Motif registry — the curated set of marks a patch can carry beside its
- * name (quilt name badges, patch cards).
+ * Motif registry — the curated set of marks that stand for a patch (its
+ * corner mark on a quilt tile, beside its name on a patch card).
  *
  * A patch's motif resolves in order (see docs/adr/004 and docs/adr/021):
  *   1. appearance.icon, when it names a known motif (chosen by admins)
@@ -11,11 +11,11 @@
  * Unknown appearance.icon slugs (e.g. a foreign instance's custom motif in
  * a merged multi-quilt view) fall through to 2 and 3, never error.
  *
- * Icons come from the same Phosphor set as the rest of the UI. Quilt labels
- * are built imperatively (plain DOM, rebuilt on every zoom tick), so instead
- * of mounting a Svelte component per label we mount each icon component once,
- * extract its SVG markup, and cache it — after that, badges are cheap
- * innerHTML stamps.
+ * Icons come from the same Phosphor set as the rest of the UI. The quilt is
+ * built imperatively (plain DOM and SVG, rewritten on every zoom tick), so
+ * instead of mounting a Svelte component per mark we mount each icon
+ * component once, extract its SVG markup, and cache it — after that, marks
+ * are cheap innerHTML stamps.
  */
 import { mount, unmount, flushSync } from 'svelte';
 import {
@@ -161,6 +161,22 @@ function buildIconSvg(Component, size, color, weight) {
 }
 
 /**
+ * Build a plain SVG <g> for a Phosphor icon (no live component).
+ *
+ * Handed back as a <g>, not the <svg> buildIconSvg returns: these go into the
+ * quilt canvas, where the parent's transform is what places and sizes them,
+ * and a nested <svg> would need its own x/y plumbed through. Phosphor draws
+ * in a 256-unit box, so the scale brings it down to `size`.
+ */
+function buildIconGroup(Component, size, color, weight) {
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('fill', color);
+  g.setAttribute('transform', `scale(${size / 256})`);
+  g.innerHTML = iconMarkup(Component, weight);
+  return g;
+}
+
+/**
  * Create an inline SVG element for a patch's motif.
  * Returns an SVG DOM element ready to append.
  */
@@ -168,37 +184,33 @@ export function createMotifElement(patch, size = 12, color = '#fff') {
   return buildIconSvg(motifComponentForPatch(patch), size, color, 'fill');
 }
 
-/**
- * Status mark for an unclaimed patch (docs/adr/030): a broken chain link —
- * a patch on the quilt with nobody holding the other end.
- *
- * Handed back as a <g>, not the <svg> the other builders return: this one
- * goes into the quilt canvas, where the parent's transform is what places
- * and sizes it, and a nested <svg> would need its own x/y plumbed through.
- * Phosphor draws in a 256-unit box, so the scale brings it down to `size`.
- */
-export function createUnclaimedMarkGroup(size = 14, color = '#fff') {
-  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  g.setAttribute('fill', color);
-  g.setAttribute('transform', `scale(${size / 256})`);
-  g.innerHTML = iconMarkup(LinkBreak, 'bold');
-  return g;
+/** A patch's motif as a <g>, for the quilt tile's top-left corner mark. */
+export function createMotifGroup(patch, size = 14, color = '#fff') {
+  return buildIconGroup(motifComponentForPatch(patch), size, color, 'fill');
 }
 
 /**
- * Role mark (CONTEXT.md): the quilt name badge's belonging indicator.
- * Gold star = admin or member (belonging). Never shown for a follow —
- * see createFollowedHeart below for that case.
+ * Status mark for an unclaimed patch (docs/adr/030): a broken chain link —
+ * a patch on the quilt with nobody holding the other end.
  */
-export function createMyPatchStar(size = 12) {
-  return buildIconSvg(Star, size, '#D4A843', 'fill');
+export function createUnclaimedMarkGroup(size = 14, color = '#fff') {
+  return buildIconGroup(LinkBreak, size, color, 'bold');
+}
+
+/**
+ * Role mark (CONTEXT.md): the belonging indicator worn in a quilt tile's
+ * bottom-right corner. Gold star = admin or member (belonging). Never shown
+ * for a follow — see createFollowedHeartGroup below for that case.
+ */
+export function createMyPatchStarGroup(size = 14) {
+  return buildIconGroup(Star, size, '#D4A843', 'fill');
 }
 
 /**
  * Role mark (CONTEXT.md): small filled heart marking a patch the user
- * follows (but doesn't belong to) on quilt name badges. Distinct from the star —
- * a follow is never rendered as belonging.
+ * follows (but doesn't belong to). Distinct from the star — a follow is
+ * never rendered as belonging.
  */
-export function createFollowedHeart(size = 12) {
-  return buildIconSvg(Heart, size, '#C02624', 'fill');
+export function createFollowedHeartGroup(size = 14) {
+  return buildIconGroup(Heart, size, '#C02624', 'fill');
 }
