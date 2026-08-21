@@ -184,8 +184,11 @@ func TestLabelStatesFederation(t *testing.T) {
 		return body
 	}
 
-	on := &config.Config{Federation: config.Federation{Enabled: true}}
-	off := &config.Config{Federation: config.Federation{Enabled: false}}
+	on := &config.Config{Federation: config.Federation{Enabled: true}, MultiQuilt: true}
+	off := &config.Config{Federation: config.Federation{Enabled: false}, MultiQuilt: false}
+	// Independent flags: neither line may be derived from the other.
+	followedOnly := &config.Config{Federation: config.Federation{Enabled: true}, MultiQuilt: false}
+	readOnly := &config.Config{Federation: config.Federation{Enabled: false}, MultiQuilt: true}
 
 	// Unpublished: the flag rides along anyway, mirroring "version", so a
 	// consumer learns this from a quilt whose stewards wrote no Label.
@@ -217,4 +220,14 @@ func TestLabelStatesFederation(t *testing.T) {
 	// Nothing stored: the same database answers both ways, which is the
 	// property that keeps the statement from disagreeing with the routes
 	// actually mounted.
+
+	// Multi-quilt rides the same slot and is genuinely independent — a
+	// quilt can be followable without being readable and vice versa
+	// (docs/adr/061 decision 5).
+	if b := fetch(followedOnly); b["federation"] != true || b["multi_quilt"] != false {
+		t.Errorf("federating but not readable: %v / %v", b["federation"], b["multi_quilt"])
+	}
+	if b := fetch(readOnly); b["federation"] != false || b["multi_quilt"] != true {
+		t.Errorf("readable but not federating: %v / %v", b["federation"], b["multi_quilt"])
+	}
 }

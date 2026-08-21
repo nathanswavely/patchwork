@@ -3,6 +3,9 @@
 Date: 2026-08-21. Status: **accepted** — built, unlike ADR 058–060.
 Discharges ADR 060's fourth decision ("until then, say it"), which named
 the obligation without naming the surface. Extends ADR 023 (the Label).
+**Amended the same day:** multi-quilt was rejected below and is now
+decision 5 — the reasoning that excluded it did not survive contact with
+what the flag actually does.
 
 ## Context
 
@@ -74,12 +77,24 @@ admin, and an admin who has not read their own Label has a different
 problem. If a warning surface is ever built for other reasons, this is a
 good first tenant.
 
-**Stating multi-quilt beside it.** `multi_quilt` is the other cross-quilt
-capability, equally enforced and equally unstated, and it was tempting to
-sweep it in. Left out because it answers a different question — whether
-*other* quilts may read this one, which is reciprocity rather than
-materials — and because a disclosure stays readable one line at a time.
-Worth revisiting on its own.
+**5. Multi-quilt gets the same treatment, on its own line.** *(Amended.)*
+This was rejected above as "reciprocity rather than materials" — a fact
+about what other quilts may do, not about what this one is made of.
+Reading `internal/middleware/cors.go` undid that. `multi_quilt` gates
+exactly one thing: whether public GET endpoints answer cross-origin. That
+is not a statement about other quilts' behaviour; it is a property of this
+deployment, in the same sense and the same place as whether its actors are
+mounted. The original objection described a distinction that isn't there.
+
+The two are independent and neither implies the other, so each gets its
+own line rather than one merged sentence: **federation is whether this
+quilt can be followed; multi-quilt is whether it can be read.** A quilt
+can do either, both, or neither, and a person deciding where to put their
+venue's calendar is asking both questions.
+
+The surviving half of the original objection — that a disclosure stays
+readable one line at a time — is answered by the fact that these are two
+short lines under a heading that already carries three.
 
 ## Consequences
 

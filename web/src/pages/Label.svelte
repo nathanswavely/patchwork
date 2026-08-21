@@ -122,15 +122,26 @@
       {#if label.version}
         <p class="runs-on-version muted">Running Patchwork {label.version}.</p>
       {/if}
-      <!-- Whether the quilt federates, stated in both directions
+      <!-- The two cross-quilt capabilities, each stated in both directions
            (docs/adr/061). Derived from config on the server, like the
-           version above it — materials, not settings. -->
+           version above them — materials, not settings. Federation is
+           whether this quilt can be followed; multi-quilt is whether it can
+           be read. They are independent, so each gets its own line. -->
       <p class="runs-on-version muted">
         {#if label.federation}
           Federating. Public patches here can be followed from Mastodon and
           other ActivityPub sites.
         {:else}
           Not federating. Patches here can't be followed from other sites.
+        {/if}
+      </p>
+      <p class="runs-on-version muted">
+        {#if label.multi_quilt}
+          Readable by other quilts. Their sites can show this quilt's public
+          patches and events alongside their own.
+        {:else}
+          Not readable by other quilts. They can link here, but people have
+          to follow the link to see anything.
         {/if}
       </p>
     </section>

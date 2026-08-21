@@ -160,11 +160,16 @@ func GetLabel(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// Label is where a quilt says how it is run, and until now it
 		// said nothing about this in either direction (docs/adr/061).
 		federation := cfg != nil && cfg.Federation.Enabled
+		// The other cross-quilt capability, on the same terms: multi_quilt
+		// gates CORS on public GETs (internal/middleware/cors.go), which is
+		// what decides whether another quilt's site may read this one at all.
+		multiQuilt := cfg != nil && cfg.MultiQuilt
 		if !ok || !published {
 			json.NewEncoder(w).Encode(map[string]any{
-				"published":  false,
-				"version":    Version,
-				"federation": federation,
+				"published":   false,
+				"version":     Version,
+				"federation":  federation,
+				"multi_quilt": multiQuilt,
 			})
 			return
 		}
@@ -179,6 +184,7 @@ func GetLabel(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// release image.
 			"version":              Version,
 			"federation":           federation,
+			"multi_quilt":          multiQuilt,
 			"prose":                prose,
 			"support_url":          supportURL,
 			"feedback_url":         feedbackURL,

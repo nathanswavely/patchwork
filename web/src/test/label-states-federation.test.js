@@ -21,10 +21,28 @@ describe('the Label states whether the quilt federates (docs/adr/061)', () => {
     expect(src).toMatch(/Not federating\. Patches here can't be followed/);
   });
 
+  it('states multi-quilt in both directions too, on its own line', () => {
+    // docs/adr/061 decision 5: federation is whether the quilt can be
+    // followed, multi-quilt whether it can be read. Independent facts.
+    expect(src).toMatch(/Readable by other quilts\./);
+    expect(src).toMatch(/Not readable by other quilts\./);
+    expect(src).toMatch(/\{#if label\.multi_quilt\}/);
+  });
+
+  it('never derives one capability from the other', () => {
+    // A single {#if} covering both lines would make a followable quilt
+    // claim to be readable, which is a lie the config can't produce.
+    const federationIf = (src.match(/\{#if label\.federation\}/g) || []).length;
+    const multiIf = (src.match(/\{#if label\.multi_quilt\}/g) || []).length;
+    expect(federationIf).toBeGreaterThanOrEqual(1);
+    expect(multiIf).toBe(1);
+  });
+
   it('puts it with the materials, beside the running version', () => {
     // "What this runs on" already ends with a derived, unstored fact.
-    const runsOn = src.slice(src.indexOf('Running Patchwork'), src.indexOf('Running Patchwork') + 700);
+    const runsOn = src.slice(src.indexOf('Running Patchwork'), src.indexOf('Running Patchwork') + 1200);
     expect(runsOn).toMatch(/label\.federation/);
+    expect(runsOn).toMatch(/label\.multi_quilt/);
   });
 
   it('prices the exit where the exit is described', () => {
