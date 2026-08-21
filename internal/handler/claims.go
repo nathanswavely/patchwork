@@ -12,6 +12,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -21,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
@@ -42,8 +44,8 @@ const setupWindow = 14 * 24 * time.Hour
 // ClaimHTTPClient is SSRF-guarded: meta_tag verification fetches a page on
 // the claimed domain, a URL someone outside the instance influences.
 var (
-	ClaimLookupTXT  func(domain string) ([]string, error) = net.LookupTXT
-	ClaimHTTPClient                                       = safehttp.NewClient(10 * time.Second)
+	ClaimLookupTXT  func(domain string) ([]string, error)                = net.LookupTXT
+	ClaimHTTPClient                                                      = safehttp.NewClient(10 * time.Second)
 	ClaimSendMail   func(cfg config.SMTP, to []string, msg []byte) error = mail.Send
 )
 
@@ -169,14 +171,26 @@ func BackfillVerificationDomains(db *database.DB) {
 	}
 }
 
+// claimResolver wires the atproto resolver to the same swappable seams the
+// other claim methods use, so a test that stubs DNS stubs this too.
+func claimResolver() atproto.Resolver {
+	return atproto.Resolver{
+		LookupTXT: func(domain string) ([]string, error) { return ClaimLookupTXT(domain) },
+		Get:       ClaimHTTPClient.Get,
+	}
+}
+
 // claimMethodsFor reports which claim methods a patch currently supports.
 func claimMethodsFor(verificationDomain string, cfg *config.Config) map[string]bool {
 	hasDomain := verificationDomain != ""
 	return map[string]bool{
 		"dns":      hasDomain,
 		"meta_tag": hasDomain,
-		"email":    hasDomain && cfg.SMTP.Configured(),
-		"admin":    true,
+		// docs/adr/062: the handle IS the vetted domain, so this needs no
+		// anchor the other domain methods don't already have.
+		"did":   hasDomain,
+		"email": hasDomain && cfg.SMTP.Configured(),
+		"admin": true,
 	}
 }
 
@@ -190,6 +204,8 @@ func claimInstructions(method, token, verificationDomain, email string, resp map
 	case "meta_tag":
 		resp["instructions"] = fmt.Sprintf(`Add this tag to the <head> of https://%s: <meta name="patchwork-verify" content="%s">`, verificationDomain, token)
 		resp["meta_content"] = token
+	case "did":
+		resp["instructions"] = fmt.Sprintf("Point the atproto handle %s at a did:web identity, and have that DID document list at://%s in alsoKnownAs.", verificationDomain, verificationDomain)
 	case "email":
 		resp["instructions"] = fmt.Sprintf("We sent a verification link to %s. It expires in 24 hours.", email)
 	case "admin":
@@ -310,9 +326,9 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		validMethods := map[string]bool{"dns": true, "meta_tag": true, "email": true, "admin": true}
+		validMethods := map[string]bool{"dns": true, "meta_tag": true, "did": true, "email": true, "admin": true}
 		if !validMethods[req.Method] {
-			http.Error(w, `{"error":"method must be dns, meta_tag, email, or admin"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"method must be dns, meta_tag, did, email, or admin"}`, http.StatusBadRequest)
 			return
 		}
 
@@ -657,6 +673,7 @@ func VerifyClaim(db *database.DB) http.HandlerFunc {
 
 		verified := false
 		var verifyError string
+		var verifiedDID string
 
 		switch claim.Method {
 		case "dns":
@@ -699,6 +716,28 @@ func VerifyClaim(db *database.DB) http.HandlerFunc {
 				verifyError = "verification tag not found on the site"
 			}
 
+		// docs/adr/062. Unlike the three above, this proves a binding rather
+		// than possession of a token we issued: the handle must name the DID
+		// and the DID document must name the handle back. Either direction
+		// alone is forgeable.
+		case "did":
+			if verificationDomain == "" {
+				verifyError = "this patch no longer has a verified domain"
+				break
+			}
+			did, err := claimResolver().Verify(verificationDomain)
+			switch {
+			case errors.Is(err, atproto.ErrNotDIDWeb):
+				// Named explicitly. "Verification failed" would send someone
+				// hunting a DNS typo that isn't there.
+				verifyError = "that handle resolves to a DID this instance does not accept — only did:web is, because it is served from your own domain"
+			case err != nil:
+				verifyError = "could not verify the handle: " + err.Error()
+			default:
+				verifiedDID = did
+				verified = true
+			}
+
 		case "admin":
 			verifyError = "admin claims are reviewed manually — you'll be notified"
 
@@ -710,6 +749,14 @@ func VerifyClaim(db *database.DB) http.HandlerFunc {
 			if err := approveClaim(db, claimID, user.ID, r.RemoteAddr); err != nil {
 				http.Error(w, `{"error":"failed to approve claim"}`, http.StatusInternalServerError)
 				return
+			}
+			// Recorded only on the path that proved it (docs/adr/062). A
+			// failure here must not un-approve a claim that verified, so it
+			// is logged rather than surfaced.
+			if verifiedDID != "" {
+				if _, err := db.Exec(`UPDATE nodes SET did = ? WHERE id = ?`, verifiedDID, claim.NodeID); err != nil {
+					log.Printf("claims: verified %s for node %s but could not store it: %v", verifiedDID, claim.NodeID, err)
+				}
 			}
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]interface{}{

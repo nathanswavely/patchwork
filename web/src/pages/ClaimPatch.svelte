@@ -13,7 +13,7 @@
   // methods this patch supports.
   let loading = $state(true);
   let claim = $state(null);
-  let methods = $state({ dns: false, meta_tag: false, email: false, admin: true });
+  let methods = $state({ dns: false, meta_tag: false, did: false, email: false, admin: true });
   let verificationDomain = $state('');
 
   // Form state. No preselection: the method choice is consequential, and a
@@ -30,6 +30,7 @@
   const methodInfo = [
     { id: 'dns', label: 'DNS Verification', desc: 'Add a TXT record to your domain' },
     { id: 'meta_tag', label: 'Website Meta Tag', desc: 'Add a meta tag to your homepage' },
+    { id: 'did', label: 'atproto Handle', desc: 'Prove the did:web identity behind your domain' },
     { id: 'email', label: 'Email Verification', desc: 'Get a link at your organization email' },
     { id: 'admin', label: 'Admin Review', desc: 'Submit evidence for manual review' },
   ];
@@ -195,6 +196,16 @@
         <p>Add this tag to the <code>&lt;head&gt;</code> of <strong>https://{verificationDomain}</strong>:</p>
         <code class="verify-code">&lt;meta name="patchwork-verify" content="{claim.meta_content}"&gt;</code>
 
+      {:else if claim.method === 'did'}
+        <!-- docs/adr/062: both directions are required, so the instructions
+             have to name both. Only did:web is accepted — it is served from
+             the same domain the claim is already anchored on. -->
+        <p>Point the atproto handle <strong>{verificationDomain}</strong> at a <strong>did:web</strong> identity. Add a <strong>TXT record</strong> on <strong>_atproto.{verificationDomain}</strong>:</p>
+        <code class="verify-code">did=did:web:{verificationDomain}</code>
+        <p>Then make sure that DID document lists the handle back:</p>
+        <code class="verify-code">"alsoKnownAs": ["at://{verificationDomain}"]</code>
+        <p class="muted">A did:plc handle won't work here. Only did:web is accepted, because its document lives on your own domain rather than in a registry someone else runs.</p>
+
       {:else if claim.method === 'email'}
         <p>We sent a verification link to <strong>{claim.email}</strong>. Open it to finish claiming. The link expires 24 hours after it's sent.</p>
 
@@ -203,7 +214,7 @@
       {/if}
 
       <div class="form-actions" style="margin-top: 1rem;">
-        {#if claim.method === 'dns' || claim.method === 'meta_tag'}
+        {#if claim.method === 'dns' || claim.method === 'meta_tag' || claim.method === 'did'}
           <button class="btn btn-primary" onclick={handleVerify} disabled={verifying}>
             {verifying ? 'Checking...' : 'Verify Now'}
           </button>
