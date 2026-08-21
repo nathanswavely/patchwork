@@ -32,9 +32,21 @@ func NameKey(location string) string {
 	if i := strings.IndexAny(first, ","); i >= 0 {
 		first = first[:i]
 	}
+	return normalizeKey(first)
+}
+
+// TitleKey normalizes a listing's SUMMARY the way NameKey normalizes its
+// LOCATION, and is what a program groups on (docs/adr/063). It keeps the
+// whole string: a title has no first field, and truncating one would fold
+// together programs that merely open alike. Equally dumb on purpose —
+// the safety here is not that the matching is careful but that a program
+// ends at a link the named patch confirms.
+func TitleKey(title string) string { return normalizeKey(title) }
+
+func normalizeKey(s string) string {
 	var b strings.Builder
 	space := false
-	for _, r := range strings.ToLower(strings.TrimSpace(first)) {
+	for _, r := range strings.ToLower(strings.TrimSpace(s)) {
 		switch {
 		case unicode.IsLetter(r) || unicode.IsDigit(r):
 			if space && b.Len() > 0 {
@@ -141,10 +153,10 @@ func storeListings(db *database.DB, aggregatorID string, items []Item) error {
 		if _, err := tx.Exec(
 			`INSERT OR REPLACE INTO aggregator_listings
 			 (aggregator_id, uid, occurrence, name_key, display_name, title,
-			  description, location, latitude, longitude, starts_at, ends_at, url)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			  title_key, description, location, latitude, longitude, starts_at, ends_at, url)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			aggregatorID, it.UID, it.Occurrence, NameKey(it.Location), displayName(it.Location),
-			it.Title, it.Description, it.Location, it.Latitude, it.Longitude,
+			it.Title, TitleKey(it.Title), it.Description, it.Location, it.Latitude, it.Longitude,
 			it.StartsAt, it.EndsAt, it.URL,
 		); err != nil {
 			return fmt.Errorf("insert listing: %w", err)

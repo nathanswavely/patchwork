@@ -4098,6 +4098,34 @@
           "quote": null
         },
         {
+          "file": "internal/handler/programs.go",
+          "line": 220,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 262,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 342,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 376,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
           "file": "internal/handler/proposals.go",
           "line": 75,
           "kind": "go-error-body",
@@ -5215,6 +5243,27 @@
         {
           "file": "internal/handler/nodes.go",
           "line": 981,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 224,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 346,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 380,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -11554,6 +11603,261 @@
       ]
     },
     {
+      "id": "cfa5fcdf587a",
+      "text": "failed to list programs",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 152,
+          "kind": "go-error-body",
+          "raw": "failed to list programs",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 163,
+          "kind": "go-error-body",
+          "raw": "failed to list programs",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 229,
+          "kind": "go-error-body",
+          "raw": "failed to list programs",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "70831684f0e1",
+      "text": "failed to list offers",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 234,
+          "kind": "go-error-body",
+          "raw": "failed to list offers",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2feee4f3ae8d",
+      "text": "only this patch can be credited with a program by you",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 266,
+          "kind": "go-error-body",
+          "raw": "only this patch can be credited with a program by you",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f0ce63eb36c7",
+      "text": "aggregator_id, name_key and title_key are required",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 277,
+          "kind": "go-error-body",
+          "raw": "aggregator_id, name_key and title_key are required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d939d2d81d2a",
+      "text": "this aggregator is not carrying that title under that name",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 289,
+          "kind": "go-error-body",
+          "raw": "this aggregator is not carrying that title under that name",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5431d315aa92",
+      "text": "this patch is credited with the maximum number of programs",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 296,
+          "kind": "go-error-body",
+          "raw": "this patch is credited with the maximum number of programs",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7aee9415883a",
+      "text": "that program is already credited to this patch",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 308,
+          "kind": "go-error-body",
+          "raw": "that program is already credited to this patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "eef7b78d50cd",
+      "text": "failed to load program",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 316,
+          "kind": "go-error-body",
+          "raw": "failed to load program",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7300fe812119",
+      "text": "failed to create program",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 327,
+          "kind": "go-error-body",
+          "raw": "failed to create program",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c2c34274f0e8",
+      "text": "failed to remove program",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 352,
+          "kind": "go-error-body",
+          "raw": "failed to remove program",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "14f5107f1165",
+      "text": "program not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 356,
+          "kind": "go-error-body",
+          "raw": "program not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 398,
+          "kind": "go-error-body",
+          "raw": "program not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2c529f3a3555",
+      "text": "program_id and event_id are required",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 389,
+          "kind": "go-error-body",
+          "raw": "program_id and event_id are required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "441be6a182f3",
+      "text": "failed to dismiss offer",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/handler/programs.go",
+          "line": 405,
+          "kind": "go-error-body",
+          "raw": "failed to dismiss offer",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "b6efbbbdf3bf",
       "text": "failed to list proposals",
       "words": 4,
@@ -13931,7 +14235,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 134,
+          "line": 141,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -13949,7 +14253,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 135,
+          "line": 142,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -13967,7 +14271,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 136,
+          "line": 143,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -13985,7 +14289,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 137,
+          "line": 144,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -14003,7 +14307,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 138,
+          "line": 145,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -14021,7 +14325,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 139,
+          "line": 146,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -14039,7 +14343,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 140,
+          "line": 147,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -14057,7 +14361,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 141,
+          "line": 148,
           "kind": "go-string",
           "raw": "Voting ends in 24 hours",
           "quote": "\""
@@ -14075,7 +14379,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 143,
+          "line": 150,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -14093,7 +14397,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 148,
+          "line": 155,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -14111,7 +14415,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 149,
+          "line": 156,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -14129,7 +14433,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 150,
+          "line": 157,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -14147,7 +14451,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 151,
+          "line": 158,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -14165,7 +14469,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 152,
+          "line": 159,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -14183,7 +14487,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 154,
+          "line": 161,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -14201,7 +14505,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 155,
+          "line": 162,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -14219,7 +14523,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 156,
+          "line": 163,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -14237,7 +14541,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 157,
+          "line": 164,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -14255,7 +14559,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 158,
+          "line": 165,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -14273,7 +14577,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 159,
+          "line": 166,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -14291,7 +14595,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 161,
+          "line": 168,
           "kind": "go-string",
           "raw": "New event",
           "quote": "\""
@@ -14309,7 +14613,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 162,
+          "line": 169,
           "kind": "go-string",
           "raw": "Event starts in 24 hours",
           "quote": "\""
@@ -14327,7 +14631,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 163,
+          "line": 170,
           "kind": "go-string",
           "raw": "Event details changed",
           "quote": "\""
@@ -14345,7 +14649,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 164,
+          "line": 171,
           "kind": "go-string",
           "raw": "Event cancelled",
           "quote": "\""
@@ -14363,7 +14667,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 166,
+          "line": 173,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -14381,7 +14685,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 167,
+          "line": 174,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -14399,7 +14703,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 168,
+          "line": 175,
           "kind": "go-string",
           "raw": "Your event was declined",
           "quote": "\""
@@ -14417,7 +14721,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 170,
+          "line": 177,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -14435,9 +14739,27 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 171,
+          "line": 178,
           "kind": "go-string",
           "raw": "Event link confirmed",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "d948727d78d2",
+      "text": "A listing matched one of your programs",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 182,
+          "kind": "go-string",
+          "raw": "A listing matched one of your programs",
           "quote": "\""
         }
       ]
@@ -14453,7 +14775,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 173,
+          "line": 184,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -14471,7 +14793,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 174,
+          "line": 185,
           "kind": "go-string",
           "raw": "New patch submission",
           "quote": "\""
@@ -14489,7 +14811,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 175,
+          "line": 186,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -14507,7 +14829,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 176,
+          "line": 187,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
           "quote": "\""
@@ -14525,7 +14847,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 178,
+          "line": 189,
           "kind": "go-string",
           "raw": "Your claim was approved",
           "quote": "\""
@@ -14543,7 +14865,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 179,
+          "line": 190,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -15848,21 +16170,21 @@
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 248,
+          "line": 343,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 311,
+          "line": 406,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 382,
+          "line": 508,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -17375,7 +17697,7 @@
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 351,
+          "line": 476,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -17682,7 +18004,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 201,
+          "line": 257,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -22790,7 +23112,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 192,
+          "line": 248,
           "kind": "markup",
           "raw": "Event Sources",
           "quote": null
@@ -23912,7 +24234,7 @@
         },
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 125,
+          "line": 220,
           "kind": "js-string",
           "raw": "Failed to remove",
           "quote": "'"
@@ -24735,6 +25057,42 @@
       ]
     },
     {
+      "id": "89cbc6d0a5a4",
+      "text": "Failed to credit",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 156,
+          "kind": "js-string",
+          "raw": "Failed to credit",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "e96e814be5da",
+      "text": "Failed to remove credit",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 168,
+          "kind": "js-string",
+          "raw": "Failed to remove credit",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "1753f0f2cd2c",
       "text": "Failed to record that",
       "words": 4,
@@ -24745,14 +25103,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 86,
+          "line": 181,
           "kind": "js-string",
           "raw": "Failed to record that",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 156,
+          "line": 212,
           "kind": "js-string",
           "raw": "Failed to record that",
           "quote": "'"
@@ -24770,7 +25128,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 108,
+          "line": 203,
           "kind": "js-string",
           "raw": "Feed attached. Make sure you map any names to get the events flowing.",
           "quote": "'"
@@ -24789,7 +25147,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 113,
+          "line": 208,
           "kind": "js-string",
           "raw": "Failed to attach feed.",
           "quote": "'"
@@ -24807,7 +25165,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 122,
+          "line": 217,
           "kind": "js-string",
           "raw": "Feed removed. Mapped patches kept their events.",
           "quote": "'"
@@ -24825,7 +25183,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 137,
+          "line": 232,
           "kind": "js-string",
           "raw": "Failed to update",
           "quote": "'"
@@ -24850,14 +25208,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 146,
+          "line": 241,
           "kind": "js-string",
           "raw": "Sync failed",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 99,
+          "line": 107,
           "kind": "js-string",
           "raw": "Sync failed",
           "quote": "'"
@@ -24875,7 +25233,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 162,
+          "line": 257,
           "kind": "js-string",
           "raw": "Unclaimed, events publish",
           "quote": "'"
@@ -24893,7 +25251,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 164,
+          "line": 259,
           "kind": "js-string",
           "raw": "Accepts suggestions, events await review",
           "quote": "'"
@@ -24911,7 +25269,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 165,
+          "line": 260,
           "kind": "js-string",
           "raw": "Not accepting suggestions",
           "quote": "'"
@@ -24929,7 +25287,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 187,
+          "line": 282,
           "kind": "js-string",
           "raw": "Failed to map",
           "quote": "'"
@@ -24947,7 +25305,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 239,
+          "line": 334,
           "kind": "markup",
           "raw": "Aggregators",
           "quote": null
@@ -24965,7 +25323,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 241,
+          "line": 336,
           "kind": "markup",
           "raw": "Add a feed here if you have a calendar link that doesn't belong to a\n    specific patch. Things like city or chamber of commerce calendars.",
           "quote": null
@@ -24983,7 +25341,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 246,
+          "line": 341,
           "kind": "markup",
           "raw": "Feeds",
           "quote": null
@@ -25001,7 +25359,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 250,
+          "line": 345,
           "kind": "markup",
           "raw": "No feeds attached.",
           "quote": null
@@ -25019,7 +25377,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 259,
+          "line": 354,
           "kind": "markup",
           "raw": "First fetch in progress…",
           "quote": null
@@ -25037,7 +25395,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 261,
+          "line": 356,
           "kind": "markup",
           "raw": "Fetch failed{agg.last_error ? `: ${agg.last_error}` : ''}",
           "quote": null
@@ -25055,7 +25413,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 263,
+          "line": 358,
           "kind": "markup",
           "raw": "{agg.listing_count} {agg.listing_count === 1 ? 'listing' : 'listings'}\n                  {' · '}{agg.mapped_count} routed",
           "quote": null
@@ -25073,7 +25431,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 265,
+          "line": 360,
           "kind": "markup",
           "raw": "{' · '}fetched {relTime(agg.last_success_at)}",
           "quote": null
@@ -25091,7 +25449,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 267,
+          "line": 362,
           "kind": "markup",
           "raw": "paused",
           "quote": null
@@ -25109,7 +25467,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 288,
+          "line": 383,
           "kind": "attr:placeholder",
           "raw": "Visit Lancaster City",
           "quote": "\""
@@ -25127,7 +25485,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 289,
+          "line": 384,
           "kind": "attr:placeholder",
           "raw": "https://…/calendar.ics",
           "quote": "\""
@@ -25145,7 +25503,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 313,
+          "line": 408,
           "kind": "markup",
           "raw": "Attach a feed to see the names it carries.",
           "quote": null
@@ -25163,7 +25521,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 321,
+          "line": 416,
           "kind": "markup",
           "raw": "Hidden from this list only. Patch admins still see every name in\n        their own picker.",
           "quote": null
@@ -25181,10 +25539,46 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 324,
+          "line": 419,
           "kind": "markup",
           "raw": "Names found in your feeds show up here, and you can map them to\n        patches on your quilt.",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "50a79b8eb03e",
+      "text": "Mapping this name decides whose calendar these land on. If one is run by somebody else, credit it to them — the events stay here either way.",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 511,
+          "kind": "markup",
+          "raw": "Mapping this name decides whose calendar these land on. If one is\n          run by somebody else, credit it to them — the events stay here\n          either way.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2ccb58783e50",
+      "text": "Who runs this?",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAggregators.svelte",
+          "line": 536,
+          "kind": "attr:placeholder",
+          "raw": "Who runs this?",
+          "quote": "\""
         }
       ]
     },
@@ -25199,7 +25593,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 395,
+          "line": 555,
           "kind": "markup",
           "raw": "View on {hostOf(l.url)} ↗",
           "quote": null
@@ -37226,7 +37620,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 42,
+          "line": 50,
           "kind": "js-string",
           "raw": "Failed to load event sources",
           "quote": "'"
@@ -37244,7 +37638,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 74,
+          "line": 82,
           "kind": "js-string",
           "raw": "Failed to attach feed",
           "quote": "'"
@@ -37262,7 +37656,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 83,
+          "line": 91,
           "kind": "js-string",
           "raw": "Event source removed",
           "quote": "'"
@@ -37280,9 +37674,81 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 86,
+          "line": 94,
           "kind": "js-string",
           "raw": "Failed to remove event source",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "08db60cdfa1e",
+      "text": "Failed to propose that link",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 148,
+          "kind": "js-string",
+          "raw": "Failed to propose that link",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "58da9ff50d73",
+      "text": "Failed to dismiss that",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 163,
+          "kind": "js-string",
+          "raw": "Failed to dismiss that",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "543c52a9be32",
+      "text": "Stopped. Events you already joined stay yours.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 172,
+          "kind": "js-string",
+          "raw": "Stopped. Events you already joined stay yours.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "705e67922c4e",
+      "text": "Failed to stop that",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 175,
+          "kind": "js-string",
+          "raw": "Failed to stop that",
           "quote": "'"
         }
       ]
@@ -37298,7 +37764,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 133,
+          "line": 189,
           "kind": "js-string",
           "raw": "Failed to map name",
           "quote": "'"
@@ -37316,7 +37782,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 142,
+          "line": 198,
           "kind": "js-string",
           "raw": "Stopped. Its events are yours to edit now.",
           "quote": "'"
@@ -37334,7 +37800,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 145,
+          "line": 201,
           "kind": "js-string",
           "raw": "Failed to unmap",
           "quote": "'"
@@ -37352,7 +37818,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 153,
+          "line": 209,
           "kind": "js-string",
           "raw": "Kept yours",
           "quote": "'"
@@ -37370,7 +37836,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 153,
+          "line": 209,
           "kind": "js-string",
           "raw": "Added as a separate event",
           "quote": "'"
@@ -37388,7 +37854,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 194,
+          "line": 250,
           "kind": "markup",
           "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\n    Google Calendar's secret address, the calendar feed from your website)\n    or an events page from Squarespace, Humanitix, and similar sites.\n    Imported events publish directly and stay in step with the feed.",
           "quote": null
@@ -37406,7 +37872,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 212,
+          "line": 268,
           "kind": "markup",
           "raw": "First sync in progress…",
           "quote": null
@@ -37424,7 +37890,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 214,
+          "line": 270,
           "kind": "markup",
           "raw": "Sync failed{source.last_error ? `: ${source.last_error}` : ''}",
           "quote": null
@@ -37442,7 +37908,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 218,
+          "line": 274,
           "kind": "markup",
           "raw": "· synced {relTime(source.last_success_at)}",
           "quote": null
@@ -37460,7 +37926,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 240,
+          "line": 296,
           "kind": "markup",
           "raw": "No event sources yet.",
           "quote": null
@@ -37478,7 +37944,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 246,
+          "line": 302,
           "kind": "attr:placeholder",
           "raw": "https://calendar.google.com/calendar/ical/…/basic.ics",
           "quote": "\""
@@ -37496,7 +37962,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 255,
+          "line": 311,
           "kind": "markup",
           "raw": "Removing a source keeps past events and removes upcoming imported ones.",
           "quote": null
@@ -37514,7 +37980,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 260,
+          "line": 316,
           "kind": "markup",
           "raw": "Possible duplicates",
           "quote": null
@@ -37532,7 +37998,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 262,
+          "line": 318,
           "kind": "markup",
           "raw": "Each of these lands at the same time as an event you already have.\n      Yours is the one showing.",
           "quote": null
@@ -37550,9 +38016,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 270,
+          "line": 326,
           "kind": "markup",
           "raw": "Yours:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a35b1c3a2996",
+      "text": "Programs credited to you",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 350,
+          "kind": "markup",
+          "raw": "Programs credited to you",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "83e657f4cc4b",
+      "text": "Recurring listings someone recognized as yours. They stay on the venue's calendar — these are offers to put your name on them too, and the venue confirms each one.",
+      "words": 29,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted for docs/adr/063 (programs and offers); read against the house tone rules, two of the longer hints tightened before recording.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 352,
+          "kind": "markup",
+          "raw": "Recurring listings someone recognized as yours. They stay on the\n      venue's calendar — these are offers to put your name on them too, and\n      the venue confirms each one.",
           "quote": null
         }
       ]
@@ -37568,7 +38070,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 293,
+          "line": 401,
           "kind": "markup",
           "raw": "Listing calendars",
           "quote": null
@@ -37586,7 +38088,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 295,
+          "line": 403,
           "kind": "markup",
           "raw": "Calendars that list events across the community, like the city calendar.\n    Answering to a name brings every event filed under it here from now on.\n    Anything an admin points at you waits in your review queue first. Stop\n    any of them here.",
           "quote": null
@@ -37604,7 +38106,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 310,
+          "line": 418,
           "kind": "markup",
           "raw": "Suggests into your review queue",
           "quote": null
@@ -37622,7 +38124,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 310,
+          "line": 418,
           "kind": "markup",
           "raw": ", set up by {entry.added_by_name}",
           "quote": null
@@ -37640,7 +38142,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 313,
+          "line": 421,
           "kind": "markup",
           "raw": "{entry.pending_count} waiting",
           "quote": null
@@ -37658,7 +38160,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 316,
+          "line": 424,
           "kind": "markup",
           "raw": "{' · '}{entry.event_count} approved",
           "quote": null
@@ -37676,7 +38178,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 319,
+          "line": 427,
           "kind": "markup",
           "raw": "{' · '}updated {relTime(entry.last_success_at)}",
           "quote": null
@@ -37694,7 +38196,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 362,
+          "line": 470,
           "kind": "markup",
           "raw": "No listing calendars are carrying a name this patch could answer to.",
           "quote": null

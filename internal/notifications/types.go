@@ -89,6 +89,13 @@ const (
 	EventLinkRequested NotificationType = "event.link_request"
 	EventLinkConfirmed NotificationType = "event.link_confirmed"
 
+	// A new listing matched a program this patch is credited with
+	// (docs/adr/063). Not a link and not an event of theirs — an offer to
+	// propose one. Crediting back-fills silently; only offers arriving
+	// afterward announce, which is docs/adr/056's rule for crosswalk
+	// entries applied to programs.
+	ProgramOffer NotificationType = "program.offer"
+
 	AdminClaimRequest     NotificationType = "admin.claim_request"
 	AdminSubmission       NotificationType = "admin.submission"
 	AdminEventSubmission  NotificationType = "admin.event_submission"
@@ -170,6 +177,10 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	EventLinkRequested: {CategoryEvents, "Event link request for your patch", AudienceAdminsOnly, PriorityHigh},
 	EventLinkConfirmed: {CategoryEvents, "Event link confirmed", AudienceAdminsOnly, PriorityNormal},
 
+	// Normal, not high: an offer is an invitation to act, and the event is
+	// already on the quilt under its venue whether or not anyone acts.
+	ProgramOffer: {CategoryEvents, "A listing matched one of your programs", AudienceAdminsOnly, PriorityNormal},
+
 	AdminClaimRequest:     {CategoryAdmin, "New patch claim request", AudienceSiteAdmins, PriorityHigh},
 	AdminSubmission:       {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventSubmission:  {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
@@ -226,7 +237,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		EventCreated, EventReminder, EventUpdated, EventCancelled,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
-		EventLinkRequested, EventLinkConfirmed,
+		EventLinkRequested, EventLinkConfirmed, ProgramOffer,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
 		GovernanceSuccessionNeeded,
 		ClaimApproved, ClaimSetupExpiring,

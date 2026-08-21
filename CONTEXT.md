@@ -811,16 +811,58 @@ only where it accepts event suggestions — that entry **suggests**: what
 it brings waits in the patch's review queue and publishes nothing until
 its own admins approve. A patch mapping itself publishes directly, which
 is the only standing consent. Every entry pointing at a patch is visible
-in its settings, names whoever set it up, and can be stopped there.
+in its settings, names whoever set it up, and can be stopped there. A
+name is the only key that routes: every listing carries both a place and
+a title, so if both decided ownership one listing would answer to two
+sources. What a title can do instead is a **program** (docs/adr/063).
 _Avoid_: routing rule (reads as plumbing; a crosswalk is curated),
 mapping table (backend flavour), alias, matcher
+
+**Program**:
+A recurring title in an aggregator's feed that a human has recognized and
+**credited** to a patch — the seven listings titled African American
+Heritage Walking Tour are the historical society's, though the feed names
+it nowhere. A program never routes; it decides nothing about who owns an
+event, only who else belongs on one. What it produces is an offer to the
+credited patch, whose admins propose an ordinary event link (docs/adr/032)
+that the owning patch confirms — so nothing lands without that hand, and a
+wrong program is declined rather than suffered. Promoted from inside a
+name's listings, where the evidence is: a title does not say who runs it
+and the feed usually does not say at all, which is why a program is
+recognized and never inferred. Several programs may be credited to one
+patch, the way several names may point at one. Inert until its name is
+routed — with no events there is nothing to offer. Credited by whoever
+speaks for the patch being credited and by nobody else: the venue whose
+event it is may tag a patch one event at a time, but never point standing
+machinery at a stranger who would then owe a refusal every month
+(docs/adr/063).
+_Avoid_: series (Tockify gave one tour seven series ids; the word
+misleads), candidate (that is a person on a ballot), suggestion (that is
+what a crosswalk entry does to a review queue), rule, alias, credit as a
+noun (crediting is the act; the thing is a program)
+
+**Offer**:
+What a credited program presents to its patch — an event routed from a
+listing whose title that program names, waiting for a person to propose an
+ordinary event link (docs/adr/032) that the owning patch confirms. Never
+stored: an offer is what remains after subtracting the links already made
+and the offers already declined, so there is nothing for the reconciler to
+write and a program cannot quietly become a route. Shown at Patch Settings
+→ Sources beside the crosswalk entries and held duplicates. Crediting
+back-fills its offers silently — nobody wants six notifications for a
+decision they just made — and every offer after that announces
+(docs/adr/063).
+_Avoid_: candidate (that is a person on a ballot), suggestion (a crosswalk
+entry does that to a review queue), match, proposal (that is the link, and
+a person makes it)
 
 **Listing**:
 One item in an aggregator's feed — deliberately not an event, because it
 may never become one. A listing whose name carries no crosswalk entry is
 **unrouted**. Opening a name shows its listings as the feed published
 them, including a link out to the publisher's own page: whether a name
-means an organization is not answerable from the name alone.
+means an organization is not answerable from the name alone, and neither
+is who runs what it hosts.
 _Avoid_: submission (a person makes those, docs/adr/026), pending event
 (it is not an event yet), unmatched (names what failed, not what it is)
 
@@ -830,7 +872,8 @@ room number. It hides the name from the instance admin's own list and
 nowhere else: a patch's picker still offers every unmapped name, because
 whether a patch answers to one is that patch's judgement (docs/adr/056).
 Reversible, and it touches no listings — the name is set aside, not
-deleted.
+deleted. Any programs under that name go with it, which costs nothing: an
+ignored name never routes, so they could never have offered anything.
 _Avoid_: reject, dismiss, hide (each implies the name is gone rather
 than set aside), blocklist
 

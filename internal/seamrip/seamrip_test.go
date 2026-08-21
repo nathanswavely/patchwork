@@ -634,6 +634,9 @@ func TestEveryColumnHasABoundaryDecision(t *testing.T) {
 			"email_window_start":     "same",
 			"setup_expires_at":       "a deadline set by the old instance's review",
 		},
+		"aggregator_programs": {
+			"backfilled_at": "announcement state; the fork's first pass is silent back-fill, not an offer per notification (docs/adr/063)",
+		},
 		"memberships": {"join_message": "written to that instance's admins during review, not to the fork's"},
 	}
 

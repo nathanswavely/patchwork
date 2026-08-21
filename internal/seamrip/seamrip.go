@@ -209,6 +209,27 @@ func Tables() []Table {
 				c("created_at")),
 		},
 		{
+			File: "aggregator_programs.json",
+			Name: "aggregator_programs",
+			// Recognizing that a venue's listed tour is the historical
+			// society's is knowledge the feed does not contain and a
+			// machine cannot re-derive — the organization is named nowhere
+			// in it (docs/adr/063). Losing this on a fork would mean
+			// recognizing every program again from memory, which is the
+			// same loss as losing the crosswalk and travels for the same
+			// reason.
+			//
+			// backfilled_at stays behind, so the fork's first pass is
+			// silent back-fill rather than a notification per offer. That
+			// is docs/adr/056's rule read through a restore: nobody wants
+			// the fork's opening act to be forty announcements.
+			Query: `SELECT id, aggregator_id, name_key, title_key, display_title,
+				node_id, credited_by, created_at FROM aggregator_programs`,
+			Columns: cols(id("id"), id("aggregator_id"), c("name_key"),
+				c("title_key"), c("display_title"), id("node_id"),
+				id("credited_by"), c("created_at")),
+		},
+		{
 			File: "event_source_skips.json",
 			Name: "event_source_skips",
 			Query: `SELECT source_id, uid, occurrence, created_at
@@ -246,6 +267,24 @@ func Tables() []Table {
 			Columns: cols(id("id"), id("event_id"), id("node_id"), c("status"),
 				c("initiated_by"), id("requested_by"), id("absorb_event_id"),
 				c("created_at"), c("confirmed_at")),
+		},
+		{
+			// Offers a credited patch declined (docs/adr/063). After events,
+			// because a dismissal points at one and Import retries only
+			// within a table. A refusal is that patch's own judgement, and a
+			// fork that dropped it would re-offer every declined event on its
+			// first sync and owe the same refusal again.
+			File: "aggregator_offer_dismissals.json",
+			Name: "aggregator_offer_dismissals",
+			// Only dismissals whose event survived the export cut — events
+			// travel active-only, and a dismissal pointing at a dropped
+			// event would arrive orphaned.
+			Query: `SELECT d.program_id, d.event_id, d.dismissed_by, d.created_at
+				FROM aggregator_offer_dismissals d
+				JOIN events e ON e.id = d.event_id
+				WHERE e.removed_at IS NULL AND e.status = 'active'`,
+			Columns: cols(id("program_id"), id("event_id"), id("dismissed_by"),
+				c("created_at")),
 		},
 		{
 			// Doorways to patches on other quilts (docs/adr/032). Stored as

@@ -55,6 +55,7 @@ several branches are in flight.
 | [057](057-the-grant-reaches-unclaimed-patches.md) | The trusted-contributor grant reaches unclaimed patches — links too, not just events *(amends 032)* |
 | [062](062-the-handle-is-the-domain-and-the-did-is-did-web.md) | The handle is the domain, and the DID must be did:web — ADR 058's step B, and a correction to 060 |
 | [061](061-what-this-runs-on-includes-whether-it-federates.md) | What this quilt runs on includes whether it federates — federation and multi-quilt stated, the door prices the exit *(extends 023, discharges 060)* |
+| [063](063-the-feed-says-where-only-a-person-says-who.md) | The feed says where; only a person says who — programs credit an organization the feed never names *(closes 056's known gap)* |
 
 ## Partly implemented
 

@@ -39,6 +39,14 @@ func PatchSetup(slug string) string {
 	return Patch(slug) + "/setup"
 }
 
+// PatchSources is a patch's event-source settings — /patches/:slug/settings/sources.
+// Where the aggregator's effects on a patch gather: the crosswalk entries
+// pointing at it, its held duplicates, and the offers its programs make
+// (docs/adr/063).
+func PatchSources(slug string) string {
+	return Patch(slug) + "/settings/sources"
+}
+
 // Event is an event's detail page — SPA route /events/:id.
 //
 // Events are addressed globally, not under the patch that owns them: one
