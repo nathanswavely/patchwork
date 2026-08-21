@@ -29581,7 +29581,7 @@
       "text": "Prove the did:web identity behind your domain",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30142,7 +30142,7 @@
       "text": "Point the atproto handle",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30160,7 +30160,7 @@
       "text": "at a",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30196,7 +30196,7 @@
       "text": "identity. Add a",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30250,7 +30250,7 @@
       "text": "Then make sure that DID document lists the handle back:",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -30286,7 +30286,7 @@
       "text": "A did:plc handle won't work here. Only did:web is accepted, because its document lives on your own domain rather than in a registry someone else runs.",
       "words": 26,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
