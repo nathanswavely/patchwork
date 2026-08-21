@@ -209,8 +209,19 @@
     box-shadow: 0 2px 12px var(--color-shadow);
   }
 
+  /* The dismiss X and Clear stand on the same canvas as the chips, so they
+     take the same ground — bare, they were legible only over dark tiles. */
+  .chips-overlay .chips-collapse {
+    background: var(--color-glass);
+    box-shadow: 0 1px 3px var(--color-shadow);
+  }
+
+  .chips-overlay .chips-collapse:hover {
+    background: var(--color-glass-heavy);
+  }
+
   .chips-overlay .chips-clear {
-    background: color-mix(in srgb, var(--color-bg) 65%, transparent);
+    background: var(--color-glass);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 999px;
