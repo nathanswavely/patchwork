@@ -248,8 +248,9 @@
   <h2>Event Sources</h2>
   <p class="muted subtitle">
     Calendar feeds this patch pulls events from. Paste an ICS address (a
-    Google Calendar's secret address, the calendar feed from your website)
-    or an events page from Squarespace, Humanitix, and similar sites.
+    Google Calendar's secret address, the calendar feed from your website),
+    an events page from Squarespace, Humanitix, and similar sites, or an
+    atproto handle whose calendar you want to follow.
     Imported events publish directly and stay in step with the feed.
   </p>
 
@@ -297,9 +298,13 @@
     {/if}
 
     <form class="add-form" onsubmit={addSource}>
+      <!-- Deliberately type="text": an atproto handle is a bare domain
+           (docs/adr/064), and type="url" makes the browser refuse to submit
+           one before the server ever sees it. The server validates. -->
       <input
-        type="url"
-        placeholder="https://calendar.google.com/calendar/ical/…/basic.ics"
+        type="text"
+        inputmode="url"
+        placeholder="https://…/basic.ics  or  an atproto handle"
         bind:value={newUrl}
         disabled={adding}
       />
