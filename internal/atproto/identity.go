@@ -44,7 +44,7 @@ type Service struct {
 }
 
 // PDSEndpoint returns the account's personal data server, the host that
-// answers XRPC reads for this repository (docs/adr/063).
+// answers XRPC reads for this repository (docs/adr/064).
 func (d *Doc) PDSEndpoint() (string, error) {
 	if d == nil {
 		return "", errors.New("no DID document")
@@ -134,7 +134,7 @@ func DocURLFor(did string) (string, error) {
 // served from the domain itself, a did:plc means nothing without asking
 // this registry — which is exactly why docs/adr/062 refuses did:plc for a
 // patch's OWN identity. Reading somebody's calendar adopts nothing, so it
-// is allowed here (docs/adr/063 decision 2).
+// is allowed here (docs/adr/064 decision 2).
 const plcDirectory = "https://plc.directory"
 
 // ResolveDoc fetches and parses a DID document, for did:web or did:plc.

@@ -1,7 +1,7 @@
 package eventsource
 
 // Parsing community.lexicon.calendar.event records into items
-// (docs/adr/063).
+// (docs/adr/064).
 //
 // The lexicon requires only `createdAt` and `name`. Everything this
 // project needs to make an event — above all a start time — is optional
@@ -53,7 +53,7 @@ type lexURI struct {
 // A record with no parsable `startsAt` is skipped rather than defaulted.
 // createdAt, today, and import time are all available and all wrong: each
 // would put a fictional date on a venue's public calendar, and a record
-// that does not say when it happens is not yet an event (docs/adr/063
+// that does not say when it happens is not yet an event (docs/adr/064
 // decision 3).
 func ParseATProtoEvents(records []atproto.Record, now time.Time) ([]Item, error) {
 	horizonEnd := now.Add(Horizon)
@@ -82,7 +82,7 @@ func ParseATProtoEvents(records []atproto.Record, now time.Time) ([]Item, error)
 		}
 
 		item := Item{
-			// docs/adr/063 decision 4: the rkey is the UID. Occurrence
+			// docs/adr/064 decision 4: the rkey is the UID. Occurrence
 			// stays empty — the lexicon has no recurrence, so a repeating
 			// event is repeated records and there is nothing to expand.
 			UID:         rkey,

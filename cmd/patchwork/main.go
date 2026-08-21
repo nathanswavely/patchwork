@@ -333,6 +333,13 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/crosswalk/{id}", middleware.AuthRequired(db, handler.DeleteCrosswalkEntry(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/aggregator-holds", middleware.AuthRequired(db, handler.ListAggregatorHolds(db)))
 	mux.HandleFunc("POST /api/v1/aggregator-holds/{id}/decide", middleware.AuthRequired(db, handler.DecideAggregatorHold(db)))
+	// Programs and their offers (docs/adr/063). Node-scoped because
+	// standing is over the credited patch and nothing else — the venue
+	// whose event it is has no say and needs none.
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/programs", middleware.AuthRequired(db, handler.ListPrograms(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/programs", middleware.AuthRequired(db, handler.CreateProgram(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/programs/{id}", middleware.AuthRequired(db, handler.DeleteProgram(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/offers/dismiss", middleware.AuthRequired(db, handler.DismissOffer(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/events/bulk", middleware.AuthRequired(db, handler.BulkCreateEvents(db)))
 
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
@@ -484,6 +491,7 @@ func main() {
 	mux.HandleFunc("POST /api/v1/admin/aggregator-names/ignore", middleware.AdminRequired(db, handler.AdminIgnoreName(db, true)))
 	mux.HandleFunc("POST /api/v1/admin/aggregator-names/unignore", middleware.AdminRequired(db, handler.AdminIgnoreName(db, false)))
 	mux.HandleFunc("GET /api/v1/admin/aggregator-listings", middleware.AdminRequired(db, handler.AdminListNameListings(db)))
+	mux.HandleFunc("GET /api/v1/admin/programs", middleware.AdminRequired(db, handler.AdminListPrograms(db)))
 
 	mux.HandleFunc("GET /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminGetSettings(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminUpdateSettings(db, cfg)))

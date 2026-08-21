@@ -127,7 +127,7 @@ func TestSync_ATProtoUnreachableRepoDeletesNothing(t *testing.T) {
 }
 
 // A record dropped from the collection withdraws its event — the single
-// removal path (docs/adr/063 rejects trusting the lexicon's status field).
+// removal path (docs/adr/064 rejects trusting the lexicon's status field).
 // A future event the feed no longer carries is a promise withdrawn, so the
 // row goes; ADR 031's protection is for PAST events, covered by the ICS
 // tests and shared by every source type.

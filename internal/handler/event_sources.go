@@ -118,7 +118,7 @@ func CreateEventSource(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"url is required"}`, http.StatusBadRequest)
 			return
 		}
-		// An atproto handle or AT-URI is a source too (docs/adr/063). It is
+		// An atproto handle or AT-URI is a source too (docs/adr/064). It is
 		// resolved here rather than at sync time so the DID — not the
 		// rebindable handle — is what gets stored, and so a typo fails
 		// while somebody is still looking at the screen.
@@ -323,7 +323,7 @@ func DetachEvent(db *database.DB) http.HandlerFunc {
 
 // resolveATProtoSource recognises the two things a person might paste for
 // an atproto calendar and turns either into the stored AT-URI form
-// (docs/adr/063 decision 1).
+// (docs/adr/064 decision 1).
 //
 // The second return says "this was meant to be an atproto source" — so a
 // handle that fails to resolve reports why, instead of falling through and
@@ -375,12 +375,3 @@ func eventSourceResolver() atproto.Resolver {
 }
 
 var eventSourceHTTPClient = safehttp.NewClient(15 * time.Second)
-
-// jsonString quotes a string for embedding in a hand-built JSON error.
-func jsonString(s string) string {
-	b, err := json.Marshal(s)
-	if err != nil {
-		return `"error"`
-	}
-	return string(b)
-}

@@ -67,7 +67,7 @@ func TestParseATProtoEvents_ReadsARecord(t *testing.T) {
 	}
 }
 
-// docs/adr/063 decision 3. The lexicon requires only createdAt and name,
+// docs/adr/064 decision 3. The lexicon requires only createdAt and name,
 // so this record is valid and still cannot become an event. Defaulting to
 // createdAt would publish a show dated three weeks before it happens.
 func TestParseATProtoEvents_SkipsRecordsWithNoStart(t *testing.T) {

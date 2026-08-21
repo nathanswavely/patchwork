@@ -6,7 +6,11 @@ order, not a plan. Builds on ADR 024 (cross-quilt following), ADR 031
 (event sources), ADR 049 (state only what you enforce), ADR 054
 (federation needs a receiver). **Amended 2026-08-21** after reading
 Abramov's "Open Social": constraint 1 gains the mechanism it was missing,
-and step B is re-argued from ADR 060.
+and step B is re-argued from ADR 060. **Amended again the same day**, with
+A and B built: step D is retired and step C is demoted to optional. The
+order below was written as a sequence and was starting to read as a
+roadmap; two of its four steps do not survive contact with decisions this
+project already made.
 
 ## Context
 
@@ -79,7 +83,7 @@ new noun. Every slot below is one Patchwork already has.
 
 ### The order, and why it is this order
 
-**A. An atproto event source type.** `event_sources.type` is already a
+**A. An atproto event source type.** *(Built: ADR 064.)* `event_sources.type` is already a
 column defaulting to `'ics'` (migration 033). The reason this one is first
 is ADR 056: the Lancaster aggregator feed carried **no `ORGANIZER` on any
 of 196 events** — the host appeared nowhere a machine could read, which is
@@ -94,7 +98,7 @@ from "who is this?" to "is this DID that patch?", which is (B). It is
 nonetheless the first feed shape where ADR 031's "attaching a source is
 vouching for the feed" could be *checked* rather than asserted.
 
-**B. A DID as a fourth claim verification method.** `claims.method` is
+**B. A DID as a fourth claim verification method.** *(Built: ADR 062.)* `claims.method` is
 already `'dns' | 'meta_tag' | 'email' | 'admin'`, anchored on the vetted
 `nodes.verification_domain` (migration 031). atproto handle verification
 is DNS TXT or a well-known file against that same domain — the two
@@ -131,12 +135,64 @@ Two things are unsettled and this ADR does not settle them: what a
 Patchwork session means when the identity it rests on is external and
 revocable elsewhere, and what happens on DID rotation or handle change.
 
-**D. Publishing public events as records — last, and only against a
-reader.** ADR 054's rule applies verbatim. It applies more easily here
-than it did to governance, because the calendar and RSVP lexicons are
-owned by a third party (`lexicon.community`, the schemas Smoke Signal
-runs on), so "a reader exists" is a fact somebody can check rather than a
-hope.
+*Amended — this step is optional, and the mission argument above is
+weaker than it reads.* Two existing decisions already deliver most of
+what it promised:
+
+- **ADR 020 already made access non-hostage.** Recovery codes on paper,
+  admin-mediated recovery links, deliberately channel-free. Nobody is
+  locked out today by an admin going sideways. And because ADR 020's
+  reasoning forbids an auth path that depends on a third party being
+  reachable, atproto could only ever be a *second* door onto an account a
+  local credential already opens — which means the local credential, not
+  the DID, is still what gets a person in.
+- **ADR 002 already carries a person through a fork.** Memberships
+  travel. A member who forks with their community arrives as themselves,
+  threads intact. A DID adds nothing to that.
+
+What remains is a convenience: one fewer step at sign-in, bought with the
+first dependency in the auth path on somebody else's PDS being reachable,
+plus DPoP, PAR, and a served client-metadata document. Worth building if
+someone wants it; not a gap in the platform if nobody does.
+
+Step C was also the prerequisite for step D, which is the strongest
+reason it was sequenced here. With D retired, that reason is gone too.
+
+**D. Publishing public events as records — RETIRED.** *(Amended.)*
+
+The gate this step named has actually opened: `community.lexicon.calendar.
+event` has readers, and ADR 064 built one. It is being retired anyway, on
+a line ADR 064 drew for a different purpose — **reading a calendar is not
+claiming an identity, and writing one is.**
+
+Patchwork runs no repository (constraint 1), so published records could
+only go into *the patch's own* repo, with Patchwork holding a durable
+write token for somebody else's account. Everything the platform does
+today is either pull (ICS, event sources) or push from its own actor
+(ActivityPub `Create`). This would be the first time Patchwork acts *as*
+another party, and an instance holding write tokens can put arbitrary
+records in every repository that ever authorized it.
+
+The population is also backwards. A patch that *has* a repository can
+publish to it directly; the events Patchwork would push are events
+somebody typed into Patchwork. That leaves the narrow band who use
+Patchwork as their source of truth, hold an atproto account, and do not
+post to it — approximately nobody in the reference community, whose
+venues have websites and Google Calendars. This is the same test ADR 064
+used to *accept* `did:plc`: do not build for a population that does not
+exist. It cuts the other way here.
+
+And the reach may not be the reach a community wants. Patchwork's
+discovery is deliberately local — the map, the quilt, ADR 022's lenses —
+while atproto distribution is global and placeless. The per-patch ICS and
+RSS feeds are already public, so anyone who wants a patch's events in
+atproto can bridge them without Patchwork holding a credential for
+anyone.
+
+*Reopen if:* venues start arriving with atproto as their primary
+presence, a bridge appears that genuinely needs a push rather than a
+pull, or Patchwork grows a reason to hold delegated credentials for
+something else — which would make this incremental rather than a first.
 
 ## Considered and rejected
 

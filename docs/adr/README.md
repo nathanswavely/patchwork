@@ -53,9 +53,10 @@ several branches are in flight.
 | [050](050-follower-permissions-gate-taking-part.md) | Follower permissions gate taking part, not reading — only `charters` was ever a read gate |
 | [056](056-aggregators-own-nothing-the-crosswalk-is-the-review.md) | Aggregators own nothing; the crosswalk is the review — one feed, many patches, consent per name |
 | [057](057-the-grant-reaches-unclaimed-patches.md) | The trusted-contributor grant reaches unclaimed patches — links too, not just events *(amends 032)* |
-| [063](063-reading-a-calendar-is-not-claiming-an-identity.md) | Reading a calendar is not claiming an identity — the atproto event source, and why did:plc is fine here |
 | [062](062-the-handle-is-the-domain-and-the-did-is-did-web.md) | The handle is the domain, and the DID must be did:web — ADR 058's step B, and a correction to 060 |
 | [061](061-what-this-runs-on-includes-whether-it-federates.md) | What this quilt runs on includes whether it federates — federation and multi-quilt stated, the door prices the exit *(extends 023, discharges 060)* |
+| [063](063-the-feed-says-where-only-a-person-says-who.md) | The feed says where; only a person says who — programs credit an organization the feed never names *(closes 056's known gap)* |
+| [064](064-reading-a-calendar-is-not-claiming-an-identity.md) | Reading a calendar is not claiming an identity — the atproto event source, and why did:plc is fine here |
 
 ## Partly implemented
 
@@ -83,7 +84,7 @@ several branches are in flight.
 |---|----------|
 | [008](008-ledger-and-commons.md) | The ledger and the commons — earmarked contributions, not stored value |
 | [019](019-self-hosted-mail-spike.md) | Self-hosted mail sidecar — spike plan |
-| [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only |
+| [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only *(amended: A and B built as 064 and 062, D retired, C optional)* |
 | [059](059-the-handle-is-a-subscribe-option.md) | The handle is a subscribe option — the patch actor exists and no surface says so |
 | [060](060-a-fork-keeps-its-threads-and-loses-its-audience.md) | A fork keeps its threads and loses its audience — the reach gap in the seamrip boundary |
 

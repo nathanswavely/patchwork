@@ -142,7 +142,7 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 	}
 
 	// An atproto source names a repository, not a document: resolve the
-	// DID to its PDS and read one collection (docs/adr/063). No
+	// DID to its PDS and read one collection (docs/adr/064). No
 	// conditional GET — listRecords carries no etag — so this refetches
 	// in full each cycle, which a venue-sized collection can afford.
 	if src.Type == "atproto" {
@@ -520,7 +520,85 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		}
 		broadcastCreate(db, e, src.NodeID)
 	}
+	offerAnnouncements(db, notifier, src, announcements)
 	return nil
+}
+
+// offerAnnouncements tells credited patches that a new listing matched one
+// of their programs (docs/adr/063). Only newly created events pass
+// through here, which is what makes crediting silent back-fill: everything
+// the feed already carried became an offer the instant the program
+// landed, and nobody wants six notifications for a decision just made.
+//
+// A program still holding a NULL backfilled_at has never had a routing
+// pass — it arrived in a seamrip. It gets one silent pass and then
+// announces, the same courtesy a fresh crosswalk entry gets.
+func offerAnnouncements(db *database.DB, notifier *notifications.Notifier, src *Source, created []model.Event) {
+	if !src.AggregatorID.Valid || !src.NameKey.Valid || len(created) == 0 {
+		return
+	}
+	rows, err := db.Query(
+		`SELECT p.id, p.node_id, n.name, n.slug, p.title_key, p.display_title,
+		        p.backfilled_at IS NOT NULL
+		   FROM aggregator_programs p
+		   JOIN nodes n ON n.id = p.node_id
+		    AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
+		  WHERE p.aggregator_id = ? AND p.name_key = ? AND p.node_id != ?`,
+		src.AggregatorID.String, src.NameKey.String, src.NodeID)
+	if err != nil {
+		return
+	}
+	type program struct {
+		id, nodeID, nodeName, nodeSlug, titleKey, displayTitle string
+		backfilled                                            bool
+	}
+	var programs []program
+	for rows.Next() {
+		var p program
+		if err := rows.Scan(&p.id, &p.nodeID, &p.nodeName, &p.nodeSlug,
+			&p.titleKey, &p.displayTitle, &p.backfilled); err == nil {
+			programs = append(programs, p)
+		}
+	}
+	rows.Close()
+
+	for _, p := range programs {
+		matched := 0
+		var first *model.Event
+		for i := range created {
+			if TitleKey(created[i].Title) == p.titleKey {
+				matched++
+				if first == nil {
+					first = &created[i]
+				}
+			}
+		}
+		if matched == 0 {
+			continue
+		}
+		if !p.backfilled {
+			db.Exec(`UPDATE aggregator_programs
+			         SET backfilled_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+			         WHERE id = ?`, p.id)
+			continue
+		}
+		title := "A listing matched " + p.displayTitle
+		if matched > 1 {
+			title = fmt.Sprintf("%d listings matched %s", matched, p.displayTitle)
+		}
+		if notifier != nil {
+			go notifier.Notify(notifications.Event{
+				Type:     notifications.ProgramOffer,
+				NodeID:   p.nodeID,
+				NodeSlug: p.nodeSlug,
+				NodeName: p.nodeName,
+				EntityID: first.ID,
+				Title:    title,
+				Body:     "Propose a link if it is yours, or dismiss the offer.",
+				Link:     weblink.PatchSources(p.nodeSlug),
+			})
+		}
+	}
 }
 
 // Remove deletes a source under the same per-source lock Sync holds, so

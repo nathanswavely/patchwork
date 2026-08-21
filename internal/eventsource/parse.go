@@ -210,8 +210,12 @@ func itemFromEvent(e *ical.Event, uid, occurrence string) (*Item, time.Time, boo
 		return nil, time.Time{}, false
 	}
 
-	title, _ := e.Props.Text(ical.PropSummary)
-	if strings.TrimSpace(title) == "" {
+	// Trimmed, not merely tested for emptiness: publishers write
+	// "SUMMARY: Thing" and the space after the colon is part of the value,
+	// so untrimmed titles arrive visibly indented everywhere they render.
+	rawTitle, _ := e.Props.Text(ical.PropSummary)
+	title := strings.TrimSpace(rawTitle)
+	if title == "" {
 		title = "(untitled)"
 	}
 	description, _ := e.Props.Text(ical.PropDescription)

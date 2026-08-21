@@ -1,8 +1,14 @@
-# ADR 063: Reading a calendar is not claiming an identity
+# ADR 064: Reading a calendar is not claiming an identity
 
 Date: 2026-08-21. Status: **accepted**. Builds ADR 058's step A. Sits
 inside ADR 031's model unchanged, and narrows ADR 062's `did:web` rule to
 the thing it was actually about.
+
+Numbering note: claimed 063, renumbered to 064 at merge time — ADR 063
+(programs) reached main first, and CLAUDE.md's rule moves the unmerged
+side. That ADR and this one meet at the same finding from opposite
+directions: it concludes that only a person can say whose event a listing
+is, and this one holds that a DID names a repository and not a venue.
 
 ## Context
 

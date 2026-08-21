@@ -22,6 +22,14 @@
   let holds = $state([]);
   let mapping = $state({});
   let deciding = $state({});
+  // Programs crediting this patch, and the offers they make
+  // (docs/adr/063). An offer is an event somebody else owns whose title
+  // matches a program credited here — nothing has happened to it, and
+  // nothing will until someone here proposes the link and the owner
+  // confirms.
+  let programs = $state([]);
+  let offers = $state([]);
+  let offering = $state({});
 
   $effect(() => {
     if (slug) {
@@ -105,18 +113,66 @@
 
   async function loadCrosswalk() {
     try {
-      const [entries, available, held] = await Promise.all([
+      const [entries, available, held, progs] = await Promise.all([
         api(`nodes/${slug}/crosswalk`),
         api(`nodes/${slug}/aggregator-names`),
         api(`nodes/${slug}/aggregator-holds`),
+        api(`nodes/${slug}/programs`),
       ]);
       crosswalk = entries.items || [];
       names = available.items || [];
       holds = held.items || [];
+      programs = progs.items || [];
+      offers = progs.offers || [];
     } catch (e) {
       crosswalk = [];
       names = [];
       holds = [];
+      programs = [];
+      offers = [];
+    }
+  }
+
+  // Proposing is an ordinary event link (docs/adr/032) — the owning patch
+  // still confirms. The program only found it.
+  async function proposeLink(offer) {
+    offering = { ...offering, [offer.event_id]: true };
+    try {
+      await api(`events/${offer.event_id}/links`, {
+        method: 'POST',
+        body: { target: slug },
+      });
+      showToast(`Asked ${offer.owner_name} to add you to “${offer.title}”`);
+      await loadCrosswalk();
+    } catch (err) {
+      showToast(err.data?.error || 'Failed to propose that link', 'error');
+    } finally {
+      offering = { ...offering, [offer.event_id]: false };
+    }
+  }
+
+  async function dismissOffer(offer) {
+    offering = { ...offering, [offer.event_id]: true };
+    try {
+      await api(`nodes/${slug}/offers/dismiss`, {
+        method: 'POST',
+        body: { program_id: offer.program_id, event_id: offer.event_id },
+      });
+      await loadCrosswalk();
+    } catch (err) {
+      showToast(err.data?.error || 'Failed to dismiss that', 'error');
+    } finally {
+      offering = { ...offering, [offer.event_id]: false };
+    }
+  }
+
+  async function stopProgram(program) {
+    try {
+      await api(`nodes/${slug}/programs/${program.id}`, { method: 'DELETE' });
+      showToast('Stopped. Events you already joined stay yours.');
+      await loadCrosswalk();
+    } catch (err) {
+      showToast(err.data?.error || 'Failed to stop that', 'error');
     }
   }
 
@@ -243,7 +299,7 @@
 
     <form class="add-form" onsubmit={addSource}>
       <!-- Deliberately type="text": an atproto handle is a bare domain
-           (docs/adr/063), and type="url" makes the browser refuse to submit
+           (docs/adr/064), and type="url" makes the browser refuse to submit
            one before the server ever sees it. The server validates. -->
       <input
         type="text"
@@ -291,6 +347,58 @@
             >Add it too</button>
           </div>
         </li>
+      {/each}
+    </ul>
+  {/if}
+
+  {#if programs.length > 0}
+    <h2 class="section-head">Programs credited to you</h2>
+    <p class="muted subtitle">
+      Recurring listings someone recognized as yours. They stay on the
+      venue's calendar — these are offers to put your name on them too, and
+      the venue confirms each one.
+    </p>
+    <ul class="program-list">
+      {#each programs as p (p.id)}
+        <li class="program-row">
+          <div class="program-head">
+            <span class="program-title">{p.display_title}</span>
+            <span class="muted program-sub">
+              {'listed under '}{p.display_name}{' on '}{p.aggregator_name}
+            </span>
+          </div>
+          <button class="link-stop" onclick={() => stopProgram(p)}>Stop</button>
+        </li>
+        {@const mine = offers.filter((o) => o.program_id === p.id)}
+        {#if mine.length === 0}
+          <li class="offer-empty muted">
+            {p.routed
+              ? 'Nothing waiting — every listing is either linked or dismissed.'
+              : `Nothing yet: “${p.display_name}” has not been mapped to a patch, so these listings are not events on this quilt.`}
+          </li>
+        {:else}
+          {#each mine as o (o.event_id)}
+            <li class="offer-row">
+              <div class="offer-info">
+                <span class="offer-when muted">{whenOf(o.starts_at)}</span>
+                <span class="offer-title">{o.title}</span>
+                <span class="muted offer-owner">{'on '}{o.owner_name}</span>
+              </div>
+              <div class="offer-actions">
+                <button
+                  class="btn btn-secondary btn-sm"
+                  disabled={offering[o.event_id]}
+                  onclick={() => proposeLink(o)}
+                >Ask to be added</button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  disabled={offering[o.event_id]}
+                  onclick={() => dismissOffer(o)}
+                >Not ours</button>
+              </div>
+            </li>
+          {/each}
+        {/if}
       {/each}
     </ul>
   {/if}
@@ -457,6 +565,43 @@
   }
 
   .name-list,
+  .program-list { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+  .program-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.7rem 0 0.35rem;
+    border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+  }
+  .program-head { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .program-title { font-weight: 500; }
+  .program-sub { font-size: 0.82rem; }
+  .link-stop {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .link-stop:hover { text-decoration: underline; }
+  .offer-empty { font-size: 0.82rem; padding: 0.15rem 0 0.6rem 1rem; line-height: 1.5; }
+  .offer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0 0.5rem 1rem;
+    flex-wrap: wrap;
+  }
+  .offer-info { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .offer-when { font-size: 0.8rem; }
+  .offer-owner { font-size: 0.8rem; }
+  .offer-actions { display: flex; gap: 0.4rem; }
+
   .hold-list {
     list-style: none;
     padding: 0;

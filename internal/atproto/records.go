@@ -1,4 +1,4 @@
-// Records: reading one collection out of one repository (docs/adr/063).
+// Records: reading one collection out of one repository (docs/adr/064).
 //
 // This is the whole atproto read surface — a listRecords call against the
 // account's own PDS. No relay, no AppView, no firehose (ADR 058's first
@@ -32,7 +32,7 @@ type Record struct {
 
 // Rkey returns the record key — the last path segment of the AT-URI. It is
 // stable for the life of the record, which is what the event reconciler
-// keys on (docs/adr/063 decision 4).
+// keys on (docs/adr/064 decision 4).
 func (r Record) Rkey() string {
 	i := strings.LastIndex(r.URI, "/")
 	if i == -1 || i == len(r.URI)-1 {
@@ -83,7 +83,7 @@ func (r Resolver) ListRecords(pds, did, collection string) ([]Record, error) {
 
 // ParseATURI splits at://<did>/<collection> into its parts. Patchwork
 // stores a source this way so the feed survives a handle rename
-// (docs/adr/063 decision 1).
+// (docs/adr/064 decision 1).
 func ParseATURI(uri string) (did, collection string, err error) {
 	rest, ok := strings.CutPrefix(uri, "at://")
 	if !ok {

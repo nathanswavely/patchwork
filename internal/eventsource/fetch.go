@@ -78,7 +78,7 @@ func fetchFeed(ctx context.Context, feedURL, etag, lastModified string) (*fetchR
 
 // atprotoResolver reads through the same SSRF-guarded client every other
 // outbound fetch in this package uses: a DID document and a PDS endpoint
-// are both addresses a stranger chose (docs/adr/063).
+// are both addresses a stranger chose (docs/adr/064).
 //
 // A var, not a func, so a test can serve canned documents the way
 // ClaimLookupTXT does for claims — a did:web resolves over https by

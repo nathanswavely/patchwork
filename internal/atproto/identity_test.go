@@ -137,7 +137,7 @@ func TestDocURLFor(t *testing.T) {
 	}
 }
 
-// docs/adr/063: the PDS endpoint comes from the DID document's service
+// docs/adr/064: the PDS endpoint comes from the DID document's service
 // entry, and is where listRecords is asked.
 func TestPDSEndpoint(t *testing.T) {
 	doc := &atproto.Doc{Service: []atproto.Service{

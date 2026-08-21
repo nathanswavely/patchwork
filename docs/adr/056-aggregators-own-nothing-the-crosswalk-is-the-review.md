@@ -158,7 +158,7 @@ The decisions:
 - **Vendor APIs or scraping the calendar page.** Tockify publishes ICS,
   as does every aggregator worth taking. ADR 031 settled this.
 
-## Known gap
+## Known gap — closed by ADR 063
 
 A patch cannot discover that a venue's routed calendar names it. ADR
 032's handshake is available to both sides, but neither has a reason to
@@ -170,3 +170,10 @@ matching may *suggest to a human* even though it may never *route*. The
 failure modes differ: a bad route puts a stranger's event on your
 calendar silently, a bad suggestion is dismissed. Worth building when an
 instance is large enough to feel the gap, not before.
+
+**Closed 2026-08-21 by ADR 063.** The line anticipated here is drawn
+there: text may suggest, never route. Two corrections to the paragraph
+above. The mechanism is not text matching — the organization is not named
+anywhere in the feed, so a person recognizes it and the title only groups
+what they recognized. And "candidate list" reads across the glossary onto
+elections; the thing is a **program**, and what it offers is an offer.

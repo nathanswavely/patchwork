@@ -80,7 +80,7 @@ func seedSource(t *testing.T, db *database.DB, feedURL string) string {
 }
 
 // seedSourceOfType is seedSource for any source type — an atproto source
-// carries an at:// URI rather than a feed URL (docs/adr/063).
+// carries an at:// URI rather than a feed URL (docs/adr/064).
 func seedSourceOfType(t *testing.T, db *database.DB, sourceType, feedURL string) string {
 	t.Helper()
 	userID := auth.NewUUIDv7()
