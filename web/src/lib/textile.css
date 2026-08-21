@@ -70,15 +70,20 @@
     inset 0 -1px 2px rgba(0,0,0,0.05),
     0 1px 3px rgba(0,0,0,0.1);
 }
+/* Dark frosted is a lit dark ground, not a white film. A film reads as
+   frosted only over a dark backdrop; these chips float over the quilt,
+   where a 12%-white wash let a magenta tile through and took the label
+   with it. The ground is lighter than --lt-canvas so the pill still
+   lifts off a dark page, and opaque enough to stop the canvas. */
 [data-theme="dark"] .lt-resin-frosted {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(40, 45, 58, 0.88);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-color: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
   box-shadow:
     inset 0 1px 3px rgba(255,255,255,0.12),
     inset 0 -1px 2px rgba(0,0,0,0.3),
-    0 1px 3px rgba(255,255,255,0.03);
+    0 1px 3px rgba(0,0,0,0.35);
 }
 
 /* Tinted resin — colored translucent (set background color on the element) */
