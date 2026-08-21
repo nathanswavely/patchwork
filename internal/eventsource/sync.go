@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
+	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -138,6 +139,35 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 			return nil, nil, err
 		}
 		return items, result, nil
+	}
+
+	// An atproto source names a repository, not a document: resolve the
+	// DID to its PDS and read one collection (docs/adr/063). No
+	// conditional GET — listRecords carries no etag — so this refetches
+	// in full each cycle, which a venue-sized collection can afford.
+	if src.Type == "atproto" {
+		did, collection, err := atproto.ParseATURI(src.URL)
+		if err != nil {
+			return nil, nil, err
+		}
+		res := atprotoResolver()
+		doc, err := res.ResolveDoc(did)
+		if err != nil {
+			return nil, nil, fmt.Errorf("resolve %s: %w", did, err)
+		}
+		pds, err := doc.PDSEndpoint()
+		if err != nil {
+			return nil, nil, err
+		}
+		records, err := res.ListRecords(pds, did, collection)
+		if err != nil {
+			return nil, nil, err
+		}
+		items, err := ParseATProtoEvents(records, now)
+		if err != nil {
+			return nil, nil, err
+		}
+		return items, &fetchResult{}, nil
 	}
 
 	if src.Type == "jsonld" {

@@ -3,15 +3,20 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
+	"github.com/patchwork-toolkit/patchwork/internal/safehttp"
 )
 
 // maxSourcesPerNode bounds how many feeds one patch may pull from.
@@ -113,7 +118,18 @@ func CreateEventSource(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"url is required"}`, http.StatusBadRequest)
 			return
 		}
-		if u, err := url.Parse(req.URL); err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
+		// An atproto handle or AT-URI is a source too (docs/adr/063). It is
+		// resolved here rather than at sync time so the DID — not the
+		// rebindable handle — is what gets stored, and so a typo fails
+		// while somebody is still looking at the screen.
+		sourceType := "ics"
+		if atURI, ok, err := resolveATProtoSource(req.URL); ok {
+			if err != nil {
+				http.Error(w, `{"error":`+jsonString(err.Error())+`}`, http.StatusBadRequest)
+				return
+			}
+			req.URL, sourceType = atURI, "atproto"
+		} else if u, err := url.Parse(req.URL); err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
 			// webcal:// is what calendar apps hand people; accept the
 			// intent rather than teaching everyone to rewrite it.
 			if u, err2 := url.Parse(req.URL); err2 == nil && u.Scheme == "webcal" && u.Host != "" {
@@ -137,8 +153,8 @@ func CreateEventSource(db *database.DB) http.HandlerFunc {
 
 		id := auth.NewUUIDv7()
 		_, err := db.Exec(
-			`INSERT INTO event_sources (id, node_id, type, url, added_by) VALUES (?, ?, 'ics', ?, ?)`,
-			id, nodeID, req.URL, user.ID,
+			`INSERT INTO event_sources (id, node_id, type, url, added_by) VALUES (?, ?, ?, ?, ?)`,
+			id, nodeID, sourceType, req.URL, user.ID,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"this feed is already attached"}`, http.StatusConflict)
@@ -303,4 +319,68 @@ func DetachEvent(db *database.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	}
+}
+
+// resolveATProtoSource recognises the two things a person might paste for
+// an atproto calendar and turns either into the stored AT-URI form
+// (docs/adr/063 decision 1).
+//
+// The second return says "this was meant to be an atproto source" — so a
+// handle that fails to resolve reports why, instead of falling through and
+// being rejected as a malformed URL.
+func resolveATProtoSource(raw string) (string, bool, error) {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return "", false, nil
+	}
+
+	// Already an AT-URI: accept it as given, but insist it names a DID.
+	if strings.HasPrefix(raw, "at://") {
+		did, collection, err := atproto.ParseATURI(raw)
+		if err != nil {
+			return "", true, err
+		}
+		if collection != atproto.EventCollection {
+			return "", true, fmt.Errorf("that collection is not %s", atproto.EventCollection)
+		}
+		return atproto.ATURIFor(did), true, nil
+	}
+
+	// A bare DID.
+	if strings.HasPrefix(raw, "did:") {
+		return atproto.ATURIFor(raw), true, nil
+	}
+
+	// A handle, with or without the leading @. Only treated as one when it
+	// has no scheme and no path — otherwise a pasted https:// calendar URL
+	// would be misread as a domain handle.
+	handle := strings.TrimPrefix(raw, "@")
+	if strings.Contains(handle, "/") || strings.Contains(handle, ":") || !strings.Contains(handle, ".") {
+		return "", false, nil
+	}
+	did, err := eventSourceResolver().ResolveHandle(handle)
+	if err != nil {
+		return "", true, fmt.Errorf("no atproto account found at %s", handle)
+	}
+	return atproto.ATURIFor(did), true, nil
+}
+
+// eventSourceResolver reads through the SSRF-guarded client, like every
+// other outbound fetch this package makes.
+func eventSourceResolver() atproto.Resolver {
+	return atproto.Resolver{
+		LookupTXT: net.LookupTXT,
+		Get:       eventSourceHTTPClient.Get,
+	}
+}
+
+var eventSourceHTTPClient = safehttp.NewClient(15 * time.Second)
+
+// jsonString quotes a string for embedding in a hand-built JSON error.
+func jsonString(s string) string {
+	b, err := json.Marshal(s)
+	if err != nil {
+		return `"error"`
+	}
+	return string(b)
 }

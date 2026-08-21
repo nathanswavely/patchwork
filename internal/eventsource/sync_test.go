@@ -73,8 +73,15 @@ func (f *feedServer) set(body string, status int) {
 	f.mu.Unlock()
 }
 
-// seedSource creates a user, node, and attached source; returns source ID.
+// seedSource creates a user, node, and attached ICS source; returns source ID.
 func seedSource(t *testing.T, db *database.DB, feedURL string) string {
+	t.Helper()
+	return seedSourceOfType(t, db, "ics", feedURL)
+}
+
+// seedSourceOfType is seedSource for any source type — an atproto source
+// carries an at:// URI rather than a feed URL (docs/adr/063).
+func seedSourceOfType(t *testing.T, db *database.DB, sourceType, feedURL string) string {
 	t.Helper()
 	userID := auth.NewUUIDv7()
 	if _, err := db.Exec(
@@ -93,8 +100,8 @@ func seedSource(t *testing.T, db *database.DB, feedURL string) string {
 	}
 	sourceID := auth.NewUUIDv7()
 	if _, err := db.Exec(
-		`INSERT INTO event_sources (id, node_id, type, url, added_by) VALUES (?, ?, 'ics', ?, ?)`,
-		sourceID, nodeID, feedURL, userID,
+		`INSERT INTO event_sources (id, node_id, type, url, added_by) VALUES (?, ?, ?, ?, ?)`,
+		sourceID, nodeID, sourceType, feedURL, userID,
 	); err != nil {
 		t.Fatalf("seed source: %v", err)
 	}

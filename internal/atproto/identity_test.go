@@ -136,3 +136,57 @@ func TestDocURLFor(t *testing.T) {
 		}
 	}
 }
+
+// docs/adr/063: the PDS endpoint comes from the DID document's service
+// entry, and is where listRecords is asked.
+func TestPDSEndpoint(t *testing.T) {
+	doc := &atproto.Doc{Service: []atproto.Service{
+		{ID: "#other", Type: "SomethingElse", ServiceEndpoint: "https://wrong.example"},
+		{ID: "#atproto_pds", Type: "AtprotoPersonalDataServer", ServiceEndpoint: "https://pds.example/"},
+	}}
+	got, err := doc.PDSEndpoint()
+	if err != nil {
+		t.Fatalf("endpoint: %v", err)
+	}
+	if got != "https://pds.example" {
+		t.Errorf("got %q, want the trailing slash trimmed", got)
+	}
+
+	if _, err := (&atproto.Doc{}).PDSEndpoint(); err == nil {
+		t.Error("a document with no PDS must report so")
+	}
+}
+
+// The cursor walk stops when the PDS stops advancing, so a host that
+// repeats a cursor cannot hold the poller open.
+func TestListRecords_PagesAndStops(t *testing.T) {
+	page := func(cursor string, rkeys ...string) string {
+		recs := []string{}
+		for _, k := range rkeys {
+			recs = append(recs, `{"uri":"at://did:web:x/c/`+k+`","cid":"b","value":{}}`)
+		}
+		return `{"records":[` + strings.Join(recs, ",") + `],"cursor":"` + cursor + `"}`
+	}
+	calls := 0
+	r := atproto.Resolver{Get: func(url string) (*http.Response, error) {
+		calls++
+		if strings.Contains(url, "cursor=") {
+			return resp(200, page("stuck", "c")), nil // same cursor: stop
+		}
+		return resp(200, page("stuck", "a", "b")), nil
+	}}
+
+	got, err := r.ListRecords("https://pds.example", "did:web:x", "c")
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if len(got) != 3 {
+		t.Errorf("want 3 records across 2 pages, got %d", len(got))
+	}
+	if calls != 2 {
+		t.Errorf("want the walk to stop on a repeated cursor, made %d calls", calls)
+	}
+	if got[0].Rkey() != "a" {
+		t.Errorf("Rkey = %q", got[0].Rkey())
+	}
+}

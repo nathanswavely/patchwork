@@ -3959,28 +3959,28 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 76,
+          "line": 81,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 101,
+          "line": 106,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 178,
+          "line": 194,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 215,
+          "line": 231,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4816,7 +4816,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 123,
+          "line": 139,
           "kind": "go-error-body",
           "raw": "url must be http(s)",
           "quote": null
@@ -4841,7 +4841,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 144,
+          "line": 160,
           "kind": "go-error-body",
           "raw": "this feed is already attached",
           "quote": null
@@ -5130,35 +5130,35 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 80,
+          "line": 85,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 105,
+          "line": 110,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 182,
+          "line": 198,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 219,
+          "line": 235,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 281,
+          "line": 297,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5834,7 +5834,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 273,
+          "line": 289,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -8187,14 +8187,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 85,
+          "line": 90,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 155,
+          "line": 171,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
@@ -8212,7 +8212,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 113,
+          "line": 118,
           "kind": "go-error-body",
           "raw": "url is required",
           "quote": null
@@ -8230,7 +8230,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 134,
+          "line": 150,
           "kind": "go-error-body",
           "raw": "this patch already has the maximum number of event sources",
           "quote": null
@@ -8248,7 +8248,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 166,
+          "line": 182,
           "kind": "go-error-body",
           "raw": "failed to create event source",
           "quote": null
@@ -8266,21 +8266,21 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 190,
+          "line": 206,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 227,
+          "line": 243,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 253,
+          "line": 269,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
@@ -8298,7 +8298,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 198,
+          "line": 214,
           "kind": "go-error-body",
           "raw": "failed to remove event source",
           "quote": null
@@ -8316,7 +8316,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 232,
+          "line": 248,
           "kind": "go-error-body",
           "raw": "this source just synced — try again in a minute",
           "quote": null
@@ -8334,7 +8334,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 243,
+          "line": 259,
           "kind": "go-error-body",
           "raw": "failed to sync",
           "quote": null
@@ -8352,7 +8352,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 277,
+          "line": 293,
           "kind": "go-error-body",
           "raw": "this event is not attached to an event source",
           "quote": null
@@ -8370,14 +8370,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 290,
+          "line": 306,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 298,
+          "line": 314,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
@@ -17682,7 +17682,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 201,
+          "line": 202,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -37378,11 +37378,11 @@
       ]
     },
     {
-      "id": "b70cb6e1ca27",
-      "text": "Calendar feeds this patch pulls events from. Paste an ICS address (a Google Calendar's secret address, the calendar feed from your website) or an events page from Squarespace, Humanitix, and similar sites. Imported events publish directly and stay in step with the feed.",
-      "words": 43,
+      "id": "6c54f4bcad05",
+      "text": "Calendar feeds this patch pulls events from. Paste an ICS address (a Google Calendar's secret address, the calendar feed from your website), an events page from Squarespace, Humanitix, and similar sites, or an atproto handle whose calendar you want to follow. Imported events publish directly and stay in step with the feed.",
+      "words": 52,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37390,7 +37390,7 @@
           "file": "web/src/pages/PatchSettingsSources.svelte",
           "line": 194,
           "kind": "markup",
-          "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\n    Google Calendar's secret address, the calendar feed from your website)\n    or an events page from Squarespace, Humanitix, and similar sites.\n    Imported events publish directly and stay in step with the feed.",
+          "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\n    Google Calendar's secret address, the calendar feed from your website),\n    an events page from Squarespace, Humanitix, and similar sites, or an\n    atproto handle whose calendar you want to follow.\n    Imported events publish directly and stay in step with the feed.",
           "quote": null
         }
       ]
@@ -37406,7 +37406,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 212,
+          "line": 213,
           "kind": "markup",
           "raw": "First sync in progress…",
           "quote": null
@@ -37424,7 +37424,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 214,
+          "line": 215,
           "kind": "markup",
           "raw": "Sync failed{source.last_error ? `: ${source.last_error}` : ''}",
           "quote": null
@@ -37442,7 +37442,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 218,
+          "line": 219,
           "kind": "markup",
           "raw": "· synced {relTime(source.last_success_at)}",
           "quote": null
@@ -37460,7 +37460,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 240,
+          "line": 241,
           "kind": "markup",
           "raw": "No event sources yet.",
           "quote": null
@@ -37468,19 +37468,19 @@
       ]
     },
     {
-      "id": "510706afee5a",
-      "text": "https://calendar.google.com/calendar/ical/…/basic.ics",
-      "words": 1,
+      "id": "a8d3696b6236",
+      "text": "https://…/basic.ics or an atproto handle",
+      "words": 5,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 246,
+          "line": 251,
           "kind": "attr:placeholder",
-          "raw": "https://calendar.google.com/calendar/ical/…/basic.ics",
+          "raw": "https://…/basic.ics  or  an atproto handle",
           "quote": "\""
         }
       ]
@@ -37496,7 +37496,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 255,
+          "line": 260,
           "kind": "markup",
           "raw": "Removing a source keeps past events and removes upcoming imported ones.",
           "quote": null
@@ -37514,7 +37514,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 260,
+          "line": 265,
           "kind": "markup",
           "raw": "Possible duplicates",
           "quote": null
@@ -37532,7 +37532,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 262,
+          "line": 267,
           "kind": "markup",
           "raw": "Each of these lands at the same time as an event you already have.\n      Yours is the one showing.",
           "quote": null
@@ -37550,7 +37550,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 270,
+          "line": 275,
           "kind": "markup",
           "raw": "Yours:",
           "quote": null
@@ -37568,7 +37568,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 293,
+          "line": 298,
           "kind": "markup",
           "raw": "Listing calendars",
           "quote": null
@@ -37586,7 +37586,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 295,
+          "line": 300,
           "kind": "markup",
           "raw": "Calendars that list events across the community, like the city calendar.\n    Answering to a name brings every event filed under it here from now on.\n    Anything an admin points at you waits in your review queue first. Stop\n    any of them here.",
           "quote": null
@@ -37604,7 +37604,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 310,
+          "line": 315,
           "kind": "markup",
           "raw": "Suggests into your review queue",
           "quote": null
@@ -37622,7 +37622,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 310,
+          "line": 315,
           "kind": "markup",
           "raw": ", set up by {entry.added_by_name}",
           "quote": null
@@ -37640,7 +37640,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 313,
+          "line": 318,
           "kind": "markup",
           "raw": "{entry.pending_count} waiting",
           "quote": null
@@ -37658,7 +37658,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 316,
+          "line": 321,
           "kind": "markup",
           "raw": "{' · '}{entry.event_count} approved",
           "quote": null
@@ -37676,7 +37676,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 319,
+          "line": 324,
           "kind": "markup",
           "raw": "{' · '}updated {relTime(entry.last_success_at)}",
           "quote": null
@@ -37694,7 +37694,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 362,
+          "line": 367,
           "kind": "markup",
           "raw": "No listing calendars are carrying a name this patch could answer to.",
           "quote": null
@@ -41119,6 +41119,42 @@
           "kind": "markup",
           "raw": "yours to seamrip",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b70cb6e1ca27",
+      "text": "Calendar feeds this patch pulls events from. Paste an ICS address (a Google Calendar's secret address, the calendar feed from your website) or an events page from Squarespace, Humanitix, and similar sites. Imported events publish directly and stay in step with the feed.",
+      "words": 43,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 194,
+          "kind": "markup",
+          "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\n    Google Calendar's secret address, the calendar feed from your website)\n    or an events page from Squarespace, Humanitix, and similar sites.\n    Imported events publish directly and stay in step with the feed.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "510706afee5a",
+      "text": "https://calendar.google.com/calendar/ical/…/basic.ics",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 246,
+          "kind": "attr:placeholder",
+          "raw": "https://calendar.google.com/calendar/ical/…/basic.ics",
+          "quote": "\""
         }
       ]
     }

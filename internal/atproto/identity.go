@@ -30,8 +30,31 @@ const (
 
 // Doc is the subset of a DID document this project reads.
 type Doc struct {
-	ID          string   `json:"id"`
-	AlsoKnownAs []string `json:"alsoKnownAs"`
+	ID          string    `json:"id"`
+	AlsoKnownAs []string  `json:"alsoKnownAs"`
+	Service     []Service `json:"service"`
+}
+
+// Service is a DID document service entry. The one this project wants is
+// the account's personal data server, which is where its records live.
+type Service struct {
+	ID              string `json:"id"`
+	Type            string `json:"type"`
+	ServiceEndpoint string `json:"serviceEndpoint"`
+}
+
+// PDSEndpoint returns the account's personal data server, the host that
+// answers XRPC reads for this repository (docs/adr/063).
+func (d *Doc) PDSEndpoint() (string, error) {
+	if d == nil {
+		return "", errors.New("no DID document")
+	}
+	for _, svc := range d.Service {
+		if svc.Type == "AtprotoPersonalDataServer" && svc.ServiceEndpoint != "" {
+			return strings.TrimSuffix(svc.ServiceEndpoint, "/"), nil
+		}
+	}
+	return "", errors.New("DID document names no personal data server")
 }
 
 // LookupTXT and Get are the two external seams, swappable in tests. Get is
@@ -107,9 +130,23 @@ func DocURLFor(did string) (string, error) {
 	return "https://" + host + "/" + strings.Join(parts[1:], "/") + "/did.json", nil
 }
 
-// ResolveDoc fetches and parses a did:web document.
+// plcDirectory resolves did:plc identifiers. Unlike did:web, which is
+// served from the domain itself, a did:plc means nothing without asking
+// this registry — which is exactly why docs/adr/062 refuses did:plc for a
+// patch's OWN identity. Reading somebody's calendar adopts nothing, so it
+// is allowed here (docs/adr/063 decision 2).
+const plcDirectory = "https://plc.directory"
+
+// ResolveDoc fetches and parses a DID document, for did:web or did:plc.
 func (r Resolver) ResolveDoc(did string) (*Doc, error) {
-	url, err := DocURLFor(did)
+	var url string
+	var err error
+	switch {
+	case strings.HasPrefix(did, "did:plc:"):
+		url = plcDirectory + "/" + did
+	default:
+		url, err = DocURLFor(did)
+	}
 	if err != nil {
 		return nil, err
 	}
