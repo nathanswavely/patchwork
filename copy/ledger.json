@@ -19031,7 +19031,7 @@
           "file": "web/src/components/MapLocationPicker.svelte",
           "line": 122,
           "kind": "markup",
-          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n    precisely or as loosely as you like. Nothing is saved until you hit\n    Save location.",
+          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\r\n    precisely or as loosely as you like. Nothing is saved until you hit\r\n    Save location.",
           "quote": null
         }
       ]
@@ -19128,7 +19128,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -19164,7 +19164,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
         }
       ]
@@ -21648,7 +21648,7 @@
       "text": "Search the handle in Mastodon to follow new events there. Replies don't reach the patch. The address belongs to {getInstanceName()}, so it doesn't travel if this community moves to another quilt.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22822,7 +22822,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 377,
+          "line": 380,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -24116,7 +24116,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 220,
+          "line": 219,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -24173,7 +24173,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 221,
+          "line": 220,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -24457,7 +24457,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 192,
+          "line": 191,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -27310,7 +27310,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
+          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -27661,7 +27661,7 @@
       "text": "The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27697,7 +27697,7 @@
       "text": "Represents this quilt in the quilt switcher and in other people's Connected Quilts. Draft it here, in the same drafter patches use for their tiles.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27841,7 +27841,7 @@
       "text": "Every patch starts with the lining and can amend its copy by proposal. Amended patches always wear a public badge; this policy also keeps them out of the quilt, search, the map, and public feeds for everyone. Direct links still work.",
       "words": 41,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27873,22 +27873,23 @@
       ]
     },
     {
-      "id": "386212c71850",
-      "text": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind — as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory. That's an ops practice, not this export.",
-      "words": 69,
+      "id": "24a43049dee2",
+      "text": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.",
+      "words": 61,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 358,
+          "line": 363,
           "kind": "markup",
-          "raw": "Download this quilt's portable community data as a zip: patches, people,\n          memberships, events, proposals with votes, and governance records.\n                                                                       \n                                                               \n          Credentials, sessions, and federation keys deliberately stay behind —\n          as do followers from other sites, since the addresses they follow\n          belong to this quilt rather than to the patches.\n          For a full backup of the deployment itself, back up the server's data\n          directory. That's an ops practice, not this export.",
+          "raw": "Download this quilt's portable community data as a zip: patches, people,\n          memberships, events, proposals with votes, and governance records.\n          Credentials, sessions, and federation keys deliberately stay behind —\n          as do followers from other sites, since the addresses they follow\n          belong to this quilt rather than to the patches.\n          For a full backup of the deployment itself, back up the server's data\n          directory. That's an ops practice, not this export.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind — as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory. That's an ops practice, not this export."
     },
     {
       "id": "e3c128d00bbc",
@@ -27901,7 +27902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 379,
+          "line": 382,
           "kind": "markup",
           "raw": "Wipe this quilt",
           "quote": null
@@ -27919,7 +27920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 382,
+          "line": 385,
           "kind": "markup",
           "raw": "Erases",
           "quote": null
@@ -27937,7 +27938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 382,
+          "line": 385,
           "kind": "markup",
           "raw": "all community data",
           "quote": null
@@ -27949,13 +27950,13 @@
       "text": ": every patch, person, event, proposal, and governance record. The deployment returns to first-run. The server, domain, and configuration survive. The community's data does not. This cannot be undone. Download an export first.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 382,
+          "line": 385,
           "kind": "markup",
           "raw": ": every patch, person, event,\n          proposal, and governance record. The deployment returns to first-run.\n          The server, domain, and configuration survive. The community's data\n          does not. This cannot be undone. Download an export first.",
           "quote": null
@@ -27973,7 +27974,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 388,
+          "line": 391,
           "kind": "markup",
           "raw": "Type the quilt name to confirm:",
           "quote": null
@@ -27991,7 +27992,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 407,
+          "line": 410,
           "kind": "markup",
           "raw": "Really erase everything? You will be signed out.",
           "quote": null
@@ -28201,7 +28202,7 @@
       "text": "This clears the patch's chosen tile, so the quilt decides its look again. The patch itself is untouched.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28409,7 +28410,7 @@
       "text": "Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28553,7 +28554,7 @@
       "text": "The vocabulary patch admins tag their patches with. Tags power discovery and pull patches with shared tags together on the quilt. A tag's motif is the mark shown for patches that chose no motif of their own. Deleting a tag removes it from every patch wearing it.",
       "words": 47,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28561,7 +28562,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -28747,11 +28748,11 @@
       ]
     },
     {
-      "id": "f1b17f263f8e",
-      "text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth. No email required.",
-      "words": 25,
+      "id": "44478689e560",
+      "text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
+      "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28759,10 +28760,11 @@
           "file": "web/src/pages/AdminUsers.svelte",
           "line": 173,
           "kind": "markup",
-          "raw": "Generate a link to invite someone to this Patchwork. Share it wherever\n      your community talks: a message, a flyer, word of mouth. No email required.",
+          "raw": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth. No email required."
     },
     {
       "id": "4d761fbe8572",
@@ -28775,7 +28777,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 178,
+          "line": 177,
           "kind": "markup",
           "raw": "Max uses",
           "quote": null
@@ -28793,7 +28795,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 182,
+          "line": 181,
           "kind": "markup",
           "raw": "Expires in (hours, 0 = never)",
           "quote": null
@@ -28805,13 +28807,13 @@
       "text": "This link is shown once, so copy it now. Anyone with it can create an account.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 195,
+          "line": 194,
           "kind": "markup",
           "raw": "This link is shown once, so copy it now. Anyone with it can create an account.",
           "quote": null
@@ -28829,7 +28831,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 203,
+          "line": 202,
           "kind": "attr:placeholder",
           "raw": "Search by name or email...",
           "quote": "\""
@@ -28847,7 +28849,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 214,
+          "line": 213,
           "kind": "markup",
           "raw": "No users found.",
           "quote": null
@@ -28865,7 +28867,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 222,
+          "line": 221,
           "kind": "markup",
           "raw": "Role",
           "quote": null
@@ -28883,7 +28885,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 223,
+          "line": 222,
           "kind": "markup",
           "raw": "Trusted Contributor",
           "quote": null
@@ -28901,7 +28903,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 224,
+          "line": 223,
           "kind": "markup",
           "raw": "Joined",
           "quote": null
@@ -28919,7 +28921,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 225,
+          "line": 224,
           "kind": "markup",
           "raw": "Status",
           "quote": null
@@ -28937,7 +28939,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 226,
+          "line": 225,
           "kind": "markup",
           "raw": "Actions",
           "quote": null
@@ -28955,7 +28957,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 247,
+          "line": 246,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -28987,7 +28989,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 248,
+          "line": 247,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -29019,7 +29021,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 261,
+          "line": 260,
           "kind": "markup",
           "raw": "Trusted",
           "quote": null
@@ -29037,7 +29039,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 280,
+          "line": 279,
           "kind": "markup",
           "raw": "Suspended",
           "quote": null
@@ -29055,7 +29057,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 282,
+          "line": 281,
           "kind": "markup",
           "raw": "Active",
           "quote": null
@@ -33005,7 +33007,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -33148,14 +33150,14 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 151,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         }
       ]
@@ -33521,7 +33523,7 @@
       "text": "Federating. Public patches here can be followed from Mastodon and other ActivityPub sites.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33539,7 +33541,7 @@
       "text": "Not federating. Patches here can't be followed from other sites.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33557,7 +33559,7 @@
       "text": "Readable by other quilts. Their sites can show this quilt's public patches and events alongside their own.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33575,7 +33577,7 @@
       "text": "Not readable by other quilts. They can link here, but people have to follow the link to see anything.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33680,11 +33682,11 @@
       "previous_ai_text": "Real people run this, and real people sometimes run things badly. So the exit is built in: any member can export what they can already see and start the community over somewhere else, under different stewards. Nobody has to ask first."
     },
     {
-      "id": "4536d54d1af6",
-      "text": "What travels is the community — members, events, charters, and the threads between patches. What doesn't is this quilt's addresses: a patch that leaves keeps its people and starts over with the followers it had on other sites.",
-      "words": 38,
+      "id": "769c81f84462",
+      "text": "Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites.",
+      "words": 35,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33692,10 +33694,11 @@
           "file": "web/src/pages/Label.svelte",
           "line": 186,
           "kind": "markup",
-          "raw": "What travels is the community — members, events, charters, and the\n          threads between patches. What doesn't is this quilt's addresses: a\n          patch that leaves keeps its people and starts over with the\n          followers it had on other sites.",
+          "raw": "Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "What travels is the community — members, events, charters, and the threads between patches. What doesn't is this quilt's addresses: a patch that leaves keeps its people and starts over with the followers it had on other sites."
     },
     {
       "id": "3d2301d732a7",
@@ -33800,7 +33803,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -34229,7 +34232,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
           "quote": null
         }
       ]
@@ -35818,7 +35821,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -35908,7 +35911,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -37596,7 +37599,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -37668,7 +37671,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
           "quote": null
         }
       ]
@@ -39313,7 +39316,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
           "quote": null
         }
       ]
@@ -39457,7 +39460,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
           "quote": null
         }
       ]
@@ -39475,7 +39478,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
           "quote": null
         }
       ]
@@ -39529,7 +39532,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
           "quote": null
         }
       ]
@@ -39583,7 +39586,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
           "quote": null
         }
       ]
@@ -39709,7 +39712,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 129,
           "kind": "markup",
-          "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
+          "raw": "No account was created yet. Request a new sign-in link and\r\n          you'll be right back here.",
           "quote": null
         }
       ]
@@ -39763,7 +39766,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 174,
           "kind": "markup",
-          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
+          "raw": ". Pick the name\r\n          you'll go by here. It becomes your profile address, so it\r\n          can't change later.",
           "quote": null
         }
       ]

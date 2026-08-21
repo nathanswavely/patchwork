@@ -183,10 +183,7 @@
              so the community travels and its audience does not. Only worth
              saying where there is an audience to lose. -->
         <p class="door-cost muted">
-          What travels is the community — members, events, charters, and the
-          threads between patches. What doesn't is this quilt's addresses: a
-          patch that leaves keeps its people and starts over with the
-          followers it had on other sites.
+          Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites.
         </p>
       {/if}
     </section>

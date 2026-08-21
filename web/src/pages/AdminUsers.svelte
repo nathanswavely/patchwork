@@ -170,8 +170,7 @@
   <section class="invite-section card">
     <h2>Invite Links</h2>
     <p class="muted">
-      Generate a link to invite someone to this Patchwork. Share it wherever
-      your community talks: a message, a flyer, word of mouth. No email required.
+      Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
     </p>
     <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
       <label>
