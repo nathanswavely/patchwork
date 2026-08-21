@@ -37382,7 +37382,7 @@
       "text": "Calendar feeds this patch pulls events from. Paste an ICS address (a Google Calendar's secret address, the calendar feed from your website), an events page from Squarespace, Humanitix, and similar sites, or an atproto handle whose calendar you want to follow. Imported events publish directly and stay in step with the feed.",
       "words": 52,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
