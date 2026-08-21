@@ -83,14 +83,39 @@
   const LABEL_MIN_PX = 52;
   // Name badge shape comes from its name alone (CONTEXT.md "Name badge") —
   // constant text cap, no tie to tile size or screen position.
-  const LABEL_TEXT_MAX = 140;
+  //
+  // The cap is deliberately narrow and the line budget deliberately deep.
+  // Two adjacent tiles both earn a badge only when the tile pitch clears
+  // `widest pill + LABEL_GAP`, so the WIDEST name governs how far in one
+  // has to zoom before a row stops alternating label/no-label. Tiles are
+  // square and a pill is wide and short, so wrapping spends the dimension
+  // that has room: across the Lancaster instance's names, 110/3 lines puts
+  // the widest pill at 126px against 158px for the old 140/2, and the
+  // vertical requirement never binds (~93px against ~158px horizontal).
+  //
+  // The two move together or not at all. Lowering the cap alone does not
+  // narrow the longest names — their balanced two-line split is already at
+  // the ceiling — it ellipsises them. At 110/2 ten of 44 names clip; at
+  // 110/3 none do, including one ("Long's Park Amphitheater Foundation")
+  // that was already clipping at 140/2.
+  // The width cap, as a multiple of the badge's own font size rather than a
+  // pixel count: 8.5em is the 110px that was measured against the old 13px
+  // type, and stated this way it follows --pw-label-font wherever that lands
+  // instead of quietly becoming a different cap at a different size.
+  const LABEL_TEXT_EM = 8.5;
+  const LABEL_MAX_LINES = 3;
   // Minimum visible quilt between placed badges; a rival badge that can't
   // clear this gap stays hidden until a closer zoom. Sized by eye against a
   // dense quilt: a name-only pill is ~65px narrower than the old motif-and-
   // role one, so at the pre-corner-mark gap of 12 many more badges cleared
   // collision and the quilt went back to being papered in them.
+  //
+  // Left at 32 when the cap above came down, having been measured rather
+  // than assumed: against the narrowed pills, dropping this to 20 bought
+  // exactly one more badge across the crowded zooms (25 against 24 at the
+  // densest) and spent every pixel of breathing room to do it. The cap is
+  // the lever here; this is not.
   const LABEL_GAP = 32;
-  const LABEL_FONT = '600 13px "Space Grotesk Variable", system-ui, sans-serif';
   // Corner marks: an on-screen size, like a name badge, not a share of the
   // tile — see updateCornerMarks. MARK_PX is the diameter one wants,
   // MARK_INSET its gap from the tile's corner, both in canonical units
@@ -125,33 +150,134 @@
   const BASE_UNIT_DRIFT = 0.1;
 
   // Measured badge text metrics, cached per name (names don't change
-  // mid-session; the cache is busted once when the display font loads).
+  // mid-session; the cache is busted when the display font loads, and when
+  // the type metrics below move under it).
   let measureCtx = null;
   const measureCache = new Map();
+
+  /**
+   * The badge's own computed type and box, read from a throwaway element
+   * wearing the class rather than restated here.
+   *
+   * These numbers exist in the stylesheet already, and a second copy in JS
+   * is a copy that goes stale: the pill is rem-based, so its font size is
+   * the reader's to change, and the width cap, the pill footprint, and the
+   * collision test all hang off it. Read once and cached — getComputedStyle
+   * is a layout read and updateLabels runs on every pan tick.
+   */
+  let labelType = null;
+
+  function badgeType() {
+    if (labelType) return labelType;
+    const probe = document.createElement('div');
+    probe.className = 'patch-label';
+    probe.style.cssText = 'position:absolute;left:-9999px;top:-9999px;visibility:hidden';
+    document.body.appendChild(probe);
+    const cs = getComputedStyle(probe);
+    const fontSize = parseFloat(cs.fontSize) || 13;
+    const lineH = parseFloat(cs.lineHeight) || Math.round(fontSize * 1.3);
+    labelType = {
+      fontSize,
+      font: `${cs.fontWeight} ${fontSize}px ${cs.fontFamily}`,
+      lineH,
+      textMax: Math.round(fontSize * LABEL_TEXT_EM),
+      // Horizontal and vertical chrome: what the pill adds around its text.
+      chromeX: (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0)
+        + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.borderRightWidth) || 0),
+      chromeY: (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0)
+        + (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0),
+    };
+    probe.remove();
+    return labelType;
+  }
+
+  /** Type moved under us — remeasure everything that was derived from it. */
+  function resetBadgeType() {
+    labelType = null;
+    measureCache.clear();
+  }
+
+  /**
+   * Catch the badge's type moving under us. Two ways it can: the reader
+   * changes their default text size (the pill is in rem), or the pill's own
+   * size becomes viewport-dependent — a narrow-screen badge is the obvious
+   * next thing to want here, and it would move at a breakpoint the root font
+   * size never notices.
+   *
+   * So compare what the badge actually computes to, not the root it derives
+   * from. Neither event announces itself, but both arrive with the reflow a
+   * resize reports. Compared rather than reset unconditionally: a drag-resize
+   * is a stream of these, and remeasuring every name per frame is waste.
+   */
+  function syncBadgeType() {
+    const was = labelType ? labelType.fontSize : 0;
+    labelType = null;
+    const now = badgeType().fontSize;
+    if (was && Math.abs(now - was) < 0.5) return false;
+    measureCache.clear();
+    return true;
+  }
+
+  /**
+   * Narrowest balanced width for `words` broken into exactly `lines` lines —
+   * the width of the longest line under the best split, mirroring what CSS
+   * `text-wrap: balance` will do inside the pill.
+   *
+   * Recursive with a memo rather than a scan of split points: at two lines
+   * those are the same thing, but at three the choices interact, and taking
+   * the greedy split first can strand a long tail word on its own line.
+   */
+  function balancedWidth(words, lines, from, memo) {
+    if (lines === 1) return measureCtx.measureText(words.slice(from).join(' ')).width;
+    // One slot per (start word, lines remaining); lines is small and bounded
+    // by LABEL_MAX_LINES, so the stride only has to clear it.
+    const key = from * 8 + lines;
+    const hit = memo.get(key);
+    if (hit !== undefined) return hit;
+    let best = Infinity;
+    // Leave at least one word for each remaining line.
+    for (let end = from + 1; end <= words.length - (lines - 1); end++) {
+      const head = measureCtx.measureText(words.slice(from, end).join(' ')).width;
+      // A line already wider than the best full answer can't be beaten by
+      // whatever follows it — max() is monotone in this term.
+      if (head >= best) break;
+      best = Math.min(best, Math.max(head, balancedWidth(words, lines - 1, end, memo)));
+    }
+    memo.set(key, best);
+    return best;
+  }
 
   function measureBadgeText(name) {
     let m = measureCache.get(name);
     if (m) return m;
     if (!measureCtx) measureCtx = document.createElement('canvas').getContext('2d');
-    measureCtx.font = LABEL_FONT;
+    const { font, textMax } = badgeType();
+    measureCtx.font = font;
     const full = measureCtx.measureText(name).width;
-    if (full <= LABEL_TEXT_MAX) {
-      m = { textW: Math.ceil(full), lines: 1 };
-    } else {
-      // Two lines, balanced: mirror the CSS `text-wrap: balance` by taking
-      // the word split that minimizes the longer line, so the pill hugs the
-      // balanced width instead of sitting at the cap. +2px slack absorbs
-      // canvas-vs-layout rounding.
-      const words = name.split(/\s+/);
-      let best = full;
-      for (let i = 1; i < words.length; i++) {
-        const a = measureCtx.measureText(words.slice(0, i).join(' ')).width;
-        const b = measureCtx.measureText(words.slice(i).join(' ')).width;
-        best = Math.min(best, Math.max(a, b));
-      }
-      m = { textW: Math.min(Math.ceil(best) + 2, LABEL_TEXT_MAX), lines: 2 };
+    if (full <= textMax) {
+      measureCache.set(name, (m = { textW: Math.ceil(full), lines: 1 }));
+      return m;
     }
-    measureCache.set(name, m);
+    // Spend the fewest lines that get the name under the cap, so a two-word
+    // name never sprawls to three. The pill then hugs that balanced width
+    // instead of sitting at the cap; +2px slack absorbs canvas-vs-layout
+    // rounding.
+    const words = name.split(/\s+/);
+    for (let lines = 2; lines <= LABEL_MAX_LINES; lines++) {
+      if (words.length < lines) break;
+      const best = balancedWidth(words, lines, 0, new Map());
+      if (best <= textMax) {
+        measureCache.set(name, (m = { textW: Math.ceil(best) + 2, lines }));
+        return m;
+      }
+    }
+    // Nothing fits on word boundaries: one unbroken word, or more name than
+    // the budget holds. Sit at the cap and let word-break/line-clamp take it
+    // mid-word — estimating the line count from the run length rather than
+    // always claiming the maximum, so a name that overshoots by a little
+    // doesn't get a pill sized for one that overshoots by a lot.
+    const wrapped = Math.min(Math.ceil(full / textMax), LABEL_MAX_LINES);
+    measureCache.set(name, (m = { textW: textMax, lines: Math.max(2, wrapped) }));
     return m;
   }
 
@@ -1195,15 +1321,19 @@
     const label = document.createElement('div');
     label.className = 'patch-label lt-vellum';
 
-    // Text: name only, 2-line ellipsis. Wrapped names get an explicit
-    // width — the measured balanced width — so the pill hugs the text
-    // instead of every two-liner rendering at the full cap.
+    // Text: name only, clamped to the line count it was measured at. A
+    // wrapped name gets an explicit width — the measured balanced width —
+    // so the pill hugs the text instead of every wrapped name rendering at
+    // the full cap. The clamp has to travel with the measurement: a name
+    // measured at three lines and clamped at two renders an ellipsis inside
+    // a pill built tall enough to hold it.
     const nameSpan = document.createElement('span');
     nameSpan.className = 'label-name';
-    if (lines === 2) {
+    nameSpan.style.webkitLineClamp = String(lines);
+    if (lines > 1) {
       nameSpan.style.width = textW + 'px';
     } else {
-      nameSpan.style.maxWidth = LABEL_TEXT_MAX + 'px';
+      nameSpan.style.maxWidth = badgeType().textMax + 'px';
     }
     nameSpan.textContent = tile.data.name || '';
     label.appendChild(nameSpan);
@@ -1307,9 +1437,11 @@
       const name = tile.data.name || '';
       const { textW, lines } = measureBadgeText(name);
       const role = quiltScope === 'local' ? myPatchRoles.get(tile.data.slug) : undefined;
-      const labelW = textW + 16;
-      // Height: padding (3+3) + borders (2×2) + lines × 17.
-      const labelH = 10 + lines * 17;
+      // Footprint from the pill's own computed box, not restated constants —
+      // it is rem-based and the reader can move it.
+      const { chromeX, chromeY, lineH } = badgeType();
+      const labelW = textW + chromeX;
+      const labelH = chromeY + lines * lineH;
 
       // Collision check against already-placed labels. Placed rects are
       // stored inflated by LABEL_GAP, so a rival only lands when there is
@@ -1484,8 +1616,12 @@
 
     const { vw, vh } = getContainerSize();
     if (!vw || !vh) return; // Still collapsed — wait for a real size.
-    // Sub-pixel reflows shouldn't restart the pop-in animation.
-    if (Math.abs(vw - lastBuiltW) < 2 && Math.abs(vh - lastBuiltH) < 2) return;
+    // Badge type first: if it moved, every measured footprint below is stale.
+    const typeMoved = syncBadgeType();
+    // Sub-pixel reflows shouldn't restart the pop-in animation — unless the
+    // type moved, in which case the badges on screen are the wrong size.
+    if (!typeMoved && Math.abs(vw - lastBuiltW) < 2 && Math.abs(vh - lastBuiltH) < 2) return;
+    if (typeMoved) { dropAllLabels(); updateLabels(); }
 
     // A rebuild is only warranted when the tiles would come out meaningfully
     // different — that is, when baseUnit drifts. The packing ignores the
@@ -1578,7 +1714,7 @@
     // Text measured before the display font loads used the fallback font's
     // metrics — remeasure once real metrics exist.
     document.fonts?.ready?.then(() => {
-      measureCache.clear();
+      resetBadgeType();
       // The badges on screen were sized from those metrics, and reuse can't see
       // that the numbers moved — so make this pass build them again.
       dropAllLabels();
@@ -1749,9 +1885,13 @@
     width: max-content;
     transform: translate(-50%, -50%);
     color: var(--color-label-text);
-    padding: 3px 6px;
-    border-radius: 6px;
-    font-size: 13px;
+    /* Padding and radius in em so the chip keeps its proportions at whatever
+       size --pw-label-font resolves to; the seam stays a hairline, which is
+       what a 20px pill can carry without the border reading as the loudest
+       thing in it. */
+    padding: 0.2em 0.4em;
+    border-radius: 0.5em;
+    font-size: var(--pw-label-font);
     font-weight: 600;
     pointer-events: auto;
     cursor: pointer;
@@ -1762,7 +1902,7 @@
     justify-content: center;
     text-align: center;
     line-height: 1.3;
-    border: 2px solid var(--lt-thread);
+    border: 1px solid var(--lt-thread);
     font-family: 'Space Grotesk Variable', system-ui, sans-serif;
     color: var(--color-text);
   }
@@ -1787,14 +1927,18 @@
   }
 
   :global(.patch-label .label-name) {
-    font-size: 13px;
+    /* Inherits the pill's font-size deliberately — badgeType() measures the
+       pill and the text has to be the size that measurement assumed. A second
+       declaration here is how the box and its contents drift apart. */
     display: -webkit-box;
+    /* Overridden per badge to the line count it was measured at. */
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* Even two-line splits; mid-word breaks stay as the escape hatch for
-       pathological unbroken strings only. */
+    /* Even splits across however many lines the name was measured at;
+       mid-word breaks stay as the escape hatch for pathological unbroken
+       strings only. */
     text-wrap: balance;
     word-break: break-word;
     min-width: 0;

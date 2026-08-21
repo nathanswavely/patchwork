@@ -50,6 +50,18 @@
                 list). Replaces 640/680/760.
        wide — editors and diffs, which are not prose and want the room.
                 Replaces 800/1000. */
+  /* Quilt name badge type. In rem on purpose: the badge is the densest text
+     in the app and the only place we deliberately go below body size, so a
+     reader who has raised their default text size has to get a bigger badge
+     rather than a permanently 11px one. Everything that depends on it —
+     the pill's width cap, its measured footprint, the collision test — is
+     read back from the computed value rather than restated as a constant.
+     0.6875rem is 11px at a 16px root — the stop, not a starting guess: 13px
+     to 11px moved the densest zoom from 25 badges to 28, and 11px to 10px
+     moved it to 29. The lever is spent by 11, and 10 is below where common
+     design-system floors put label text on a busy ground. */
+  --pw-label-font: 0.6875rem;
+
   --pw-measure-narrow: 54ch;
   --pw-measure: 66ch;
   --pw-measure-wide: 90ch;
