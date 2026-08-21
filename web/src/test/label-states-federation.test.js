@@ -16,44 +16,58 @@ function source(relPath) {
 describe('the Label states whether the quilt federates (docs/adr/061)', () => {
   const src = source('pages/Label.svelte');
 
-  it('states it in both directions, not only the flattering one', () => {
-    expect(src).toMatch(/Federating\. Public patches here can be followed/);
-    expect(src).toMatch(/Not federating\. Patches here can't be followed/);
-  });
+  // The wording of every string below belongs to whoever holds the copy
+  // ledger (tools/copy-ledger), and it has already been rewritten once.
+  // So these assert the *decision* — that both directions are stated, and
+  // that neither capability is derived from the other — rather than the
+  // sentences, which are free to change without breaking the suite.
+  function branchesOf(flag) {
+    const at = src.indexOf(`{#if label.${flag}}`);
+    if (at === -1) return null;
+    const end = src.indexOf('{/if}', at);
+    const body = src.slice(at, end);
+    const split = body.indexOf('{:else}');
+    if (split === -1) return null;
+    const strip = (t) => t.replace(/\{[^}]*\}/g, '').replace(/<[^>]*>/g, '').trim();
+    return { affirmative: strip(body.slice(0, split)), negative: strip(body.slice(split)) };
+  }
 
-  it('states multi-quilt in both directions too, on its own line', () => {
-    // docs/adr/061 decision 5: federation is whether the quilt can be
-    // followed, multi-quilt whether it can be read. Independent facts.
-    expect(src).toMatch(/Readable by other quilts\./);
-    expect(src).toMatch(/Not readable by other quilts\./);
-    expect(src).toMatch(/\{#if label\.multi_quilt\}/);
+  it('states each capability in both directions, not only the flattering one', () => {
+    // docs/adr/061 decision 3: a line that renders only when the answer is
+    // yes is marketing, not a label. Both branches must carry real text.
+    for (const flag of ['federation', 'multi_quilt']) {
+      const b = branchesOf(flag);
+      expect(b, `${flag} has no {#if}/{:else} pair`).not.toBeNull();
+      expect(b.affirmative.length).toBeGreaterThan(20);
+      expect(b.negative.length).toBeGreaterThan(20);
+      expect(b.negative).not.toBe(b.affirmative);
+    }
   });
 
   it('never derives one capability from the other', () => {
-    // A single {#if} covering both lines would make a followable quilt
-    // claim to be readable, which is a lie the config can't produce.
-    const federationIf = (src.match(/\{#if label\.federation\}/g) || []).length;
-    const multiIf = (src.match(/\{#if label\.multi_quilt\}/g) || []).length;
-    expect(federationIf).toBeGreaterThanOrEqual(1);
-    expect(multiIf).toBe(1);
+    // docs/adr/061 decision 5: federation is whether the quilt can be
+    // followed, multi-quilt whether it can be read. One {#if} covering both
+    // would make a followable quilt claim to be readable — a state the
+    // config cannot actually produce.
+    expect((src.match(/\{#if label\.multi_quilt\}/g) || []).length).toBe(1);
+    expect((src.match(/\{#if label\.federation\}/g) || []).length).toBeGreaterThanOrEqual(1);
   });
 
-  it('puts it with the materials, beside the running version', () => {
+  it('puts them with the materials, beside the running version', () => {
     // "What this runs on" already ends with a derived, unstored fact.
     const runsOn = src.slice(src.indexOf('Running Patchwork'), src.indexOf('Running Patchwork') + 1200);
     expect(runsOn).toMatch(/label\.federation/);
     expect(runsOn).toMatch(/label\.multi_quilt/);
   });
 
-  it('prices the exit where the exit is described', () => {
-    // docs/adr/060: the community travels and the audience does not.
-    expect(src).toMatch(/What travels is the community/);
-    expect(src).toMatch(/starts over with the\s+followers it had on other sites/);
-  });
-
-  it('only prices the exit when there is an audience to lose', () => {
+  it('prices the exit where the exit is described, only when there is an audience to lose', () => {
+    // docs/adr/060: the community travels and the audience does not. The
+    // sentence is the stewards' to write; what must not quietly vanish is
+    // the paragraph, its gate, and the fact it names.
     const door = src.slice(src.indexOf('class="the-door"'));
+    expect(door).toMatch(/class="door-cost\b/);
     expect(door).toMatch(/\{#if label\.federation\}/);
+    expect(door).toMatch(/followers/i);
   });
 });
 
