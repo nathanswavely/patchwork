@@ -80,6 +80,7 @@ several branches are in flight.
 |---|----------|
 | [008](008-ledger-and-commons.md) | The ledger and the commons — earmarked contributions, not stored value |
 | [019](019-self-hosted-mail-spike.md) | Self-hosted mail sidecar — spike plan |
+| [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only |
 
 ## Rejected after evaluation
 
