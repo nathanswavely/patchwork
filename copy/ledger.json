@@ -4399,28 +4399,28 @@
         },
         {
           "file": "internal/handler/label.go",
-          "line": 266,
+          "line": 284,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 381,
+          "line": 399,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 454,
+          "line": 472,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 540,
+          "line": 558,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -9266,14 +9266,14 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 272,
+          "line": 290,
           "kind": "go-error-body",
           "raw": "failed to save label",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 280,
+          "line": 298,
           "kind": "go-error-body",
           "raw": "failed to save label",
           "quote": null
@@ -9291,7 +9291,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 288,
+          "line": 306,
           "kind": "go-error-body",
           "raw": "prose must be 20000 characters or fewer",
           "quote": null
@@ -9309,7 +9309,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 297,
+          "line": 315,
           "kind": "go-error-body",
           "raw": "support link must be an http(s) URL",
           "quote": null
@@ -9327,7 +9327,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 306,
+          "line": 324,
           "kind": "go-error-body",
           "raw": "feedback link must be an http(s) URL",
           "quote": null
@@ -9345,7 +9345,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 316,
+          "line": 334,
           "kind": "go-error-body",
           "raw": "currency must be a 3-letter code",
           "quote": null
@@ -9363,7 +9363,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 333,
+          "line": 351,
           "kind": "go-error-body",
           "raw": "seamripped-from link must be an http(s) URL",
           "quote": null
@@ -9381,7 +9381,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 348,
+          "line": 366,
           "kind": "go-error-body",
           "raw": "the Label needs at least one listed steward before it can publish",
           "quote": null
@@ -9399,7 +9399,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 353,
+          "line": 371,
           "kind": "go-error-body",
           "raw": "failed to publish",
           "quote": null
@@ -9417,7 +9417,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 359,
+          "line": 377,
           "kind": "go-error-body",
           "raw": "failed to unpublish",
           "quote": null
@@ -9435,7 +9435,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 385,
+          "line": 403,
           "kind": "go-error-body",
           "raw": "too many cost items",
           "quote": null
@@ -9453,7 +9453,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 392,
+          "line": 410,
           "kind": "go-error-body",
           "raw": "every cost item needs a service name",
           "quote": null
@@ -9471,7 +9471,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 396,
+          "line": 414,
           "kind": "go-error-body",
           "raw": "amounts cannot be negative",
           "quote": null
@@ -9489,7 +9489,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 400,
+          "line": 418,
           "kind": "go-error-body",
           "raw": "period must be monthly or yearly",
           "quote": null
@@ -9507,7 +9507,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 404,
+          "line": 422,
           "kind": "go-error-body",
           "raw": "stated_on must be a YYYY-MM-DD date",
           "quote": null
@@ -9525,28 +9525,28 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 414,
-          "kind": "go-error-body",
-          "raw": "failed to save costs",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/label.go",
-          "line": 419,
-          "kind": "go-error-body",
-          "raw": "failed to save costs",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/label.go",
-          "line": 427,
-          "kind": "go-error-body",
-          "raw": "failed to save costs",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/label.go",
           "line": 432,
+          "kind": "go-error-body",
+          "raw": "failed to save costs",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/label.go",
+          "line": 437,
+          "kind": "go-error-body",
+          "raw": "failed to save costs",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/label.go",
+          "line": 445,
+          "kind": "go-error-body",
+          "raw": "failed to save costs",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/label.go",
+          "line": 450,
           "kind": "go-error-body",
           "raw": "failed to save costs",
           "quote": null
@@ -9564,7 +9564,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 462,
+          "line": 480,
           "kind": "go-error-body",
           "raw": "no such user",
           "quote": null
@@ -9582,7 +9582,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 474,
+          "line": 492,
           "kind": "go-error-body",
           "raw": "that person is already on the stewards list",
           "quote": null
@@ -9600,7 +9600,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 491,
+          "line": 509,
           "kind": "go-error-body",
           "raw": "failed to remove steward",
           "quote": null
@@ -9618,7 +9618,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 495,
+          "line": 513,
           "kind": "go-error-body",
           "raw": "no such steward",
           "quote": null
@@ -9636,7 +9636,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 546,
+          "line": 564,
           "kind": "go-error-body",
           "raw": "you are not on the stewards list",
           "quote": null
@@ -9654,7 +9654,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 553,
+          "line": 571,
           "kind": "go-error-body",
           "raw": "blurb must be 200 characters or fewer",
           "quote": null
@@ -9672,14 +9672,14 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 557,
+          "line": 575,
           "kind": "go-error-body",
           "raw": "failed to save",
           "quote": null
         },
         {
           "file": "internal/handler/label.go",
-          "line": 567,
+          "line": 585,
           "kind": "go-error-body",
           "raw": "failed to save",
           "quote": null
@@ -9697,7 +9697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/label.go",
-          "line": 586,
+          "line": 604,
           "kind": "go-error-body",
           "raw": "failed to remove listing",
           "quote": null
@@ -16991,7 +16991,7 @@
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1547,
+          "line": 1774,
           "kind": "markup",
           "raw": "Try Again",
           "quote": null
@@ -19031,7 +19031,7 @@
           "file": "web/src/components/MapLocationPicker.svelte",
           "line": 122,
           "kind": "markup",
-          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n    precisely or as loosely as you like. Nothing is saved until you hit\n    Save location.",
+          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\r\n    precisely or as loosely as you like. Nothing is saved until you hit\r\n    Save location.",
           "quote": null
         }
       ]
@@ -19128,7 +19128,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -19164,40 +19164,8 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "6cc07c87a7bf",
-      "text": "Copy failed. Select the address instead.",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchOverflow.svelte",
-          "line": 55,
-          "kind": "js-string",
-          "raw": "Copy failed. Select the address instead.",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/AccountSettings.svelte",
-          "line": 161,
-          "kind": "js-string",
-          "raw": "Copy failed. Select the address instead.",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 171,
-          "kind": "js-string",
-          "raw": "Copy failed. Select the address instead.",
-          "quote": "'"
         }
       ]
     },
@@ -19212,14 +19180,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchOverflow.svelte",
-          "line": 69,
+          "line": 58,
           "kind": "attr:aria-label",
           "raw": "More actions",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchOverflow.svelte",
-          "line": 70,
+          "line": 59,
           "kind": "attr:title",
           "raw": "More actions",
           "quote": "\""
@@ -19237,84 +19205,9 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchOverflow.svelte",
-          "line": 108,
+          "line": 97,
           "kind": "markup",
           "raw": "Subscribe",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "1a9459a1e8c0",
-      "text": "Calendar (ICS)",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchOverflow.svelte",
-          "line": 110,
-          "kind": "markup",
-          "raw": "Calendar (ICS)",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 278,
-          "kind": "markup",
-          "raw": "Calendar (ICS)",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "3bcf9f2bf072",
-      "text": "RSS",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchOverflow.svelte",
-          "line": 115,
-          "kind": "markup",
-          "raw": "RSS",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 283,
-          "kind": "markup",
-          "raw": "RSS",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e35c5f82a1cc",
-      "text": "Paste the calendar address into your calendar app to follow this patch's events.",
-      "words": 13,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchOverflow.svelte",
-          "line": 119,
-          "kind": "markup",
-          "raw": "Paste the calendar address into your calendar app to follow this patch's events.",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 287,
-          "kind": "markup",
-          "raw": "Paste the calendar address into your calendar app to follow this patch's events.",
           "quote": null
         }
       ]
@@ -19890,7 +19783,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 298,
+          "line": 461,
           "kind": "js-string",
           "raw": "This quilt",
           "quote": "'"
@@ -19908,7 +19801,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 669,
+          "line": 832,
           "kind": "js-string",
           "raw": "'Space Grotesk Variable', system-ui, sans-serif",
           "quote": "\""
@@ -19926,7 +19819,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1542,
+          "line": 1769,
           "kind": "markup",
           "raw": "Loading quilt...",
           "quote": null
@@ -19944,14 +19837,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1553,
+          "line": 1780,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1581,
+          "line": 1808,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -19969,14 +19862,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1560,
+          "line": 1787,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1588,
+          "line": 1815,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -20008,14 +19901,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1563,
+          "line": 1790,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1591,
+          "line": 1818,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
@@ -20033,7 +19926,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1568,
+          "line": 1795,
           "kind": "markup",
           "raw": "This quilt is empty.",
           "quote": null
@@ -20051,7 +19944,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 1569,
+          "line": 1796,
           "kind": "markup",
           "raw": "Create the first patch to get started.",
           "quote": null
@@ -21654,6 +21547,121 @@
       ]
     },
     {
+      "id": "6cc07c87a7bf",
+      "text": "Copy failed. Select the address instead.",
+      "words": 6,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/SubscribeFeeds.svelte",
+          "line": 37,
+          "kind": "js-string",
+          "raw": "Copy failed. Select the address instead.",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 161,
+          "kind": "js-string",
+          "raw": "Copy failed. Select the address instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "1a9459a1e8c0",
+      "text": "Calendar (ICS)",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/SubscribeFeeds.svelte",
+          "line": 43,
+          "kind": "markup",
+          "raw": "Calendar (ICS)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3bcf9f2bf072",
+      "text": "RSS",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/SubscribeFeeds.svelte",
+          "line": 48,
+          "kind": "markup",
+          "raw": "RSS",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a53bdbbb43f0",
+      "text": "Mastodon",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/SubscribeFeeds.svelte",
+          "line": 54,
+          "kind": "markup",
+          "raw": "Mastodon",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e35c5f82a1cc",
+      "text": "Paste the calendar address into your calendar app to follow this patch's events.",
+      "words": 13,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/SubscribeFeeds.svelte",
+          "line": 59,
+          "kind": "markup",
+          "raw": "Paste the calendar address into your calendar app to follow this patch's events.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ebd538665a24",
+      "text": "Search the handle in Mastodon to follow new events there. Replies don't reach the patch. The address belongs to {getInstanceName()}, so it doesn't travel if this community moves to another quilt.",
+      "words": 31,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/SubscribeFeeds.svelte",
+          "line": 62,
+          "kind": "markup",
+          "raw": "Search the handle in Mastodon to follow new events there. Replies don't\n    reach the patch. The address belongs to {getInstanceName()}, so it\n    doesn't travel if this community moves to another quilt.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "4d0ab4a16ff2",
       "text": "Selected tags, in priority order",
       "words": 5,
@@ -22814,7 +22822,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 373,
+          "line": 380,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -24108,7 +24116,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 220,
+          "line": 219,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -24165,7 +24173,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 221,
+          "line": 220,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -24449,7 +24457,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 192,
+          "line": 191,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -26183,7 +26191,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 78,
+          "line": 79,
           "kind": "js-string",
           "raw": "Event approved",
           "quote": "'"
@@ -26287,7 +26295,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 299,
+          "line": 279,
           "kind": "markup",
           "raw": "{formatDate(sub.starts_at)} &middot; {formatTime(sub.starts_at)}",
           "quote": null
@@ -26337,7 +26345,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 313,
+          "line": 293,
           "kind": "attr:placeholder",
           "raw": "Note to the submitter (optional)",
           "quote": "\""
@@ -26787,7 +26795,7 @@
         },
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 145,
+          "line": 167,
           "kind": "markup",
           "raw": "Seamripped from",
           "quote": null
@@ -27302,7 +27310,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
+          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -27653,7 +27661,7 @@
       "text": "The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27689,7 +27697,7 @@
       "text": "Represents this quilt in the quilt switcher and in other people's Connected Quilts. Draft it here, in the same drafter patches use for their tiles.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27833,7 +27841,7 @@
       "text": "Every patch starts with the lining and can amend its copy by proposal. Amended patches always wear a public badge; this policy also keeps them out of the quilt, search, the map, and public feeds for everyone. Direct links still work.",
       "words": 41,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27865,22 +27873,23 @@
       ]
     },
     {
-      "id": "89c643bd19f2",
-      "text": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind. For a full backup of the deployment itself, back up the server's data directory. That's an ops practice, not this export.",
-      "words": 48,
+      "id": "24a43049dee2",
+      "text": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.",
+      "words": 61,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 358,
+          "line": 363,
           "kind": "markup",
-          "raw": "Download this quilt's portable community data as a zip: patches, people,\n          memberships, events, proposals with votes, and governance records.\n          Credentials, sessions, and federation keys deliberately stay behind.\n          For a full backup of the deployment itself, back up the server's data\n          directory. That's an ops practice, not this export.",
+          "raw": "Download this quilt's portable community data as a zip: patches, people,\n          memberships, events, proposals with votes, and governance records.\n          Credentials, sessions, and federation keys deliberately stay behind —\n          as do followers from other sites, since the addresses they follow\n          belong to this quilt rather than to the patches.\n          For a full backup of the deployment itself, back up the server's data\n          directory. That's an ops practice, not this export.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind — as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory. That's an ops practice, not this export."
     },
     {
       "id": "e3c128d00bbc",
@@ -27893,7 +27902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 375,
+          "line": 382,
           "kind": "markup",
           "raw": "Wipe this quilt",
           "quote": null
@@ -27911,7 +27920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 378,
+          "line": 385,
           "kind": "markup",
           "raw": "Erases",
           "quote": null
@@ -27929,7 +27938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 378,
+          "line": 385,
           "kind": "markup",
           "raw": "all community data",
           "quote": null
@@ -27941,13 +27950,13 @@
       "text": ": every patch, person, event, proposal, and governance record. The deployment returns to first-run. The server, domain, and configuration survive. The community's data does not. This cannot be undone. Download an export first.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 378,
+          "line": 385,
           "kind": "markup",
           "raw": ": every patch, person, event,\n          proposal, and governance record. The deployment returns to first-run.\n          The server, domain, and configuration survive. The community's data\n          does not. This cannot be undone. Download an export first.",
           "quote": null
@@ -27965,7 +27974,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 384,
+          "line": 391,
           "kind": "markup",
           "raw": "Type the quilt name to confirm:",
           "quote": null
@@ -27983,7 +27992,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 403,
+          "line": 410,
           "kind": "markup",
           "raw": "Really erase everything? You will be signed out.",
           "quote": null
@@ -28193,7 +28202,7 @@
       "text": "This clears the patch's chosen tile, so the quilt decides its look again. The patch itself is untouched.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28401,7 +28410,7 @@
       "text": "Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28545,7 +28554,7 @@
       "text": "The vocabulary patch admins tag their patches with. Tags power discovery and pull patches with shared tags together on the quilt. A tag's motif is the mark shown for patches that chose no motif of their own. Deleting a tag removes it from every patch wearing it.",
       "words": 47,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28553,7 +28562,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -28739,11 +28748,11 @@
       ]
     },
     {
-      "id": "f1b17f263f8e",
-      "text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth. No email required.",
-      "words": 25,
+      "id": "44478689e560",
+      "text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
+      "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28751,10 +28760,11 @@
           "file": "web/src/pages/AdminUsers.svelte",
           "line": 173,
           "kind": "markup",
-          "raw": "Generate a link to invite someone to this Patchwork. Share it wherever\n      your community talks: a message, a flyer, word of mouth. No email required.",
+          "raw": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth. No email required."
     },
     {
       "id": "4d761fbe8572",
@@ -28767,7 +28777,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 178,
+          "line": 177,
           "kind": "markup",
           "raw": "Max uses",
           "quote": null
@@ -28785,7 +28795,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 182,
+          "line": 181,
           "kind": "markup",
           "raw": "Expires in (hours, 0 = never)",
           "quote": null
@@ -28797,13 +28807,13 @@
       "text": "This link is shown once, so copy it now. Anyone with it can create an account.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 195,
+          "line": 194,
           "kind": "markup",
           "raw": "This link is shown once, so copy it now. Anyone with it can create an account.",
           "quote": null
@@ -28821,7 +28831,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 203,
+          "line": 202,
           "kind": "attr:placeholder",
           "raw": "Search by name or email...",
           "quote": "\""
@@ -28839,7 +28849,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 214,
+          "line": 213,
           "kind": "markup",
           "raw": "No users found.",
           "quote": null
@@ -28857,7 +28867,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 222,
+          "line": 221,
           "kind": "markup",
           "raw": "Role",
           "quote": null
@@ -28875,7 +28885,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 223,
+          "line": 222,
           "kind": "markup",
           "raw": "Trusted Contributor",
           "quote": null
@@ -28893,7 +28903,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 224,
+          "line": 223,
           "kind": "markup",
           "raw": "Joined",
           "quote": null
@@ -28911,7 +28921,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 225,
+          "line": 224,
           "kind": "markup",
           "raw": "Status",
           "quote": null
@@ -28929,7 +28939,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 226,
+          "line": 225,
           "kind": "markup",
           "raw": "Actions",
           "quote": null
@@ -28947,7 +28957,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 247,
+          "line": 246,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -28979,7 +28989,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 248,
+          "line": 247,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -29011,7 +29021,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 261,
+          "line": 260,
           "kind": "markup",
           "raw": "Trusted",
           "quote": null
@@ -29029,7 +29039,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 280,
+          "line": 279,
           "kind": "markup",
           "raw": "Suspended",
           "quote": null
@@ -29047,7 +29057,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 282,
+          "line": 281,
           "kind": "markup",
           "raw": "Active",
           "quote": null
@@ -30993,7 +31003,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 188,
+          "line": 178,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -31262,7 +31272,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 238,
+          "line": 228,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -31348,7 +31358,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 238,
+          "line": 228,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -31892,7 +31902,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 334,
+          "line": 314,
           "kind": "markup",
           "raw": "Loading events...",
           "quote": null
@@ -32305,7 +32315,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 179,
+          "line": 169,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -32997,7 +33007,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -33140,14 +33150,14 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 151,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         }
       ]
@@ -33509,6 +33519,78 @@
       ]
     },
     {
+      "id": "daa229d2b23e",
+      "text": "Federating. Public patches here can be followed from Mastodon and other ActivityPub sites.",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Label.svelte",
+          "line": 132,
+          "kind": "markup",
+          "raw": "Federating. Public patches here can be followed from Mastodon and\n          other ActivityPub sites.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8b8be7d1ce53",
+      "text": "Not federating. Patches here can't be followed from other sites.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Label.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "Not federating. Patches here can't be followed from other sites.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3a6d8f1e7226",
+      "text": "Readable by other quilts. Their sites can show this quilt's public patches and events alongside their own.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Label.svelte",
+          "line": 140,
+          "kind": "markup",
+          "raw": "Readable by other quilts. Their sites can show this quilt's public\n          patches and events alongside their own.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e5666e449d8e",
+      "text": "Not readable by other quilts. They can link here, but people have to follow the link to see anything.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Label.svelte",
+          "line": 143,
+          "kind": "markup",
+          "raw": "Not readable by other quilts. They can link here, but people have\n          to follow the link to see anything.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "60f573566b8a",
       "text": "Support this quilt",
       "words": 3,
@@ -33519,7 +33601,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 132,
+          "line": 154,
           "kind": "markup",
           "raw": "Support this quilt",
           "quote": null
@@ -33537,7 +33619,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 137,
+          "line": 159,
           "kind": "markup",
           "raw": "Send feedback",
           "quote": null
@@ -33555,7 +33637,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 147,
+          "line": 169,
           "kind": "markup",
           "raw": ".\n        This quilt started as a fork of it.",
           "quote": null
@@ -33573,7 +33655,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 155,
+          "line": 177,
           "kind": "markup",
           "raw": "If you don't like how this is run",
           "quote": null
@@ -33591,13 +33673,32 @@
       "occurrences": [
         {
           "file": "web/src/pages/Label.svelte",
-          "line": 157,
+          "line": 179,
           "kind": "markup",
           "raw": "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.",
           "quote": null
         }
       ],
       "previous_ai_text": "Real people run this, and real people sometimes run things badly. So the exit is built in: any member can export what they can already see and start the community over somewhere else, under different stewards. Nobody has to ask first."
+    },
+    {
+      "id": "769c81f84462",
+      "text": "Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites.",
+      "words": 35,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Label.svelte",
+          "line": 186,
+          "kind": "markup",
+          "raw": "Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "What travels is the community — members, events, charters, and the threads between patches. What doesn't is this quilt's addresses: a patch that leaves keeps its people and starts over with the followers it had on other sites."
     },
     {
       "id": "3d2301d732a7",
@@ -33702,7 +33803,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -34131,7 +34232,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
           "quote": null
         }
       ]
@@ -34291,7 +34392,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 78,
+          "line": 79,
           "kind": "js-string",
           "raw": "Suggestion declined",
           "quote": "'"
@@ -34309,7 +34410,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 83,
+          "line": 84,
           "kind": "js-string",
           "raw": "Failed to review",
           "quote": "'"
@@ -34327,7 +34428,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 133,
+          "line": 134,
           "kind": "js-string",
           "raw": "Upload failed",
           "quote": "'"
@@ -34345,7 +34446,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 180,
+          "line": 170,
           "kind": "markup",
           "raw": "Become a member to access events.",
           "quote": null
@@ -34363,7 +34464,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 186,
+          "line": 176,
           "kind": "markup",
           "raw": "{events.length} events",
           "quote": null
@@ -34381,7 +34482,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 214,
+          "line": 204,
           "kind": "markup",
           "raw": "Become a member to create events.",
           "quote": null
@@ -34399,7 +34500,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 216,
+          "line": 206,
           "kind": "markup",
           "raw": "Join this patch to create events.",
           "quote": null
@@ -34417,7 +34518,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 224,
+          "line": 214,
           "kind": "markup",
           "raw": "Download template",
           "quote": null
@@ -34435,7 +34536,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 238,
+          "line": 228,
           "kind": "markup",
           "raw": "When",
           "quote": null
@@ -34453,7 +34554,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 250,
+          "line": 240,
           "kind": "markup",
           "raw": "…and {uploadEvents.length - 8} more",
           "quote": null
@@ -34471,7 +34572,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 261,
+          "line": 251,
           "kind": "markup",
           "raw": "Fix the rows above and re-pick the file.",
           "quote": null
@@ -34489,7 +34590,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 265,
+          "line": 255,
           "kind": "markup",
           "raw": "No events found in {uploadFileName}.",
           "quote": null
@@ -34507,7 +34608,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 269,
+          "line": 259,
           "kind": "markup",
           "raw": "Times are read in your timezone. Rows matching an event already on the\n        calendar are skipped, so re-uploading a corrected file is safe.",
           "quote": null
@@ -34525,7 +34626,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 293,
+          "line": 273,
           "kind": "markup",
           "raw": "Suggested events",
           "quote": null
@@ -34543,7 +34644,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 300,
+          "line": 280,
           "kind": "markup",
           "raw": "&middot; {sub.location}",
           "quote": null
@@ -34561,7 +34662,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 306,
+          "line": 286,
           "kind": "markup",
           "raw": "Suggested by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
@@ -34579,7 +34680,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 337,
+          "line": 317,
           "kind": "markup",
           "raw": "No events scheduled.",
           "quote": null
@@ -34597,7 +34698,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 338,
+          "line": 318,
           "kind": "markup",
           "raw": "Members can create events for meetups, shows, or gatherings.",
           "quote": null
@@ -34615,7 +34716,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 354,
+          "line": 334,
           "kind": "markup",
           "raw": "&middot; {event.location}",
           "quote": null
@@ -35720,7 +35821,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -35810,7 +35911,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -37498,7 +37599,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -37570,7 +37671,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
           "quote": null
         }
       ]
@@ -39215,7 +39316,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
           "quote": null
         }
       ]
@@ -39359,7 +39460,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
           "quote": null
         }
       ]
@@ -39377,7 +39478,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
           "quote": null
         }
       ]
@@ -39431,7 +39532,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
           "quote": null
         }
       ]
@@ -39485,7 +39586,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
           "quote": null
         }
       ]
@@ -39611,7 +39712,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 129,
           "kind": "markup",
-          "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
+          "raw": "No account was created yet. Request a new sign-in link and\r\n          you'll be right back here.",
           "quote": null
         }
       ]
@@ -39665,7 +39766,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 174,
           "kind": "markup",
-          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
+          "raw": ". Pick the name\r\n          you'll go by here. It becomes your profile address, so it\r\n          can't change later.",
           "quote": null
         }
       ]

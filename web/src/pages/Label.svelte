@@ -122,6 +122,28 @@
       {#if label.version}
         <p class="runs-on-version muted">Running Patchwork {label.version}.</p>
       {/if}
+      <!-- The two cross-quilt capabilities, each stated in both directions
+           (docs/adr/061). Derived from config on the server, like the
+           version above them — materials, not settings. Federation is
+           whether this quilt can be followed; multi-quilt is whether it can
+           be read. They are independent, so each gets its own line. -->
+      <p class="runs-on-version muted">
+        {#if label.federation}
+          Federating. Public patches here can be followed from Mastodon and
+          other ActivityPub sites.
+        {:else}
+          Not federating. Patches here can't be followed from other sites.
+        {/if}
+      </p>
+      <p class="runs-on-version muted">
+        {#if label.multi_quilt}
+          Readable by other quilts. Their sites can show this quilt's public
+          patches and events alongside their own.
+        {:else}
+          Not readable by other quilts. They can link here, but people have
+          to follow the link to see anything.
+        {/if}
+      </p>
     </section>
 
     <!-- Support & feedback -->
@@ -156,6 +178,14 @@
       <p>
         Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards.
       </p>
+      {#if label.federation}
+        <!-- docs/adr/060: ap_followers and ap_id stay behind on a seamrip,
+             so the community travels and its audience does not. Only worth
+             saying where there is an audience to lose. -->
+        <p class="door-cost muted">
+          Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites.
+        </p>
+      {/if}
     </section>
   {/if}
 </div>
@@ -265,6 +295,12 @@
   }
 
   /* Costs */
+  /* The door draws a dashed rule directly above itself, and this section
+     had no bottom margin — the last "materials" line sat right on it.
+     24px matches .label-links and .label-prose above. */
+  .costs {
+    margin-bottom: 24px;
+  }
   .costs h2,
   .the-door h2 {
     font-size: 1.05rem;
@@ -364,5 +400,10 @@
     margin: 0;
     font-size: 0.9rem;
     line-height: 1.6;
+  }
+  /* Outranks `.the-door p { margin: 0 }`, which would otherwise run the
+     two paragraphs together. */
+  .the-door .door-cost {
+    margin-top: 10px;
   }
 </style>

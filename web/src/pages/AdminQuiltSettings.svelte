@@ -354,12 +354,13 @@
     <section class="section">
       <h2>Data Export (Seamrip)</h2>
       <div class="settings-card">
+        <!-- docs/adr/060: ap_followers and ap_id stay behind, so the community
+             travels and its audience does not. Kept outside the <p>: the copy
+             ledger blanks comments when extracting but matches raw source when
+             writing back, so a comment inside a text run makes that string
+             permanently unwritable (tools/copy-ledger/writeback.js). -->
         <p class="section-desc">
-          Download this quilt's portable community data as a zip: patches, people,
-          memberships, events, proposals with votes, and governance records.
-          Credentials, sessions, and federation keys deliberately stay behind.
-          For a full backup of the deployment itself, back up the server's data
-          directory. That's an ops practice, not this export.
+          Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.
         </p>
         <PasskeyNotice show={!hasPasskey} action="export this quilt's data" />
         <button class="btn btn-primary" onclick={downloadExport} disabled={exporting}>

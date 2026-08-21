@@ -237,7 +237,7 @@ func main() {
 
 	// The Label (docs/adr/023) — public read: its most important reader
 	// has no account yet. Steward self-listing is the person's own switch.
-	mux.HandleFunc("GET /api/v1/label", handler.GetLabel(db))
+	mux.HandleFunc("GET /api/v1/label", handler.GetLabel(db, cfg))
 
 	// Legal documents (docs/adr/028) — public read, defaults ship in the
 	// binary so this never 404s on a fresh deployment.

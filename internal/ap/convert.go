@@ -6,6 +6,24 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
+// FederationNotice is appended to a patch actor's summary (docs/adr/059).
+//
+// A remote follower reads the actor's summary as the profile bio on their
+// own server; they never see Patchwork's Subscribe modal. So the one fact
+// they need before replying belongs here: APNodeInbox answers 202 to every
+// activity it does not handle, which means a reply is affirmatively
+// accepted and then discarded. A calendar you can follow is an honest
+// thing to be; a conversation that swallows what you say is not.
+const FederationNotice = "Follow for this patch's events. Replies are not received."
+
+// summaryWithNotice appends FederationNotice to a patch's description.
+func summaryWithNotice(description string) string {
+	if description == "" {
+		return FederationNotice
+	}
+	return description + "\n\n" + FederationNotice
+}
+
 // NodeToActor converts a Patchwork Node to an ActivityPub Actor (Organization).
 func NodeToActor(node model.Node, domain string) Actor {
 	baseURL := fmt.Sprintf("https://%s", domain)
@@ -17,7 +35,7 @@ func NodeToActor(node model.Node, domain string) Actor {
 		ID:                apID,
 		Name:              node.Name,
 		PreferredUsername: node.Slug,
-		Summary:           node.Description,
+		Summary:           summaryWithNotice(node.Description),
 		URL:               fmt.Sprintf("%s/patches/%s", baseURL, node.Slug),
 		Inbox:             apID + "/inbox",
 		Outbox:            apID + "/outbox",
