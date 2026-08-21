@@ -2,6 +2,7 @@ package ap_test
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
@@ -198,5 +199,36 @@ func TestNodeToActor_JSONMarshal(t *testing.T) {
 	}
 	if parsed["preferredUsername"] != "json-test" {
 		t.Errorf("preferredUsername missing or wrong in JSON output: %v", parsed["preferredUsername"])
+	}
+}
+
+// docs/adr/059: a patch actor's summary carries the reply notice, because
+// the person deciding whether to reply reads the bio on their own server
+// and never sees Patchwork's Subscribe modal.
+func TestNodeToActor_SummaryCarriesTheReplyNotice(t *testing.T) {
+	node := model.Node{
+		ID:          "test-node-id",
+		Name:        "Lancaster Arts",
+		Slug:        "lancaster-arts",
+		Description: "An arts community",
+	}
+
+	actor := ap.NodeToActor(node, "arts.lancaster.example")
+
+	if !strings.Contains(actor.Summary, "An arts community") {
+		t.Errorf("description dropped from summary: %q", actor.Summary)
+	}
+	if !strings.Contains(actor.Summary, ap.FederationNotice) {
+		t.Errorf("reply notice missing from summary: %q", actor.Summary)
+	}
+}
+
+// A patch with no description still carries the notice, and does not lead
+// with blank lines.
+func TestNodeToActor_SummaryOnADescriptionlessPatch(t *testing.T) {
+	actor := ap.NodeToActor(model.Node{ID: "id", Name: "N", Slug: "n"}, "example.test")
+
+	if actor.Summary != ap.FederationNotice {
+		t.Errorf("expected the notice alone, got %q", actor.Summary)
 	}
 }

@@ -15,9 +15,9 @@
   import { DotsThree } from 'phosphor-svelte';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
-  import { showToast } from '../stores/toast.svelte.js';
   import Modal from './Modal.svelte';
   import ReportButton from './ReportButton.svelte';
+  import SubscribeFeeds from './SubscribeFeeds.svelte';
 
   let {
     slug = '',
@@ -33,9 +33,6 @@
 
   // Subscribable feeds exist only for public patches (docs/adr/031).
   let feedAvailable = $derived(node?.visibility === 'public');
-  let icsUrl = $derived(`${location.origin}/api/v1/nodes/${slug}/events.ics`);
-  let rssUrl = $derived(`${location.origin}/api/v1/nodes/${slug}/events.rss`);
-
   // Unclaimed patches have no governance, so their workspace root is the
   // events calendar (docs/adr/039).
   let workspaceHref = $derived(`/patches/${slug}/${isUnclaimed ? 'events' : 'governance'}`);
@@ -47,14 +44,6 @@
     if (menuOpen && !e.target.closest('.overflow-container')) menuOpen = false;
   }
 
-  async function copyUrl(url) {
-    try {
-      await navigator.clipboard.writeText(url);
-      showToast('Copied');
-    } catch {
-      showToast('Copy failed. Select the address instead.', 'error');
-    }
-  }
 </script>
 
 <svelte:window onclick={handleWindowClick} />
@@ -106,17 +95,7 @@
   <Modal open={subscribeOpen} label="Subscribe to {node?.name || 'this patch'}" onClose={() => { subscribeOpen = false; }}>
     {#snippet children()}
       <h2 class="subscribe-title">Subscribe</h2>
-      <div class="feed-row">
-        <span class="feed-label">Calendar (ICS)</span>
-        <code class="feed-url">{icsUrl}</code>
-        <button class="btn btn-secondary btn-sm" onclick={() => copyUrl(icsUrl)}>Copy</button>
-      </div>
-      <div class="feed-row">
-        <span class="feed-label">RSS</span>
-        <code class="feed-url">{rssUrl}</code>
-        <button class="btn btn-secondary btn-sm" onclick={() => copyUrl(rssUrl)}>Copy</button>
-      </div>
-      <p class="muted feed-hint">Paste the calendar address into your calendar app to follow this patch's events.</p>
+      <SubscribeFeeds {slug} />
     {/snippet}
   </Modal>
 {/if}
@@ -189,31 +168,4 @@
     padding-right: 1.5rem;
   }
 
-  .feed-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0;
-  }
-
-  .feed-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    min-width: 7rem;
-  }
-
-  .feed-url {
-    flex: 1;
-    min-width: 0;
-    font-size: 0.75rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: var(--color-text-muted);
-  }
-
-  .feed-hint {
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
-  }
 </style>

@@ -7,6 +7,7 @@
   import { formatEventDate as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import SubscribeFeeds from '../components/SubscribeFeeds.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -160,17 +161,6 @@
   // Subscribable feeds exist only for public patches (docs/adr/031).
   let showSubscribe = $state(false);
   let feedAvailable = $derived(node?.visibility === 'public');
-  let icsUrl = $derived(`${location.origin}/api/v1/nodes/${slug}/events.ics`);
-  let rssUrl = $derived(`${location.origin}/api/v1/nodes/${slug}/events.rss`);
-
-  async function copyUrl(url) {
-    try {
-      await navigator.clipboard.writeText(url);
-      showToast('Copied');
-    } catch {
-      showToast('Copy failed. Select the address instead.', 'error');
-    }
-  }
 
 </script>
 
@@ -274,17 +264,7 @@
 
   {#if showSubscribe && feedAvailable}
     <div class="subscribe-panel">
-      <div class="feed-row">
-        <span class="feed-label">Calendar (ICS)</span>
-        <code class="feed-url">{icsUrl}</code>
-        <button class="btn btn-secondary btn-sm" onclick={() => copyUrl(icsUrl)}>Copy</button>
-      </div>
-      <div class="feed-row">
-        <span class="feed-label">RSS</span>
-        <code class="feed-url">{rssUrl}</code>
-        <button class="btn btn-secondary btn-sm" onclick={() => copyUrl(rssUrl)}>Copy</button>
-      </div>
-      <p class="muted feed-hint">Paste the calendar address into your calendar app to follow this patch's events.</p>
+      <SubscribeFeeds {slug} />
     </div>
   {/if}
 
@@ -479,34 +459,6 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     background: var(--color-surface);
-  }
-
-  .feed-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    min-width: 0;
-  }
-
-  .feed-label {
-    font-size: 0.8rem;
-    font-weight: 500;
-    width: 96px;
-    flex-shrink: 0;
-  }
-
-  .feed-url {
-    font-size: 0.75rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .feed-hint {
-    font-size: 0.75rem;
-    margin: 0;
   }
 
   .role-prompt {

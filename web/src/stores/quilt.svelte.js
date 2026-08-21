@@ -17,6 +17,10 @@ let instanceLoaded = $state(false);
 // shown to every visitor in the quilt switcher.
 let neighborQuilts = $state([]);
 let instanceDomain = $state('');
+// Whether this quilt federates (docs/adr/059). Gates the patch handle in
+// Subscribe: without it the actor endpoints are not mounted, so the
+// address would resolve to nothing.
+let instanceFederation = $state(false);
 
 // --- Filter state (docs/adr/033) ---
 // The filter — tag selection plus the search chip — is standing state that
@@ -38,6 +42,7 @@ export function getInstanceName() { return instanceName; }
 export function getInstanceDescription() { return instanceDescription; }
 export function getNeighborQuilts() { return neighborQuilts; }
 export function getInstanceDomain() { return instanceDomain; }
+export function getInstanceFederation() { return instanceFederation; }
 export function getInstanceIconUrl() { return instanceIconUrl; }
 export function getInstanceModules() { return instanceModules; }
 export function getInstanceStats() { return instanceStats; }
@@ -127,6 +132,7 @@ export async function loadInstance() {
     }
     if (data?.neighbor_quilts) neighborQuilts = data.neighbor_quilts;
     if (data?.domain) instanceDomain = data.domain;
+    if (data?.federation !== undefined) instanceFederation = data.federation;
     instanceLoaded = true;
   } catch { /* keep defaults */ }
 }

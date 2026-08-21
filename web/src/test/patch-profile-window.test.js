@@ -160,9 +160,13 @@ describe('PatchOverflow', () => {
   const src = source('components/PatchOverflow.svelte');
 
   it('brings the per-patch feeds to the public page', () => {
-    expect(src).toMatch(/events\.ics/);
-    expect(src).toMatch(/events\.rss/);
+    // The rows themselves moved into SubscribeFeeds (docs/adr/059) so the
+    // profile and the Events tab can't drift; the gate stayed here.
+    expect(src).toContain('<SubscribeFeeds {slug} />');
     expect(src).toMatch(/feedAvailable = \$derived\(node\?\.visibility === 'public'\)/);
+    const feeds = source('components/SubscribeFeeds.svelte');
+    expect(feeds).toMatch(/events\.ics/);
+    expect(feeds).toMatch(/events\.rss/);
   });
 
   it('carries the workspace fallback for people with standing only', () => {
