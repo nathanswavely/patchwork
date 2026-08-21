@@ -7,6 +7,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
 
@@ -27,9 +28,9 @@ func seedListing(t *testing.T, db *database.DB, aggregatorID, uid, nameKey, disp
 	t.Helper()
 	if _, err := db.Exec(
 		`INSERT INTO aggregator_listings (aggregator_id, uid, occurrence, name_key, display_name,
-		 title, description, location, starts_at)
-		 VALUES (?, ?, '', ?, ?, ?, '', ?, ?)`,
-		aggregatorID, uid, nameKey, displayName, title, displayName,
+		 title, title_key, description, location, starts_at)
+		 VALUES (?, ?, '', ?, ?, ?, ?, '', ?, ?)`,
+		aggregatorID, uid, nameKey, displayName, title, eventsource.TitleKey(title), displayName,
 		time.Now().Add(48*time.Hour).UTC().Format(time.RFC3339),
 	); err != nil {
 		t.Fatalf("seed listing: %v", err)

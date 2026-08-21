@@ -350,9 +350,13 @@ type UnroutedName struct {
 // admin opens a name to decide what it means (docs/adr/056). Never an
 // event — a listing becomes one only where a crosswalk entry routes it.
 type AggregatorListing struct {
-	UID         string  `json:"uid"`
-	Occurrence  string  `json:"occurrence"`
-	Title       string  `json:"title"`
+	UID        string `json:"uid"`
+	Occurrence string `json:"occurrence"`
+	Title      string `json:"title"`
+	// TitleKey groups the listings a publisher files under one title, so a
+	// reader of this drawer can credit the whole program at once rather
+	// than one date at a time (docs/adr/063).
+	TitleKey    string  `json:"title_key"`
 	Description string  `json:"description"`
 	Location    string  `json:"location"`
 	StartsAt    string  `json:"starts_at"`
@@ -376,6 +380,51 @@ type AggregatorHold struct {
 	StartsAt      string `json:"starts_at"`
 	AggregatorName string `json:"aggregator_name"`
 	CreatedAt      string `json:"created_at"`
+}
+
+// AggregatorProgram is a recurring title someone recognized and credited
+// to a patch (docs/adr/063). It never routes: the events stay the owning
+// patch's, and what the program produces is offers.
+type AggregatorProgram struct {
+	ID             string `json:"id"`
+	AggregatorID   string `json:"aggregator_id"`
+	AggregatorName string `json:"aggregator_name"`
+	NameKey        string `json:"name_key"`
+	// DisplayName is the place this program was recognized under — the
+	// row has to say which name it sits beneath, since it is scoped to one.
+	DisplayName  string `json:"display_name"`
+	TitleKey     string `json:"title_key"`
+	DisplayTitle string `json:"display_title"`
+	NodeID       string `json:"node_id"`
+	NodeName     string `json:"node_name"`
+	NodeSlug     string `json:"node_slug"`
+	CreditedBy   string `json:"credited_by"`
+	CreatedAt    string `json:"created_at"`
+	// ListingCount is what the feed currently carries under this title.
+	ListingCount int `json:"listing_count"`
+	// Routed reports whether this program's name has a crosswalk entry.
+	// False means inert — with no events there is nothing to offer — and
+	// the row says so rather than looking broken (docs/adr/063).
+	Routed bool `json:"routed"`
+	// OfferCount is how many of its events are still waiting on someone.
+	OfferCount int `json:"offer_count"`
+}
+
+// AggregatorOffer is one event a credited program presents to its patch,
+// waiting for a person to propose an event link (docs/adr/032). Never
+// stored — it is what remains after subtracting links already made and
+// offers already declined (docs/adr/063).
+type AggregatorOffer struct {
+	ProgramID    string `json:"program_id"`
+	DisplayTitle string `json:"display_title"`
+	EventID      string `json:"event_id"`
+	Title        string `json:"title"`
+	StartsAt     string `json:"starts_at"`
+	Location     string `json:"location"`
+	// The patch that owns the event — the one whose admins confirm.
+	OwnerNodeID string `json:"owner_node_id"`
+	OwnerName   string `json:"owner_name"`
+	OwnerSlug   string `json:"owner_slug"`
 }
 
 type Membership struct {

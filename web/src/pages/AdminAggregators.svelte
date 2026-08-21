@@ -20,6 +20,12 @@
 
   let aggregators = $state([]);
   let names = $state([]);
+  // Programs credited so far (docs/adr/063). They sit in the same list
+  // as the names: both are a key grouping listings that someone had to
+  // read and judge, and splitting them would hide that a name has been
+  // read already.
+  let programs = $state([]);
+  let crediting = $state({});
   let loading = $state(true);
   let showIgnored = $state(false);
   let ignoredCount = $state(0);
@@ -40,18 +46,21 @@
 
   async function load() {
     try {
-      const [feeds, shown, ignoredSet] = await Promise.all([
+      const [feeds, shown, ignoredSet, progs] = await Promise.all([
         api('admin/aggregators'),
         api(`admin/aggregator-names${showIgnored ? '?ignored=true' : ''}`),
         api('admin/aggregator-names?ignored=true'),
+        api('admin/programs'),
       ]);
       aggregators = feeds.items || [];
       names = shown.items || [];
       ignoredCount = (ignoredSet.items || []).length;
+      programs = progs.items || [];
       schedulePoll();
     } catch {
       aggregators = [];
       names = [];
+      programs = [];
     } finally {
       loading = false;
     }
@@ -71,6 +80,92 @@
       listings = [];
     } finally {
       listingsLoading = false;
+    }
+  }
+
+  // The drawer groups by title, because that is what a program is: the
+  // seven dates of one walking tour, not seven things to decide about
+  // (docs/adr/063). The feed names no organizer, so the reader supplies
+  // the answer — the grouping only saves them from typing it seven times.
+  let titleGroups = $derived.by(() => {
+    const by = new Map();
+    for (const l of listings) {
+      const key = l.title_key || l.title;
+      if (!by.has(key)) by.set(key, { titleKey: l.title_key, title: l.title, items: [] });
+      by.get(key).items.push(l);
+    }
+    return [...by.values()];
+  });
+
+  // Names and programs in one list, each program under the name it
+  // was recognized beneath. A program whose name is already routed has
+  // no row to sit under, so it goes last.
+  let rows = $derived.by(() => {
+    const out = [];
+    const placed = new Set();
+    for (const n of names) {
+      out.push({ kind: 'name', key: `n:${n.aggregator_id}:${n.name_key}`, name: n });
+      for (const p of programs) {
+        if (p.aggregator_id === n.aggregator_id && p.name_key === n.name_key) {
+          out.push({ kind: 'program', key: `p:${p.id}`, program: p });
+          placed.add(p.id);
+        }
+      }
+    }
+    for (const p of programs) {
+      if (!placed.has(p.id)) out.push({ kind: 'program', key: `p:${p.id}`, program: p });
+    }
+    return out;
+  });
+
+  function creditedFor(group) {
+    if (!openName) return null;
+    return programs.find(
+      (p) =>
+        p.aggregator_id === openName.aggregator_id &&
+        p.name_key === openName.name_key &&
+        p.title_key === group.titleKey,
+    );
+  }
+
+  // Any patch on the quilt: an instance admin speaks for all of them, and
+  // crediting asserts nothing about the venue whose event it is — that
+  // patch's calendar changes only if someone proposes a link and its own
+  // admins confirm (docs/adr/063).
+  function creditProvider() {
+    return patchPickerProvider((n) => ({
+      type: n.status === 'unclaimed' ? 'Unclaimed' : 'Active',
+      sublabel: n.description ? n.description.slice(0, 60) : '',
+    }));
+  }
+
+  async function creditTo(group, patch) {
+    crediting = { ...crediting, [group.titleKey]: true };
+    try {
+      await api(`nodes/${patch.slug}/programs`, {
+        method: 'POST',
+        body: {
+          aggregator_id: openName.aggregator_id,
+          name_key: openName.name_key,
+          title_key: group.titleKey,
+        },
+      });
+      showToast(`“${group.title}” credited to ${patch.label}.`);
+      await load();
+    } catch (err) {
+      showToast(err.data?.error || 'Failed to credit', 'error');
+    } finally {
+      crediting = { ...crediting, [group.titleKey]: false };
+    }
+  }
+
+  async function uncredit(program) {
+    try {
+      await api(`nodes/${program.node_slug}/programs/${program.id}`, { method: 'DELETE' });
+      showToast(`“${program.display_title}” is no longer credited to ${program.node_name}.`);
+      await load();
+    } catch (err) {
+      showToast(err.data?.error || 'Failed to remove credit', 'error');
     }
   }
 
@@ -326,9 +421,39 @@
       {/if}
     </p>
     <ul class="name-list">
-      {#each names as name (name.aggregator_id + name.name_key)}
-        <li class="name-row">
-          <div class="name-info">
+      {#each rows as row (row.key)}
+        {#if row.kind === 'program'}
+          <li class="name-row program-row">
+            <div class="name-info">
+              <span class="name-label">{row.program.display_title}</span>
+              <span class="muted name-count">
+                {'Credited to '}{row.program.node_name}
+                {' · '}{row.program.listing_count}
+                {row.program.listing_count === 1 ? ' listing under ' : ' listings under '}
+                {row.program.display_name}
+              </span>
+              {#if !row.program.routed}
+                <span class="muted samples">
+                  {`Waiting on “${row.program.display_name}” to be mapped — until it is, there are no events to offer.`}
+                </span>
+              {:else if row.program.offer_count > 0}
+                <span class="muted samples">
+                  {row.program.offer_count === 1
+                    ? '1 offer waiting on their admins'
+                    : `${row.program.offer_count} offers waiting on their admins`}
+                </span>
+              {/if}
+            </div>
+            <div class="name-map">
+              <button class="link-ignore" onclick={() => uncredit(row.program)}>
+                Remove credit
+              </button>
+            </div>
+          </li>
+        {:else}
+          {@const name = row.name}
+          <li class="name-row">
+            <div class="name-info">
             <span class="name-label">{name.display_name}</span>
             <span class="muted name-count">
               <button class="link-count" onclick={() => openListings(name)}>
@@ -360,7 +485,8 @@
               </button>
             {/if}
           </div>
-        </li>
+          </li>
+        {/if}
       {/each}
     </ul>
   {/if}
@@ -381,20 +507,57 @@
       {#if listingsLoading}
         <p class="muted">Loading…</p>
       {:else}
+        <p class="muted modal-note">
+          Mapping this name decides whose calendar these land on. If one is
+          run by somebody else, credit it to them — the events stay here
+          either way.
+        </p>
         <ul class="listing-list">
-          {#each listings as l (l.uid + l.occurrence)}
-            <li class="listing">
-              <span class="listing-when muted">{whenOf(l.starts_at)}</span>
-              <span class="listing-title">{l.title}</span>
-              {#if l.location}<span class="muted listing-loc">{l.location}</span>{/if}
-              {#if l.description}
-                <p class="listing-desc">{snippet(l.description)}</p>
+          {#each titleGroups as g (g.titleKey)}
+            {@const credited = creditedFor(g)}
+            <li class="title-group">
+              <div class="group-head">
+                <span class="listing-title">{g.title}</span>
+                <span class="muted group-count">
+                  {g.items.length}{g.items.length === 1 ? ' date' : ' dates'}
+                </span>
+              </div>
+              {#if credited}
+                <p class="muted credited-note">
+                  {'Credited to '}{credited.node_name}{'.'}
+                  <button class="link-ignore" onclick={() => uncredit(credited)}>
+                    Remove credit
+                  </button>
+                </p>
+              {:else}
+                <div class="group-credit">
+                  <WorkspaceSearch
+                    variant="picker"
+                    placeholder="Who runs this?"
+                    provider={creditProvider}
+                    onSelect={(patch) => creditTo(g, patch)}
+                    suggestLabel={() => `Suggest “${g.title}” as a patch`}
+                    onSuggest={() => suggestPatchFor({ display_name: g.title })}
+                    alwaysSuggest
+                  />
+                </div>
               {/if}
-              {#if l.url}
-                <a href={l.url} target="_blank" rel="noopener noreferrer" class="listing-link">
-                  View on {hostOf(l.url)} ↗
-                </a>
-              {/if}
+              <ul class="date-list">
+                {#each g.items as l (l.uid + l.occurrence)}
+                  <li class="listing">
+                    <span class="listing-when muted">{whenOf(l.starts_at)}</span>
+                    {#if l.location}<span class="muted listing-loc">{l.location}</span>{/if}
+                    {#if l.description}
+                      <p class="listing-desc">{snippet(l.description)}</p>
+                    {/if}
+                    {#if l.url}
+                      <a href={l.url} target="_blank" rel="noopener noreferrer" class="listing-link">
+                        View on {hostOf(l.url)} ↗
+                      </a>
+                    {/if}
+                  </li>
+                {/each}
+              </ul>
             </li>
           {/each}
         </ul>
@@ -546,4 +709,37 @@
   .samples { font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .name-map { display: flex; flex-direction: column; gap: 0.35rem; flex: 0 1 18rem; }
   .muted { color: var(--color-text-muted); }
+
+  /* A program sits under the name it was recognized beneath, indented
+     so the list still reads as names first (docs/adr/063). */
+  .program-row {
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-border);
+    margin-left: 0.15rem;
+  }
+  .program-row .name-label { font-weight: 400; font-size: 0.95rem; }
+
+  .title-group {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .title-group:last-child { border-bottom: none; }
+  .group-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+  .group-count { font-size: 0.8rem; white-space: nowrap; }
+  .group-credit { margin: 0.5rem 0 0.25rem; }
+  .credited-note {
+    font-size: 0.82rem;
+    margin: 0.4rem 0 0.25rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .modal-note { font-size: 0.82rem; line-height: 1.5; margin: 0 0 0.75rem; }
+  .date-list { list-style: none; padding: 0; margin: 0.35rem 0 0 0.85rem; }
+  .date-list .listing { padding: 0.45rem 0; border-bottom: none; }
 </style>

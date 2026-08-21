@@ -411,7 +411,7 @@ func AdminListNameListings(db *database.DB) http.HandlerFunc {
 			return
 		}
 		rows, err := db.Query(
-			`SELECT uid, occurrence, title, description, location, starts_at, ends_at, url
+			`SELECT uid, occurrence, title, title_key, description, location, starts_at, ends_at, url
 			 FROM aggregator_listings
 			 WHERE aggregator_id = ? AND name_key = ?
 			 ORDER BY starts_at`, aggregatorID, nameKey)
@@ -424,7 +424,7 @@ func AdminListNameListings(db *database.DB) http.HandlerFunc {
 		items := []model.AggregatorListing{}
 		for rows.Next() {
 			var l model.AggregatorListing
-			if err := rows.Scan(&l.UID, &l.Occurrence, &l.Title, &l.Description,
+			if err := rows.Scan(&l.UID, &l.Occurrence, &l.Title, &l.TitleKey, &l.Description,
 				&l.Location, &l.StartsAt, &l.EndsAt, &l.URL); err != nil {
 				http.Error(w, `{"error":"failed to list listings"}`, http.StatusInternalServerError)
 				return
