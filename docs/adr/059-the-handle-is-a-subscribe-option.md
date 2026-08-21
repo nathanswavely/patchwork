@@ -4,7 +4,7 @@ Date: 2026-08-21. Status: **proposed**. Builds on ADR 042 (the patch
 profile's overflow), ADR 049 (state only what you enforce), ADR 006
 (people are not the product), ADR 023 (the Label). Companion to ADR 058,
 which drew the same line for a protocol we do not run; this one draws it
-for the protocol we do.
+for the protocol we do. Carries a consequence from ADR 060.
 
 ## Context
 
@@ -148,6 +148,15 @@ one lands well.
 
 ## Consequences
 
+- **The address is the quilt's, not the patch's, and the row must say
+  so.** ADR 060: `ap_followers` and `nodes.ap_id` stay behind on a
+  seamrip, so `@the-selvage@arts.lancaster.example` does not survive the
+  patch forking to another instance — the followers this row recruits are
+  lost in exactly the scenario the fork exists for. That is a reason to
+  publish the handle *with the caveat*, never a reason to withhold it: an
+  address that might move still beats an address nobody knows exists, and
+  a community that knows what it is building on can decide for itself.
+  One clause in the same copy that carries the reply disclosure.
 - Nothing here creates a table or a column, so the ADR 002 boundary is
   untouched.
 - **A frontend test cannot verify this.** CLAUDE.md is explicit that every

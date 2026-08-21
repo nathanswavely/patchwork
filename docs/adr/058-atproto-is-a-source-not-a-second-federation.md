@@ -4,7 +4,9 @@ Date: 2026-08-21. Status: **proposed** as a boundary. Nothing here is
 scheduled; the constraint is the decision, and the four steps below are an
 order, not a plan. Builds on ADR 024 (cross-quilt following), ADR 031
 (event sources), ADR 049 (state only what you enforce), ADR 054
-(federation needs a receiver).
+(federation needs a receiver). **Amended 2026-08-21** after reading
+Abramov's "Open Social": constraint 1 gains the mechanism it was missing,
+and step B is re-argued from ADR 060.
 
 ## Context
 
@@ -46,6 +48,16 @@ is a client: targeted XRPC reads against somebody else's AppView, and at
 most a filtered Jetstream subscription to one collection. Any atproto
 client goes through `internal/safehttp` like `ap` and `eventsource`
 already do.
+
+*Amended:* there is a third client mechanism this originally missed, and
+it is the one that fits best. A PDS serves a `wss://` event stream for
+its **own** repos, and a relay exists — in the words of the post that
+prompted this amendment — "to avoid opening a million event socket
+connections." A quilt has hundreds of members, not millions. Subscribing
+to the repos a patch already knows about is scale-matched to a community
+instance, and it is ADR 031's polling model with a push transport rather
+than infrastructure. It stays inside this constraint; it is named here so
+nobody reads "no relay" as "poll everything."
 
 **2. ActivityPub remains the federation. atproto is not a second one.**
 ADR 054 established the rule the hard way: `gv:Vote` and
@@ -90,6 +102,22 @@ mechanisms already implemented, pointed at the same anchor. A new method
 value, no new anchor, no new trust root. It composes with (A): once a DID
 is bound to a patch, that patch's own atproto events are self-attributed
 and need no crosswalk at all.
+
+*Amended — this step is the load-bearing one, and this ADR originally
+undersold it.* Written first as a mechanical convenience (same DNS
+machinery, one more enum value), B is really about **who holds a patch's
+identity**. ADR 060 establishes the gap: `ap_followers` and `ap_id` stay
+behind on a seamrip, so a forking patch keeps every member and loses
+every remote follower, and no ActivityPub mechanism fixes it in the
+hostile case a fork exists for. A `did:web` handle on a patch's own
+`verification_domain` is an identity the instance cannot hold hostage —
+the one kind of handle that survives the act seamrip is built to make
+possible.
+
+That is the real argument for atproto here, and it is a mission argument
+rather than a feature one. It changes B's priority, not this ADR's
+boundary: constraints 1 and 3 hold exactly as written, and a durable
+handle needs no relay, no AppView, and no private data.
 
 **C. atproto sign-in as a fourth auth path.** This is the one with a
 mission argument rather than a mechanical one. Seamrip is a safety valve

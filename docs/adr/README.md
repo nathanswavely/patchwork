@@ -82,6 +82,7 @@ several branches are in flight.
 | [019](019-self-hosted-mail-spike.md) | Self-hosted mail sidecar — spike plan |
 | [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only |
 | [059](059-the-handle-is-a-subscribe-option.md) | The handle is a subscribe option — the patch actor exists and no surface says so |
+| [060](060-a-fork-keeps-its-threads-and-loses-its-audience.md) | A fork keeps its threads and loses its audience — the reach gap in the seamrip boundary |
 
 ## Rejected after evaluation
 
