@@ -9,6 +9,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -1312,3 +1313,97 @@ func TestReviewSubmissionEmptyTagsClears(t *testing.T) {
 		t.Fatalf("stored tags = %v, want none after empty override", got)
 	}
 }
+
+// docs/adr/062: the fourth claim method proves a binding, not possession of
+// a token we issued, and records the DID it proved.
+func TestClaimDIDVerify(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "did-owner", "member")
+	alice, aliceToken := createTestUser(t, db, "did-alice", "member")
+	_ = alice
+
+	nodeID := createTestNode(t, db, owner.ID, "Tellus", "tellus", "open")
+	makeClaimable(t, db, nodeID, "tellus.example")
+
+	resp, code := openClaim(t, db, cfg, aliceToken, "tellus", map[string]interface{}{"method": "did"})
+	if code != http.StatusCreated {
+		t.Fatalf("open did claim: got %d — %v", code, resp)
+	}
+	claimID := resp["id"].(string)
+
+	origTXT := handler.ClaimLookupTXT
+	origClient := handler.ClaimHTTPClient
+	t.Cleanup(func() {
+		handler.ClaimLookupTXT = origTXT
+		handler.ClaimHTTPClient = origClient
+	})
+
+	verify := func() map[string]interface{} {
+		t.Helper()
+		r := authedRequest("POST", "/api/v1/claims/"+claimID+"/verify", nil, aliceToken)
+		w := serveMux(t, db, "POST", "/api/v1/claims/{id}/verify", handler.VerifyClaim(db), r)
+		var vr map[string]interface{}
+		json.Unmarshal(w.Body.Bytes(), &vr)
+		return vr
+	}
+
+	// A did:plc handle is refused, and the message says why rather than
+	// sending someone hunting a DNS typo that isn't there.
+	handler.ClaimLookupTXT = func(domain string) ([]string, error) {
+		return []string{"did=did:plc:abc123"}, nil
+	}
+	vr := verify()
+	if vr["verified"] != false {
+		t.Fatal("did:plc must not verify")
+	}
+	if msg, _ := vr["error"].(string); !strings.Contains(msg, "did:web") {
+		t.Errorf("error should name did:web, got: %q", msg)
+	}
+	if got := nodeDID(t, db, nodeID); got != "" {
+		t.Errorf("a refused claim stored a DID: %q", got)
+	}
+
+	// The real thing: handle names the DID, document names the handle back.
+	handler.ClaimLookupTXT = func(domain string) ([]string, error) {
+		if domain != "_atproto.tellus.example" {
+			t.Fatalf("lookup on %q, want the _atproto subdomain", domain)
+		}
+		return []string{"did=did:web:tellus.example"}, nil
+	}
+	handler.ClaimHTTPClient = stubDIDClient(map[string]string{
+		"https://tellus.example/.well-known/did.json": `{"id":"did:web:tellus.example","alsoKnownAs":["at://tellus.example"]}`,
+	})
+	vr = verify()
+	if vr["verified"] != true {
+		t.Fatalf("did verification failed: %v", vr)
+	}
+	if got := nodeDID(t, db, nodeID); got != "did:web:tellus.example" {
+		t.Errorf("nodes.did = %q, want the verified DID", got)
+	}
+}
+
+func nodeDID(t *testing.T, db *database.DB, nodeID string) string {
+	t.Helper()
+	var did sql.NullString
+	if err := db.QueryRow(`SELECT did FROM nodes WHERE id = ?`, nodeID).Scan(&did); err != nil {
+		t.Fatalf("read did: %v", err)
+	}
+	return did.String
+}
+
+// stubDIDClient serves canned documents and 404s everything else, so a test
+// never reaches the network.
+func stubDIDClient(pages map[string]string) *http.Client {
+	return &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		body, ok := pages[r.URL.String()]
+		if !ok {
+			return &http.Response{StatusCode: 404, Body: io.NopCloser(strings.NewReader("")), Request: r}, nil
+		}
+		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(body)), Request: r}, nil
+	})}
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }

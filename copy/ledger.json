@@ -3931,28 +3931,28 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 275,
+          "line": 291,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 415,
+          "line": 431,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 902,
+          "line": 949,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 940,
+          "line": 987,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4294,35 +4294,35 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 309,
+          "line": 325,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 602,
+          "line": 618,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 834,
+          "line": 881,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 890,
+          "line": 937,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1117,
+          "line": 1164,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4709,7 +4709,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 952,
+          "line": 999,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -6290,7 +6290,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 932,
+          "line": 979,
           "kind": "go-error-body",
           "raw": "user_id is required",
           "quote": null
@@ -6824,7 +6824,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 279,
+          "line": 295,
           "kind": "go-error-body",
           "raw": "this patch is not available for claiming",
           "quote": null
@@ -6842,7 +6842,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 290,
+          "line": 306,
           "kind": "go-error-body",
           "raw": "this patch has an approved claim awaiting setup",
           "quote": null
@@ -6860,14 +6860,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 299,
+          "line": 315,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 364,
+          "line": 380,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
@@ -6875,19 +6875,19 @@
       ]
     },
     {
-      "id": "22e19ec1ac63",
-      "text": "method must be dns, meta_tag, email, or admin",
-      "words": 8,
+      "id": "838a077ed527",
+      "text": "method must be dns, meta_tag, did, email, or admin",
+      "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 315,
+          "line": 331,
           "kind": "go-error-body",
-          "raw": "method must be dns, meta_tag, email, or admin",
+          "raw": "method must be dns, meta_tag, did, email, or admin",
           "quote": null
         }
       ]
@@ -6903,7 +6903,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 322,
+          "line": 338,
           "kind": "go-error-body",
           "raw": "this patch has no verified domain — choose admin review",
           "quote": null
@@ -6921,7 +6921,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 332,
+          "line": 348,
           "kind": "go-error-body",
           "raw": "a valid email address is required for email verification",
           "quote": null
@@ -6939,7 +6939,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 336,
+          "line": 352,
           "kind": "go-error-body",
           "raw": "the email must be at @%s",
           "quote": null
@@ -6957,7 +6957,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 367,
+          "line": 383,
           "kind": "go-error-body",
           "raw": "failed to create claim",
           "quote": null
@@ -6975,7 +6975,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 451,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "failed to load claim",
           "quote": null
@@ -6993,35 +6993,35 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 473,
+          "line": 489,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 513,
+          "line": 529,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 645,
+          "line": 661,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 843,
+          "line": 890,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1142,
+          "line": 1189,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7039,28 +7039,28 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 477,
+          "line": 493,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 517,
+          "line": 533,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 650,
+          "line": 666,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1146,
+          "line": 1193,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7078,14 +7078,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 481,
+          "line": 497,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 654,
+          "line": 670,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
@@ -7103,7 +7103,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 521,
+          "line": 537,
           "kind": "go-error-body",
           "raw": "this claim has no email verification to resend",
           "quote": null
@@ -7121,7 +7121,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 538,
+          "line": 554,
           "kind": "go-error-body",
           "raw": "resend limit reached — try again tomorrow",
           "quote": null
@@ -7139,14 +7139,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 581,
+          "line": 597,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 607,
+          "line": 623,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
@@ -7164,7 +7164,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 611,
+          "line": 627,
           "kind": "go-error-body",
           "raw": "this verification link has expired — request a new email from the claim page",
           "quote": null
@@ -7182,21 +7182,21 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 616,
+          "line": 632,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 711,
+          "line": 750,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 857,
+          "line": 904,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
@@ -7214,7 +7214,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 773,
+          "line": 820,
           "kind": "go-error-body",
           "raw": "failed to query claims",
           "quote": null
@@ -7232,7 +7232,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 847,
+          "line": 894,
           "kind": "go-error-body",
           "raw": "claim is not pending",
           "quote": null
@@ -7250,7 +7250,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 870,
+          "line": 917,
           "kind": "go-error-body",
           "raw": "action must be 'approve' or 'reject'",
           "quote": null
@@ -7282,7 +7282,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 906,
+          "line": 953,
           "kind": "go-error-body",
           "raw": "verification domains only apply to unclaimed patches",
           "quote": null
@@ -7300,7 +7300,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 944,
+          "line": 991,
           "kind": "go-error-body",
           "raw": "patch is not unclaimed",
           "quote": null
@@ -7318,7 +7318,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 969,
+          "line": 1016,
           "kind": "go-error-body",
           "raw": "failed to assign owner",
           "quote": null
@@ -7336,7 +7336,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1129,
+          "line": 1176,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -7354,7 +7354,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1150,
+          "line": 1197,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -7372,7 +7372,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1159,
+          "line": 1206,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired — the patch is claimable again",
           "quote": null
@@ -7390,14 +7390,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1168,
+          "line": 1215,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1174,
+          "line": 1221,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -7415,7 +7415,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1177,
+          "line": 1224,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -19031,7 +19031,7 @@
           "file": "web/src/components/MapLocationPicker.svelte",
           "line": 122,
           "kind": "markup",
-          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\r\n    precisely or as loosely as you like. Nothing is saved until you hit\r\n    Save location.",
+          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n    precisely or as loosely as you like. Nothing is saved until you hit\n    Save location.",
           "quote": null
         }
       ]
@@ -19128,7 +19128,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -19164,7 +19164,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
         }
       ]
@@ -22822,7 +22822,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 380,
+          "line": 374,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -27310,7 +27310,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
+          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -27885,7 +27885,7 @@
           "file": "web/src/pages/AdminQuiltSettings.svelte",
           "line": 363,
           "kind": "markup",
-          "raw": "Download this quilt's portable community data as a zip: patches, people,\n          memberships, events, proposals with votes, and governance records.\n          Credentials, sessions, and federation keys deliberately stay behind —\n          as do followers from other sites, since the addresses they follow\n          belong to this quilt rather than to the patches.\n          For a full backup of the deployment itself, back up the server's data\n          directory. That's an ops practice, not this export.",
+          "raw": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.",
           "quote": null
         }
       ],
@@ -27902,7 +27902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 382,
+          "line": 376,
           "kind": "markup",
           "raw": "Wipe this quilt",
           "quote": null
@@ -27920,7 +27920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 385,
+          "line": 379,
           "kind": "markup",
           "raw": "Erases",
           "quote": null
@@ -27938,7 +27938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 385,
+          "line": 379,
           "kind": "markup",
           "raw": "all community data",
           "quote": null
@@ -27956,7 +27956,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 385,
+          "line": 379,
           "kind": "markup",
           "raw": ": every patch, person, event,\n          proposal, and governance record. The deployment returns to first-run.\n          The server, domain, and configuration survive. The community's data\n          does not. This cannot be undone. Download an export first.",
           "quote": null
@@ -27974,7 +27974,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 391,
+          "line": 385,
           "kind": "markup",
           "raw": "Type the quilt name to confirm:",
           "quote": null
@@ -27992,7 +27992,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 410,
+          "line": 404,
           "kind": "markup",
           "raw": "Really erase everything? You will be signed out.",
           "quote": null
@@ -28562,7 +28562,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -29577,6 +29577,24 @@
       ]
     },
     {
+      "id": "f6f12b2a0b60",
+      "text": "Prove the did:web identity behind your domain",
+      "words": 7,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 33,
+          "kind": "js-string",
+          "raw": "Prove the did:web identity behind your domain",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "36575d819a4c",
       "text": "Email Verification",
       "words": 2,
@@ -29587,7 +29605,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 33,
+          "line": 34,
           "kind": "js-string",
           "raw": "Email Verification",
           "quote": "'"
@@ -29605,7 +29623,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 33,
+          "line": 34,
           "kind": "js-string",
           "raw": "Get a link at your organization email",
           "quote": "'"
@@ -29623,7 +29641,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 34,
+          "line": 35,
           "kind": "js-string",
           "raw": "Admin Review",
           "quote": "'"
@@ -29641,7 +29659,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 34,
+          "line": 35,
           "kind": "js-string",
           "raw": "Submit evidence for manual review",
           "quote": "'"
@@ -29659,7 +29677,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 41,
+          "line": 42,
           "kind": "js-string",
           "raw": "Requires a verified domain on this listing",
           "quote": "'"
@@ -29677,7 +29695,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 42,
+          "line": 43,
           "kind": "js-string",
           "raw": "This quilt can't send email",
           "quote": "\""
@@ -29695,7 +29713,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 43,
+          "line": 44,
           "kind": "js-string",
           "raw": "Unavailable on this listing",
           "quote": "'"
@@ -29713,7 +29731,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 61,
+          "line": 62,
           "kind": "js-string",
           "raw": "Failed to load claim status",
           "quote": "'"
@@ -29731,7 +29749,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 78,
+          "line": 79,
           "kind": "js-string",
           "raw": "Claim submitted for review",
           "quote": "'"
@@ -29749,7 +29767,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 81,
+          "line": 82,
           "kind": "js-string",
           "raw": "Failed to submit claim",
           "quote": "'"
@@ -29767,7 +29785,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 97,
+          "line": 98,
           "kind": "js-string",
           "raw": "Claim verified. Finish setup to activate this patch.",
           "quote": "'"
@@ -29792,7 +29810,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 100,
+          "line": 101,
           "kind": "js-string",
           "raw": "Verification failed. Please try again.",
           "quote": "'"
@@ -29810,7 +29828,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 103,
+          "line": 104,
           "kind": "js-string",
           "raw": "Verification failed",
           "quote": "'"
@@ -29835,7 +29853,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 120,
+          "line": 121,
           "kind": "js-string",
           "raw": "Claim withdrawn",
           "quote": "'"
@@ -29853,7 +29871,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 126,
+          "line": 127,
           "kind": "js-string",
           "raw": "Failed to withdraw claim",
           "quote": "'"
@@ -29871,7 +29889,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 138,
+          "line": 139,
           "kind": "js-string",
           "raw": "Verification email sent",
           "quote": "'"
@@ -29889,7 +29907,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 140,
+          "line": 141,
           "kind": "js-string",
           "raw": "Failed to resend email",
           "quote": "'"
@@ -29907,7 +29925,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 154,
+          "line": 155,
           "kind": "markup",
           "raw": "Claim {node?.name || 'this patch'}",
           "quote": null
@@ -29925,7 +29943,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 155,
+          "line": 156,
           "kind": "markup",
           "raw": "Prove you represent this organization to take ownership.",
           "quote": null
@@ -29943,7 +29961,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 166,
+          "line": 167,
           "kind": "markup",
           "raw": "Claim approved",
           "quote": null
@@ -29961,7 +29979,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 168,
+          "line": 169,
           "kind": "markup",
           "raw": "You're cleared to set up this patch. Setup is where it becomes active. Until then, it still reads as unclaimed to everyone else.",
           "quote": null
@@ -29979,7 +29997,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 170,
+          "line": 171,
           "kind": "markup",
           "raw": "Approval expires {formatExpiry(claim.setup_expires_at)}.",
           "quote": null
@@ -29997,7 +30015,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 185,
+          "line": 186,
           "kind": "markup",
           "raw": "Your claim is open",
           "quote": null
@@ -30015,7 +30033,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 190,
+          "line": 191,
           "kind": "markup",
           "raw": "Add a",
           "quote": null
@@ -30033,7 +30051,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 190,
+          "line": 191,
+          "kind": "markup",
+          "raw": "TXT record",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 203,
           "kind": "markup",
           "raw": "TXT record",
           "quote": null
@@ -30051,7 +30076,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 192,
+          "line": 193,
           "kind": "markup",
           "raw": "DNS changes can take a few minutes to propagate.",
           "quote": null
@@ -30069,7 +30094,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 195,
+          "line": 196,
           "kind": "markup",
           "raw": "Add this tag to the",
           "quote": null
@@ -30087,7 +30112,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 195,
+          "line": 196,
           "kind": "markup",
           "raw": "&lt;head&gt;",
           "quote": null
@@ -30105,9 +30130,171 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 195,
+          "line": 196,
           "kind": "markup",
           "raw": "https://{verificationDomain}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "70d0855ead60",
+      "text": "Point the atproto handle",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 203,
+          "kind": "markup",
+          "raw": "Point the atproto handle",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "585a9d9a7ab8",
+      "text": "at a",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 203,
+          "kind": "markup",
+          "raw": "at a",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "030a72e255d9",
+      "text": "did:web",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 203,
+          "kind": "markup",
+          "raw": "did:web",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3d487e780704",
+      "text": "identity. Add a",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 203,
+          "kind": "markup",
+          "raw": "identity. Add a",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9d1dd5292e4b",
+      "text": "_atproto.{verificationDomain}",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 203,
+          "kind": "markup",
+          "raw": "_atproto.{verificationDomain}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2d33adba4228",
+      "text": "did=did:web:{verificationDomain}",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "did=did:web:{verificationDomain}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "33394918ab6c",
+      "text": "Then make sure that DID document lists the handle back:",
+      "words": 10,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 205,
+          "kind": "markup",
+          "raw": "Then make sure that DID document lists the handle back:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0f3896e9461f",
+      "text": "\"alsoKnownAs\": [\"at://{verificationDomain}\"]",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 206,
+          "kind": "markup",
+          "raw": "\"alsoKnownAs\": [\"at://{verificationDomain}\"]",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "24102acb9754",
+      "text": "A did:plc handle won't work here. Only did:web is accepted, because its document lives on your own domain rather than in a registry someone else runs.",
+      "words": 26,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/ClaimPatch.svelte",
+          "line": 207,
+          "kind": "markup",
+          "raw": "A did:plc handle won't work here. Only did:web is accepted, because its document lives on your own domain rather than in a registry someone else runs.",
           "quote": null
         }
       ]
@@ -30123,7 +30310,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 199,
+          "line": 210,
           "kind": "markup",
           "raw": "We sent a verification link to",
           "quote": null
@@ -30141,7 +30328,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 199,
+          "line": 210,
           "kind": "markup",
           "raw": ". Open it to finish claiming. The link expires 24 hours after it's sent.",
           "quote": null
@@ -30159,7 +30346,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 202,
+          "line": 213,
           "kind": "markup",
           "raw": "Your claim is with the quilt admins for review. You'll be notified when it's resolved.",
           "quote": null
@@ -30177,7 +30364,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 219,
+          "line": 230,
           "kind": "markup",
           "raw": "Withdrawing lets you start over with a different method.",
           "quote": null
@@ -30195,7 +30382,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 243,
+          "line": 254,
           "kind": "markup",
           "raw": "Tell us why you should own this patch",
           "quote": null
@@ -30213,7 +30400,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 250,
+          "line": 261,
           "kind": "markup",
           "raw": "Your email at @{verificationDomain}",
           "quote": null
@@ -30231,7 +30418,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ClaimPatch.svelte",
-          "line": 252,
+          "line": 263,
           "kind": "markup",
           "raw": "The address must be at the organization's verified domain.",
           "quote": null
@@ -33007,7 +33194,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -33150,14 +33337,14 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 151,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         }
       ]
@@ -33803,7 +33990,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -34232,7 +34419,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
           "quote": null
         }
       ]
@@ -35821,7 +36008,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -35911,7 +36098,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -37599,7 +37786,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -37671,7 +37858,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
           "quote": null
         }
       ]
@@ -39316,7 +39503,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
           "quote": null
         }
       ]
@@ -39460,7 +39647,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
           "quote": null
         }
       ]
@@ -39478,7 +39665,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
           "quote": null
         }
       ]
@@ -39532,7 +39719,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
           "quote": null
         }
       ]
@@ -39586,7 +39773,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
           "quote": null
         }
       ]
@@ -39712,7 +39899,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 129,
           "kind": "markup",
-          "raw": "No account was created yet. Request a new sign-in link and\r\n          you'll be right back here.",
+          "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
           "quote": null
         }
       ]
@@ -39766,7 +39953,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 174,
           "kind": "markup",
-          "raw": ". Pick the name\r\n          you'll go by here. It becomes your profile address, so it\r\n          can't change later.",
+          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
           "quote": null
         }
       ]

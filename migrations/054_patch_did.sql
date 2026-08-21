@@ -1,0 +1,14 @@
+-- 054: a patch's verified AT Protocol identity (docs/adr/062).
+--
+-- Set when a claim verifies by the 'did' method: the DID that the patch's
+-- own verification_domain resolves to, proved in both directions. Only
+-- did:web is ever stored — a did:plc resolves through a registry the
+-- community does not own, which is the dependency docs/adr/060 refuses.
+--
+-- This travels in a seamrip (internal/seamrip). That is the entire point:
+-- an identity anchored on the community's own domain is worthless if the
+-- fork cannot take it with them.
+--
+-- claim_requests.method gains the value 'did' with no schema change — that
+-- column carries no CHECK constraint (migration 031), only a comment.
+ALTER TABLE nodes ADD COLUMN did TEXT;

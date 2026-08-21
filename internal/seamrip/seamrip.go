@@ -87,7 +87,7 @@ func Tables() []Table {
 				address, website, image_url, image_alt, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
-				submitted_by, submission_source, created_at, updated_at
+				submitted_by, submission_source, did, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"), c("address"),
@@ -108,7 +108,17 @@ func Tables() []Table {
 				// an admin's choice about their own door, and a patch that had
 				// closed it found it open again on the fork.
 				def("accept_event_suggestions", 1),
+				// The patch's did:web identity (docs/adr/062). It travels while
+				// verification_domain beside it does not, and the asymmetry is
+				// the point: verification_domain is the OLD instance's vetting
+				// judgement, which a fork has no business inheriting, whereas a
+				// did:web value names its own document's location. The fork can
+				// re-prove it in one request against the community's own domain,
+				// trusting nobody here. Being self-locating is what makes a DID
+				// portable, and it is the second reason 062 refused did:plc:
+				// that one needs plc.directory to say what it means.
 				id("submitted_by"), c("submission_source"),
+				def("did", ""),
 				c("created_at"), c("updated_at")),
 		},
 		{
