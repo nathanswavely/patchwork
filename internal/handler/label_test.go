@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -20,7 +21,7 @@ func getLabelJSON(t *testing.T, db *database.DB) map[string]any {
 	t.Helper()
 	r := httptest.NewRequest("GET", "/api/v1/label", nil)
 	w := httptest.NewRecorder()
-	handler.GetLabel(db)(w, r)
+	handler.GetLabel(db, nil)(w, r)
 	var body map[string]any
 	if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
 		t.Fatalf("label response: %v", err)
@@ -164,4 +165,56 @@ func TestLabelSummaryNeverCarriesHandles(t *testing.T) {
 	if body := getLabelJSON(t, db); len(body["stewards"].([]any)) != 1 {
 		t.Fatalf("public label should list the steward: %v", body)
 	}
+}
+
+// docs/adr/061: the Label states whether the quilt federates, in both
+// directions, derived from config rather than stored.
+func TestLabelStatesFederation(t *testing.T) {
+	db := setupTestDB(t)
+
+	fetch := func(cfg *config.Config) map[string]any {
+		t.Helper()
+		r := httptest.NewRequest("GET", "/api/v1/label", nil)
+		w := httptest.NewRecorder()
+		handler.GetLabel(db, cfg)(w, r)
+		var body map[string]any
+		if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
+			t.Fatalf("label response: %v", err)
+		}
+		return body
+	}
+
+	on := &config.Config{Federation: config.Federation{Enabled: true}}
+	off := &config.Config{Federation: config.Federation{Enabled: false}}
+
+	// Unpublished: the flag rides along anyway, mirroring "version", so a
+	// consumer learns this from a quilt whose stewards wrote no Label.
+	if got := fetch(on)["federation"]; got != true {
+		t.Errorf("unpublished label with federation on: got %v", got)
+	}
+	if got := fetch(off)["federation"]; got != false {
+		t.Errorf("unpublished label with federation off: got %v", got)
+	}
+
+	// Publish it: a steward first, since the floor of one is enforced.
+	_, adminToken := createTestUser(t, db, "boss", "admin")
+	r := authedRequest("POST", "/api/v1/admin/label/stewards", map[string]string{"username": "boss"}, adminToken)
+	if w := serveAdmin(db, "POST", "/api/v1/admin/label/stewards", handler.AdminAddLabelSteward(db), r); w.Code != http.StatusOK {
+		t.Fatalf("add steward: got %d: %s", w.Code, w.Body.String())
+	}
+	r = authedRequest("PATCH", "/api/v1/admin/label", map[string]any{"published": true, "prose": "we run this"}, adminToken)
+	if w := serveAdmin(db, "PATCH", "/api/v1/admin/label", handler.AdminUpdateLabel(db), r); w.Code != http.StatusOK {
+		t.Fatalf("publish: got %d: %s", w.Code, w.Body.String())
+	}
+
+	if got := fetch(on)["federation"]; got != true {
+		t.Errorf("published label with federation on: got %v", got)
+	}
+	if got := fetch(off)["federation"]; got != false {
+		t.Errorf("published label with federation off: got %v", got)
+	}
+
+	// Nothing stored: the same database answers both ways, which is the
+	// property that keeps the statement from disagreeing with the routes
+	// actually mounted.
 }

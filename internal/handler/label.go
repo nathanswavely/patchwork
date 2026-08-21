@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 )
@@ -149,12 +150,22 @@ func labelSummary(db *database.DB) LabelSummary {
 
 // GetLabel handles GET /api/v1/label — public, readable logged out: the
 // Label's most important reader has no account yet.
-func GetLabel(db *database.DB) http.HandlerFunc {
+func GetLabel(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		prose, supportURL, feedbackURL, currency, fromName, fromURL, published, ok := loadLabelRow(db)
 		w.Header().Set("Content-Type", "application/json")
+		// Whether this quilt federates is deployment state, like the
+		// version: derived from config on every read, never stored, so
+		// there is no second copy to drift (docs/adr/055's habit). The
+		// Label is where a quilt says how it is run, and until now it
+		// said nothing about this in either direction (docs/adr/061).
+		federation := cfg != nil && cfg.Federation.Enabled
 		if !ok || !published {
-			json.NewEncoder(w).Encode(map[string]any{"published": false, "version": Version})
+			json.NewEncoder(w).Encode(map[string]any{
+				"published":  false,
+				"version":    Version,
+				"federation": federation,
+			})
 			return
 		}
 		items := loadCostItems(db)
@@ -167,6 +178,7 @@ func GetLabel(db *database.DB) http.HandlerFunc {
 			// (docs/adr/023). Stamped at build time; "dev" outside a
 			// release image.
 			"version":              Version,
+			"federation":           federation,
 			"prose":                prose,
 			"support_url":          supportURL,
 			"feedback_url":         feedbackURL,

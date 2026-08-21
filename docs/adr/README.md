@@ -53,6 +53,7 @@ several branches are in flight.
 | [050](050-follower-permissions-gate-taking-part.md) | Follower permissions gate taking part, not reading — only `charters` was ever a read gate |
 | [056](056-aggregators-own-nothing-the-crosswalk-is-the-review.md) | Aggregators own nothing; the crosswalk is the review — one feed, many patches, consent per name |
 | [057](057-the-grant-reaches-unclaimed-patches.md) | The trusted-contributor grant reaches unclaimed patches — links too, not just events *(amends 032)* |
+| [061](061-what-this-runs-on-includes-whether-it-federates.md) | What this quilt runs on includes whether it federates — the Label states it, the door prices it *(extends 023, discharges 060)* |
 
 ## Partly implemented
 

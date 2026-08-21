@@ -357,7 +357,11 @@
         <p class="section-desc">
           Download this quilt's portable community data as a zip: patches, people,
           memberships, events, proposals with votes, and governance records.
-          Credentials, sessions, and federation keys deliberately stay behind.
+          <!-- docs/adr/060: ap_followers and ap_id stay behind, so the
+               community travels and its audience does not. -->
+          Credentials, sessions, and federation keys deliberately stay behind —
+          as do followers from other sites, since the addresses they follow
+          belong to this quilt rather than to the patches.
           For a full backup of the deployment itself, back up the server's data
           directory. That's an ops practice, not this export.
         </p>
