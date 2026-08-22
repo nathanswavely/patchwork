@@ -74,14 +74,38 @@ git branch --list                                # local branches, incl. other w
 Local branches matter as much as PRs: an unpushed worktree branch claimed
 ADR 038 invisibly to a session that checked only origin/main and open PRs.
 
+**That check has a shelf life.** It tells you the number was free when you
+claimed it, not that it still is. ADR 063 was claimed against a clean
+board — main topped out at 062, no open PRs, no other branches — and was
+wrong three hours later when another PR merged its own 063 while the first
+sat in review. **Re-check before merge, not only before claiming**, and
+re-check again after any merge of main into a long-lived branch.
+
 When running parallel agents or worktrees on one repo, **assign each its
 number up front** rather than letting each pick. If a collision does land,
-renumber the side with fewer inbound references and update every citation
-in the same commit — `git mv` so history survives, then sweep `*.md`, `*.go`,
+renumber the side with fewer inbound references — or, when one side has
+already merged, the unmerged one — and update every citation in the same
+commit: `git mv` so history survives, then sweep `*.md`, `*.go`,
 `*.svelte`, `*.js`, `*.sql` for the old number.
+
+Sweeping is where this bites a second time. Once both ADRs exist in one
+tree, **a blanket find-and-replace is wrong**: files legitimately cite the
+other side's number too. Renumbering 063 → 064 meant 17 citations moved
+and two files kept theirs, because `internal/eventsource/sync.go` and
+`PatchSettingsSources.svelte` each cited *both* ADRs after the merge.
+Anchor those edits on the surrounding sentence, not on the number.
 
 Numbers are never reused once merged: `migrations/006` is intentionally
 absent, and a retired ADR keeps its number and gets a status line.
+
+**The same collision has a code form, and git is equally blind to it.**
+Two branches each added a `jsonString` helper — one in
+`internal/handler/programs.go`, one in `internal/handler/event_sources.go`
+— so the merge was clean and the package stopped compiling. A green PR
+does not stay green just because main merged without conflicts: **build
+and run the suites after merging main**, before treating a quiet merge as
+a working one. Shared helper names, new columns on a table two branches
+both touched, and a route registered twice all fail this way.
 
 ### Verifying frontend changes
 
