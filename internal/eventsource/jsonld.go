@@ -41,13 +41,19 @@ func ParseJSONLD(data []byte, now time.Time) ([]Item, error) {
 	windowStart := now.Add(-pastGrace)
 	windowEnd := now.Add(Horizon)
 
+	// schema.org has no calendar-wide zone to consult the way ICS does,
+	// and a great many CMS plugins emit startDate as the site's local
+	// wall clock with no offset at all. Those read in the configured
+	// zone rather than as UTC (docs/adr/065).
+	zone := FloatingZone()
+
 	var items []Item
 	seen := map[string]bool{}
 	for _, ev := range events {
 		if status, _ := ev["eventStatus"].(string); strings.Contains(status, "Cancelled") {
 			continue
 		}
-		start, err := parseJSONLDTime(str(ev["startDate"]))
+		start, err := parseJSONLDTime(str(ev["startDate"]), zone)
 		if err != nil {
 			continue
 		}
@@ -81,7 +87,7 @@ func ParseJSONLD(data []byte, now time.Time) ([]Item, error) {
 			Description: stripHTML(str(ev["description"])),
 			StartsAt:    start.UTC().Format(time.RFC3339),
 		}
-		if end, err := parseJSONLDTime(str(ev["endDate"])); err == nil && end.After(start) {
+		if end, err := parseJSONLDTime(str(ev["endDate"]), zone); err == nil && end.After(start) {
 			s := end.UTC().Format(time.RFC3339)
 			it.EndsAt = &s
 		}
@@ -137,10 +143,11 @@ func isEventType(t any) bool {
 	return false
 }
 
-// parseJSONLDTime accepts the ISO 8601 shapes seen in the wild:
-// RFC 3339, offsets without a colon (Humanitix), floating date-times
-// (treated as UTC), and bare dates.
-func parseJSONLDTime(s string) (time.Time, error) {
+// parseJSONLDTime accepts the ISO 8601 shapes seen in the wild: RFC
+// 3339, offsets without a colon (Humanitix), floating date-times, and
+// bare dates. The first two carry their own offset and ignore zone; the
+// last two carry none and are read in it.
+func parseJSONLDTime(s string, zone *time.Location) (time.Time, error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
 		return time.Time{}, fmt.Errorf("empty date")
@@ -149,9 +156,12 @@ func parseJSONLDTime(s string) (time.Time, error) {
 		time.RFC3339,
 		"2006-01-02T15:04:05-0700",
 		"2006-01-02T15:04:05",
+		"2006-01-02T15:04",
 		"2006-01-02",
 	} {
-		if t, err := time.Parse(layout, s); err == nil {
+		// ParseInLocation for all of them: the layouts that carry an
+		// offset use it, and only the ones that don't fall back to zone.
+		if t, err := time.ParseInLocation(layout, s, zone); err == nil {
 			return t, nil
 		}
 	}

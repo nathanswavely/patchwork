@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 func writeConfig(t *testing.T, content string) string {
@@ -123,6 +124,7 @@ func TestNoWarningsForRealConfig(t *testing.T) {
 instance:
   name: "Test"
   domain: "quilt.example.org"
+  timezone: "America/New_York"
 federation:
   enabled: true
 `))
@@ -131,5 +133,63 @@ federation:
 	}
 	if ws := cfg.Warnings(); len(ws) != 0 {
 		t.Errorf("expected no warnings, got %v", ws)
+	}
+}
+
+func TestTimezoneResolves(t *testing.T) {
+	cfg, err := Load(writeConfig(t, `
+instance:
+  name: "Test"
+  timezone: "America/New_York"
+`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := cfg.Instance.Location().String(); got != "America/New_York" {
+		t.Errorf("Location() = %s, want America/New_York", got)
+	}
+}
+
+// A misspelled zone is invisible until an imported calendar is hours
+// off, so it has to fail where a config error is still readable.
+func TestTimezoneRejectsNonsense(t *testing.T) {
+	for _, bad := range []string{"America/Lancaster", "EST-5", "Eastern Standard Time"} {
+		_, err := Load(writeConfig(t, `
+instance:
+  name: "Test"
+  timezone: "`+bad+`"
+`))
+		if err == nil {
+			t.Errorf("timezone %q was accepted", bad)
+			continue
+		}
+		if !strings.Contains(err.Error(), "instance.timezone") {
+			t.Errorf("error for %q should name the field, got: %v", bad, err)
+		}
+	}
+}
+
+// Unset is UTC, which is what an instance that has configured nothing
+// already had.
+func TestTimezoneDefaultsToUTCAndWarns(t *testing.T) {
+	cfg, err := Load(writeConfig(t, `
+instance:
+  name: "Test"
+  domain: "quilt.example.org"
+`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Instance.Location() != time.UTC {
+		t.Errorf("Location() = %v, want UTC", cfg.Instance.Location())
+	}
+	found := false
+	for _, w := range cfg.Warnings() {
+		if strings.Contains(w, "instance.timezone") {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected a timezone warning, got %v", cfg.Warnings())
 	}
 }

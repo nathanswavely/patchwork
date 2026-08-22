@@ -8,6 +8,10 @@ import (
 	"time"
 
 	"gopkg.in/yaml.v3"
+
+	// The distroless image ships no tzdata, and a configured zone name
+	// has to resolve wherever the binary runs.
+	_ "time/tzdata"
 )
 
 // Config represents the patchwork.yaml configuration.
@@ -111,6 +115,42 @@ type Instance struct {
 	Name        string `yaml:"name"`
 	Domain      string `yaml:"domain"`
 	Description string `yaml:"description"`
+
+	// Timezone is the IANA name of the zone this community keeps time
+	// in ("America/New_York"). It is NOT a display setting: events are
+	// stored as instants and every surface renders them in the reader's
+	// own browser zone, which stays true. It exists because ingest has
+	// a question display doesn't — a calendar feed may hand over a bare
+	// wall clock ("19:00", no offset, no zone), and turning that into an
+	// instant takes a zone from somewhere (docs/adr/065).
+	//
+	// Empty means UTC, which is right only for a community that keeps
+	// UTC. Anywhere else it lands imported events hours off.
+	Timezone string `yaml:"timezone"`
+}
+
+// Location resolves instance.timezone. Load has already validated it, so
+// a caller can take the location and not the error; an unset or
+// unparseable zone is UTC.
+func (i Instance) Location() *time.Location {
+	loc, err := parseTimezone(i.Timezone)
+	if err != nil {
+		return time.UTC
+	}
+	return loc
+}
+
+// parseTimezone resolves an IANA timezone name. Empty is UTC.
+func parseTimezone(name string) (*time.Location, error) {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return time.UTC, nil
+	}
+	loc, err := time.LoadLocation(name)
+	if err != nil {
+		return nil, fmt.Errorf("%q is not an IANA timezone name (try \"America/New_York\", \"Europe/Berlin\", \"UTC\")", name)
+	}
+	return loc, nil
 }
 
 type Branding struct {
@@ -196,6 +236,12 @@ func Load(path string) (*Config, error) {
 		return nil, fmt.Errorf("instance.domain is required when federation is enabled")
 	}
 
+	// A typo here is invisible until an imported calendar is hours off,
+	// so it fails at startup like the session durations below.
+	if _, err := parseTimezone(cfg.Instance.Timezone); err != nil {
+		return nil, fmt.Errorf("instance.timezone: %w", err)
+	}
+
 	// Fail at startup rather than at the first login attempt.
 	if _, _, err := cfg.Session.Durations(); err != nil {
 		return nil, err
@@ -233,6 +279,9 @@ func (c *Config) Warnings() []string {
 	var w []string
 	if c.Instance.Domain == exampleDomain {
 		w = append(w, "instance.domain still has the example value — set it to your real domain")
+	}
+	if c.Instance.Timezone == "" {
+		w = append(w, "instance.timezone is unset, so calendar feeds that publish times without a zone are read as UTC — set it to your community's IANA zone (e.g. America/New_York) if imported events land hours off")
 	}
 	if c.Federation.Enabled {
 		d := c.Instance.Domain
