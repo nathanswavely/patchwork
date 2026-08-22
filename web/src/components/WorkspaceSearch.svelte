@@ -36,6 +36,12 @@
    *    posture assumes a 420px field: pinned to a narrow one, the flex
    *    row collapses every result's name to an ellipsis and leaves only
    *    its description showing.
+   *  - matchField: pins the dropdown to the field's own width instead of
+   *    letting it grow past one edge. The widening above assumes free room
+   *    beside the field; inside a scrolling box — a modal, a panel — there
+   *    is none, and the overflow is clipped rather than overlaid, because
+   *    `overflow-y: auto` computes `overflow-x` to `auto` too. Pass it
+   *    wherever an ancestor scrolls, and give the field the room instead.
    *  - shortcut={false}: gives up the '/' focus key. Several pickers on a
    *    page would otherwise all bind it and fight over the global bar's.
    *    Implied by variant="picker" — a slash shortcut into one of nine
@@ -58,6 +64,7 @@
     onSelect = null,
     alwaysSuggest = false,
     shortcut = true,
+    matchField = false,
   } = $props();
 
   let isPicker = $derived(variant === 'picker');
@@ -205,7 +212,12 @@
 
 <svelte:window onkeydown={onWindowKeydown} onclick={onWindowClick} />
 
-<div class="finder" class:finder-takeover={variant === 'takeover'} class:finder-picker={isPicker}>
+<div
+  class="finder"
+  class:finder-takeover={variant === 'takeover'}
+  class:finder-picker={isPicker}
+  class:finder-match-field={matchField}
+>
   {#if !isPicker}
     <span class="finder-icon"><MagnifyingGlass size={15} weight="duotone" /></span>
   {/if}
@@ -446,6 +458,17 @@
     right: 0;
     min-width: min(26rem, 90vw);
     max-width: calc(100vw - 2rem);
+  }
+
+  /* Except where an ancestor scrolls. A scrolling box clips on both axes —
+     `overflow-y: auto` computes `overflow-x` to `auto` — so a dropdown
+     reaching past the field is cut off rather than drawn over, and the box
+     grows a horizontal scrollbar. Pinned to the field, it cannot reach. */
+  .finder-picker.finder-match-field .finder-results {
+    left: 0;
+    right: 0;
+    min-width: 0;
+    max-width: none;
   }
 
   /* Stacked, so a name is never the half that ellipsises away. */

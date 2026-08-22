@@ -22742,7 +22742,7 @@
       "occurrences": [
         {
           "file": "web/src/components/WorkspaceSearch.svelte",
-          "line": 230,
+          "line": 242,
           "kind": "markup",
           "raw": "Searching…",
           "quote": null
@@ -22760,7 +22760,7 @@
       "occurrences": [
         {
           "file": "web/src/components/WorkspaceSearch.svelte",
-          "line": 233,
+          "line": 245,
           "kind": "markup",
           "raw": "No matches in this context",
           "quote": null
@@ -25575,7 +25575,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 536,
+          "line": 537,
           "kind": "attr:placeholder",
           "raw": "Who runs this?",
           "quote": "\""
@@ -25593,7 +25593,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAggregators.svelte",
-          "line": 555,
+          "line": 556,
           "kind": "markup",
           "raw": "View on {hostOf(l.url)} ↗",
           "quote": null
