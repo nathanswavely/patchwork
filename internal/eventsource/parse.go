@@ -69,6 +69,15 @@ func ParseICS(data []byte, now time.Time) ([]Item, error) {
 		return nil, fmt.Errorf("parse ics: %w", err)
 	}
 
+	// What a zoneless time in this document means. The calendar's own
+	// X-WR-TIMEZONE wins where it has one; otherwise the instance says
+	// (docs/adr/065). Every read below passes it, so a floating DTSTART
+	// lands on the venue's clock and an RRULE expands on it — a weekly
+	// 7pm show stays 7pm across a daylight-saving boundary instead of
+	// sliding an hour.
+	zone := calendarZone(cal)
+	normalizeTZIDs(cal.Component)
+
 	windowStart := now.Add(-pastGrace)
 	windowEnd := now.Add(Horizon)
 
@@ -96,7 +105,7 @@ func ParseICS(data []byte, now time.Time) ([]Item, error) {
 			order = append(order, uid)
 		}
 		if rid := e.Props.Get(ical.PropRecurrenceID); rid != nil {
-			t, err := rid.DateTime(time.UTC)
+			t, err := rid.DateTime(zone)
 			if err != nil {
 				continue
 			}
@@ -121,7 +130,7 @@ func ParseICS(data []byte, now time.Time) ([]Item, error) {
 		// alone. Emitted after the master's expansion consumes its share.
 		if g.master == nil {
 			for occ, ov := range g.overrides {
-				if it, start, ok := itemFromEvent(ov, uid, occ); ok {
+				if it, start, ok := itemFromEvent(ov, uid, occ, zone); ok {
 					add(it, start)
 				}
 			}
@@ -132,22 +141,22 @@ func ParseICS(data []byte, now time.Time) ([]Item, error) {
 			continue // whole series cancelled: nothing desired
 		}
 
-		set, err := g.master.RecurrenceSet(time.UTC)
+		set, err := g.master.RecurrenceSet(zone)
 		if err != nil || set == nil {
 			// No RRULE (or one we can't parse — treat as non-recurring
 			// rather than dropping the event entirely).
-			if it, start, ok := itemFromEvent(g.master, uid, ""); ok {
+			if it, start, ok := itemFromEvent(g.master, uid, "", zone); ok {
 				add(it, start)
 			}
 			continue
 		}
 
-		masterStart, err := g.master.DateTimeStart(time.UTC)
+		masterStart, err := g.master.DateTimeStart(zone)
 		if err != nil {
 			continue
 		}
 		var duration time.Duration
-		if masterEnd, err := g.master.DateTimeEnd(time.UTC); err == nil && masterEnd.After(masterStart) {
+		if masterEnd, err := g.master.DateTimeEnd(zone); err == nil && masterEnd.After(masterStart) {
 			duration = masterEnd.Sub(masterStart)
 		}
 
@@ -156,12 +165,12 @@ func ParseICS(data []byte, now time.Time) ([]Item, error) {
 			occKey := occ.UTC().Format(time.RFC3339)
 			if ov, ok := g.overrides[occKey]; ok {
 				consumed[occKey] = true
-				if it, start, ok := itemFromEvent(ov, uid, occKey); ok {
+				if it, start, ok := itemFromEvent(ov, uid, occKey, zone); ok {
 					add(it, start)
 				}
 				continue
 			}
-			it, _, ok := itemFromEvent(g.master, uid, occKey)
+			it, _, ok := itemFromEvent(g.master, uid, occKey, zone)
 			if !ok {
 				continue
 			}
@@ -181,7 +190,7 @@ func ParseICS(data []byte, now time.Time) ([]Item, error) {
 			if consumed[occKey] {
 				continue
 			}
-			if it, start, ok := itemFromEvent(ov, uid, occKey); ok {
+			if it, start, ok := itemFromEvent(ov, uid, occKey, zone); ok {
 				add(it, start)
 			}
 		}
@@ -201,11 +210,11 @@ func ParseICS(data []byte, now time.Time) ([]Item, error) {
 
 // itemFromEvent builds an Item from one VEVENT. ok is false when the
 // event is unusable (no valid start) or cancelled.
-func itemFromEvent(e *ical.Event, uid, occurrence string) (*Item, time.Time, bool) {
+func itemFromEvent(e *ical.Event, uid, occurrence string, zone *time.Location) (*Item, time.Time, bool) {
 	if status, _ := e.Status(); status == ical.EventCancelled {
 		return nil, time.Time{}, false
 	}
-	start, err := e.DateTimeStart(time.UTC)
+	start, err := e.DateTimeStart(zone)
 	if err != nil || start.IsZero() {
 		return nil, time.Time{}, false
 	}
@@ -247,7 +256,7 @@ func itemFromEvent(e *ical.Event, uid, occurrence string) (*Item, time.Time, boo
 			it.URL = s
 		}
 	}
-	if end, err := e.DateTimeEnd(time.UTC); err == nil && end.After(start) {
+	if end, err := e.DateTimeEnd(zone); err == nil && end.After(start) {
 		s := end.UTC().Format(time.RFC3339)
 		it.EndsAt = &s
 	}

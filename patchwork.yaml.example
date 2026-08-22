@@ -9,6 +9,13 @@ instance:
   name: "Lancaster Arts Patchwork"
   domain: "patchwork.example.com"
   description: "A community organizing platform for the Lancaster arts scene."
+  # The IANA zone this community keeps time in. This is not a display
+  # setting — everyone always sees events in their own browser's zone.
+  # It is what an imported calendar's zoneless times mean: a feed that
+  # says a show starts at "19:00" with no offset is saying seven in the
+  # evening here, and without this that is read as 19:00 UTC and the
+  # show lands hours early (docs/adr/065). Defaults to UTC.
+  timezone: "America/New_York"
 
 # SMTP configuration for magic link authentication.
 # Optional — without SMTP, magic links print to the server log instead,

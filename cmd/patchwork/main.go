@@ -200,6 +200,13 @@ func main() {
 		}
 	}()
 
+	// Tell the feed parsers what a zoneless time in a calendar means,
+	// before anything reads one (docs/adr/065). Set here rather than
+	// read from config inside the parsers so the sync worker and the
+	// handlers' "sync now" agree by construction.
+	eventsource.SetFloatingZone(cfg.Instance.Location())
+	log.Printf("config: calendar feeds that publish times without a zone are read as %s", cfg.Instance.Location())
+
 	// Start the event source worker: hourly re-sync of every attached
 	// calendar feed (docs/adr/031).
 	sourceCtx, sourceCancel := context.WithCancel(context.Background())
