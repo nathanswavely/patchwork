@@ -373,37 +373,13 @@
     max-width: 400px;
   }
 
-  .table-wrapper {
-    overflow-x: auto;
-  }
-
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 0.6rem 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .data-table th {
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
+  /* .table-wrapper and .data-table are the shared table component (app.css). */
   .data-table tr.suspended {
     opacity: 0.7;
   }
 
   .data-table select {
-    padding: 0.25rem 0.5rem;
+    padding: 0.35rem 0.5rem;
     font-size: 0.85rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
