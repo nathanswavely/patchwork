@@ -169,8 +169,20 @@ Binns Park at 46 listings, a public square the city genuinely programs,
 then two arts venues at 15 and an improv troupe at 12 that the feed files
 as a location. The Marriott sits at 7, and 26 of 49 names carry a single
 listing. A confirmed link grows both tiles (ADR 032), so crediting
-programs mitigates what is left. Whether hosting and running should weigh
-the same is ADR 015's question and is left open here.
+programs mitigates what is left.
+
+**Hosting and running weigh the same, held rather than settled**
+(2026-08-21). This is already what ships: `event_count` sums a patch's own
+active events and its confirmed links with no weighting
+(`internal/handler/tree.go`), so a venue's tile grows for a night it hosts
+exactly as the organizer's does for running it. Keeping it that way is a
+decision and not an oversight — a venue that opens its room *is* doing
+community work, which is ADR 015's premise rather than a loophole in it,
+and this feed does not embarrass the rule: its busiest name is a public
+square the city genuinely programs, not a hall nobody claims. What would
+reopen it is a venue carrying a hundred nights it does not run, and no
+quilt has one. Weighting a linked event below an owned one is the lever if
+one ever does, and it belongs to ADR 015.
 
 Declining to route a venue is not a way to manage this. By decision 7 it
 suppresses the events entirely — the credited patch gets nothing either —
