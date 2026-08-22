@@ -533,6 +533,7 @@
                 <div class="group-credit">
                   <WorkspaceSearch
                     variant="picker"
+                    matchField
                     placeholder="Who runs this?"
                     provider={creditProvider}
                     onSelect={(patch) => creditTo(g, patch)}
