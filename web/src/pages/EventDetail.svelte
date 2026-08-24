@@ -39,13 +39,26 @@
     !!event && (isAdmin() || getMembershipRoles().get(event.node_slug) === 'admin')
   );
 
-  // Editing is allowed for admins of the hosting patch, instance admins,
-  // and the event's own creator, mirroring the backend check in UpdateEvent
-  // (docs/adr/026: creators may always edit their own event).
+  // Mirrors the backend check in UpdateEvent (docs/adr/026): admins of the
+  // hosting patch and instance admins edit anything, and a creator edits
+  // their own event as long as they still stand where they posted it — a
+  // member of an active patch, or anyone whose event is still a submission
+  // (pending, or on an unclaimed patch, where an edit re-enters review). A
+  // suggestion adopted onto an active patch belongs to the patch, so its
+  // outside submitter gets no Edit button that would only 403.
+  let creatorRole = $derived(
+    event ? getMembershipRoles().get(event.node_slug) : undefined
+  );
   let canEdit = $derived(
     !!event && !imported && (
       canManage
-      || (!!getUser() && event.created_by === getUser().id)
+      || (
+        !!getUser() && event.created_by === getUser().id && (
+          creatorRole === 'member'
+          || event.status === 'pending_review'
+          || event.node_status === 'unclaimed'
+        )
+      )
     )
   );
 

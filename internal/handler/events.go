@@ -452,9 +452,16 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		// edit their own event, but the edit re-enters review. On active
 		// patches an adopted suggestion belongs to the patch — the suggester
 		// keeps no residual rights once it is approved.
+		//
+		// The direct door on an active patch is the one CreateEvent opens:
+		// members and admins. Admins edit anything on their calendar; a
+		// member's reach stops at the event they created, which is the same
+		// line DeleteEvent draws. This used to say admins only, so a member
+		// could publish an event and then get a 403 editing it a minute later.
 		isCreator := user.ID == createdBy
 		direct := user.Role == "admin" ||
 			(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
+			(nodeStatus == "active" && isCreator && userHasNodeRole(db, user.ID, nodeID, "member")) ||
 			(nodeStatus == "unclaimed" && user.TrustedContributor && isCreator)
 		reReview := false
 		switch {
