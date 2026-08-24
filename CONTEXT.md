@@ -1148,9 +1148,11 @@ corner marks on the tile itself. Badges reveal progressively as tiles earn
 on-screen room, and where badges would crowd the larger tile's wins — the
 rest wait for a closer zoom. What a badge needs to *appear* and what it
 needs to *stay* are deliberately different: a badge already on screen is
-placed first, holds down to a smaller tile, and may sit closer to its
-neighbours than a new one would be allowed. A name a reader has already
-read should not blink off and back on while they pinch.
+placed first, holds down to a smaller tile, and — while its tile is roomy
+enough to be worth reading — may sit closer to its neighbours than a new
+one would be allowed. A name a reader has already read should not blink
+off and back on while they pinch; a quilt shrunk to a thumbnail should
+still give its names back.
 A badge's *text* is its name alone; how that text breaks across lines
 is decided where the badge lands. A name sits flat on one line until its
 neighbours leave no room for a pill that wide, and then stacks onto two

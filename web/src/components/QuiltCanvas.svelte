@@ -144,6 +144,9 @@
   // then re-placed a step later when its rival is dropped or reshaped: the
   // blink both KEEP constants exist to stop.
   //
+  // This is the most an incumbent is ever forgiven, reached only on a roomy
+  // tile (LABEL_ROOMY_PX below); a badge nearer the size floor owes more.
+  //
   // 26 is a deliberate trade, and it is not the value that stops every blink.
   // Measured over the same 34-step sweep: 32/32 left three names blinking out
   // and back, 32/26 two, 32/18 none, at 394 and 422 badges-on-screen
@@ -153,6 +156,19 @@
   // cost a little wrapping: at 26 a few names stack a line deeper than they
   // need to, purely to clear the wider gap.
   const LABEL_KEEP_GAP = 26;
+  // ...and only as far as its tile has room to justify. An incumbent on a
+  // 52px tile owes the full 32; one on an 80px tile or bigger owes 26; between
+  // those the gap slides. Without this the relaxation applies hardest exactly
+  // where it looks worst — zoomed far out, where every tile is near the floor,
+  // the whole quilt is a thumbnail and holding five names over it reads as
+  // clutter rather than continuity (desktop far zoom: 5 names against 3).
+  //
+  // A ramp and not a threshold, which was the first attempt: a gap that flips
+  // at a tile size is one more line to cross, and badges crossing it blink for
+  // exactly the reason the KEEP constants exist. Measured over the 34-step
+  // sweep, a hard cutoff at 78 or 95 took reappearances from 2 back up to 4,
+  // while the ramp holds at 2. Nothing about a tile's size should be a cliff.
+  const LABEL_ROOMY_PX = 80;
   // Corner marks: an on-screen size, like a name badge, not a share of the
   // tile — see updateCornerMarks. MARK_PX is the diameter one wants,
   // MARK_INSET its gap from the tile's corner, both in canonical units
@@ -1510,11 +1526,16 @@
       const { chromeX, chromeY, lineH } = badgeType();
 
       // How much visible quilt this badge owes its neighbours: the full gap to
-      // move in, a smaller one to stay. Same hysteresis as the size floor
-      // above and for the same reason — the badges on screen drift together
-      // as the quilt scales, and a name should not blink off the moment two
-      // pills come a pixel closer than a fresh pair would be allowed.
-      const gap = held ? LABEL_KEEP_GAP : LABEL_GAP;
+      // move in, and to stay, a gap that slides toward LABEL_KEEP_GAP as its
+      // tile grows past the floor. Same hysteresis as the size floor above and
+      // for the same reason — the badges on screen drift together as the quilt
+      // scales, and a name should not blink off the moment two pills come a
+      // pixel closer than a fresh pair would be allowed — but a name only
+      // earns that leniency while there is a tile under it worth reading.
+      const relax = held
+        ? Math.max(0, Math.min(1, (screenPx - LABEL_MIN_PX) / (LABEL_ROOMY_PX - LABEL_MIN_PX)))
+        : 0;
+      const gap = LABEL_GAP + (LABEL_KEEP_GAP - LABEL_GAP) * relax;
 
       // Which shape the name wears is decided HERE, against the badges already
       // on screen, rather than by the name alone: a pill that doesn't fit
