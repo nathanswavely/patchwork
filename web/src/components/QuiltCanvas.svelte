@@ -79,8 +79,28 @@
     return { vw: window.innerWidth, vh: window.innerHeight };
   }
 
-  // On-screen tile size at which a tile earns a label (see updateLabels).
+  // On-screen tile size at which a tile earns a label, and the smaller one at
+  // which it finally gives that label back (see updateLabels).
+  //
+  // Two thresholds rather than one because a single one is a line that gets
+  // crossed twice: a zoom-out is a stream of passes, the tile shrinks past 52
+  // in the middle of it, and any wobble — a pinch that gives a pixel back, a
+  // rebuild that re-rounds the tile — flips the name on and off.
+  //
+  // The band is narrow on purpose. A pill is already wider than a 52px tile,
+  // so every pixel of hold past that is a name floating further from the tile
+  // it belongs to: at 38 the seeded quilt kept two names hovering over a
+  // thumbnail-sized quilt long after the tiles under them had stopped reading
+  // as tiles. 44 is about 15% — enough to swallow the wobble a gesture
+  // produces, not enough to hold a name into a zoom with nothing to attach it
+  // to.
+  //
+  // This band is NOT what stops a badge blinking off and back on mid-zoom;
+  // that is a collision, and LABEL_KEEP_GAP is what settles it. Over a
+  // 34-step sweep of the seeded quilt this threshold alone changed no
+  // reappearance at any value from 52 (no hysteresis) down to 30.
   const LABEL_MIN_PX = 52;
+  const LABEL_KEEP_PX = 44;
   // A name badge's TEXT is its name's alone (CONTEXT.md "Name badge"); how
   // that text is broken across lines is the tile's, and the two constants
   // below bound the choice rather than making it. See updateLabels.
@@ -105,7 +125,8 @@
   const LABEL_TEXT_EM = 8.5;
   const LABEL_MAX_LINES = 3;
   // Minimum visible quilt between placed badges; a rival badge that can't
-  // clear this gap stays hidden until a closer zoom. Sized by eye against a
+  // clear this gap stays hidden until a closer zoom, and a badge already on
+  // screen holds its place down to LABEL_KEEP_GAP. Sized by eye against a
   // dense quilt: a name-only pill is ~65px narrower than the old motif-and-
   // role one, so at the pre-corner-mark gap of 12 many more badges cleared
   // collision and the quilt went back to being papered in them.
@@ -116,6 +137,16 @@
   // densest) and spent every pixel of breathing room to do it. The cap is
   // the lever here; this is not.
   const LABEL_GAP = 32;
+  // What an incumbent owes instead — the collision half of the hysteresis
+  // above, and the half that does the work. Badges drift together as the quilt
+  // scales, and on one gap a badge that crosses 32px of separation is dropped,
+  // then re-placed a step later when its rival is dropped or reshaped: the
+  // blink both KEEP constants exist to stop. Measured over the same 34-step
+  // sweep: 32/32 left three names blinking out and back, 32/26 two, 32/18
+  // none. 18 is also where the shape search stops paying for the gap in wraps
+  // — at 26 several names stacked a line deeper than they needed to just to
+  // clear it, which is a worse trade than sitting a little closer.
+  const LABEL_KEEP_GAP = 18;
   // Corner marks: an on-screen size, like a name badge, not a share of the
   // tile — see updateCornerMarks. MARK_PX is the diameter one wants,
   // MARK_INSET its gap from the tile's corner, both in canonical units
@@ -1434,7 +1465,8 @@
     // physically big enough to hold one. Keying off the world size instead
     // meant a quilt of uniformly-sized tiles (no member/event spread to grow
     // them) never crossed the threshold at any zoom level.
-    const minShowPx = LABEL_MIN_PX;
+    //
+    // Earning one and keeping one are different sizes — see LABEL_KEEP_PX.
 
     // Incumbents first, then by size descending so larger labels get priority
     // in collision detection.
@@ -1448,7 +1480,8 @@
     for (const tile of sortedTiles) {
       const tilePx = tile.pxSize;
       const screenPx = tilePx * k;
-      if (screenPx < minShowPx) continue;
+      const held = heldBadge.has(tile.data.id);
+      if (screenPx < (held ? LABEL_KEEP_PX : LABEL_MIN_PX)) continue;
 
       // World coordinates (pre-zoom) — offset includes the centering transform.
       const worldX = canvasOffsetX + tile.px + tilePx / 2;
@@ -1470,6 +1503,13 @@
       // it is rem-based and the reader can move it.
       const { chromeX, chromeY, lineH } = badgeType();
 
+      // How much visible quilt this badge owes its neighbours: the full gap to
+      // move in, a smaller one to stay. Same hysteresis as the size floor
+      // above and for the same reason — the badges on screen drift together
+      // as the quilt scales, and a name should not blink off the moment two
+      // pills come a pixel closer than a fresh pair would be allowed.
+      const gap = held ? LABEL_KEEP_GAP : LABEL_GAP;
+
       // Which shape the name wears is decided HERE, against the badges already
       // on screen, rather than by the name alone: a pill that doesn't fit
       // stacks onto another line and asks again, and only a name that can't
@@ -1484,9 +1524,6 @@
       let shape = null;
       let rect = null;
       for (const candidate of badgeShapes(name)) {
-        // Collision check against already-placed labels. Placed rects are
-        // stored inflated by LABEL_GAP, so a rival only lands when there is
-        // visible quilt between the pills.
         const labelW = candidate.textW + chromeX;
         const labelH = chromeY + candidate.lines * lineH;
         const box = {
@@ -1496,12 +1533,14 @@
           h: labelH,
         };
 
+        // Collision check against already-placed labels, each of which only
+        // clears when there is `gap` of quilt between the two pills.
         let collides = false;
         for (const existing of labelRects) {
-          if (box.x < existing.x + existing.w &&
-              box.x + box.w > existing.x &&
-              box.y < existing.y + existing.h &&
-              box.y + box.h > existing.y) {
+          if (box.x - gap < existing.x + existing.w &&
+              box.x + box.w + gap > existing.x &&
+              box.y - gap < existing.y + existing.h &&
+              box.y + box.h + gap > existing.y) {
             collides = true;
             break;
           }
@@ -1517,12 +1556,7 @@
       if (!shape) continue;
       const { textW, lines } = shape;
 
-      labelRects.push({
-        x: rect.x - LABEL_GAP,
-        y: rect.y - LABEL_GAP,
-        w: rect.w + LABEL_GAP * 2,
-        h: rect.h + LABEL_GAP * 2,
-      });
+      labelRects.push(rect);
       labeledPatchIds.add(tile.data.id);
 
       // Reuse this patch's badge if it still matches what it was built from.

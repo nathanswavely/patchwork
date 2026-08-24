@@ -1145,14 +1145,18 @@ _Avoid_: square, cell
 The pill floating over a tile that names its patch — the name, centered,
 and nothing else; what a patch *is* and how the viewer stands with it are
 corner marks on the tile itself. Badges reveal progressively as tiles earn
-on-screen room, and where badges would crowd, a badge already on screen
-keeps its place and otherwise the larger tile's wins — the rest wait for a
-closer zoom. A badge's *text* is its name alone; how that text breaks
-across lines is decided where the badge lands. A name sits flat on one
-line until its neighbours leave no room for a pill that wide, and then
-stacks onto two or three — tiles are square and a pill is wide and short,
-so wrapping spends the dimension that has room. At the viewport edge it
-clips rather than reshapes.
+on-screen room, and where badges would crowd the larger tile's wins — the
+rest wait for a closer zoom. What a badge needs to *appear* and what it
+needs to *stay* are deliberately different: a badge already on screen is
+placed first, holds down to a smaller tile, and may sit closer to its
+neighbours than a new one would be allowed. A name a reader has already
+read should not blink off and back on while they pinch.
+A badge's *text* is its name alone; how that text breaks across lines
+is decided where the badge lands. A name sits flat on one line until its
+neighbours leave no room for a pill that wide, and then stacks onto two
+or three — tiles are square and a pill is wide and short, so wrapping
+spends the dimension that has room. At the viewport edge it clips rather
+than reshapes.
 _Avoid_: label / quilt label (the Label is the stewardship disclosure),
 pin (retired — docs/adr/027), card, marker
 
