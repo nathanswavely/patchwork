@@ -18,8 +18,10 @@
  * Everything here is pure geometry and deterministic. Nothing touches the
  * DOM except the two texture bakes, which draw into a detached canvas.
  *
- * CONTEXT.md holds the vocabulary: the tile-to-tile boundary is a *seam*
- * (sashing is the framing between remote-quilt regions, not this).
+ * docs/adr/066 records the decision and what was measured. CONTEXT.md holds
+ * the vocabulary: the tile-to-tile boundary is a *tile seam* (plain "seam"
+ * is the block drafter's, sewn within one block; sashing is the framing
+ * between remote-quilt regions — neither is this).
  */
 
 // ---------------------------------------------------------------------------
