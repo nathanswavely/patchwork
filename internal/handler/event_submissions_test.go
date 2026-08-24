@@ -471,3 +471,81 @@ func TestAdminQueueNotificationsReachTheirActor(t *testing.T) {
 		t.Errorf("member notified about their own event: got %d, want 0", n)
 	}
 }
+
+// patchEventVia sends a PATCH to UpdateEvent as the given session.
+func patchEventVia(t *testing.T, db *database.DB, token, eventID string, body map[string]interface{}) (model.Event, int) {
+	t.Helper()
+	r := authedRequest("PATCH", "/api/v1/events/"+eventID, body, token)
+	w := serveMux(t, db, "PATCH", "/api/v1/events/{id}", handler.UpdateEvent(db), r)
+	var e model.Event
+	json.Unmarshal(w.Body.Bytes(), &e)
+	return e, w.Code
+}
+
+// The edit door is the create door (docs/adr/026). On an active patch
+// CreateEvent publishes for members and admins, so a member who posted an
+// event must be able to edit it — UpdateEvent asked for admin and handed a
+// member a 403 on their own event a minute after they created it. The reach
+// stops there: one member does not rewrite another's event, and a suggestion
+// adopted onto the patch keeps no residual rights for its outside submitter.
+func TestUpdateEventFollowsTheCreateDoor(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := submissionsCfg(true)
+	admin, adminToken := createTestUser(t, db, "voss-admin", "member")
+	member, memberToken := createTestUser(t, db, "elena-voss", "member")
+	other, otherToken := createTestUser(t, db, "other-member", "member")
+	_, strangerToken := createTestUser(t, db, "passing-stranger", "member")
+
+	nodeID := createTestNode(t, db, admin.ID, "Tinker's Damn", "tinkers-damn", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+
+	// The other member needs a membership too, so the only thing separating
+	// them from elena on her event is authorship.
+	createTestMembership(t, db, other.ID, nodeID, "member", "active")
+
+	// A member publishes directly...
+	e, code := createEventVia(t, db, cfg, memberToken, eventBody(nodeID, "Basement Set"))
+	if code != 201 || e.Status != "active" {
+		t.Fatalf("member create: code=%d status=%q, want 201 active", code, e.Status)
+	}
+
+	// ...and may edit what they published.
+	updated, code := patchEventVia(t, db, memberToken, e.ID, map[string]interface{}{"title": "Basement Set (early)"})
+	if code != 200 {
+		t.Fatalf("member editing own event: got %d, want 200", code)
+	}
+	if updated.Title != "Basement Set (early)" {
+		t.Fatalf("member edit did not stick: title=%q", updated.Title)
+	}
+	if got := eventStatusInDB(t, db, e.ID); got != "active" {
+		t.Fatalf("member edit changed status to %q, want it left active", got)
+	}
+
+	// A fellow member does not get to rewrite it.
+	if _, code := patchEventVia(t, db, otherToken, e.ID, map[string]interface{}{"title": "Hijacked"}); code != 403 {
+		t.Fatalf("other member editing someone else's event: got %d, want 403", code)
+	}
+
+	// A patch admin edits anything on their calendar.
+	if _, code := patchEventVia(t, db, adminToken, e.ID, map[string]interface{}{"location": "Back room"}); code != 200 {
+		t.Fatalf("patch admin editing a member's event: got %d, want 200", code)
+	}
+
+	// An outsider's suggestion is editable while it waits...
+	sub, code := createEventVia(t, db, cfg, strangerToken, eventBody(nodeID, "Touring Show"))
+	if code != 201 || sub.Status != "pending_review" {
+		t.Fatalf("stranger create: code=%d status=%q, want 201 pending_review", code, sub.Status)
+	}
+	if _, code := patchEventVia(t, db, strangerToken, sub.ID, map[string]interface{}{"title": "Touring Show (moved)"}); code != 200 {
+		t.Fatalf("submitter editing own pending submission: got %d, want 200", code)
+	}
+
+	// ...and belongs to the patch once adopted.
+	if _, err := db.Exec("UPDATE events SET status = 'active' WHERE id = ?", sub.ID); err != nil {
+		t.Fatalf("approve submission: %v", err)
+	}
+	if _, code := patchEventVia(t, db, strangerToken, sub.ID, map[string]interface{}{"title": "Retitled"}); code != 403 {
+		t.Fatalf("submitter editing an adopted event: got %d, want 403", code)
+	}
+}
