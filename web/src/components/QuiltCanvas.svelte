@@ -96,9 +96,10 @@
   // to.
   //
   // This band is NOT what stops a badge blinking off and back on mid-zoom;
-  // that is a collision, and LABEL_KEEP_GAP is what settles it. Over a
-  // 34-step sweep of the seeded quilt this threshold alone changed no
-  // reappearance at any value from 52 (no hysteresis) down to 30.
+  // that is a collision, and LABEL_KEEP_GAP is what settles it — see there
+  // for how completely it settles it at the value shipped. Over a 34-step
+  // sweep of the seeded quilt this threshold alone changed no reappearance at
+  // any value from 52 (no hysteresis) down to 30.
   const LABEL_MIN_PX = 52;
   const LABEL_KEEP_PX = 44;
   // A name badge's TEXT is its name's alone (CONTEXT.md "Name badge"); how
@@ -141,12 +142,17 @@
   // above, and the half that does the work. Badges drift together as the quilt
   // scales, and on one gap a badge that crosses 32px of separation is dropped,
   // then re-placed a step later when its rival is dropped or reshaped: the
-  // blink both KEEP constants exist to stop. Measured over the same 34-step
-  // sweep: 32/32 left three names blinking out and back, 32/26 two, 32/18
-  // none. 18 is also where the shape search stops paying for the gap in wraps
-  // — at 26 several names stacked a line deeper than they needed to just to
-  // clear it, which is a worse trade than sitting a little closer.
-  const LABEL_KEEP_GAP = 18;
+  // blink both KEEP constants exist to stop.
+  //
+  // 26 is a deliberate trade, and it is not the value that stops every blink.
+  // Measured over the same 34-step sweep: 32/32 left three names blinking out
+  // and back, 32/26 two, 32/18 none, at 394 and 422 badges-on-screen
+  // respectively. What the six extra pixels buy is breathing room — LABEL_GAP
+  // above is 32 because a quilt papered in pills stops reading as a quilt, and
+  // an incumbent allowed all the way down to 18 spends most of that. They also
+  // cost a little wrapping: at 26 a few names stack a line deeper than they
+  // need to, purely to clear the wider gap.
+  const LABEL_KEEP_GAP = 26;
   // Corner marks: an on-screen size, like a name badge, not a share of the
   // tile — see updateCornerMarks. MARK_PX is the diameter one wants,
   // MARK_INSET its gap from the tile's corner, both in canonical units
