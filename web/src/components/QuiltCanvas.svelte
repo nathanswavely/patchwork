@@ -87,13 +87,19 @@
   // in the middle of it, and any wobble — a pinch that gives a pixel back, a
   // rebuild that re-rounds the tile — flips the name on and off.
   //
-  // The band is narrow on purpose. A pill is already wider than a 52px tile,
-  // so every pixel of hold past that is a name floating further from the tile
-  // it belongs to: at 38 the seeded quilt kept two names hovering over a
-  // thumbnail-sized quilt long after the tiles under them had stopped reading
-  // as tiles. 44 is about 15% — enough to swallow the wobble a gesture
-  // produces, not enough to hold a name into a zoom with nothing to attach it
-  // to.
+  // The band is narrow on purpose, and 48 is about as narrow as it can be and
+  // still be a band. A pill is already wider than a 52px tile, so every pixel
+  // of hold past that is a name floating further from the tile it belongs to,
+  // and the far zoom-out is where that reads worst: at 38 the seeded quilt
+  // kept names hovering over a thumbnail long after the tiles under them had
+  // stopped reading as tiles, and 44 still kept three at the deepest phone
+  // zoom. At 48 that view comes back clean.
+  //
+  // It is a real trade and the sweep prices it exactly: against 44, this
+  // costs three badges at k≈1.6 (a browsing zoom) to clear three at k≈0.5 (a
+  // deliberate shrink to thumbnail). Every other step of the sweep is
+  // identical, twice over. Widen it again and the thumbnail gets its floating
+  // names back.
   //
   // This band is NOT what stops a badge blinking off and back on mid-zoom;
   // that is a collision, and LABEL_KEEP_GAP is what settles it — see there
@@ -101,7 +107,7 @@
   // sweep of the seeded quilt this threshold alone changed no reappearance at
   // any value from 52 (no hysteresis) down to 30.
   const LABEL_MIN_PX = 52;
-  const LABEL_KEEP_PX = 44;
+  const LABEL_KEEP_PX = 48;
   // A name badge's TEXT is its name's alone (CONTEXT.md "Name badge"); how
   // that text is broken across lines is the tile's, and the two constants
   // below bound the choice rather than making it. See updateLabels.
