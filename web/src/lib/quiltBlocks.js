@@ -216,6 +216,11 @@ export function getBlockIndex(patchId, appearance) {
   return Math.abs(hashStr(patchId)) % BLOCKS.length;
 }
 
+/** The curated block at an index, for callers that pick by number (fillers). */
+export function blockKeyAt(index) {
+  return BLOCKS[Math.abs(index) % BLOCKS.length].key;
+}
+
 /** Get rotation (0, 90, 180, 270), honoring a pinned appearance.rotation. */
 export function getRotation(patchId, appearance) {
   const r = appearance?.rotation;
@@ -323,4 +328,92 @@ export function renderGhostBlock(group, size, index, palette) {
   const blockG = group.append('g').attr('opacity', 0.15);
   BLOCKS[blockIdx].render(blockG, size, palette);
   sealSeams(blockG);
+}
+
+// --- GEOMETRY CAPTURE ---
+
+/**
+ * A stand-in for the d3 selection the block renderers draw into, which
+ * records what they asked for instead of creating it.
+ *
+ * The alternative was a second copy of all twelve renderers emitting point
+ * lists for the warp to chew on. Two copies of the same twelve blocks is two
+ * places for Pinwheel to drift, and the drift would show up as a tile that
+ * looks different on the quilt than in the block drafter. Capturing what the
+ * real renderers already emit keeps one source of truth.
+ */
+function geometryRecorder(out) {
+  const node = (tag) => {
+    const attrs = {};
+    const self = {
+      attr(k, v) { attrs[k] = v; return self; },
+      append(child) { return node(child); },
+      selectAll() { return { attr() { return this; } }; },
+    };
+    out.push({ tag, attrs });
+    return self;
+  };
+  return {
+    append: node,
+    // sealSeams reaches for these; captured geometry has no strokes to seal.
+    selectAll() { return { attr() { return this; } }; },
+  };
+}
+
+/** "x,y x,y" or "Mx,yLx,y...Z" (possibly several subpaths) -> polygon lists. */
+function pointsFromNode({ tag, attrs }, size) {
+  const s = size || 1;
+  if (tag === 'rect') {
+    const x = +(attrs.x || 0), y = +(attrs.y || 0);
+    const w = +(attrs.width || 0), h = +(attrs.height || 0);
+    if (!w || !h) return [];
+    return [[[x / s, y / s], [(x + w) / s, y / s], [(x + w) / s, (y + h) / s], [x / s, (y + h) / s]]];
+  }
+  if (tag === 'polygon') {
+    const pts = String(attrs.points || '').trim().split(/\s+/)
+      .map((p) => p.split(',').map(Number))
+      .filter((p) => p.length === 2 && p.every(Number.isFinite));
+    return pts.length >= 3 ? [pts.map(([x, y]) => [x / s, y / s])] : [];
+  }
+  if (tag === 'path') {
+    return String(attrs.d || '').split('M').filter(Boolean).map((sub) => (
+      sub.replace(/Z\s*$/i, '').split('L')
+        .map((p) => p.split(/[\s,]+/).filter(Boolean).map(Number))
+        .filter((p) => p.length === 2 && p.every(Number.isFinite))
+        .map(([x, y]) => [x / s, y / s])
+    )).filter((poly) => poly.length >= 3);
+  }
+  return [];
+}
+
+/**
+ * A block's pieces as polygons in the unit square, in paint order.
+ *
+ * Coordinates are fractions of the tile so the caller can warp them onto a
+ * lattice of any base unit. Rotation is deliberately *not* applied here — a
+ * warped block has to rotate in block space before the warp, so the caller
+ * gets the rotation separately via getRotation().
+ *
+ * @returns {{pts: number[][], fill: string}[]}
+ */
+export function blockPieces(patchId, palette, appearance = null) {
+  const SIZE = 1000;             // captured at a round size, then normalised
+  const recorded = [];
+  const rec = geometryRecorder(recorded);
+
+  const block = appearance?.block;
+  if (block && typeof block === 'object' && isValidDraft(block)) {
+    renderDraftBlock(rec, SIZE, block, palette);
+  } else {
+    BLOCKS[getBlockIndex(patchId, appearance)].render(rec, SIZE, palette);
+  }
+
+  const pieces = [];
+  for (const n of recorded) {
+    if (n.tag === 'g') continue;
+    const fill = n.attrs.fill;
+    if (!fill || fill === 'none') continue;
+    for (const poly of pointsFromNode(n, SIZE)) pieces.push({ pts: poly, fill });
+  }
+  return pieces;
 }
