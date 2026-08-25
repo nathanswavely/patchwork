@@ -18,6 +18,12 @@
   --lt-shadow-x: 3px;
   --lt-shadow-y: 3px;
   --lt-shadow-color: rgba(42, 37, 32, 0.15);
+
+  /* Seam ink on the quilt: the stitch, the pressed-allowance highlight it
+     throws, and the topstitch that runs in the ditch. */
+  --lt-seam-ink: rgba(28, 24, 18, 0.55);
+  --lt-seam-ridge: rgba(255, 255, 255, 0.75);
+  --lt-seam-stitch: rgba(255, 255, 255, 0.7);
 }
 
 [data-theme="dark"] {
@@ -28,6 +34,12 @@
   --lt-shadow-x: 3px;
   --lt-shadow-y: 3px;
   --lt-shadow-color: rgba(224, 219, 212, 0.08);
+
+  /* On denim the ground is already dark, so the stitch darkens harder and
+     the highlight pulls back — a 0.75 white ridge reads as a chalk line. */
+  --lt-seam-ink: rgba(0, 0, 0, 0.72);
+  --lt-seam-ridge: rgba(255, 255, 255, 0.22);
+  --lt-seam-stitch: rgba(226, 220, 208, 0.45);
 }
 
 /* ---- Vellum: semi-opaque layer with soft blur, like tracing paper ---- */

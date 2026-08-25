@@ -58,6 +58,7 @@ several branches are in flight.
 | [063](063-the-feed-says-where-only-a-person-says-who.md) | The feed says where; only a person says who — programs credit an organization the feed never names *(closes 056's known gap)* |
 | [064](064-reading-a-calendar-is-not-claiming-an-identity.md) | Reading a calendar is not claiming an identity — the atproto event source, and why did:plc is fine here |
 | [065](065-a-feed-time-without-a-zone-still-happened-somewhere.md) | A feed time without a zone still happened somewhere — ingest gets a timezone, display still doesn't *(inside 031)* |
+| [066](066-a-seam-belongs-to-the-boundary-not-to-either-tile.md) | A seam belongs to the boundary, not to either tile — the quilt's shared lattice, warped blocks and cloth *(inside 004 and 029)* |
 
 ## Partly implemented
 

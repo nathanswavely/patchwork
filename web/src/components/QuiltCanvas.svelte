@@ -3,7 +3,11 @@
   import * as d3 from 'd3';
   import { api } from '../lib/api.js';
   import { identityColorForPatch, paletteForPatch, ghostPalette, darken, textOnColor } from '../lib/quiltTheme.js';
-  import { renderBlock, renderGhostBlock } from '../lib/quiltBlocks.js';
+  import { renderBlock, blockPieces, getRotation, blockKeyAt } from '../lib/quiltBlocks.js';
+  import {
+    CLOTH, createLattice, warpPolygon, fabricGrain, bakeWrinkles, bakeWeave,
+    WEAVES, weaveFor,
+  } from '../lib/quiltCloth.js';
   import { quiltLayout } from '../lib/quiltLayout.js';
   import { createMotifGroup, createMyPatchStarGroup, createFollowedHeartGroup, createUnclaimedMarkGroup } from '../lib/patchIcons.js';
   import { buildRemoteGroups, composeGroupLayouts } from '../lib/quiltRegions.js';
@@ -22,27 +26,14 @@
   }
   let canSuggest = $derived(!!searchQuery.trim() && getSubmissionsEnabled());
 
-  // Raw edge polygon variants — percentage coordinates from LT raw.css.
-  // Each is 12 points: 4 corners + 8 edge midpoints with slight deviation.
-  const RAW_EDGES = [
-    [[0.5,1.2],[30,0.3],[70,0.8],[99.2,0.4],[99.6,35],[99.1,65],[99.5,98.8],[65,99.5],[35,99.1],[0.8,99.6],[0.3,60],[0.7,30]],
-    [[0.8,0.4],[35,0.9],[65,0.2],[99.5,1.0],[99.1,40],[99.7,70],[99.3,99.2],[70,99.6],[30,99.8],[0.4,99.1],[0.9,55],[0.2,25]],
-    [[1.0,0.6],[40,0.2],[60,1.1],[99.4,0.3],[99.8,30],[99.2,60],[99.6,99.5],[60,99.2],[40,99.7],[0.6,99.4],[0.2,65],[1.1,35]],
-    [[0.3,0.9],[25,0.5],[75,1.0],[99.7,0.7],[99.3,45],[99.8,55],[99.1,99.3],[75,99.8],[25,99.4],[0.9,99.7],[0.5,50],[1.0,20]],
-    [[0.7,0.3],[45,1.1],[55,0.4],[99.3,0.8],[99.5,25],[99.1,75],[99.7,99.1],[55,99.5],[45,99.3],[0.4,99.8],[1.1,70],[0.6,40]],
-  ];
-
-  /** Get SVG polygon points string for a raw edge variant at given size. */
-  function rawEdgePoints(variantIndex, size) {
-    const pts = RAW_EDGES[variantIndex % RAW_EDGES.length];
-    return pts.map(([x, y]) => `${(x / 100 * size).toFixed(1)},${(y / 100 * size).toFixed(1)}`).join(' ');
-  }
-
-  /** Get CSS clip-path polygon string for a raw edge variant. */
-  function rawEdgeClipPath(variantIndex) {
-    const pts = RAW_EDGES[variantIndex % RAW_EDGES.length];
-    return `polygon(${pts.map(([x, y]) => `${x}% ${y}%`).join(', ')})`;
-  }
+  // The tile-to-tile boundary is a **seam** (CONTEXT.md), and it belongs to
+  // the boundary, not to either tile. The five per-tile RAW_EDGES polygons
+  // that used to live here gave each tile its own wobbly outline, so the gap
+  // between two neighbours was the sum of two independent insets — it pinched
+  // and flared along a single seam, and being world geometry it grew 20x
+  // across the zoom range. The wobble now comes from a lattice both
+  // neighbours read; see internal docs in lib/quiltCloth.js.
+  let lattice = null;
 
   let {
     filterTags = [],
@@ -68,7 +59,6 @@
   } = $props();
 
   let containerEl = $state(null);
-  let shadowsEl = $state(null);
   let labelsEl = $state(null);
 
   /** Get container dimensions (falls back to window if container not ready). */
@@ -406,7 +396,7 @@
   // size and the myPatchRoles effect can add or drop the role slot in place
   // (see updateCornerMarks).
   let cornerMarks = new Map();
-  // Map of patch ID → { g, shadowDiv, tile, dist, visible } for per-tile animation.
+  // Map of patch ID → { g, tile, dist, visible } for per-tile animation.
   let tileMap = new Map();
   let layoutBuilt = false;
   // The staggered pop-in is an *entrance* — it belongs to the quilt arriving,
@@ -417,7 +407,12 @@
   let firstBuild = true;
   // Stored references for relayout animation.
   let contentG_ref = null;
-  let shadowContainer_ref = null;
+  // Cloth layers: rebuilt with the layout, stood down while it moves.
+  let clothG = null;
+  let weaveG = null;
+  let stitchG = null;
+  let weaveParked = false;
+  let weaveSettleTimer = null;
   let svgSelection = null;
   let zoomBehavior = null;
   // Container size the current layout was built against, so the observer can
@@ -573,9 +568,10 @@
 
     const filteredChildren = showAll ? allChildren : allChildren.filter(c => ids.has(c.id));
 
-    // Hide labels and shadows during transition.
+    // Hide labels and cloth during the transition. The seam network belongs
+    // to the layout, and mid-slide there is no layout for it to belong to.
     if (labelsEl) labelsEl.style.opacity = '0';
-    if (shadowsEl) shadowsEl.style.opacity = '0';
+    if (clothG) clothG.style('display', 'none');
 
     if (filteredChildren.length === 0) {
       // Pop out everything.
@@ -604,6 +600,7 @@
 
     // Run layout with filtered set but fixed sizes.
     const bu = baseUnit;
+    lattice = createLattice(bu);
     const layout = quiltLayout(filteredChildren, affinityData, fixedSizes);
 
     // New positions for non-filler tiles.
@@ -611,6 +608,8 @@
     for (const t of layout.tiles) {
       if (t.isFiller) continue;
       newPosMap.set(t.data.id, {
+        nc: t.gridPos.col - layout.minCol,
+        nr: t.gridPos.row - layout.minRow,
         px: (t.gridPos.col - layout.minCol) * bu,
         py: (t.gridPos.row - layout.minRow) * bu,
       });
@@ -666,6 +665,8 @@
         item.g.transition().duration(dur).ease(d3.easeCubicInOut)
           .attr('transform', `translate(${newCx},${newCy}) scale(1)`)
           .style('opacity', 1);
+        item.tile.nc = newPos.nc;
+        item.tile.nr = newPos.nr;
         item.tile.px = newPos.px;
         item.tile.py = newPos.py;
       } else if (newPos && !item.visible) {
@@ -677,6 +678,8 @@
         item.g.transition().delay(200).duration(300).ease(d3.easeBackOut.overshoot(0.6))
           .attr('transform', `translate(${newCx},${newCy}) scale(1)`)
           .style('opacity', 1);
+        item.tile.nc = newPos.nc;
+        item.tile.nr = newPos.nr;
         item.tile.px = newPos.px;
         item.tile.py = newPos.py;
         item.visible = true;
@@ -725,23 +728,10 @@
         .call(zoomBehavior.transform, targetTransform);
     }
 
-    // After everything settles: snap shadows and show labels.
+    // After everything settles: re-cut the fabric where it landed, then lay
+    // the cloth back over it.
     setTimeout(() => {
-      for (const [, item] of tileMap) {
-        if (item.shadowDiv) {
-          item.shadowDiv.style.transition = 'none';
-          item.shadowDiv.style.left = item.tile.px + 'px';
-          item.shadowDiv.style.top = item.tile.py + 'px';
-          item.shadowDiv.style.opacity = item.visible ? '1' : '0';
-        }
-      }
-      if (shadowContainer_ref) {
-        const k = currentTransform.k;
-        shadowContainer_ref.style.transition = 'none';
-        shadowContainer_ref.style.transform = `translate(${currentTransform.x + canvasOffsetX * k}px,${currentTransform.y + canvasOffsetY * k}px) scale(${k})`;
-        shadowContainer_ref.style.transformOrigin = '0 0';
-      }
-      if (shadowsEl) shadowsEl.style.opacity = '1';
+      rebuildCloth(layout, bu);
 
       placedTiles = [...tileMap.values()]
         .filter(item => !item.tile.isFiller && item.visible)
@@ -768,13 +758,11 @@
         item.g.transition().duration(300).ease(d3.easeBackOut.overshoot(0.6))
           .attr('transform', `translate(${cx},${cy}) scale(1)`)
           .style('opacity', 1);
-        if (item.shadowDiv) item.shadowDiv.style.opacity = '1';
         item.visible = true;
       } else if (!show && item.visible) {
         item.g.transition().duration(250).ease(d3.easeBackIn.overshoot(0.5))
           .attr('transform', `translate(${cx},${cy}) scale(0)`)
           .style('opacity', 0);
-        if (item.shadowDiv) item.shadowDiv.style.opacity = '0';
         item.visible = false;
       }
     }
@@ -833,9 +821,12 @@
       ? composeGroupLayouts(groupsMeta, new Map([['home', affinityData]]))
       : quiltLayout(allChildren, affinityData);
     const bu = baseUnit;
+    lattice = createLattice(bu);
 
     const pixelTiles = layout.tiles.map(t => ({
       ...t,
+      nc: t.gridPos.col - layout.minCol,
+      nr: t.gridPos.row - layout.minRow,
       px: (t.gridPos.col - layout.minCol) * bu,
       py: (t.gridPos.row - layout.minRow) * bu,
       pxSize: t.currentSize * bu,
@@ -909,15 +900,22 @@
       }
     }
 
-    const shadowLayer = [];
     const tileGroups = []; // For staggered animation.
     cornerMarks = new Map(); // Re-collected below; the old svg is already gone.
+
+    // Cloth geometry, collected across tiles and emitted once per paint.
+    // Grouped into spatial chunks because a path is only skipped when its
+    // bounding box misses the viewport — one path spanning the whole quilt is
+    // a path that rasterises on every frame however little of it is on screen.
+    const weaveChunks = new Map();
+    let quiltSilhouette = '';
 
     // --- RENDER TILES ---
     for (const tile of pixelTiles) {
       const s = tile.pxSize;
       const tileCx = tile.px + s / 2;
       const tileCy = tile.py + s / 2;
+      const sz = tile.currentSize;
 
       // Create group at tile center — scaled to 0 for the pop-in, or already
       // placed when this build is a rebuild that shouldn't re-animate.
@@ -933,38 +931,12 @@
       // Distance from center for stagger ordering.
       const dist = Math.sqrt((tileCx - centerX) ** 2 + (tileCy - centerY) ** 2);
 
-      if (tile.isFiller) {
-        const palette = ghostPalette(parseInt(tile.id.split('-')[1]) || 0);
-        const fillerRaw = (parseInt(tile.id.split('-')[1]) || 0) % RAW_EDGES.length;
-        inner.append('clipPath').attr('id', `clip-${tile.id}`)
-          .append('polygon').attr('points', rawEdgePoints(fillerRaw, s));
-        const blockG = inner.append('g').attr('clip-path', `url(#clip-${tile.id})`);
-        renderGhostBlock(blockG, s, parseInt(tile.id.split('-')[1]) || 0, palette);
-        inner.append('polygon')
-          .attr('points', rawEdgePoints(fillerRaw, s))
-          .attr('fill', 'none')
-          .attr('stroke', 'var(--lt-thread)')
-          .attr('stroke-width', 1);
-        tileGroups.push({ g, dist, tile, shadowDiv: null });
+      const filler = tile.isFiller;
+      quiltSilhouette += paintFabric(tile, inner, weaveChunks);
+
+      if (filler) {
+        tileGroups.push({ g, dist, tile });
       } else {
-        const palette = paletteForPatch(tile.data.id, tile.data.appearance);
-
-        // Raw edge variant — deterministic from tile ID hash
-        const rawVariant = tile.data.id.charCodeAt(0) % RAW_EDGES.length;
-
-        inner.append('clipPath').attr('id', `clip-${tile.data.id}`)
-          .append('polygon').attr('points', rawEdgePoints(rawVariant, s));
-        const blockG = inner.append('g').attr('clip-path', `url(#clip-${tile.data.id})`);
-        renderBlock(blockG, s, tile.data.id, palette, tile.data.appearance);
-
-        // Thread seam around every tile — keeps near-black block palettes
-        // from dissolving into the dark canvas (and vice versa on cotton).
-        inner.append('polygon')
-          .attr('points', rawEdgePoints(rawVariant, s))
-          .attr('fill', 'none')
-          .attr('stroke', 'var(--lt-thread-heavy)')
-          .attr('stroke-width', 1.5);
-
         // Corner marks (CONTEXT.md "Corner mark"). A static hero has no room
         // for them and no zoom to reveal them at — same reason it draws no
         // name badges (docs/adr/040).
@@ -984,45 +956,6 @@
               createUnclaimedMarkGroup(MARK_GLYPH_PX, '#fff'));
           }
           syncRoleMark(entry);
-        }
-
-        // Pillow depth + fabric texture overlay div.
-        const shadowDiv = document.createElement('div');
-        shadowDiv.className = 'tile-shadow';
-        shadowDiv.style.position = 'absolute';
-        shadowDiv.style.left = tile.px + 'px';
-        shadowDiv.style.top = tile.py + 'px';
-        shadowDiv.style.width = s + 'px';
-        shadowDiv.style.height = s + 'px';
-        shadowDiv.style.pointerEvents = 'none';
-        shadowDiv.style.opacity = animate ? '0' : '1';
-        shadowDiv.style.transition = 'opacity 200ms ease';
-        shadowDiv.style.clipPath = rawEdgeClipPath(rawVariant);
-
-        // Pillow shadow — seam darkening at edges + subtle highlight.
-        const seam = Math.max(3, Math.round(s * 0.03));
-        const pillow = Math.max(4, Math.round(s * 0.05));
-        shadowDiv.style.boxShadow = [
-          `inset 0 0 ${seam}px 0 rgba(0,0,0,0.15)`,
-          `inset ${pillow}px ${pillow}px ${pillow * 2}px 0 rgba(255,255,255,0.04)`,
-        ].join(', ');
-
-        // Fabric surface texture — very subtle rumple.
-        const hash = tile.data.id.charCodeAt(0) + tile.data.id.charCodeAt(tile.data.id.length - 1);
-        const a1 = 120 + (hash % 60);
-        const a2 = 240 + ((hash * 7) % 80);
-        shadowDiv.style.backgroundImage = [
-          `linear-gradient(${a1}deg, transparent 30%, rgba(255,255,255,0.025) 45%, transparent 60%)`,
-          `linear-gradient(${a2}deg, transparent 35%, rgba(0,0,0,0.025) 50%, transparent 65%)`,
-        ].join(', ');
-
-        shadowLayer.push(shadowDiv);
-
-        if (tile.data.slug === selectedPatchSlug) {
-          shadowDiv.style.boxShadow = [
-            `inset 0 0 ${seam}px 0 rgba(0,0,0,0.1)`,
-            `inset 0 0 ${Math.round(s * 0.08)}px 0 var(--color-primary)`,
-          ].join(', ');
         }
 
         // Hover overlay (starts transparent, darkens on hover).
@@ -1056,26 +989,15 @@
           });
         }
 
-        tileGroups.push({ g, dist, tile, shadowDiv });
+        tileGroups.push({ g, dist, tile });
       }
     }
 
-    // --- SHADOW LAYER ---
-    if (shadowsEl) {
-      shadowsEl.innerHTML = '';
-      const shadowContainer = document.createElement('div');
-      shadowContainer.className = 'shadow-content';
-      shadowContainer.style.transform = `translate(${oX}px,${oY}px)`;
-      shadowContainer.style.transformOrigin = '0 0';
-      shadowContainer.style.position = 'absolute';
-      shadowContainer.style.left = '0';
-      shadowContainer.style.top = '0';
-      for (const div of shadowLayer) {
-        shadowContainer.appendChild(div);
-      }
-      shadowsEl.appendChild(shadowContainer);
-      shadowContainer_ref = shadowContainer;
-    }
+    // --- CLOTH ---
+    // Everything above the fabric and shared across tiles: the weave, the
+    // folds, and the seam ink. These layers are rebuilt whenever the layout
+    // is, and stand down while the quilt is moving.
+    buildCloth(contentG, layout, quiltSilhouette, weaveChunks, bu);
 
     // --- STAGGERED POP-IN ANIMATION ---
     // Sort by distance from center: closest tiles pop in first.
@@ -1100,9 +1022,6 @@
           .style('opacity', 1);
 
         // Pop in shadow div too.
-        if (item.shadowDiv) {
-          setTimeout(() => { item.shadowDiv.style.opacity = '1'; }, delay);
-        }
       });
     }
 
@@ -1136,13 +1055,11 @@
       .on('zoom', (event) => {
         zoomG.attr('transform', event.transform);
         currentTransform = event.transform;
-        if (shadowContainer_ref) {
-          shadowContainer_ref.style.transition = 'none';
-          shadowContainer_ref.style.transform = `translate(${event.transform.x + canvasOffsetX * event.transform.k}px,${event.transform.y + canvasOffsetY * event.transform.k}px) scale(${event.transform.k})`;
-          shadowContainer_ref.style.transformOrigin = '0 0';
-        }
         updateLabels();
         updateCornerMarks();
+        updateSeamRidge();
+        applyClothTiers();
+        parkWeaveDuringZoom();
       });
 
     svgSelection = svg;
@@ -1645,6 +1562,312 @@
    * updateCornerMarks can hold it at a fixed screen size by counter-scaling
    * around that anchor — the corner is the one point that must not drift.
    */
+  /**
+   * Everything above the fabric: the weave, the folds, and the seam ink.
+   *
+   * All of it is shared between tiles rather than owned by any one of them,
+   * which is the point — a seam is a property of a boundary, a fold spans the
+   * whole quilt, and a weave belongs to a fabric. Each layer is split into
+   * spatial chunks so its paths carry bounding boxes small enough to be
+   * skipped when they scroll off screen.
+   */
+  /**
+   * Draw one tile's fabric: its block, warped onto the shared lattice.
+   *
+   * Kept out of the build loop because a filter repacks the quilt, and a tile
+   * that lands in a different grid cell has to be re-warped there — its baked
+   * edge was cut to fit the seams of the cell it left, and carrying it across
+   * by transform would open the very gaps this system exists to close.
+   *
+   * Returns the tile's outline so the caller can accumulate the quilt's
+   * silhouette, and adds this tile's cuts to the weave chunks.
+   */
+  function paintFabric(tile, inner, weaveChunks) {
+    const sz = tile.currentSize;
+    const filler = tile.isFiller;
+    const fillerIdx = filler ? (parseInt(tile.id.split('-')[1]) || 0) : 0;
+    const palette = filler
+      ? ghostPalette(fillerIdx)
+      : paletteForPatch(tile.data.id, tile.data.appearance);
+    const appearance = filler ? { block: blockKeyAt(fillerIdx) } : tile.data.appearance;
+    const patchId = filler ? tile.id : tile.data.id;
+    const rotation = filler ? 0 : getRotation(tile.data.id, tile.data.appearance);
+
+    // The block stretches onto the lattice rather than being drawn square and
+    // clipped. Clipping leaves the fabric short wherever a seam bows outward
+    // — measured at 23% of the tile boundary uncovered — and the clip path
+    // itself was one masking operation per tile, on every frame.
+    const warp = lattice.makeWarp(tile.nc, tile.nr, sz, rotation);
+    const pieces = blockPieces(patchId, palette, appearance);
+
+    // Batch by fabric within the tile: pieces cut from one fabric become one
+    // path, so an edge interior to that fabric stops being an edge — and the
+    // seal stroke below is paid once per fabric rather than once per piece.
+    const byFabric = new Map();
+    for (const piece of pieces) {
+      const d = warpPolygon(piece.pts, warp, sz, CLOTH.quality);
+      byFabric.set(piece.fill, (byFabric.get(piece.fill) || '') + d);
+      if (!filler && weaveChunks) {
+        const wi = weaveFor(piece.fill);
+        const key = `${lattice.chunkKey(tile.nc, tile.nr)}|${wi}`;
+        const cut = weaveChunks.get(key);
+        if (cut) cut.d += d;
+        else weaveChunks.set(key, { wi, grain: fabricGrain(piece.fill), d });
+      }
+    }
+
+    inner.selectAll('.fabric').remove();
+    // Warped geometry is in world coordinates; this group carries it back
+    // into the tile-local space the corner marks are anchored in.
+    const blockG = inner.insert('g', ':first-child')
+      .attr('class', 'fabric')
+      .attr('transform', `translate(${-tile.px},${-tile.py})`);
+    if (filler) blockG.attr('opacity', 0.15);
+    for (const [fill, d] of byFabric) {
+      blockG.append('path')
+        .attr('d', d)
+        .attr('fill', fill)
+        // Two fabrics meeting each cover part of the boundary pixel, so the
+        // ground shows through the remainder and draws a hairline grid over
+        // the block. Growing each fill by half a non-scaling stroke of its
+        // own colour closes it at any zoom.
+        .attr('stroke', fill)
+        .attr('stroke-width', 1)
+        .attr('stroke-linejoin', 'round')
+        .attr('vector-effect', 'non-scaling-stroke');
+    }
+
+    return lattice.tilePath(tile.nc, tile.nr, sz);
+  }
+
+  /**
+   * Re-cut every visible tile against the layout it just landed in, then
+   * rebuild the cloth over it.
+   *
+   * A repack moves tiles between grid cells, and a tile's edge was cut to fit
+   * the seams of the cell it left. Sliding it across by transform would carry
+   * the old cut with it and open exactly the gaps the shared lattice exists
+   * to close, so the fabric is re-warped rather than moved.
+   */
+  function rebuildCloth(layout, bu) {
+    if (!contentG_ref || !lattice) return;
+    const weaveChunks = new Map();
+    let silhouette = '';
+    const placed = [];
+    for (const [, item] of tileMap) {
+      if (!item.visible) continue;
+      const inner = item.g.select('g');
+      if (inner.empty()) continue;
+      silhouette += paintFabric(item.tile, inner, weaveChunks);
+      placed.push({
+        gridPos: { col: item.tile.nc, row: item.tile.nr },
+        currentSize: item.tile.currentSize,
+      });
+    }
+    if (!placed.length) {
+      if (clothG) clothG.style('display', 'none');
+      return;
+    }
+    let maxCol = 0, maxRow = 0;
+    for (const t of placed) {
+      maxCol = Math.max(maxCol, t.gridPos.col + t.currentSize);
+      maxRow = Math.max(maxRow, t.gridPos.row + t.currentSize);
+    }
+    buildCloth(contentG_ref, { tiles: placed, minCol: 0, minRow: 0, maxCol, maxRow },
+      silhouette, weaveChunks, bu);
+    if (clothG) clothG.style('display', null);
+  }
+
+  function buildCloth(contentG, layout, silhouette, weaveChunks, bu) {
+    contentG.selectAll('.cloth, .cloth-defs').remove();
+    clothG = contentG.append('g').attr('class', 'cloth');
+    weaveG = null;
+
+    const cols = layout.maxCol - layout.minCol;
+    const rows = layout.maxRow - layout.minRow;
+    const seams = lattice.seamGeometry(
+      layout.tiles.map(t => ({
+        col: t.gridPos.col - layout.minCol,
+        row: t.gridPos.row - layout.minRow,
+        size: t.currentSize,
+      })),
+    );
+
+    /** One stroke layer, one path per chunk. */
+    const strokeChunks = (parent, chunks, attrs) => {
+      for (const d of chunks.values()) {
+        const path = parent.append('path').attr('d', d).attr('fill', 'none');
+        for (const [k, v] of Object.entries(attrs)) path.attr(k, v);
+      }
+    };
+
+    // --- Weave -------------------------------------------------------------
+    // One baked swatch, reused by every fabric; they differ by the transform
+    // on the pattern rather than by another image, so the GPU uploads one
+    // texture however many fabrics the quilt has.
+    if (weaveChunks.size) {
+      const defs = contentG.append('defs').attr('class', 'cloth-defs');
+      for (let wi = 0; wi < WEAVES; wi++) {
+        const scale = CLOTH.weaveScale * bu;
+        defs.append('pattern')
+          .attr('id', `pw-weave-${wi}`)
+          .attr('width', scale).attr('height', scale)
+          .attr('patternUnits', 'userSpaceOnUse')
+          .attr('patternTransform', `rotate(${wi * 31})`)
+          .append('image')
+          .attr('href', bakeWeave(wi))
+          .attr('width', scale).attr('height', scale)
+          .attr('preserveAspectRatio', 'none');
+      }
+      weaveG = clothG.append('g').attr('class', 'weave');
+      for (const cut of weaveChunks.values()) {
+        weaveG.append('path')
+          .attr('d', cut.d)
+          .attr('fill', `url(#pw-weave-${cut.wi})`)
+          .attr('opacity', CLOTH.weaveDepth * cut.grain);
+      }
+    }
+
+    // --- Folds -------------------------------------------------------------
+    // One baked image masked to the quilt's own silhouette, so folds stop at
+    // the ragged edge. Ordinary alpha rather than a blend mode: a blend would
+    // force the whole quilt into an isolated compositing buffer.
+    if (CLOTH.wrinkleAmt > 0 && cols > 0 && rows > 0) {
+      const maskId = `pw-quiltmask-${Math.round(bu)}-${cols}x${rows}`;
+      contentG.append('defs').attr('class', 'cloth-defs')
+        .append('clipPath').attr('id', maskId)
+        .append('path').attr('d', silhouette);
+      clothG.append('g').attr('clip-path', `url(#${maskId})`)
+        .append('image')
+        .attr('href', bakeWrinkles(cols, rows))
+        .attr('x', 0).attr('y', 0)
+        .attr('width', cols * bu).attr('height', rows * bu)
+        .attr('preserveAspectRatio', 'none');
+    }
+
+    // --- Bevel and puff ----------------------------------------------------
+    // A single wide stroke centred on the boundary darkens both sides at
+    // once, which is what an inner lip on each of two neighbours added up to
+    // anyway. Three stacked widths stand in for a soft falloff without a
+    // filter. This is the ground the light sits on, so it goes first.
+    if (CLOTH.bevel > 0) {
+      const lip = CLOTH.bevel * bu * 2;
+      const bevelG = clothG.append('g').attr('class', 'bevel');
+      for (const [mult, alpha] of [[3.2, 0.05], [1.9, 0.07], [1.0, 0.13]]) {
+        strokeChunks(bevelG, seams.chunks, {
+          stroke: `rgba(0,0,0,${(alpha * (1 + CLOTH.puff * 2)).toFixed(3)})`,
+          'stroke-width': (lip * mult).toFixed(2),
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+        });
+      }
+    }
+
+    // --- Doming ------------------------------------------------------------
+    // A quilted surface under one lamp shows its curvature as asymmetric
+    // shading either side of every seam: lit on the side turning toward the
+    // lamp, shadowed on the side turning away. Two offset strokes for the
+    // whole quilt say that, where a per-tile gradient needed a fill each —
+    // and randomising the *angle* per tile, as the old shadow layer did,
+    // cancels the illusion outright.
+    if (CLOTH.lightAmt > 0) {
+      const off = CLOTH.bevel * bu * 1.1 || 4;
+      const domeG = clothG.append('g').attr('class', 'doming');
+      for (const [shift, colour, weight] of [
+        [off, '255,252,244', 1], [-off, '0,0,0', 0.85],
+      ]) {
+        strokeChunks(domeG, seams.chunks, {
+          stroke: `rgba(${colour},${(CLOTH.lightAmt * 1.7 * weight).toFixed(3)})`,
+          'stroke-width': (off * 1.6).toFixed(2),
+          transform: `translate(${shift.toFixed(2)},${shift.toFixed(2)})`,
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+        });
+      }
+    }
+
+    // --- Seam ink ----------------------------------------------------------
+    // Screen pixels, not world units: the stitch reads the same at 0.3x and
+    // 6x. The gap it replaces grew twentyfold across that range.
+    const seamG = clothG.append('g').attr('class', 'seam');
+    if (CLOTH.ridge > 0) {
+      strokeChunks(seamG, seams.chunks, {
+        stroke: 'var(--lt-seam-ridge)',
+        'stroke-width': CLOTH.seamW,
+        'vector-effect': 'non-scaling-stroke',
+        'stroke-linecap': 'round',
+        transform: `translate(${CLOTH.ridge / currentTransform.k},${CLOTH.ridge / currentTransform.k})`,
+        'data-ridge': '1',
+      });
+    }
+    strokeChunks(seamG, seams.chunks, {
+      stroke: 'var(--lt-seam-ink)',
+      'stroke-width': CLOTH.seamW,
+      'vector-effect': 'non-scaling-stroke',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+    });
+
+    // Topstitch and binding: detail that only exists above their tiers.
+    stitchG = clothG.append('g').attr('class', 'topstitch');
+    strokeChunks(stitchG, seams.chunks, {
+      stroke: 'var(--lt-seam-stitch)',
+      'stroke-width': 1,
+      'vector-effect': 'non-scaling-stroke',
+      'stroke-dasharray': '4 4',
+      'stroke-linecap': 'round',
+    });
+
+    strokeChunks(clothG.append('g').attr('class', 'binding'), seams.outer, {
+      stroke: 'var(--lt-seam-ink)',
+      'stroke-width': CLOTH.seamW * 4,
+      'vector-effect': 'non-scaling-stroke',
+      'stroke-linecap': 'square',
+      opacity: 0.9,
+    });
+
+    applyClothTiers();
+  }
+
+  /**
+   * The detail that only exists close up. Toggling a layer's display is one
+   * style write; deciding it per tile would be thousands.
+   */
+  function applyClothTiers() {
+    const k = currentTransform.k || 1;
+    if (stitchG) stitchG.style('display', k >= CLOTH.stitchFrom ? null : 'none');
+    if (weaveG && !weaveParked) {
+      weaveG.style('display', k >= CLOTH.weaveFrom ? null : 'none');
+    }
+  }
+
+  /**
+   * A pattern fill is the one paint that has to be re-tiled when the scale
+   * changes: free to pan across, and the dominant cost of every zoom — 12ms
+   * of a 41ms frame at 269 patches, where the bevel, the subdivision and the
+   * doming each cost under a millisecond. Nobody can read a thread count
+   * while the view is moving, so it stands down for the gesture.
+   */
+  function parkWeaveDuringZoom() {
+    if (!weaveG) return;
+    if (!weaveParked) {
+      weaveParked = true;
+      weaveG.style('display', 'none');
+    }
+    clearTimeout(weaveSettleTimer);
+    weaveSettleTimer = setTimeout(() => {
+      weaveParked = false;
+      applyClothTiers();
+    }, CLOTH.weaveSettleMs);
+  }
+
+  /** The ridge offset is measured in screen pixels, so it tracks the scale. */
+  function updateSeamRidge() {
+    if (!clothG) return;
+    const o = (CLOTH.ridge / (currentTransform.k || 1)).toFixed(3);
+    clothG.selectAll('[data-ridge]').attr('transform', `translate(${o},${o})`);
+  }
+
   function drawCornerMark(entry, slot, corner, discFill, glyph) {
     const { ax, ay, sx, sy } = MARK_CORNERS[corner];
     const g = entry.inner.append('g')
@@ -1926,7 +2149,6 @@
   </div>
 {:else}
   <div class="canvas-container lt-fill-canvas lt-texture-grain" class:non-interactive={!interactive} bind:this={containerEl}></div>
-  <div class="shadows-layer" bind:this={shadowsEl}></div>
   <div class="labels-layer" bind:this={labelsEl}></div>
   {#if visibleIds.size === 0 && (filterTags.length > 0 || searchQuery.trim())}
     <!-- Every tile filtered out. Name the lenses (docs/adr/022) — on mobile
@@ -1984,15 +2206,6 @@
     cursor: default;
   }
 
-  .shadows-layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
 
   .labels-layer {
     position: absolute;

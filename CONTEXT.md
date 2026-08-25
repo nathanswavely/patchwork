@@ -1141,6 +1141,23 @@ label), address (that is the prose field, not the marker)
 A patch as rendered in the quilt: its palette, block, and rotation.
 _Avoid_: square, cell
 
+**Tile seam**:
+The line where two tiles meet. It belongs to the boundary, not to either
+tile — both neighbours read the same wandering lattice, so they meet
+exactly and the seam is stitched *on top* rather than being a gap left
+underneath (docs/adr/066). Drawn in screen pixels, so it reads the same
+however far in the quilt is zoomed; the fabric's own depth either side of
+it — the bevel, the batting puff, the light — is drawn in world units,
+because that is a property of cloth rather than a mark on a map. The
+quilt's outer edge wears a heavier one, the **binding**.
+
+Plain "seam" is the block drafter's (below): a line sewn *within* one
+block. Same word, two scales, as in real quilting — say which when both
+are in play. The quilt canvas draws the drafter's seams too, as the
+hairlines between fabrics inside a tile.
+_Avoid_: border, gap, gutter, raw edge (the retired per-tile outline),
+sashing (that is the framing between remote-quilt regions — see above)
+
 **Name badge**:
 The pill floating over a tile that names its patch — the name, centered,
 and nothing else; what a patch *is* and how the viewer stands with it are
@@ -1172,7 +1189,7 @@ never means "unclaimed" and a status disc never claims to be the patch's.
 Every disc carries a seam ring and a drop shadow, because a mark sits on
 arbitrary fabric and an identity disc is often the very color underneath it.
 Status, not fabric: like a name badge a corner mark holds a fixed on-screen
-size whatever the zoom, and it is never clipped by the tile's raw edge. One
+size whatever the zoom, and it is never clipped by the tile's seam. One
 size is computed per tile and shared by all of its marks, so a tile's marks
 appear and vanish together; they shrink, then go, when the tile is too small
 to host them. The motif is worn by every tile, at every zoom a mark survives
@@ -1216,9 +1233,11 @@ drafted block.
 _Avoid_: custom block editor, designer, builder
 
 **Seam**:
-A straight line sewn between two anchors. Seams split every piece they
-cross. A design has a seam budget — seams are counted, not unlimited.
-_Avoid_: line, stroke, edge
+A straight line sewn between two anchors, *within* one block. Seams split
+every piece they cross. A design has a seam budget — seams are counted,
+not unlimited.
+_Avoid_: line, stroke, edge; do not confuse with the **tile seam**, the
+line between two tiles on the quilt (see Tile appearance)
 
 **Anchor**:
 A point on a cell wall where a seam can start or end: corners plus fixed
