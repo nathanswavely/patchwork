@@ -1020,9 +1020,20 @@
           .ease(d3.easeBackOut.overshoot(0.6))
           .attr('transform', `translate(${cx},${cy}) scale(1)`)
           .style('opacity', 1);
-
-        // Pop in shadow div too.
       });
+
+      // The cloth is a property of the whole quilt, so it has nothing to say
+      // until the whole quilt is there. Drawn at full strength from the
+      // start, the seams, folds and weave hang in empty space while the tiles
+      // are still flying in — a finished surface over a quilt that isn't
+      // sewn yet. It fades in on the same beat the labels do.
+      if (clothG) {
+        clothG.style('opacity', 0)
+          .transition()
+          .delay(totalAnimDuration + tileAnimDuration * 0.6)
+          .duration(400)
+          .style('opacity', 1);
+      }
     }
 
     // Store in tileMap keyed by patch ID (or filler ID).
@@ -1675,12 +1686,23 @@
     }
     buildCloth(contentG_ref, { tiles: placed, minCol: 0, minRow: 0, maxCol, maxRow },
       silhouette, weaveChunks, bu);
-    if (clothG) clothG.style('display', null);
+    // Clear opacity as well as display: a rebuild can land mid-way through
+    // the intro fade, and inheriting a half-finished value would leave the
+    // quilt wearing no cloth with nothing left to finish the transition.
+    if (clothG) clothG.style('display', null).style('opacity', null);
   }
 
   function buildCloth(contentG, layout, silhouette, weaveChunks, bu) {
     contentG.selectAll('.cloth, .cloth-defs').remove();
-    clothG = contentG.append('g').attr('class', 'cloth');
+    // The cloth sits above every tile and covers the whole quilt — the weave
+    // over each piece, the fold image over all of it, the seam strokes along
+    // every boundary. Painted elements hit-test by default, so without this
+    // the cloth swallows every hover and click and the only thing left
+    // pointing at a patch is its name badge, which lives in the HTML layer
+    // above. A tile with no badge would become unreachable.
+    clothG = contentG.append('g')
+      .attr('class', 'cloth')
+      .style('pointer-events', 'none');
     weaveG = null;
 
     const cols = layout.maxCol - layout.minCol;
