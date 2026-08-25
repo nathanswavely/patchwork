@@ -79,10 +79,42 @@
     return { vw: window.innerWidth, vh: window.innerHeight };
   }
 
-  // On-screen tile size at which a tile earns a label (see updateLabels).
+  // On-screen tile size at which a tile earns a label, and the smaller one at
+  // which it finally gives that label back (see updateLabels).
+  //
+  // Two thresholds rather than one because a single one is a line that gets
+  // crossed twice: a zoom-out is a stream of passes, the tile shrinks past 52
+  // in the middle of it, and any wobble — a pinch that gives a pixel back, a
+  // rebuild that re-rounds the tile — flips the name on and off.
+  //
+  // The band is narrow on purpose. A pill is already wider than a 52px tile,
+  // so every pixel of hold past that is a name floating further from the tile
+  // it belongs to: at 38 the seeded quilt kept names hovering over a thumbnail
+  // long after the tiles under them had stopped reading as tiles. 44 is about
+  // 15% — enough to swallow the wobble a gesture produces, not enough to hold
+  // a name into a zoom with nothing to attach it to.
+  //
+  // 48 was tried, to clear the last few names from the far zoom-out, and
+  // reverted. It does not clear them: at k≈0.58 and k≈0.54 the same three
+  // names still sit over the thumbnail — and they sit there in a build with no
+  // hysteresis at all, because a pill has always been wider than a tile at
+  // that size. 48 only moves the boundary one notch, to k≈0.49, and the sweep
+  // prices that notch at three badges lost at k≈1.6, a zoom people browse at.
+  // A narrow notch for a narrow notch, and the wrong one. If the far zoom-out
+  // ever needs fixing for real, the lever is not here: either drop every badge
+  // below an absolute zoom, or scale the pill down so it stops outgrowing its
+  // tile.
+  //
+  // This band is NOT what stops a badge blinking off and back on mid-zoom;
+  // that is a collision, and LABEL_KEEP_GAP is what settles it — see there
+  // for how completely it settles it at the value shipped. Over a 34-step
+  // sweep of the seeded quilt this threshold alone changed no reappearance at
+  // any value from 52 (no hysteresis) down to 30.
   const LABEL_MIN_PX = 52;
-  // Name badge shape comes from its name alone (CONTEXT.md "Name badge") —
-  // constant text cap, no tie to tile size or screen position.
+  const LABEL_KEEP_PX = 44;
+  // A name badge's TEXT is its name's alone (CONTEXT.md "Name badge"); how
+  // that text is broken across lines is the tile's, and the two constants
+  // below bound the choice rather than making it. See updateLabels.
   //
   // The cap is deliberately narrow and the line budget deliberately deep.
   // Two adjacent tiles both earn a badge only when the tile pitch clears
@@ -90,8 +122,7 @@
   // has to zoom before a row stops alternating label/no-label. Tiles are
   // square and a pill is wide and short, so wrapping spends the dimension
   // that has room: across the Lancaster instance's names, 110/3 lines puts
-  // the widest pill at 126px against 158px for the old 140/2, and the
-  // vertical requirement never binds (~93px against ~158px horizontal).
+  // the widest pill at 126px against 158px for the old 140/2.
   //
   // The two move together or not at all. Lowering the cap alone does not
   // narrow the longest names — their balanced two-line split is already at
@@ -105,7 +136,8 @@
   const LABEL_TEXT_EM = 8.5;
   const LABEL_MAX_LINES = 3;
   // Minimum visible quilt between placed badges; a rival badge that can't
-  // clear this gap stays hidden until a closer zoom. Sized by eye against a
+  // clear this gap stays hidden until a closer zoom, and a badge already on
+  // screen holds its place down to LABEL_KEEP_GAP. Sized by eye against a
   // dense quilt: a name-only pill is ~65px narrower than the old motif-and-
   // role one, so at the pre-corner-mark gap of 12 many more badges cleared
   // collision and the quilt went back to being papered in them.
@@ -116,6 +148,42 @@
   // densest) and spent every pixel of breathing room to do it. The cap is
   // the lever here; this is not.
   const LABEL_GAP = 32;
+  // What an incumbent owes instead — the collision half of the hysteresis
+  // above, and the half that does the work. Badges drift together as the quilt
+  // scales, and on one gap a badge that crosses 32px of separation is dropped,
+  // then re-placed a step later when its rival is dropped or reshaped: the
+  // blink both KEEP constants exist to stop.
+  //
+  // This is the most an incumbent is ever forgiven, reached only on a roomy
+  // tile (LABEL_ROOMY_PX below); a badge nearer the size floor owes more.
+  //
+  // 26 is a deliberate trade, and it is not the value that stops every blink.
+  // Measured over the same 34-step sweep: 32/32 left three names blinking out
+  // and back, 32/26 two, 32/18 none, at 394 and 422 badges-on-screen
+  // respectively. What the six extra pixels buy is breathing room — LABEL_GAP
+  // above is 32 because a quilt papered in pills stops reading as a quilt, and
+  // an incumbent allowed all the way down to 18 spends most of that. They also
+  // cost a little wrapping: at 26 a few names stack a line deeper than they
+  // need to, purely to clear the wider gap.
+  //
+  // Re-measured once the ramp below existed, since 18 won on flicker before
+  // it: under the ramp it no longer does. 18 raises reappearances from 2 to 3
+  // while adding twelve badges across the sweep. Whatever the flat gap needed
+  // a low floor for, the ramp does better.
+  const LABEL_KEEP_GAP = 26;
+  // ...and only as far as its tile has room to justify. An incumbent on a
+  // 52px tile owes the full 32; one on an 80px tile or bigger owes 26; between
+  // those the gap slides. Without this the relaxation applies hardest exactly
+  // where it looks worst — zoomed far out, where every tile is near the floor,
+  // the whole quilt is a thumbnail and holding five names over it reads as
+  // clutter rather than continuity (desktop far zoom: 5 names against 3).
+  //
+  // A ramp and not a threshold, which was the first attempt: a gap that flips
+  // at a tile size is one more line to cross, and badges crossing it blink for
+  // exactly the reason the KEEP constants exist. Measured over the 34-step
+  // sweep, a hard cutoff at 78 or 95 took reappearances from 2 back up to 4,
+  // while the ramp holds at 2. Nothing about a tile's size should be a cliff.
+  const LABEL_ROOMY_PX = 80;
   // Corner marks: an on-screen size, like a name badge, not a share of the
   // tile — see updateCornerMarks. MARK_PX is the diameter one wants,
   // MARK_INSET its gap from the tile's corner, both in canonical units
@@ -149,7 +217,7 @@
   // resize earns a full relayout rather than a view adjustment (handleResize).
   const BASE_UNIT_DRIFT = 0.1;
 
-  // Measured badge text metrics, cached per name (names don't change
+  // Measured badge shapes, cached per name (names don't change
   // mid-session; the cache is busted when the display font loads, and when
   // the type metrics below move under it).
   let measureCtx = null;
@@ -247,38 +315,45 @@
     return best;
   }
 
-  function measureBadgeText(name) {
-    let m = measureCache.get(name);
-    if (m) return m;
+  /**
+   * Every shape one name can wear, shallowest first: {textW, lines} for each
+   * line count that actually buys a narrower pill.
+   *
+   * Measured per name and cached; which of them a badge wears is decided per
+   * placement (updateLabels), because the same name wants a different answer
+   * on a roomy tile than on one hemmed in by its neighbours' badges.
+   */
+  function badgeShapes(name) {
+    let shapes = measureCache.get(name);
+    if (shapes) return shapes;
     if (!measureCtx) measureCtx = document.createElement('canvas').getContext('2d');
     const { font, textMax } = badgeType();
     measureCtx.font = font;
+    shapes = [];
     const full = measureCtx.measureText(name).width;
-    if (full <= textMax) {
-      measureCache.set(name, (m = { textW: Math.ceil(full), lines: 1 }));
-      return m;
-    }
-    // Spend the fewest lines that get the name under the cap, so a two-word
-    // name never sprawls to three. The pill then hugs that balanced width
-    // instead of sitting at the cap; +2px slack absorbs canvas-vs-layout
-    // rounding.
+    if (full <= textMax) shapes.push({ textW: Math.ceil(full), lines: 1 });
+    // Deeper splits, kept only while each one is still narrower than the last
+    // — a line that buys no width is a line spent for nothing. +2px slack
+    // absorbs canvas-vs-layout rounding.
     const words = name.split(/\s+/);
-    for (let lines = 2; lines <= LABEL_MAX_LINES; lines++) {
-      if (words.length < lines) break;
+    let narrowest = full;
+    for (let lines = 2; lines <= LABEL_MAX_LINES && words.length >= lines; lines++) {
       const best = balancedWidth(words, lines, 0, new Map());
-      if (best <= textMax) {
-        measureCache.set(name, (m = { textW: Math.ceil(best) + 2, lines }));
-        return m;
-      }
+      if (best >= narrowest) break;
+      narrowest = best;
+      if (best <= textMax) shapes.push({ textW: Math.ceil(best) + 2, lines });
     }
-    // Nothing fits on word boundaries: one unbroken word, or more name than
-    // the budget holds. Sit at the cap and let word-break/line-clamp take it
-    // mid-word — estimating the line count from the run length rather than
-    // always claiming the maximum, so a name that overshoots by a little
-    // doesn't get a pill sized for one that overshoots by a lot.
-    const wrapped = Math.min(Math.ceil(full / textMax), LABEL_MAX_LINES);
-    measureCache.set(name, (m = { textW: textMax, lines: Math.max(2, wrapped) }));
-    return m;
+    if (shapes.length === 0) {
+      // Nothing fits on word boundaries: one unbroken word, or more name than
+      // the budget holds. Sit at the cap and let word-break/line-clamp take it
+      // mid-word — estimating the line count from the run length rather than
+      // always claiming the maximum, so a name that overshoots by a little
+      // doesn't get a pill sized for one that overshoots by a lot.
+      const wrapped = Math.min(Math.ceil(full / textMax), LABEL_MAX_LINES);
+      shapes.push({ textW: textMax, lines: Math.max(2, wrapped) });
+    }
+    measureCache.set(name, shapes);
+    return shapes;
   }
 
   /**
@@ -1309,6 +1384,28 @@
     });
   }
 
+  /**
+   * Wear one of the name's shapes: the line clamp it was measured at, and for
+   * a wrapped name the measured balanced width, so the pill hugs its text
+   * instead of every wrapped name rendering at the full cap. The clamp has to
+   * travel with the measurement: a name measured at three lines and clamped at
+   * two renders an ellipsis inside a pill built tall enough to hold it.
+   *
+   * Applied on every pass rather than baked in at build time, because the
+   * shape is the tile's call and the tile is a zoom away from a different one.
+   * Written in place rather than by rebuilding the badge: a rebuild during a
+   * pinch drops the element the touch sequence is being delivered to.
+   */
+  function applyBadgeShape(label, textW, lines) {
+    if (label.__textW === textW && label.__lines === lines) return;
+    const nameSpan = label.firstChild;
+    nameSpan.style.webkitLineClamp = String(lines);
+    nameSpan.style.width = lines > 1 ? textW + 'px' : '';
+    nameSpan.style.maxWidth = lines > 1 ? '' : badgeType().textMax + 'px';
+    label.__textW = textW;
+    label.__lines = lines;
+  }
+
   // Build one badge. Everything in here is fixed for as long as the patch's data
   // and the viewer's role in it are: there are six listeners to bind, which is
   // why updateLabels reuses these rather than building a fresh set on every
@@ -1321,22 +1418,13 @@
     const label = document.createElement('div');
     label.className = 'patch-label lt-vellum';
 
-    // Text: name only, clamped to the line count it was measured at. A
-    // wrapped name gets an explicit width — the measured balanced width —
-    // so the pill hugs the text instead of every wrapped name rendering at
-    // the full cap. The clamp has to travel with the measurement: a name
-    // measured at three lines and clamped at two renders an ellipsis inside
-    // a pill built tall enough to hold it.
+    // Text: name only. The shape it wears is applyBadgeShape's, here and on
+    // every later pass.
     const nameSpan = document.createElement('span');
     nameSpan.className = 'label-name';
-    nameSpan.style.webkitLineClamp = String(lines);
-    if (lines > 1) {
-      nameSpan.style.width = textW + 'px';
-    } else {
-      nameSpan.style.maxWidth = badgeType().textMax + 'px';
-    }
     nameSpan.textContent = tile.data.name || '';
     label.appendChild(nameSpan);
+    applyBadgeShape(label, textW, lines);
 
     // Label hover → tooltip + click → select patch.
     const tileData = tile.data;
@@ -1400,16 +1488,28 @@
     const k = t.k;
     const { vw, vh } = getContainerSize();
 
+    // Who held a badge on the last pass. A zoom is a stream of these, and the
+    // set that wins collision is not stable across it: two tiles a few pixels
+    // apart in size swap priority as the quilt scales, and each swap reads on
+    // screen as one name blinking out and another blinking in. An incumbent
+    // therefore goes first and keeps its spot for as long as it can still hold
+    // a badge at all — it still loses one to the size floor or the viewport
+    // edge, which are the honest reasons to lose one.
+    const heldBadge = labeledPatchIds;
     labeledPatchIds = new Set();
 
     // Progressive reveal by ON-SCREEN size: a tile earns a label once it is
     // physically big enough to hold one. Keying off the world size instead
     // meant a quilt of uniformly-sized tiles (no member/event spread to grow
     // them) never crossed the threshold at any zoom level.
-    const minShowPx = LABEL_MIN_PX;
+    //
+    // Earning one and keeping one are different sizes — see LABEL_KEEP_PX.
 
-    // Sort tiles by size descending so larger labels get priority in collision detection.
-    const sortedTiles = [...placedTiles].sort((a, b) => b.pxSize - a.pxSize);
+    // Incumbents first, then by size descending so larger labels get priority
+    // in collision detection.
+    const sortedTiles = [...placedTiles].sort((a, b) =>
+      (heldBadge.has(b.data.id) ? 1 : 0) - (heldBadge.has(a.data.id) ? 1 : 0)
+      || b.pxSize - a.pxSize);
 
     // Track placed label bounding boxes for collision avoidance.
     const labelRects = [];
@@ -1417,7 +1517,8 @@
     for (const tile of sortedTiles) {
       const tilePx = tile.pxSize;
       const screenPx = tilePx * k;
-      if (screenPx < minShowPx) continue;
+      const held = heldBadge.has(tile.data.id);
+      if (screenPx < (held ? LABEL_KEEP_PX : LABEL_MIN_PX)) continue;
 
       // World coordinates (pre-zoom) — offset includes the centering transform.
       const worldX = canvasOffsetX + tile.px + tilePx / 2;
@@ -1431,47 +1532,73 @@
       if (screenX < -150 || screenX > vw + 150 ||
           screenY < -50 || screenY > vh + 50) continue;
 
-      // Exact pill footprint from the measured name: text + padding (6+6) +
-      // borders (2×2). Nothing else is in the pill — motif and role mark are
-      // corner marks on the tile.
+      // Nothing but the name is in the pill — motif and role mark are corner
+      // marks on the tile.
       const name = tile.data.name || '';
-      const { textW, lines } = measureBadgeText(name);
       const role = quiltScope === 'local' ? myPatchRoles.get(tile.data.slug) : undefined;
       // Footprint from the pill's own computed box, not restated constants —
       // it is rem-based and the reader can move it.
       const { chromeX, chromeY, lineH } = badgeType();
-      const labelW = textW + chromeX;
-      const labelH = chromeY + lines * lineH;
 
-      // Collision check against already-placed labels. Placed rects are
-      // stored inflated by LABEL_GAP, so a rival only lands when there is
-      // visible quilt between the pills.
-      const rect = {
-        x: screenX - labelW / 2,
-        y: screenY - labelH / 2,
-        w: labelW,
-        h: labelH,
-      };
+      // How much visible quilt this badge owes its neighbours: the full gap to
+      // move in, and to stay, a gap that slides toward LABEL_KEEP_GAP as its
+      // tile grows past the floor. Same hysteresis as the size floor above and
+      // for the same reason — the badges on screen drift together as the quilt
+      // scales, and a name should not blink off the moment two pills come a
+      // pixel closer than a fresh pair would be allowed — but a name only
+      // earns that leniency while there is a tile under it worth reading.
+      const relax = held
+        ? Math.max(0, Math.min(1, (screenPx - LABEL_MIN_PX) / (LABEL_ROOMY_PX - LABEL_MIN_PX)))
+        : 0;
+      const gap = LABEL_GAP + (LABEL_KEEP_GAP - LABEL_GAP) * relax;
 
-      let collides = false;
-      for (const existing of labelRects) {
-        if (rect.x < existing.x + existing.w &&
-            rect.x + rect.w > existing.x &&
-            rect.y < existing.y + existing.h &&
-            rect.y + rect.h > existing.y) {
-          collides = true;
-          break;
+      // Which shape the name wears is decided HERE, against the badges already
+      // on screen, rather than by the name alone: a pill that doesn't fit
+      // stacks onto another line and asks again, and only a name that can't
+      // fit at any depth gives up its badge.
+      //
+      // Wrapping is the right currency to pay in because the two dimensions
+      // are not equally scarce. Tiles are square, a pill is wide and short, so
+      // width is what runs out first; a line costs ~17px of the height nobody
+      // was using and can buy 40+px of the width everybody wants. Shallowest
+      // first, so nothing wraps that didn't have to: a big tile at a close
+      // zoom still wears the flat single-line pill it wears today.
+      let shape = null;
+      let rect = null;
+      for (const candidate of badgeShapes(name)) {
+        const labelW = candidate.textW + chromeX;
+        const labelH = chromeY + candidate.lines * lineH;
+        const box = {
+          x: screenX - labelW / 2,
+          y: screenY - labelH / 2,
+          w: labelW,
+          h: labelH,
+        };
+
+        // Collision check against already-placed labels, each of which only
+        // clears when there is `gap` of quilt between the two pills.
+        let collides = false;
+        for (const existing of labelRects) {
+          if (box.x - gap < existing.x + existing.w &&
+              box.x + box.w + gap > existing.x &&
+              box.y - gap < existing.y + existing.h &&
+              box.y + box.h + gap > existing.y) {
+            collides = true;
+            break;
+          }
         }
+        if (collides) continue; // Try a deeper, narrower stack of the name.
+        shape = candidate;
+        rect = box;
+        break;
       }
 
-      if (collides) continue; // Skip — a higher-priority label is already here.
+      // No shape of this name clears its neighbours — a higher-priority label
+      // is already here.
+      if (!shape) continue;
+      const { textW, lines } = shape;
 
-      labelRects.push({
-        x: rect.x - LABEL_GAP,
-        y: rect.y - LABEL_GAP,
-        w: rect.w + LABEL_GAP * 2,
-        h: rect.h + LABEL_GAP * 2,
-      });
+      labelRects.push(rect);
       labeledPatchIds.add(tile.data.id);
 
       // Reuse this patch's badge if it still matches what it was built from.
@@ -1491,6 +1618,7 @@
       }
       if (label.parentNode !== labelsEl) labelsEl.appendChild(label);
 
+      applyBadgeShape(label, textW, lines);
       label.classList.toggle('selected', tile.data.slug === selectedPatchSlug);
       label.style.left = screenX + 'px';
       label.style.top = screenY + 'px';
