@@ -27,7 +27,7 @@
     "diff": "^9.0.0",
     "dompurify": "^3.4.12",
     "leaflet": "^1.9.4",
-    "marked": "^18.0.9",
+    "marked": "^18.0.10",
     "phosphor-svelte": "^3.1.0"
   }
 }
