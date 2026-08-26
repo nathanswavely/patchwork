@@ -42,6 +42,9 @@
    *    is none, and the overflow is clipped rather than overlaid, because
    *    `overflow-y: auto` computes `overflow-x` to `auto` too. Pass it
    *    wherever an ancestor scrolls, and give the field the room instead.
+   *  - inputId: puts an id on the field so a form's <label for> can name it.
+   *    The bar's search is its own landmark and needs none; a picker sitting
+   *    in a labelled form row is a form control like any other.
    *  - shortcut={false}: gives up the '/' focus key. Several pickers on a
    *    page would otherwise all bind it and fight over the global bar's.
    *    Implied by variant="picker" — a slash shortcut into one of nine
@@ -65,6 +68,7 @@
     alwaysSuggest = false,
     shortcut = true,
     matchField = false,
+    inputId = null,
   } = $props();
 
   let isPicker = $derived(variant === 'picker');
@@ -223,6 +227,7 @@
   {/if}
   <input
     bind:this={inputEl}
+    id={inputId}
     class="finder-input"
     type="search"
     {placeholder}
