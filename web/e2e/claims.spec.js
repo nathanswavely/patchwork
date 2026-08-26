@@ -78,7 +78,7 @@ test.describe('Claim flow', () => {
   test('patch profile shows the claim in progress', async ({ page }) => {
     await loginAs(page, 'active');
     await goto(page, `/patches/${slug}`);
-    await expect(page.getByText('No one runs this patch yet.')).toBeVisible();
+    await expect(page.getByText('No one runs this patch yet')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Your claim is in progress' })).toBeVisible();
   });
 

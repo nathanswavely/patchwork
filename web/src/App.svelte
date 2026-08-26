@@ -70,6 +70,7 @@
   import Label from './pages/Label.svelte';
   import About from './pages/About.svelte';
   import Lining from './pages/Lining.svelte';
+  import Governance from './pages/Governance.svelte';
   import AdminLegal from './pages/AdminLegal.svelte';
   import LegalDoc from './pages/LegalDoc.svelte';
   import SubmitPatch from './pages/SubmitPatch.svelte';
@@ -114,6 +115,7 @@
   // readable logged out, same register as /label.
   addRoute('/about', 'about');
   addRoute('/lining', 'lining');
+  addRoute('/governance', 'governance');
 
   // Legal documents (docs/adr/028) — public, readable logged out.
   addRoute('/privacy', 'privacy');
@@ -593,6 +595,10 @@
         <About />
       {:else if routeName === 'lining'}
         <Lining />
+      <!-- The second explaining surface, admitted by docs/adr/068 because
+           governance is permission-gated from the reader who needs it. -->
+      {:else if routeName === 'governance'}
+        <Governance />
 
       <!-- ===== LEGAL DOCUMENTS (docs/adr/028) ===== -->
       {:else if routeName === 'privacy' || routeName === 'terms'}

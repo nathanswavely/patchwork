@@ -939,6 +939,20 @@ the intro card.
 _Avoid_: help page, FAQ, marketing page, landing page (discovery is the
 landing), about (as a name for the Label)
 
+**Governance page**:
+The public explanation of how a patch decides things, at /governance,
+reached from the About page. The second and last explaining surface the
+app carries (docs/adr/068) — every other public prose route shows an
+artifact that exists without it, and this one explains something a reader
+cannot go and look at, because governance is hidden from non-members. Its
+subject is patch governance only; who runs the quilt belongs to the
+Label. Project-owned and fixed like the lining's text, never an instance
+override: a description of what the software does is the project's claim
+to make, and an instance that could edit it could narrate behavior it
+does not control.
+_Avoid_: docs, help, guide, manual, governance hub (that is the patch
+workspace surface at /patches/{slug}/governance)
+
 **Label**:
 The quilt's public statement of how it is run and paid for — who stewards
 it, what outside services it depends on and why, what those cost, and how
