@@ -1,9 +1,14 @@
 <script>
+  import { X } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
-  import { getInstanceTimezone } from '../stores/quilt.svelte.js';
   import { toZonedInputValue, fromZonedInputValue, sameZoneAsViewer } from '../lib/datetime.js';
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import VocabLabel from '../components/VocabLabel.svelte';
+  import WorkspaceSearch from '../components/WorkspaceSearch.svelte';
+  import { reachablePatchPickerProvider } from '../lib/finderProviders.js';
+  import { isAdmin, isTrustedContributor } from '../stores/auth.svelte.js';
+  import { getMemberships } from '../stores/memberships.svelte.js';
+  import { getSubmissionsEnabled, getInstanceTimezone } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
   let { eventId = '', nodeSlug = '' } = $props();
@@ -11,7 +16,8 @@
 
   // A ?node=slug query param (or nodeSlug prop) pre-scopes the form to one
   // patch — the suggest-an-event door (docs/adr/026). The user may not
-  // belong to that patch, so the select is locked to it.
+  // belong to that patch, and the door already answered which patch this
+  // is for, so the field states it rather than asking again.
   let lockSlug = $derived(nodeSlug || getQuery().get('node') || '');
 
   let title = $state('');
@@ -20,25 +26,36 @@
   let location = $state('');
   let startsAt = $state('');
   let endsAt = $state('');
-  // The zone the times in this form are written in (docs/adr/045). On an
-  // edit it is the event's resolved zone; on a new event it is the chosen
-  // patch's, which is why it follows nodeId. Empty means the form is
-  // reading and writing the editor's own clock, which is the honest
-  // fallback before a patch is picked.
+  let recurrence = $state('');
+  // A flyer or show photo, held wherever the patch already keeps it
+  // (docs/adr/007). The description is required alongside it, and the server
+  // refuses the pair without one.
+  let imageUrl = $state('');
+  let imageAlt = $state('');
+
+  // The patch this event is for: chosen in the picker, or fixed by the door
+  // that was walked in through. { id, name, slug, status }.
+  let hostingPatch = $state(null);
+  // Fixed means the field states a patch rather than asking for one: an edit
+  // cannot move an event between patches, and the suggest door (docs/adr/026)
+  // is already scoped to the patch it came from. Neither is a choice, so
+  // neither gets a picker.
+  let fixed = $derived(isEdit || !!lockSlug);
+
+  // The zone the times in this form are written in (docs/adr/045). It
+  // follows the hosting patch, because an event inherits its patch's zone
+  // unless it says otherwise — so picking a patch is what sets the clock
+  // the boxes below are read in.
   let timezone = $state('');
-  // What the patch would give this event on its own. The zone control
-  // appears only when the two differ — a touring band's out-of-town date
-  // — because a field that must be filled for every event is a field that
-  // will be filled wrong.
+  // What the patch would give this event on its own. The control appears
+  // only when the two differ — a touring band's out-of-town date — because
+  // a field that must be filled for every event is a field filled wrong.
   let patchTimezone = $state('');
-  // Whether the editor has asked for the zone control. Hidden by default:
-  // the only case that justifies asking is an event whose zone differs
-  // from its patch's, and that is rare enough to be opt-in.
   let zoneOverridden = $state(false);
 
-  // Whether a typed zone is one this browser can resolve. The server
-  // checks too and is the authority; this is so a typo is visible before
-  // a save round trip rather than after it.
+  // Whether a typed zone is one this browser can resolve. The server checks
+  // too and is the authority; this is so a typo is visible before a save
+  // round trip rather than after it.
   function isValidZone(tz) {
     try {
       new Intl.DateTimeFormat('en-US', { timeZone: tz });
@@ -47,98 +64,12 @@
       return false;
     }
   }
-  let recurrence = $state('');
-  // A flyer or show photo, held wherever the patch already keeps it
-  // (docs/adr/007). The description is required alongside it, and the server
-  // refuses the pair without one.
-  let imageUrl = $state('');
-  let imageAlt = $state('');
-
-  let myNodes = $state([]);
-  let lockedNode = $state(null);
-  let lockedUnclaimed = $state(false);
-  let eventNodeStatus = $state('');
-  // Set when a submit came back pending_review — the form is replaced by
-  // a confirmation instead of navigating to an event nobody else can see.
-  let pendingReviewers = $state('');
-  let loadingNodes = $state(true);
-  let submitting = $state(false);
-  let error = $state('');
-
-  $effect(() => {
-    if (isEdit) {
-      loadEvent();
-    } else if (lockSlug) {
-      loadLockedNode();
-    } else {
-      loadMyNodes();
-    }
-  });
-
-  async function loadEvent() {
-    loadingNodes = true;
-    try {
-      const [event, nodesData] = await Promise.all([
-        api(`events/${eventId}`),
-        api('me/nodes').catch(() => ({ items: [] })),
-      ]);
-      title = event.title || '';
-      description = event.description || '';
-      nodeId = event.node_id || '';
-      location = event.location || '';
-      imageUrl = event.image_url || '';
-      imageAlt = event.image_alt || '';
-      // Read in the event's zone, not the editor's: an organizer editing a
-      // Lancaster show sees 8:00 PM whether they are in Lancaster or on
-      // tour, because 8pm is the fact they are editing.
-      timezone = event.timezone || '';
-      // The event payload's zone is already resolved, so an inheriting
-      // event and one that pins its patch's zone look identical here.
-      // Comparing against the patch's own answer is what keeps the
-      // control hidden for the ordinary case — and what stops a plain
-      // save from freezing a copy of a zone the event was inheriting.
-      await loadPatchZone(event.node_slug);
-      zoneOverridden = !!timezone && !!patchTimezone && timezone !== patchTimezone;
-      startsAt = toZonedInputValue(event.starts_at, timezone);
-      endsAt = toZonedInputValue(event.ends_at, timezone);
-      recurrence = event.recurrence || '';
-      eventNodeStatus = event.node_status || '';
-      myNodes = nodesData.items || nodesData || [];
-      // Creators can edit events on patches they don't belong to; keep
-      // the (disabled) select able to show the hosting patch's name.
-      if (nodeId && !myNodes.some((n) => n.node_id === nodeId) && event.node_name) {
-        myNodes = [...myNodes, { node_id: nodeId, node_name: event.node_name }];
-      }
-    } catch (e) {
-      error = e.message || 'Failed to load event';
-      myNodes = [];
-    } finally {
-      loadingNodes = false;
-    }
-  }
-
-  async function loadLockedNode() {
-    loadingNodes = true;
-    try {
-      const data = await api(`nodes/${lockSlug}`);
-      lockedNode = data.node || data;
-      lockedUnclaimed = data.is_unclaimed || false;
-      nodeId = lockedNode.id;
-      patchTimezone = lockedNode.timezone || getInstanceTimezone() || '';
-      if (!isEdit) timezone = patchTimezone;
-      myNodes = [lockedNode];
-    } catch (e) {
-      error = e.message || 'Failed to load patch';
-      myNodes = [];
-    } finally {
-      loadingNodes = false;
-    }
-  }
 
   // What zone this event would get from its patch alone. Fetched rather
-  // than assumed: me/nodes carries membership rows, not patch fields, and
-  // guessing the instance's here would make every save pin a zone the
-  // event was happily inheriting.
+  // than assumed: an event payload's zone arrives already resolved, so an
+  // inheriting event and one pinning its patch's zone are indistinguishable
+  // in it, and guessing the instance's here would make every save freeze a
+  // copy of a zone the event was happily inheriting.
   async function loadPatchZone(slug) {
     const fallback = getInstanceTimezone() || '';
     if (!slug) {
@@ -153,27 +84,165 @@
       patchTimezone = fallback;
     }
   }
+  // Set when a submit came back pending_review — the form is replaced by
+  // a confirmation instead of navigating to an event nobody else can see.
+  let pendingReviewers = $state('');
+  let loadingPatch = $state(true);
+  let submitting = $state(false);
+  let error = $state('');
 
-  // A new event follows the patch it is being posted to, so picking a
-  // patch is what sets the clock the form is written in.
-  async function pickPatchZone() {
-    if (isEdit || !nodeId) return;
-    const chosen = myNodes.find((n) => n.node_id === nodeId);
-    await loadPatchZone(chosen?.node_slug || chosen?.slug);
-    timezone = patchTimezone;
-  }
+  $effect(() => {
+    if (isEdit) {
+      loadEvent();
+    } else if (lockSlug) {
+      loadLockedNode();
+    } else {
+      // Nothing to fetch: the picker loads its corpus on first focus.
+      loadingPatch = false;
+    }
+  });
 
-  async function loadMyNodes() {
-    loadingNodes = true;
+  async function loadEvent() {
+    loadingPatch = true;
     try {
-      const data = await api('me/nodes');
-      myNodes = data.items || data || [];
-    } catch {
-      myNodes = [];
+      const event = await api(`events/${eventId}`);
+      title = event.title || '';
+      description = event.description || '';
+      nodeId = event.node_id || '';
+      location = event.location || '';
+      imageUrl = event.image_url || '';
+      imageAlt = event.image_alt || '';
+      // Read in the event's zone, not the editor's: an organizer editing a
+      // Lancaster show sees 8:00 PM whether they are in Lancaster or on
+      // tour, because 8pm is the fact they are editing.
+      timezone = event.timezone || '';
+      startsAt = toZonedInputValue(event.starts_at, timezone);
+      endsAt = toZonedInputValue(event.ends_at, timezone);
+      recurrence = event.recurrence || '';
+      hostingPatch = {
+        id: event.node_id,
+        name: event.node_name || '',
+        slug: event.node_slug || '',
+        status: event.node_status || '',
+      };
+      await loadPatchZone(event.node_slug);
+      zoneOverridden = !!timezone && !!patchTimezone && timezone !== patchTimezone;
+    } catch (e) {
+      error = e.message || 'Failed to load event';
     } finally {
-      loadingNodes = false;
+      loadingPatch = false;
     }
   }
+
+  async function loadLockedNode() {
+    loadingPatch = true;
+    try {
+      const data = await api(`nodes/${lockSlug}`);
+      const node = data.node || data;
+      nodeId = node.id;
+      hostingPatch = {
+        id: node.id,
+        name: node.name,
+        slug: node.slug,
+        status: data.is_unclaimed ? 'unclaimed' : node.status || 'active',
+      };
+      patchTimezone = node.timezone || getInstanceTimezone() || '';
+      if (!isEdit) timezone = patchTimezone;
+    } catch (e) {
+      error = e.message || 'Failed to load patch';
+    } finally {
+      loadingPatch = false;
+    }
+  }
+
+  // Active memberships only, matching the server's userHasNodeRole. me/nodes
+  // serves 'active' and 'pending' alike, so the raw role map calls someone
+  // with an outstanding join request a member — the picker would label the
+  // row "member", the button would say Create Event, and the server would
+  // make a submission. That is the same lying button this field exists to
+  // stop, arriving by a different route.
+  let activeRoles = $derived.by(() => {
+    const roles = new Map();
+    for (const m of getMemberships()) {
+      if (m.status === 'active') roles.set(m.node_slug, m.role);
+    }
+    return roles;
+  });
+
+  // Who may post straight to a patch, mirroring CreateEvent (docs/adr/026):
+  // members and admins of an active patch, the instance admin anywhere, and
+  // a trusted contributor on an unclaimed one. Everybody else may still
+  // suggest, and the field says so rather than finding out on submit.
+  function postsDirectly(status, slug) {
+    if (isAdmin()) return true;
+    if (status === 'unclaimed') return isTrustedContributor();
+    const role = activeRoles.get(slug);
+    return role === 'member' || role === 'admin';
+  }
+
+  // Why a suggestion would be refused, in the words the server would use.
+  // A patch that will not take one is shown and refused with the reason
+  // rather than hidden (CONTEXT.md "Patch picker") — absence would read as
+  // "not on this quilt".
+  function refusalFor(node) {
+    if (!getSubmissionsEnabled()) return 'not taking suggestions';
+    if (node.status === 'active' && !node.accept_event_suggestions) {
+      return 'not taking suggestions';
+    }
+    return '';
+  }
+
+  function hostingPatchProvider() {
+    return reachablePatchPickerProvider((n) => {
+      const direct = postsDirectly(n.status, n.slug);
+      const refusal = direct ? '' : refusalFor(n);
+      return {
+        type: n.status === 'unclaimed' ? 'Unclaimed patches' : 'Patches',
+        // Your own patches wear the standing that lets you post to them;
+        // everything else says what pressing the button will actually do.
+        sublabel: direct
+          ? activeRoles.get(n.slug) || ''
+          : refusal || 'will be reviewed',
+        disabled: !!refusal,
+        id: n.id,
+        status: n.status,
+      };
+    });
+  }
+
+  async function choosePatch(item) {
+    hostingPatch = {
+      id: item.id,
+      name: item.label,
+      slug: item.slug,
+      status: item.status,
+    };
+    nodeId = item.id;
+    // A new event follows the patch it is being posted to, so picking a
+    // patch is what sets the clock this form is written in.
+    await loadPatchZone(item.slug);
+    if (!isEdit && !zoneOverridden) timezone = patchTimezone;
+  }
+
+  function clearPatch() {
+    hostingPatch = null;
+    nodeId = '';
+    // Without a patch there is no zone to inherit, so the form falls back
+    // to the editor's own clock rather than keeping the last patch's.
+    if (!zoneOverridden) {
+      timezone = '';
+      patchTimezone = '';
+    }
+  }
+
+  // A pick the server will hold for review. Drives the button, so the label
+  // promises what the patch actually allows.
+  let willReview = $derived(
+    !!hostingPatch && !postsDirectly(hostingPatch.status, hostingPatch.slug)
+  );
+  let reviewers = $derived(
+    hostingPatch?.status === 'unclaimed' ? 'quilt admins' : 'patch admins'
+  );
 
   function validate() {
     if (!title.trim()) return 'Title is required';
@@ -200,8 +269,8 @@
         location: location.trim() || undefined,
         starts_at: fromZonedInputValue(startsAt, timezone),
         ends_at: fromZonedInputValue(endsAt, timezone),
-        // Sent only when it differs from what the patch would supply, so
-        // an ordinary event stays inheriting rather than freezing a copy.
+        // Sent only when it differs from what the patch would supply, so an
+        // ordinary event stays inheriting rather than freezing a copy.
         timezone: timezone && timezone !== patchTimezone ? timezone : undefined,
         recurrence: recurrence || undefined,
         image_url: imageUrl.trim(),
@@ -212,7 +281,7 @@
         if (result?.status === 'pending_review') {
           // A non-trusted creator's edit on an unclaimed patch goes back
           // through review (docs/adr/026).
-          pendingReviewers = eventNodeStatus === 'unclaimed' ? 'quilt admins' : 'patch admins';
+          pendingReviewers = reviewers;
           showToast('Submitted for review', 'success');
         } else {
           showToast('Event updated', 'success');
@@ -221,7 +290,7 @@
       } else {
         const result = await api('events', { method: 'POST', body });
         if (result?.status === 'pending_review') {
-          pendingReviewers = lockedUnclaimed ? 'quilt admins' : 'patch admins';
+          pendingReviewers = reviewers;
           showToast('Submitted for review', 'success');
         } else {
           showToast('Event created', 'success');
@@ -269,7 +338,7 @@
         {#if isEdit}
           Update your event details.
         {:else if lockSlug}
-          Suggest an event{lockedNode ? ` for ${lockedNode.name}` : ''}. It will be reviewed before it appears.
+          Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.
         {:else}
           Schedule a new event for your community.
         {/if}
@@ -288,21 +357,48 @@
 
         <div class="field">
           <label for="node">Hosting Patch <span class="required">*</span></label>
-          {#if loadingNodes}
-            <select id="node" disabled>
-              <option>Loading patches...</option>
-            </select>
-          {:else if myNodes.length === 0}
-            <p class="muted" style="font-size: 0.85rem;">
-              {lockSlug ? error || 'Could not load this patch.' : 'You need to be a member of a patch to create an event.'}
-            </p>
+          {#if fixed}
+            <!-- Stated, not asked. An edit cannot move an event between
+                 patches and a suggestion goes to the patch you came from,
+                 so a control here would be a dropdown that refuses to open. -->
+            {#if loadingPatch}
+              <p class="fixed-patch muted">Loading…</p>
+            {:else if hostingPatch}
+              <p class="fixed-patch">{hostingPatch.name}</p>
+            {:else}
+              <p class="muted" style="font-size: 0.85rem;">
+                {error || 'Could not load this patch.'}
+              </p>
+            {/if}
+          {:else if hostingPatch}
+            <span class="chosen-patch">
+              {hostingPatch.name}
+              <button
+                type="button"
+                class="chip-x"
+                title="Choose a different patch"
+                disabled={submitting}
+                onclick={clearPatch}
+              >
+                <X size={11} />
+              </button>
+            </span>
           {:else}
-            <select id="node" bind:value={nodeId} onchange={pickPatchZone} disabled={submitting || isEdit || !!lockSlug}>
-              <option value="">Select a patch</option>
-              {#each myNodes as node (node.node_id)}
-                <option value={node.node_id}>{node.node_name}</option>
-              {/each}
-            </select>
+            <WorkspaceSearch
+              variant="picker"
+              matchField
+              browse
+              inputId="node"
+              placeholder="Find a patch…"
+              provider={hostingPatchProvider}
+              onSelect={choosePatch}
+            />
+          {/if}
+          {#if !fixed && willReview}
+            <p class="image-hint muted">
+              You aren't a member of this patch, so the {reviewers} will look
+              at your event before it appears.
+            </p>
           {/if}
         </div>
 
@@ -397,8 +493,8 @@
         {/if}
 
         <div class="field-actions">
-          <button type="submit" class="btn btn-primary" disabled={submitting || myNodes.length === 0}>
-            {submitting ? 'Saving...' : isEdit ? 'Save Changes' : lockSlug ? 'Suggest Event' : 'Create Event'}
+          <button type="submit" class="btn btn-primary" disabled={submitting || !nodeId}>
+            {submitting ? 'Saving...' : isEdit ? 'Save Changes' : willReview ? 'Suggest Event' : 'Create Event'}
           </button>
           <button
             type="button"
@@ -473,6 +569,39 @@
 
   .required {
     color: var(--color-error);
+  }
+
+  .fixed-patch {
+    margin: 0;
+    padding: 0.1rem 0;
+    font-weight: 500;
+  }
+
+  .chosen-patch {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.3rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px dashed var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .chip-x {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+
+  .chip-x:hover:not(:disabled) {
+    color: var(--color-text);
   }
 
   textarea {

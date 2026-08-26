@@ -275,11 +275,17 @@ A form field that chooses a patch from the quilt's public set — typed
 into, resolved by choosing, and it goes nowhere: the chosen patch becomes
 a value in whatever the surface is about to do. Used wherever something
 must be pointed at a patch: routing an aggregator's name through a
-crosswalk entry (docs/adr/056), and proposing an event link (docs/adr/032).
-A patch it will not accept is shown and refused with the reason rather than
-hidden — absence would read as "not on this quilt". Not search, though it
-is the same dropdown: search's corpus follows the context you are standing
-in, a picker's follows the question the field is asking.
+crosswalk entry (docs/adr/056), proposing an event link (docs/adr/032),
+and naming the patch an event is for (docs/adr/026). A patch it will not
+accept is shown and refused with the reason rather than hidden — absence
+would read as "not on this quilt", and so does a patch the listing never
+carried: where the answer includes patches of your own, the corpus is the
+public set widened by your own memberships, private ones included. Where it
+stands in for a select, it opens on its corpus before anything is typed:
+someone with three patches to choose between should not have to guess a
+name to see the three. Not search, though it is the same dropdown: search's
+corpus follows the context you are standing in, a picker's follows the
+question the field is asking.
 _Avoid_: patch finder, patch search, patch selector, autocomplete, typeahead
 
 **Admin panel**:

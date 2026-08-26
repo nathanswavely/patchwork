@@ -42,6 +42,16 @@
    *    is none, and the overflow is clipped rather than overlaid, because
    *    `overflow-y: auto` computes `overflow-x` to `auto` too. Pass it
    *    wherever an ancestor scrolls, and give the field the room instead.
+   *  - browse: opens on the corpus itself, before anything is typed, so
+   *    focusing the field shows what there is to choose from. Search must
+   *    not do this — the whole quilt dumped under the bar is noise — but a
+   *    picker standing in for a <select> must: someone with three patches to
+   *    choose between should not have to guess a name to see the three. The
+   *    bottom suggest/action rows still wait for a query; they answer "not
+   *    here", which an untyped corpus hasn't been asked yet.
+   *  - inputId: puts an id on the field so a form's <label for> can name it.
+   *    The bar's search is its own landmark and needs none; a picker sitting
+   *    in a labelled form row is a form control like any other.
    *  - shortcut={false}: gives up the '/' focus key. Several pickers on a
    *    page would otherwise all bind it and fight over the global bar's.
    *    Implied by variant="picker" — a slash shortcut into one of nine
@@ -65,6 +75,8 @@
     alwaysSuggest = false,
     shortcut = true,
     matchField = false,
+    browse = false,
+    inputId = null,
   } = $props();
 
   let isPicker = $derived(variant === 'picker');
@@ -96,7 +108,8 @@
   }
 
   let results = $derived.by(() => {
-    if (!items || !query.trim()) return [];
+    if (!items) return [];
+    if (!query.trim()) return browse ? items.slice(0, 12) : [];
     // Diacritic-folded match: "tornado" finds Tornādo Tornädo.
     const q = fold(query);
     return items.filter(i =>
@@ -171,8 +184,13 @@
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       activeIndex = Math.max(activeIndex - 1, 0);
-    } else if (e.key === 'Enter' && activeIndex >= 0) {
+    } else if (e.key === 'Enter') {
+      // An open finder owns Enter outright, matched row or not. A picker
+      // lives inside a <form>, where letting the keypress through submits
+      // the form from a field the person was still choosing in.
+      if (!open) return;
       e.preventDefault();
+      if (activeIndex < 0) return;
       if (results[activeIndex]) select(results[activeIndex]);
       else if (activeIndex === results.length) {
         if (hasAction) runAction();
@@ -223,6 +241,7 @@
   {/if}
   <input
     bind:this={inputEl}
+    id={inputId}
     class="finder-input"
     type="search"
     {placeholder}
@@ -236,7 +255,7 @@
     <kbd class="finder-kbd">/</kbd>
   {/if}
 
-  {#if open && query.trim()}
+  {#if open && (query.trim() || browse)}
     <div class="finder-results">
       {#if loading}
         <div class="finder-empty">Searching…</div>
