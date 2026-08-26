@@ -16279,6 +16279,13 @@
           "quote": null
         },
         {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 350,
+          "kind": "markup",
+          "raw": "Loading…",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/RemotePatch.svelte",
           "line": 94,
           "kind": "markup",
@@ -17410,6 +17417,13 @@
           "kind": "js-string",
           "raw": "Unclaimed patches",
           "quote": "'"
+        },
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 185,
+          "kind": "js-string",
+          "raw": "Unclaimed patches",
+          "quote": "'"
         }
       ]
     },
@@ -17751,6 +17765,13 @@
           "kind": "attr:title",
           "raw": "Choose a different patch",
           "quote": "\""
+        },
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 364,
+          "kind": "attr:title",
+          "raw": "Choose a different patch",
+          "quote": "\""
         }
       ]
     },
@@ -17773,6 +17794,13 @@
         {
           "file": "web/src/pages/AdminAggregators.svelte",
           "line": 476,
+          "kind": "attr:placeholder",
+          "raw": "Find a patch…",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 376,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -19839,7 +19867,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 131,
+          "line": 151,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -22824,7 +22852,7 @@
       "occurrences": [
         {
           "file": "web/src/components/WorkspaceSearch.svelte",
-          "line": 242,
+          "line": 247,
           "kind": "markup",
           "raw": "Searching…",
           "quote": null
@@ -22842,7 +22870,7 @@
       "occurrences": [
         {
           "file": "web/src/components/WorkspaceSearch.svelte",
-          "line": 245,
+          "line": 250,
           "kind": "markup",
           "raw": "No matches in this context",
           "quote": null
@@ -24420,7 +24448,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 233,
+          "line": 287,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -28147,7 +28175,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 285,
+          "line": 339,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -28409,7 +28437,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 362,
+          "line": 442,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -28470,7 +28498,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 374,
+          "line": 454,
           "kind": "markup",
           "raw": "Not a timezone this quilt knows.",
           "quote": null
@@ -29791,7 +29819,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 179,
+          "line": 233,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -31874,7 +31902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 113,
+          "line": 130,
           "kind": "js-string",
           "raw": "Failed to load event",
           "quote": "'"
@@ -31892,7 +31920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 180,
+          "line": 234,
           "kind": "js-string",
           "raw": "Please select a patch",
           "quote": "'"
@@ -31910,7 +31938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 181,
+          "line": 235,
           "kind": "js-string",
           "raw": "Start date/time is required",
           "quote": "'"
@@ -31928,21 +31956,21 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 216,
+          "line": 270,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 225,
+          "line": 279,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 245,
+          "line": 299,
           "kind": "markup",
           "raw": "Submitted for review",
           "quote": null
@@ -31960,7 +31988,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 218,
+          "line": 272,
           "kind": "js-string",
           "raw": "Event updated",
           "quote": "'"
@@ -31978,7 +32006,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 227,
+          "line": 281,
           "kind": "js-string",
           "raw": "Event created",
           "quote": "'"
@@ -31996,7 +32024,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 232,
+          "line": 286,
           "kind": "js-string",
           "raw": "Failed to update event",
           "quote": "'"
@@ -32014,7 +32042,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 232,
+          "line": 286,
           "kind": "js-string",
           "raw": "Failed to create event",
           "quote": "'"
@@ -32032,7 +32060,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 247,
+          "line": 301,
           "kind": "markup",
           "raw": "The {pendingReviewers} will look at it. Your event will appear on\n            the calendar once it's approved.",
           "quote": null
@@ -32050,7 +32078,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 270,
+          "line": 324,
           "kind": "markup",
           "raw": "Update your event details.",
           "quote": null
@@ -32058,19 +32086,19 @@
       ]
     },
     {
-      "id": "aaf2813dd58e",
-      "text": "Suggest an event{lockedNode ? ` for ${lockedNode.name}` : ''}. It will be reviewed before it appears.",
+      "id": "346bc0703598",
+      "text": "Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Unchanged copy from the initial release; this id is new only because the interpolated variable was renamed lockedNode -> hostingPatch.",
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 272,
+          "line": 326,
           "kind": "markup",
-          "raw": "Suggest an event{lockedNode ? ` for ${lockedNode.name}` : ''}. It will be reviewed before it appears.",
+          "raw": "Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.",
           "quote": null
         }
       ]
@@ -32086,7 +32114,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 274,
+          "line": 328,
           "kind": "markup",
           "raw": "Schedule a new event for your community.",
           "quote": null
@@ -32104,7 +32132,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 280,
+          "line": 334,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -32143,7 +32171,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 290,
+          "line": 344,
           "kind": "markup",
           "raw": "Hosting Patch",
           "quote": null
@@ -32151,37 +32179,19 @@
       ]
     },
     {
-      "id": "63dae490ea53",
-      "text": "Loading patches...",
-      "words": 2,
-      "tier": "label",
+      "id": "54a10b118576",
+      "text": "You aren't a member of this patch, so the {reviewers} will look at your event before it appears.",
+      "words": 18,
+      "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "New hint on the create form: says the chosen patch will hold the event for review, which the button alone cannot show.",
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 293,
+          "line": 383,
           "kind": "markup",
-          "raw": "Loading patches...",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "99ddb7dbe255",
-      "text": "Select a patch",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 301,
-          "kind": "markup",
-          "raw": "Select a patch",
+          "raw": "You aren't a member of this patch, so the {reviewers} will look\n              at your event before it appears.",
           "quote": null
         }
       ]
@@ -32197,7 +32207,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 310,
+          "line": 390,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -32229,7 +32239,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 311,
+          "line": 391,
           "kind": "attr:placeholder",
           "raw": "Where is this happening?",
           "quote": "\""
@@ -32247,7 +32257,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 315,
+          "line": 395,
           "kind": "markup",
           "raw": "Image address",
           "quote": null
@@ -32265,7 +32275,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 316,
+          "line": 396,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -32325,7 +32335,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 318,
+          "line": 398,
           "kind": "markup",
           "raw": "Link a flyer or photo you already have online. Patchwork points at\n            it and never keeps a copy.",
           "quote": null
@@ -32343,7 +32353,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 328,
+          "line": 408,
           "kind": "markup",
           "raw": "Describe the image",
           "quote": null
@@ -32368,7 +32378,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 329,
+          "line": 409,
           "kind": "attr:placeholder",
           "raw": "Flyer for the March show",
           "quote": "\""
@@ -32386,7 +32396,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 331,
+          "line": 411,
           "kind": "markup",
           "raw": "Read aloud by screen readers, and shown if the image stops\n              loading.",
           "quote": null
@@ -32404,7 +32414,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 339,
+          "line": 419,
           "kind": "markup",
           "raw": "Starts At",
           "quote": null
@@ -32422,7 +32432,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 343,
+          "line": 423,
           "kind": "markup",
           "raw": "Ends At",
           "quote": null
@@ -32440,7 +32450,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 356,
+          "line": 436,
           "kind": "markup",
           "raw": "Times are in {timezone.replace(/_/g, ' ')}{zoneOverridden ? '' : \", this patch's timezone\"}.",
           "quote": null
@@ -32458,7 +32468,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 371,
+          "line": 451,
           "kind": "markup",
           "raw": "An IANA name. Clear it to go back to\n              {patchTimezone ? patchTimezone.replace(/_/g, ' ') : \"the patch's timezone\"}.",
           "quote": null
@@ -32476,7 +32486,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 385,
+          "line": 465,
           "kind": "markup",
           "raw": "Recurrence",
           "quote": null
@@ -32494,7 +32504,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 387,
+          "line": 467,
           "kind": "markup",
           "raw": "One-time",
           "quote": null
@@ -32512,7 +32522,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 388,
+          "line": 468,
           "kind": "markup",
           "raw": "Daily",
           "quote": null
@@ -32530,7 +32540,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 389,
+          "line": 469,
           "kind": "markup",
           "raw": "Weekly",
           "quote": null
@@ -32548,7 +32558,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 390,
+          "line": 470,
           "kind": "markup",
           "raw": "Every Two Weeks",
           "quote": null
@@ -32566,7 +32576,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 391,
+          "line": 471,
           "kind": "markup",
           "raw": "Monthly",
           "quote": null
@@ -42000,6 +42010,42 @@
           "line": 279,
           "kind": "markup",
           "raw": "{formatDate(sub.starts_at)} &middot; {formatTime(sub.starts_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "63dae490ea53",
+      "text": "Loading patches...",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 293,
+          "kind": "markup",
+          "raw": "Loading patches...",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "99ddb7dbe255",
+      "text": "Select a patch",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 301,
+          "kind": "markup",
+          "raw": "Select a patch",
           "quote": null
         }
       ]
