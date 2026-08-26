@@ -112,22 +112,14 @@
   <section class="about-section">
     <h2>How does it work?</h2>
     <p>
-      Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.
+      Every community, group, or entity on the "quilt" is a patch. It
+      could be a music venue, a food bank, a local union chapter, an
+      artist, a coalition, a band... you get the picture. Every patch is
+      equal in ability to use the features of the platform and its
+      discoverability, though some patches may grow or move depending on
+      their activity or relationships to other patches.
     </p>
-    <p>
-      You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.
-    </p>
-    <p>
-      The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.
-    </p>
-    <p>
-      Events come from the patches you follow or join. Your feed is built
-      from those connections and nothing else.
-    </p>
-  </section>
-
-  <section class="about-section">
-    <h2>What makes it different</h2>
+    <p>You can interact with patches in a few ways:</p>
     <ul>
       <li>Follow a patch to see events and public notifications from it in your own personal quilt.</li>
       <li>Join a patch as a member to be involved in non-public activities.</li>
@@ -183,8 +175,10 @@
         amendments to it for your community are public.
       </li>
       <li>
-        "Leaving" is totally fine and affordances for it are built in. It's called a "Seamrip." A community can export its data and stand up again under new stewards The
-        <a href="/label">Label</a> says where the door is.
+        Leaving is made intentionally easy. If this place is not for you,
+        but you like some of it, take it with you and start another quilt.
+        It's open source, and this quilt's data can be exported whole and
+        stood up somewhere else.
       </li>
     </ul>
   </section>

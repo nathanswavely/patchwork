@@ -4567,14 +4567,14 @@
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 97,
+          "line": 109,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 227,
+          "line": 273,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -8676,7 +8676,7 @@
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 137,
+          "line": 177,
           "kind": "go-error-body",
           "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
@@ -13109,6 +13109,42 @@
       ]
     },
     {
+      "id": "bc4d557adacb",
+      "text": "failed to reset the name",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 116,
+          "kind": "go-error-body",
+          "raw": "failed to reset the name",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "65cc69546a9e",
+      "text": "invalid name",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 122,
+          "kind": "go-error-body",
+          "raw": "invalid name",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "fa5975d51d36",
       "text": "name cannot be empty",
       "words": 4,
@@ -13119,7 +13155,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 104,
+          "line": 127,
           "kind": "go-error-body",
           "raw": "name cannot be empty",
           "quote": null
@@ -13137,7 +13173,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 108,
+          "line": 131,
           "kind": "go-error-body",
           "raw": "name must be 100 characters or fewer",
           "quote": null
@@ -13155,9 +13191,27 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 112,
+          "line": 135,
           "kind": "go-error-body",
           "raw": "failed to save name",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "67104b8f9e88",
+      "text": "invalid description",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 149,
+          "kind": "go-error-body",
+          "raw": "invalid description",
           "quote": null
         }
       ]
@@ -13173,9 +13227,27 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 120,
+          "line": 155,
           "kind": "go-error-body",
           "raw": "description must be 500 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "87d01678892a",
+      "text": "failed to reset the description",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 160,
+          "kind": "go-error-body",
+          "raw": "failed to reset the description",
           "quote": null
         }
       ]
@@ -13191,7 +13263,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 124,
+          "line": 164,
           "kind": "go-error-body",
           "raw": "failed to save description",
           "quote": null
@@ -13209,7 +13281,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 133,
+          "line": 173,
           "kind": "go-error-body",
           "raw": "failed to clear the timezone",
           "quote": null
@@ -13227,7 +13299,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 140,
+          "line": 180,
           "kind": "go-error-body",
           "raw": "failed to save the timezone",
           "quote": null
@@ -13245,7 +13317,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 148,
+          "line": 188,
           "kind": "go-error-body",
           "raw": "invalid icon_design",
           "quote": null
@@ -13263,7 +13335,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 153,
+          "line": 193,
           "kind": "go-error-body",
           "raw": "failed to clear the icon",
           "quote": null
@@ -13281,7 +13353,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 163,
+          "line": 203,
           "kind": "go-error-body",
           "raw": "failed to save the icon",
           "quote": null
@@ -13299,7 +13371,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 175,
+          "line": 215,
           "kind": "go-error-body",
           "raw": "failed to save policy",
           "quote": null
@@ -13317,7 +13389,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 233,
+          "line": 279,
           "kind": "go-error-body",
           "raw": "confirmation name does not match the quilt name",
           "quote": null
@@ -13335,7 +13407,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 244,
+          "line": 290,
           "kind": "go-error-body",
           "raw": "wipe failed — no data was deleted",
           "quote": null
@@ -15542,21 +15614,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 462,
+          "line": 464,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 508,
+          "line": 510,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 557,
+          "line": 559,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -15574,21 +15646,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 463,
+          "line": 465,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 509,
+          "line": 511,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 558,
+          "line": 560,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -15606,7 +15678,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 646,
+          "line": 652,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -15624,7 +15696,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 647,
+          "line": 653,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -15846,7 +15918,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 412,
+          "line": 419,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -17347,7 +17419,7 @@
           "file": "web/src/components/ElectionPanel.svelte",
           "line": 132,
           "kind": "markup",
-          "raw": "You can change this until voting closes. Approving nobody is the same as\n        not voting.",
+          "raw": "You can change this until voting closes. Approving nobody is the same as\r\n        not voting.",
           "quote": null
         }
       ]
@@ -18866,7 +18938,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 381,
+          "line": 388,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -19463,7 +19535,7 @@
           "file": "web/src/components/MapLocationPicker.svelte",
           "line": 122,
           "kind": "markup",
-          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n    precisely or as loosely as you like. Nothing is saved until you hit\n    Save location.",
+          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\r\n    precisely or as loosely as you like. Nothing is saved until you hit\r\n    Save location.",
           "quote": null
         }
       ]
@@ -19560,7 +19632,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -19596,7 +19668,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
         }
       ]
@@ -20576,7 +20648,7 @@
           "file": "web/src/components/ReportButton.svelte",
           "line": 81,
           "kind": "markup",
-          "raw": "Reports go to the instance admins, who review them against the\n      community lining.{entityName ? ` You're reporting ${entityName}.` : ''}",
+          "raw": "Reports go to the instance admins, who review them against the\r\n      community lining.{entityName ? ` You're reporting ${entityName}.` : ''}",
           "quote": null
         }
       ]
@@ -21896,7 +21968,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 302,
+          "line": 309,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -21971,7 +22043,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 352,
+          "line": 359,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -22443,13 +22515,6 @@
         {
           "file": "web/src/components/TemplatePreviewDrawer.svelte",
           "line": 112,
-          "kind": "markup",
-          "raw": "How it works",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/About.svelte",
-          "line": 82,
           "kind": "markup",
           "raw": "How it works",
           "quote": null
@@ -23021,7 +23086,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 270,
+          "line": 305,
           "kind": "markup",
           "raw": "Quilt Settings",
           "quote": null
@@ -23254,7 +23319,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 444,
+          "line": 492,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -23855,7 +23920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 41,
+          "line": 61,
           "kind": "markup",
           "raw": "About &mdash; {instanceName}",
           "quote": null
@@ -23873,7 +23938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 69,
+          "line": 89,
           "kind": "markup",
           "raw": "What is {instanceName}?",
           "quote": null
@@ -23881,209 +23946,235 @@
       ]
     },
     {
-      "id": "45d2766ee518",
-      "text": "What this is",
+      "id": "0b12ba39ab4d",
+      "text": "What is this?",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/About.svelte",
-          "line": 73,
-          "kind": "markup",
-          "raw": "What this is",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "69a76e398e86",
-      "text": "is a Patchwork: a home the communities here run for themselves, on their own machine.",
-      "words": 15,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/About.svelte",
-          "line": 75,
-          "kind": "markup",
-          "raw": "is a Patchwork: a home the\n      communities here run for themselves, on their own machine.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d2ae93869c90",
-      "text": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
-      "words": 22,
-      "tier": "prose",
-      "status": "human",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/About.svelte",
-          "line": 84,
-          "kind": "markup",
-          "raw": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
-          "quote": null
-        }
-      ],
-      "previous_ai_text": "Every group here is a patch. A band, a venue, a collective, a coalition. Patches are equals: none is a subcategory of another, and none owns another."
-    },
-    {
-      "id": "6c8a45e92e93",
-      "text": "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
-      "words": 31,
-      "tier": "prose",
-      "status": "human",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/About.svelte",
-          "line": 87,
-          "kind": "markup",
-          "raw": "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
-          "quote": null
-        }
-      ],
-      "previous_ai_text": "Following any public patch takes one click. Joining is for people who want to belong: members vote on proposals, appear on the member list, and help run the place."
-    },
-    {
-      "id": "729773f00c76",
-      "text": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
-      "words": 25,
-      "tier": "prose",
-      "status": "human",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/About.svelte",
-          "line": 90,
-          "kind": "markup",
-          "raw": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
-          "quote": null
-        }
-      ],
-      "previous_ai_text": "The quilt places patches near the other patches they share people with. When two tiles sit close, real people move between those groups. Nobody arranges the layout by hand."
-    },
-    {
-      "id": "8a3591cbe67c",
-      "text": "Events come from the patches you follow or join. Your feed is built from those connections and nothing else.",
-      "words": 19,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
           "line": 93,
           "kind": "markup",
-          "raw": "Events come from the patches you follow or join. Your feed is built\n      from those connections and nothing else.",
+          "raw": "What is this?",
           "quote": null
         }
       ]
     },
     {
-      "id": "8ec7e65cc362",
-      "text": "What makes it different",
+      "id": "97c57152cb4c",
+      "text": "A Patchwork is a hyper-local-by-design platform built to enable discovery, connection, and community building without relying on billionaire owned, algorithm powered, attention-economy-buttressed apps and social media sites. Patchwork is an open source codebase that can be hosted by anyone. No ads and no monetization strategy.",
+      "words": 45,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 95,
+          "kind": "markup",
+          "raw": "A Patchwork is a hyper-local-by-design platform built to enable\n      discovery, connection, and community building without relying on\n      billionaire owned, algorithm powered, attention-economy-buttressed\n      apps and social media sites. Patchwork is an open source codebase\n      that can be hosted by anyone. No ads and no monetization strategy.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "03666fe9461c",
+      "text": "This instance describes itself as:",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 107,
+          "kind": "markup",
+          "raw": "This instance describes itself as:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c3f15799af50",
+      "text": "How does it work?",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 99,
+          "line": 113,
           "kind": "markup",
-          "raw": "What makes it different",
+          "raw": "How does it work?",
           "quote": null
         }
       ]
     },
     {
-      "id": "df487b7c7c6a",
-      "text": "No ads, and nothing here is for sale.",
-      "words": 8,
+      "id": "db1dcf21d386",
+      "text": "Every community, group, or entity on the \"quilt\" is a patch. It could be a music venue, a food bank, a local union chapter, an artist, a coalition, a band... you get the picture. Every patch is equal in ability to use the features of the platform and its discoverability, though some patches may grow or move depending on their activity or relationships to other patches.",
+      "words": 66,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 115,
+          "kind": "markup",
+          "raw": "Every community, group, or entity on the \"quilt\" is a patch. It\n      could be a music venue, a food bank, a local union chapter, an\n      artist, a coalition, a band... you get the picture. Every patch is\n      equal in ability to use the features of the platform and its\n      discoverability, though some patches may grow or move depending on\n      their activity or relationships to other patches.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "77f3cc5d896a",
+      "text": "You can interact with patches in a few ways:",
+      "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 101,
+          "line": 122,
           "kind": "markup",
-          "raw": "No ads, and nothing here is for sale.",
+          "raw": "You can interact with patches in a few ways:",
           "quote": null
         }
       ]
     },
     {
-      "id": "492de56e1193",
-      "text": "No algorithm decides what you see. The quilt and your feed follow the connections you actually have.",
+      "id": "1dab73ed08a4",
+      "text": "Follow a patch to see events and public notifications from it in your own personal quilt.",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 124,
+          "kind": "markup",
+          "raw": "Follow a patch to see events and public notifications from it in your own personal quilt.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4f07676df7e3",
+      "text": "Join a patch as a member to be involved in non-public activities.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 125,
+          "kind": "markup",
+          "raw": "Join a patch as a member to be involved in non-public activities.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ca655bc26db0",
+      "text": "Create or manage a patch to update members, document policies, and even run internal elections and governance.",
       "words": 17,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 102,
+          "line": 126,
           "kind": "markup",
-          "raw": "No algorithm decides what you see. The quilt and your feed follow the connections you actually have.",
+          "raw": "Create or manage a patch to update members, document policies, and even run internal elections and governance.",
           "quote": null
         }
       ]
     },
     {
-      "id": "b7d2f6a22f98",
-      "text": "Run by named people in this community, with the costs stated in the open.",
-      "words": 14,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "28307c13ef1f",
+      "text": "Patches are arranged on the quilt near other patches that share members, followers, and events. Patchwork also has a robust governance system that allows patches to elect leaders, vote on policies, and attest to shared values. If you're interested in transparent, open-source governance through Patchwork,",
+      "words": 45,
+      "tier": "prose",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 103,
+          "line": 129,
           "kind": "markup",
-          "raw": "Run by named people in this community, with the costs stated in the open.",
+          "raw": "Patches are arranged on the quilt near other patches that share\n      members, followers, and events. Patchwork also has a robust\n      governance system that allows patches to elect leaders, vote on\n      policies, and attest to shared values. If you're interested in\n      transparent, open-source governance through Patchwork,",
           "quote": null
         }
       ]
     },
     {
-      "id": "9100ce012757",
-      "text": "Every patch starts from",
-      "words": 4,
+      "id": "4bf92bcdd888",
+      "text": "read more here",
+      "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 105,
+          "line": 134,
           "kind": "markup",
-          "raw": "Every patch starts from",
+          "raw": "read more here",
           "quote": null
-        },
+        }
+      ]
+    },
+    {
+      "id": "3955115f8a44",
+      "text": "Where do patches come from?",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
         {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 201,
+          "file": "web/src/pages/About.svelte",
+          "line": 139,
           "kind": "markup",
-          "raw": "Every patch starts from",
+          "raw": "Where do patches come from?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ccb53f8a6df5",
+      "text": "Patches are created either by their owner or as \"unclaimed\" by an admin or a community suggestion. Unclaimed patches can be acquired and verified by their owners. However, any claimed patch must make a choice: adopt",
+      "words": 36,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 141,
+          "kind": "markup",
+          "raw": "Patches are created either by their owner or as \"unclaimed\" by an\n      admin or a community suggestion. Unclaimed patches can be acquired\n      and verified by their owners. However, any claimed patch must make a\n      choice: adopt",
           "quote": null
         }
       ]
@@ -24099,7 +24190,21 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 105,
+          "line": 144,
+          "kind": "markup",
+          "raw": "the lining",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 174,
+          "kind": "markup",
+          "raw": "the lining",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 133,
           "kind": "markup",
           "raw": "the lining",
           "quote": null
@@ -24114,81 +24219,163 @@
       ]
     },
     {
-      "id": "ca511074248e",
-      "text": ", a shared community-standards baseline. Amendments to it are public.",
-      "words": 10,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "ec3e7e5522b2",
+      "text": ", or adopt and then publicly dissent. The lining is the \"baseline\" commitment that Patchwork expects, and any dissent or modifications thereof will not result in a ban, but instead a brand. Patchwork was designed to be a community building tool, and therefore has intentional biases towards fostering community according to values held by the contributors. Neighbors with differing values are welcome to use the tools, as they are welcome to participate in society and use shared public infrastructure, but the admin(s) will take steps to enforce rules or remove individuals and entities if significant breach occurs.",
+      "words": 97,
+      "tier": "prose",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 105,
+          "line": 144,
           "kind": "markup",
-          "raw": ",\n        a shared community-standards baseline. Amendments to it are public.",
+          "raw": ",\n      or adopt and then publicly dissent. The lining is the \"baseline\"\n      commitment that Patchwork expects, and any dissent or modifications\n      thereof will not result in a ban, but instead a brand. Patchwork was\n      designed to be a community building tool, and therefore has\n      intentional biases towards fostering community according to values\n      held by the contributors. Neighbors with differing values are\n      welcome to use the tools, as they are welcome to participate in\n      society and use shared public infrastructure, but the admin(s) will\n      take steps to enforce rules or remove individuals and entities if\n      significant breach occurs.",
           "quote": null
         }
       ]
     },
     {
-      "id": "d96dd4d9fddb",
-      "text": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
-      "words": 29,
+      "id": "2653d09843e1",
+      "text": "Patch presence on this quilt does not indicate an endorsement by this Patchwork or the people who run it. It only means the person, place, or group exists and that somebody recorded it, like a modern phone book. Nothing reaches your personal quilt except the patches you choose to follow, and anything that has no business being here at all can be reported to the admins.",
+      "words": 66,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 109,
+          "line": 157,
           "kind": "markup",
-          "raw": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
+          "raw": "Patch presence on this quilt does not indicate an endorsement by this\n      Patchwork or the people who run it. It only means the person, place,\n      or group exists and that somebody recorded it, like a modern phone\n      book. Nothing reaches your personal quilt except the patches you\n      choose to follow, and anything that has no business being here at all\n      can be reported to the admins.",
           "quote": null
         }
-      ],
-      "previous_ai_text": "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The"
+      ]
     },
     {
-      "id": "0e66373f45dc",
-      "text": "Label",
-      "words": 1,
+      "id": "b90045cdb266",
+      "text": "What makes Patchwork different",
+      "words": 4,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 110,
+          "line": 167,
           "kind": "markup",
-          "raw": "Label",
+          "raw": "What makes Patchwork different",
           "quote": null
-        },
-        {
-          "file": "web/src/pages/AccountSettings.svelte",
-          "line": 218,
-          "kind": "attr:placeholder",
-          "raw": "Label",
-          "quote": "\""
         }
       ]
     },
     {
-      "id": "fb3312d30051",
-      "text": "says where the door is.",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
+      "id": "613fd94b8ee2",
+      "text": "No ads, and no data collection beyond what the platform needs to function.",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 110,
+          "line": 169,
           "kind": "markup",
-          "raw": "says where the door is.",
+          "raw": "No ads, and no data collection beyond what the platform needs to function.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bddeb9b02d9c",
+      "text": "No algorithm that decides what you should see.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 170,
+          "kind": "markup",
+          "raw": "No algorithm that decides what you should see.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "97ce0ce3bd79",
+      "text": "Run by community members.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 171,
+          "kind": "markup",
+          "raw": "Run by community members.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c03e8fb8991e",
+      "text": "Creating a patch requires adopting",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 173,
+          "kind": "markup",
+          "raw": "Creating a patch requires adopting",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3b3e906a92f0",
+      "text": ", and amendments to it for your community are public.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 174,
+          "kind": "markup",
+          "raw": ", and\n        amendments to it for your community are public.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "993fbef7431a",
+      "text": "Leaving is made intentionally easy. If this place is not for you, but you like some of it, take it with you and start another quilt. It's open source, and this quilt's data can be exported whole and stood up somewhere else.",
+      "words": 42,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 178,
+          "kind": "markup",
+          "raw": "Leaving is made intentionally easy. If this place is not for you,\n        but you like some of it, take it with you and start another quilt.\n        It's open source, and this quilt's data can be exported whole and\n        stood up somewhere else.",
           "quote": null
         }
       ]
@@ -24204,7 +24391,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 119,
+          "line": 190,
           "kind": "markup",
           "raw": "Join {instanceName}",
           "quote": null
@@ -24229,7 +24416,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/About.svelte",
-          "line": 125,
+          "line": 196,
           "kind": "markup",
           "raw": "Patchwork is open source. Start your own quilt &rarr;",
           "quote": null
@@ -24684,6 +24871,24 @@
       ]
     },
     {
+      "id": "0e66373f45dc",
+      "text": "Label",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 218,
+          "kind": "attr:placeholder",
+          "raw": "Label",
+          "quote": "\""
+        }
+      ]
+    },
+    {
       "id": "ab04e20ed4f2",
       "text": "https://…",
       "words": 1,
@@ -24810,7 +25015,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 420,
+          "line": 468,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -25759,7 +25964,7 @@
           "file": "web/src/pages/AdminArchivedPatches.svelte",
           "line": 43,
           "kind": "markup",
-          "raw": "Archived patches are hidden everywhere but nothing is erased. Members,\n    events, and history stay intact. Restoring returns a patch to what it was\n    before, without notifying anyone.",
+          "raw": "Archived patches are hidden everywhere but nothing is erased. Members,\r\n    events, and history stay intact. Restoring returns a patch to what it was\r\n    before, without notifying anyone.",
           "quote": null
         }
       ]
@@ -25795,7 +26000,7 @@
           "file": "web/src/pages/AdminArchivedPatches.svelte",
           "line": 61,
           "kind": "markup",
-          "raw": "/{node.slug}\n              · archived {formatDate(node.archived_at)}\n              · {node.member_count} {node.member_count === 1 ? 'member' : 'members'},\n              {node.follower_count} {node.follower_count === 1 ? 'follower' : 'followers'}",
+          "raw": "/{node.slug}\r\n              · archived {formatDate(node.archived_at)}\r\n              · {node.member_count} {node.member_count === 1 ? 'member' : 'members'},\r\n              {node.follower_count} {node.follower_count === 1 ? 'follower' : 'followers'}",
           "quote": null
         }
       ]
@@ -27814,7 +28019,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
+          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -27978,6 +28183,60 @@
       ]
     },
     {
+      "id": "82dd385aec72",
+      "text": "Quilt name reset to the deployment default",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 160,
+          "kind": "js-string",
+          "raw": "Quilt name reset to the deployment default",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ec2857cfe29f",
+      "text": "Description reset to the deployment default",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 160,
+          "kind": "js-string",
+          "raw": "Description reset to the deployment default",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b09e047b4567",
+      "text": "Failed to reset",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 162,
+          "kind": "js-string",
+          "raw": "Failed to reset",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "73c6f884d5d7",
       "text": "Quilt icon saved",
       "words": 3,
@@ -27988,7 +28247,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 195,
+          "line": 230,
           "kind": "js-string",
           "raw": "Quilt icon saved",
           "quote": "'"
@@ -28006,7 +28265,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 197,
+          "line": 232,
           "kind": "js-string",
           "raw": "Failed to save the icon",
           "quote": "'"
@@ -28024,7 +28283,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 209,
+          "line": 244,
           "kind": "js-string",
           "raw": "Quilt icon reset",
           "quote": "'"
@@ -28042,7 +28301,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 211,
+          "line": 246,
           "kind": "js-string",
           "raw": "Failed to reset the icon",
           "quote": "'"
@@ -28060,7 +28319,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 244,
+          "line": 279,
           "kind": "js-string",
           "raw": "Export failed",
           "quote": "'"
@@ -28078,7 +28337,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 261,
+          "line": 296,
           "kind": "js-string",
           "raw": "Wipe failed",
           "quote": "'"
@@ -28096,7 +28355,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 271,
+          "line": 306,
           "kind": "markup",
           "raw": "How this quilt presents itself, here and on other quilts.",
           "quote": null
@@ -28114,7 +28373,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 281,
+          "line": 316,
           "kind": "markup",
           "raw": "Identity",
           "quote": null
@@ -28132,7 +28391,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 284,
+          "line": 319,
           "kind": "markup",
           "raw": "Quilt name",
           "quote": null
@@ -28150,7 +28409,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 287,
+          "line": 323,
           "kind": "markup",
           "raw": "Set here in the admin panel. Overrides the name in patchwork.yaml.",
           "quote": null
@@ -28168,7 +28427,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 291,
+          "line": 331,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -28204,6 +28463,24 @@
       ]
     },
     {
+      "id": "9beb78c72cfa",
+      "text": "Set here in the admin panel. Overrides the description in patchwork.yaml.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 335,
+          "kind": "markup",
+          "raw": "Set here in the admin panel. Overrides the description in patchwork.yaml.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "79fa33618d8e",
       "text": "Domain",
       "words": 1,
@@ -28214,7 +28491,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 295,
+          "line": 343,
           "kind": "markup",
           "raw": "Domain",
           "quote": null
@@ -28232,7 +28509,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 297,
+          "line": 345,
           "kind": "markup",
           "raw": "The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.",
           "quote": null
@@ -28250,7 +28527,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 309,
+          "line": 357,
           "kind": "markup",
           "raw": "Quilt Icon",
           "quote": null
@@ -28268,7 +28545,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 312,
+          "line": 360,
           "kind": "markup",
           "raw": "Represents this quilt in the quilt switcher and in other people's Connected Quilts.\n          Draft it here, in the same drafter patches use for their tiles.",
           "quote": null
@@ -28286,7 +28563,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 324,
+          "line": 372,
           "kind": "attr:aria-label",
           "raw": "Quilt icon preview",
           "quote": "\""
@@ -28304,7 +28581,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 329,
+          "line": 377,
           "kind": "markup",
           "raw": "Drafted for this quilt.",
           "quote": null
@@ -28322,7 +28599,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 331,
+          "line": 379,
           "kind": "markup",
           "raw": "Assigned from the quilt's name. Draft your own below.",
           "quote": null
@@ -28340,7 +28617,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 340,
+          "line": 388,
           "kind": "markup",
           "raw": "Reset icon",
           "quote": null
@@ -28358,7 +28635,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 348,
+          "line": 396,
           "kind": "markup",
           "raw": "Start from a block",
           "quote": null
@@ -28376,7 +28653,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 364,
+          "line": 412,
           "kind": "markup",
           "raw": "Starting over replaces what's on the canvas. Nothing is saved until you save.",
           "quote": null
@@ -28394,7 +28671,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 373,
+          "line": 421,
           "kind": "markup",
           "raw": "Timekeeping",
           "quote": null
@@ -28412,7 +28689,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 375,
+          "line": 423,
           "kind": "markup",
           "raw": "Where this quilt keeps time. An event shows the wall clock of the place\n        it happens, so this is what a patch falls back to when it has not named\n        a timezone of its own, and what a calendar feed's zoneless times mean\n        when it is imported. Everyone reading from elsewhere sees the event's\n        own clock, with the zone named next to it.",
           "quote": null
@@ -28430,7 +28707,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 382,
+          "line": 430,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -28455,7 +28732,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 391,
+          "line": 439,
           "kind": "markup",
           "raw": "An IANA name, like America/New_York or Europe/Berlin.",
           "quote": null
@@ -28473,7 +28750,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 393,
+          "line": 441,
           "kind": "markup",
           "raw": "Clear it to go back to {timezoneConfigured.replace(/_/g, ' ')} from patchwork.yaml.",
           "quote": null
@@ -28491,7 +28768,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 396,
+          "line": 444,
           "kind": "markup",
           "raw": "Not a timezone this quilt knows.",
           "quote": null
@@ -28516,7 +28793,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 406,
+          "line": 454,
           "kind": "markup",
           "raw": "The Lining",
           "quote": null
@@ -28534,7 +28811,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 408,
+          "line": 456,
           "kind": "markup",
           "raw": "Every patch starts with the lining and can amend its copy by proposal.\n        Amended patches always wear a public badge; this policy also keeps them\n        out of the quilt, search, the map, and public feeds for everyone.\n        Direct links still work.",
           "quote": null
@@ -28552,7 +28829,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 425,
+          "line": 473,
           "kind": "markup",
           "raw": "Data Export (Seamrip)",
           "quote": null
@@ -28570,7 +28847,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 433,
+          "line": 481,
           "kind": "markup",
           "raw": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.",
           "quote": null
@@ -28589,7 +28866,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 446,
+          "line": 494,
           "kind": "markup",
           "raw": "Wipe this quilt",
           "quote": null
@@ -28607,7 +28884,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 449,
+          "line": 497,
           "kind": "markup",
           "raw": "Erases",
           "quote": null
@@ -28625,7 +28902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 449,
+          "line": 497,
           "kind": "markup",
           "raw": "all community data",
           "quote": null
@@ -28643,7 +28920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 449,
+          "line": 497,
           "kind": "markup",
           "raw": ": every patch, person, event,\n          proposal, and governance record. The deployment returns to first-run.\n          The server, domain, and configuration survive. The community's data\n          does not. This cannot be undone. Download an export first.",
           "quote": null
@@ -28661,7 +28938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 455,
+          "line": 503,
           "kind": "markup",
           "raw": "Type the quilt name to confirm:",
           "quote": null
@@ -28679,7 +28956,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 474,
+          "line": 522,
           "kind": "markup",
           "raw": "Really erase everything? You will be signed out.",
           "quote": null
@@ -28897,7 +29174,7 @@
           "file": "web/src/pages/AdminReports.svelte",
           "line": 159,
           "kind": "markup",
-          "raw": "This clears the patch's chosen tile, so the quilt decides its look again.\n                    The patch itself is untouched.",
+          "raw": "This clears the patch's chosen tile, so the quilt decides its look again.\r\n                    The patch itself is untouched.",
           "quote": null
         }
       ]
@@ -29249,7 +29526,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -31884,7 +32161,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 314,
+          "line": 321,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -32851,6 +33128,546 @@
           "line": 313,
           "kind": "markup",
           "raw": "Load more events",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "efe82efeb283",
+      "text": "How governance works &mdash; {instanceName}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 38,
+          "kind": "markup",
+          "raw": "How governance works &mdash; {instanceName}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9c224875ac13",
+      "text": "How governance works",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 43,
+          "kind": "markup",
+          "raw": "How governance works",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3e5b17fddfcd",
+      "text": "Every patch runs itself. A band never has to think about any of this, and a coalition of forty people can hold real votes with a real record. Both are the same software; what differs is how much of it a patch switches on.",
+      "words": 44,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 45,
+          "kind": "markup",
+          "raw": "Every patch runs itself. A band never has to think about any of\n      this, and a coalition of forty people can hold real votes with a\n      real record. Both are the same software; what differs is how much of\n      it a patch switches on.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "843170953174",
+      "text": "Who decides",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 53,
+          "kind": "markup",
+          "raw": "Who decides",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e56a445930a5",
+      "text": "A patch's electorate is its active admins and members, once they have been there as long as that patch asks. Followers are not in it. Following is meant to be frictionless and costs nothing, so it carries no say in what the patch does, and becoming a member is the step that changes that.",
+      "words": 54,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 55,
+          "kind": "markup",
+          "raw": "A patch's electorate is its active admins and members, once they\n      have been there as long as that patch asks. Followers are not in it.\n      Following is meant to be frictionless and costs nothing, so it\n      carries no say in what the patch does, and becoming a member is the\n      step that changes that.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b739265987f5",
+      "text": "A patch can let its followers read along with proposals and comment on them. It cannot give them a vote.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 62,
+          "kind": "markup",
+          "raw": "A patch can let its followers read along with proposals and comment\n      on them. It cannot give them a vote.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b962921998ad",
+      "text": "How a decision gets made",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 68,
+          "kind": "markup",
+          "raw": "How a decision gets made",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b55433c8e0da",
+      "text": "Patches sit in one of three places, and they are genuinely different.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 70,
+          "kind": "markup",
+          "raw": "Patches sit in one of three places, and they are genuinely\n      different.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "83a0bdfa32bf",
+      "text": "An admin decides.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 74,
+          "kind": "markup",
+          "raw": "An admin decides.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e84ec2128588",
+      "text": "The change is applied the moment it is made. It still lands in the patch's governance history where members can see it, but nobody was asked. Most small patches live here and should.",
+      "words": 33,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 74,
+          "kind": "markup",
+          "raw": "The change is applied the moment\n      it is made. It still lands in the patch's governance history where\n      members can see it, but nobody was asked. Most small patches live\n      here and should.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "55519f593b15",
+      "text": "The patch votes.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "The patch votes.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e8da0f18b344",
+      "text": "A proposal opens for voting the moment it is raised, and discussion happens alongside the vote rather than in a stage before it. When voting opens, the rules the vote runs under are fixed for its whole life: who may vote, how many of them have to turn out, and what carries it. A patch can change its rules while a vote is running, and that vote still finishes under the rules it started with. You do not get to use the new rules to pass the change to the new rules.",
+      "words": 92,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "A proposal opens for voting the\n      moment it is raised, and discussion happens alongside the vote\n      rather than in a stage before it. When voting opens, the rules the\n      vote runs under are fixed for its whole life: who may vote, how many\n      of them have to turn out, and what carries it. A patch can change\n      its rules while a vote is running, and that vote still finishes\n      under the rules it started with. You do not get to use the new rules\n      to pass the change to the new rules.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e08e37248dd5",
+      "text": "What carries a proposal is the patch's own setting: a majority, a two-thirds supermajority, or full consensus.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 90,
+          "kind": "markup",
+          "raw": "What carries a proposal is the patch's own setting: a majority, a\n      two-thirds supermajority, or full consensus.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "546f9c4d7a74",
+      "text": "The decision happens somewhere else.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 94,
+          "kind": "markup",
+          "raw": "The decision happens somewhere else.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "67626c40e9dd",
+      "text": "Some communities decide at a meeting, on a show of hands, in a room with no software in it. A patch can say so, and then record what was decided as an attestation: the membership decided this, elsewhere, on this date. Patchwork cannot check that claim and does not pretend to. It records who asserted what, in public, and a mistaken record is corrected by a later one rather than quietly edited.",
+      "words": 72,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 94,
+          "kind": "markup",
+          "raw": "Some\n      communities decide at a meeting, on a show of hands, in a room with\n      no software in it. A patch can say so, and then record what was\n      decided as an attestation: the membership decided this, elsewhere,\n      on this date. Patchwork cannot check that claim and does not pretend\n      to. It records who asserted what, in public, and a mistaken record\n      is corrected by a later one rather than quietly edited.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dbd2ec0ae5c2",
+      "text": "Who leads",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 105,
+          "kind": "markup",
+          "raw": "Who leads",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f56a27431610",
+      "text": "Admins run a patch. How someone becomes one is the patch's third choice, and each answer brings its own mechanics.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 107,
+          "kind": "markup",
+          "raw": "Admins run a patch. How someone becomes one is the patch's third\n      choice, and each answer brings its own mechanics.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c0e24343449f",
+      "text": "A maintainer",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 111,
+          "kind": "markup",
+          "raw": "A maintainer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d39ee29c4dda",
+      "text": "keeps the patch and names their own successor.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 111,
+          "kind": "markup",
+          "raw": "keeps the patch and names their own\n      successor.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c4eeb670d3da",
+      "text": "Meritocratic",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 112,
+          "kind": "markup",
+          "raw": "Meritocratic",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "519ebca65154",
+      "text": "patches follow the open source pattern: admins nominate from active members when the patch needs another, and the community ratifies.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 112,
+          "kind": "markup",
+          "raw": "patches follow the open\n      source pattern: admins nominate from active members when the patch\n      needs another, and the community ratifies.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d51d35a956de",
+      "text": "Elected",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 114,
+          "kind": "markup",
+          "raw": "Elected",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "52879c3a33b1",
+      "text": "patches are the only ones with seats and terms, filled by an election that comes round on a calendar. An election is an ordinary proposal underneath, with the same electorate and the same rules fixed at open; the electorate approves as many candidates as it likes and the most-approved take the open seats.",
+      "words": 53,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 115,
+          "kind": "markup",
+          "raw": "patches are the only ones with seats and terms, filled by an\n      election that comes round on a calendar. An election is an ordinary\n      proposal underneath, with the same electorate and the same rules\n      fixed at open; the electorate approves as many candidates as it\n      likes and the most-approved take the open seats.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dea0871f45e6",
+      "text": "A term running out never removes anyone. The seat shows publicly that it is overdue and its holder keeps serving until a successor is elected, because a clock should not be able to leave a community leaderless.",
+      "words": 37,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 122,
+          "kind": "markup",
+          "raw": "A term running out never removes anyone. The seat shows publicly\n      that it is overdue and its holder keeps serving until a successor is\n      elected, because a clock should not be able to leave a community\n      leaderless.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "42095fc66f0d",
+      "text": "What every patch starts from",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 130,
+          "kind": "markup",
+          "raw": "What every patch starts from",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "28ed704b612f",
+      "text": "Whatever it chooses, a patch begins by adopting",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 132,
+          "kind": "markup",
+          "raw": "Whatever it chooses, a patch begins by adopting",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "58b22fe38d75",
+      "text": ", the baseline this whole quilt shares. A patch can write its own charters on top of it and can amend its copy of the lining itself, and if it does, that is public on the patch and it wears a badge saying so.",
+      "words": 44,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 133,
+          "kind": "markup",
+          "raw": ", the\n      baseline this whole quilt shares. A patch can write its own charters\n      on top of it and can amend its copy of the lining itself, and if it\n      does, that is public on the patch and it wears a badge saying so.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7f56d2461ab3",
+      "text": "Charters are the community's own words, and they can promise things no software enforces. That is legitimate and it is where such promises belong. This page only describes what Patchwork itself does.",
+      "words": 32,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 139,
+          "kind": "markup",
+          "raw": "Charters are the community's own words, and they can promise things\n      no software enforces. That is legitimate and it is where such\n      promises belong. This page only describes what Patchwork itself\n      does.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f2c1f86731a7",
+      "text": "This is about how the patches here govern themselves. For who runs this quilt and what it costs to keep on, read",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 145,
+          "kind": "markup",
+          "raw": "This is about how the patches here govern themselves. For who runs\n      this quilt and what it costs to keep on, read",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ea7730c63e56",
+      "text": "the Label",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Governance.svelte",
+          "line": 147,
+          "kind": "markup",
+          "raw": "the Label",
           "quote": null
         }
       ]
@@ -33899,7 +34716,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -34042,14 +34859,14 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 151,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         }
       ]
@@ -34695,7 +35512,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -35124,7 +35941,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
           "quote": null
         }
       ]
@@ -36344,7 +37161,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 373,
+          "line": 380,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -36441,9 +37258,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 227,
+          "line": 233,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a81d1482228d",
+      "text": "The community added it",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchProfile.svelte",
+          "line": 234,
+          "kind": "markup",
+          "raw": "The community added it",
           "quote": null
         }
       ]
@@ -36459,7 +37294,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 229,
+          "line": 236,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -36477,7 +37312,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 231,
+          "line": 238,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -36495,7 +37330,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 233,
+          "line": 240,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -36513,7 +37348,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 233,
+          "line": 240,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -36531,7 +37366,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 245,
+          "line": 252,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -36549,7 +37384,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 247,
+          "line": 254,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -36567,7 +37402,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 274,
+          "line": 281,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -36585,7 +37420,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 342,
+          "line": 349,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -36713,7 +37548,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -36803,7 +37638,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -38617,7 +39452,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -38689,7 +39524,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
           "quote": null
         }
       ]
@@ -39708,7 +40543,7 @@
           "file": "web/src/pages/RemotePatch.svelte",
           "line": 152,
           "kind": "markup",
-          "raw": "You're viewing this patch's public face from your own quilt. Joining,\n        RSVPs, and everything deeper live on",
+          "raw": "You're viewing this patch's public face from your own quilt. Joining,\r\n        RSVPs, and everything deeper live on",
           "quote": null
         }
       ]
@@ -40334,7 +41169,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
           "quote": null
         }
       ]
@@ -40478,7 +41313,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
           "quote": null
         }
       ]
@@ -40496,7 +41331,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
           "quote": null
         }
       ]
@@ -40550,7 +41385,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
           "quote": null
         }
       ]
@@ -40604,7 +41439,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
           "quote": null
         }
       ]
@@ -40730,7 +41565,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 129,
           "kind": "markup",
-          "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
+          "raw": "No account was created yet. Request a new sign-in link and\r\n          you'll be right back here.",
           "quote": null
         }
       ]
@@ -40784,7 +41619,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 174,
           "kind": "markup",
-          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
+          "raw": ". Pick the name\r\n          you'll go by here. It becomes your profile address, so it\r\n          can't change later.",
           "quote": null
         }
       ]
@@ -41468,7 +42303,7 @@
           "file": "web/src/pages/Welcome.svelte",
           "line": 180,
           "kind": "markup",
-          "raw": "&nbsp;and costs\n              about",
+          "raw": "&nbsp;and costs\r\n              about",
           "quote": null
         }
       ]
@@ -41667,6 +42502,24 @@
           "line": 199,
           "kind": "markup",
           "raw": "Report harmful behavior instead of ignoring it",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9100ce012757",
+      "text": "Every patch starts from",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Welcome.svelte",
+          "line": 201,
+          "kind": "markup",
+          "raw": "Every patch starts from",
           "quote": null
         }
       ]
@@ -42049,6 +42902,136 @@
           "quote": null
         }
       ]
+    },
+    {
+      "id": "45d2766ee518",
+      "text": "What this is",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 73,
+          "kind": "markup",
+          "raw": "What this is",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d2ae93869c90",
+      "text": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
+      "words": 22,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 84,
+          "kind": "markup",
+          "raw": "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Every group here is a patch. A band, a venue, a collective, a coalition. Patches are equals: none is a subcategory of another, and none owns another."
+    },
+    {
+      "id": "6c8a45e92e93",
+      "text": "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
+      "words": 31,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 87,
+          "kind": "markup",
+          "raw": "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Following any public patch takes one click. Joining is for people who want to belong: members vote on proposals, appear on the member list, and help run the place."
+    },
+    {
+      "id": "729773f00c76",
+      "text": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
+      "words": 25,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 90,
+          "kind": "markup",
+          "raw": "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "The quilt places patches near the other patches they share people with. When two tiles sit close, real people move between those groups. Nobody arranges the layout by hand."
+    },
+    {
+      "id": "8a3591cbe67c",
+      "text": "Events come from the patches you follow or join. Your feed is built from those connections and nothing else.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 93,
+          "kind": "markup",
+          "raw": "Events come from the patches you follow or join. Your feed is built\n      from those connections and nothing else.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "492de56e1193",
+      "text": "No algorithm decides what you see. The quilt and your feed follow the connections you actually have.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 102,
+          "kind": "markup",
+          "raw": "No algorithm decides what you see. The quilt and your feed follow the connections you actually have.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d96dd4d9fddb",
+      "text": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
+      "words": 29,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/About.svelte",
+          "line": 109,
+          "kind": "markup",
+          "raw": "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The"
     }
   ],
   "baseline": [
