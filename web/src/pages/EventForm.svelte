@@ -5,9 +5,9 @@
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import VocabLabel from '../components/VocabLabel.svelte';
   import WorkspaceSearch from '../components/WorkspaceSearch.svelte';
-  import { patchPickerProvider } from '../lib/finderProviders.js';
+  import { reachablePatchPickerProvider } from '../lib/finderProviders.js';
   import { isAdmin, isTrustedContributor } from '../stores/auth.svelte.js';
-  import { getMembershipRoles } from '../stores/memberships.svelte.js';
+  import { getMemberships } from '../stores/memberships.svelte.js';
   import { getSubmissionsEnabled, getInstanceTimezone } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
 
@@ -16,7 +16,8 @@
 
   // A ?node=slug query param (or nodeSlug prop) pre-scopes the form to one
   // patch — the suggest-an-event door (docs/adr/026). The user may not
-  // belong to that patch, so the select is locked to it.
+  // belong to that patch, and the door already answered which patch this
+  // is for, so the field states it rather than asking again.
   let lockSlug = $derived(nodeSlug || getQuery().get('node') || '');
 
   let title = $state('');
@@ -154,6 +155,20 @@
     }
   }
 
+  // Active memberships only, matching the server's userHasNodeRole. me/nodes
+  // serves 'active' and 'pending' alike, so the raw role map calls someone
+  // with an outstanding join request a member — the picker would label the
+  // row "member", the button would say Create Event, and the server would
+  // make a submission. That is the same lying button this field exists to
+  // stop, arriving by a different route.
+  let activeRoles = $derived.by(() => {
+    const roles = new Map();
+    for (const m of getMemberships()) {
+      if (m.status === 'active') roles.set(m.node_slug, m.role);
+    }
+    return roles;
+  });
+
   // Who may post straight to a patch, mirroring CreateEvent (docs/adr/026):
   // members and admins of an active patch, the instance admin anywhere, and
   // a trusted contributor on an unclaimed one. Everybody else may still
@@ -161,7 +176,7 @@
   function postsDirectly(status, slug) {
     if (isAdmin()) return true;
     if (status === 'unclaimed') return isTrustedContributor();
-    const role = getMembershipRoles().get(slug);
+    const role = activeRoles.get(slug);
     return role === 'member' || role === 'admin';
   }
 
@@ -178,7 +193,7 @@
   }
 
   function hostingPatchProvider() {
-    return patchPickerProvider((n) => {
+    return reachablePatchPickerProvider((n) => {
       const direct = postsDirectly(n.status, n.slug);
       const refusal = direct ? '' : refusalFor(n);
       return {
@@ -186,7 +201,7 @@
         // Your own patches wear the standing that lets you post to them;
         // everything else says what pressing the button will actually do.
         sublabel: direct
-          ? getMembershipRoles().get(n.slug) || ''
+          ? activeRoles.get(n.slug) || ''
           : refusal || 'will be reviewed',
         disabled: !!refusal,
         id: n.id,
@@ -372,6 +387,7 @@
             <WorkspaceSearch
               variant="picker"
               matchField
+              browse
               inputId="node"
               placeholder="Find a patch…"
               provider={hostingPatchProvider}

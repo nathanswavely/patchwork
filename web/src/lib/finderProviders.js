@@ -175,14 +175,14 @@ export function discoveryFinderProvider() {
  * event link cares about who is already linked (docs/adr/032). Returning
  * null from decorate drops the row.
  */
-export async function patchPickerProvider(decorate) {
+async function fetchNodePages(extra = '') {
   const nodes = [];
   let after = '';
   try {
     // Bounded against a cursor that never advances: 20 pages is 2000
     // patches, well past community scale and short of a hung tab.
     for (let page = 0; page < 20; page++) {
-      const data = await api(`nodes?limit=100${after ? `&after=${encodeURIComponent(after)}` : ''}`);
+      const data = await api(`nodes?limit=100${extra}${after ? `&after=${encodeURIComponent(after)}` : ''}`);
       const items = data.items || [];
       nodes.push(...items);
       if (!data.next_cursor || items.length === 0) break;
@@ -192,10 +192,37 @@ export async function patchPickerProvider(decorate) {
     // Partial beats empty: a picker over the pages that did arrive still
     // finds most patches, where an empty corpus finds none.
   }
+  return nodes;
+}
+
+function decorateNodes(nodes, decorate) {
   const items = [];
   for (const n of nodes) {
     const row = decorate(n);
     if (row) items.push({ label: n.name, href: `/patches/${n.slug}`, slug: n.slug, ...row });
   }
   return items;
+}
+
+export async function patchPickerProvider(decorate) {
+  return decorateNodes(await fetchNodePages(), decorate);
+}
+
+/**
+ * The same corpus, widened by the caller's own patches.
+ *
+ * The unscoped listing is the public set — ListNodes pins `visibility =
+ * 'public'` unconditionally — so a private patch the caller belongs to and
+ * could post to directly is missing from it. That absence reads as "not on
+ * this quilt", which is the one thing a picker must never say about a patch
+ * the person is standing in. `scope=my` returns exactly the patches they
+ * hold an active relationship on, private ones included, so the union is the
+ * honest answer to "where could this go". Same row shape either way, so
+ * `decorate` cannot tell which source a node arrived from — and shouldn't.
+ */
+export async function reachablePatchPickerProvider(decorate) {
+  const [listed, mine] = await Promise.all([fetchNodePages(), fetchNodePages('&scope=my')]);
+  const byId = new Map();
+  for (const n of [...listed, ...mine]) byId.set(n.id, n);
+  return decorateNodes([...byId.values()], decorate);
 }

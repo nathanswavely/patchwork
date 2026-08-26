@@ -15,9 +15,13 @@
  * Asserted against source text — there is no Svelte render library in this
  * project (see patch-profile-window.test.js).
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { reachablePatchPickerProvider } from '../lib/finderProviders.js';
+import { api } from '../lib/api.js';
+
+vi.mock('../lib/api.js', () => ({ api: vi.fn() }));
 
 function source(relPath) {
   return readFileSync(resolve(process.cwd(), 'src', relPath), 'utf8');
@@ -27,11 +31,24 @@ const form = source('pages/EventForm.svelte');
 const picker = source('components/WorkspaceSearch.svelte');
 
 describe('choosing a patch is the picker, over the whole quilt', () => {
-  it('uses the shared picker corpus rather than the me/nodes list', () => {
-    expect(form).toContain("import { patchPickerProvider } from '../lib/finderProviders.js'");
-    expect(form).toMatch(/return patchPickerProvider\(/);
+  it('uses the reachable corpus rather than the me/nodes list', () => {
+    expect(form).toContain("import { reachablePatchPickerProvider } from '../lib/finderProviders.js'");
+    expect(form).toMatch(/return reachablePatchPickerProvider\(/);
     // The old corpus was the patches you belong to. Nothing should fetch it.
     expect(form).not.toContain("api('me/nodes')");
+  });
+
+  it('opens on the corpus instead of demanding a guess first', () => {
+    expect(form).toMatch(/<WorkspaceSearch[\s\S]*?browse/);
+    expect(picker).toMatch(/browse = false,/);
+    expect(picker).toMatch(/if \(!query\.trim\(\)\) return browse \? items\.slice\(0, 12\) : \[\]/);
+    expect(picker).toMatch(/\{#if open && \(query\.trim\(\) \|\| browse\)\}/);
+  });
+
+  it('does not let Enter in the picker submit the form around it', () => {
+    // Without the guard, a keypress meant for the dropdown reaches the form.
+    expect(picker).toMatch(/if \(!open\) return;/);
+    expect(picker).toMatch(/if \(activeIndex < 0\) return;/);
   });
 
   it('renders the picker variant, not a select', () => {
@@ -61,6 +78,12 @@ describe('a fixed patch is stated, not asked', () => {
 });
 
 describe('the row and the button say what will happen', () => {
+  it('counts only active memberships, the way userHasNodeRole does', () => {
+    // me/nodes serves 'active' and 'pending'; a pending join grants nothing.
+    expect(form).toMatch(/if \(m\.status === 'active'\) roles\.set\(m\.node_slug, m\.role\)/);
+    expect(form).not.toContain('getMembershipRoles');
+  });
+
   it('mirrors CreateEvent on who posts directly (docs/adr/026)', () => {
     // Instance admin anywhere; trusted contributor on unclaimed only;
     // member or admin of an active patch. A follower is none of these.
@@ -89,5 +112,39 @@ describe('the row and the button say what will happen', () => {
 
   it('routes the confirmation to whoever owns the queue', () => {
     expect(form).toMatch(/hostingPatch\?\.status === 'unclaimed' \? 'quilt admins' : 'patch admins'/);
+  });
+});
+
+// The public listing pins visibility = 'public' (internal/handler/nodes.go),
+// so a private patch the person belongs to — and can post to directly — is
+// absent from it. A picker that omits it says "not on this quilt" about a
+// patch they are standing in.
+describe('the corpus reaches the caller’s own patches', () => {
+  beforeEach(() => { api.mockReset(); });
+  afterEach(() => { vi.restoreAllMocks(); });
+
+  function pages(byQuery) {
+    api.mockImplementation((path) => {
+      const scoped = path.includes('scope=my');
+      return Promise.resolve({ items: byQuery(scoped), next_cursor: '' });
+    });
+  }
+
+  it('asks for the public set and the caller’s own, and unions them', async () => {
+    pages((scoped) =>
+      scoped
+        ? [{ id: 'p1', name: 'Back Room', slug: 'back-room', status: 'active' }]
+        : [{ id: 'p2', name: 'Gallery Row', slug: 'gallery-row', status: 'active' }]
+    );
+    const rows = await reachablePatchPickerProvider((n) => ({ type: 'Patches', sublabel: n.slug }));
+    expect(rows.map((r) => r.label).sort()).toEqual(['Back Room', 'Gallery Row']);
+    expect(api.mock.calls.some(([p]) => p.includes('scope=my'))).toBe(true);
+  });
+
+  it('lists a patch once when it is both public and the caller’s', async () => {
+    const shared = { id: 'p1', name: 'The Selvage', slug: 'the-selvage', status: 'active' };
+    pages(() => [shared]);
+    const rows = await reachablePatchPickerProvider((n) => ({ type: 'Patches', sublabel: n.slug }));
+    expect(rows).toHaveLength(1);
   });
 });
