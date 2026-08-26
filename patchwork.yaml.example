@@ -9,13 +9,6 @@ instance:
   name: "Lancaster Arts Patchwork"
   domain: "patchwork.example.com"
   description: "A community organizing platform for the Lancaster arts scene."
-  # The IANA zone this community keeps time in. This is not a display
-  # setting — everyone always sees events in their own browser's zone.
-  # It is what an imported calendar's zoneless times mean: a feed that
-  # says a show starts at "19:00" with no offset is saying seven in the
-  # evening here, and without this that is read as 19:00 UTC and the
-  # show lands hours early (docs/adr/065). Defaults to UTC.
-  timezone: "America/New_York"
 
 # SMTP configuration for magic link authentication.
 # Optional — without SMTP, magic links print to the server log instead,
@@ -35,6 +28,15 @@ geographic:
   latitude: 40.0379
   longitude: -76.3055
   radius: 25
+  # The IANA zone this community keeps time in — the same claim the
+  # coordinates above make, in the units a clock uses. An event's zone
+  # resolves event -> patch -> instance -> UTC (docs/adr/045), and this
+  # is the instance rung: it decides what an imported calendar's zoneless
+  # times mean on the way in, and what wall clock every reader sees on
+  # the way out. Unset means UTC, which renders a Lancaster 8pm show as
+  # midnight the next day. An admin can override it in the admin panel
+  # without a redeploy; this is the bootstrap default.
+  timezone: "America/New_York"
 
 # Feature modules. Hints for the web app about which views to offer
 # (exposed via GET /api/v1/instance); data endpoints remain available.

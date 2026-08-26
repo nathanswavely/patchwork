@@ -227,7 +227,16 @@ type Event struct {
 	Longitude   *float64 `json:"longitude,omitempty"`
 	StartsAt    string   `json:"starts_at"`
 	EndsAt      *string  `json:"ends_at,omitempty"`
-	Recurrence  string   `json:"recurrence"`
+	// Timezone is the IANA zone the event happens in (docs/adr/045).
+	// StartsAt stays the instant and stays the sort key; this is the fact
+	// that instant encodes — the wall clock the organizer meant.
+	//
+	// On the wire it is always resolved and never empty: the API collapses
+	// event → patch → instance → UTC before it leaves, so a client never
+	// reimplements the fallback and never fetches the patch to render the
+	// event. Stored, it may be NULL, and NULL means inherit.
+	Timezone   string `json:"timezone"`
+	Recurrence string `json:"recurrence"`
 	Visibility  string   `json:"visibility"`
 	// A flyer or a show photo, held wherever the patch keeps it (docs/adr/007).
 	ImageURL string `json:"image_url"`

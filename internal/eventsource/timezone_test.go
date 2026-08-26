@@ -3,6 +3,10 @@ package eventsource
 import (
 	"context"
 	"testing"
+
+	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/settings"
 	"time"
 )
 
@@ -14,9 +18,9 @@ func withZone(t *testing.T, name string) *time.Location {
 	if err != nil {
 		t.Fatalf("load %s: %v", name, err)
 	}
-	prev := FloatingZone()
-	SetFloatingZone(loc)
-	t.Cleanup(func() { SetFloatingZone(prev) })
+	prev := currentTestZone
+	currentTestZone = loc
+	t.Cleanup(func() { currentTestZone = prev })
 	return loc
 }
 
@@ -33,7 +37,7 @@ DTEND:20260821T220000
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -63,7 +67,7 @@ DTSTART:20260821T190000
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -86,7 +90,7 @@ DTEND;VALUE=DATE:20260822
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -97,7 +101,7 @@ END:VCALENDAR`
 		t.Errorf("StartsAt = %s, want 2026-08-21T04:00:00Z (midnight EDT)", items[0].StartsAt)
 	}
 	// The day a reader in the venue's own zone sees.
-	got := mustParse(t, items[0].StartsAt).In(FloatingZone()).Format("2006-01-02")
+	got := mustParse(t, items[0].StartsAt).In(testZone()).Format("2006-01-02")
 	if got != "2026-08-21" {
 		t.Errorf("renders on %s, want 2026-08-21", got)
 	}
@@ -119,7 +123,7 @@ DTEND;TZID="Eastern Standard Time":20260821T200000
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -145,7 +149,7 @@ DTSTART;TZID=Customized Time Zone:20260821T190000
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -170,7 +174,7 @@ DTSTART;TZID="(UTC-05:00) Eastern Time (US & Canada)":20260821T190000
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -195,7 +199,7 @@ END:VEVENT
 END:VCALENDAR`
 	// US DST ends 2026-11-01, so this run straddles it.
 	now := time.Date(2026, 10, 22, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -203,7 +207,7 @@ END:VCALENDAR`
 		t.Fatalf("expected 6 occurrences, got %d", len(items))
 	}
 	for _, it := range items {
-		local := mustParse(t, it.StartsAt).In(FloatingZone())
+		local := mustParse(t, it.StartsAt).In(testZone())
 		if local.Hour() != 19 || local.Minute() != 0 {
 			t.Errorf("occurrence %s renders locally at %s, want 19:00", it.StartsAt, local.Format("15:04"))
 		}
@@ -228,7 +232,7 @@ DTSTART;TZID=America/New_York:20260821T190000
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -254,7 +258,7 @@ func TestParseJSONLD_FloatingTimeIsNotUTC(t *testing.T) {
  "endDate":"2026-08-21T22:00:00"}
 </script></head><body></body></html>`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseJSONLD([]byte(page), now)
+	items, err := ParseJSONLD([]byte(page), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -277,7 +281,7 @@ func TestParseJSONLD_StatedOffsetsIgnoreTheFallbackZone(t *testing.T) {
  "startDate":"2026-08-21T19:00:00-04:00"}
 </script></html>`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseJSONLD([]byte(page), now)
+	items, err := ParseJSONLD([]byte(page), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -294,7 +298,7 @@ func TestParseJSONLD_BareDateLandsOnItsOwnDay(t *testing.T) {
  "startDate":"2026-08-21"}
 </script></html>`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseJSONLD([]byte(page), now)
+	items, err := ParseJSONLD([]byte(page), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -339,12 +343,23 @@ func TestResolveTZID(t *testing.T) {
 	}
 }
 
-func TestFloatingZoneDefaultsToUTC(t *testing.T) {
-	prev := FloatingZone()
-	t.Cleanup(func() { SetFloatingZone(prev) })
-	SetFloatingZone(nil)
-	if FloatingZone() != time.UTC {
-		t.Errorf("FloatingZone() = %v, want UTC", FloatingZone())
+// A parser handed no zone at all still has to produce times, and UTC is
+// the chain's terminating rung (docs/adr/045).
+func TestNilZoneReadsAsUTC(t *testing.T) {
+	ics := `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:nil-zone
+SUMMARY:No Zone Anywhere
+DTSTART:20260821T190000
+END:VEVENT
+END:VCALENDAR`
+	items, err := ParseICS([]byte(ics), time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC), nil)
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if len(items) != 1 || items[0].StartsAt != "2026-08-21T19:00:00Z" {
+		t.Fatalf("StartsAt = %v, want 2026-08-21T19:00:00Z", items)
 	}
 }
 
@@ -357,18 +372,33 @@ func mustParse(t *testing.T, s string) time.Time {
 	return tm
 }
 
+// setPatchZone puts a zone on the patch a source belongs to, which is
+// where Sync reads it from (docs/adr/045) — not from a package global,
+// so two patches in two zones can sync in one process without one
+// deciding for the other.
+func setPatchZone(t *testing.T, db *database.DB, sourceID, zone string) {
+	t.Helper()
+	if _, err := db.Exec(
+		`UPDATE nodes SET timezone = ? WHERE id = (SELECT node_id FROM event_sources WHERE id = ?)`,
+		zone, sourceID,
+	); err != nil {
+		t.Fatalf("set patch zone: %v", err)
+	}
+}
+
 // End to end, because the parser being right is not the same as the
 // right instant reaching the events table.
 func TestSync_FloatingFeedTimeIsStoredInTheVenuesZone(t *testing.T) {
-	withZone(t, "America/New_York")
+	zone := withZone(t, "America/New_York")
 	db := setupTestDB(t)
 
 	// A floating DTSTART two days out, written as a bare wall clock the
 	// way a CMS export does.
-	local := time.Now().In(FloatingZone()).Add(48 * time.Hour).Truncate(time.Hour)
+	local := time.Now().In(zone).Add(48 * time.Hour).Truncate(time.Hour)
 	wall := local.Format("20060102T150405")
 	feed := newFeedServer(t, wrap(vevent("floating@test", "The Nancy Reagans", wall)))
 	sourceID := seedSource(t, db, feed.srv.URL)
+	setPatchZone(t, db, sourceID, "America/New_York")
 
 	if err := Sync(context.Background(), db, nil, sourceID); err != nil {
 		t.Fatalf("sync: %v", err)
@@ -381,7 +411,7 @@ func TestSync_FloatingFeedTimeIsStoredInTheVenuesZone(t *testing.T) {
 		t.Fatalf("read stored event: %v", err)
 	}
 	// Read back in the venue's zone, it must be the o'clock the feed said.
-	got := mustParse(t, startsAt).In(FloatingZone())
+	got := mustParse(t, startsAt).In(zone)
 	if !got.Equal(local) {
 		t.Errorf("stored %s, which is %s locally; feed said %s",
 			startsAt, got.Format(time.RFC3339), local.Format(time.RFC3339))
@@ -392,13 +422,14 @@ func TestSync_FloatingFeedTimeIsStoredInTheVenuesZone(t *testing.T) {
 // it corrected by an ordinary re-sync, in place, without the event
 // losing its id.
 func TestSync_RepairsAWrongStoredTimeInPlace(t *testing.T) {
-	withZone(t, "America/New_York")
+	zone := withZone(t, "America/New_York")
 	db := setupTestDB(t)
 
-	local := time.Now().In(FloatingZone()).Add(48 * time.Hour).Truncate(time.Hour)
+	local := time.Now().In(zone).Add(48 * time.Hour).Truncate(time.Hour)
 	wall := local.Format("20060102T150405")
 	feed := newFeedServer(t, wrap(vevent("floating@test", "The Nancy Reagans", wall)))
 	sourceID := seedSource(t, db, feed.srv.URL)
+	setPatchZone(t, db, sourceID, "America/New_York")
 
 	if err := Sync(context.Background(), db, nil, sourceID); err != nil {
 		t.Fatalf("first sync: %v", err)
@@ -455,7 +486,7 @@ DTSTART;TZID="America/New_York":20260821T190000
 END:VEVENT
 END:VCALENDAR`
 	now := time.Date(2026, 8, 20, 12, 0, 0, 0, time.UTC)
-	items, err := ParseICS([]byte(ics), now)
+	items, err := ParseICS([]byte(ics), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -477,4 +508,110 @@ func TestWindowsZoneTableIsFoldedAndResolvable(t *testing.T) {
 			t.Errorf("key %q maps to %q, which tzdata does not have: %v", key, iana, err)
 		}
 	}
+}
+
+// testZone is the zone a parser test reads zoneless times in. Tests that
+// care set it via withZone; the rest get UTC, which is what they asserted
+// against before a zone was a parameter.
+func testZone() *time.Location { return currentTestZone }
+
+var currentTestZone = time.UTC
+
+// The whole reason the zone stopped being a package global (docs/adr/045):
+// one instance can hold a Lancaster venue and a Portland one, and the same
+// wall clock in their two feeds is two different instants.
+func TestSync_TwoPatchesTwoZonesInOneProcess(t *testing.T) {
+	db := setupTestDB(t)
+
+	// The same floating DTSTART, served to both patches.
+	wall := time.Now().UTC().Add(48 * time.Hour).Truncate(time.Hour).Format("20060102T150405")
+	east := newFeedServer(t, wrap(vevent("show@east", "East Show", wall)))
+	west := newFeedServer(t, wrap(vevent("show@west", "West Show", wall)))
+
+	// seedSource names its user and patch fixedly, so the second patch is
+	// seeded here rather than by calling it twice.
+	eastID := seedSource(t, db, east.srv.URL)
+	westID := seedSecondSource(t, db, west.srv.URL)
+	setPatchZone(t, db, eastID, "America/New_York")
+	setPatchZone(t, db, westID, "America/Los_Angeles")
+
+	for _, id := range []string{eastID, westID} {
+		if err := Sync(context.Background(), db, nil, id); err != nil {
+			t.Fatalf("sync %s: %v", id, err)
+		}
+	}
+
+	read := func(sourceID string) string {
+		t.Helper()
+		var s string
+		if err := db.QueryRow(`SELECT starts_at FROM events WHERE source_id = ?`, sourceID).Scan(&s); err != nil {
+			t.Fatalf("read %s: %v", sourceID, err)
+		}
+		return s
+	}
+	eastAt, westAt := read(eastID), read(westID)
+	if eastAt == westAt {
+		t.Fatalf("both patches stored %s — the zone is still being decided globally", eastAt)
+	}
+	// Three hours apart, whichever side of a DST boundary they fall on.
+	gap := mustParse(t, westAt).Sub(mustParse(t, eastAt))
+	if gap != 3*time.Hour {
+		t.Errorf("west − east = %s, want 3h (east %s, west %s)", gap, eastAt, westAt)
+	}
+}
+
+// A patch that names no zone falls through to the instance's, which is
+// the rung an admin sets from the panel.
+func TestSync_PatchWithoutAZoneUsesTheInstances(t *testing.T) {
+	db := setupTestDB(t)
+	if err := settings.Set(db, settings.KeyTimezone, "America/New_York"); err != nil {
+		t.Fatalf("set instance zone: %v", err)
+	}
+
+	local := time.Now().In(time.FixedZone("EDT", -4*3600)).Add(48 * time.Hour).Truncate(time.Hour)
+	feed := newFeedServer(t, wrap(vevent("inherit@test", "Inherited Zone",
+		local.Format("20060102T150405"))))
+	sourceID := seedSource(t, db, feed.srv.URL) // node.timezone left NULL
+
+	if err := Sync(context.Background(), db, nil, sourceID); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+	var startsAt string
+	if err := db.QueryRow(`SELECT starts_at FROM events WHERE source_id = ?`, sourceID).Scan(&startsAt); err != nil {
+		t.Fatalf("read stored event: %v", err)
+	}
+	ny, _ := time.LoadLocation("America/New_York")
+	if got := mustParse(t, startsAt).In(ny); !got.Equal(local) {
+		t.Errorf("stored %s (%s in New York); feed said %s",
+			startsAt, got.Format(time.RFC3339), local.Format(time.RFC3339))
+	}
+}
+
+// seedSecondSource is seedSource for a test that needs two patches: same
+// shape, different user and slug, because those columns are unique.
+func seedSecondSource(t *testing.T, db *database.DB, feedURL string) string {
+	t.Helper()
+	userID := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO users (id, username, display_name, role) VALUES (?, 'westward', 'Westward', 'member')`,
+		userID,
+	); err != nil {
+		t.Fatalf("seed user: %v", err)
+	}
+	nodeID := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status)
+		 VALUES (?, ?, 'The Doug Fir', 'the-doug-fir', '', 'leaf', 'public', 'open', 'active')`,
+		nodeID, userID,
+	); err != nil {
+		t.Fatalf("seed node: %v", err)
+	}
+	sourceID := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO event_sources (id, node_id, type, url, added_by) VALUES (?, ?, 'ics', ?, ?)`,
+		sourceID, nodeID, feedURL, userID,
+	); err != nil {
+		t.Fatalf("seed source: %v", err)
+	}
+	return sourceID
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/settings"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
@@ -48,6 +49,26 @@ func dayBound(v, instant string) string {
 }
 
 // ListEvents handles GET /api/v1/events.
+// nullableZone stores an absent zone as NULL rather than "", so the column
+// says "inherit" in one spelling instead of two.
+func nullableZone(tz string) any {
+	if strings.TrimSpace(tz) == "" {
+		return nil
+	}
+	return strings.TrimSpace(tz)
+}
+
+// eventZoneSQL resolves an event's zone the way docs/adr/045 specifies:
+// the event's own, else its patch's, else the instance's. The last rung is
+// a bound parameter rather than a column because it lives in config plus
+// an admin override, not in the row — so every query using this fragment
+// must bind the instance zone as its FIRST argument, ahead of any WHERE
+// parameters.
+//
+// NULLIF because an empty string is how a cleared control arrives, and an
+// event that inherits should inherit whether its zone is NULL or blank.
+const eventZoneSQL = `COALESCE(NULLIF(e.timezone,''), NULLIF(n.timezone,''), ?)`
+
 func ListEvents(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		after, limit := parsePaginationParams(r)
@@ -89,9 +110,13 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		query := `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status FROM events e JOIN nodes n ON e.node_id = n.id`
+		query := `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, ` + eventZoneSQL + ` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status FROM events e JOIN nodes n ON e.node_id = n.id`
 		var conditions []string
 		var args []interface{}
+
+		// First, because eventZoneSQL's placeholder sits in the SELECT
+		// clause and therefore precedes every WHERE parameter appended below.
+		args = append(args, settings.EffectiveTimezone(db))
 
 		conditions = append(conditions, "e.visibility = 'public'")
 		conditions = append(conditions, "e.removed_at IS NULL")
@@ -175,7 +200,7 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		var events []eventWithNode
 		for rows.Next() {
 			var e eventWithNode
-			if err := rows.Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus); err != nil {
+			if err := rows.Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus); err != nil {
 				continue
 			}
 			events = append(events, e)
@@ -218,11 +243,11 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 		// An archived or removed patch takes its events with it — same gate
 		// as GetNode, so an event link doesn't outlive its patch page.
 		err := db.QueryRow(
-			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.status, e.source_id, e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.status, e.source_id, e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status
 			 FROM events e JOIN nodes n ON e.node_id = n.id
 			 WHERE e.id = ? AND e.removed_at IS NULL
-			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`, eventID,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.SourceID, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus)
+			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`, settings.EffectiveTimezone(db), eventID,
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.SourceID, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -290,10 +315,15 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Longitude   *float64 `json:"longitude"`
 			StartsAt    string   `json:"starts_at"`
 			EndsAt      *string  `json:"ends_at"`
-			Recurrence  string   `json:"recurrence"`
-			Visibility  string   `json:"visibility"`
-			ImageURL    string   `json:"image_url"`
-			ImageAlt    string   `json:"image_alt"`
+			// Absent or empty means inherit from the patch (docs/adr/045).
+			// The form only asks when the event's zone differs from its
+			// patch's — a touring band's out-of-town date — because a field
+			// that must be filled for every event is a field filled wrong.
+			Timezone   string `json:"timezone"`
+			Recurrence string `json:"recurrence"`
+			Visibility string `json:"visibility"`
+			ImageURL   string `json:"image_url"`
+			ImageAlt   string `json:"image_alt"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -303,6 +333,11 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// (docs/adr/007).
 		if msg := validateImageRef(req.ImageURL, req.ImageAlt); msg != "" {
 			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			return
+		}
+		req.Timezone = strings.TrimSpace(req.Timezone)
+		if req.Timezone != "" && !settings.ValidTimezone(req.Timezone) {
+			http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
 			return
 		}
 		if req.NodeID == "" || req.Title == "" || req.StartsAt == "" {
@@ -356,9 +391,9 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		id := auth.NewUUIDv7()
 		apID := ap.EventAPID(ap.GetDomain(), id)
 		_, err = db.Exec(
-			`INSERT INTO events (id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, recurrence, visibility, image_url, image_alt, status, ap_id)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, req.NodeID, user.ID, req.Title, req.Description, req.Location, req.Latitude, req.Longitude, req.StartsAt, req.EndsAt, req.Recurrence, req.Visibility, strings.TrimSpace(req.ImageURL), strings.TrimSpace(req.ImageAlt), status, apID,
+			`INSERT INTO events (id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, timezone, recurrence, visibility, image_url, image_alt, status, ap_id)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, req.NodeID, user.ID, req.Title, req.Description, req.Location, req.Latitude, req.Longitude, req.StartsAt, req.EndsAt, nullableZone(req.Timezone), req.Recurrence, req.Visibility, strings.TrimSpace(req.ImageURL), strings.TrimSpace(req.ImageAlt), status, apID,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create event"}`, http.StatusInternalServerError)
@@ -369,9 +404,9 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		var e model.Event
 		db.QueryRow(
-			`SELECT id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, recurrence, visibility, COALESCE(image_url,''), COALESCE(image_alt,''), status, created_at, updated_at
-			 FROM events WHERE id = ?`, id,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.CreatedAt, &e.UpdatedAt)
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.status, e.created_at, e.updated_at
+			 FROM events e JOIN nodes n ON e.node_id = n.id WHERE e.id = ?`, settings.EffectiveTimezone(db), id,
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.CreatedAt, &e.UpdatedAt)
 
 		var nodeSlugN, nodeNameN string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", req.NodeID).Scan(&nodeSlugN, &nodeNameN)
@@ -485,8 +520,23 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		allowedFields := map[string]bool{
 			"title": true, "description": true, "location": true,
 			"latitude": true, "longitude": true, "starts_at": true,
-			"ends_at": true, "recurrence": true, "visibility": true,
-			"image_url": true, "image_alt": true,
+			"ends_at": true, "timezone": true, "recurrence": true,
+			"visibility": true, "image_url": true, "image_alt": true,
+		}
+
+		// A zone that isn't a zone would resolve to nothing and silently
+		// hand every reader the instance's clock instead of the event's.
+		// Sending "" or null clears it back to inheriting from the patch.
+		if raw, present := req["timezone"]; present {
+			tz, _ := raw.(string)
+			if tz = strings.TrimSpace(tz); tz == "" {
+				req["timezone"] = nil
+			} else if !settings.ValidTimezone(tz) {
+				http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+				return
+			} else {
+				req["timezone"] = tz
+			}
 		}
 
 		// Same pairing rule as a patch's image: a PATCH carrying one half is
@@ -530,9 +580,9 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 
 		var e model.Event
 		db.QueryRow(
-			`SELECT id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, recurrence, visibility, COALESCE(image_url,''), COALESCE(image_alt,''), status, created_at, updated_at
-			 FROM events WHERE id = ?`, eventID,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.CreatedAt, &e.UpdatedAt)
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.status, e.created_at, e.updated_at
+			 FROM events e JOIN nodes n ON e.node_id = n.id WHERE e.id = ?`, settings.EffectiveTimezone(db), eventID,
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.CreatedAt, &e.UpdatedAt)
 
 		var nodeSlugN, nodeNameN string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&nodeSlugN, &nodeNameN)

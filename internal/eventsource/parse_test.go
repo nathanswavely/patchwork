@@ -24,7 +24,7 @@ GEO:40.038;-76.305
 DTSTART:20260722T190000Z
 DTEND:20260722T220000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -68,7 +68,7 @@ SUMMARY:Weekly (special)
 DTSTART:20260805T200000Z
 DTEND:20260805T220000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -109,7 +109,7 @@ SUMMARY:Cancelled Show
 STATUS:CANCELLED
 DTSTART:20260722T190000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -131,7 +131,7 @@ STATUS:CANCELLED
 SUMMARY:Series
 DTSTART:20260729T190000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -147,7 +147,7 @@ SUMMARY:Board Meeting
 CLASS:PRIVATE
 DTSTART:20260722T190000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -172,7 +172,7 @@ UID:in@test
 SUMMARY:Inside
 DTSTART:20260801T190000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -187,7 +187,7 @@ UID:tz@test
 SUMMARY:Evening Show
 DTSTART;TZID=America/New_York:20260722T190000
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -209,7 +209,7 @@ BEGIN:VEVENT
 UID:blank@test
 DTSTART:20260723T190000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}

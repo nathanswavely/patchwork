@@ -22,6 +22,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/settings"
 	"github.com/patchwork-toolkit/patchwork/web"
 )
 
@@ -204,8 +205,13 @@ func main() {
 	// before anything reads one (docs/adr/065). Set here rather than
 	// read from config inside the parsers so the sync worker and the
 	// handlers' "sync now" agree by construction.
-	eventsource.SetFloatingZone(cfg.Instance.Location())
-	log.Printf("config: calendar feeds that publish times without a zone are read as %s", cfg.Instance.Location())
+	// The bottom rung of the chain an event's zone resolves through:
+	// event → patch → instance → UTC (docs/adr/045). Recorded before
+	// anything serves a request or syncs a feed. The admin's override
+	// lives in instance_settings and is read per request, so it takes
+	// effect without a restart; this is only the configured default.
+	settings.SetTimezoneDefault(cfg.Timezone())
+	log.Printf("config: this quilt keeps time in %s", settings.EffectiveTimezone(db))
 
 	// Start the event source worker: hourly re-sync of every attached
 	// calendar feed (docs/adr/031).

@@ -25,7 +25,7 @@ var ldScriptRe = regexp.MustCompile(`(?is)<script[^>]*type="application/ld\+json
 // blocks, applying the same window as the other parsers. It errors when
 // the page carries no Event markup at all, so the auto-detect chain can
 // tell "not this kind of page" from "empty calendar".
-func ParseJSONLD(data []byte, now time.Time) ([]Item, error) {
+func ParseJSONLD(data []byte, now time.Time, zone *time.Location) ([]Item, error) {
 	var events []map[string]any
 	for _, m := range ldScriptRe.FindAllSubmatch(data, -1) {
 		var doc any
@@ -43,9 +43,11 @@ func ParseJSONLD(data []byte, now time.Time) ([]Item, error) {
 
 	// schema.org has no calendar-wide zone to consult the way ICS does,
 	// and a great many CMS plugins emit startDate as the site's local
-	// wall clock with no offset at all. Those read in the configured
-	// zone rather than as UTC (docs/adr/065).
-	zone := FloatingZone()
+	// wall clock with no offset at all. Those read in the patch's zone
+	// rather than as UTC (docs/adr/045).
+	if zone == nil {
+		zone = time.UTC
+	}
 
 	var items []Item
 	seen := map[string]bool{}

@@ -42,7 +42,7 @@ func ldFixture(now time.Time) string {
 
 func TestParseJSONLD(t *testing.T) {
 	now := time.Now().UTC()
-	items, err := ParseJSONLD([]byte(ldFixture(now)), now)
+	items, err := ParseJSONLD([]byte(ldFixture(now)), now, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -88,7 +88,7 @@ func TestParseJSONLD(t *testing.T) {
 }
 
 func TestParseJSONLD_NoMarkupErrors(t *testing.T) {
-	_, err := ParseJSONLD([]byte("<html><body>plain page</body></html>"), time.Now().UTC())
+	_, err := ParseJSONLD([]byte("<html><body>plain page</body></html>"), time.Now().UTC(), testZone())
 	if err == nil {
 		t.Fatal("a page without Event markup must error so detection can move on")
 	}

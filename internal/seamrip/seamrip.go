@@ -83,14 +83,20 @@ func Tables() []Table {
 		{
 			File: "nodes.json",
 			Name: "nodes",
-			Query: `SELECT id, owner_id, name, slug, description, latitude, longitude,
+			Query: `SELECT id, owner_id, name, slug, description, latitude, longitude, timezone,
 				address, website, image_url, image_alt, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
-				c("description"), c("latitude"), c("longitude"), c("address"),
+				c("description"), c("latitude"), c("longitude"),
+				// Where the patch keeps time (docs/adr/045). It travels for
+				// the same reason the coordinates do: a fork that lost it
+				// would render every one of its events in the wrong zone,
+				// and NULL here would silently mean "the new instance's",
+				// which is a different place.
+				c("timezone"), c("address"),
 				c("website"),
 				// A patch's image is a URL it owns, so it travels like any
 				// other field (docs/adr/007). The bytes were never ours to
@@ -241,14 +247,18 @@ func Tables() []Table {
 			File: "events.json",
 			Name: "events",
 			Query: `SELECT id, node_id, created_by, title, description, location,
-				latitude, longitude, starts_at, ends_at, recurrence, visibility,
+				latitude, longitude, starts_at, ends_at, timezone, recurrence, visibility,
 				image_url, image_alt,
 				source_id, source_uid, source_occurrence,
 				created_at, updated_at FROM events
 				WHERE removed_at IS NULL AND status = 'active'`,
 			Columns: cols(id("id"), id("node_id"), id("created_by"), c("title"),
 				c("description"), c("location"), c("latitude"), c("longitude"),
-				c("starts_at"), c("ends_at"), c("recurrence"), c("visibility"),
+				// starts_at is the instant; timezone is the wall clock it
+				// encodes (docs/adr/045). Both travel, or the fork keeps
+				// the encoding and loses the fact. Usually NULL, meaning
+				// the event inherits its patch's zone — which travels too.
+				c("starts_at"), c("ends_at"), c("timezone"), c("recurrence"), c("visibility"),
 				def("image_url", ""), def("image_alt", ""),
 				id("source_id"), c("source_uid"), def("source_occurrence", ""),
 				c("created_at"), c("updated_at")),

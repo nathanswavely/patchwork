@@ -15,6 +15,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/settings"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
@@ -39,6 +40,11 @@ type Source struct {
 	// publishing (docs/adr/056). The patch opened its door to
 	// suggestions; it did not adopt the feed.
 	Suggests bool
+	// Zone is what a time in this feed means when the feed itself does
+	// not say: the patch's zone, else the instance's (docs/adr/045).
+	// Resolved once when the source is loaded, so the whole sync reads
+	// one answer.
+	Zone *time.Location
 }
 
 // sourceLocks serializes syncs per source: the hourly worker and a
@@ -57,15 +63,20 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 	defer mu.(*sync.Mutex).Unlock()
 
 	var src Source
+	var zoneName string
 	err := db.QueryRow(
-		`SELECT id, node_id, type, url, added_by, etag, last_modified, last_success_at,
-		 aggregator_id, name_key, suggests FROM event_sources WHERE id = ?`, sourceID,
+		`SELECT s.id, s.node_id, s.type, s.url, s.added_by, s.etag, s.last_modified,
+		 s.last_success_at, s.aggregator_id, s.name_key, s.suggests,
+		 COALESCE(NULLIF(n.timezone,''), ?)
+		 FROM event_sources s JOIN nodes n ON n.id = s.node_id WHERE s.id = ?`,
+		settings.EffectiveTimezone(db), sourceID,
 	).Scan(&src.ID, &src.NodeID, &src.Type, &src.URL, &src.AddedBy,
 		&src.Etag, &src.LastModified, &src.LastSuccessAt,
-		&src.AggregatorID, &src.NameKey, &src.Suggests)
+		&src.AggregatorID, &src.NameKey, &src.Suggests, &zoneName)
 	if err != nil {
 		return fmt.Errorf("load source: %w", err)
 	}
+	src.Zone = loadZone(zoneName)
 
 	items, result, err := loadItems(ctx, db, &src)
 	if err != nil {
@@ -175,7 +186,7 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 		if err != nil || result.NotModified {
 			return nil, result, err
 		}
-		items, err := ParseJSONLD(result.Body, now)
+		items, err := ParseJSONLD(result.Body, now, src.Zone)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -186,14 +197,14 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 	if err != nil || result.NotModified {
 		return nil, result, err
 	}
-	items, icsErr := ParseICS(result.Body, now)
+	items, icsErr := ParseICS(result.Body, now, src.Zone)
 	if icsErr == nil {
 		return items, result, nil
 	}
 
 	// Not ICS. The page is already in hand, so the JSON-LD probe is
 	// free: any schema.org Event markup makes this a jsonld source.
-	if ldItems, ldErr := ParseJSONLD(result.Body, now); ldErr == nil {
+	if ldItems, ldErr := ParseJSONLD(result.Body, now, src.Zone); ldErr == nil {
 		src.Type = "jsonld"
 		return ldItems, result, nil
 	}
@@ -550,7 +561,7 @@ func offerAnnouncements(db *database.DB, notifier *notifications.Notifier, src *
 	}
 	type program struct {
 		id, nodeID, nodeName, nodeSlug, titleKey, displayTitle string
-		backfilled                                            bool
+		backfilled                                             bool
 	}
 	var programs []program
 	for rows.Next() {
