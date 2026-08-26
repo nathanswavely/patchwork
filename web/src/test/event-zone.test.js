@@ -8,6 +8,12 @@ import {
   sameZoneAsViewer,
 } from '../lib/datetime.js';
 
+// These cases read the reader's zone as UTC — the annotation exists to tell
+// the two apart, so a test of it cannot be written without saying where the
+// reader is. Nothing here inherits that from the machine: vite.config.js pins
+// the suite to TZ=UTC, which is what makes these assertions mean the same
+// thing in CI and on a laptop in Lancaster.
+
 // A Lancaster 8pm show, stored as the instant it is. Under viewer-local
 // rendering this reads as midnight *the next day* to anyone on UTC, which
 // is the bug docs/adr/045 exists to end: both the events list and the patch
@@ -23,8 +29,8 @@ describe('an event renders in its own zone, not the reader’s', () => {
   it('keeps the day it is on, which is the half that reads as broken', () => {
     expect(formatEventDateLong(LANCASTER_8PM, 'America/New_York'))
       .toBe('Wednesday, July 22, 2026');
-    // The same instant with no zone is the old behaviour, and in a UTC
-    // test runner it lands on the 23rd — the flyer says Wednesday and the
+    // The same instant with no zone is the old behaviour, and for a UTC
+    // reader it lands on the 23rd — the flyer says Wednesday and the
     // website says Thursday.
     expect(formatEventDateLong(LANCASTER_8PM)).toBe('Thursday, July 23, 2026');
   });
@@ -38,7 +44,7 @@ describe('an event renders in its own zone, not the reader’s', () => {
 
 describe('the zone is annotated only when it would surprise the reader', () => {
   it('says nothing to a reader already in the event’s zone', () => {
-    // The runner is UTC, so UTC is "home" here.
+    // The suite is pinned to UTC, so UTC is "home" here.
     expect(formatEventTime(LANCASTER_8PM, 'UTC')).toBe('12:00 AM');
     expect(sameZoneAsViewer('UTC')).toBe(true);
   });
