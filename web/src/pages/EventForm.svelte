@@ -1,6 +1,7 @@
 <script>
   import { api } from '../lib/api.js';
-  import { toLocalInputValue, fromLocalInputValue } from '../lib/datetime.js';
+  import { getInstanceTimezone } from '../stores/quilt.svelte.js';
+  import { toZonedInputValue, fromZonedInputValue, sameZoneAsViewer } from '../lib/datetime.js';
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import VocabLabel from '../components/VocabLabel.svelte';
   import { showToast } from '../stores/toast.svelte.js';
@@ -19,6 +20,33 @@
   let location = $state('');
   let startsAt = $state('');
   let endsAt = $state('');
+  // The zone the times in this form are written in (docs/adr/045). On an
+  // edit it is the event's resolved zone; on a new event it is the chosen
+  // patch's, which is why it follows nodeId. Empty means the form is
+  // reading and writing the editor's own clock, which is the honest
+  // fallback before a patch is picked.
+  let timezone = $state('');
+  // What the patch would give this event on its own. The zone control
+  // appears only when the two differ — a touring band's out-of-town date
+  // — because a field that must be filled for every event is a field that
+  // will be filled wrong.
+  let patchTimezone = $state('');
+  // Whether the editor has asked for the zone control. Hidden by default:
+  // the only case that justifies asking is an event whose zone differs
+  // from its patch's, and that is rare enough to be opt-in.
+  let zoneOverridden = $state(false);
+
+  // Whether a typed zone is one this browser can resolve. The server
+  // checks too and is the authority; this is so a typo is visible before
+  // a save round trip rather than after it.
+  function isValidZone(tz) {
+    try {
+      new Intl.DateTimeFormat('en-US', { timeZone: tz });
+      return true;
+    } catch {
+      return false;
+    }
+  }
   let recurrence = $state('');
   // A flyer or show photo, held wherever the patch already keeps it
   // (docs/adr/007). The description is required alongside it, and the server
@@ -60,8 +88,19 @@
       location = event.location || '';
       imageUrl = event.image_url || '';
       imageAlt = event.image_alt || '';
-      startsAt = toLocalInputValue(event.starts_at);
-      endsAt = toLocalInputValue(event.ends_at);
+      // Read in the event's zone, not the editor's: an organizer editing a
+      // Lancaster show sees 8:00 PM whether they are in Lancaster or on
+      // tour, because 8pm is the fact they are editing.
+      timezone = event.timezone || '';
+      // The event payload's zone is already resolved, so an inheriting
+      // event and one that pins its patch's zone look identical here.
+      // Comparing against the patch's own answer is what keeps the
+      // control hidden for the ordinary case — and what stops a plain
+      // save from freezing a copy of a zone the event was inheriting.
+      await loadPatchZone(event.node_slug);
+      zoneOverridden = !!timezone && !!patchTimezone && timezone !== patchTimezone;
+      startsAt = toZonedInputValue(event.starts_at, timezone);
+      endsAt = toZonedInputValue(event.ends_at, timezone);
       recurrence = event.recurrence || '';
       eventNodeStatus = event.node_status || '';
       myNodes = nodesData.items || nodesData || [];
@@ -85,6 +124,8 @@
       lockedNode = data.node || data;
       lockedUnclaimed = data.is_unclaimed || false;
       nodeId = lockedNode.id;
+      patchTimezone = lockedNode.timezone || getInstanceTimezone() || '';
+      if (!isEdit) timezone = patchTimezone;
       myNodes = [lockedNode];
     } catch (e) {
       error = e.message || 'Failed to load patch';
@@ -92,6 +133,34 @@
     } finally {
       loadingNodes = false;
     }
+  }
+
+  // What zone this event would get from its patch alone. Fetched rather
+  // than assumed: me/nodes carries membership rows, not patch fields, and
+  // guessing the instance's here would make every save pin a zone the
+  // event was happily inheriting.
+  async function loadPatchZone(slug) {
+    const fallback = getInstanceTimezone() || '';
+    if (!slug) {
+      patchTimezone = fallback;
+      return;
+    }
+    try {
+      const data = await api(`nodes/${slug}`);
+      const node = data.node || data;
+      patchTimezone = node.timezone || fallback;
+    } catch {
+      patchTimezone = fallback;
+    }
+  }
+
+  // A new event follows the patch it is being posted to, so picking a
+  // patch is what sets the clock the form is written in.
+  async function pickPatchZone() {
+    if (isEdit || !nodeId) return;
+    const chosen = myNodes.find((n) => n.node_id === nodeId);
+    await loadPatchZone(chosen?.node_slug || chosen?.slug);
+    timezone = patchTimezone;
   }
 
   async function loadMyNodes() {
@@ -110,6 +179,7 @@
     if (!title.trim()) return 'Title is required';
     if (!nodeId) return 'Please select a patch';
     if (!startsAt) return 'Start date/time is required';
+    if (timezone && !isValidZone(timezone)) return 'Timezone must be an IANA name, like America/New_York';
     return '';
   }
 
@@ -128,8 +198,11 @@
         description: description.trim() || undefined,
         node_id: nodeId,
         location: location.trim() || undefined,
-        starts_at: fromLocalInputValue(startsAt),
-        ends_at: fromLocalInputValue(endsAt),
+        starts_at: fromZonedInputValue(startsAt, timezone),
+        ends_at: fromZonedInputValue(endsAt, timezone),
+        // Sent only when it differs from what the patch would supply, so
+        // an ordinary event stays inheriting rather than freezing a copy.
+        timezone: timezone && timezone !== patchTimezone ? timezone : undefined,
         recurrence: recurrence || undefined,
         image_url: imageUrl.trim(),
         image_alt: imageAlt.trim(),
@@ -224,7 +297,7 @@
               {lockSlug ? error || 'Could not load this patch.' : 'You need to be a member of a patch to create an event.'}
             </p>
           {:else}
-            <select id="node" bind:value={nodeId} disabled={submitting || isEdit || !!lockSlug}>
+            <select id="node" bind:value={nodeId} onchange={pickPatchZone} disabled={submitting || isEdit || !!lockSlug}>
               <option value="">Select a patch</option>
               {#each myNodes as node (node.node_id)}
                 <option value={node.node_id}>{node.node_name}</option>
@@ -272,6 +345,42 @@
           </div>
         </div>
 
+        <!--
+          The zone the boxes above are written in. Said out loud only when
+          the editor is somewhere else, because an organizer posting a show
+          at their own venue in their own city is not doing a conversion and
+          does not need to be told about one (docs/adr/045).
+        -->
+        {#if timezone && !sameZoneAsViewer(timezone)}
+          <p class="zone-note muted">
+            Times are in {timezone.replace(/_/g, ' ')}{zoneOverridden ? '' : ", this patch's timezone"}.
+          </p>
+        {/if}
+
+        <div class="field">
+          {#if zoneOverridden}
+            <label for="event-timezone">Timezone</label>
+            <input
+              id="event-timezone"
+              type="text"
+              bind:value={timezone}
+              disabled={submitting}
+              placeholder={patchTimezone || 'America/New_York'}
+            />
+            <p class="muted">
+              An IANA name. Clear it to go back to
+              {patchTimezone ? patchTimezone.replace(/_/g, ' ') : "the patch's timezone"}.
+              {#if timezone && !isValidZone(timezone)}
+                <span class="zone-invalid">Not a timezone this quilt knows.</span>
+              {/if}
+            </p>
+          {:else}
+            <button type="button" class="link-button" onclick={() => (zoneOverridden = true)} disabled={submitting}>
+              This event is in a different timezone
+            </button>
+          {/if}
+        </div>
+
         <div class="field">
           <label for="recurrence">Recurrence</label>
           <select id="recurrence" bind:value={recurrence} disabled={submitting}>
@@ -306,6 +415,28 @@
 </div>
 
 <style>
+  .zone-note {
+    margin: -0.25rem 0 0.75rem;
+    font-size: 0.9rem;
+  }
+  .zone-invalid {
+    color: var(--color-danger, #e05252);
+  }
+  .link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .link-button:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
   h1 {
     margin-bottom: 0.25rem;
   }

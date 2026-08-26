@@ -121,7 +121,7 @@
               <span>upcoming events</span>
               {#each upcomingEvents.slice(0, 3) as event}
                 <a href="/events/{event.id}" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}`); }}>
-                  {formatDate(event.starts_at)} &middot; {event.title}
+                  {formatDate(event.starts_at, event.timezone)} &middot; {event.title}
                 </a>
               {/each}
             </div>

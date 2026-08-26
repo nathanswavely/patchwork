@@ -50,6 +50,7 @@ func AdminGetSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		_, nameOverridden := settings.Get(db, settings.KeyName)
 		_, descOverridden := settings.Get(db, settings.KeyDescription)
 		hideAmended, _ := settings.Get(db, settings.KeyHideAmendedLinings)
+		_, tzOverridden := settings.Get(db, settings.KeyTimezone)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -59,8 +60,16 @@ func AdminGetSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			"name_overridden":        nameOverridden,
 			"description_overridden": descOverridden,
 			"hide_amended_linings":   hideAmended == "true",
-			"icon":                   currentIconState(db, cfg),
-			"icon_starters":          starters,
+			// Where this quilt keeps time (docs/adr/045) — the rung an
+			// event's zone falls through to when neither it nor its patch
+			// names one. Editable here because getting it wrong shows up
+			// as every event being hours off, and that should not wait on
+			// a redeploy.
+			"timezone":            settings.EffectiveTimezone(db),
+			"timezone_overridden": tzOverridden,
+			"timezone_configured": cfg.Timezone(),
+			"icon":                currentIconState(db, cfg),
+			"icon_starters":       starters,
 		})
 	}
 }
@@ -80,6 +89,9 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// Quilt policy: hide amended-lining patches from discovery for
 			// everyone (docs/adr/037).
 			HideAmendedLinings *bool `json:"hide_amended_linings"`
+			// The quilt's zone (docs/adr/045). Empty string clears the
+			// override and falls back to geographic.timezone.
+			Timezone *string `json:"timezone"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -110,6 +122,22 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			}
 			if err := settings.Set(db, settings.KeyDescription, desc); err != nil {
 				http.Error(w, `{"error":"failed to save description"}`, http.StatusInternalServerError)
+				return
+			}
+		}
+
+		if req.Timezone != nil {
+			tz := strings.TrimSpace(*req.Timezone)
+			if tz == "" {
+				if err := settings.Unset(db, settings.KeyTimezone); err != nil {
+					http.Error(w, `{"error":"failed to clear the timezone"}`, http.StatusInternalServerError)
+					return
+				}
+			} else if !settings.ValidTimezone(tz) {
+				http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+				return
+			} else if err := settings.Set(db, settings.KeyTimezone, tz); err != nil {
+				http.Error(w, `{"error":"failed to save the timezone"}`, http.StatusInternalServerError)
 				return
 			}
 		}

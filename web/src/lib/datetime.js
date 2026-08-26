@@ -8,12 +8,18 @@
  * to name the densities rather than to collapse them into one function
  * with a flag.
  *
- * Everything here reads and writes the *viewer's* browser timezone: times
- * are stored as UTC and no instance timezone exists anywhere in the stack,
- * so a local evening event can show on the wrong day to a viewer whose
- * clock is set elsewhere. docs/adr/045 decides that an event's time belongs
- * to the place it happens rather than to its reader, and this module is the
- * seam that change lands on — nothing below has been given a zone yet.
+ * An event's time belongs to the place it happens, not to its reader
+ * (docs/adr/045). Every formatter that renders an *event* therefore takes
+ * the event's zone as a second argument and goes through Intl with a
+ * `timeZone`, rather than letting `toLocaleString` reach for whatever the
+ * browser is set to. The API resolves that zone before it sends it — event,
+ * else patch, else instance — so `tz` is never empty here and this module
+ * never reimplements the fallback.
+ *
+ * Passing no zone still works and still means the viewer's, which is what
+ * the record formatters below want: "joined on", "claimed on", an audit
+ * row. Those are facts about the reader's own account and history, not
+ * about a gathering somewhere.
  */
 
 /**
@@ -33,28 +39,46 @@ export function upcomingFrom() {
   return new Date().toISOString();
 }
 
+/**
+ * Options for an event formatter, with the zone applied only when one was
+ * given. Passing `timeZone: undefined` is the same as omitting it, but
+ * passing a bad name throws a RangeError that would take the page with it —
+ * so an unresolvable zone falls back to the viewer's rather than blanking
+ * a list. The server validates on the way in; this guards the case where a
+ * stored zone outlives a tzdata rename.
+ */
+function withZone(opts, tz) {
+  if (!tz) return opts;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz });
+  } catch {
+    return opts;
+  }
+  return { ...opts, timeZone: tz };
+}
+
 /** "Sun, Jul 26" — list rows, cards, anywhere the year is implied. */
-export function formatEventDate(iso) {
+export function formatEventDate(iso, tz) {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-US', {
+  return new Date(iso).toLocaleDateString('en-US', withZone({
     weekday: 'short', month: 'short', day: 'numeric',
-  });
+  }, tz));
 }
 
 /** "Sun, Jul 26, 2026" — queues and admin tables, where rows span years. */
-export function formatEventDateStamped(iso) {
+export function formatEventDateStamped(iso, tz) {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-US', {
+  return new Date(iso).toLocaleDateString('en-US', withZone({
     weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
-  });
+  }, tz));
 }
 
 /** "Sunday, July 26, 2026" — a detail page's headline, read once. */
-export function formatEventDateLong(iso) {
+export function formatEventDateLong(iso, tz) {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-US', {
+  return new Date(iso).toLocaleDateString('en-US', withZone({
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-  });
+  }, tz));
 }
 
 /**
@@ -90,12 +114,51 @@ export function formatMonth(iso) {
   });
 }
 
-/** "8:00 PM". */
-export function formatEventTime(iso) {
+/**
+ * "8:00 PM" at home, "8:00 PM EDT" when the event's zone is not the
+ * reader's.
+ *
+ * Annotating every time teaches the reader to ignore the annotation;
+ * annotating only the surprising ones is what makes a merged cross-quilt
+ * feed legible (docs/adr/024). A Lancaster reader browsing Lancaster sees
+ * no zone anywhere, which is correct — they are not doing a conversion.
+ */
+export function formatEventTime(iso, tz) {
   if (!iso) return '';
-  return new Date(iso).toLocaleTimeString('en-US', {
-    hour: 'numeric', minute: '2-digit',
-  });
+  const base = { hour: 'numeric', minute: '2-digit' };
+  if (!tz || sameZoneAsViewer(tz)) {
+    return new Date(iso).toLocaleTimeString('en-US', withZone(base, tz));
+  }
+  return new Date(iso).toLocaleTimeString('en-US',
+    withZone({ ...base, timeZoneName: 'short' }, tz));
+}
+
+/**
+ * Whether an event's zone is the one the reader is already in.
+ *
+ * Compared by name first, because that is the common case and is exact.
+ * Two different names can still be the same clock — America/New_York and
+ * America/Detroit never disagree — so a name mismatch falls through to
+ * comparing what the two zones actually render for this moment. Otherwise
+ * a reader in Detroit would see "EDT" stamped on every Lancaster event, so
+ * the annotation would be noise exactly where it claims to be signal.
+ */
+export function sameZoneAsViewer(tz, at = Date.now()) {
+  if (!tz) return true;
+  let viewer;
+  try {
+    viewer = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return true;
+  }
+  if (!viewer || viewer === tz) return true;
+  try {
+    const opts = { dateStyle: 'short', timeStyle: 'long' };
+    return new Intl.DateTimeFormat('en-US', { ...opts, timeZone: tz }).format(at)
+      === new Intl.DateTimeFormat('en-US', { ...opts, timeZone: viewer }).format(at);
+  } catch {
+    return true;
+  }
 }
 
 /**
@@ -124,6 +187,77 @@ export function formatRelative(iso) {
 // means local, which moved an event by the editor's offset on every save.
 
 const pad = (n) => String(n).padStart(2, '0');
+
+/**
+ * The offset, in milliseconds, that `tz` was at the instant `t`.
+ *
+ * Derived by asking Intl what wall clock `tz` shows for `t` and treating
+ * that reading as if it were UTC: the difference between the two is the
+ * offset. There is no API that just says this, and the arithmetic has to
+ * come from the same table that renders the event, or the form and the
+ * page would disagree twice a year.
+ */
+function zoneOffsetMs(tz, t) {
+  let parts;
+  try {
+    parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+    }).formatToParts(new Date(t));
+  } catch {
+    return 0;
+  }
+  const g = {};
+  for (const { type, value } of parts) g[type] = value;
+  // Intl renders midnight as hour 24 under hour12:false in some engines.
+  const hour = g.hour === '24' ? '00' : g.hour;
+  const asIfUTC = Date.UTC(
+    Number(g.year), Number(g.month) - 1, Number(g.day),
+    Number(hour), Number(g.minute), Number(g.second),
+  );
+  return asIfUTC - t;
+}
+
+/**
+ * UTC instant -> "YYYY-MM-DDTHH:MM" as the clock reads in `tz`.
+ *
+ * An organizer editing a Lancaster show should see 8:00 PM in the box
+ * whether they are in Lancaster or on tour, because 8pm is the fact they
+ * are editing. Without a zone this falls back to the browser's, which is
+ * what a form with no event context still wants.
+ */
+export function toZonedInputValue(iso, tz) {
+  if (!iso) return '';
+  if (!tz) return toLocalInputValue(iso);
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return '';
+  const shifted = new Date(t + zoneOffsetMs(tz, t));
+  return (
+    `${shifted.getUTCFullYear()}-${pad(shifted.getUTCMonth() + 1)}-${pad(shifted.getUTCDate())}` +
+    `T${pad(shifted.getUTCHours())}:${pad(shifted.getUTCMinutes())}`
+  );
+}
+
+/**
+ * "YYYY-MM-DDTHH:MM" as the clock reads in `tz` -> UTC instant.
+ *
+ * Resolved twice on purpose. The first pass guesses the offset using the
+ * wall clock read as if it were UTC, which is wrong by at most an hour;
+ * the second pass re-reads the offset at that corrected instant, which
+ * settles it. One pass alone picks the wrong side of a DST boundary for
+ * evening events on the two nights a year the clocks move — exactly the
+ * shows most likely to be affected.
+ */
+export function fromZonedInputValue(value, tz) {
+  if (!value) return undefined;
+  if (!tz) return fromLocalInputValue(value);
+  const asIfUTC = Date.parse(`${value}:00Z`);
+  if (Number.isNaN(asIfUTC)) return fromLocalInputValue(value);
+  let t = asIfUTC - zoneOffsetMs(tz, asIfUTC);
+  t = asIfUTC - zoneOffsetMs(tz, t);
+  return new Date(t).toISOString();
+}
 
 /** UTC instant -> "YYYY-MM-DDTHH:MM" read in the browser's zone. */
 export function toLocalInputValue(iso) {
