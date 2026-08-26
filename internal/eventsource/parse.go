@@ -63,19 +63,19 @@ func Key(uid, occurrence string) string { return uid + "\x00" + occurrence }
 // recurring events expanded to occurrences. Cancelled items are simply
 // absent — the reconciler treats absence as removal. PRIVATE and
 // CONFIDENTIAL items never leave the parser.
-func ParseICS(data []byte, now time.Time) ([]Item, error) {
+func ParseICS(data []byte, now time.Time, zone *time.Location) ([]Item, error) {
 	cal, err := ical.NewDecoder(bytes.NewReader(data)).Decode()
 	if err != nil {
 		return nil, fmt.Errorf("parse ics: %w", err)
 	}
 
 	// What a zoneless time in this document means. The calendar's own
-	// X-WR-TIMEZONE wins where it has one; otherwise the instance says
-	// (docs/adr/065). Every read below passes it, so a floating DTSTART
+	// X-WR-TIMEZONE wins where it has one; otherwise the zone the caller
+	// resolved for the patch that attached this feed (docs/adr/045). Every read below passes it, so a floating DTSTART
 	// lands on the venue's clock and an RRULE expands on it — a weekly
 	// 7pm show stays 7pm across a daylight-saving boundary instead of
 	// sliding an hour.
-	zone := calendarZone(cal)
+	zone = calendarZone(cal, zone)
 	normalizeTZIDs(cal.Component)
 
 	windowStart := now.Add(-pastGrace)

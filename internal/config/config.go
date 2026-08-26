@@ -116,24 +116,29 @@ type Instance struct {
 	Domain      string `yaml:"domain"`
 	Description string `yaml:"description"`
 
-	// Timezone is the IANA name of the zone this community keeps time
-	// in ("America/New_York"). It is NOT a display setting: events are
-	// stored as instants and every surface renders them in the reader's
-	// own browser zone, which stays true. It exists because ingest has
-	// a question display doesn't — a calendar feed may hand over a bare
-	// wall clock ("19:00", no offset, no zone), and turning that into an
-	// instant takes a zone from somewhere (docs/adr/065).
-	//
-	// Empty means UTC, which is right only for a community that keeps
-	// UTC. Anywhere else it lands imported events hours off.
+	// Timezone is the deprecated home of the community's zone. It moved
+	// to geographic.timezone, beside the coordinates that already declare
+	// where this quilt is (docs/adr/045, docs/adr/067). Still read, so an
+	// instance that set it during the ADR 065 window keeps working; the
+	// geographic key wins where both are present, and Warnings says so.
 	Timezone string `yaml:"timezone"`
 }
 
-// Location resolves instance.timezone. Load has already validated it, so
-// a caller can take the location and not the error; an unset or
+// Timezone is the quilt's configured zone name, the bootstrap default the
+// instance_settings override is layered over. geographic.timezone is the
+// home; instance.timezone is the deprecated spelling and loses to it.
+func (c *Config) Timezone() string {
+	if tz := strings.TrimSpace(c.Geographic.Timezone); tz != "" {
+		return tz
+	}
+	return strings.TrimSpace(c.Instance.Timezone)
+}
+
+// Location resolves the configured zone. Load has already validated it,
+// so a caller can take the location and not the error; an unset or
 // unparseable zone is UTC.
-func (i Instance) Location() *time.Location {
-	loc, err := parseTimezone(i.Timezone)
+func (c *Config) Location() *time.Location {
+	loc, err := parseTimezone(c.Timezone())
 	if err != nil {
 		return time.UTC
 	}
@@ -175,6 +180,21 @@ type Geographic struct {
 	Latitude  float64 `yaml:"latitude"`
 	Longitude float64 `yaml:"longitude"`
 	Radius    float64 `yaml:"radius"`
+
+	// Timezone is the IANA name of the zone this community keeps time in
+	// ("America/New_York"). It lives here because it is the same claim
+	// the coordinates above make — where this quilt is — and it is the
+	// bottom of the chain an event's zone resolves through: event →
+	// patch → instance → UTC (docs/adr/045).
+	//
+	// It is the bootstrap default only. An admin can override it from the
+	// admin panel without a redeploy, the way instance.name already
+	// works, and the override wins.
+	//
+	// Empty means UTC, which is right only for a community that keeps
+	// UTC. Anywhere else it renders every event hours off, and reads
+	// zoneless calendar feeds hours off on the way in.
+	Timezone string `yaml:"timezone"`
 }
 
 type Modules struct {
@@ -238,6 +258,9 @@ func Load(path string) (*Config, error) {
 
 	// A typo here is invisible until an imported calendar is hours off,
 	// so it fails at startup like the session durations below.
+	if _, err := parseTimezone(cfg.Geographic.Timezone); err != nil {
+		return nil, fmt.Errorf("geographic.timezone: %w", err)
+	}
 	if _, err := parseTimezone(cfg.Instance.Timezone); err != nil {
 		return nil, fmt.Errorf("instance.timezone: %w", err)
 	}
@@ -280,8 +303,15 @@ func (c *Config) Warnings() []string {
 	if c.Instance.Domain == exampleDomain {
 		w = append(w, "instance.domain still has the example value — set it to your real domain")
 	}
-	if c.Instance.Timezone == "" {
-		w = append(w, "instance.timezone is unset, so calendar feeds that publish times without a zone are read as UTC — set it to your community's IANA zone (e.g. America/New_York) if imported events land hours off")
+	if c.Timezone() == "" {
+		w = append(w, "geographic.timezone is unset, so every event renders in each reader's own browser zone and zoneless calendar feeds are read as UTC — set it to your community's IANA zone (e.g. America/New_York)")
+	}
+	if strings.TrimSpace(c.Instance.Timezone) != "" {
+		if strings.TrimSpace(c.Geographic.Timezone) != "" {
+			w = append(w, "instance.timezone and geographic.timezone are both set — geographic.timezone wins; delete instance.timezone")
+		} else {
+			w = append(w, "instance.timezone is deprecated — move it to geographic.timezone, beside latitude and longitude")
+		}
 	}
 	if c.Federation.Enabled {
 		d := c.Instance.Domain

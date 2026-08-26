@@ -69,7 +69,7 @@
         <div class="submission-card card">
           <div class="sub-header">
             <h3>{sub.title}</h3>
-            <span class="muted">{formatDate(sub.starts_at)} &middot; {formatTime(sub.starts_at)}</span>
+            <span class="muted">{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}</span>
           </div>
           <p class="sub-patch">
             <a

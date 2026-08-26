@@ -323,8 +323,8 @@
                    block owns the rest. -->
               <a href="/events/{event.id}" class="event-item" onclick={go(`/events/${event.id}`)}>
                 <span class="event-when">
-                  <span class="event-date">{formatEventDate(event.starts_at)}</span>
-                  <span class="event-time">{formatEventTime(event.starts_at)}</span>
+                  <span class="event-date">{formatEventDate(event.starts_at, event.timezone)}</span>
+                  <span class="event-time">{formatEventTime(event.starts_at, event.timezone)}</span>
                 </span>
                 <span class="event-info">
                   <span class="event-name">{event.title}</span>

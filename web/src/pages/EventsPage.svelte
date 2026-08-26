@@ -283,8 +283,8 @@
           }}
         >
           <div class="event-date-col">
-            <span class="event-date-label">{formatDate(event.starts_at)}</span>
-            <span class="event-time-label">{formatTime(event.starts_at)}</span>
+            <span class="event-date-label">{formatDate(event.starts_at, event.timezone)}</span>
+            <span class="event-time-label">{formatTime(event.starts_at, event.timezone)}</span>
           </div>
           <div class="event-info">
             <div class="event-title">{event.title}</div>

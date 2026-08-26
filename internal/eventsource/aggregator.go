@@ -10,6 +10,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/settings"
 )
 
 // An aggregator lists events it does not own (docs/adr/056). Syncing one
@@ -92,6 +93,12 @@ func SyncAggregator(ctx context.Context, db *database.DB, notifier *notification
 	if err != nil {
 		return fmt.Errorf("load aggregator: %w", err)
 	}
+	// An aggregator belongs to no patch — it is one city calendar feeding
+	// many — so its zoneless times mean the instance's zone, the same rung
+	// a patch that names none falls through to (docs/adr/045). The patches
+	// it routes to do not each reinterpret it: the listing was parsed once,
+	// and a crosswalk entry inherits that reading.
+	src.Zone = loadZone(settings.EffectiveTimezone(db))
 	if paused {
 		// A seamrip import, or an admin who pulled the plug. Routing
 		// still runs off cached listings — pausing stops the fetch, not

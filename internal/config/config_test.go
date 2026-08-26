@@ -124,6 +124,7 @@ func TestNoWarningsForRealConfig(t *testing.T) {
 instance:
   name: "Test"
   domain: "quilt.example.org"
+geographic:
   timezone: "America/New_York"
 federation:
   enabled: true
@@ -140,12 +141,13 @@ func TestTimezoneResolves(t *testing.T) {
 	cfg, err := Load(writeConfig(t, `
 instance:
   name: "Test"
+geographic:
   timezone: "America/New_York"
 `))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := cfg.Instance.Location().String(); got != "America/New_York" {
+	if got := cfg.Location().String(); got != "America/New_York" {
 		t.Errorf("Location() = %s, want America/New_York", got)
 	}
 }
@@ -157,13 +159,14 @@ func TestTimezoneRejectsNonsense(t *testing.T) {
 		_, err := Load(writeConfig(t, `
 instance:
   name: "Test"
+geographic:
   timezone: "`+bad+`"
 `))
 		if err == nil {
 			t.Errorf("timezone %q was accepted", bad)
 			continue
 		}
-		if !strings.Contains(err.Error(), "instance.timezone") {
+		if !strings.Contains(err.Error(), "geographic.timezone") {
 			t.Errorf("error for %q should name the field, got: %v", bad, err)
 		}
 	}
@@ -180,12 +183,12 @@ instance:
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.Instance.Location() != time.UTC {
-		t.Errorf("Location() = %v, want UTC", cfg.Instance.Location())
+	if cfg.Location() != time.UTC {
+		t.Errorf("Location() = %v, want UTC", cfg.Location())
 	}
 	found := false
 	for _, w := range cfg.Warnings() {
-		if strings.Contains(w, "instance.timezone") {
+		if strings.Contains(w, "geographic.timezone") {
 			found = true
 		}
 	}

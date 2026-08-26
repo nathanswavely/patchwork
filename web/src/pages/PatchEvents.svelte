@@ -276,7 +276,7 @@
           <div class="suggested-main">
             <span class="suggested-event-title">{sub.title}</span>
             <span class="suggested-meta muted">
-              {formatDate(sub.starts_at)} &middot; {formatTime(sub.starts_at)}
+              {formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}
               {#if sub.location} &middot; {sub.location}{/if}
             </span>
             {#if sub.description}
@@ -326,11 +326,11 @@
             class="event-row"
             onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}`); }}
           >
-            <span class="event-date">{formatDate(event.starts_at)}</span>
+            <span class="event-date">{formatDate(event.starts_at, event.timezone)}</span>
             <span class="event-info">
               <span class="event-title">{event.title}</span>
               <span class="event-detail">
-                {formatTime(event.starts_at)}
+                {formatTime(event.starts_at, event.timezone)}
                 {#if event.location} &middot; {event.location}{/if}
               </span>
             </span>

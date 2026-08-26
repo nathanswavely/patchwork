@@ -163,21 +163,27 @@ type Appearance struct {
 }
 
 type Node struct {
-	ID               string      `json:"id"`
-	OwnerID          string      `json:"owner_id"`
-	Name             string      `json:"name"`
-	Slug             string      `json:"slug"`
-	Description      string      `json:"description"`
-	Latitude         *float64    `json:"latitude,omitempty"`
-	Longitude        *float64    `json:"longitude,omitempty"`
-	Address          string      `json:"address"`
-	Website          string      `json:"website"`
+	ID          string   `json:"id"`
+	OwnerID     string   `json:"owner_id"`
+	Name        string   `json:"name"`
+	Slug        string   `json:"slug"`
+	Description string   `json:"description"`
+	Latitude    *float64 `json:"latitude,omitempty"`
+	Longitude   *float64 `json:"longitude,omitempty"`
+	Address     string   `json:"address"`
+	// Timezone is where this patch keeps time (docs/adr/045), as an IANA
+	// name. Unlike an event payload's resolved zone, this is the stored
+	// value: empty means the patch inherits the instance's, which is what
+	// its settings form needs to show an empty field rather than a
+	// pre-filled one nobody chose.
+	Timezone string `json:"timezone"`
+	Website  string `json:"website"`
 	// ImageURL is a reference, never bytes (docs/adr/007): the browser fetches
 	// it from wherever the patch keeps it. ImageAlt is required alongside, and
 	// is what remains when the bytes go.
-	ImageURL string     `json:"image_url"`
-	ImageAlt string     `json:"image_alt"`
-	Links    []NodeLink `json:"links"`
+	ImageURL         string      `json:"image_url"`
+	ImageAlt         string      `json:"image_alt"`
+	Links            []NodeLink  `json:"links"`
 	Visibility       string      `json:"visibility"`
 	MembershipPolicy string      `json:"membership_policy"`
 	Appearance       *Appearance `json:"appearance,omitempty"`
@@ -227,8 +233,17 @@ type Event struct {
 	Longitude   *float64 `json:"longitude,omitempty"`
 	StartsAt    string   `json:"starts_at"`
 	EndsAt      *string  `json:"ends_at,omitempty"`
-	Recurrence  string   `json:"recurrence"`
-	Visibility  string   `json:"visibility"`
+	// Timezone is the IANA zone the event happens in (docs/adr/045).
+	// StartsAt stays the instant and stays the sort key; this is the fact
+	// that instant encodes — the wall clock the organizer meant.
+	//
+	// On the wire it is always resolved and never empty: the API collapses
+	// event → patch → instance → UTC before it leaves, so a client never
+	// reimplements the fallback and never fetches the patch to render the
+	// event. Stored, it may be NULL, and NULL means inherit.
+	Timezone   string `json:"timezone"`
+	Recurrence string `json:"recurrence"`
+	Visibility string `json:"visibility"`
 	// A flyer or a show photo, held wherever the patch keeps it (docs/adr/007).
 	ImageURL string `json:"image_url"`
 	ImageAlt string `json:"image_alt"`
@@ -368,16 +383,16 @@ type AggregatorListing struct {
 // event at that instant (docs/adr/056). The patch's own event wins until
 // one of its admins says the two are different.
 type AggregatorHold struct {
-	ID            string `json:"id"`
-	SourceID      string `json:"source_id"`
-	NodeID        string `json:"node_id"`
-	UID           string `json:"uid"`
-	Occurrence    string `json:"occurrence"`
-	RivalEventID  string `json:"rival_event_id"`
-	RivalTitle    string `json:"rival_title"`
-	Title         string `json:"title"`
-	Location      string `json:"location"`
-	StartsAt      string `json:"starts_at"`
+	ID             string `json:"id"`
+	SourceID       string `json:"source_id"`
+	NodeID         string `json:"node_id"`
+	UID            string `json:"uid"`
+	Occurrence     string `json:"occurrence"`
+	RivalEventID   string `json:"rival_event_id"`
+	RivalTitle     string `json:"rival_title"`
+	Title          string `json:"title"`
+	Location       string `json:"location"`
+	StartsAt       string `json:"starts_at"`
 	AggregatorName string `json:"aggregator_name"`
 	CreatedAt      string `json:"created_at"`
 }

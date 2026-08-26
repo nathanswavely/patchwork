@@ -28,6 +28,41 @@
   let hideAmendedLinings = $state(false);
   let savingPolicy = $state(false);
 
+  // Where this quilt keeps time (docs/adr/045): the rung an event's zone
+  // falls through to when neither the event nor its patch names one. Set
+  // here as well as in patchwork.yaml because a wrong zone shows up as
+  // every event being hours off, and that fix should not need a redeploy.
+  let timezone = $state('');
+  let timezoneConfigured = $state('');
+  let savingTimezone = $state(false);
+
+  function zoneIsKnown(tz) {
+    if (!tz) return true; // empty clears the override
+    try {
+      new Intl.DateTimeFormat('en-US', { timeZone: tz });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function saveTimezone() {
+    const tz = timezone.trim();
+    if (!zoneIsKnown(tz)) {
+      showToast('That is not a timezone this quilt knows', 'error');
+      return;
+    }
+    savingTimezone = true;
+    try {
+      const saved = await api('admin/settings', { method: 'PATCH', body: { timezone: tz } });
+      timezone = saved?.timezone || tz || timezoneConfigured;
+      showToast(tz ? 'Timezone saved' : 'Timezone reset to the configured default', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    }
+    savingTimezone = false;
+  }
+
   async function savePolicy(value) {
     savingPolicy = true;
     try {
@@ -85,6 +120,8 @@
       name = data.name;
       description = data.description;
       hideAmendedLinings = !!data.hide_amended_linings;
+      timezone = data.timezone || '';
+      timezoneConfigured = data.timezone_configured || '';
       seedIcon(data.icon);
     } catch (e) {
       error = e.message;
@@ -333,6 +370,39 @@
 
     <!-- ===== Data export ===== -->
     <section class="section">
+      <h2>Timekeeping</h2>
+      <p class="section-desc">
+        Where this quilt keeps time. An event shows the wall clock of the place
+        it happens, so this is what a patch falls back to when it has not named
+        a timezone of its own, and what a calendar feed's zoneless times mean
+        when it is imported. Everyone reading from elsewhere sees the event's
+        own clock, with the zone named next to it.
+      </p>
+      <div class="settings-card">
+        <label class="field-label" for="quilt-timezone">Timezone</label>
+        <input
+          id="quilt-timezone"
+          type="text"
+          bind:value={timezone}
+          disabled={savingTimezone}
+          placeholder={timezoneConfigured || 'America/New_York'}
+        />
+        <p class="section-desc">
+          An IANA name, like America/New_York or Europe/Berlin.
+          {#if timezoneConfigured}
+            Clear it to go back to {timezoneConfigured.replace(/_/g, ' ')} from patchwork.yaml.
+          {/if}
+          {#if !zoneIsKnown(timezone.trim())}
+            <span class="zone-invalid">Not a timezone this quilt knows.</span>
+          {/if}
+        </p>
+        <button class="btn btn-primary" onclick={saveTimezone} disabled={savingTimezone}>
+          {savingTimezone ? 'Saving...' : 'Save timezone'}
+        </button>
+      </div>
+    </section>
+
+    <section class="section">
       <h2>The Lining</h2>
       <p class="section-desc">
         Every patch starts with the lining and can amend its copy by proposal.
@@ -416,6 +486,10 @@
 </div>
 
 <style>
+  .zone-invalid {
+    color: var(--color-danger, #e05252);
+  }
+
   .page-header {
     padding: 1.5rem 0 1rem;
   }

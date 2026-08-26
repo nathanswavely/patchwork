@@ -1,6 +1,14 @@
 # ADR 065: A feed time without a zone still happened somewhere
 
-Date: 2026-08-22. Status: **accepted**. Sits inside ADR 031's model
+Date: 2026-08-22. Status: **accepted, partly superseded by ADR 067**.
+Its finding stands — a feed time carrying no zone is not UTC — and two of
+its mechanisms do not. `instance.timezone` moved to `geographic.timezone`
+with an admin override, and "instance-wide rather than per-source" was
+wrong: ADR 045 already had a chain to hang it on, and ingest now reads a
+feed in the zone of the patch that attached it. This ADR was written
+without citing ADR 045, which had decided the shape a year of numbering
+earlier; the "no instance timezone exists anywhere in the stack" line it
+quotes from datetime.js was the next sentence's setup, not a settled rule. Sits inside ADR 031's model
 unchanged — this is about how a fetched document is read, not about what
 a source is or what attaching one means. Adds the one piece of
 configuration the frontend's datetime rules deliberately never needed.

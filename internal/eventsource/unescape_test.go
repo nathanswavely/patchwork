@@ -24,7 +24,7 @@ DESCRIPTION:Tapes\, records &amp; zines
 LOCATION:Lanc Workshop &amp; Tool Library\, 433 Ice Avenue
 DTSTART:20260722T190000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -52,7 +52,7 @@ SUMMARY:Coffee & Cassettes
 LOCATION:5 & Dime
 DTSTART:20260722T190000Z
 END:VEVENT
-`), testNow)
+`), testNow, testZone())
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}

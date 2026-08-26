@@ -16,6 +16,7 @@ let instanceLoaded = $state(false);
 // Neighbor quilts (docs/adr/024): the instance's public adjacency list,
 // shown to every visitor in the quilt switcher.
 let neighborQuilts = $state([]);
+let instanceTimezone = $state('');
 let instanceDomain = $state('');
 // Whether this quilt federates (docs/adr/059). Gates the patch handle in
 // Subscribe: without it the actor endpoints are not mounted, so the
@@ -48,6 +49,11 @@ export function getInstanceModules() { return instanceModules; }
 export function getInstanceStats() { return instanceStats; }
 export function isInstanceLoaded() { return instanceLoaded; }
 export function getSubmissionsEnabled() { return instanceSubmissionsEnabled; }
+// Where this quilt keeps time (docs/adr/045): the rung an event's zone
+// falls through to when neither it nor its patch names one. Read by the
+// event form so a new event defaults to the quilt's clock rather than
+// the organizer's laptop.
+export function getInstanceTimezone() { return instanceTimezone; }
 export function getAllTags() { return allTags; }
 export function getTagVocabulary() { return tagVocabulary; }
 export function getTagCounts() { return tagCounts; }
@@ -133,6 +139,7 @@ export async function loadInstance() {
     if (data?.neighbor_quilts) neighborQuilts = data.neighbor_quilts;
     if (data?.domain) instanceDomain = data.domain;
     if (data?.federation !== undefined) instanceFederation = data.federation;
+    if (data?.geography?.timezone) instanceTimezone = data.geography.timezone;
     instanceLoaded = true;
   } catch { /* keep defaults */ }
 }

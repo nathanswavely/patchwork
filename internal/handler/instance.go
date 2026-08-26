@@ -41,6 +41,12 @@ type InstanceGeography struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	Radius    float64 `json:"radius"`
+	// Where this quilt keeps time (docs/adr/045). Public because it is
+	// the same claim the coordinates make, and because the event form
+	// needs a sensible default before a patch is chosen — and because a
+	// quilt reading us cross-origin renders our events and would
+	// otherwise have to guess.
+	Timezone string `json:"timezone"`
 }
 
 type InstanceBranding struct {
@@ -103,6 +109,7 @@ func Instance(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				Latitude:  cfg.Geographic.Latitude,
 				Longitude: cfg.Geographic.Longitude,
 				Radius:    cfg.Geographic.Radius,
+				Timezone:  settings.EffectiveTimezone(db),
 			},
 			Branding: InstanceBranding{
 				Color:   cfg.Branding.Color,

@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/emersion/go-ical"
@@ -23,36 +22,13 @@ import (
 // All-day events lost a whole day the same way, midnight UTC being the
 // evening before.
 //
-// So ingest needs a zone even though display doesn't (docs/adr/065).
-// Display genuinely doesn't: events are stored as instants and rendered
-// in the reader's own browser zone, and that stays true. This zone is
-// used only to decide what a zoneless *feed* time meant, and only when
-// the feed itself declines to say.
-
-// floatingZone is the zone a zoneless feed time is read in. Set once at
-// startup from instance.timezone, before the sync worker starts; atomic
-// because "once at startup" is a convention and the worker is not the
-// only caller.
-var floatingZone atomic.Pointer[time.Location]
-
-// FloatingZone reports the zone zoneless feed times are read in. UTC
-// until SetFloatingZone says otherwise, which preserves the old
-// behaviour for an instance that has configured nothing.
-func FloatingZone() *time.Location {
-	if loc := floatingZone.Load(); loc != nil {
-		return loc
-	}
-	return time.UTC
-}
-
-// SetFloatingZone sets the zone zoneless feed times are read in. A nil
-// location resets to UTC.
-func SetFloatingZone(loc *time.Location) {
-	if loc == nil {
-		loc = time.UTC
-	}
-	floatingZone.Store(loc)
-}
+// The zone a feed is read in is the zone of the patch that attached it
+// (docs/adr/045): a venue's own calendar publishing floating times is
+// publishing them in its own zone, and that is what floating means. It
+// resolves patch → instance → UTC, the same chain an event's own zone
+// resolves through, and it arrives here as a parameter rather than a
+// package global so that two patches in two zones can sync in the same
+// process without one deciding for the other.
 
 // offsetInName matches the offset publishers bake into a TZID they made
 // up: "(UTC-05:00) Eastern Time (US & Canada)", "GMT+0100", "UTC-5".
@@ -191,9 +167,12 @@ var windowsZones = map[string]string{
 // calendarZone reads the zone a calendar declares for itself.
 // X-WR-TIMEZONE is not in RFC 5545, but Google, Apple, and most of the
 // CMS plugins in between write it, and it is the only statement a feed
-// full of floating times ever makes about where it is. Falls back to
-// the configured zone.
-func calendarZone(cal *ical.Calendar) *time.Location {
+// full of floating times ever makes about where it is. Falls back to the
+// zone the caller resolved for the patch that attached the feed.
+func calendarZone(cal *ical.Calendar, fallback *time.Location) *time.Location {
+	if fallback == nil {
+		fallback = time.UTC
+	}
 	if cal != nil && cal.Component != nil {
 		if p := cal.Props.Get(propCalendarTimezone); p != nil {
 			if loc, _, ok := resolveTZID(p.Value); ok {
@@ -201,7 +180,7 @@ func calendarZone(cal *ical.Calendar) *time.Location {
 			}
 		}
 	}
-	return FloatingZone()
+	return fallback
 }
 
 // propCalendarTimezone is the calendar-wide zone hint. go-ical has no
@@ -271,3 +250,15 @@ const (
 	icsDateTime    = "20060102T150405"
 	icsDateTimeUTC = "20060102T150405Z"
 )
+
+// loadZone turns a resolved zone name into a location, falling back to
+// UTC rather than failing. The name has already been through the same
+// validation the admin panel applies; a name that stops resolving here
+// means tzdata moved under a stored value, and a feed read an hour off
+// beats a feed that stops syncing.
+func loadZone(name string) *time.Location {
+	if loc, err := time.LoadLocation(strings.TrimSpace(name)); err == nil {
+		return loc
+	}
+	return time.UTC
+}

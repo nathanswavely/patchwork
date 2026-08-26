@@ -87,12 +87,12 @@
 
   let timeLabel = $derived.by(() => {
     if (!event?.starts_at) return '';
-    const start = `${formatDate(event.starts_at)} · ${formatTime(event.starts_at)}`;
+    const start = `${formatDate(event.starts_at, event.timezone)} · ${formatTime(event.starts_at, event.timezone)}`;
     if (!event.ends_at) return start;
     const sameDay = event.starts_at.slice(0, 10) === event.ends_at.slice(0, 10);
     return sameDay
-      ? `${start} – ${formatTime(event.ends_at)}`
-      : `${start} – ${formatDate(event.ends_at)} · ${formatTime(event.ends_at)}`;
+      ? `${start} – ${formatTime(event.ends_at, event.timezone)}`
+      : `${start} – ${formatDate(event.ends_at, event.timezone)} · ${formatTime(event.ends_at, event.timezone)}`;
   });
 
   const RECURRENCE_LABELS = {

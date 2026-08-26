@@ -18,6 +18,9 @@
   let placingLocation = $state(false);
   let savingLocation = $state(false);
   let mapCenter = $state(null);
+  // The quilt's zone, so this patch's empty timezone field can say what
+  // leaving it empty actually means rather than just looking unset.
+  let instanceTimezone = $state('');
   let onMap = $derived(hasMapLocation(node?.latitude, node?.longitude));
   let locationReadout = $derived(
     onMap ? formatCoord(node.latitude, node.longitude) : ''
@@ -31,6 +34,7 @@
       .then((inst) => {
         if (inst?.geography) {
           mapCenter = { lat: inst.geography.latitude, lng: inst.geography.longitude };
+          instanceTimezone = inst.geography.timezone || '';
         }
       })
       .catch(() => {});
@@ -119,6 +123,22 @@
 
   function resetTags() {
     tags = Array.isArray(node?.tags) ? [...node.tags] : [];
+  }
+
+  // Checked before the round trip so a typo is visible where it was typed.
+  // The server validates too and is the authority; a zone it cannot resolve
+  // would silently hand every event in this patch the quilt's clock instead.
+  async function saveTimezone(newValue) {
+    const tz = (newValue || '').trim();
+    if (tz) {
+      try {
+        new Intl.DateTimeFormat('en-US', { timeZone: tz });
+      } catch {
+        showToast('That is not a timezone this quilt knows', 'error');
+        return;
+      }
+    }
+    await saveField('timezone', tz);
   }
 
   async function saveField(field, newValue) {
@@ -268,6 +288,29 @@
     onSave={(v) => saveField('address', v)}
     placeholder="e.g. Lancaster, PA"
   />
+
+  <!--
+    Where this patch keeps time (docs/adr/045). Next to the address because
+    it is the same claim in the units a clock uses, and separate from the
+    map marker for the same reason the address is: a pin is a position, a
+    zone is what its clock reads.
+
+    Every event this patch hosts inherits it, and a calendar feed the patch
+    attaches is read in it — so a blank here is not neutral, it means the
+    quilt's zone.
+  -->
+  <InlineEdit
+    label="Timezone"
+    value={node?.timezone || ''}
+    type="text"
+    onSave={(v) => saveTimezone(v)}
+    placeholder={instanceTimezone || 'e.g. America/New_York'}
+  />
+  <p class="field-hint muted">
+    An IANA name. Leave it empty to follow the quilt{instanceTimezone
+      ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`
+      : ''}.
+  </p>
 
   <!-- Map location section (issue #4). Separate from the address prose
        above: an address never implies a map position. -->
@@ -485,6 +528,11 @@
 </div>
 
 <style>
+  .field-hint {
+    margin: -0.5rem 0 1rem;
+    font-size: 0.85rem;
+  }
+
   .settings-info {
     max-width: var(--pw-measure-narrow);
   }

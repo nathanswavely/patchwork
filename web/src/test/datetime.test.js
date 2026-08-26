@@ -264,12 +264,24 @@ describe('EventForm uses the pairing on both sides', () => {
     'utf8',
   );
 
-  it('prefills and submits through the helpers', () => {
+  it('prefills and submits through the helpers, naming the same zone', () => {
+    // The pairing is the property: both directions have to name one zone
+    // or every open-and-save moves the event. Since docs/adr/045 that zone
+    // is the event's rather than the editor's, so the halves are the
+    // zoned helpers and both are passed `timezone`.
     expect(src).toContain("from '../lib/datetime.js'");
-    expect(src).toContain('startsAt = toLocalInputValue(event.starts_at)');
-    expect(src).toContain('endsAt = toLocalInputValue(event.ends_at)');
-    expect(src).toContain('starts_at: fromLocalInputValue(startsAt)');
-    expect(src).toContain('ends_at: fromLocalInputValue(endsAt)');
+    expect(src).toContain('startsAt = toZonedInputValue(event.starts_at, timezone)');
+    expect(src).toContain('endsAt = toZonedInputValue(event.ends_at, timezone)');
+    expect(src).toContain('starts_at: fromZonedInputValue(startsAt, timezone)');
+    expect(src).toContain('ends_at: fromZonedInputValue(endsAt, timezone)');
+  });
+
+  it('never reads or writes a form time in the browser’s zone', () => {
+    // toLocalInputValue/fromLocalInputValue still exist and are still the
+    // right answer for a form with no event behind it. On this form they
+    // would silently reintroduce the editor's clock.
+    expect(src).not.toMatch(/\btoLocalInputValue\(/);
+    expect(src).not.toMatch(/\bfromLocalInputValue\(/);
   });
 
   it('never reads a datetime-local value off the raw ISO digits', () => {
