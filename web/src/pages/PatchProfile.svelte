@@ -221,10 +221,17 @@
 
       <!-- State is worn in the header, never disguised as an action. The
            unclaimed fact used to be visible only as a blue button, so the
-           act shouted while the fact stayed silent (docs/adr/042). -->
+           act shouted while the fact stayed silent (docs/adr/042).
+           Provenance is the half this page cannot show on its own: "no one
+           runs this" says nobody is in charge, not that the community put
+           the listing here, so a visitor meeting it cold reads the page as
+           the group's own and the quilt as vouching for it. The clause
+           links to About ("Where patches come from") because a signed-in
+           visitor has no other standing path there. -->
       {#if isUnclaimed}
         <p class="state-notice">
           No one runs this patch yet.
+          <a href="/about" class="provenance-link" onclick={go('/about')}>The community added it</a>.
           {#if isAdmin}
             <a href="/admin/claims" onclick={go('/admin/claims')}>Review claims</a>.
           {:else if hasOpenClaim}
@@ -570,6 +577,18 @@
     font-size: 0.85rem;
     color: var(--color-text-muted);
     margin-top: 0.6rem;
+  }
+
+  /* The provenance clause reads at the weight of the state it explains, so
+     the claim link stays the only bright thing on the line — a fact styled
+     like an act is the confusion docs/adr/042 removed from this header. */
+  .state-notice .provenance-link {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .state-notice .provenance-link:hover {
+    color: var(--color-text);
   }
 
   .amended-lining-row {

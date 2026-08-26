@@ -73,6 +73,61 @@ func TestQuiltRenameOverridesYaml(t *testing.T) {
 	}
 }
 
+// Explicit null clears an override so patchwork.yaml is authoritative
+// again — the same three-way contract icon_design already uses. Absent must
+// stay distinguishable from null, or saving the name would silently reset
+// the description on every identity save.
+func TestQuiltIdentityResetsToYaml(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := testConfig()
+	_, token := createTestUser(t, db, "boss", "admin")
+
+	patch := func(body map[string]interface{}) *httptest.ResponseRecorder {
+		r := authedRequest("PATCH", "/api/v1/admin/settings", body, token)
+		return serveAdmin(db, "PATCH", "/api/v1/admin/settings", handler.AdminUpdateSettings(db, cfg), r)
+	}
+
+	if w := patch(map[string]interface{}{"name": "Renamed Quilt", "description": "new desc"}); w.Code != http.StatusOK {
+		t.Fatalf("override: got %d: %s", w.Code, w.Body.String())
+	}
+
+	// Resetting the name leaves the description override standing.
+	w := patch(map[string]interface{}{"name": nil})
+	if w.Code != http.StatusOK {
+		t.Fatalf("reset name: got %d: %s", w.Code, w.Body.String())
+	}
+	if got := settings.EffectiveName(db, cfg); got != cfg.Instance.Name {
+		t.Errorf("effective name = %q, want the yaml default %q", got, cfg.Instance.Name)
+	}
+	if got := settings.EffectiveDescription(db, cfg); got != "new desc" {
+		t.Errorf("description = %q, want it untouched by the name reset", got)
+	}
+
+	var resp struct {
+		NameOverridden bool `json:"name_overridden"`
+		DescOverridden bool `json:"description_overridden"`
+	}
+	json.NewDecoder(w.Body).Decode(&resp)
+	if resp.NameOverridden {
+		t.Error("name_overridden stayed true after a reset")
+	}
+	if !resp.DescOverridden {
+		t.Error("description_overridden went false without being reset")
+	}
+
+	// A blank description resets too: Get reads "" as absent, so storing it
+	// would leave a row claiming an override no reader ever sees.
+	if w := patch(map[string]interface{}{"description": "   "}); w.Code != http.StatusOK {
+		t.Fatalf("blank description: got %d: %s", w.Code, w.Body.String())
+	}
+	if _, overridden := settings.Get(db, settings.KeyDescription); overridden {
+		t.Error("a blank description left an override row behind")
+	}
+	if got := settings.EffectiveDescription(db, cfg); got != cfg.Instance.Description {
+		t.Errorf("description = %q, want the yaml default %q", got, cfg.Instance.Description)
+	}
+}
+
 func getIcon(db *database.DB, cfg *config.Config, ifNoneMatch string) *httptest.ResponseRecorder {
 	r := httptest.NewRequest("GET", "/api/v1/instance/icon", nil)
 	if ifNoneMatch != "" {

@@ -113,10 +113,21 @@ describe('PatchProfile', () => {
   });
 
   it('states the unclaimed fact as a header line, with the claim inside it', () => {
-    expect(src).toContain('No one runs this patch yet.');
+    expect(src).toContain('No one runs this patch yet');
     expect(src).toContain('class="state-notice"');
     // Not a competing primary button any more.
     expect(src).not.toMatch(/btn-primary[^>]*>\s*Claim this patch/);
+  });
+
+  it('states where the listing came from, at the weight of the state and not the act', () => {
+    // Provenance is the half the page cannot show on its own: "no one runs
+    // this" says nobody is in charge, not that the community put the listing
+    // here (About, "Where patches come from").
+    expect(src).toContain('The community added it');
+    expect(src).toMatch(/class="provenance-link"[^>]*>/);
+    // Muted and underlined, so the claim link stays the only bright thing on
+    // the line — a fact styled like an act is what docs/adr/042 removed.
+    expect(src).toMatch(/\.state-notice \.provenance-link \{[^}]*color: inherit/);
   });
 
   it('routes an instance admin to the claim queue rather than offering them a claim', () => {

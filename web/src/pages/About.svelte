@@ -7,6 +7,22 @@
    *
    * Reached from the "What is Patchwork?" affordance in the global bar and
    * the intro card, so its most likely first reader is anonymous.
+   *
+   * The prose here ships in the binary and is the same on every quilt, so
+   * it speaks for the project rather than for any one instance; the only
+   * instance-authored text on the page is the description slot under "What
+   * is this?" and the Label gist. Two consequences: nothing may promise
+   * what a given instance does (a sweep, a review process), and nothing may
+   * assert what the platform does not enforce (docs/adr/049).
+   *
+   * "Where do patches come from?" exists because no other surface carries a
+   * listing's provenance: a visitor meeting an unclaimed patch cold reads
+   * the quilt as a roster of groups that opted in, and concludes the quilt
+   * vouches for every tile on it. The claims it makes are load-bearing —
+   * unclaimed patches carry no lining and no members (docs/adr/039),
+   * claiming adopts the lining at setup (docs/adr/030), dissent brands
+   * rather than bans (docs/adr/037), and export is whole-instance and
+   * admin-only behind a step-up gate (docs/adr/017).
    */
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, isAuthChecked } from '../stores/auth.svelte.js';
@@ -34,6 +50,10 @@
   function goLining(e) {
     e.preventDefault();
     navigate('/lining');
+  }
+  function goGovernance(e) {
+    e.preventDefault();
+    navigate('/governance');
   }
 </script>
 
@@ -70,16 +90,27 @@
   </div>
 
   <section class="about-section">
-    <h2>What this is</h2>
+    <h2>What is this?</h2>
     <p>
-      <strong>{instanceName}</strong> is a Patchwork: a home the
-      communities here run for themselves, on their own machine.
-      {#if instanceDescription}{instanceDescription}{/if}
+      A Patchwork is a hyper-local-by-design platform built to enable
+      discovery, connection, and community building without relying on
+      billionaire owned, algorithm powered, attention-economy-buttressed
+      apps and social media sites. Patchwork is an open source codebase
+      that can be hosted by anyone. No ads and no monetization strategy.
     </p>
+    <!-- The instance's own words, and the only place on this page a quilt
+         speaks for itself. Attributed rather than blended into the prose
+         around it: the paragraph above is the project's claim, this is the
+         instance's, and a reader should be able to tell which is which.
+         Renders nothing when unset. -->
+    {#if instanceDescription}
+      <p class="instance-intro">This instance describes itself as:</p>
+      <p class="instance-desc">{instanceDescription}</p>
+    {/if}
   </section>
 
   <section class="about-section">
-    <h2>How it works</h2>
+    <h2>How does it work?</h2>
     <p>
       Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another.
     </p>
@@ -98,12 +129,58 @@
   <section class="about-section">
     <h2>What makes it different</h2>
     <ul>
-      <li>No ads, and nothing here is for sale.</li>
-      <li>No algorithm decides what you see. The quilt and your feed follow the connections you actually have.</li>
-      <li>Run by named people in this community, with the costs stated in the open.</li>
+      <li>Follow a patch to see events and public notifications from it in your own personal quilt.</li>
+      <li>Join a patch as a member to be involved in non-public activities.</li>
+      <li>Create or manage a patch to update members, document policies, and even run internal elections and governance.</li>
+    </ul>
+    <p>
+      Patches are arranged on the quilt near other patches that share
+      members, followers, and events. Patchwork also has a robust
+      governance system that allows patches to elect leaders, vote on
+      policies, and attest to shared values. If you're interested in
+      transparent, open-source governance through Patchwork,
+      <a href="/governance" onclick={goGovernance}>read more here</a>.
+    </p>
+  </section>
+
+  <section class="about-section">
+    <h2>Where do patches come from?</h2>
+    <p>
+      Patches are created either by their owner or as "unclaimed" by an
+      admin or a community suggestion. Unclaimed patches can be acquired
+      and verified by their owners. However, any claimed patch must make a
+      choice: adopt <a href="/lining" onclick={goLining}>the lining</a>,
+      or adopt and then publicly dissent. The lining is the "baseline"
+      commitment that Patchwork expects, and any dissent or modifications
+      thereof will not result in a ban, but instead a brand. Patchwork was
+      designed to be a community building tool, and therefore has
+      intentional biases towards fostering community according to values
+      held by the contributors. Neighbors with differing values are
+      welcome to use the tools, as they are welcome to participate in
+      society and use shared public infrastructure, but the admin(s) will
+      take steps to enforce rules or remove individuals and entities if
+      significant breach occurs.
+    </p>
+    <p>
+      Patch presence on this quilt does not indicate an endorsement by this
+      Patchwork or the people who run it. It only means the person, place,
+      or group exists and that somebody recorded it, like a modern phone
+      book. Nothing reaches your personal quilt except the patches you
+      choose to follow, and anything that has no business being here at all
+      can be reported to the admins.
+    </p>
+  </section>
+
+  <section class="about-section">
+    <h2>What makes Patchwork different</h2>
+    <ul>
+      <li>No ads, and no data collection beyond what the platform needs to function.</li>
+      <li>No algorithm that decides what you should see.</li>
+      <li>Run by community members.</li>
       <li>
-        Every patch starts from <a href="/lining" onclick={goLining}>the lining</a>,
-        a shared community-standards baseline. Amendments to it are public.
+        Creating a patch requires adopting
+        <a href="/lining" onclick={goLining}>the lining</a>, and
+        amendments to it for your community are public.
       </li>
       <li>
         "Leaving" is totally fine and affordances for it are built in. It's called a "Seamrip." A community can export its data and stand up again under new stewards The
@@ -191,6 +268,22 @@
 
   .about-section a {
     color: var(--color-primary);
+  }
+
+  /* The instance speaking in its own voice, marked as a quotation so it
+     never reads as more of the project's prose. Both selectors carry the
+     section class so they outrank `.about-section p`'s margins rather than
+     fighting them with !important. */
+  .about-section .instance-intro {
+    margin-bottom: 6px;
+    color: var(--color-text-muted);
+  }
+
+  .about-section .instance-desc {
+    margin: 0;
+    padding-left: 12px;
+    border-left: 3px solid var(--color-border);
+    line-height: 1.6;
   }
 
   .about-join {

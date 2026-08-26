@@ -1,6 +1,10 @@
 # Onboarding is statements, not signatures
 
-Date: 2026-07-24. Status: accepted.
+Date: 2026-07-24. Status: accepted; amended by docs/adr/068 — "no in-app
+help center" stands, but the About page is no longer the *single*
+explaining surface: /governance is admitted under a two-part test,
+because a permission-gated subsystem cannot be taught by the UI that
+hides it.
 
 Designing first-contact for every audience at once — anonymous visitors,
 new accounts, new patch members, new patch owners — surfaced a question

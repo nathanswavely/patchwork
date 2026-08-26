@@ -24,6 +24,13 @@ import (
 // icon — is database state editable by the instance admin; deployment
 // concerns stay in patchwork.yaml.
 
+// isJSONNull reports whether a raw field was sent as the literal null,
+// which every override on this endpoint reads as "clear this and let
+// patchwork.yaml speak again".
+func isJSONNull(raw json.RawMessage) bool {
+	return strings.TrimSpace(string(raw)) == "null"
+}
+
 // iconState describes the effective quilt icon for API responses: the
 // design that is being served, and whether an admin drafted it or the
 // quilt was assigned one (docs/adr/043).
@@ -80,8 +87,13 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		adminUser := middleware.UserFromContext(r.Context())
 
 		var req struct {
-			Name        *string `json:"name"`
-			Description *string `json:"description"`
+			// Name and Description carry the same three-way contract as
+			// IconDesign: absent leaves the setting alone, a string sets the
+			// override, and explicit null clears it so patchwork.yaml is
+			// authoritative again. Raw so absent and null stay
+			// distinguishable — a *string collapses them.
+			Name        json.RawMessage `json:"name"`
+			Description json.RawMessage `json:"description"`
 			// IconDesign is a drafted block plus its fabrics; explicit
 			// null clears it and the quilt goes back to an assigned block
 			// (docs/adr/043). Raw so absent and null stay distinguishable.
@@ -98,29 +110,57 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		if req.Name != nil {
-			name := strings.TrimSpace(*req.Name)
-			if name == "" {
-				http.Error(w, `{"error":"name cannot be empty"}`, http.StatusBadRequest)
-				return
-			}
-			if len(name) > 100 {
-				http.Error(w, `{"error":"name must be 100 characters or fewer"}`, http.StatusBadRequest)
-				return
-			}
-			if err := settings.Set(db, settings.KeyName, name); err != nil {
-				http.Error(w, `{"error":"failed to save name"}`, http.StatusInternalServerError)
-				return
+		if len(req.Name) > 0 {
+			if isJSONNull(req.Name) {
+				if err := settings.Unset(db, settings.KeyName); err != nil {
+					http.Error(w, `{"error":"failed to reset the name"}`, http.StatusInternalServerError)
+					return
+				}
+			} else {
+				var raw string
+				if err := json.Unmarshal(req.Name, &raw); err != nil {
+					http.Error(w, `{"error":"invalid name"}`, http.StatusBadRequest)
+					return
+				}
+				name := strings.TrimSpace(raw)
+				if name == "" {
+					http.Error(w, `{"error":"name cannot be empty"}`, http.StatusBadRequest)
+					return
+				}
+				if len(name) > 100 {
+					http.Error(w, `{"error":"name must be 100 characters or fewer"}`, http.StatusBadRequest)
+					return
+				}
+				if err := settings.Set(db, settings.KeyName, name); err != nil {
+					http.Error(w, `{"error":"failed to save name"}`, http.StatusInternalServerError)
+					return
+				}
 			}
 		}
 
-		if req.Description != nil {
-			desc := strings.TrimSpace(*req.Description)
+		if len(req.Description) > 0 {
+			// An empty description resets rather than storing "": Get already
+			// treats a blank value as absent, so a stored empty string is a
+			// row that claims an override the reader never sees.
+			desc := ""
+			if !isJSONNull(req.Description) {
+				var raw string
+				if err := json.Unmarshal(req.Description, &raw); err != nil {
+					http.Error(w, `{"error":"invalid description"}`, http.StatusBadRequest)
+					return
+				}
+				desc = strings.TrimSpace(raw)
+			}
 			if len(desc) > 500 {
 				http.Error(w, `{"error":"description must be 500 characters or fewer"}`, http.StatusBadRequest)
 				return
 			}
-			if err := settings.Set(db, settings.KeyDescription, desc); err != nil {
+			if desc == "" {
+				if err := settings.Unset(db, settings.KeyDescription); err != nil {
+					http.Error(w, `{"error":"failed to reset the description"}`, http.StatusInternalServerError)
+					return
+				}
+			} else if err := settings.Set(db, settings.KeyDescription, desc); err != nil {
 				http.Error(w, `{"error":"failed to save description"}`, http.StatusInternalServerError)
 				return
 			}
@@ -179,11 +219,17 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		auth.LogAuditEvent(db, adminUser.ID, "admin.instance_settings_update", "instance", "", "{}", clientIP(r))
 
+		_, nameOverridden := settings.Get(db, settings.KeyName)
+		_, descOverridden := settings.Get(db, settings.KeyDescription)
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"status": "ok",
-			"name":   settings.EffectiveName(db, cfg),
-			"icon":   currentIconState(db, cfg),
+			"status":                 "ok",
+			"name":                   settings.EffectiveName(db, cfg),
+			"description":            settings.EffectiveDescription(db, cfg),
+			"name_overridden":        nameOverridden,
+			"description_overridden": descOverridden,
+			"icon":                   currentIconState(db, cfg),
 		})
 	}
 }

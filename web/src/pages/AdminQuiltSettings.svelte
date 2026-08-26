@@ -75,6 +75,7 @@
     savingPolicy = false;
   }
   let savingIdentity = $state(false);
+  let resetting = $state('');
 
   // Icon (docs/adr/043): drafted in the block drafter, like a patch tile.
   let iconDraft = $state({ grid: 3, seams: [], colors: {} });
@@ -136,13 +137,47 @@
         method: 'PATCH',
         body: { name: name.trim(), description },
       });
-      data = { ...data, name: res.name, name_overridden: true, description_overridden: true };
-      applyIdentityChange({ name: res.name });
+      applyIdentity(res);
       showToast('Quilt identity saved', 'success');
     } catch (e) {
       showToast(e.message || 'Failed to save', 'error');
     }
     savingIdentity = false;
+  }
+
+  /**
+   * Drop one override and let patchwork.yaml speak for that field again
+   * (explicit null on the endpoint). Per field, not per form: an admin who
+   * wants the deployment's description back rarely wants to lose the name
+   * they chose. The fields are only reachable when actually overridden, so
+   * there is no "reset" that resets nothing.
+   */
+  async function resetField(field) {
+    resetting = field;
+    try {
+      const res = await api('admin/settings', { method: 'PATCH', body: { [field]: null } });
+      applyIdentity(res);
+      showToast(field === 'name' ? 'Quilt name reset to the deployment default' : 'Description reset to the deployment default', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to reset', 'error');
+    }
+    resetting = '';
+  }
+
+  // The server owns what is effective after a write, including which fields
+  // still carry an override, so the form re-seeds from the response rather
+  // than assuming the value it just sent won.
+  function applyIdentity(res) {
+    data = {
+      ...data,
+      name: res.name,
+      description: res.description,
+      name_overridden: res.name_overridden,
+      description_overridden: res.description_overridden,
+    };
+    name = res.name;
+    description = res.description;
+    applyIdentityChange({ name: res.name });
   }
 
   // The fabrics the icon draws with. Slot zero is the quilt's own color;
@@ -284,12 +319,25 @@
           <span class="field-label">Quilt name</span>
           <input type="text" bind:value={name} maxlength="100" />
           {#if data.name_overridden}
-            <span class="field-hint">Set here in the admin panel. Overrides the name in patchwork.yaml.</span>
+            <span class="field-hint">
+              Set here in the admin panel. Overrides the name in patchwork.yaml.
+              <button class="link-btn" onclick={() => resetField('name')} disabled={!!resetting}>
+                {resetting === 'name' ? 'Resetting…' : 'Reset to default'}
+              </button>
+            </span>
           {/if}
         </label>
         <label class="field">
           <span class="field-label">Description</span>
           <textarea bind:value={description} rows="3" maxlength="500"></textarea>
+          {#if data.description_overridden}
+            <span class="field-hint">
+              Set here in the admin panel. Overrides the description in patchwork.yaml.
+              <button class="link-btn" onclick={() => resetField('description')} disabled={!!resetting}>
+                {resetting === 'description' ? 'Resetting…' : 'Reset to default'}
+              </button>
+            </span>
+          {/if}
         </label>
         <div class="field">
           <span class="field-label">Domain</span>
@@ -545,6 +593,24 @@
     font-size: 0.78rem;
     color: var(--color-text-muted);
     line-height: 1.4;
+  }
+
+  /* Reset sits inside the hint that explains the override, at the hint's
+     weight: it undoes a setting rather than saving one, so it never
+     competes with Save Identity. */
+  .link-btn {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .link-btn:disabled {
+    color: var(--color-text-muted);
+    cursor: default;
   }
 
   .field-static {

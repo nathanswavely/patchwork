@@ -80,6 +80,7 @@ several branches are in flight.
 | [053](053-amendments-adopted-elsewhere.md) | Amendments adopted elsewhere — prose only, rules by direct change, no ballot |
 | [055](055-the-record-is-assembled-not-written.md) | The record is assembled, not written — the minute book was a reading gap, not a writing one |
 | [054](054-attested-decisions-federate-through-their-objects.md) | Attested decisions federate through their objects, or not at all — closes the question 052 and 053 both left open *(the behaviour already shipped; this adds the gate's test)* |
+| [068](068-a-second-explaining-surface.md) | A second explaining surface — /governance, and the test that keeps it the last one *(amends 040)* |
 
 ## Proposed — designs on record, not built
 
