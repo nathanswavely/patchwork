@@ -27,6 +27,14 @@
      by a page or by a surface inside one. */
   --pw-gutter: clamp(0.75rem, 3vw, 1.5rem);
 
+  /* The mobile canvas-chrome row — the Label's info button, the view
+     switcher and the filter button float here, just above the bottom nav
+     bar. One token because all three must sit at the SAME height and they
+     live in two different components. Matching the offset is only half of
+     it: everything on this row must also be position: fixed, or the
+     numbers agree while the boxes they are measured from don't. */
+  --pw-canvas-chrome-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+
   /* A card or interruption's own edge to its own content. Deliberately
      a separate scale from the gutter — collapsing the page's edges for
      a phone must not squeeze what's inside the boxes. */

@@ -426,9 +426,11 @@
     position: relative;
     display: flex;
     height: 100vh;
-    height: 100dvh; /* track the visible viewport so absolutely-positioned
-                       chrome (the mobile view switcher) aligns with the
-                       fixed bottom nav on mobile browsers */
+    height: 100dvh; /* track the visible viewport so the panes fill the
+                       screen without the page scrolling behind them.
+                       Nothing positions against this box's bottom edge —
+                       the floating chrome is fixed to the viewport (see
+                       .mobile-header below). */
     overflow: hidden;
   }
 
@@ -772,18 +774,26 @@
     .social-home {
       flex-direction: column;
       height: 100vh; /* full bleed — the quilt shows behind the chrome */
-      height: 100dvh; /* dynamic viewport so the floating view switcher clears
-                         the fixed bottom nav on real mobile browsers */
+      height: 100dvh; /* dynamic viewport so the panes stop at the visible
+                         bottom rather than under the browser's own bar */
     }
 
     /* View toggle floats just above the bottom nav bar, in thumb reach.
        pointer-events pass through around the pill so the canvas stays
-       pannable. */
+       pannable.
+
+       FIXED, not absolute, and sharing --pw-canvas-chrome-bottom with the
+       info and filter buttons in SocialShell: the three are one floating
+       row and must measure from the same box. Absolute inside the 100dvh
+       .social-home agreed with those fixed buttons in a narrowed desktop
+       window and sat about a safe-area's height above them on an iPhone,
+       where the box a fixed element resolves against and the one 100dvh
+       sizes are not reliably the same. Same offset was never enough. */
     .mobile-header {
       display: flex;
       justify-content: center;
-      position: absolute;
-      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+      position: fixed;
+      bottom: var(--pw-canvas-chrome-bottom);
       left: 0;
       right: 0;
       padding: 0 16px;
@@ -791,8 +801,14 @@
       pointer-events: none;
     }
 
+    /* 4px padding + a 28px option = 36px, the height of the info and
+       filter buttons it sits between. Pinned rather than left to the
+       button's default line box, so the row stays level. */
     .mobile-pill-toggle {
       display: flex;
+      align-items: center;
+      height: 36px;
+      box-sizing: border-box;
       pointer-events: auto;
       background: var(--color-glass);
       backdrop-filter: blur(16px);
@@ -803,7 +819,10 @@
     }
 
     .pill-option {
-      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 16px;
       border: none;
       background: none;
       border-radius: 999px;
