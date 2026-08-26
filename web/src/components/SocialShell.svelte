@@ -914,7 +914,7 @@
       justify-content: center;
       position: fixed;
       right: 12px;
-      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+      bottom: var(--pw-canvas-chrome-bottom);
       z-index: 20; /* same floating layer as the view pill and info button */
       width: 36px;
       height: 36px;
@@ -1011,7 +1011,7 @@
       justify-content: center;
       position: fixed;
       left: 12px;
-      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+      bottom: var(--pw-canvas-chrome-bottom);
       z-index: 20; /* same floating layer as the view pill, under the rail (55) */
       width: 36px;
       height: 36px;
