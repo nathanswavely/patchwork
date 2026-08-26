@@ -6,12 +6,12 @@
   import { parseCsv, rowsToEvents, TEMPLATE_CSV } from '../lib/eventCsv.js';
   import { formatEventDate as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
+  import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { showToast } from '../stores/toast.svelte.js';
   import SubscribeFeeds from '../components/SubscribeFeeds.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
-  let isMember = $derived(patch.value.isMember);
   let membershipRole = $derived(patch.value.membershipRole);
   let isUnclaimed = $derived(patch.value.isUnclaimed);
   let node = $derived(patch.value.node);
@@ -23,14 +23,23 @@
   // admins here, and the instance admin for unclaimed patches.
   let canReview = $derived(patch.value.isAdmin || isInstanceAdmin());
 
-  // Non-members may suggest events for review when the doors are open.
-  let canSuggest = $derived.by(() => {
-    if (!node || !isLoggedIn() || patch.value.isBanned) return false;
-    if (!getSubmissionsEnabled()) return false;
-    if (isUnclaimed) return true;
-    if (patch.value.isAdmin || (isMember && membershipRole !== 'follower')) return false;
-    return node.accept_event_suggestions === true;
-  });
+  // What posting an event here would do — the same helper the patch profile
+  // asks, so the two surfaces cannot disagree about whether this person has a
+  // door at all (docs/adr/026). They did: this page asked its own question,
+  // and asked it inside an else-if chain that bulk upload answered first, so
+  // an instance admin or a trusted contributor was offered a CSV importer and
+  // no way to post a single event.
+  let postingRight = $derived(eventPostingRight({
+    signedIn: isLoggedIn(),
+    isInstanceAdmin: isInstanceAdmin(),
+    trustedContributor: !!getUser()?.trusted_contributor,
+    isUnclaimed,
+    isBanned: patch.value.isBanned,
+    // Not `isMember`: the patch context sets it for followers too.
+    isMemberOrAdmin: membershipRole === 'member' || membershipRole === 'admin',
+    submissionsEnabled: getSubmissionsEnabled(),
+    acceptSuggestions: node?.accept_event_suggestions === true,
+  }));
 
   let events = $state([]);
   let loading = $state(true);
@@ -181,30 +190,25 @@
         <button class="subscribe-toggle" onclick={() => (showSubscribe = !showSubscribe)}>Subscribe</button>
       {/if}
     </span>
-    {#if isMember && membershipRole !== 'follower'}
-      <span class="header-buttons">
-        {#if canBulkUpload}
-          <button class="btn btn-secondary btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
-        {/if}
+    <span class="header-buttons">
+      {#if canBulkUpload}
+        <button class="btn btn-secondary btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
+      {/if}
+      {#if postingRight !== 'none'}
+        <!-- Always carries ?node=: this is the door to this patch's calendar,
+             and dropping the slug lands people on an unscoped form asking
+             which patch they meant. -->
         <a
-          href="/events/new"
+          href="/events/new?node={slug}"
           class="btn btn-primary btn-sm"
-          onclick={(e) => { e.preventDefault(); navigate('/events/new'); }}
-        >Create Event</a>
-      </span>
-    {:else if canBulkUpload}
-      <button class="btn btn-secondary btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
-    {:else if canSuggest}
-      <a
-        href="/events/new?node={slug}"
-        class="btn btn-primary btn-sm"
-        onclick={(e) => { e.preventDefault(); navigate(`/events/new?node=${slug}`); }}
-      >Suggest an event</a>
-    {:else if membershipRole === 'follower'}
-      <span class="role-prompt muted">Become a member to create events.</span>
-    {:else}
-      <span class="role-prompt muted">Join this patch to create events.</span>
-    {/if}
+          onclick={(e) => { e.preventDefault(); navigate(`/events/new?node=${slug}`); }}
+        >{postingRight === 'direct' ? 'New event' : 'Suggest an event'}</a>
+      {:else if membershipRole === 'follower'}
+        <span class="role-prompt muted">Become a member to create events.</span>
+      {:else}
+        <span class="role-prompt muted">Join this patch to create events.</span>
+      {/if}
+    </span>
   </div>
 
   {#if showUpload && canBulkUpload}
