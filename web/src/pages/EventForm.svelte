@@ -85,7 +85,11 @@
       lockedNode = data.node || data;
       lockedUnclaimed = data.is_unclaimed || false;
       nodeId = lockedNode.id;
-      myNodes = [lockedNode];
+      // The select is fed membership rows, not patches — it reads node_id
+      // and node_name. Handing it a raw patch (id, name) rendered an option
+      // with no value and no label, so the locked field showed blank and
+      // unfillable over a patch the form had in fact already chosen.
+      myNodes = [{ node_id: lockedNode.id, node_name: lockedNode.name }];
     } catch (e) {
       error = e.message || 'Failed to load patch';
       myNodes = [];
