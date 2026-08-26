@@ -1,21 +1,27 @@
 /**
- * E2E: Event creation — the "select a patch" dropdown on /events/new.
+ * E2E: Event creation — naming the hosting patch on /events/new.
  *
- * Regression coverage for issue #8: EventForm.svelte read the wrong field
- * names from GET /api/v1/me/nodes. That endpoint returns membership rows
- * shaped {id: <membership id>, node_id, node_name, node_slug, ...}, but the
- * form rendered `node.name` (undefined — blank option labels) and submitted
- * `node.id` (the *membership* row id, not the patch id) as the event's
- * node_id. With foreign_keys=ON that id doesn't match any row in `nodes`,
- * so the old code either 500s on submit or, worse, files the event under
- * whatever patch the stray id happens to collide with.
+ * Regression coverage for issue #8, which was an id bug wearing a labelling
+ * bug's clothes: EventForm.svelte read the wrong field names from GET
+ * /api/v1/me/nodes. That endpoint returns membership rows shaped
+ * {id: <membership id>, node_id, node_name, node_slug, ...}, but the form
+ * rendered `node.name` (undefined — blank labels) and submitted `node.id`
+ * (the *membership* row id, not the patch id) as the event's node_id. With
+ * foreign_keys=ON that id doesn't match any row in `nodes`, so the old code
+ * either 500s on submit or, worse, files the event under whatever patch the
+ * stray id happens to collide with.
+ *
+ * The field is the patch picker now, not a <select>, so the interaction
+ * below types and chooses instead of selecting an option. What is being
+ * guarded has not changed: the row carries the patch's real name, and the
+ * value submitted is the patch's id, proven by where the event lands.
  *
  * DATA OWNERSHIP (see setup.js): creates its own fresh patch (unique name)
  * via the admin API and posts an event to it as `admin` — no assertions on
- * seed data, no mutation of any other spec's owned state. `admin` already
- * has many memberships, so a populated, multi-option dropdown is itself
- * part of the regression check (a single-option dropdown wouldn't catch a
- * wrong-id submission landing on the "right" patch by luck).
+ * seed data, no mutation of any other spec's owned state. `admin` can reach
+ * every patch on the quilt, so the corpus is populated and the chosen row
+ * has to be the right one (a one-row corpus wouldn't catch a wrong-id
+ * submission landing on the "right" patch by luck).
  */
 import { test, expect } from '@playwright/test';
 import { loginAs, goto } from './setup.js';
@@ -40,20 +46,28 @@ test.describe('Event creation — patch dropdown', () => {
     expect(slug).toBeTruthy();
   });
 
-  test('dropdown shows real patch names and submits the selected patch', async ({ page }) => {
+  test('the picker shows real patch names and submits the chosen patch', async ({ page }) => {
     await loginAs(page, 'admin');
     await goto(page, '/events/new');
 
-    const select = page.locator('#node');
-    await expect(select).toBeVisible();
+    const field = page.locator('#node');
+    await expect(field).toBeVisible();
 
-    // The bug rendered every <option> with a blank label (node.name was
-    // undefined on the membership shape). Assert the option carries the
-    // real patch name, not an empty label.
-    const option = select.locator('option', { hasText: patchName });
-    await expect(option).toHaveCount(1);
+    // Focusing opens on the corpus, before anything is typed — the picker
+    // stands in for a select, and a select shows its options.
+    await field.click();
+    await expect(page.locator('.finder-item').first()).toBeVisible();
 
-    await select.selectOption({ label: patchName });
+    // The bug rendered every row with a blank label (node.name was
+    // undefined on the membership shape). Assert the row carries the real
+    // patch name, not an empty one.
+    await field.fill(patchName);
+    const row = page.locator('.finder-item', { hasText: patchName });
+    await expect(row).toHaveCount(1);
+    await row.click();
+
+    // Choosing replaces the picker with the patch it chose.
+    await expect(page.locator('.chosen-patch')).toContainText(patchName);
 
     await page.locator('#title').fill('Dropdown Regression Test Event');
     await page.locator('#starts-at').fill('2027-01-01T18:00');
