@@ -977,6 +977,15 @@ wiping data is not tearing down the machine.
 _Avoid_: delete quilt (ambiguous about the deployment), reset (too soft),
 uninstall
 
+**Bootstrap token**:
+The single secret that claims a fresh instance: while no accounts exist,
+creating the first account — the one that becomes instance admin —
+requires presenting it (docs/adr/070). Supplied via config or
+environment, or generated into the first-run log notice; dead the moment
+the first account exists — it gates bootstrap, never registration.
+_Avoid_: setup code, admin password (nothing about it is a password),
+invite (invites are minted by an admin, who doesn't exist yet)
+
 ## Multi-quilt
 
 **Quilt switcher**:
