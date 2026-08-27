@@ -156,6 +156,98 @@ func TestMarkAllNotificationsRead(t *testing.T) {
 	}
 }
 
+func TestDeleteNotification(t *testing.T) {
+	db := setupTestDB(t)
+	user, userToken := createTestUser(t, db, "notif-del1", "member")
+
+	handler.CreateNotification(db, user.ID, "test", "To delete", "", "")
+
+	var notifID string
+	db.QueryRow("SELECT id FROM notifications WHERE user_id = ?", user.ID).Scan(&notifID)
+
+	r := authedRequest("DELETE", "/api/v1/notifications/"+notifID, nil, userToken)
+	mux := http.NewServeMux()
+	mux.HandleFunc("DELETE /api/v1/notifications/{id}", middleware.AuthRequired(db, handler.DeleteNotification(db)))
+	w := httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ?", user.ID).Scan(&count)
+	if count != 0 {
+		t.Fatalf("expected 0 notifications, got %d", count)
+	}
+}
+
+func TestDeleteNotification_WrongUser(t *testing.T) {
+	db := setupTestDB(t)
+	user1, _ := createTestUser(t, db, "notif-delowner1", "member")
+	_, user2Token := createTestUser(t, db, "notif-delother1", "member")
+
+	handler.CreateNotification(db, user1.ID, "test", "Private notif", "", "")
+
+	var notifID string
+	db.QueryRow("SELECT id FROM notifications WHERE user_id = ?", user1.ID).Scan(&notifID)
+
+	// user2 tries to delete user1's notification.
+	r := authedRequest("DELETE", "/api/v1/notifications/"+notifID, nil, user2Token)
+	mux := http.NewServeMux()
+	mux.HandleFunc("DELETE /api/v1/notifications/{id}", middleware.AuthRequired(db, handler.DeleteNotification(db)))
+	w := httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ?", user1.ID).Scan(&count)
+	if count != 1 {
+		t.Fatalf("expected notification to survive, got %d", count)
+	}
+}
+
+func TestClearNotifications(t *testing.T) {
+	db := setupTestDB(t)
+	user, userToken := createTestUser(t, db, "notif-clear1", "member")
+	other, _ := createTestUser(t, db, "notif-clearother1", "member")
+
+	handler.CreateNotification(db, user.ID, "test", "N1", "", "")
+	handler.CreateNotification(db, user.ID, "test", "N2", "", "")
+	handler.CreateNotification(db, user.ID, "test", "N3", "", "")
+	handler.CreateNotification(db, other.ID, "test", "Keep me", "", "")
+
+	r := authedRequest("DELETE", "/api/v1/notifications", nil, userToken)
+	mux := http.NewServeMux()
+	mux.HandleFunc("DELETE /api/v1/notifications", middleware.AuthRequired(db, handler.ClearNotifications(db)))
+	w := httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	result := decodeJSON(t, w)
+	if result["deleted"].(float64) != 3 {
+		t.Fatalf("expected 3 deleted, got %v", result["deleted"])
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ?", user.ID).Scan(&count)
+	if count != 0 {
+		t.Fatalf("expected 0 notifications for user, got %d", count)
+	}
+
+	// Other user's notifications are untouched.
+	db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ?", other.ID).Scan(&count)
+	if count != 1 {
+		t.Fatalf("expected other user's notification to survive, got %d", count)
+	}
+}
+
 func TestNotificationCount(t *testing.T) {
 	db := setupTestDB(t)
 	user, userToken := createTestUser(t, db, "notif-count1", "member")

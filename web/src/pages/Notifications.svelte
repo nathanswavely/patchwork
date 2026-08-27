@@ -1,8 +1,10 @@
 <script>
   import NotifIcon from '../components/NotifIcon.svelte';
+  import ConfirmAction from '../components/ConfirmAction.svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { clearUnread, decrementUnread } from '../stores/notifications.svelte.js';
+  import { showToast } from '../stores/toast.svelte.js';
 
   let notifications = $state([]);
   let loading = $state(true);
@@ -56,6 +58,31 @@
     clearUnread();
   }
 
+  // Dismissing one: the row goes, and an unread row takes the badge down with
+  // it. A read row never counted, so the badge does not move.
+  async function dismissNotif(notif) {
+    try {
+      await api(`notifications/${notif.id}`, { method: 'DELETE' });
+      notifications = notifications.filter(n => n.id !== notif.id);
+      if (!notif.read_at) decrementUnread();
+    } catch (e) {
+      showToast(e.message || 'Could not dismiss that notification', 'error');
+    }
+  }
+
+  // Clear-all empties the whole table server-side, not the page in view, so
+  // the badge goes to zero rather than down by the rows rendered.
+  async function clearAll() {
+    try {
+      await api('notifications', { method: 'DELETE' });
+      notifications = [];
+      nextCursor = '';
+      clearUnread();
+    } catch (e) {
+      showToast(e.message || 'Could not clear notifications', 'error');
+    }
+  }
+
   async function clickNotif(notif) {
     if (!notif.read_at) {
       try {
@@ -86,9 +113,19 @@
   <div class="container-narrow">
     <div class="notif-page-header">
       <h1>Notifications</h1>
-      {#if notifications.some(n => !n.read_at)}
-        <button class="btn btn-secondary btn-sm" onclick={markAllRead}>Mark all read</button>
-      {/if}
+      <div class="header-actions">
+        {#if notifications.some(n => !n.read_at)}
+          <button class="btn btn-secondary btn-sm" onclick={markAllRead}>Mark all read</button>
+        {/if}
+        {#if notifications.length > 0}
+          <ConfirmAction
+            label="Clear all"
+            confirmLabel="Delete them all"
+            variant="danger"
+            onConfirm={clearAll}
+          />
+        {/if}
+      </div>
     </div>
 
     <div class="filters">
@@ -116,20 +153,19 @@
     {:else}
       <div class="notif-list">
         {#each notifications as notif (notif.id)}
-          <button
-            class="notif-item"
-            class:unread={!notif.read_at}
-            onclick={() => clickNotif(notif)}
-          >
-            <span class="notif-icon"><NotifIcon type={notif.type} /></span>
-            <div class="notif-content">
-              <div class="notif-title">{notif.title}</div>
-              {#if notif.body}
-                <div class="notif-body">{notif.body}</div>
-              {/if}
-            </div>
-            <span class="notif-time">{timeAgo(notif.created_at)}</span>
-          </button>
+          <div class="notif-item" class:unread={!notif.read_at}>
+            <button class="notif-main" onclick={() => clickNotif(notif)}>
+              <span class="notif-icon"><NotifIcon type={notif.type} /></span>
+              <div class="notif-content">
+                <div class="notif-title">{notif.title}</div>
+                {#if notif.body}
+                  <div class="notif-body">{notif.body}</div>
+                {/if}
+              </div>
+              <span class="notif-time">{timeAgo(notif.created_at)}</span>
+            </button>
+            <button class="notif-dismiss" onclick={() => dismissNotif(notif)} aria-label="Dismiss notification" title="Dismiss">&times;</button>
+          </div>
         {/each}
       </div>
 
@@ -152,6 +188,11 @@
 
   .notif-page-header h1 {
     font-size: 1.3rem;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.4rem;
   }
 
   .filters {
@@ -188,17 +229,39 @@
 
   .notif-item {
     display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    font-size: 0.85rem;
+  }
+
+  .notif-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
     align-items: flex-start;
     gap: 0.6rem;
     padding: 0.75rem;
     border: none;
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-surface);
+    background: none;
     cursor: pointer;
     text-align: left;
-    width: 100%;
-    font-size: 0.85rem;
+    font-size: inherit;
+    color: inherit;
   }
+
+  .notif-dismiss {
+    flex-shrink: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0 0.75rem;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .notif-dismiss:hover { color: var(--color-text); }
 
   .notif-item:last-child { border-bottom: none; }
   .notif-item:hover { background: var(--color-bg); }
