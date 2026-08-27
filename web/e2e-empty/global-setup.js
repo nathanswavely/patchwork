@@ -18,6 +18,11 @@
  * backend.
  */
 import { spawn, execSync } from 'child_process';
+
+// The token this suite claims its instance with (docs/adr/070). Fixed
+// rather than generated: the server only prints a generated one, and a
+// harness that scrapes its own secret out of a log is testing the log.
+const BOOTSTRAP_TOKEN = 'e2e-empty-bootstrap-token';
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -74,7 +79,15 @@ export default async function globalSetup() {
   console.log(`Empty-instance stack: backend :${EMPTY_API_PORT}`);
   const server = spawn(bin, ['-config', path.join('web', 'e2e-empty', 'patchwork.e2e-empty.yaml')], {
     cwd: repoRoot,
-    env: { ...process.env, PATCHWORK_PORT: String(EMPTY_API_PORT) },
+    // Claiming a fresh instance needs its bootstrap token (docs/adr/070).
+    // Setting it here rather than scraping the generated one out of the
+    // log is the path a provisioning layer takes, so this suite exercises
+    // that path rather than the log-reading one.
+    env: {
+      ...process.env,
+      PATCHWORK_PORT: String(EMPTY_API_PORT),
+      PATCHWORK_BOOTSTRAP_TOKEN: BOOTSTRAP_TOKEN,
+    },
   });
   // Go's log package writes to stderr; capture both to be safe.
   server.stdout.on('data', (d) => { output += d.toString(); });
@@ -129,6 +142,7 @@ export default async function globalSetup() {
           token: body.signup_token,
           username: FIRST_USER_NAME,
           display_name: 'First User',
+          bootstrap_token: BOOTSTRAP_TOKEN,
         }),
       });
       if (!signup.ok) {

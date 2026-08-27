@@ -6,6 +6,11 @@ services:
     build:
       context: ../..
     restart: unless-stopped
+    environment:
+      # Claiming a fresh instance needs its bootstrap token (docs/adr/070).
+      # Supplied here rather than read out of the container log, because
+      # this is how a provisioning layer does it.
+      PATCHWORK_BOOTSTRAP_TOKEN: smoke-bootstrap-token
     volumes:
       - smoke_data:/data
       - ./patchwork.smoke.yaml:/patchwork.yaml:ro
