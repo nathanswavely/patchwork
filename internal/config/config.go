@@ -122,6 +122,15 @@ type Instance struct {
 	// instance that set it during the ADR 065 window keeps working; the
 	// geographic key wins where both are present, and Warnings says so.
 	Timezone string `yaml:"timezone"`
+
+	// BootstrapToken gates the very first account (docs/adr/070). The first
+	// account becomes instance admin, and magic-link signup is open
+	// registration, so without this an instance reachable before its
+	// operator signs up is claimable by whoever finds it first. Leave it
+	// unset and the server generates one at startup and prints it in the
+	// first-run notice; a provisioning layer sets it and hands it to the
+	// operator. Dead the moment an account exists.
+	BootstrapToken string `yaml:"bootstrap_token"`
 }
 
 // Timezone is the quilt's configured zone name, the bootstrap default the
@@ -274,6 +283,9 @@ func Load(path string) (*Config, error) {
 	// YAML file (e.g. docker compose env_file).
 	if pass := os.Getenv("PATCHWORK_SMTP_PASS"); pass != "" {
 		cfg.SMTP.Pass = pass
+	}
+	if tok := os.Getenv("PATCHWORK_BOOTSTRAP_TOKEN"); tok != "" {
+		cfg.Instance.BootstrapToken = tok
 	}
 
 	// Port and database path can also come from the environment, so one

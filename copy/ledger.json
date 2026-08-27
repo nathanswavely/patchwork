@@ -4301,21 +4301,21 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 310,
+          "line": 318,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 569,
+          "line": 577,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 707,
+          "line": 715,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -6475,7 +6475,7 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 314,
+          "line": 322,
           "kind": "go-error-body",
           "raw": "token and username are required",
           "quote": null
@@ -6500,14 +6500,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 328,
+          "line": 336,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 523,
+          "line": 531,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
@@ -6532,7 +6532,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 354,
+          "line": 362,
           "kind": "go-error-body",
           "raw": "failed to begin registration",
           "quote": null
@@ -6550,14 +6550,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 373,
+          "line": 381,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 384,
+          "line": 392,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
@@ -6575,7 +6575,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 441,
+          "line": 449,
           "kind": "go-error-body",
           "raw": "failed to begin step-up",
           "quote": null
@@ -6593,14 +6593,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 458,
+          "line": 466,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 509,
+          "line": 517,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
@@ -6618,7 +6618,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 471,
+          "line": 479,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
@@ -6643,7 +6643,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 476,
+          "line": 484,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
           "quote": null
@@ -6661,7 +6661,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 495,
+          "line": 503,
           "kind": "go-error-body",
           "raw": "failed to begin login",
           "quote": null
@@ -6679,7 +6679,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 577,
+          "line": 585,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -6697,7 +6697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 587,
+          "line": 595,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -6715,7 +6715,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 598,
+          "line": 606,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -6733,7 +6733,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 606,
+          "line": 614,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -6751,7 +6751,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 620,
+          "line": 628,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -6769,7 +6769,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 663,
+          "line": 671,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -6787,14 +6787,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 699,
+          "line": 707,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 740,
+          "line": 748,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -6812,7 +6812,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 719,
+          "line": 727,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -6830,14 +6830,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 723,
+          "line": 731,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 754,
+          "line": 762,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -6855,7 +6855,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 749,
+          "line": 757,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -24817,7 +24817,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 180,
+          "line": 185,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -24874,7 +24874,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 201,
+          "line": 206,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -34642,7 +34642,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 34,
+          "line": 37,
           "kind": "js-string",
           "raw": "At least 3 characters.",
           "quote": "'"
@@ -34667,7 +34667,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 36,
+          "line": 39,
           "kind": "js-string",
           "raw": "Lowercase letters, numbers, and hyphens only, starting and ending with a letter or number.",
           "quote": "'"
@@ -34728,7 +34728,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 107,
+          "line": 112,
           "kind": "js-string",
           "raw": "Passkey enrollment failed",
           "quote": "'"
@@ -34807,7 +34807,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 139,
+          "line": 144,
           "kind": "markup",
           "raw": "You're in",
           "quote": null
@@ -34832,7 +34832,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 141,
+          "line": 146,
           "kind": "markup",
           "raw": "Passkey saved.",
           "quote": null
@@ -34857,7 +34857,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 143,
+          "line": 148,
           "kind": "markup",
           "raw": "This device can sign you in from now on.",
           "quote": null
@@ -34882,7 +34882,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 146,
+          "line": 151,
           "kind": "markup",
           "raw": "Take a look around",
           "quote": null
@@ -34907,7 +34907,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 149,
+          "line": 154,
           "kind": "markup",
           "raw": "Create a passkey and this device signs you in with one tap.",
           "quote": null
@@ -34932,7 +34932,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 151,
+          "line": 156,
           "kind": "markup",
           "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
@@ -34957,7 +34957,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 166,
+          "line": 171,
           "kind": "markup",
           "raw": "Skip for now",
           "quote": null
@@ -35054,7 +35054,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 219,
+          "line": 245,
           "kind": "markup",
           "raw": "By creating an account you agree to the",
           "quote": null
@@ -35086,7 +35086,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 220,
+          "line": 246,
           "kind": "markup",
           "raw": "User Agreement",
           "quote": null
@@ -35111,7 +35111,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 221,
+          "line": 247,
           "kind": "markup",
           "raw": "and",
           "quote": null
@@ -35143,7 +35143,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 221,
+          "line": 247,
           "kind": "markup",
           "raw": "Privacy Policy",
           "quote": null
@@ -41595,7 +41595,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 46,
+          "line": 49,
           "kind": "js-string",
           "raw": "Missing signup token",
           "quote": "'"
@@ -41613,7 +41613,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 57,
+          "line": 61,
           "kind": "js-string",
           "raw": "Invalid or expired signup link",
           "quote": "'"
@@ -41631,7 +41631,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 82,
+          "line": 87,
           "kind": "js-string",
           "raw": "Signup failed",
           "quote": "'"
@@ -41649,7 +41649,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 122,
+          "line": 127,
           "kind": "markup",
           "raw": "Checking your link...",
           "quote": null
@@ -41667,7 +41667,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 126,
+          "line": 131,
           "kind": "markup",
           "raw": "Link expired",
           "quote": null
@@ -41685,7 +41685,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 129,
+          "line": 134,
           "kind": "markup",
           "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
           "quote": null
@@ -41703,7 +41703,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 172,
+          "line": 177,
           "kind": "markup",
           "raw": "Choose your username",
           "quote": null
@@ -41721,7 +41721,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 174,
+          "line": 179,
           "kind": "markup",
           "raw": "You're signing up as",
           "quote": null
@@ -41739,7 +41739,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 174,
+          "line": 179,
           "kind": "markup",
           "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
           "quote": null
@@ -41757,7 +41757,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 185,
+          "line": 190,
           "kind": "attr:placeholder",
           "raw": "e.g. gallery-row-gal",
           "quote": "\""
@@ -41775,9 +41775,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 198,
+          "line": 203,
           "kind": "markup",
           "raw": "3-30 characters: lowercase letters, numbers, hyphens.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2996dc8b785a",
+      "text": "Bootstrap token",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Field label for the bootstrap token (docs/adr/070) — mechanical.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SignupComplete.svelte",
+          "line": 219,
+          "kind": "markup",
+          "raw": "Bootstrap token",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "07beed6cba3b",
+      "text": "This account will run the quilt. The token is in the server's first-run log, unless it was set in configuration.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Signup hint telling a self-hoster where their bootstrap token is (docs/adr/070). Accepted as drafted; reword if the voice should be the owner's.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SignupComplete.svelte",
+          "line": 231,
+          "kind": "markup",
+          "raw": "This account will run the quilt. The token is in the server's\n              first-run log, unless it was set in configuration.",
           "quote": null
         }
       ]

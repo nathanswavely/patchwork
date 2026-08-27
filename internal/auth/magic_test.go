@@ -68,7 +68,7 @@ func TestVerifyMagicLinkNewEmailTwoPhase(t *testing.T) {
 	}
 
 	// Phase 2: completing signup with a chosen username creates the account.
-	created, err := CompleteSignup(db, signupToken, "Chosen-Name", "Chosen Person")
+	created, err := CompleteSignup(db, signupToken, "Chosen-Name", "Chosen Person", useBootstrapToken(t))
 	if err != nil {
 		t.Fatalf("CompleteSignup: %v", err)
 	}
@@ -83,7 +83,7 @@ func TestVerifyMagicLinkNewEmailTwoPhase(t *testing.T) {
 	}
 
 	// The signup token is single-use.
-	if _, err := CompleteSignup(db, signupToken, "second-try", ""); err == nil {
+	if _, err := CompleteSignup(db, signupToken, "second-try", "", ""); err == nil {
 		t.Fatal("expected error reusing a consumed signup token")
 	}
 }
@@ -102,17 +102,17 @@ func TestCompleteSignupRaceOnEmail(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := CompleteSignup(db, tokenA, "first-finisher", ""); err != nil {
+	if _, err := CompleteSignup(db, tokenA, "first-finisher", "", useBootstrapToken(t)); err != nil {
 		t.Fatalf("first CompleteSignup: %v", err)
 	}
-	if _, err := CompleteSignup(db, tokenB, "second-finisher", ""); err == nil {
+	if _, err := CompleteSignup(db, tokenB, "second-finisher", "", ""); err == nil {
 		t.Fatal("expected error when an account with the email already exists")
 	}
 }
 
 func TestCompleteSignupInvalidToken(t *testing.T) {
 	db := setupTestDB(t)
-	if _, err := CompleteSignup(db, "not-a-real-token", "someone", ""); err == nil {
+	if _, err := CompleteSignup(db, "not-a-real-token", "someone", "", ""); err == nil {
 		t.Fatal("expected error for invalid signup token")
 	}
 }

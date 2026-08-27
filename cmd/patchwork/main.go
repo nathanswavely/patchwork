@@ -222,8 +222,30 @@ func main() {
 	// First-run bootstrap notice: until an account exists there is no admin,
 	// so tell the operator how to claim the instance.
 	if auth.NoUsersExist(db) {
+		// The first account is claimed with a token, not raced for
+		// (docs/adr/070). A configured token comes from a provisioning
+		// layer that already handed it to the operator; otherwise generate
+		// one and print it, since this log is already the bootstrap channel
+		// — it is where magic links go without SMTP, so the operator is the
+		// one reader guaranteed to have it.
+		token := cfg.Instance.BootstrapToken
+		generated := token == ""
+		if generated {
+			var err error
+			if token, err = auth.GenerateBootstrapToken(); err != nil {
+				log.Fatalf("first run: could not generate a bootstrap token: %v", err)
+			}
+		}
+		auth.SetBootstrapToken(token)
+
 		log.Println("first run: no accounts exist yet — the first account created will become the instance admin")
 		log.Printf("first run: sign in at https://%s/login (without SMTP, the magic link prints to this log)", cfg.Instance.Domain)
+		if generated {
+			log.Printf("first run: bootstrap token %s — the signup form asks for it; it dies with the first account", token)
+			log.Println("first run: set instance.bootstrap_token or PATCHWORK_BOOTSTRAP_TOKEN to choose your own (it changes on every restart until then)")
+		} else {
+			log.Println("first run: bootstrap token read from configuration — the signup form asks for it")
+		}
 	}
 
 	// Configure which peers may set X-Forwarded-For. Everything else has the

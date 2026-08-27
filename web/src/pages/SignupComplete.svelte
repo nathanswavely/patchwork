@@ -15,6 +15,9 @@
   let valid = $state(false);
   let validationError = $state('');
   let email = $state('');
+  // Set when this signup is the one that claims the quilt (docs/adr/070).
+  let needsBootstrapToken = $state(false);
+  let bootstrapToken = $state('');
 
   let username = $state('');
   let displayName = $state('');
@@ -52,6 +55,7 @@
     try {
       const data = await api(`auth/signup/${token}/validate`);
       email = data.email || '';
+      needsBootstrapToken = data.needs_bootstrap_token === true;
       valid = true;
     } catch (e) {
       validationError = e.message || 'Invalid or expired signup link';
@@ -70,6 +74,7 @@
           token,
           username: username.trim().toLowerCase(),
           display_name: displayName.trim() || undefined,
+          bootstrap_token: needsBootstrapToken ? bootstrapToken.trim() : undefined,
         },
       });
       // Persist redirect so the post-login effect can apply it.
@@ -207,10 +212,31 @@
             disabled={submitting}
           />
 
+          {#if needsBootstrapToken}
+            <!-- Nobody has claimed this quilt yet, so this account becomes
+                 its admin and the token is what proves you are the operator
+                 rather than whoever found the address first (docs/adr/070). -->
+            <label for="bootstrap-token">Bootstrap token <span class="required">*</span></label>
+            <input
+              id="bootstrap-token"
+              type="text"
+              bind:value={bootstrapToken}
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              required
+              disabled={submitting}
+            />
+            <p class="hint muted">
+              This account will run the quilt. The token is in the server's
+              first-run log, unless it was set in configuration.
+            </p>
+          {/if}
+
           <button
             type="submit"
             class="btn btn-primary"
-            disabled={submitting || !username.trim()}
+            disabled={submitting || !username.trim() || (needsBootstrapToken && !bootstrapToken.trim())}
           >
             {submitting ? 'Creating Account...' : 'Create Account'}
           </button>

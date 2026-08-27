@@ -79,7 +79,7 @@ func ValidateSignupToken(db *database.DB, rawToken string) (string, error) {
 // CompleteSignup consumes a signup token and creates the account with the
 // chosen username. Same guarantees as the invite path: first-account admin
 // bootstrap, ap_id, AP keypair, all inside one transaction.
-func CompleteSignup(db *database.DB, rawToken, rawUsername, displayName string) (*model.User, error) {
+func CompleteSignup(db *database.DB, rawToken, rawUsername, displayName, bootstrapToken string) (*model.User, error) {
 	hash := sha256.Sum256([]byte(rawToken))
 	tokenHash := hex.EncodeToString(hash[:])
 
@@ -116,6 +116,13 @@ func CompleteSignup(db *database.DB, rawToken, rawUsername, displayName string) 
 	}
 	if n > 0 {
 		return nil, fmt.Errorf("an account with this email already exists — sign in instead")
+	}
+
+	// The first account on a fresh instance is the instance admin, so it is
+	// claimed with a token rather than raced for (docs/adr/070). A no-op
+	// once any account exists.
+	if err := checkBootstrapToken(tx, bootstrapToken); err != nil {
+		return nil, err
 	}
 
 	username, err := PrepareUsername(tx, rawUsername)
