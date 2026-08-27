@@ -221,30 +221,21 @@
     font-weight: 500;
   }
 
-  .table-wrapper {
-    overflow-x: auto;
-  }
-
+  /* .table-wrapper and .data-table are the shared table component (app.css);
+     these are the audit log's own denser reading of it — rows are scanned in
+     bulk, and an expanded metadata block has to sit under its own row. */
   .data-table {
-    width: 100%;
-    border-collapse: collapse;
     font-size: 0.85rem;
   }
 
   .data-table th,
   .data-table td {
     padding: 0.5rem 0.6rem;
-    text-align: left;
-    border-bottom: 1px solid var(--color-border);
     vertical-align: top;
   }
 
   .data-table th {
     font-size: 0.75rem;
-    color: var(--color-text-muted);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
   }
 
   .nowrap {
