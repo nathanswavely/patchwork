@@ -38,6 +38,19 @@ geographic:
   # without a redeploy; this is the bootstrap default.
   timezone: "America/New_York"
 
+  # Gates the first account (docs/adr/070). The first account created on a
+  # fresh instance becomes the instance admin, and magic-link signup is open
+  # registration — so without this, an instance that is reachable before its
+  # operator signs up can be claimed by whoever finds it first.
+  #
+  # Leave it unset and the server generates one at startup and prints it in
+  # the first-run log notice, which is already where magic links go without
+  # SMTP. Set it (or PATCHWORK_BOOTSTRAP_TOKEN) when something else is
+  # provisioning the instance and needs to hand the operator a link that
+  # already works. Either way it is dead the moment an account exists: it
+  # gates bootstrap, never registration.
+  # bootstrap_token: "a-long-random-string"
+
 # Feature modules. Hints for the web app about which views to offer
 # (exposed via GET /api/v1/instance); data endpoints remain available.
 modules:

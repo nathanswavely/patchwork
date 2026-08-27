@@ -64,7 +64,7 @@ SIGNUP=$(curl -fsS -H 'Accept: application/json' "$BASE/api/v1/auth/verify/$TOKE
 
 COOKIE=$(curl -fsS -D - -o /dev/null -X POST "$BASE/api/v1/auth/signup" \
   -H 'Content-Type: application/json' -H 'X-Patchwork-Request: true' \
-  -d "{\"token\":\"$SIGNUP\",\"username\":\"smoketest\",\"display_name\":\"Smoke Test\"}" \
+  -d "{\"token\":\"$SIGNUP\",\"username\":\"smoketest\",\"display_name\":\"Smoke Test\",\"bootstrap_token\":\"smoke-bootstrap-token\"}" \
   | grep -i '^set-cookie:' | head -1 | sed 's/^[Ss]et-[Cc]ookie: *//' | cut -d';' -f1 | tr -d '\r')
 [ -n "$COOKIE" ] || fail "signup did not return a session cookie"
 

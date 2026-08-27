@@ -288,9 +288,14 @@ func ValidateSignupToken(db *database.DB) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		// Whether this signup is the one that claims the quilt, so the form
+		// knows to ask for the bootstrap token (docs/adr/070). Told here
+		// rather than on /instance because it is only ever the next question
+		// for someone already holding a valid signup token.
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"valid": true,
-			"email": email,
+			"valid":                 true,
+			"email":                 email,
+			"needs_bootstrap_token": auth.NoUsersExist(db),
 		})
 	}
 }
@@ -305,6 +310,9 @@ func CompleteSignup(db *database.DB) http.HandlerFunc {
 			Token       string `json:"token"`
 			Username    string `json:"username"`
 			DisplayName string `json:"display_name"`
+			// Only a fresh instance reads this (docs/adr/070); once an
+			// account exists it is ignored.
+			BootstrapToken string `json:"bootstrap_token"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -315,7 +323,7 @@ func CompleteSignup(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		user, err := auth.CompleteSignup(db, req.Token, req.Username, req.DisplayName)
+		user, err := auth.CompleteSignup(db, req.Token, req.Username, req.DisplayName, req.BootstrapToken)
 		if err != nil {
 			http.Error(w, `{"error":"`+err.Error()+`"}`, http.StatusBadRequest)
 			return

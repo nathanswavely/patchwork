@@ -30,8 +30,19 @@ func insertMagicLinkDB(t *testing.T, db *database.DB, email string) string {
 	return rawToken
 }
 
+// useBootstrapToken installs a known bootstrap token for the life of one
+// test. The gate is package state, so it is restored afterwards.
+func useBootstrapToken(t *testing.T) string {
+	t.Helper()
+	const tok = "test-bootstrap-token"
+	SetBootstrapToken(tok)
+	t.Cleanup(func() { SetBootstrapToken("") })
+	return tok
+}
+
 func TestFirstMagicLinkUserBecomesAdmin(t *testing.T) {
 	db := setupTestDB(t)
+	boot := useBootstrapToken(t)
 
 	// Two-phase flow (docs/adr/013): verify issues a signup token; the
 	// account (and the first-admin bootstrap) happens at CompleteSignup.
@@ -39,7 +50,7 @@ func TestFirstMagicLinkUserBecomesAdmin(t *testing.T) {
 	if err != nil {
 		t.Fatalf("VerifyMagicLink (first): %v", err)
 	}
-	first, err := CompleteSignup(db, signupA, "founder", "")
+	first, err := CompleteSignup(db, signupA, "founder", "", boot)
 	if err != nil {
 		t.Fatalf("CompleteSignup (first): %v", err)
 	}
@@ -60,7 +71,7 @@ func TestFirstMagicLinkUserBecomesAdmin(t *testing.T) {
 	if err != nil {
 		t.Fatalf("VerifyMagicLink (second): %v", err)
 	}
-	second, err := CompleteSignup(db, signupB, "second-person", "")
+	second, err := CompleteSignup(db, signupB, "second-person", "", "")
 	if err != nil {
 		t.Fatalf("CompleteSignup (second): %v", err)
 	}
