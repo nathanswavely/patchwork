@@ -4483,14 +4483,14 @@
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 237,
+          "line": 287,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 299,
+          "line": 349,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -7956,14 +7956,14 @@
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 256,
+          "line": 306,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 291,
+          "line": 341,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -11584,6 +11584,13 @@
           "kind": "go-error-body",
           "raw": "notification id required",
           "quote": null
+        },
+        {
+          "file": "internal/handler/notifications.go",
+          "line": 163,
+          "kind": "go-error-body",
+          "raw": "notification id required",
+          "quote": null
         }
       ]
     },
@@ -11637,6 +11644,60 @@
           "line": 144,
           "kind": "go-error-body",
           "raw": "failed to mark all notifications read",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "621a96fef297",
+      "text": "failed to delete notification",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notifications.go",
+          "line": 172,
+          "kind": "go-error-body",
+          "raw": "failed to delete notification",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dde3d7b383e1",
+      "text": "notification not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notifications.go",
+          "line": 177,
+          "kind": "go-error-body",
+          "raw": "notification not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "61d54cd2e465",
+      "text": "failed to clear notifications",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notifications.go",
+          "line": 194,
+          "kind": "go-error-body",
+          "raw": "failed to clear notifications",
           "quote": null
         }
       ]
@@ -17419,7 +17480,7 @@
           "file": "web/src/components/ElectionPanel.svelte",
           "line": 132,
           "kind": "markup",
-          "raw": "You can change this until voting closes. Approving nobody is the same as\r\n        not voting.",
+          "raw": "You can change this until voting closes. Approving nobody is the same as\n        not voting.",
           "quote": null
         }
       ]
@@ -18087,7 +18148,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 88,
+          "line": 115,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -18112,7 +18173,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 90,
+          "line": 118,
           "kind": "markup",
           "raw": "Mark all read",
           "quote": null
@@ -18158,7 +18219,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 110,
+          "line": 147,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -18218,7 +18279,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 113,
+          "line": 150,
           "kind": "markup",
           "raw": "You're all caught up",
           "quote": null
@@ -19182,6 +19243,13 @@
           "kind": "markup",
           "raw": "Dismiss",
           "quote": null
+        },
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 167,
+          "kind": "attr:title",
+          "raw": "Dismiss",
+          "quote": "\""
         }
       ]
     },
@@ -19535,7 +19603,7 @@
           "file": "web/src/components/MapLocationPicker.svelte",
           "line": 122,
           "kind": "markup",
-          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\r\n    precisely or as loosely as you like. Nothing is saved until you hit\r\n    Save location.",
+          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n    precisely or as loosely as you like. Nothing is saved until you hit\n    Save location.",
           "quote": null
         }
       ]
@@ -19632,7 +19700,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -19668,7 +19736,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
         }
       ]
@@ -20648,7 +20716,7 @@
           "file": "web/src/components/ReportButton.svelte",
           "line": 81,
           "kind": "markup",
-          "raw": "Reports go to the instance admins, who review them against the\r\n      community lining.{entityName ? ` You're reporting ${entityName}.` : ''}",
+          "raw": "Reports go to the instance admins, who review them against the\n      community lining.{entityName ? ` You're reporting ${entityName}.` : ''}",
           "quote": null
         }
       ]
@@ -25964,7 +26032,7 @@
           "file": "web/src/pages/AdminArchivedPatches.svelte",
           "line": 43,
           "kind": "markup",
-          "raw": "Archived patches are hidden everywhere but nothing is erased. Members,\r\n    events, and history stay intact. Restoring returns a patch to what it was\r\n    before, without notifying anyone.",
+          "raw": "Archived patches are hidden everywhere but nothing is erased. Members,\n    events, and history stay intact. Restoring returns a patch to what it was\n    before, without notifying anyone.",
           "quote": null
         }
       ]
@@ -26000,7 +26068,7 @@
           "file": "web/src/pages/AdminArchivedPatches.svelte",
           "line": 61,
           "kind": "markup",
-          "raw": "/{node.slug}\r\n              · archived {formatDate(node.archived_at)}\r\n              · {node.member_count} {node.member_count === 1 ? 'member' : 'members'},\r\n              {node.follower_count} {node.follower_count === 1 ? 'follower' : 'followers'}",
+          "raw": "/{node.slug}\n              · archived {formatDate(node.archived_at)}\n              · {node.member_count} {node.member_count === 1 ? 'member' : 'members'},\n              {node.follower_count} {node.follower_count === 1 ? 'follower' : 'followers'}",
           "quote": null
         }
       ]
@@ -26900,7 +26968,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 79,
+          "line": 88,
           "kind": "js-string",
           "raw": "Event approved",
           "quote": "'"
@@ -27004,7 +27072,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 279,
+          "line": 283,
           "kind": "markup",
           "raw": "{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}",
           "quote": null
@@ -27054,7 +27122,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 293,
+          "line": 297,
           "kind": "attr:placeholder",
           "raw": "Note to the submitter (optional)",
           "quote": "\""
@@ -28019,7 +28087,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
+          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -29174,7 +29242,7 @@
           "file": "web/src/pages/AdminReports.svelte",
           "line": 159,
           "kind": "markup",
-          "raw": "This clears the patch's chosen tile, so the quilt decides its look again.\r\n                    The patch itself is untouched.",
+          "raw": "This clears the patch's chosen tile, so the quilt decides its look again.\n                    The patch itself is untouched.",
           "quote": null
         }
       ]
@@ -29526,7 +29594,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -32154,7 +32222,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 178,
+          "line": 187,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -32423,7 +32491,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 228,
+          "line": 232,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -32491,7 +32559,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 228,
+          "line": 232,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -33071,7 +33139,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 314,
+          "line": 318,
           "kind": "markup",
           "raw": "Loading events...",
           "quote": null
@@ -34024,7 +34092,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 169,
+          "line": 178,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -34716,7 +34784,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -34859,14 +34927,14 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 151,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         }
       ]
@@ -35512,7 +35580,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -35941,7 +36009,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
           "quote": null
         }
       ]
@@ -36055,6 +36123,42 @@
       ]
     },
     {
+      "id": "54a548463797",
+      "text": "Could not dismiss that notification",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 69,
+          "kind": "js-string",
+          "raw": "Could not dismiss that notification",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "df5ec62b2d50",
+      "text": "Could not clear notifications",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 82,
+          "kind": "js-string",
+          "raw": "Could not clear notifications",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "8ab25e81f97f",
       "text": "Unread only",
       "words": 2,
@@ -36065,7 +36169,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 106,
+          "line": 143,
           "kind": "markup",
           "raw": "Unread only",
           "quote": null
@@ -36083,10 +36187,28 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 114,
+          "line": 151,
           "kind": "markup",
           "raw": "No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b7bb3f342402",
+      "text": "Dismiss notification",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Error string or control label for the notification dismiss/clear doors — mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 167,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss notification",
+          "quote": "\""
         }
       ]
     },
@@ -36101,7 +36223,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 79,
+          "line": 88,
           "kind": "js-string",
           "raw": "Suggestion declined",
           "quote": "'"
@@ -36119,7 +36241,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 84,
+          "line": 93,
           "kind": "js-string",
           "raw": "Failed to review",
           "quote": "'"
@@ -36137,7 +36259,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 134,
+          "line": 143,
           "kind": "js-string",
           "raw": "Upload failed",
           "quote": "'"
@@ -36155,7 +36277,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 170,
+          "line": 179,
           "kind": "markup",
           "raw": "Become a member to access events.",
           "quote": null
@@ -36173,7 +36295,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 176,
+          "line": 185,
           "kind": "markup",
           "raw": "{events.length} events",
           "quote": null
@@ -36191,7 +36313,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 204,
+          "line": 207,
           "kind": "markup",
           "raw": "Become a member to create events.",
           "quote": null
@@ -36209,7 +36331,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 206,
+          "line": 209,
           "kind": "markup",
           "raw": "Join this patch to create events.",
           "quote": null
@@ -36227,7 +36349,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 214,
+          "line": 218,
           "kind": "markup",
           "raw": "Download template",
           "quote": null
@@ -36245,7 +36367,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 228,
+          "line": 232,
           "kind": "markup",
           "raw": "When",
           "quote": null
@@ -36263,7 +36385,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 240,
+          "line": 244,
           "kind": "markup",
           "raw": "…and {uploadEvents.length - 8} more",
           "quote": null
@@ -36281,7 +36403,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 251,
+          "line": 255,
           "kind": "markup",
           "raw": "Fix the rows above and re-pick the file.",
           "quote": null
@@ -36299,7 +36421,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 255,
+          "line": 259,
           "kind": "markup",
           "raw": "No events found in {uploadFileName}.",
           "quote": null
@@ -36317,7 +36439,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 259,
+          "line": 263,
           "kind": "markup",
           "raw": "Times are read in your timezone. Rows matching an event already on the\n        calendar are skipped, so re-uploading a corrected file is safe.",
           "quote": null
@@ -36335,7 +36457,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 273,
+          "line": 277,
           "kind": "markup",
           "raw": "Suggested events",
           "quote": null
@@ -36353,7 +36475,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 280,
+          "line": 284,
           "kind": "markup",
           "raw": "&middot; {sub.location}",
           "quote": null
@@ -36371,7 +36493,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 286,
+          "line": 290,
           "kind": "markup",
           "raw": "Suggested by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
@@ -36389,7 +36511,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 317,
+          "line": 321,
           "kind": "markup",
           "raw": "No events scheduled.",
           "quote": null
@@ -36407,7 +36529,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 318,
+          "line": 322,
           "kind": "markup",
           "raw": "Members can create events for meetups, shows, or gatherings.",
           "quote": null
@@ -36425,7 +36547,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 334,
+          "line": 338,
           "kind": "markup",
           "raw": "&middot; {event.location}",
           "quote": null
@@ -37548,7 +37670,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -37638,7 +37760,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -39452,7 +39574,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -39524,7 +39646,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
           "quote": null
         }
       ]
@@ -40543,7 +40665,7 @@
           "file": "web/src/pages/RemotePatch.svelte",
           "line": 152,
           "kind": "markup",
-          "raw": "You're viewing this patch's public face from your own quilt. Joining,\r\n        RSVPs, and everything deeper live on",
+          "raw": "You're viewing this patch's public face from your own quilt. Joining,\n        RSVPs, and everything deeper live on",
           "quote": null
         }
       ]
@@ -41169,7 +41291,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
           "quote": null
         }
       ]
@@ -41313,7 +41435,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
           "quote": null
         }
       ]
@@ -41331,7 +41453,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
           "quote": null
         }
       ]
@@ -41385,7 +41507,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
           "quote": null
         }
       ]
@@ -41439,7 +41561,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
           "quote": null
         }
       ]
@@ -41565,7 +41687,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 129,
           "kind": "markup",
-          "raw": "No account was created yet. Request a new sign-in link and\r\n          you'll be right back here.",
+          "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
           "quote": null
         }
       ]
@@ -41619,7 +41741,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 174,
           "kind": "markup",
-          "raw": ". Pick the name\r\n          you'll go by here. It becomes your profile address, so it\r\n          can't change later.",
+          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
           "quote": null
         }
       ]
@@ -42303,7 +42425,7 @@
           "file": "web/src/pages/Welcome.svelte",
           "line": 180,
           "kind": "markup",
-          "raw": "&nbsp;and costs\r\n              about",
+          "raw": "&nbsp;and costs\n              about",
           "quote": null
         }
       ]
