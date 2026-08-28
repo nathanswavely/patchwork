@@ -389,3 +389,27 @@ export function eventDateRange(preset, opts = {}) {
       return { from: dayStart(today), to: '' };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Previewing a feed correction (docs/adr/073).
+
+/**
+ * What an instant becomes when a publisher's local-time-stamped-as-UTC
+ * defect is corrected: take the UTC wall clock and read those same digits
+ * in `tz`.
+ *
+ * The Go side (`eventsource.ReinterpretUTCAsLocal`) is what actually
+ * rewrites the times on sync; this exists only so the settings page can
+ * show an admin what the switch would do to a real event before they save
+ * it. Kept deliberately small and equivalent — if the two ever disagree,
+ * the server is right.
+ */
+export function reinterpretUTCAsLocal(iso, tz) {
+  if (!iso || !tz) return iso;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const wall =
+    `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}` +
+    `T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+  return fromZonedInputValue(wall, tz) || iso;
+}

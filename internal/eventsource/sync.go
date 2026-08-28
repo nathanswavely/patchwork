@@ -45,6 +45,12 @@ type Source struct {
 	// Resolved once when the source is loaded, so the whole sync reads
 	// one answer.
 	Zone *time.Location
+	// LocalTimeStampedUTC marks a publisher that emits the venue's wall
+	// clock as though it were UTC (docs/adr/073). Set by whoever attached
+	// the source, because only a person comparing the markup against the
+	// page can tell — the feed's own offset is internally consistent and
+	// simply wrong.
+	LocalTimeStampedUTC bool
 }
 
 // sourceLocks serializes syncs per source: the hourly worker and a
@@ -67,12 +73,13 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 	err := db.QueryRow(
 		`SELECT s.id, s.node_id, s.type, s.url, s.added_by, s.etag, s.last_modified,
 		 s.last_success_at, s.aggregator_id, s.name_key, s.suggests,
-		 COALESCE(NULLIF(n.timezone,''), ?)
+		 s.local_time_stamped_utc, COALESCE(NULLIF(n.timezone,''), ?)
 		 FROM event_sources s JOIN nodes n ON n.id = s.node_id WHERE s.id = ?`,
 		settings.EffectiveTimezone(db), sourceID,
 	).Scan(&src.ID, &src.NodeID, &src.Type, &src.URL, &src.AddedBy,
 		&src.Etag, &src.LastModified, &src.LastSuccessAt,
-		&src.AggregatorID, &src.NameKey, &src.Suggests, &zoneName)
+		&src.AggregatorID, &src.NameKey, &src.Suggests,
+		&src.LocalTimeStampedUTC, &zoneName)
 	if err != nil {
 		return fmt.Errorf("load source: %w", err)
 	}
@@ -82,6 +89,13 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 	if err != nil {
 		recordFailure(db, src.ID, err)
 		return err
+	}
+	// After every parser, so the correction reads the same whichever
+	// format the feed turned out to be — and after a crosswalk entry's
+	// cached listings too, since a publisher's defect belongs to the
+	// publisher rather than to the shape it publishes in.
+	if src.LocalTimeStampedUTC {
+		items = correctStampedUTC(items, src.Zone)
 	}
 	if result.NotModified {
 		recordSuccess(db, src.ID, src.Etag.String, src.LastModified.String)

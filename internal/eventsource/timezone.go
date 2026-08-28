@@ -262,3 +262,53 @@ func loadZone(name string) *time.Location {
 	}
 	return time.UTC
 }
+
+// ReinterpretUTCAsLocal corrects a feed that publishes local time stamped
+// as UTC (docs/adr/073).
+//
+// The defect: a publisher holds the venue's wall clock — 7pm — and emits
+// it as though the digits were UTC. Downstream that instant renders four
+// or five hours early, and the offset the feed prints beside it
+// ("15:00:00-04:00") is a faithful rendering of the wrong instant, so
+// every parser believes it and is right to.
+//
+// The correction takes the instant's UTC wall clock and reads those same
+// digits in the patch's zone: 19:00Z becomes 19:00 in America/New_York,
+// which is 23:00Z — 7pm, the number the publisher started from.
+//
+// This re-derives the shift on every sync rather than storing one, which
+// is what makes it survive daylight saving: the same rule yields a
+// four-hour move in August and a five-hour move in November, with
+// nothing to edit in between.
+func ReinterpretUTCAsLocal(iso string, zone *time.Location) string {
+	if zone == nil {
+		return iso
+	}
+	t, err := time.Parse(time.RFC3339, iso)
+	if err != nil {
+		return iso // not an instant we wrote; leave it exactly as found
+	}
+	u := t.UTC()
+	return time.Date(u.Year(), u.Month(), u.Day(), u.Hour(), u.Minute(), u.Second(), 0, zone).
+		UTC().Format(time.RFC3339)
+}
+
+// correctStampedUTC applies ReinterpretUTCAsLocal across a parsed set.
+//
+// StartsAt and EndsAt only. Occurrence is deliberately untouched: it is
+// the identity half of the reconciler's key (docs/adr/031), not a time
+// anybody reads, so shifting it would turn every recurring event into a
+// delete-and-reinsert the first time the switch is flipped — duplicate
+// notifications, and event_source_skips rows orphaned so events an admin
+// hid come back. Leaving it means the correction lands as an UPDATE in
+// place and the event keeps its id, its links and its RSVPs.
+func correctStampedUTC(items []Item, zone *time.Location) []Item {
+	for i := range items {
+		items[i].StartsAt = ReinterpretUTCAsLocal(items[i].StartsAt, zone)
+		if items[i].EndsAt != nil {
+			fixed := ReinterpretUTCAsLocal(*items[i].EndsAt, zone)
+			items[i].EndsAt = &fixed
+		}
+	}
+	return items
+}

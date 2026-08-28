@@ -355,6 +355,7 @@ func main() {
 	// Event sources (docs/adr/031): owner-attached calendar feeds.
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/event-sources", middleware.AuthRequired(db, handler.ListEventSources(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources", middleware.AuthRequired(db, handler.CreateEventSource(db)))
+	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/event-sources/{id}", middleware.AuthRequired(db, handler.UpdateEventSource(db)))
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/event-sources/{id}", middleware.AuthRequired(db, handler.DeleteEventSource(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources/{id}/sync", middleware.AuthRequired(db, handler.SyncEventSource(db)))
 	mux.HandleFunc("POST /api/v1/events/{id}/detach", middleware.AuthRequired(db, handler.DetachEvent(db)))
