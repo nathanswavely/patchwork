@@ -507,6 +507,11 @@ func main() {
 	mux.HandleFunc("PATCH /api/v1/admin/reports/{id}", middleware.AdminRequired(db, handler.UpdateReport(db)))
 	mux.HandleFunc("GET /api/v1/admin/users", middleware.AdminRequired(db, handler.ListUsers(db)))
 	mux.HandleFunc("PATCH /api/v1/admin/users/{id}", middleware.AdminRequired(db, handler.UpdateUser(db)))
+	// Setting an address points an account at a mailbox, and whoever holds
+	// that mailbox can magic-link into it — the same shape as promotion, so
+	// the same step-up gate (docs/adr/017), and its own route rather than a
+	// field on the PATCH above (docs/adr/072).
+	mux.HandleFunc("PUT /api/v1/admin/users/{id}/email", middleware.AdminRequired(db, middleware.SudoRequired(db, handler.SetUserEmail(db, cfg))))
 	mux.HandleFunc("GET /api/v1/admin/audit-log", middleware.AdminRequired(db, handler.AuditLog(db)))
 	// Archived patches: list + the only way back from archived (docs/adr/034).
 	mux.HandleFunc("GET /api/v1/admin/nodes", middleware.AdminRequired(db, handler.AdminListNodes(db)))
