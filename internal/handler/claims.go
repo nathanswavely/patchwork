@@ -141,8 +141,8 @@ func validateExplicitDomain(raw string) (string, error) {
 // BackfillVerificationDomains runs once at startup: unclaimed patches created
 // through admin paths before migration 031 get their verification_domain
 // derived from their website. NULL means "never processed" — after this pass
-// the row holds either a domain or '' and is never touched again, so an
-// admin clearing the field later sticks.
+// the row holds either a domain or the empty string and is never touched
+// again, so an admin clearing the field later sticks.
 func BackfillVerificationDomains(db *database.DB) {
 	rows, err := db.Query(
 		`SELECT id, COALESCE(website,'') FROM nodes
