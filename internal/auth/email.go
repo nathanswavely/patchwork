@@ -1,65 +1,38 @@
 package auth
 
 import (
+	"fmt"
 	"net/mail"
 	"strings"
 )
 
-// maxEmailLength is the RFC 5321 cap on a forward path. `users.email` is
-// TEXT and would happily store a megabyte, so the bound is enforced here or
-// nowhere.
-const maxEmailLength = 254
+// maxEmailLen bounds a stored address. RFC 5321 caps a path at 256 octets;
+// anything near that is not a community member's mailbox.
+const maxEmailLen = 254
 
-// NormalizeEmail canonicalizes an email address for storage and lookup:
-// surrounding whitespace trimmed, the whole address lowercased.
+// NormalizeEmail trims and lowercases an address, and checks it parses.
 //
-// The local part of an address is case-sensitive per RFC 5321, but no mail
-// provider in practice treats it that way, and honoring the letter of the
-// spec here would mean "Bob@Example.com" and "bob@example.com" are two
-// accounts nobody can tell apart. `users.email` is UNIQUE under SQLite's
-// BINARY collation, so without this every address is as many distinct
-// accounts as it has capitalizations — and a returning person who typed
-// their address differently the second time falls through to the signup
-// branch rather than signing in.
-//
-// Every path that writes or reads an address must go through here, and
-// migration 058 canonicalized the rows that predate it. The two halves are
-// one change: normalizing the lookup alone would strand every mixed-case
-// row that already existed.
-func NormalizeEmail(email string) string {
-	return strings.ToLower(strings.TrimSpace(email))
-}
-
-// ValidEmail reports whether an address is well-formed enough to store and
-// to send a sign-in link to. Pass it a NormalizeEmail'd address.
-//
-// The parse is net/mail's, so the grammar is RFC 5322's rather than a regex
-// that will be wrong in a way nobody notices for a year. Two rules are laid
-// on top of it:
-//
-// The address must be exactly what net/mail parsed back out. ParseAddress
-// also accepts the forms an email *header* may carry — "Bob
-// <bob@example.com>", "bob@example.com (Bob)", `"bob"@example.com` — and
-// returns the bare address inside. Those are legal headers and illegal
-// identities: stored verbatim they are strings that no longer equal the
-// address they mean, so the next lookup misses. Demanding equality keeps
-// exactly the bare form.
-//
-// And the domain is NOT required to contain a dot. It is the obvious extra
-// check and it would break local development: the seeded dev admin is
-// `admin@localhost` (cmd/seed), which is also the marker cmd/seed uses to
-// tell a demo database from a real one. A dotless domain is valid, rare,
-// and load-bearing here.
-//
-// This is deliberately shallow. Whether an address *receives mail* is not
-// knowable from its syntax, and the magic link is what proves that.
-func ValidEmail(email string) bool {
-	if email == "" || len(email) > maxEmailLength {
-		return false
+// Lowercasing matters more than it looks: every lookup that finds an existing
+// account is `WHERE email = ?`, an exact match. Storing one person as
+// "Someone@example.com" and letting them later type "someone@example.com"
+// misses their row, and the magic-link path reads a miss as a new visitor —
+// so instead of signing them in it offers to build them a second account,
+// stranding the first. Normalizing at every entry point keeps the stored form
+// and the typed form the same string.
+func NormalizeEmail(raw string) (string, error) {
+	email := strings.ToLower(strings.TrimSpace(raw))
+	if email == "" {
+		return "", fmt.Errorf("email is required")
 	}
+	if len(email) > maxEmailLen {
+		return "", fmt.Errorf("email address is too long")
+	}
+	// ParseAddress accepts "Name <addr>"; we want the bare address only, so
+	// anything that round-trips to something other than what we passed in is
+	// rejected rather than silently rewritten.
 	addr, err := mail.ParseAddress(email)
-	if err != nil {
-		return false
+	if err != nil || addr.Address != email {
+		return "", fmt.Errorf("that does not look like an email address")
 	}
-	return addr.Address == email
+	return email, nil
 }

@@ -348,15 +348,16 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// check leaned entirely on the domain comparison below to throw
 			// out malformed input, which it did — but only by accident of
 			// where the last '@' happened to fall.
-			claimEmail = auth.NormalizeEmail(req.Email)
-			if !auth.ValidEmail(claimEmail) {
+			var err error
+			claimEmail, err = auth.NormalizeEmail(req.Email)
+			if err != nil {
 				http.Error(w, `{"error":"a valid email address is required for email verification"}`, http.StatusBadRequest)
 				return
 			}
-			// ValidEmail guarantees a bare parseable address, so there is an
-			// '@' with something on both sides. The domain is what follows
-			// the last one — the ownership anchor, and the only part that
-			// proves anything.
+			// NormalizeEmail returns a bare parseable address or an error, so
+			// there is an '@' here with something on both sides. The domain
+			// is what follows the last one — the ownership anchor, and the
+			// only part that proves anything.
 			at := strings.LastIndex(claimEmail, "@")
 			if claimEmail[at+1:] != verificationDomain {
 				http.Error(w, fmt.Sprintf(`{"error":"the email must be at @%s"}`, verificationDomain), http.StatusBadRequest)

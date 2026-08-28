@@ -83,6 +83,7 @@ several branches are in flight.
 | [054](054-attested-decisions-federate-through-their-objects.md) | Attested decisions federate through their objects, or not at all — closes the question 052 and 053 both left open *(the behaviour already shipped; this adds the gate's test)* |
 | [068](068-a-second-explaining-surface.md) | A second explaining surface — /governance, and the test that keeps it the last one *(amends 040)* |
 | [070](070-the-first-account-is-claimed-with-a-token.md) | The first account is claimed with a token, not a race — a bootstrap token gates bootstrap, never registration *(implementation pending)* |
+| [072](072-an-admin-can-attach-an-address-and-the-old-one-is-told.md) | An admin can attach an address, and the old one is told — the in-product repair for an account 071 came too late for, gated like promotion *(answers the endpoint 071 rejected)* |
 
 ## Proposed — designs on record, not built
 

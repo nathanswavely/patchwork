@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-webauthn/webauthn/protocol"
@@ -168,19 +169,21 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		// Canonicalize before anything keys off the address: the rate-limit
-		// bucket as much as the row it will eventually match. Left raw,
-		// "Bob@Example.com" and "bob@example.com" are separate buckets, so
-		// the per-email limit is only ever one capitalization deep. Trimming
-		// also means an address of nothing but whitespace is caught here
-		// rather than stored as a magic link nobody can ever consume.
-		email := auth.NormalizeEmail(req.Email)
-		if email == "" {
+		// An absent address is not a malformed one: nothing was typed, so
+		// there is nothing to correct and nothing to say. Checked before
+		// NormalizeEmail, which folds "" and "not an address" into the same
+		// error, and these two want different answers.
+		if strings.TrimSpace(req.Email) == "" {
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 			return
 		}
 
+		// Canonicalize before anything keys off the address: the rate-limit
+		// bucket as much as the row it will eventually match. Left raw,
+		// "Bob@Example.com" and "bob@example.com" are separate buckets, so
+		// the per-email limit is only ever one capitalization deep.
+		//
 		// A malformed address is the one thing this endpoint can say out
 		// loud. The blanket 200 elsewhere exists to keep "does this person
 		// have an account" unanswerable; whether a string parses as an
@@ -188,8 +191,9 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// nothing about the instance. Answering 200 here would be worse
 		// than useless — it tells someone who fat-fingered their address to
 		// go and wait for mail that was never going to arrive.
-		if !auth.ValidEmail(email) {
-			http.Error(w, `{"error":"that doesn't look like an email address"}`, http.StatusBadRequest)
+		email, err := auth.NormalizeEmail(req.Email)
+		if err != nil {
+			http.Error(w, `{"error":"`+err.Error()+`"}`, http.StatusBadRequest)
 			return
 		}
 

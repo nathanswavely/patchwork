@@ -10,19 +10,80 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 )
 
-func TestNormalizeEmail(t *testing.T) {
-	cases := []struct{ in, want string }{
-		{"bob@example.com", "bob@example.com"},
-		{"Bob@Example.com", "bob@example.com"},
-		{"BOB@EXAMPLE.COM", "bob@example.com"},
-		{"  bob@example.com  ", "bob@example.com"},
-		{"\tBob@Example.com\n", "bob@example.com"},
-		{"   ", ""},
-		{"", ""},
+func TestNormalizeEmailFolds(t *testing.T) {
+	// The whole point: what gets stored and what gets typed later must be
+	// the same string, because every lookup is an exact match.
+	for _, raw := range []string{
+		"Someone@Example.com",
+		"  someone@example.com  ",
+		"SOMEONE@EXAMPLE.COM",
+	} {
+		got, err := NormalizeEmail(raw)
+		if err != nil {
+			t.Fatalf("NormalizeEmail(%q): %v", raw, err)
+		}
+		if got != "someone@example.com" {
+			t.Errorf("NormalizeEmail(%q) = %q, want someone@example.com", raw, got)
+		}
 	}
-	for _, c := range cases {
-		if got := NormalizeEmail(c.in); got != c.want {
-			t.Errorf("NormalizeEmail(%q) = %q, want %q", c.in, got, c.want)
+}
+
+func TestNormalizeEmailRejects(t *testing.T) {
+	cases := map[string]string{
+		"empty":         "",
+		"blank":         "   ",
+		"no at":         "someone",
+		"no domain":     "someone@",
+		"display form":  "Someone <someone@example.com>",
+		"trailing junk": "someone@example.com, other@example.com",
+	}
+	for name, raw := range cases {
+		if got, err := NormalizeEmail(raw); err == nil {
+			t.Errorf("%s: NormalizeEmail(%q) = %q, want error", name, raw, got)
+		}
+	}
+}
+
+func TestNormalizeEmailLength(t *testing.T) {
+	long := "a"
+	for len(long) < maxEmailLen {
+		long += "a"
+	}
+	if _, err := NormalizeEmail(long + "@example.com"); err == nil {
+		t.Error("over-long address accepted")
+	}
+}
+
+// A dotless domain is legal, rare, and load-bearing: the seeded dev admin is
+// admin@localhost (cmd/seed), which is also the marker cmd/seed uses to tell
+// a demo database from a real one. Requiring a dot in the domain is the
+// obvious extra rule and would lock local dev out of magic-link sign-in.
+func TestNormalizeEmailKeepsDotlessDomains(t *testing.T) {
+	for _, raw := range []string{"admin@localhost", "a@b", "bob@[127.0.0.1]"} {
+		got, err := NormalizeEmail(raw)
+		if err != nil {
+			t.Errorf("NormalizeEmail(%q): %v", raw, err)
+			continue
+		}
+		if got != raw {
+			t.Errorf("NormalizeEmail(%q) = %q, want it unchanged", raw, got)
+		}
+	}
+}
+
+// Shapes HTML's type="email" lets through that RFC 5322 does not, so they
+// arrive at the server and have to be refused here.
+func TestNormalizeEmailRejectsMalformedLocalParts(t *testing.T) {
+	for _, raw := range []string{
+		"bob..smith@example.com",
+		".bob@example.com",
+		"bob.@example.com",
+		`"bob@evil.example"@example.com`,
+		"bob@example.com (Bob)",
+		"bob smith@example.com",
+	} {
+		if got, err := NormalizeEmail(raw); err == nil {
+			t.Errorf("NormalizeEmail(%q) = %q, want error", raw, got)
 		}
 	}
 }
@@ -248,65 +309,6 @@ func TestCompleteSignupRejectsCaseVariantOfExistingAccount(t *testing.T) {
 	}
 	if n != 1 {
 		t.Errorf("expected exactly 1 account for the address, got %d", n)
-	}
-}
-
-func TestValidEmail(t *testing.T) {
-	valid := []string{
-		"bob@example.com",
-		"bob+tag@example.com",
-		"bob.smith@sub.example.co.uk",
-		"bob@[127.0.0.1]",
-		// Dotless domains are legal and load-bearing: the seeded dev admin
-		// is admin@localhost, and rejecting it would lock local dev out of
-		// magic-link sign-in.
-		"admin@localhost",
-		"a@b",
-	}
-	for _, e := range valid {
-		if !ValidEmail(e) {
-			t.Errorf("ValidEmail(%q) = false, want true", e)
-		}
-	}
-
-	invalid := []string{
-		"",
-		"   ",
-		"bob",
-		"bob@",
-		"@example.com",
-		"bob@@example.com",
-		"bob smith@example.com",
-		"bob@exam ple.com",
-		"bob@example.com\n",
-		// Header forms. net/mail parses all of these, and each returns a
-		// bare address that is not the string handed in — stored verbatim
-		// they would never match a lookup again.
-		"Bob <bob@example.com>",
-		"<bob@example.com>",
-		"bob@example.com (Bob)",
-		`"bob"@example.com`,
-		// Two addresses in one field.
-		"bob@example.com, carol@example.com",
-		// Past the RFC 5321 forward-path cap.
-		strings.Repeat("a", 250) + "@example.com",
-	}
-	for _, e := range invalid {
-		if ValidEmail(e) {
-			t.Errorf("ValidEmail(%q) = true, want false", e)
-		}
-	}
-}
-
-// Validation sits behind normalization, so an address that is only valid
-// once trimmed still gets in.
-func TestValidEmailRunsOnNormalizedInput(t *testing.T) {
-	raw := "  Bob@Example.COM  "
-	if ValidEmail(raw) {
-		t.Error("ValidEmail should reject an untrimmed address; callers normalize first")
-	}
-	if !ValidEmail(NormalizeEmail(raw)) {
-		t.Errorf("ValidEmail(NormalizeEmail(%q)) = false, want true", raw)
 	}
 }
 

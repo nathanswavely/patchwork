@@ -3938,21 +3938,21 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 441,
+          "line": 442,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 959,
+          "line": 960,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 997,
+          "line": 998,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4199,24 +4199,6 @@
       ]
     },
     {
-      "id": "19f49127e7f2",
-      "text": "failed to list users",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/admin.go",
-          "line": 44,
-          "kind": "go-error-body",
-          "raw": "failed to list users",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "111227382359",
       "text": "user id required",
       "words": 3,
@@ -4225,6 +4207,13 @@
       "replacement": null,
       "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
       "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 40,
+          "kind": "go-error-body",
+          "raw": "user id required",
+          "quote": null
+        },
         {
           "file": "internal/handler/admin.go",
           "line": 85,
@@ -4272,6 +4261,13 @@
       "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
       "occurrences": [
         {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 48,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
           "file": "internal/handler/admin.go",
           "line": 97,
           "kind": "go-error-body",
@@ -4301,21 +4297,21 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 343,
+          "line": 346,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 602,
+          "line": 605,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 740,
+          "line": 743,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4329,28 +4325,28 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 628,
+          "line": 629,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 891,
+          "line": 892,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 947,
+          "line": 948,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1174,
+          "line": 1175,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4617,6 +4613,177 @@
       ]
     },
     {
+      "id": "036932891ffe",
+      "text": "user not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 68,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 118,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/admin.go",
+          "line": 160,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 53,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 67,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 455,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 487,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/claims.go",
+          "line": 1010,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/inbox.go",
+          "line": 155,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/users.go",
+          "line": 41,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "245d5de8b225",
+      "text": "failed to load user",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error strings in a file this branch created — plain sentences a caller reads, no draft to replace",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 71,
+          "kind": "go-error-body",
+          "raw": "failed to load user",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fc34a84d5b05",
+      "text": "failed to check the address",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error strings in a file this branch created — plain sentences a caller reads, no draft to replace",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 100,
+          "kind": "go-error-body",
+          "raw": "failed to check the address",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9598fc044883",
+      "text": "another account already uses that address",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error strings in a file this branch created — plain sentences a caller reads, no draft to replace",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 111,
+          "kind": "go-error-body",
+          "raw": "another account already uses that address",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4c7529002892",
+      "text": "failed to set the email address",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error strings in a file this branch created — plain sentences a caller reads, no draft to replace",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 114,
+          "kind": "go-error-body",
+          "raw": "failed to set the email address",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "19f49127e7f2",
+      "text": "failed to list users",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/admin.go",
+          "line": 44,
+          "kind": "go-error-body",
+          "raw": "failed to list users",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "abe08b1e5c91",
       "text": "role must be member or admin",
       "words": 6,
@@ -4687,73 +4854,6 @@
           "line": 155,
           "kind": "go-error-body",
           "raw": "failed to update user",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "036932891ffe",
-      "text": "user not found",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/handler/admin.go",
-          "line": 160,
-          "kind": "go-error-body",
-          "raw": "user not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 53,
-          "kind": "go-error-body",
-          "raw": "user not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 67,
-          "kind": "go-error-body",
-          "raw": "user not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 455,
-          "kind": "go-error-body",
-          "raw": "user not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 487,
-          "kind": "go-error-body",
-          "raw": "user not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/claims.go",
-          "line": 1009,
-          "kind": "go-error-body",
-          "raw": "user not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/inbox.go",
-          "line": 155,
-          "kind": "go-error-body",
-          "raw": "user not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/users.go",
-          "line": 41,
-          "kind": "go-error-body",
-          "raw": "user not found",
           "quote": null
         }
       ]
@@ -6339,7 +6439,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 989,
+          "line": 990,
           "kind": "go-error-body",
           "raw": "user_id is required",
           "quote": null
@@ -6443,14 +6543,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 239,
+          "line": 242,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 305,
+          "line": 308,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
@@ -6475,7 +6575,7 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 347,
+          "line": 350,
           "kind": "go-error-body",
           "raw": "token and username are required",
           "quote": null
@@ -6500,14 +6600,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 361,
+          "line": 364,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 556,
+          "line": 559,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
@@ -6517,24 +6617,6 @@
           "line": 85,
           "kind": "go-error-body",
           "raw": "failed to create session",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "bb75052389a1",
-      "text": "that doesn't look like an email address",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Sign-in rejection for a malformed address. Plain and lowercase, matching the other handler error bodies; says what is wrong without guessing at the typo.",
-      "occurrences": [
-        {
-          "file": "internal/handler/auth.go",
-          "line": 192,
-          "kind": "go-error-body",
-          "raw": "that doesn't look like an email address",
           "quote": null
         }
       ]
@@ -6550,7 +6632,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 387,
+          "line": 390,
           "kind": "go-error-body",
           "raw": "failed to begin registration",
           "quote": null
@@ -6568,14 +6650,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 406,
+          "line": 409,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 417,
+          "line": 420,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
@@ -6593,7 +6675,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 474,
+          "line": 477,
           "kind": "go-error-body",
           "raw": "failed to begin step-up",
           "quote": null
@@ -6611,14 +6693,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 491,
+          "line": 494,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 542,
+          "line": 545,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
@@ -6636,7 +6718,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 504,
+          "line": 507,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
@@ -6661,7 +6743,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 509,
+          "line": 512,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
           "quote": null
@@ -6679,7 +6761,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 528,
+          "line": 531,
           "kind": "go-error-body",
           "raw": "failed to begin login",
           "quote": null
@@ -6697,7 +6779,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 610,
+          "line": 613,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -6715,7 +6797,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 620,
+          "line": 623,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -6733,7 +6815,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 631,
+          "line": 634,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -6751,7 +6833,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 639,
+          "line": 642,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -6769,7 +6851,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 653,
+          "line": 656,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -6787,7 +6869,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 696,
+          "line": 699,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -6805,14 +6887,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 732,
+          "line": 735,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 773,
+          "line": 776,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -6830,7 +6912,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 752,
+          "line": 755,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -6848,14 +6930,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 756,
+          "line": 759,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 787,
+          "line": 790,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -6873,7 +6955,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 782,
+          "line": 785,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -6934,7 +7016,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 390,
+          "line": 391,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
@@ -6988,7 +7070,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 353,
+          "line": 354,
           "kind": "go-error-body",
           "raw": "a valid email address is required for email verification",
           "quote": null
@@ -7006,7 +7088,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 362,
+          "line": 363,
           "kind": "go-error-body",
           "raw": "the email must be at @%s",
           "quote": null
@@ -7024,7 +7106,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 393,
+          "line": 394,
           "kind": "go-error-body",
           "raw": "failed to create claim",
           "quote": null
@@ -7042,7 +7124,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 477,
+          "line": 478,
           "kind": "go-error-body",
           "raw": "failed to load claim",
           "quote": null
@@ -7060,35 +7142,35 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 499,
+          "line": 500,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 539,
+          "line": 540,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 671,
+          "line": 672,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 900,
+          "line": 901,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1199,
+          "line": 1200,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7106,28 +7188,28 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 503,
+          "line": 504,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 543,
+          "line": 544,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 676,
+          "line": 677,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1203,
+          "line": 1204,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7145,14 +7227,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 507,
+          "line": 508,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 680,
+          "line": 681,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
@@ -7170,7 +7252,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 547,
+          "line": 548,
           "kind": "go-error-body",
           "raw": "this claim has no email verification to resend",
           "quote": null
@@ -7188,7 +7270,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 564,
+          "line": 565,
           "kind": "go-error-body",
           "raw": "resend limit reached — try again tomorrow",
           "quote": null
@@ -7206,14 +7288,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 607,
+          "line": 608,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 633,
+          "line": 634,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
@@ -7231,7 +7313,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 637,
+          "line": 638,
           "kind": "go-error-body",
           "raw": "this verification link has expired — request a new email from the claim page",
           "quote": null
@@ -7249,21 +7331,21 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 642,
+          "line": 643,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 760,
+          "line": 761,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 914,
+          "line": 915,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
@@ -7281,7 +7363,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 830,
+          "line": 831,
           "kind": "go-error-body",
           "raw": "failed to query claims",
           "quote": null
@@ -7299,7 +7381,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 904,
+          "line": 905,
           "kind": "go-error-body",
           "raw": "claim is not pending",
           "quote": null
@@ -7317,7 +7399,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 927,
+          "line": 928,
           "kind": "go-error-body",
           "raw": "action must be 'approve' or 'reject'",
           "quote": null
@@ -7349,7 +7431,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 963,
+          "line": 964,
           "kind": "go-error-body",
           "raw": "verification domains only apply to unclaimed patches",
           "quote": null
@@ -7367,7 +7449,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1001,
+          "line": 1002,
           "kind": "go-error-body",
           "raw": "patch is not unclaimed",
           "quote": null
@@ -7385,7 +7467,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1026,
+          "line": 1027,
           "kind": "go-error-body",
           "raw": "failed to assign owner",
           "quote": null
@@ -7403,7 +7485,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1186,
+          "line": 1187,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -7421,7 +7503,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1207,
+          "line": 1208,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -7439,7 +7521,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1216,
+          "line": 1217,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired — the patch is claimable again",
           "quote": null
@@ -7457,14 +7539,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1225,
+          "line": 1226,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1231,
+          "line": 1232,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -7482,7 +7564,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1234,
+          "line": 1235,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -17229,6 +17311,13 @@
           "quote": null
         },
         {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 301,
+          "kind": "markup",
+          "raw": "Cancel",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/GovernanceEdit.svelte",
           "line": 191,
           "kind": "markup",
@@ -20775,7 +20864,7 @@
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 143,
+          "line": 144,
           "kind": "markup",
           "raw": "Details",
           "quote": null
@@ -24821,7 +24910,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 219,
+          "line": 260,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -24878,7 +24967,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 220,
+          "line": 261,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -25180,7 +25269,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 191,
+          "line": 232,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -26145,7 +26234,7 @@
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 141,
+          "line": 142,
           "kind": "markup",
           "raw": "Action",
           "quote": null
@@ -26340,6 +26429,24 @@
       ]
     },
     {
+      "id": "5cbab62f3a57",
+      "text": "admin.user_email_set",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The audit action name itself, matching its sibling options — a machine identifier, not prose",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAuditLog.svelte",
+          "line": 106,
+          "kind": "markup",
+          "raw": "admin.user_email_set",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "3e8bd9a159b8",
       "text": "membership.join",
       "words": 1,
@@ -26350,7 +26457,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 106,
+          "line": 107,
           "kind": "markup",
           "raw": "membership.join",
           "quote": null
@@ -26368,7 +26475,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 107,
+          "line": 108,
           "kind": "markup",
           "raw": "auth.login",
           "quote": null
@@ -26386,14 +26493,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 111,
+          "line": 112,
           "kind": "markup",
           "raw": "User",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 140,
+          "line": 141,
           "kind": "markup",
           "raw": "User",
           "quote": null
@@ -26411,7 +26518,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 112,
+          "line": 113,
           "kind": "attr:placeholder",
           "raw": "Search by user ID...",
           "quote": "\""
@@ -26429,7 +26536,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 115,
+          "line": 116,
           "kind": "markup",
           "raw": "From",
           "quote": null
@@ -26454,7 +26561,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 133,
+          "line": 134,
           "kind": "markup",
           "raw": "No audit entries found.",
           "quote": null
@@ -26472,7 +26579,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 139,
+          "line": 140,
           "kind": "markup",
           "raw": "Time",
           "quote": null
@@ -26490,7 +26597,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 142,
+          "line": 143,
           "kind": "markup",
           "raw": "Target",
           "quote": null
@@ -26889,7 +26996,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 165,
+          "line": 206,
           "kind": "markup",
           "raw": "User Management",
           "quote": null
@@ -29682,7 +29789,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 74,
+          "line": 81,
           "kind": "js-string",
           "raw": "User unsuspended",
           "quote": "'"
@@ -29700,7 +29807,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 74,
+          "line": 81,
           "kind": "js-string",
           "raw": "User suspended",
           "quote": "'"
@@ -29718,7 +29825,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 90,
+          "line": 97,
           "kind": "js-string",
           "raw": "Trusted contributor revoked",
           "quote": "'"
@@ -29736,7 +29843,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 90,
+          "line": 97,
           "kind": "js-string",
           "raw": "Marked as trusted contributor",
           "quote": "'"
@@ -29754,7 +29861,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 156,
+          "line": 197,
           "kind": "js-string",
           "raw": "Invite link copied",
           "quote": "'"
@@ -29772,7 +29879,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 158,
+          "line": 199,
           "kind": "js-string",
           "raw": "Could not copy. Select the link and copy it manually.",
           "quote": "'"
@@ -29790,7 +29897,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 171,
+          "line": 212,
           "kind": "markup",
           "raw": "Invite Links",
           "quote": null
@@ -29808,7 +29915,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 173,
+          "line": 214,
           "kind": "markup",
           "raw": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
           "quote": null
@@ -29827,7 +29934,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 177,
+          "line": 218,
           "kind": "markup",
           "raw": "Max uses",
           "quote": null
@@ -29845,7 +29952,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 181,
+          "line": 222,
           "kind": "markup",
           "raw": "Expires in (hours, 0 = never)",
           "quote": null
@@ -29863,7 +29970,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 194,
+          "line": 235,
           "kind": "markup",
           "raw": "This link is shown once, so copy it now. Anyone with it can create an account.",
           "quote": null
@@ -29881,7 +29988,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 202,
+          "line": 243,
           "kind": "attr:placeholder",
           "raw": "Search by name or email...",
           "quote": "\""
@@ -29899,9 +30006,34 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 213,
+          "line": 254,
           "kind": "markup",
           "raw": "No users found.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "969ccbd3cf63",
+      "text": "Email",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 262,
+          "kind": "markup",
+          "raw": "Email",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 175,
+          "kind": "markup",
+          "raw": "Email",
           "quote": null
         }
       ]
@@ -29917,7 +30049,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 221,
+          "line": 263,
           "kind": "markup",
           "raw": "Role",
           "quote": null
@@ -29935,7 +30067,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 222,
+          "line": 264,
           "kind": "markup",
           "raw": "Trusted Contributor",
           "quote": null
@@ -29953,7 +30085,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 223,
+          "line": 265,
           "kind": "markup",
           "raw": "Joined",
           "quote": null
@@ -29971,7 +30103,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 224,
+          "line": 266,
           "kind": "markup",
           "raw": "Status",
           "quote": null
@@ -29989,10 +30121,28 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 225,
+          "line": 267,
           "kind": "markup",
           "raw": "Actions",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7b17fb0bd173",
+      "text": "name@example.com",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Conventional email placeholder — shows the shape of the field, nothing to write",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 294,
+          "kind": "attr:placeholder",
+          "raw": "name@example.com",
+          "quote": "\""
         }
       ]
     },
@@ -30007,7 +30157,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 246,
+          "line": 316,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -30039,7 +30189,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 247,
+          "line": 317,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -30071,7 +30221,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 260,
+          "line": 330,
           "kind": "markup",
           "raw": "Trusted",
           "quote": null
@@ -30089,7 +30239,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 279,
+          "line": 349,
           "kind": "markup",
           "raw": "Suspended",
           "quote": null
@@ -30107,7 +30257,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 281,
+          "line": 351,
           "kind": "markup",
           "raw": "Active",
           "quote": null
@@ -35956,24 +36106,6 @@
           "line": 157,
           "kind": "markup",
           "raw": "The quickest way in. Your key stays on your device.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "969ccbd3cf63",
-      "text": "Email",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Login.svelte",
-          "line": 175,
-          "kind": "markup",
-          "raw": "Email",
           "quote": null
         }
       ]
@@ -43208,6 +43340,42 @@
         }
       ],
       "previous_ai_text": "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The"
+    },
+    {
+      "id": "9c801da4764c",
+      "text": "an email address is required",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error strings in a file this branch created — plain sentences a caller reads, no draft to replace",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 57,
+          "kind": "go-error-body",
+          "raw": "an email address is required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "46e6ac42094b",
+      "text": "that does not look like an email address",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error strings in a file this branch created — plain sentences a caller reads, no draft to replace",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 61,
+          "kind": "go-error-body",
+          "raw": "that does not look like an email address",
+          "quote": null
+        }
+      ]
     }
   ],
   "baseline": [
