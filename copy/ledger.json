@@ -3938,21 +3938,21 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 431,
+          "line": 441,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 949,
+          "line": 959,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 987,
+          "line": 997,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4301,21 +4301,21 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 318,
+          "line": 343,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 577,
+          "line": 602,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 715,
+          "line": 740,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4329,28 +4329,28 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 618,
+          "line": 628,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 881,
+          "line": 891,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 937,
+          "line": 947,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1164,
+          "line": 1174,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4737,7 +4737,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 999,
+          "line": 1009,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -6339,7 +6339,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 979,
+          "line": 989,
           "kind": "go-error-body",
           "raw": "user_id is required",
           "quote": null
@@ -6443,14 +6443,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 214,
+          "line": 239,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 280,
+          "line": 305,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
@@ -6475,7 +6475,7 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 322,
+          "line": 347,
           "kind": "go-error-body",
           "raw": "token and username are required",
           "quote": null
@@ -6500,14 +6500,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 336,
+          "line": 361,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 531,
+          "line": 556,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
@@ -6517,6 +6517,24 @@
           "line": 85,
           "kind": "go-error-body",
           "raw": "failed to create session",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bb75052389a1",
+      "text": "that doesn't look like an email address",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Sign-in rejection for a malformed address. Plain and lowercase, matching the other handler error bodies; says what is wrong without guessing at the typo.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 192,
+          "kind": "go-error-body",
+          "raw": "that doesn't look like an email address",
           "quote": null
         }
       ]
@@ -6532,7 +6550,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 362,
+          "line": 387,
           "kind": "go-error-body",
           "raw": "failed to begin registration",
           "quote": null
@@ -6550,14 +6568,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 381,
+          "line": 406,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 392,
+          "line": 417,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
@@ -6575,7 +6593,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 449,
+          "line": 474,
           "kind": "go-error-body",
           "raw": "failed to begin step-up",
           "quote": null
@@ -6593,14 +6611,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 466,
+          "line": 491,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 517,
+          "line": 542,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
@@ -6618,7 +6636,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 479,
+          "line": 504,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
@@ -6643,7 +6661,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 484,
+          "line": 509,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
           "quote": null
@@ -6661,7 +6679,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 503,
+          "line": 528,
           "kind": "go-error-body",
           "raw": "failed to begin login",
           "quote": null
@@ -6679,7 +6697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 585,
+          "line": 610,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -6697,7 +6715,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 595,
+          "line": 620,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -6715,7 +6733,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 606,
+          "line": 631,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -6733,7 +6751,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 614,
+          "line": 639,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -6751,7 +6769,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 628,
+          "line": 653,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -6769,7 +6787,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 671,
+          "line": 696,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -6787,14 +6805,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 707,
+          "line": 732,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 748,
+          "line": 773,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -6812,7 +6830,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 727,
+          "line": 752,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -6830,14 +6848,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 731,
+          "line": 756,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 762,
+          "line": 787,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -6855,7 +6873,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 757,
+          "line": 782,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -6916,7 +6934,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 380,
+          "line": 390,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
@@ -6970,7 +6988,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 348,
+          "line": 353,
           "kind": "go-error-body",
           "raw": "a valid email address is required for email verification",
           "quote": null
@@ -6988,7 +7006,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 352,
+          "line": 362,
           "kind": "go-error-body",
           "raw": "the email must be at @%s",
           "quote": null
@@ -7006,7 +7024,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 383,
+          "line": 393,
           "kind": "go-error-body",
           "raw": "failed to create claim",
           "quote": null
@@ -7024,7 +7042,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 467,
+          "line": 477,
           "kind": "go-error-body",
           "raw": "failed to load claim",
           "quote": null
@@ -7042,35 +7060,35 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 489,
+          "line": 499,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 529,
+          "line": 539,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 661,
+          "line": 671,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 890,
+          "line": 900,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1189,
+          "line": 1199,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7088,28 +7106,28 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 493,
+          "line": 503,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 533,
+          "line": 543,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 666,
+          "line": 676,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1193,
+          "line": 1203,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7127,14 +7145,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 497,
+          "line": 507,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 670,
+          "line": 680,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
@@ -7152,7 +7170,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 537,
+          "line": 547,
           "kind": "go-error-body",
           "raw": "this claim has no email verification to resend",
           "quote": null
@@ -7170,7 +7188,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 554,
+          "line": 564,
           "kind": "go-error-body",
           "raw": "resend limit reached — try again tomorrow",
           "quote": null
@@ -7188,14 +7206,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 597,
+          "line": 607,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 623,
+          "line": 633,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
@@ -7213,7 +7231,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 627,
+          "line": 637,
           "kind": "go-error-body",
           "raw": "this verification link has expired — request a new email from the claim page",
           "quote": null
@@ -7231,21 +7249,21 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 632,
+          "line": 642,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 750,
+          "line": 760,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 904,
+          "line": 914,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
@@ -7263,7 +7281,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 820,
+          "line": 830,
           "kind": "go-error-body",
           "raw": "failed to query claims",
           "quote": null
@@ -7281,7 +7299,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 894,
+          "line": 904,
           "kind": "go-error-body",
           "raw": "claim is not pending",
           "quote": null
@@ -7299,7 +7317,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 917,
+          "line": 927,
           "kind": "go-error-body",
           "raw": "action must be 'approve' or 'reject'",
           "quote": null
@@ -7331,7 +7349,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 953,
+          "line": 963,
           "kind": "go-error-body",
           "raw": "verification domains only apply to unclaimed patches",
           "quote": null
@@ -7349,7 +7367,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 991,
+          "line": 1001,
           "kind": "go-error-body",
           "raw": "patch is not unclaimed",
           "quote": null
@@ -7367,7 +7385,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1016,
+          "line": 1026,
           "kind": "go-error-body",
           "raw": "failed to assign owner",
           "quote": null
@@ -7385,7 +7403,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1176,
+          "line": 1186,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -7403,7 +7421,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1197,
+          "line": 1207,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -7421,7 +7439,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1206,
+          "line": 1216,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired — the patch is claimable again",
           "quote": null
@@ -7439,14 +7457,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1215,
+          "line": 1225,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1221,
+          "line": 1231,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -7464,7 +7482,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1224,
+          "line": 1234,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
