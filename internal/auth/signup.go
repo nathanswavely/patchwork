@@ -25,6 +25,8 @@ const signupTokenExpiry = 60 * time.Minute
 // createSignupToken stores a hashed single-use signup token for an email
 // inside an existing transaction and returns the raw token.
 func createSignupToken(tx *sql.Tx, email string) (string, error) {
+	email = NormalizeEmail(email)
+
 	rawToken, err := generateToken()
 	if err != nil {
 		return "", err
@@ -73,7 +75,9 @@ func ValidateSignupToken(db *database.DB, rawToken string) (string, error) {
 	if err == nil && time.Now().After(exp) {
 		return "", fmt.Errorf("signup link has expired — request a new sign-in link")
 	}
-	return email, nil
+	// Show the address the account will actually be created under, not the
+	// capitalization that happened to be typed.
+	return NormalizeEmail(email), nil
 }
 
 // CompleteSignup consumes a signup token and creates the account with the
@@ -107,6 +111,23 @@ func CompleteSignup(db *database.DB, rawToken, rawUsername, displayName, bootstr
 	exp, err := time.Parse(time.RFC3339, expiresAt)
 	if err == nil && time.Now().After(exp) {
 		return nil, fmt.Errorf("signup link has expired — request a new sign-in link")
+	}
+
+	// A token minted before migration 058 carries the address as typed. It
+	// is canonicalized here rather than trusted, so the existing-account
+	// check below and the INSERT that follows agree with every other
+	// lookup — an uncanonical INSERT would sail past the UNIQUE index and
+	// recreate the very row the migration removed.
+	email = NormalizeEmail(email)
+
+	// The last gate before an address becomes an account. RequestMagicLink
+	// already refused anything malformed, so reaching here means a token
+	// minted before that check existed — or a caller that never passed
+	// through the handler at all. This is the boundary the invariant is
+	// worth stating at: `users.email` is what every sign-in matches
+	// against, and a row nobody can type is a row nobody can sign into.
+	if !ValidEmail(email) {
+		return nil, fmt.Errorf("that doesn't look like an email address — request a new sign-in link")
 	}
 
 	// Two concurrent signup tokens for the same address: first one wins.

@@ -52,3 +52,102 @@ func TestRequestMagicLinkSendFailureLogged(t *testing.T) {
 		t.Errorf("send failure not logged; log output: %q", logged)
 	}
 }
+
+// A malformed address is refused at the door with a 400. The blanket 200 on
+// this endpoint exists to keep account existence unanswerable; address
+// syntax says nothing about the instance, so refusing it leaks nothing —
+// and answering "ok" would send someone off to wait for mail that was never
+// going to be sent.
+func TestRequestMagicLinkRejectsMalformedAddress(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{}
+	cfg.Instance.Domain = "example.com"
+
+	for _, body := range []string{
+		`{"email":"not-an-address"}`,
+		`{"email":"Bob <bob@example.com>"}`,
+		`{"email":"bob@exam ple.com"}`,
+		`{"email":"bob@example.com, carol@example.com"}`,
+	} {
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/magic-link", strings.NewReader(body))
+		w := httptest.NewRecorder()
+		handler.RequestMagicLink(db, cfg)(w, req)
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("body %s: status = %d, want 400", body, w.Code)
+		}
+		// Nothing was staged, so no link can be consumed later.
+		var n int
+		if err := db.QueryRow(`SELECT COUNT(*) FROM magic_links`).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		if n != 0 {
+			t.Errorf("body %s: %d magic links stored for a malformed address", body, n)
+		}
+	}
+}
+
+// An empty or whitespace-only address keeps the old silent 200 — there is no
+// address to say anything about, and the form has nothing to correct.
+func TestRequestMagicLinkEmptyAddressStaysGeneric(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{}
+	cfg.Instance.Domain = "example.com"
+
+	for _, body := range []string{`{"email":""}`, `{"email":"   "}`, `{}`, `not json`} {
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/magic-link", strings.NewReader(body))
+		w := httptest.NewRecorder()
+		handler.RequestMagicLink(db, cfg)(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("body %s: status = %d, want 200", body, w.Code)
+		}
+	}
+}
+
+// The dotless dev address must survive the new gate, or `admin@localhost`
+// (cmd/seed's dev admin, and its marker for a demo database) can no longer
+// sign in. No SMTP configured, so this takes the log-the-link branch.
+func TestRequestMagicLinkAcceptsDotlessDevAddress(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/magic-link",
+		strings.NewReader(`{"email":"admin@localhost"}`))
+	w := httptest.NewRecorder()
+	handler.RequestMagicLink(db, cfg)(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200", w.Code)
+	}
+	var stored string
+	if err := db.QueryRow(`SELECT email FROM magic_links`).Scan(&stored); err != nil {
+		t.Fatalf("no magic link stored for admin@localhost: %v", err)
+	}
+	if stored != "admin@localhost" {
+		t.Errorf("magic_links.email = %q, want %q", stored, "admin@localhost")
+	}
+}
+
+// Case variants share one rate-limit bucket. Keyed on the raw string they
+// would not, making the per-email limit only one capitalization deep.
+func TestRequestMagicLinkStoresNormalizedAddress(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/magic-link",
+		strings.NewReader(`{"email":"  Bob@Example.COM  "}`))
+	w := httptest.NewRecorder()
+	handler.RequestMagicLink(db, cfg)(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200", w.Code)
+	}
+	var stored string
+	if err := db.QueryRow(`SELECT email FROM magic_links`).Scan(&stored); err != nil {
+		t.Fatal(err)
+	}
+	if stored != "bob@example.com" {
+		t.Errorf("magic_links.email = %q, want %q", stored, "bob@example.com")
+	}
+}
