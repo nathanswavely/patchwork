@@ -19,9 +19,16 @@
   let nextCursor = $state('');
   let searchTimeout = $state(null);
 
-  // Promoting someone to admin needs a passkey confirmation. Surfaced on load
-  // so an admin without one learns it here, not mid-promotion.
+  // Promoting someone to admin and setting someone's email both need a
+  // passkey confirmation. Surfaced on load so an admin without one learns it
+  // here, not mid-action.
   let hasPasskey = $state(true);
+
+  // Which user's email is being edited, and the address typed so far. One at
+  // a time: this is a repair, not data entry.
+  let editingEmailFor = $state('');
+  let emailDraft = $state('');
+  let savingEmail = $state(false);
 
   $effect(() => {
     void searchQuery;
@@ -125,6 +132,40 @@
     }
   }
 
+  function startEmailEdit(user) {
+    editingEmailFor = user.id;
+    emailDraft = user.email || '';
+  }
+
+  function cancelEmailEdit() {
+    editingEmailFor = '';
+    emailDraft = '';
+  }
+
+  // Setting an address points the account at a mailbox, and whoever holds it
+  // can magic-link in — so it takes a passkey confirmation the way promotion
+  // does (docs/adr/017, docs/adr/072).
+  async function saveEmail(user) {
+    const email = emailDraft.trim();
+    if (!email) return;
+    savingEmail = true;
+    try {
+      const data = await withStepUp(() => api(`admin/users/${user.id}/email`, {
+        method: 'PUT',
+        body: { email },
+      }));
+      // Show the address as stored, not as typed: sign-in matches it exactly,
+      // so this is what the person has to enter.
+      showToast(`Email set to ${data.email}`, 'success');
+      cancelEmailEdit();
+      loadUsers();
+    } catch (e) {
+      if (e instanceof PasskeyRequiredError) hasPasskey = false;
+      showToast(e.message, 'error');
+    } finally {
+      savingEmail = false;
+    }
+  }
 
   let inviteMaxUses = $state(1);
   let inviteExpiresHrs = $state(72);
@@ -165,7 +206,7 @@
     <h1>User Management</h1>
   </div>
 
-  <PasskeyNotice show={!hasPasskey} action="promote someone to instance admin" />
+  <PasskeyNotice show={!hasPasskey} action="promote someone to instance admin or set their email address" />
 
   <section class="invite-section card">
     <h2>Invite Links</h2>
@@ -218,6 +259,7 @@
           <tr>
             <th>Username</th>
             <th>Display Name</th>
+            <th>Email</th>
             <th>Role</th>
             <th>Trusted Contributor</th>
             <th>Joined</th>
@@ -238,6 +280,34 @@
                 </a>
               </td>
               <td>{u.display_name || '--'}</td>
+              <td>
+                {#if editingEmailFor === u.id}
+                  <form
+                    class="email-edit"
+                    onsubmit={(e) => { e.preventDefault(); saveEmail(u); }}
+                  >
+                    <!-- svelte-ignore a11y_autofocus -->
+                    <input
+                      type="email"
+                      autofocus
+                      bind:value={emailDraft}
+                      placeholder="name@example.com"
+                      onkeydown={(e) => { if (e.key === 'Escape') cancelEmailEdit(); }}
+                    />
+                    <button type="submit" class="btn btn-primary btn-sm" disabled={savingEmail || !emailDraft.trim()}>
+                      {savingEmail ? 'Saving...' : 'Save'}
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick={cancelEmailEdit}>
+                      Cancel
+                    </button>
+                  </form>
+                {:else}
+                  <span class="email-address" class:muted={!u.email}>{u.email || '--'}</span>
+                  <button class="btn btn-secondary btn-sm" onclick={() => startEmailEdit(u)}>
+                    {u.email ? 'Change' : 'Set'}
+                  </button>
+                {/if}
+              </td>
               <td>
                 <select
                   value={pendingRoles[u.id] ?? u.role}
@@ -384,6 +454,23 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     background: var(--color-surface);
+  }
+
+  .email-edit {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .email-edit input {
+    min-width: 12rem;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .email-address {
+    margin-right: 0.4rem;
+    word-break: break-all;
   }
 
   .badge-trusted {

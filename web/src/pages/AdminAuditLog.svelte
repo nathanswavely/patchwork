@@ -103,6 +103,7 @@
           <option value="report.create">report.create</option>
           <option value="report.resolve">report.resolve</option>
           <option value="admin.user_update">admin.user_update</option>
+          <option value="admin.user_email_set">admin.user_email_set</option>
           <option value="membership.join">membership.join</option>
           <option value="auth.login">auth.login</option>
         </select>
