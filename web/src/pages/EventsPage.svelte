@@ -20,6 +20,11 @@
   let listCursor = $state('');
   let hasMore = $state(false);
   let patchMap = $state(new Map());
+  // Which scope patchMap was built for. A plain variable, deliberately not
+  // $state: it is read inside loadData, which runs from an $effect, and a
+  // reactive read of something that same effect writes is what made this page
+  // fetch its list three times per view.
+  let patchMapScope = null;
 
   // Date filter state
   let dateFilterOpen = $state(false);
@@ -72,7 +77,11 @@
 
   $effect(() => {
     void quiltScope;
-    void getRemoteFollows().length;
+    // Remote follows are a dependency only where they are an ingredient: on
+    // My Quilt, where they merge into the feed below. The whole-quilt list
+    // has nothing to do with them, and tracking them there re-ran this
+    // effect — and refetched the whole list — the moment the store resolved.
+    if (quiltScope === 'my') void getRemoteFollows().length;
     loadData();
   });
 
@@ -80,20 +89,32 @@
     loading = true;
     try {
       const { from, to } = dateRange;
+      // `params` is the shared half of the query and travels to OTHER quilts
+      // below; the scope suffix is this quilt's alone. A remote quilt has no
+      // idea who is asking (CORS is `*`, so no cookie ever rides along), and
+      // would answer scope=my with an empty list — the follows are what scope
+      // a remote quilt's events, not this parameter.
       let params = `?from=${encodeURIComponent(from)}&limit=50`;
       if (to) params += `&to=${encodeURIComponent(to)}`;
+      const localParams = params + (quiltScope === 'my' ? '&scope=my' : '');
 
-      if (patchMap.size === 0) {
-        const treeResp = await api('nodes/tree');
+      if (patchMapScope !== quiltScope) {
+        // The tag/search filter resolves an event to its patch through this
+        // map, so it has to be drawn at the same scope as the list — on My
+        // Quilt that includes private patches you belong to, which the
+        // unscoped tree does not list at all. Fetched with the whole tree
+        // rather than the public one, filtering silently dropped them.
+        const treeResp = await api(`nodes/tree${quiltScope === 'my' ? '?scope=my' : ''}`);
         const tree = treeResp.tree || treeResp;
         const map = new Map();
         for (const child of (tree.children || [])) {
           map.set(child.id, child);
         }
         patchMap = map;
+        patchMapScope = quiltScope;
       }
 
-      const data = await api(`events${params}`);
+      const data = await api(`events${localParams}`);
       let events = data.items || [];
       listCursor = data.next_cursor || '';
       hasMore = !!data.next_cursor;
@@ -142,8 +163,11 @@
     if (!listCursor) return;
     try {
       const { from, to } = dateRange;
+      // The cursor pages the local list, so it carries the same scope the
+      // first page was fetched with — otherwise page two is the whole quilt.
       let params = `?from=${encodeURIComponent(from)}&limit=50&after=${encodeURIComponent(listCursor)}`;
       if (to) params += `&to=${encodeURIComponent(to)}`;
+      if (quiltScope === 'my') params += '&scope=my';
       const data = await api(`events${params}`);
       allEvents = [...allEvents, ...(data.items || [])];
       listCursor = data.next_cursor || '';
