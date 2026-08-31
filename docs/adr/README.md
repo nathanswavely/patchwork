@@ -85,6 +85,9 @@ several branches are in flight.
 | [070](070-the-first-account-is-claimed-with-a-token.md) | The first account is claimed with a token, not a race — a bootstrap token gates bootstrap, never registration *(implementation pending)* |
 | [073](073-a-feed-can-be-wrong-about-its-own-zone.md) | A feed can be wrong about its own zone — a per-source switch for a publisher that stamps local time as UTC *(beside 045/067, applies 069's test)* |
 | [072](072-an-admin-can-attach-an-address-and-the-old-one-is-told.md) | An admin can attach an address, and the old one is told — the in-product repair for an account 071 came too late for, gated like promotion *(answers the endpoint 071 rejected)* |
+| [074](074-the-list-reads-the-quilt.md) | The list reads the quilt — quilt order as the default, the in-view lens, and a control belongs to the surface it changes *(amends 022; implementation pending)* |
+| [075](075-discovery-asks-a-question.md) | Discovery asks a question; the quilt shows everything — Welcome splits, the flow goes standing and public, and co-follow recommendation is refused *(beside 040; implementation pending)* |
+| [076](076-the-bulletin-is-the-one-broadcast.md) | The bulletin is the one broadcast, and it ships off — monthly, complete, unranked, opt-in *(implementation pending)* |
 
 ## Proposed — designs on record, not built
 
