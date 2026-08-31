@@ -9,7 +9,8 @@
    * Seam ownership: the bar carries its own bottom border (`bordered`) only
    * in discovery's ordinary page views, where it would otherwise bleed
    * surface-on-surface into the content. Over the quilt/map canvas
-   * it's glass (`glass`) with no seam, and in workspace/admin takeovers the
+   * it paints nothing at all (`glass`) — no fill, no seam, and each control
+   * carries its own chip — and in workspace/admin takeovers the
    * tab row directly below the bar is the seam — those shells pass neither
    * prop. `glass` and `bordered` are mutually exclusive by contract.
    */
@@ -272,11 +273,39 @@
     border-bottom: 1px solid var(--color-border);
   }
 
-  /* Over the quilt: glass so the canvas reads through */
+  /* Over the quilt/map: no bar at all — the canvas runs to the top of the
+     window and the controls float on it. Glass was still a band: at 0.92
+     alpha it read as an opaque strip laid over the tiles, and the seam it
+     drew across the canvas was the jank. The controls carry their own
+     surfaces (the search pill, the avatar, the New button), so the bar
+     itself has nothing left to paint. Specificity keeps this winning over
+     the mobile `.top-bar` background below. */
   .top-bar.quilt-mode {
-    background: var(--color-glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* With nothing behind them, the bare controls (bell, + New, Log In) would
+     sit straight on the tiles, and a quilt is the worst possible backdrop
+     for muted text — saturated, light, and different under every control.
+     So each carries its own chip: the same backdrop the collapsed rail's
+     chips use, which makes the two floating clusters read as one family
+     rather than as a bar that lost its paint. The avatar, the Sign Up
+     button and the search pill already own surfaces and are left alone. */
+  .top-bar.quilt-mode .bar-new-btn,
+  .top-bar.quilt-mode .bar-login,
+  .top-bar.quilt-mode .bar-bell {
+    background: color-mix(in srgb, var(--color-bg) 65%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius);
+  }
+
+  .top-bar.quilt-mode .bar-new-btn:hover,
+  .top-bar.quilt-mode .bar-new-btn.open,
+  .top-bar.quilt-mode .bar-login:hover {
+    background: color-mix(in srgb, var(--color-bg) 80%, transparent);
   }
 
   /* Mobile: breathe a little, and let the content read through the bar */
