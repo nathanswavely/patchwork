@@ -4,6 +4,7 @@
   import 'leaflet/dist/leaflet.css';
   import { blockPageZoom } from '../lib/pageZoom.js';
   import { formatCoord, roundCoord, hasMapLocation } from '../lib/mapLocation.js';
+  import { addBasemap, BASEMAP_MAX_ZOOM } from '../lib/basemap.js';
 
   // A deliberate placement surface (issue #4): the admin drags or clicks a
   // single marker, sees the chosen coordinates, and saves explicitly. Nothing
@@ -77,35 +78,33 @@
       return [40.0379, -76.3055]; // Lancaster, PA fallback (matches MapView)
     });
 
-    map = L.map(mapContainer, { fadeAnimation: false }).setView(start, 13);
+    // Everything below works off the local handle, never the `map` rune:
+    // reading that back inside the effect that wrote it makes the effect
+    // depend on itself, and the second pass hits an initialized container.
+    const instance = L.map(mapContainer, { fadeAnimation: false, maxZoom: BASEMAP_MAX_ZOOM })
+      .setView(start, 13);
+    map = instance;
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 20,
-    }).addTo(map);
+    // The picker stays light in either app theme: placement is easier to
+    // read against the pale style, and the marker is high-contrast on it.
+    addBasemap(instance, 'light');
 
     // Seed the marker if there is already a saved location.
-    if (hasMapLocation(lat, lng)) placeAt(lat, lng);
+    if (hasMapLocation(lat, lng)) untrack(() => placeAt(lat, lng));
 
     // Click anywhere to place or move the marker.
-    map.on('click', (e) => placeAt(e.latlng.lat, e.latlng.lng));
+    instance.on('click', (e) => placeAt(e.latlng.lat, e.latlng.lng));
 
-    const ro = new ResizeObserver(() => {
-      if (map) map.invalidateSize();
-    });
+    const ro = new ResizeObserver(() => instance.invalidateSize());
     ro.observe(mapContainer);
     const unblockZoom = blockPageZoom(mapContainer);
 
     return () => {
       ro.disconnect();
       unblockZoom();
-      if (map) {
-        map.remove();
-        map = null;
-        marker = null;
-      }
+      instance.remove();
+      map = null;
+      marker = null;
     };
   });
 

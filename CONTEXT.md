@@ -252,6 +252,51 @@ like any tag chip. Typing alone never sets it — narrowing is always an
 explicit act.
 _Avoid_: saved search, active query, query lens (internal shorthand only)
 
+**Quilt order**:
+The cards list's default order: the order the layout engine placed the
+tiles — the largest patch at the quilt's centre, then outward by affinity
+to what is already placed. The list reads the quilt, so the two panes
+state the same thing in two mediums, and the ranking needs no explaining
+because it is drawn on screen beside it. Not a computed ranking: it is
+the placement order the layout already produces. A→Z is the one
+alternative offered, for looking a name up rather than finding something.
+_Avoid_: relevance, recommended, ranking, sort order (as the concept —
+that is the control, not the order), alphabetical (as the default)
+
+**In view**:
+The patches inside the canvas's current viewport, and the lens that narrows
+the cards list to them — a toggle on the list, off until someone turns it
+on. The first surface-local lens: it bites on the quilt and the map and has
+no meaning on the events page, so unlike scope, filter, and query it does
+not travel with a person from surface to surface. Never addressable — quilt
+space is re-sewn as membership changes, so a saved viewport would come to
+mean other patches. Distinct from what the layout code calls visible, which
+is a patch passing the filter.
+_Avoid_: visible (that word belongs to the filter), viewport (in UI copy),
+bounds, this area
+
+**Discovery mode**:
+The standing surface that asks one question — what are you drawn to — and
+answers with a short list of patches wearing those tags, followed inline.
+Reachable by anyone at any time, anonymous visitors included, and never
+spent by being used. Its whole distinction from the quilt is the asking:
+the quilt shows everything and asks nothing, so discovery mode carries no
+canvas and ends in follows rather than navigation. What it puts forward
+comes from what this quilt wears and what is happening on it, never from
+what other people follow.
+_Avoid_: recommendations, for you, personalized, browse, onboarding (that
+is Welcome's first step, which discovery mode is not)
+
+**Bulletin**:
+The one broadcast Patchwork sends: a monthly, complete, unranked list of
+the patches that have become active since the last one — became active,
+never a directory row appearing. Off unless a person turns it on, offered
+as a named choice at the end of discovery mode. Every other notification is
+a consequence of a relationship the recipient already holds; this is the
+single exception, and it is a bulletin rather than a digest precisely
+because nothing in it is selected.
+_Avoid_: digest, roundup, newsletter, highlights, what's new for you
+
 **Search**:
 The global bar's contextual search: an autocomplete dropdown over the
 entities of the current context, opened by typing, resolved by picking a
