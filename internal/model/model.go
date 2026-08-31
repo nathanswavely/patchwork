@@ -313,8 +313,20 @@ type EventSource struct {
 	// review queue rather than publishing (docs/adr/056). AddedByName
 	// says who pointed it here, which is the whole of why a patch can
 	// see entries it did not make.
-	Suggests    bool   `json:"suggests,omitempty"`
-	AddedByName string `json:"added_by_name,omitempty"`
+	Suggests bool `json:"suggests,omitempty"`
+	// LocalTimeStampedUTC marks a publisher that emits the venue's wall
+	// clock as though it were UTC (docs/adr/073). Not a guess Patchwork
+	// makes: the feed's own offset is internally consistent and simply
+	// wrong, so only a person comparing the markup against the page can
+	// say so.
+	LocalTimeStampedUTC bool `json:"local_time_stamped_utc"`
+	// SampleStartsAt is one upcoming event from this source, and Timezone
+	// the zone its patch resolves to. Together they let the settings page
+	// show what the switch above would actually do to a real row before
+	// anybody saves it (docs/adr/073).
+	SampleStartsAt *string `json:"sample_starts_at,omitempty"`
+	Timezone       string  `json:"timezone,omitempty"`
+	AddedByName    string  `json:"added_by_name,omitempty"`
 	// PendingCount is how many of its items are waiting in the queue.
 	PendingCount int `json:"pending_count"`
 }

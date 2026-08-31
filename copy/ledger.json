@@ -3959,28 +3959,35 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 81,
+          "line": 94,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 106,
+          "line": 119,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 194,
+          "line": 207,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 231,
+          "line": 244,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 409,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4375,6 +4382,13 @@
         {
           "file": "internal/handler/elections.go",
           "line": 323,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 429,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4818,6 +4832,13 @@
           "quote": null
         },
         {
+          "file": "internal/handler/event_sources.go",
+          "line": 433,
+          "kind": "go-error-body",
+          "raw": "no valid fields to update",
+          "quote": null
+        },
+        {
           "file": "internal/handler/events.go",
           "line": 560,
           "kind": "go-error-body",
@@ -4944,7 +4965,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 139,
+          "line": 152,
           "kind": "go-error-body",
           "raw": "url must be http(s)",
           "quote": null
@@ -4969,7 +4990,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 160,
+          "line": 173,
           "kind": "go-error-body",
           "raw": "this feed is already attached",
           "quote": null
@@ -5258,35 +5279,42 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 85,
+          "line": 98,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 110,
+          "line": 123,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 198,
+          "line": 211,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 235,
+          "line": 248,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 297,
+          "line": 310,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 413,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5983,7 +6011,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 289,
+          "line": 302,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -8336,14 +8364,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 90,
+          "line": 103,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 171,
+          "line": 184,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
@@ -8361,7 +8389,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 118,
+          "line": 131,
           "kind": "go-error-body",
           "raw": "url is required",
           "quote": null
@@ -8379,7 +8407,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 150,
+          "line": 163,
           "kind": "go-error-body",
           "raw": "this patch already has the maximum number of event sources",
           "quote": null
@@ -8397,7 +8425,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 182,
+          "line": 195,
           "kind": "go-error-body",
           "raw": "failed to create event source",
           "quote": null
@@ -8415,21 +8443,35 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 206,
+          "line": 219,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 243,
+          "line": 256,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 269,
+          "line": 282,
+          "kind": "go-error-body",
+          "raw": "event source not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 421,
+          "kind": "go-error-body",
+          "raw": "event source not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 462,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
@@ -8447,7 +8489,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 214,
+          "line": 227,
           "kind": "go-error-body",
           "raw": "failed to remove event source",
           "quote": null
@@ -8465,7 +8507,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 248,
+          "line": 261,
           "kind": "go-error-body",
           "raw": "this source just synced — try again in a minute",
           "quote": null
@@ -8483,7 +8525,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 259,
+          "line": 272,
           "kind": "go-error-body",
           "raw": "failed to sync",
           "quote": null
@@ -8501,7 +8543,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 293,
+          "line": 306,
           "kind": "go-error-body",
           "raw": "this event is not attached to an event source",
           "quote": null
@@ -8519,16 +8561,52 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 306,
+          "line": 319,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 314,
+          "line": 327,
           "kind": "go-error-body",
           "raw": "failed to detach event",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "11a894166a6e",
+      "text": "failed to update event source",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 444,
+          "kind": "go-error-body",
+          "raw": "failed to update event source",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a94b1c35348a",
+      "text": "failed to load event sources",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 452,
+          "kind": "go-error-body",
+          "raw": "failed to load event sources",
           "quote": null
         }
       ]
@@ -18347,7 +18425,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 258,
+          "line": 301,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -18500,6 +18578,13 @@
         {
           "file": "web/src/pages/PatchSettingsNotifications.svelte",
           "line": 42,
+          "kind": "js-string",
+          "raw": "Failed to save",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 124,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -23462,7 +23547,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 248,
+          "line": 291,
           "kind": "markup",
           "raw": "Event Sources",
           "quote": null
@@ -25600,7 +25685,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 212,
+          "line": 255,
           "kind": "js-string",
           "raw": "Failed to record that",
           "quote": "'"
@@ -25705,7 +25790,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 107,
+          "line": 150,
           "kind": "js-string",
           "raw": "Sync failed",
           "quote": "'"
@@ -39056,7 +39141,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 50,
+          "line": 51,
           "kind": "js-string",
           "raw": "Failed to load event sources",
           "quote": "'"
@@ -39074,9 +39159,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 82,
+          "line": 83,
           "kind": "js-string",
           "raw": "Failed to attach feed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "691257c4069d",
+      "text": "Saved — sync now to rewrite this source's times",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 119,
+          "kind": "js-string",
+          "raw": "Saved — sync now to rewrite this source's times",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "cafc81f45f66",
+      "text": "Saved — this feed will be taken at its word again",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 120,
+          "kind": "js-string",
+          "raw": "Saved — this feed will be taken at its word again",
           "quote": "'"
         }
       ]
@@ -39092,7 +39213,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 91,
+          "line": 134,
           "kind": "js-string",
           "raw": "Event source removed",
           "quote": "'"
@@ -39110,7 +39231,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 94,
+          "line": 137,
           "kind": "js-string",
           "raw": "Failed to remove event source",
           "quote": "'"
@@ -39128,7 +39249,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 148,
+          "line": 191,
           "kind": "js-string",
           "raw": "Failed to propose that link",
           "quote": "'"
@@ -39146,7 +39267,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 163,
+          "line": 206,
           "kind": "js-string",
           "raw": "Failed to dismiss that",
           "quote": "'"
@@ -39164,7 +39285,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 172,
+          "line": 215,
           "kind": "js-string",
           "raw": "Stopped. Events you already joined stay yours.",
           "quote": "'"
@@ -39182,7 +39303,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 175,
+          "line": 218,
           "kind": "js-string",
           "raw": "Failed to stop that",
           "quote": "'"
@@ -39200,7 +39321,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 189,
+          "line": 232,
           "kind": "js-string",
           "raw": "Failed to map name",
           "quote": "'"
@@ -39218,7 +39339,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 198,
+          "line": 241,
           "kind": "js-string",
           "raw": "Stopped. Its events are yours to edit now.",
           "quote": "'"
@@ -39236,7 +39357,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 201,
+          "line": 244,
           "kind": "js-string",
           "raw": "Failed to unmap",
           "quote": "'"
@@ -39254,7 +39375,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 209,
+          "line": 252,
           "kind": "js-string",
           "raw": "Kept yours",
           "quote": "'"
@@ -39272,7 +39393,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 209,
+          "line": 252,
           "kind": "js-string",
           "raw": "Added as a separate event",
           "quote": "'"
@@ -39290,7 +39411,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 250,
+          "line": 293,
           "kind": "markup",
           "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\n    Google Calendar's secret address, the calendar feed from your website),\n    an events page from Squarespace, Humanitix, and similar sites, or an\n    atproto handle whose calendar you want to follow.\n    Imported events publish directly and stay in step with the feed.",
           "quote": null
@@ -39308,7 +39429,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 269,
+          "line": 312,
           "kind": "markup",
           "raw": "First sync in progress…",
           "quote": null
@@ -39326,7 +39447,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 271,
+          "line": 314,
           "kind": "markup",
           "raw": "Sync failed{source.last_error ? `: ${source.last_error}` : ''}",
           "quote": null
@@ -39344,9 +39465,63 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 275,
+          "line": 318,
           "kind": "markup",
           "raw": "· synced {relTime(source.last_success_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "863ab5839d68",
+      "text": "This calendar publishes local times as UTC",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 331,
+          "kind": "markup",
+          "raw": "This calendar publishes local times as UTC",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0a6200a194a4",
+      "text": "Tick this only if the feed's times run hours earlier than the times on the venue's own page. Patchwork then reads each time as the venue's clock instead of Greenwich's, and the next sync rewrites this source's events.",
+      "words": 38,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 334,
+          "kind": "markup",
+          "raw": "Tick this only if the feed's times run hours earlier than the times\n                on the venue's own page. Patchwork then reads each time as the\n                venue's clock instead of Greenwich's, and the next sync rewrites\n                this source's events.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5c71f205eaba",
+      "text": "Its next event would move from",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 339,
+          "kind": "markup",
+          "raw": "Its next event would move from",
           "quote": null
         }
       ]
@@ -39362,7 +39537,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 297,
+          "line": 362,
           "kind": "markup",
           "raw": "No event sources yet.",
           "quote": null
@@ -39380,7 +39555,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 307,
+          "line": 372,
           "kind": "attr:placeholder",
           "raw": "https://…/basic.ics  or  an atproto handle",
           "quote": "\""
@@ -39398,7 +39573,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 316,
+          "line": 381,
           "kind": "markup",
           "raw": "Removing a source keeps past events and removes upcoming imported ones.",
           "quote": null
@@ -39416,7 +39591,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 321,
+          "line": 386,
           "kind": "markup",
           "raw": "Possible duplicates",
           "quote": null
@@ -39434,7 +39609,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 323,
+          "line": 388,
           "kind": "markup",
           "raw": "Each of these lands at the same time as an event you already have.\n      Yours is the one showing.",
           "quote": null
@@ -39452,7 +39627,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 331,
+          "line": 396,
           "kind": "markup",
           "raw": "Yours:",
           "quote": null
@@ -39470,7 +39645,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 355,
+          "line": 420,
           "kind": "markup",
           "raw": "Programs credited to you",
           "quote": null
@@ -39488,7 +39663,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 357,
+          "line": 422,
           "kind": "markup",
           "raw": "Recurring listings someone recognized as yours. They stay on the\n      venue's calendar — these are offers to put your name on them too, and\n      the venue confirms each one.",
           "quote": null
@@ -39506,7 +39681,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 406,
+          "line": 471,
           "kind": "markup",
           "raw": "Listing calendars",
           "quote": null
@@ -39524,7 +39699,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 408,
+          "line": 473,
           "kind": "markup",
           "raw": "Calendars that list events across the community, like the city calendar.\n    Answering to a name brings every event filed under it here from now on.\n    Anything an admin points at you waits in your review queue first. Stop\n    any of them here.",
           "quote": null
@@ -39542,7 +39717,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 423,
+          "line": 488,
           "kind": "markup",
           "raw": "Suggests into your review queue",
           "quote": null
@@ -39560,7 +39735,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 423,
+          "line": 488,
           "kind": "markup",
           "raw": ", set up by {entry.added_by_name}",
           "quote": null
@@ -39578,7 +39753,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 426,
+          "line": 491,
           "kind": "markup",
           "raw": "{entry.pending_count} waiting",
           "quote": null
@@ -39596,7 +39771,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 429,
+          "line": 494,
           "kind": "markup",
           "raw": "{' · '}{entry.event_count} approved",
           "quote": null
@@ -39614,7 +39789,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 432,
+          "line": 497,
           "kind": "markup",
           "raw": "{' · '}updated {relTime(entry.last_success_at)}",
           "quote": null
@@ -39632,7 +39807,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 475,
+          "line": 540,
           "kind": "markup",
           "raw": "No listing calendars are carrying a name this patch could answer to.",
           "quote": null

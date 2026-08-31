@@ -1,6 +1,7 @@
 <script>
   import { getContext, onDestroy } from 'svelte';
   import { api } from '../lib/api.js';
+  import { formatEventTime, reinterpretUTCAsLocal } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
 
@@ -83,6 +84,48 @@
     } finally {
       adding = false;
     }
+  }
+
+  // Per-source saves in flight, so one row's checkbox cannot be clicked
+  // twice while its request is out.
+  let correcting = $state({});
+
+  // What flipping the switch would do to a real event on this source —
+  // shown before saving rather than discovered after a sync (docs/adr/073).
+  // Both times render in the patch's own zone, because "3:00 PM to 7:00 PM"
+  // is the comparison an admin can check against the venue's page; the
+  // stored instants are not.
+  function previewFor(source) {
+    if (source.local_time_stamped_utc) return null; // already corrected
+    if (!source.sample_starts_at || !source.timezone) return null;
+    const corrected = reinterpretUTCAsLocal(source.sample_starts_at, source.timezone);
+    if (corrected === source.sample_starts_at) return null;
+    return {
+      before: formatEventTime(source.sample_starts_at, source.timezone),
+      after: formatEventTime(corrected, source.timezone),
+    };
+  }
+
+  async function setStampedUTC(id, value) {
+    correcting = { ...correcting, [id]: true };
+    try {
+      const updated = await api(`nodes/${slug}/event-sources/${id}`, {
+        method: 'PATCH',
+        body: { local_time_stamped_utc: value },
+      });
+      sources = sources.map((s) => (s.id === id ? updated : s));
+      showToast(
+        value
+          ? "Saved — sync now to rewrite this source's times"
+          : 'Saved — this feed will be taken at its word again',
+        'success',
+      );
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+      // Put the checkbox back where the server still has it.
+      sources = [...sources];
+    }
+    correcting = { ...correcting, [id]: false };
   }
 
   async function removeSource(id) {
@@ -276,6 +319,28 @@
                   </span>
                 {/if}
               </span>
+            </div>
+            <div class="source-correction">
+              <label class="correction-toggle">
+                <input
+                  type="checkbox"
+                  checked={source.local_time_stamped_utc}
+                  disabled={!!correcting[source.id]}
+                  onchange={(e) => setStampedUTC(source.id, e.target.checked)}
+                />
+                <span>This calendar publishes local times as UTC</span>
+              </label>
+              <p class="correction-hint muted">
+                Tick this only if the feed's times run hours earlier than the times
+                on the venue's own page. Patchwork then reads each time as the
+                venue's clock instead of Greenwich's, and the next sync rewrites
+                this source's events.
+                {#if previewFor(source)}
+                  <br />Its next event would move from
+                  <strong>{previewFor(source).before}</strong> to
+                  <strong>{previewFor(source).after}</strong>.
+                {/if}
+              </p>
             </div>
             <div class="source-actions">
               <button
@@ -478,6 +543,23 @@
 </div>
 
 <style>
+  .source-correction {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+  }
+  .correction-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .correction-hint {
+    margin: 0.25rem 0 0 1.6rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
   h2 {
     font-size: 1.2rem;
     margin-bottom: 0.25rem;

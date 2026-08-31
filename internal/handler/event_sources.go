@@ -17,6 +17,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/safehttp"
+	"github.com/patchwork-toolkit/patchwork/internal/settings"
 )
 
 // maxSourcesPerNode bounds how many feeds one patch may pull from.
@@ -50,10 +51,21 @@ func scanEventSources(db *database.DB, nodeID string) ([]model.EventSource, erro
 		`SELECT s.id, s.node_id, s.type, s.url, s.added_by, s.status,
 		 s.last_fetch_at, s.last_success_at, s.last_error,
 		 (SELECT COUNT(*) FROM events e WHERE e.source_id = s.id AND e.removed_at IS NULL),
+		 s.local_time_stamped_utc,
+		 -- One upcoming event, so the settings page can show what flipping
+		 -- the switch would do to a real row rather than describing it
+		 -- (docs/adr/073). Upcoming rather than any: a past event is not
+		 -- something a re-sync would revisit, so previewing against one
+		 -- would promise a change that never lands.
+		 (SELECT e.starts_at FROM events e
+		   WHERE e.source_id = s.id AND e.removed_at IS NULL
+		     AND e.starts_at >= strftime('%Y-%m-%dT%H:%M:%SZ','now')
+		   ORDER BY e.starts_at LIMIT 1),
+		 COALESCE(NULLIF(n.timezone,''), ?),
 		 s.created_at, s.updated_at
-		 FROM event_sources s
+		 FROM event_sources s JOIN nodes n ON n.id = s.node_id
 		 WHERE s.node_id = ? AND s.aggregator_id IS NULL
-		 ORDER BY s.created_at`, nodeID)
+		 ORDER BY s.created_at`, settings.EffectiveTimezone(db), nodeID)
 	if err != nil {
 		return nil, err
 	}
@@ -64,6 +76,7 @@ func scanEventSources(db *database.DB, nodeID string) ([]model.EventSource, erro
 		var s model.EventSource
 		if err := rows.Scan(&s.ID, &s.NodeID, &s.Type, &s.URL, &s.AddedBy, &s.Status,
 			&s.LastFetchAt, &s.LastSuccessAt, &s.LastError, &s.EventCount,
+			&s.LocalTimeStampedUTC, &s.SampleStartsAt, &s.Timezone,
 			&s.CreatedAt, &s.UpdatedAt); err != nil {
 			return nil, err
 		}
@@ -375,3 +388,84 @@ func eventSourceResolver() atproto.Resolver {
 }
 
 var eventSourceHTTPClient = safehttp.NewClient(15 * time.Second)
+
+// UpdateEventSource handles PATCH /api/v1/nodes/{slug}/event-sources/{id}.
+//
+// One field, for now: whether this publisher stamps the venue's local time
+// as UTC (docs/adr/073). It is an assertion about a feed, made by somebody
+// who compared its markup against the page it came from — Patchwork cannot
+// detect it, because a feed with this defect is internally consistent and
+// states an offset with full confidence.
+//
+// Flipping it clears the conditional-GET state as well. Otherwise the
+// setting would sit there doing nothing until the venue happened to change
+// its calendar: an unchanged feed answers 304, the reconciler never runs,
+// and the times stay exactly as wrong as they were.
+func UpdateEventSource(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		nodeID, ok := sourceNodeAccess(db, user, r.PathValue("slug"))
+		if nodeID == "" {
+			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
+			return
+		}
+		if !ok {
+			http.Error(w, `{"error":"insufficient permissions"}`, http.StatusForbidden)
+			return
+		}
+		sourceID := r.PathValue("id")
+
+		var exists int
+		db.QueryRow(`SELECT COUNT(*) FROM event_sources WHERE id = ? AND node_id = ?`, sourceID, nodeID).Scan(&exists)
+		if exists == 0 {
+			http.Error(w, `{"error":"event source not found"}`, http.StatusNotFound)
+			return
+		}
+
+		var req struct {
+			LocalTimeStampedUTC *bool `json:"local_time_stamped_utc"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+			return
+		}
+		if req.LocalTimeStampedUTC == nil {
+			http.Error(w, `{"error":"no valid fields to update"}`, http.StatusBadRequest)
+			return
+		}
+
+		if _, err := db.Exec(
+			`UPDATE event_sources
+			    SET local_time_stamped_utc = ?, etag = NULL, last_modified = NULL,
+			        updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+			  WHERE id = ?`,
+			boolToInt(*req.LocalTimeStampedUTC), sourceID,
+		); err != nil {
+			http.Error(w, `{"error":"failed to update event source"}`, http.StatusInternalServerError)
+			return
+		}
+		auth.LogAuditEvent(db, user.ID, "event_source.update", "event_source", sourceID,
+			fmt.Sprintf(`{"local_time_stamped_utc":%t}`, *req.LocalTimeStampedUTC), clientIP(r))
+
+		sources, err := scanEventSources(db, nodeID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to load event sources"}`, http.StatusInternalServerError)
+			return
+		}
+		for _, s := range sources {
+			if s.ID == sourceID {
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(s)
+				return
+			}
+		}
+		http.Error(w, `{"error":"event source not found"}`, http.StatusNotFound)
+	}
+}
+
+func boolToInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}

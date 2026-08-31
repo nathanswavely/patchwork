@@ -1,0 +1,26 @@
+-- 059: a feed whose timestamps are local time stamped as UTC.
+--
+-- Tellus360 publishes schema.org markup with a real offset —
+-- "2026-08-28T15:00:00-04:00" — which every parser here reads correctly.
+-- The offset is just wrong. Their site takes the venue's wall clock
+-- (7pm), emits it as though it were UTC (19:00Z), and renders that back
+-- through Eastern as 15:00-04:00. The prose beside it still says "7pm".
+-- Patchwork stored 3pm and was right to: the feed said 3pm.
+--
+-- No zone setting reaches this. docs/adr/045's chain decides what a
+-- time with NO zone means; here the feed states one, confidently, and
+-- is wrong. So the correction is per source and declared by whoever
+-- attached it, because only a person comparing the markup against the
+-- page can tell.
+ALTER TABLE event_sources ADD COLUMN local_time_stamped_utc INTEGER NOT NULL DEFAULT 0;
+
+-- Deliberately not a number of hours. The error equals the venue's UTC
+-- offset, which is 4 hours in August and 5 in November — so a stored
+-- "+4" would be correct until the first Sunday in November and silently
+-- wrong for the four months after it, which is the bug class docs/adr/065
+-- and docs/adr/067 exist to remove rather than reintroduce. Reading the
+-- UTC wall clock in the patch's zone re-derives the offset every sync
+-- and needs no seasonal edit.
+--
+-- Default 0: every existing source keeps being believed. This is an
+-- assertion about one publisher, never a guess applied broadly.

@@ -187,7 +187,7 @@ func Tables() []Table {
 			// transfer (docs/adr/012), so they travel. Fetch state stays
 			// behind — the fork re-syncs from scratch.
 			Query: `SELECT id, node_id, type, url, added_by, aggregator_id, name_key,
-				suggests, created_at, updated_at FROM event_sources`,
+				suggests, local_time_stamped_utc, created_at, updated_at FROM event_sources`,
 			// aggregator_id + name_key make a row a crosswalk entry
 			// (docs/adr/056). They travel because the crosswalk is dozens
 			// of names mapped by hand — community labour, and the reason
@@ -198,9 +198,18 @@ func Tables() []Table {
 			// every suggesting entry into a publishing one, and the fork
 			// would publish onto patches that only ever agreed to be
 			// asked.
+			//
+			// local_time_stamped_utc travels for the same shape of reason
+			// (docs/adr/073). It is a finding about the publisher, not
+			// about this instance — somebody read the feed's markup
+			// against the page and established that it stamps local time
+			// as UTC, and that stays true after a fork. Losing it would
+			// have the fork re-import the same events hours off, with no
+			// trace of the reason they were ever right here.
 			Columns: cols(id("id"), id("node_id"), c("type"), c("url"),
 				id("added_by"), id("aggregator_id"), c("name_key"),
-				def("suggests", 0), c("created_at"), c("updated_at")),
+				def("suggests", 0), def("local_time_stamped_utc", 0),
+				c("created_at"), c("updated_at")),
 		},
 		{
 			File: "aggregator_ignored_names.json",
