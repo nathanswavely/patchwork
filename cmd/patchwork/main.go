@@ -451,7 +451,7 @@ func main() {
 
 	// Event routes — public. GetEvent is AuthOptional because a pending
 	// submission is visible only to its submitter and reviewers.
-	mux.HandleFunc("GET /api/v1/events", handler.ListEvents(db))
+	mux.HandleFunc("GET /api/v1/events", middleware.AuthOptional(db, handler.ListEvents(db)))
 	mux.HandleFunc("GET /api/v1/events/{id}", middleware.AuthOptional(db, handler.GetEvent(db)))
 
 	// Event routes — auth required. CreateEvent decides direct-post vs

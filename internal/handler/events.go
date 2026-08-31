@@ -76,6 +76,30 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		nodeSlug := r.URL.Query().Get("node_slug")
 		from := dayBound(r.URL.Query().Get("from"), "T00:00:00Z")
 		to := dayBound(r.URL.Query().Get("to"), "T23:59:59Z")
+		viewer := middleware.UserFromContext(r.Context())
+
+		// "My Quilt" scope, matching GET /api/v1/nodes and /nodes/tree so the
+		// events surface answers the scope switcher the way the quilt and the
+		// map already do (docs/adr/035). Without it "My Quilt" silently meant
+		// "the whole instance" here — the one surface of the three that never
+		// got the parameter.
+		myScope := r.URL.Query().Get("scope") == "my"
+		if myScope && viewer == nil {
+			// Nobody to have a quilt. The SPA never sits here — the switcher
+			// offers My Quilt only to signed-in people, and App.svelte bounces
+			// a logged-out visitor off `/events/my` to `/events`. This is the
+			// API's own answer, and it has one real caller: another quilt
+			// reading this endpoint cross-origin, which is always anonymous
+			// (CORS is `*`, so no cookie ever rides along). Answering "show me
+			// mine" with "here is everyone's" is worse than answering with
+			// nothing, so it matches ListNodes: an empty page.
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":       []model.Event{},
+				"next_cursor": "",
+			})
+			return
+		}
 
 		// No lower bound means *upcoming*, and history is asked for by name.
 		//
@@ -118,7 +142,35 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		// clause and therefore precedes every WHERE parameter appended below.
 		args = append(args, settings.EffectiveTimezone(db))
 
-		conditions = append(conditions, "e.visibility = 'public'")
+		if myScope {
+			// One relationship, one rule — this mirrors PersonalICSFeed
+			// exactly, so the My Quilt page and the My Quilt calendar you
+			// subscribe to list the same events. Every active relationship
+			// counts (admin, member AND follower), and confirmed event links
+			// travel with it (docs/adr/032), so a followed band's gig at a
+			// venue you don't follow still lands on your quilt.
+			//
+			// EXISTS rather than a JOIN: a person who belongs to both the
+			// host patch and a linked one matches twice, and a duplicate row
+			// would break the keyset cursor as well as the list.
+			//
+			// The visibility test lives inside the same subquery on purpose.
+			// It has to read the membership row that matched, so that
+			// members-only events are admitted only for a member or admin of
+			// the event's OWN patch — a confirmed link never widens
+			// visibility.
+			conditions = append(conditions, `EXISTS (
+				SELECT 1 FROM memberships m
+				WHERE m.user_id = ? AND m.status = 'active'
+				AND (m.node_id = e.node_id OR EXISTS (
+					SELECT 1 FROM event_links el WHERE el.event_id = e.id
+					AND el.node_id = m.node_id AND el.status = 'confirmed'))
+				AND (e.visibility = 'public'
+					OR (m.node_id = e.node_id AND m.role IN ('member','admin'))))`)
+			args = append(args, viewer.ID)
+		} else {
+			conditions = append(conditions, "e.visibility = 'public'")
+		}
 		conditions = append(conditions, "e.removed_at IS NULL")
 		conditions = append(conditions, "e.status = 'active'")
 
@@ -129,16 +181,25 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		// the instance-wide feed and map never surface them.
 		conditions = append(conditions, "n.status IN ('active','unclaimed')")
 		conditions = append(conditions, "n.removed_at IS NULL")
-		if nodeID == "" {
+		if nodeID == "" && !myScope {
+			// Discovery gates, and My Quilt is not discovery — it is the set
+			// of patches this person already stood up and joined, so both of
+			// these are skipped under scope=my.
+
+			// Private is unlisted, not locked. Under scope=my every row is
+			// one the viewer holds an active membership on, so a private
+			// patch they belong to is already theirs to see — and the quilt,
+			// the map and this listing agree on that (see ListNodes).
 			conditions = append(conditions, "n.visibility = 'public'")
 
 			// Amended-lining discovery filter (docs/adr/037): the instance-wide
 			// feed drops a diverged patch's events, except for viewers who
 			// knowingly joined or followed it — the filter protects browsers,
 			// not participants. A patch's own page (nodeID != "") is a direct
-			// link, and direct links always work.
+			// link, and direct links always work. Under scope=my the whole
+			// list is patches they knowingly joined, which is the exemption —
+			// tree.go declines the filter for the same reason.
 			if hideAmendedLinings(db, r) {
-				viewer := middleware.UserFromContext(r.Context())
 				for divergedID, status := range NodeLiningStatuses(db) {
 					if status != governance.LiningDiverged {
 						continue
