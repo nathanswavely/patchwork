@@ -14,7 +14,7 @@ Patchwork is a platform for grassroots communities to organize, govern, and disc
 - **Reverse proxy:** Caddy (auto-HTTPS via Let's Encrypt)
 - **Deployment:** Docker Compose (single container + Caddy)
 - **Auth:** Magic links (SMTP, optional) + invite links (no SMTP) + WebAuthn/passkeys (go-webauthn/webauthn)
-- **Maps:** Leaflet (no API key)
+- **Maps:** Leaflet, with MapLibre GL drawing OpenFreeMap vector tiles (no API key — docs/adr/077, `web/src/lib/basemap.js`)
 - **Visualization:** D3.js treemap (quilt view — the signature visual)
 
 ## Project Structure

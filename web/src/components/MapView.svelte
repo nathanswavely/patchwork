@@ -5,6 +5,7 @@
   import { getResolvedTheme } from '../stores/theme.svelte.js';
   import { identityColorForPatch, textOnColor } from '../lib/quiltTheme.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
+  import { addBasemap, BASEMAP_MAX_ZOOM } from '../lib/basemap.js';
 
   // insetRight (0–1): fraction of width covered by the floating cards panel
   // on desktop, so markers fit into the visible left portion instead of
@@ -13,7 +14,8 @@
 
   let mapContainer;
   let map = $state(null);
-  let tileLayer;
+  let basemap = $state(null);
+  let basemapTheme = null; // the theme the basemap is currently drawn in
   let markersLayer;
 
   // A quilt-colored teardrop pin: filled with the patch's identity color
@@ -38,13 +40,6 @@
     });
   }
 
-  const TILE_URLS = {
-    light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  };
-  const TILE_ATTRIBUTION =
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
-
   $effect(() => {
     if (!mapContainer) return;
 
@@ -53,7 +48,20 @@
       ? [initial.lat, initial.lng]
       : [40.0379, -76.3055]; // Lancaster, PA fallback
 
-    map = L.map(mapContainer, { fadeAnimation: false }).setView(defaultCenter, 12);
+    // Held locally as well as in state: reading the `map` rune back inside
+    // the effect that wrote it would make this effect depend on itself and
+    // tear the map down mid-setup.
+    const instance = L.map(mapContainer, { fadeAnimation: false, maxZoom: BASEMAP_MAX_ZOOM })
+      .setView(defaultCenter, 12);
+    map = instance;
+
+    // The basemap loads its renderer on demand, so it lands a tick or two
+    // after the map; the theme effect below picks it up when it does.
+    const startTheme = untrack(() => getResolvedTheme());
+    addBasemap(instance, startTheme).then((b) => {
+      basemap = b;
+      basemapTheme = b ? startTheme : null;
+    });
 
     // Leaflet caches the container size at init; recompute whenever it
     // changes — a viewport resize across the mobile/desktop breakpoint, or
@@ -73,22 +81,20 @@
       if (map) {
         map.remove();
         map = null;
-        tileLayer = null;
+        basemap = null;
+        basemapTheme = null;
         markersLayer = null;
       }
     };
   });
 
-  // Tiles follow the app theme
+  // Tiles follow the app theme. Reruns when the basemap lands too, so a
+  // theme toggled while its renderer was still loading still takes.
   $effect(() => {
     const theme = getResolvedTheme();
-    if (!map) return;
-    if (tileLayer) tileLayer.remove();
-    tileLayer = L.tileLayer(TILE_URLS[theme] || TILE_URLS.light, {
-      attribution: TILE_ATTRIBUTION,
-      subdomains: 'abcd',
-      maxZoom: 20,
-    }).addTo(map);
+    if (!basemap || theme === basemapTheme) return;
+    basemapTheme = theme;
+    basemap.setTheme(theme);
   });
 
   $effect(() => {
@@ -183,8 +189,9 @@
   }
 
   /* Tint only the tile pane (markers/controls live in other panes, so they
-     stay true-color): warm the near-white CartoDB tiles toward the cream
-     paper bg. */
+     stay true-color): warm the near-white basemap toward the cream paper
+     bg. Applies to the MapLibre canvas the same as to raster tiles — the GL
+     layer sits in this pane. */
   .map-wrapper :global(.leaflet-tile-pane) {
     filter: sepia(0.28) saturate(0.72) brightness(0.99) contrast(0.96);
   }
