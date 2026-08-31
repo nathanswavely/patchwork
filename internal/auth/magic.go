@@ -20,6 +20,11 @@ const magicLinkExpiry = 15 * time.Minute
 // caller owns URL shape so the emailed link and the one printed to the log
 // (no-SMTP dev) can never drift apart again.
 func GenerateMagicLink(db *database.DB, email string, smtpCfg config.SMTP, linkFor func(token string) string) error {
+	email, err := NormalizeEmail(email)
+	if err != nil {
+		return err
+	}
+
 	rawToken, err := generateToken()
 	if err != nil {
 		return err
@@ -53,6 +58,11 @@ func GenerateMagicLink(db *database.DB, email string, smtpCfg config.SMTP, linkF
 // GenerateMagicLinkLocal creates a magic link and stores it, but returns the raw token
 // instead of emailing it. Used when SMTP is not configured (local dev).
 func GenerateMagicLinkLocal(db *database.DB, email string) (string, error) {
+	email, err := NormalizeEmail(email)
+	if err != nil {
+		return "", err
+	}
+
 	rawToken, err := generateToken()
 	if err != nil {
 		return "", err
@@ -117,6 +127,17 @@ func VerifyMagicLink(db *database.DB, rawToken string) (*model.User, string, err
 	_, err = tx.Exec(`UPDATE magic_links SET used = 1 WHERE id = ?`, id)
 	if err != nil {
 		return nil, "", fmt.Errorf("mark magic link used: %w", err)
+	}
+
+	// Links minted before migration 058 can still hold the address exactly
+	// as it was typed, so canonicalize on the way out too — otherwise a
+	// pending link would miss the row the migration just lowercased and
+	// mint a second account for an address that already has one. A stored
+	// address that no longer parses is a dead link rather than the start of
+	// an account: better to refuse it than to sign up whatever it holds.
+	email, err = NormalizeEmail(email)
+	if err != nil {
+		return nil, "", err
 	}
 
 	// Find user by email.

@@ -141,8 +141,8 @@ func validateExplicitDomain(raw string) (string, error) {
 // BackfillVerificationDomains runs once at startup: unclaimed patches created
 // through admin paths before migration 031 get their verification_domain
 // derived from their website. NULL means "never processed" — after this pass
-// the row holds either a domain or '' and is never touched again, so an
-// admin clearing the field later sticks.
+// the row holds either a domain or the empty string and is never touched
+// again, so an admin clearing the field later sticks.
 func BackfillVerificationDomains(db *database.DB) {
 	rows, err := db.Query(
 		`SELECT id, COALESCE(website,'') FROM nodes
@@ -342,12 +342,23 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		claimEmail := ""
 		var emailExpiry interface{}
 		if req.Method == "email" {
-			claimEmail = strings.TrimSpace(strings.ToLower(req.Email))
-			at := strings.LastIndex(claimEmail, "@")
-			if at <= 0 || at == len(claimEmail)-1 {
+			// Same canonicalization and grammar as the sign-in path
+			// (internal/auth/email.go), rather than a second inline
+			// lowercase and an "@ is somewhere in the middle" test. The old
+			// check leaned entirely on the domain comparison below to throw
+			// out malformed input, which it did — but only by accident of
+			// where the last '@' happened to fall.
+			var err error
+			claimEmail, err = auth.NormalizeEmail(req.Email)
+			if err != nil {
 				http.Error(w, `{"error":"a valid email address is required for email verification"}`, http.StatusBadRequest)
 				return
 			}
+			// NormalizeEmail returns a bare parseable address or an error, so
+			// there is an '@' here with something on both sides. The domain
+			// is what follows the last one — the ownership anchor, and the
+			// only part that proves anything.
+			at := strings.LastIndex(claimEmail, "@")
 			if claimEmail[at+1:] != verificationDomain {
 				http.Error(w, fmt.Sprintf(`{"error":"the email must be at @%s"}`, verificationDomain), http.StatusBadRequest)
 				return

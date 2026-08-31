@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-webauthn/webauthn/protocol"
@@ -161,17 +162,45 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		var req struct {
 			Email string `json:"email"`
 		}
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Email == "" {
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			// Always return 200 to not leak info.
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 			return
 		}
 
+		// An absent address is not a malformed one: nothing was typed, so
+		// there is nothing to correct and nothing to say. Checked before
+		// NormalizeEmail, which folds "" and "not an address" into the same
+		// error, and these two want different answers.
+		if strings.TrimSpace(req.Email) == "" {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+			return
+		}
+
+		// Canonicalize before anything keys off the address: the rate-limit
+		// bucket as much as the row it will eventually match. Left raw,
+		// "Bob@Example.com" and "bob@example.com" are separate buckets, so
+		// the per-email limit is only ever one capitalization deep.
+		//
+		// A malformed address is the one thing this endpoint can say out
+		// loud. The blanket 200 elsewhere exists to keep "does this person
+		// have an account" unanswerable; whether a string parses as an
+		// address is a property of what was typed, so refusing it reveals
+		// nothing about the instance. Answering 200 here would be worse
+		// than useless — it tells someone who fat-fingered their address to
+		// go and wait for mail that was never going to arrive.
+		email, err := auth.NormalizeEmail(req.Email)
+		if err != nil {
+			http.Error(w, `{"error":"`+err.Error()+`"}`, http.StatusBadRequest)
+			return
+		}
+
 		ip := clientIP(r)
 
 		// Rate limit.
-		if err := middleware.CheckMagicLinkRate(req.Email, ip); err != nil {
+		if err := middleware.CheckMagicLinkRate(email, ip); err != nil {
 			// Still return 200 to not leak info.
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -184,17 +213,17 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			linkFor := func(token string) string {
 				return magicLinkURL(cfg.Instance.Domain, cfg.Server.Port, token)
 			}
-			if err := auth.GenerateMagicLink(db, req.Email, cfg.SMTP, linkFor); err != nil {
-				log.Printf("magic link: send to %s failed: %v", req.Email, err)
+			if err := auth.GenerateMagicLink(db, email, cfg.SMTP, linkFor); err != nil {
+				log.Printf("magic link: send to %s failed: %v", email, err)
 			}
 		} else {
 			// No SMTP — generate the link and print to the server log.
-			token, err := auth.GenerateMagicLinkLocal(db, req.Email)
+			token, err := auth.GenerateMagicLinkLocal(db, email)
 			if err == nil {
 				link := magicLinkURL(cfg.Instance.Domain, cfg.Server.Port, token)
-				log.Printf("\n\033[1;36m✉  Magic link for %s:\033[0m\n   \033[4m%s\033[0m\n", req.Email, link)
+				log.Printf("\n\033[1;36m✉  Magic link for %s:\033[0m\n   \033[4m%s\033[0m\n", email, link)
 			} else {
-				log.Printf("magic link: generate for %s failed: %v", req.Email, err)
+				log.Printf("magic link: generate for %s failed: %v", email, err)
 			}
 		}
 

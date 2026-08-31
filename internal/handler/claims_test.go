@@ -1407,3 +1407,91 @@ func stubDIDClient(pages map[string]string) *http.Client {
 type roundTripFunc func(*http.Request) (*http.Response, error)
 
 func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+// The claim address goes through the same grammar as sign-in
+// (internal/auth/email.go). Before that, the only thing standing between a
+// malformed address and the mail sender was the domain comparison — which
+// rejected most junk, but only because of where the last '@' landed.
+// "bob..smith@" has its '@' in exactly the right place and is not an address.
+func TestClaimEmailRejectsMalformedAddress(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(true)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+
+	nodeID := createTestNode(t, db, owner.ID, "Strict Venue", "strict-venue", "open")
+	makeClaimable(t, db, nodeID, "strictvenue.example")
+
+	sent := 0
+	origSend := handler.ClaimSendMail
+	t.Cleanup(func() { handler.ClaimSendMail = origSend })
+	handler.ClaimSendMail = func(smtp config.SMTP, to []string, msg []byte) error {
+		sent++
+		return nil
+	}
+
+	for _, bad := range []string{
+		"booking..desk@strictvenue.example",
+		".booking@strictvenue.example",
+		"booking.@strictvenue.example",
+		"Booking Desk <booking@strictvenue.example>",
+		`"booking@evil.example"@strictvenue.example`,
+		"booking@strictvenue.example (Booking)",
+		"@strictvenue.example",
+		"strictvenue.example",
+		"",
+	} {
+		_, code := openClaim(t, db, cfg, aliceToken, "strict-venue",
+			map[string]interface{}{"method": "email", "email": bad})
+		if code != http.StatusBadRequest {
+			t.Errorf("email %q: got %d, want 400", bad, code)
+		}
+	}
+
+	if sent != 0 {
+		t.Errorf("%d verification mails sent for malformed addresses; want 0", sent)
+	}
+
+	// And nothing was recorded — a refused claim must not occupy the
+	// one-open-claim-per-user slot.
+	var open int
+	db.QueryRow("SELECT COUNT(*) FROM claim_requests WHERE node_id = ?", nodeID).Scan(&open)
+	if open != 0 {
+		t.Errorf("%d claim rows created for malformed addresses; want 0", open)
+	}
+}
+
+// Normalization still happens, and still happens before the domain anchor is
+// compared: a correct address typed with stray case and whitespace is a
+// correct address.
+func TestClaimEmailNormalizesBeforeDomainCheck(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(true)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+
+	nodeID := createTestNode(t, db, owner.ID, "Case Venue", "case-venue", "open")
+	makeClaimable(t, db, nodeID, "casevenue.example")
+
+	var sentTo string
+	origSend := handler.ClaimSendMail
+	t.Cleanup(func() { handler.ClaimSendMail = origSend })
+	handler.ClaimSendMail = func(smtp config.SMTP, to []string, msg []byte) error {
+		sentTo = to[0]
+		return nil
+	}
+
+	if _, code := openClaim(t, db, cfg, aliceToken, "case-venue",
+		map[string]interface{}{"method": "email", "email": "  Booking@CaseVenue.EXAMPLE  "}); code != http.StatusCreated {
+		t.Fatalf("mixed-case address at the anchor domain: got %d, want 201", code)
+	}
+	if sentTo != "booking@casevenue.example" {
+		t.Errorf("mail sent to %q, want %q", sentTo, "booking@casevenue.example")
+	}
+
+	var stored string
+	db.QueryRow("SELECT email FROM claim_requests WHERE node_id = ?", nodeID).Scan(&stored)
+	if stored != "booking@casevenue.example" {
+		t.Errorf("claim_requests.email = %q, want %q", stored, "booking@casevenue.example")
+	}
+}
