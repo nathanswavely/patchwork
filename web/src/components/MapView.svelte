@@ -6,17 +6,33 @@
   import { identityColorForPatch, textOnColor } from '../lib/quiltTheme.js';
   import { blockPageZoom } from '../lib/pageZoom.js';
   import { addBasemap, BASEMAP_MAX_ZOOM } from '../lib/basemap.js';
+  import { clusterNodes, patchActivity } from '../lib/mapClusters.js';
+  import { placeLabels } from '../lib/mapLabels.js';
+  import { createMotifGroup } from '../lib/patchIcons.js';
+  import { getTagVocabulary } from '../stores/quilt.svelte.js';
+
+  // How close two markers must be before they collapse into one disc. Sized
+  // against the teardrop (26px wide) plus room to read between them.
+  const CLUSTER_RADIUS_PX = 44;
 
   // insetRight (0–1): fraction of width covered by the floating cards panel
   // on desktop, so markers fit into the visible left portion instead of
   // hiding behind the cards. 0 on mobile (cards are a separate pane).
-  let { nodes = [], center = null, radius = 10, onMarkerClick = null, insetRight = 0 } = $props();
+  let {
+    nodes = [],
+    center = null,
+    radius = 10,
+    onMarkerClick = null,
+    onBackgroundClick = null,
+    insetRight = 0,
+  } = $props();
 
   let mapContainer;
   let map = $state(null);
   let basemap = $state(null);
   let basemapTheme = null; // the theme the basemap is currently drawn in
   let markersLayer;
+  let hasFit = false; // the viewport is the person's once they have it
 
   // A quilt-colored teardrop pin: filled with the patch's identity color
   // (its palette primary — the same color the quilt tile uses), so a patch
@@ -24,12 +40,17 @@
   // (no external marker sprites) and themeable.
   function patchMarkerIcon(node) {
     const fill = identityColorForPatch(node);
-    const dot = textOnColor(fill); // readable center dot on the fill
+    const glyph = textOnColor(fill); // the motif reads against the fill
+    // The motif is the one thing a marker says beyond where it is
+    // (docs/adr/078): a 26px teardrop carries one glyph, and unclaimed and
+    // role live on the card. Same mark the tile wears in its top-left
+    // corner, so a patch reads the same on both surfaces.
+    const motif = createMotifGroup(node, 12, glyph).outerHTML;
     const html =
       `<svg width="26" height="34" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">` +
       `<path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0z" ` +
       `fill="${fill}" stroke="rgba(0,0,0,0.35)" stroke-width="1"/>` +
-      `<circle cx="12" cy="12" r="4.5" fill="${dot}"/>` +
+      `<g transform="translate(6,6)">${motif}</g>` +
       `</svg>`;
     return L.divIcon({
       html,
@@ -75,9 +96,19 @@
     // the document on gesture events regardless of Leaflet's touch-action).
     const unblockZoom = blockPageZoom(mapContainer);
 
+    // A press on the map itself, rather than on a marker, dismisses whatever
+    // the last press summoned.
+    instance.on('click', () => onBackgroundClick && onBackgroundClick());
+
+    // Pixel separation changes with zoom, so the grouping is recomputed
+    // there. Panning never changes it.
+    const onZoom = () => { if (map) updateMarkers(); };
+    instance.on('zoomend', onZoom);
+
     return () => {
       ro.disconnect();
       unblockZoom();
+      instance.off('zoomend', onZoom);
       if (map) {
         map.remove();
         map = null;
@@ -100,72 +131,137 @@
   $effect(() => {
     void nodes;
     void insetRight;
+    // A motif resolves through the instance's tag vocabulary, which arrives
+    // on its own fetch. Markers are stamped imperatively and never re-render
+    // themselves, so a marker built before the vocabulary lands would wear
+    // the fallback quilt mark forever — the cards beside it, being ordinary
+    // components, would show the real motif and disagree.
+    void getTagVocabulary().length;
     if (map) updateMarkers();
   });
 
+  // A cluster is not a patch: neutral dark disc, a count, no identity color
+  // and no motif (it has as many of each as it has members). Same rule the
+  // quilt uses — identity wears the patch's color, status wears neutral.
+  function clusterIcon(count) {
+    const size = count > 20 ? 44 : count > 9 ? 38 : 32;
+    const html =
+      `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">` +
+      `<circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" fill="#1f2226" ` +
+      `stroke="rgba(255,255,255,0.85)" stroke-width="2"/>` +
+      `<text x="${size / 2}" y="${size / 2}" fill="#fff" font-size="${size * 0.4}" ` +
+      `font-weight="600" text-anchor="middle" dominant-baseline="central" ` +
+      `font-family="system-ui, sans-serif">${count}</text>` +
+      `</svg>`;
+    return L.divIcon({
+      html,
+      className: 'patch-cluster',
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
+  }
+
+  // The font the names are drawn in, read once from the rendered label so
+  // measurement matches what the browser will paint.
+  let labelFont = '600 12px system-ui, sans-serif';
+  let labelled = new Map(); // id → the position its name took, kept across passes
+
+  function markerFor(node, position) {
+    const marker = L.marker([node.latitude, node.longitude], {
+      icon: patchMarkerIcon(node),
+      // Heavier patches sit on top, so the marker you can click is the one
+      // whose name you can read (docs/adr/078).
+      zIndexOffset: Math.min(patchActivity(node), 500),
+    });
+
+    // A name is a tooltip either way; what the collision pass decides is
+    // whether it stands open. The rest reveal on hover — and on touch,
+    // where Leaflet opens a tooltip on tap, which is the same promise.
+    // A name is a tooltip either way; the placement pass decides only whether
+    // it stands open, and on which side it sits when it does.
+    marker.bindTooltip(node.name, {
+      permanent: !!position,
+      direction: position ? position.dir : 'right',
+      offset: position ? position.offset : [3, -22],
+      className: 'map-name',
+      opacity: 1,
+    });
+
+    marker.on('click', () => onMarkerClick && onMarkerClick(node));
+    return marker;
+  }
+
   function updateMarkers() {
-    if (markersLayer) {
-      map.removeLayer(markersLayer);
+    if (markersLayer) map.removeLayer(markersLayer);
+
+    const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
+    const groups = clusterNodes(map, placed, CLUSTER_RADIUS_PX);
+
+    // Names are placed by separation, never by zoom: zoom is only what moves
+    // markers apart, and two patches at one address never separate at all.
+    // A name may only occupy map the reader can see: on desktop the cards
+    // pane floats over the right of the canvas, and a name under it is a
+    // name nobody reads.
+    // In layer-point space, which is what the placement pass projects into —
+    // container coordinates would be off by the map pane's own offset.
+    const size = map.getSize();
+    const padRight = Math.round(size.x * insetRight);
+    const topLeft = map.containerPointToLayerPoint([4, 4]);
+    const bottomRight = map.containerPointToLayerPoint([size.x - padRight - 4, size.y - 4]);
+    const visible = {
+      left: topLeft.x,
+      top: topLeft.y,
+      right: bottomRight.x,
+      bottom: bottomRight.y,
+    };
+
+    labelled = placeLabels(
+      groups,
+      (latlng) => map.latLngToLayerPoint(latlng),
+      labelFont,
+      labelled,
+      visible,
+    );
+
+    const layers = [];
+    for (const group of groups) {
+      if (group.members.length === 1) {
+        layers.push(markerFor(group.lead, labelled.get(group.lead.id)));
+        continue;
+      }
+      const disc = L.marker(group.latlng, { icon: clusterIcon(group.members.length) });
+      disc.on('click', () => {
+        map.fitBounds(
+          L.latLngBounds(group.members.map((n) => [n.latitude, n.longitude])),
+          { padding: [60, 60], maxZoom: BASEMAP_MAX_ZOOM },
+        );
+      });
+      layers.push(disc);
     }
 
-    const markers = [];
-    for (const node of nodes) {
-      if (node.latitude == null || node.longitude == null) continue;
+    markersLayer = L.layerGroup(layers).addTo(map);
 
-      const marker = L.marker([node.latitude, node.longitude], { icon: patchMarkerIcon(node) });
-      marker.bindPopup(popupContent(node));
-      markers.push(marker);
-    }
+    // Fit once, on the first pass that has something to fit. The first pass
+    // runs before the fetch lands, and letting an empty one count would
+    // spend the fit on nothing and pile every marker at the default zoom.
+    // After that the viewport belongs to the person: narrowing a set is not
+    // a request to be moved somewhere else.
+    if (hasFit) return;
 
-    markersLayer = L.layerGroup(markers).addTo(map);
-
-    // Keep markers clear of the floating cards panel on desktop.
-    const padRight = Math.round((mapContainer?.clientWidth || 0) * insetRight);
     const fitOpts = {
       paddingTopLeft: [24, 24],
       paddingBottomRight: [24 + padRight, 24],
     };
 
-    if (markers.length > 0) {
-      const group = L.featureGroup(markers);
-      map.fitBounds(group.getBounds(), fitOpts);
+    if (placed.length > 0) {
+      hasFit = true;
+      map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), fitOpts);
     } else if (center?.lat && center?.lng) {
-      // Estimate zoom from radius (km)
       const zoom = Math.round(14 - Math.log2(radius || 10));
       map.setView([center.lat, center.lng], Math.max(zoom, 3));
     }
   }
 
-  function popupContent(node) {
-    const div = document.createElement('div');
-    div.className = 'map-popup';
-
-    const title = document.createElement('strong');
-    title.textContent = node.name;
-    div.appendChild(title);
-
-    if (node.description) {
-      const snippet = node.description.slice(0, 100) + (node.description.length > 100 ? '…' : '');
-      const p = document.createElement('p');
-      p.className = 'map-popup-desc';
-      p.textContent = snippet;
-      div.appendChild(p);
-    }
-
-    const link = document.createElement('a');
-    link.className = 'map-popup-link';
-    link.href = `/patches/${encodeURIComponent(node.slug)}`;
-    link.textContent = 'View patch';
-    link.addEventListener('click', (e) => {
-      if (onMarkerClick) {
-        e.preventDefault();
-        onMarkerClick(node);
-      }
-    });
-    div.appendChild(link);
-
-    return div;
-  }
 </script>
 
 <div class="map-wrapper">
@@ -222,43 +318,36 @@
   }
 
   /* Textile popups: surface card, hairline border, app radius + font. */
-  .map-wrapper :global(.leaflet-popup-content-wrapper),
-  .map-wrapper :global(.leaflet-popup-tip) {
-    background: var(--color-surface);
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    box-shadow: 0 2px 12px var(--color-shadow);
-  }
-
-  .map-wrapper :global(.leaflet-popup-content-wrapper) {
-    border-radius: var(--radius);
-  }
-
-  .map-wrapper :global(.leaflet-popup-content) {
+  /* A name on the map is halo'd text, never a pill. The quilt's name badge
+     is a pill because it floats over fabric it must stay readable against;
+     a basemap is not fabric, and a field of pills reads as furniture on a
+     surface whose whole job is location (docs/adr/078). */
+  .map-wrapper :global(.map-name) {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
     font-family: var(--font);
-    margin: 0.7rem 0.85rem;
-  }
-
-  .map-wrapper :global(.map-popup strong) {
-    color: var(--color-text);
-    font-size: 0.95rem;
-  }
-
-  .map-wrapper :global(.map-popup-desc) {
-    margin: 0.25rem 0 0.5rem;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-  }
-
-  .map-wrapper :global(.map-popup-link) {
-    display: inline-block;
-    font-size: 0.8rem;
+    font-size: 12px;
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--color-text);
+    white-space: nowrap;
+    /* Legible over any tile the basemap draws underneath. */
+    paint-order: stroke fill;
+    -webkit-text-stroke: 3px var(--color-bg);
+    text-shadow: 0 1px 2px var(--color-bg);
   }
 
-  .map-wrapper :global(.leaflet-container a.leaflet-popup-close-button) {
-    color: var(--color-text-muted);
+  .map-wrapper :global(.map-name::before) {
+    display: none; /* Leaflet's tooltip arrow */
+  }
+
+  /* A cluster is not a patch, so it wears no identity color and no motif —
+     the neutral dark disc the quilt gives to status (docs/adr/078). */
+  .map-wrapper :global(.patch-cluster) {
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+    cursor: pointer;
   }
 
   /* Theme the attribution + zoom controls so they read as app chrome. */
