@@ -195,3 +195,35 @@ test('a sentence that opens like a query is still copy', () => {
   assert.ok(texts.includes('Select a patch to continue.'));
   assert.ok(texts.includes('Update your event details.'));
 });
+
+// A media query is not copy, in either of its two shapes.
+//
+// The rule covered dimension queries from the start and missed feature ones,
+// which matter because they open with a bracket exactly as a parenthetical
+// sentence does — so `(hover: hover) and (pointer: fine)` read as prose and
+// was held up for a human author it could never sensibly have. Nobody reads
+// a media query. Tested rather than remembered, because the next one will
+// arrive in a `matchMedia` call nobody is thinking about.
+test('media queries are not offered for review, dimension or feature', () => {
+  const queries = [
+    '(max-width: 768px)',
+    '(hover: hover) and (pointer: fine)',
+    '(prefers-color-scheme: dark)',
+    '(prefers-reduced-motion: reduce)',
+    '(any-pointer: coarse)',
+    '(orientation: portrait)',
+  ];
+  for (const q of queries) {
+    const src = `const m = window.matchMedia('${q}');`;
+    const hits = extractOne('web/src/lib/x.js', 'js', src);
+    assert.equal(hits.length, 0, `claimed a media query as copy: ${q}`);
+  }
+});
+
+// The other half of the same rule: narrowing it must not start dropping
+// real prose that happens to open with a bracket.
+test('a parenthetical sentence is still copy', () => {
+  const src = "const msg = '(Optional) Add a short description.';";
+  const texts = extractOne('web/src/lib/x.js', 'js', src).map((h) => h.text);
+  assert.ok(texts.includes('(Optional) Add a short description.'));
+});

@@ -90,14 +90,16 @@ describe('#45: the map honours the quilt scope', () => {
     expect(url).toContain('scope=my');
   });
 
-  it('SocialHome passes the scope to the map fetch and refetches on change', () => {
+  it('the map reads the scoped patch list rather than a list of its own', () => {
     const src = source('pages/SocialHome.svelte');
-    // The map request is built with the scope param.
-    expect(src).toMatch(/scopeParam\s*=\s*quiltScope === 'my' \? '&scope=my' : ''/);
-    expect(src).toMatch(/api\(`nodes\?limit=500\$\{scopeParam\}`\)/);
-    // The map effect depends on quiltScope, not only showMap.
-    const mapEffect = src.match(/\$effect\(\(\) => \{[^}]*loadMapData\(\);\s*\}\);/s);
-    expect(mapEffect, 'map $effect not found').toBeTruthy();
-    expect(mapEffect[0]).toContain('quiltScope');
+    // The map's markers derive from the same list the cards render, and that
+    // list is fetched with the scope (docs/adr/078). A second fetch of its
+    // own is what this guards against: the old `nodes?limit=500` payload
+    // carried neither tags nor counts, so every motif fell back to the quilt
+    // mark and patchActivity — the priority behind labels, stacking and
+    // cluster anchoring — was zero for every patch.
+    expect(src).toMatch(/mapNodes\s*=\s*\$derived\(allPatches\.filter/);
+    expect(src).not.toMatch(/api\(`nodes\?limit=500/);
+    expect(src).toMatch(/api\(`nodes\/tree\$\{quiltScope === 'my' \? '\?scope=my' : ''\}`\)/);
   });
 });
