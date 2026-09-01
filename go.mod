@@ -6,7 +6,7 @@ require (
 	github.com/emersion/go-ical v0.0.0-20250609112844-439c63cef608
 	github.com/go-git/go-git/v5 v5.19.2
 	github.com/go-webauthn/webauthn v0.17.4
-	github.com/mattn/go-sqlite3 v1.14.49
+	github.com/mattn/go-sqlite3 v1.14.50
 	github.com/sergi/go-diff v1.4.0
 	golang.org/x/time v0.15.0
 	gopkg.in/yaml.v3 v3.0.1
