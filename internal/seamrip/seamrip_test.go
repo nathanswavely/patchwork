@@ -71,8 +71,8 @@ func seedSource(t *testing.T, db *database.DB) {
 
 	for i, n := range []string{n1, n2} {
 		mustExec(t, db,
-			`INSERT INTO nodes (id, owner_id, name, slug, description, visibility, membership_policy, status, created_at, updated_at) VALUES (?, ?, ?, ?, '', 'public', 'open', 'active', ?, ?)`,
-			n, u1, fmt.Sprintf("Patch %d", i+1), fmt.Sprintf("patch-%d", i+1), now, now)
+			`INSERT INTO nodes (id, owner_id, name, slug, description, visibility, membership_policy, status, activated_at, created_at, updated_at) VALUES (?, ?, ?, ?, '', 'public', 'open', 'active', ?, ?, ?)`,
+			n, u1, fmt.Sprintf("Patch %d", i+1), fmt.Sprintf("patch-%d", i+1), "2026-02-02T00:00:00.000Z", now, now)
 	}
 
 	// u1 and u2 are members of BOTH patches (overlap = 2); u3 follows n1.
@@ -341,6 +341,16 @@ func TestRoundTrip(t *testing.T) {
 	              WHERE u.username = 'user2' AND m.visible = 0`).Scan(&hidden)
 	if hidden != 1 {
 		t.Errorf("a hidden membership was re-exposed by the fork: got %d hidden, want 1", hidden)
+	}
+
+	// When each patch joined the quilt travels (docs/adr/076). Without it a
+	// fork dates every patch to the day of the import - its "Recently added"
+	// order becomes noise and its first bulletin would announce the entire
+	// community as new arrivals.
+	var joined string
+	dst.QueryRow(`SELECT COALESCE(activated_at,'') FROM nodes WHERE slug = 'patch-1'`).Scan(&joined)
+	if joined != "2026-02-02T00:00:00.000Z" {
+		t.Errorf("arrival date lost in the fork: %q", joined)
 	}
 
 	// A patch that closed its door to event suggestions keeps it closed.

@@ -732,10 +732,14 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		}
 
 		apID := ap.NodeAPID(ap.GetDomain(), id)
+		// A patch created here is active from the first moment, so this is
+		// when it joined the quilt (docs/adr/076). Submitted listings take a
+		// different path and stay NULL until a claim completes.
+		activatedAt := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create node"}`, http.StatusInternalServerError)

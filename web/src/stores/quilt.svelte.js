@@ -119,9 +119,11 @@ export function getActiveFilterCount() {
 
 // Order is not narrowing; it decides what comes first, not what is shown.
 // Quilt order — the layout engine's own placement order, centre-out — is the
-// default. A→Z is the one alternative, for looking a name up rather than
-// finding something, which is a job the search dropdown already does better.
-let listOrder = $state('quilt'); // 'quilt' | 'alpha'
+// default. A→Z is for looking a name up rather than finding something, a job
+// the search dropdown already does better. Recently added answers "what is
+// new here" from `activated_at`, which is when a community arrived rather
+// than when a row was written (docs/adr/076).
+let listOrder = $state('quilt'); // 'quilt' | 'alpha' | 'recent'
 
 // The in-view lens narrows the list to the patches inside the canvas's
 // viewport. The first surface-local lens: it bites on the quilt and the map

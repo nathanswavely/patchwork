@@ -4092,14 +4092,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 824,
+          "line": 828,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 994,
+          "line": 998,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4353,7 +4353,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1175,
+          "line": 1179,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4486,7 +4486,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 836,
+          "line": 840,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4847,7 +4847,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 951,
+          "line": 955,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5363,14 +5363,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 830,
+          "line": 834,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1000,
+          "line": 1004,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -7198,7 +7198,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1200,
+          "line": 1204,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7237,7 +7237,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1204,
+          "line": 1208,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7513,7 +7513,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1187,
+          "line": 1191,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -7531,7 +7531,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1208,
+          "line": 1212,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -7549,7 +7549,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1217,
+          "line": 1221,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired — the patch is claimable again",
           "quote": null
@@ -7567,14 +7567,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1226,
+          "line": 1230,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1232,
+          "line": 1236,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -7592,7 +7592,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1235,
+          "line": 1239,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -8847,7 +8847,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 859,
+          "line": 863,
           "kind": "go-error-body",
           "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
@@ -11643,7 +11643,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 741,
+          "line": 745,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -11661,14 +11661,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 883,
+          "line": 887,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 890,
+          "line": 894,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -11686,7 +11686,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 901,
+          "line": 905,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -11704,7 +11704,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 963,
+          "line": 967,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -11722,7 +11722,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1008,
+          "line": 1012,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -13948,7 +13948,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tree.go",
-          "line": 85,
+          "line": 89,
           "kind": "go-error-body",
           "raw": "failed to query nodes",
           "quote": null
@@ -19445,7 +19445,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 457,
+          "line": 472,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -20650,7 +20650,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 531,
+          "line": 547,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -26926,7 +26926,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 471,
+          "line": 486,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -32208,14 +32208,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 260,
+          "line": 275,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 315,
+          "line": 330,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -39244,7 +39244,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 367,
+          "line": 382,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -42369,7 +42369,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 339,
+          "line": 354,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -42387,7 +42387,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 360,
+          "line": 375,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -42405,7 +42405,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 362,
+          "line": 377,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -42423,7 +42423,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 396,
+          "line": 411,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
           "quote": null
@@ -42441,7 +42441,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 473,
+          "line": 488,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -42459,7 +42459,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 473,
+          "line": 488,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -42477,7 +42477,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 487,
+          "line": 502,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -42495,7 +42495,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 492,
+          "line": 507,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -42513,9 +42513,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 496,
+          "line": 511,
           "kind": "markup",
           "raw": "Quilt order",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "96ec5d338ae3",
+      "text": "Recently added",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The cards list's third order (docs/adr/074), reading when a community arrived (docs/adr/076).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 512,
+          "kind": "markup",
+          "raw": "Recently added",
           "quote": null
         }
       ]
@@ -42531,7 +42549,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 519,
+          "line": 535,
           "kind": "markup",
           "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -42549,7 +42567,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 528,
+          "line": 544,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -42567,7 +42585,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 540,
+          "line": 556,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null

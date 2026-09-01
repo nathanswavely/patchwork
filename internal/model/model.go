@@ -203,8 +203,14 @@ type Node struct {
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
 	// response only; the tree carries the all-time figure.
 	UpcomingEventCount int    `json:"upcoming_event_count"`
-	CreatedAt          string `json:"created_at"`
-	UpdatedAt          string `json:"updated_at"`
+	// ActivatedAt is when this patch joined the quilt - created, or claimed
+	// through patch setup. NULL while it is only a directory listing: an
+	// unclaimed patch has not joined, because no community has arrived
+	// (docs/adr/076). Distinct from CreatedAt, which is when the row was
+	// written, and from UpdatedAt, which every later edit moves.
+	ActivatedAt *string `json:"activated_at,omitempty"`
+	CreatedAt   string  `json:"created_at"`
+	UpdatedAt   string  `json:"updated_at"`
 }
 
 type ClaimRequest struct {
