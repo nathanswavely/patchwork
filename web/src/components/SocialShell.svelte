@@ -109,7 +109,7 @@
     localStorage.setItem(SIDEBAR_KEY, sidebarCollapsed ? '1' : '0');
   }
 
-  // Quilt routes get the immersive treatment: glass bar, floating icon rail.
+  // Quilt routes get the immersive treatment: no bar fill, floating icon rail.
   const quiltRoutes = new Set(['home', 'homeMy', 'patchList', 'map', 'mapMy']);
   let isQuiltRoute = $derived(quiltRoutes.has(routeName));
 
@@ -519,6 +519,23 @@
     background: var(--color-overlay);
   }
 
+  /* Over the quilt/map the bar paints nothing (GlobalBar's `quilt-mode`),
+     so these two ride straight on the canvas — and the wordmark is the
+     worst case, white display type that lands on whatever tile happens to
+     be under it. Each takes the collapsed rail's chip backdrop, so the
+     whole floating cluster matches. */
+  .social-layout.quilt-mode .bar-sidebar-toggle,
+  .social-layout.quilt-mode .scope-btn {
+    background: color-mix(in srgb, var(--color-bg) 65%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .social-layout.quilt-mode .bar-sidebar-toggle:hover,
+  .social-layout.quilt-mode .scope-btn:hover {
+    background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+  }
+
   .logo-icon {
     flex-shrink: 0;
     color: var(--color-primary);
@@ -680,10 +697,16 @@
     width: 56px;
   }
 
-  /* Over the quilt, collapsed: no panel, items float as glass chips.
-     Expanded over the quilt: a glass *card* with a border on all four
-     sides. The quilt/map routes have no shell
-     borders — the bar is borderless glass — so a full-height drawer has
+  /* Over the quilt, collapsed: no panel, items float as chips.
+     Expanded over the quilt: the same chip backdrop widened into a *card*
+     with a border on all four sides — one recipe for the bar chips, the
+     rail chips, and this panel, so the floating chrome reads as one
+     family — a little denser here (78% vs 65%), because the panel covers
+     enough canvas that the chips' alpha let tile labels ghost up behind
+     its own. (--color-glass is 0.92 alpha, which is a wall, not glass; it
+     left the panel as the last opaque band once the bar stopped painting.)
+     The quilt/map routes have no shell
+     borders — the bar paints nothing — so a full-height drawer has
      nothing to butt against and reads as a stray panel. Inset from the left
      and sized to hug its items (bottom: auto), it reads as chrome floating
      over the canvas, like the view pill. Top stays at 56px so the items sit
@@ -692,9 +715,9 @@
     top: 56px;
     left: 12px;
     bottom: auto;
-    background: var(--color-glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     box-shadow: 0 2px 12px var(--color-shadow);
@@ -758,13 +781,14 @@
     display: inline;
   }
 
-  /* Over the quilt the peek brings the glass panel with it, and the
-     individual chip backdrops give way to the panel's. Width is the ONLY
+  /* Over the quilt the peek brings the panel with it, and the
+     individual chip backdrops give way to the panel's — same recipe, so
+     the handoff is invisible except for the widening. Width is the ONLY
      geometry hover may change (see the collapsed rule above). */
   .sidebar-rail.quilt-mode.collapsed:hover {
-    background: var(--color-glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     box-shadow: 0 2px 12px var(--color-shadow);
@@ -885,7 +909,8 @@
     margin-left: 56px;
   }
 
-  /* Quilt mode: full bleed under the glass bar, rail floats over the canvas */
+  /* Quilt mode: full bleed to the top of the window — the bar paints nothing
+     over the canvas — and the rail floats on it */
   .social-main.quilt-mode {
     margin-left: 0;
     padding: 0;
