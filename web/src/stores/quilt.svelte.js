@@ -88,6 +88,33 @@ export function getActiveFilterCount() {
   return selectedTags.length + (searchQuery.trim() ? 1 : 0);
 }
 
+// --- Order and the in-view lens (docs/adr/074) ---
+// Two things the cards list owns. They sit beside the filter because they are
+// the same kind of state — standing, session-ephemeral, never in the URL —
+// but neither is part of the filter, and clearing the filter leaves both
+// alone: touching one lens never changes another (docs/adr/022).
+
+// Order is not narrowing; it decides what comes first, not what is shown.
+// Quilt order — the layout engine's own placement order, centre-out — is the
+// default. A→Z is the one alternative, for looking a name up rather than
+// finding something, which is a job the search dropdown already does better.
+let listOrder = $state('quilt'); // 'quilt' | 'alpha'
+
+// The in-view lens narrows the list to the patches inside the canvas's
+// viewport. The first surface-local lens: it bites on the quilt and the map
+// and has no meaning on the events page, so unlike the filter it does not
+// travel. Off until someone turns it on — the canvas zoom-fits at rest, so an
+// always-on binding would look like it was doing nothing until it suddenly
+// wasn't. Deliberately not addressable: quilt space is re-sewn as membership
+// changes, so a saved viewport would come to mean different patches.
+let inViewOnly = $state(false);
+
+export function getListOrder() { return listOrder; }
+export function setListOrder(order) { listOrder = order; }
+export function getInViewOnly() { return inViewOnly; }
+export function setInViewOnly(on) { inViewOnly = !!on; }
+export function toggleInViewOnly() { inViewOnly = !inViewOnly; }
+
 // --- Chip collapse preference (docs/adr/033) ---
 // One shared preference across every chips home (canvas overlay, top of the
 // events page): a person is a chips-open or chips-collapsed person, and the

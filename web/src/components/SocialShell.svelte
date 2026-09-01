@@ -15,6 +15,7 @@
     setSearchQuery,
     getActiveFilterCount,
     getSubmissionsEnabled,
+    getInstanceModules,
   } from '../stores/quilt.svelte.js';
   import { switcherQuilts, fetchQuiltInfo } from '../stores/multiQuilt.svelte.js';
   import GlobalBar from './GlobalBar.svelte';
@@ -112,6 +113,12 @@
   // Quilt routes get the immersive treatment: glass bar, floating icon rail.
   const quiltRoutes = new Set(['home', 'homeMy', 'patchList', 'map', 'mapMy']);
   let isQuiltRoute = $derived(quiltRoutes.has(routeName));
+
+  // The canvas view switcher (docs/adr/074). Quilt/Map changes the canvas, so
+  // it lives on the canvas — it used to sit in the cards header, which is the
+  // list's, and named a choice the list has no stake in.
+  let mapEnabled = $derived(getInstanceModules().map !== false);
+  let onMapSurface = $derived(surfaceForRoute(routeName) === 'map');
 
   // The Label's mobile affordance (docs/adr/023): the quilt view has no
   // scroll end for a footer and the rail owns the bottom edge, so a small
@@ -313,6 +320,25 @@
   {#if isQuiltRoute}
     <div class="quilt-chips" class:rail-collapsed={sidebarCollapsed}>
       <FilterChips variant="overlay" />
+    </div>
+  {/if}
+
+  <!-- Canvas view switcher (docs/adr/074): desktop only. On mobile the same
+       choice already rides the floating pill, which is canvas chrome too. -->
+  {#if isQuiltRoute && mapEnabled}
+    <div class="canvas-view" class:rail-collapsed={sidebarCollapsed} role="group" aria-label="Canvas view">
+      <a
+        href={scopedPath('quilt', quiltScope)}
+        class:active={!onMapSurface}
+        aria-current={!onMapSurface ? 'page' : undefined}
+        onclick={(e) => handleNav(e, scopedPath('quilt', quiltScope))}
+      >Quilt</a>
+      <a
+        href={scopedPath('map', quiltScope)}
+        class:active={onMapSurface}
+        aria-current={onMapSurface ? 'page' : undefined}
+        onclick={(e) => handleNav(e, scopedPath('map', quiltScope))}
+      >Map</a>
     </div>
   {/if}
 
@@ -643,6 +669,49 @@
     z-index: 20; /* the canvas chrome layer — same as the view pill */
   }
 
+  /* Canvas chrome, the same floating layer and rail-aware offsets the chips
+     use — clear of the rail on the left, clear of the cards pane on the
+     right. Top-left rather than the chips' bottom-left so the two never
+     compete, and clear of Leaflet's own zoom control at the map's edge. */
+  .canvas-view {
+    position: fixed;
+    top: 68px; /* clear the glass top bar */
+    left: 224px;
+    z-index: 20;
+    display: flex;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--color-glass);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: 0 2px 12px var(--color-shadow);
+  }
+
+  .canvas-view.rail-collapsed {
+    left: 80px;
+  }
+
+  .canvas-view a {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .canvas-view a:hover {
+    color: var(--color-text);
+  }
+
+  .canvas-view a.active {
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: 0 1px 3px var(--color-shadow);
+  }
+
   .quilt-chips.rail-collapsed {
     /* The collapsed rail hugs at left 12px, 56px wide (its right edge is
        68px) since the hover-flicker fix — keep the same 12px gap the
@@ -901,6 +970,10 @@
 
     /* The desktop chips overlay yields to the FAB + sheet on mobile. */
     .quilt-chips {
+      display: none;
+    }
+
+    .canvas-view {
       display: none;
     }
 
