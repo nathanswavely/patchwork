@@ -156,21 +156,34 @@ test('a cursor dragging from a name badge pans the quilt', async ({ page }) => {
   expect(after.x - before.x).toBeGreaterThan(95);
 });
 
-test('a tap on a name badge still opens the patch', async ({ page }) => {
+test('a tap on a name badge previews the patch', async ({ page }) => {
   await goto(page, '/');
   const { label } = await firstLabelCenter(page);
   const name = (await label.locator('.label-name').innerText()).trim();
 
   await label.tap();
-  await expect(page).toHaveURL(/\/patches\/[^/]+$/);
-  await expect(page.locator('h1')).toContainText(name);
+
+  // What a tap on a badge does is whatever a tap on its tile does — that is
+  // the property this has always guarded, and a badge that swallows the tap
+  // silently is the failure it exists to catch. The destination changed in
+  // docs/adr/078: with no pointer there is a single gesture, so the first tap
+  // previews into the docked card and the card is how the patch is opened.
+  // Staying on the quilt is now the point — a tap used to cost the reader
+  // their pan and zoom to answer "what is that one?".
+  const docked = page.locator('.docked-card');
+  await expect(docked).toBeVisible();
+  await expect(docked).toContainText(name);
+  await expect(page).toHaveURL(/\/(\?.*)?$/);
 });
 
-test('a drag that starts on a name badge does not open the patch', async ({ page }) => {
+test('a drag that starts on a name badge neither opens nor previews', async ({ page }) => {
   await goto(page, '/');
   const { x, y } = await firstLabelCenter(page);
 
   await touchDrag(page, x, y, [[20, 10], [45, 20], [70, 30], [95, 40]]);
 
   await expect(page).toHaveURL(/\/(\?.*)?$/);
+  // A drag is not a tap. Now that a tap docks a card rather than navigating,
+  // the URL alone would no longer notice a drag being mistaken for one.
+  await expect(page.locator('.docked-card')).toHaveCount(0);
 });
