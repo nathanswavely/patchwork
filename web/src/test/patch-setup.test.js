@@ -71,7 +71,13 @@ describe('App wires the setup route and guards it', () => {
   });
 
   it('is exempt from the zero-memberships onboarding redirect', () => {
-    expect(src).toMatch(/\['welcome', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew'\]/);
+    // Assert the exemption, not the whole literal: the list grows as new
+    // routes a fresh account can deliberately reach are added (docs/adr/075
+    // added 'discover'), and pinning every member made an unrelated change
+    // fail here.
+    const exempt = src.match(/if \(!\[([^\]]*)\]\.includes\(routeName\)/);
+    expect(exempt, 'onboarding-redirect exempt list not found').toBeTruthy();
+    expect(exempt[1]).toContain("'patchSetup'");
   });
 
   it('gives claimPatch its own workspace tab id, not governance', () => {

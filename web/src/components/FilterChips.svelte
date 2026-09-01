@@ -17,6 +17,7 @@
   import { FunnelSimple, X } from 'phosphor-svelte';
   import {
     getAllTags,
+    getRankedTags,
     getSelectedTags,
     toggleTag,
     getSearchQuery,
@@ -62,7 +63,7 @@
             <X size={11} weight="bold" />
           </button>
         {/if}
-        {#each getAllTags() as tag (tag)}
+        {#each getRankedTags() as tag (tag)}
           {@const active = getSelectedTags().includes(tag)}
           <button
             class="chip lt-resin lt-resin-frosted"

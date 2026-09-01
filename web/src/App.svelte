@@ -86,6 +86,7 @@
   import InviteLanding from './pages/InviteLanding.svelte';
   import SignupComplete from './pages/SignupComplete.svelte';
   import Welcome from './pages/Welcome.svelte';
+  import Discover from './pages/Discover.svelte';
   import Toast from './components/Toast.svelte';
 
   // --- Routes ---
@@ -187,6 +188,10 @@
   addRoute('/invite/:token', 'invite');
   addRoute('/signup/complete', 'signupComplete');
   addRoute('/welcome', 'welcome');
+  // Discovery mode (docs/adr/075): standing, public, re-enterable. Welcome's
+  // steps 2 and 3 used to live behind /welcome's auth gate and were spent
+  // after one showing; only the orientation step still belongs there.
+  addRoute('/discover', 'discover');
 
   // User pages
   addRoute('/settings', 'settings');
@@ -428,7 +433,10 @@
   // exempt: creating a patch is the natural first act on a fresh instance.
   $effect(() => {
     if (isLoggedIn() && isMembershipsLoaded() && getMemberships().length === 0) {
-      if (!['welcome', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew'].includes(routeName)
+      // 'discover' is exempt for the same reason 'patchNew' is: it is a
+      // place a new person can deliberately go, and yanking them back to
+      // orientation from the surface orientation hands off to is a loop.
+      if (!['welcome', 'discover', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew'].includes(routeName)
           && !isOnboardingDismissed(getUser()?.id)) {
         navigate('/welcome');
       }
@@ -591,6 +599,8 @@
         <Label />
 
       <!-- ===== ABOUT + THE LINING (docs/adr/040) ===== -->
+      {:else if routeName === 'discover'}
+        <Discover />
       {:else if routeName === 'about'}
         <About />
       {:else if routeName === 'lining'}

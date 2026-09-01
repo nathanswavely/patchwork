@@ -23,7 +23,7 @@
   import FilterChips from './FilterChips.svelte';
   import { discoveryFinderProvider } from '../lib/finderProviders.js';
   import { getUnread } from '../stores/notifications.svelte.js';
-  import { ArrowSquareOut, Bell, CaretDown, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
+  import { ArrowSquareOut, Bell, CaretDown, Compass, FunnelSimple, Info, MagnifyingGlass, SquaresFour, CalendarBlank, Gauge, SidebarSimple, House } from 'phosphor-svelte';
   import LabelFooter from './LabelFooter.svelte';
   import IntroCard from './IntroCard.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
@@ -158,6 +158,10 @@
       routes: ['home', 'homeMy', 'quilt', 'patchList', 'map', 'mapMy'] },
     { id: 'events', label: 'Events', surface: 'events', icon: CalendarBlank,
       routes: ['eventList', 'eventListMy', 'eventDetail'] },
+    // Discovery mode's standing door (docs/adr/075). Its absence was the
+    // reason nobody could return to the flow — not forgetfulness.
+    { id: 'discover', label: 'Discover', href: '/discover', icon: Compass,
+      routes: ['discover'] },
     { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: Gauge,
       routes: ['dashboard'] },
   ];

@@ -15853,21 +15853,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 464,
+          "line": 472,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 510,
+          "line": 518,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 559,
+          "line": 567,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -15885,21 +15885,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 465,
+          "line": 473,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 511,
+          "line": 519,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 560,
+          "line": 568,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -15917,7 +15917,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 652,
+          "line": 662,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -15935,7 +15935,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 653,
+          "line": 663,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -18154,7 +18154,7 @@
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 44,
+          "line": 45,
           "kind": "attr:title",
           "raw": "Show filters",
           "quote": "\""
@@ -18172,7 +18172,7 @@
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 52,
+          "line": 53,
           "kind": "attr:aria-label",
           "raw": "Filter by tag",
           "quote": "\""
@@ -18190,7 +18190,7 @@
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 75,
+          "line": 76,
           "kind": "markup",
           "raw": "Clear",
           "quote": null
@@ -18208,14 +18208,14 @@
       "occurrences": [
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 81,
+          "line": 82,
           "kind": "attr:title",
           "raw": "Hide filters",
           "quote": "\""
         },
         {
           "file": "web/src/components/FilterChips.svelte",
-          "line": 82,
+          "line": 83,
           "kind": "attr:aria-label",
           "raw": "Hide filters",
           "quote": "\""
@@ -18319,14 +18319,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 398,
+          "line": 402,
           "kind": "attr:title",
           "raw": "Notifications",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 406,
+          "line": 410,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -19310,14 +19310,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 370,
+          "line": 374,
           "kind": "attr:title",
           "raw": "What is Patchwork?",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 373,
+          "line": 377,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -19650,7 +19650,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 422,
+          "line": 426,
           "kind": "attr:title",
           "raw": "The Label",
           "quote": "\""
@@ -19743,7 +19743,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 468,
+          "line": 472,
           "kind": "markup",
           "raw": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
           "quote": null
@@ -19775,7 +19775,7 @@
         },
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 187,
+          "line": 72,
           "kind": "markup",
           "raw": "Read the Label &rarr;",
           "quote": null
@@ -19854,7 +19854,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 461,
+          "line": 465,
           "kind": "attr:aria-label",
           "raw": "Close",
           "quote": "\""
@@ -20157,6 +20157,20 @@
         {
           "file": "web/src/components/PatchRelationship.svelte",
           "line": 151,
+          "kind": "markup",
+          "raw": "Follow",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 299,
+          "kind": "markup",
+          "raw": "Follow",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 345,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
@@ -21254,7 +21268,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 255,
+          "line": 259,
           "kind": "markup",
           "raw": "My Quilt",
           "quote": null
@@ -21272,7 +21286,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 259,
+          "line": 263,
           "kind": "markup",
           "raw": "Connected quilts",
           "quote": null
@@ -21290,14 +21304,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 282,
+          "line": 286,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 306,
+          "line": 310,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
@@ -21315,7 +21329,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 329,
+          "line": 333,
           "kind": "attr:aria-label",
           "raw": "Canvas view",
           "quote": "\""
@@ -21333,14 +21347,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 383,
+          "line": 387,
           "kind": "attr:title",
           "raw": "Search",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 388,
+          "line": 392,
           "kind": "markup",
           "raw": "Search",
           "quote": null
@@ -21358,7 +21372,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 423,
+          "line": 427,
           "kind": "attr:aria-label",
           "raw": "About this quilt",
           "quote": "\""
@@ -21376,7 +21390,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 437,
+          "line": 441,
           "kind": "attr:title",
           "raw": "Filter",
           "quote": "\""
@@ -21394,7 +21408,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 464,
+          "line": 468,
           "kind": "markup",
           "raw": "Stewarded by {(label.stewards || []).map((s) => `@${s.username}`).join(', ')}",
           "quote": null
@@ -21412,7 +21426,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 471,
+          "line": 475,
           "kind": "markup",
           "raw": "Run by real people and open source. Feel free to build your own if you don't like this one.",
           "quote": null
@@ -24489,7 +24503,7 @@
         },
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 201,
+          "line": 86,
           "kind": "markup",
           "raw": "the lining",
           "quote": null
@@ -32115,15 +32129,22 @@
           "quote": null
         },
         {
-          "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 139,
+          "file": "web/src/pages/Discover.svelte",
+          "line": 297,
           "kind": "markup",
           "raw": "Following",
           "quote": null
         },
         {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 328,
+          "file": "web/src/pages/Discover.svelte",
+          "line": 343,
+          "kind": "markup",
+          "raw": "Following",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 139,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -32169,6 +32190,225 @@
           "line": 223,
           "kind": "markup",
           "raw": "The groups near you are on the quilt.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ab827e3fe17d",
+      "text": "Something went wrong",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 158,
+          "kind": "js-string",
+          "raw": "Something went wrong",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/RemotePatch.svelte",
+          "line": 70,
+          "kind": "js-string",
+          "raw": "Something went wrong",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 268,
+          "kind": "js-string",
+          "raw": "Something went wrong",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 308,
+          "kind": "js-string",
+          "raw": "Something went wrong",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "a0311260046a",
+      "text": "What are you drawn to?",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Discovery mode's one question (docs/adr/075) — the surface asks before it shows.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 174,
+          "kind": "markup",
+          "raw": "What are you drawn to?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dc9ca819f6d8",
+      "text": "Pick a few and we'll pull up the patches that match. These are the tags this quilt actually wears, most-worn first.",
+      "words": 21,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Names the suggestion engine out loud: the tags this quilt wears, most-worn first (docs/adr/075).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 176,
+          "kind": "markup",
+          "raw": "Pick a few and we'll pull up the patches that match. These are the\n        tags this quilt actually wears, most-worn first.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "195b6169e39e",
+      "text": "{selectedInterests.size} selected",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "{selectedInterests.size} selected",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2eaf1f9c10ef",
+      "text": "Looking…",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Loading state while the answer is fetched.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 232,
+          "kind": "markup",
+          "raw": "Looking…",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "49abaf804ab3",
+      "text": "Nothing here yet",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Empty-quilt answer: nothing to find yet.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 236,
+          "kind": "markup",
+          "raw": "Nothing here yet",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4b74c99b8307",
+      "text": "No patches on this quilt so far. Make one for your group, and the next person who comes looking will have something to find.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Empty-quilt answer — the natural first act is making something for the next person to find.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 238,
+          "kind": "markup",
+          "raw": "No patches on this quilt so far. Make one for your group, and the\n          next person who comes looking will have something to find.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dc6e8c90aff9",
+      "text": "{matching.length} {matching.length === 1 ? 'patch' : 'patches'}{selectedInterests.size > 0 ? ' match what you picked' : ''}{' '} — the ones with something coming up are first.",
+      "words": 28,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The answer's count, stating that patches with something coming up lead (docs/adr/075).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 249,
+          "kind": "markup",
+          "raw": "{matching.length}\n          {matching.length === 1 ? 'patch' : 'patches'}{selectedInterests.size > 0 ? ' match what you picked' : ''}{' '}\n          — the ones with something coming up are first.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8288aaf33416",
+      "text": "Following {followedHere} {followedHere === 1 ? 'patch' : 'patches'}",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Follows are what the flow produces (docs/adr/075: it ends in follows, not navigation).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 357,
+          "kind": "markup",
+          "raw": "Following {followedHere} {followedHere === 1 ? 'patch' : 'patches'}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b229e95aa637",
+      "text": "Follow a few and they become your quilt.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Shown to a signed-in visitor with no follows yet.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 363,
+          "kind": "markup",
+          "raw": "Follow a few and they become your quilt.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "700135f99290",
+      "text": "Following needs an account — reading never does.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Shown to an anonymous visitor: following needs an account, reading never has (docs/adr/040).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 365,
+          "kind": "markup",
+          "raw": "Following needs an account — reading never does.",
           "quote": null
         }
       ]
@@ -40856,38 +41096,6 @@
       ]
     },
     {
-      "id": "ab827e3fe17d",
-      "text": "Something went wrong",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/RemotePatch.svelte",
-          "line": 70,
-          "kind": "js-string",
-          "raw": "Something went wrong",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 268,
-          "kind": "js-string",
-          "raw": "Something went wrong",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 308,
-          "kind": "js-string",
-          "raw": "Something went wrong",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "c4c394578125",
       "text": "Try their site",
       "words": 3,
@@ -42792,24 +43000,6 @@
       ]
     },
     {
-      "id": "add025e2b83c",
-      "text": "Failed to follow",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 115,
-          "kind": "js-string",
-          "raw": "Failed to follow",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "41588ce9c05b",
       "text": "Welcome to {instanceName}",
       "words": 3,
@@ -42820,7 +43010,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 170,
+          "line": 55,
           "kind": "markup",
           "raw": "Welcome to {instanceName}",
           "quote": null
@@ -42838,7 +43028,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 173,
+          "line": 58,
           "kind": "markup",
           "raw": "Each patch here is a group. Follow the ones you care about and your corner of the quilt takes shape.",
           "quote": null
@@ -42856,7 +43046,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 174,
+          "line": 59,
           "kind": "markup",
           "raw": "What is Patchwork? &rarr;",
           "quote": null
@@ -42874,7 +43064,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 180,
+          "line": 65,
           "kind": "markup",
           "raw": "This quilt is stewarded by",
           "quote": null
@@ -42892,9 +43082,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 180,
+          "line": 65,
           "kind": "markup",
-          "raw": "&nbsp;and costs\n              about",
+          "raw": "&nbsp;and costs\n            about",
           "quote": null
         }
       ]
@@ -42910,7 +43100,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 181,
+          "line": 66,
           "kind": "markup",
           "raw": "{formatMoney(label.total_monthly_minor, label.currency)}/month",
           "quote": null
@@ -42928,7 +43118,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 181,
+          "line": 66,
           "kind": "markup",
           "raw": "to run",
           "quote": null
@@ -42946,7 +43136,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 184,
+          "line": 69,
           "kind": "markup",
           "raw": "&ldquo;{labelProseLine}&rdquo;",
           "quote": null
@@ -42964,7 +43154,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 193,
+          "line": 78,
           "kind": "markup",
           "raw": "What's expected here",
           "quote": null
@@ -42982,7 +43172,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 194,
+          "line": 79,
           "kind": "markup",
           "raw": "The heart of the",
           "quote": null
@@ -43000,7 +43190,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 194,
+          "line": 79,
           "kind": "markup",
           "raw": "agreement",
           "quote": null
@@ -43018,7 +43208,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 194,
+          "line": 79,
           "kind": "markup",
           "raw": "you accepted when you created your account:",
           "quote": null
@@ -43036,7 +43226,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 196,
+          "line": 81,
           "kind": "markup",
           "raw": "Treat every person with dignity and respect",
           "quote": null
@@ -43054,7 +43244,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 197,
+          "line": 82,
           "kind": "markup",
           "raw": "Participate in good faith",
           "quote": null
@@ -43072,7 +43262,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 198,
+          "line": 83,
           "kind": "markup",
           "raw": "Support the communities you join",
           "quote": null
@@ -43090,7 +43280,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 199,
+          "line": 84,
           "kind": "markup",
           "raw": "Report harmful behavior instead of ignoring it",
           "quote": null
@@ -43108,7 +43298,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 201,
+          "line": 86,
           "kind": "markup",
           "raw": "Every patch starts from",
           "quote": null
@@ -43126,9 +43316,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 201,
+          "line": 86,
           "kind": "markup",
           "raw": ", the shared baseline behind these.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "05d854a9ec87",
+      "text": "Build your quilt &rarr;",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Welcome's handoff into discovery mode after the split (docs/adr/075).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Welcome.svelte",
+          "line": 90,
+          "kind": "markup",
+          "raw": "Build your quilt &rarr;",
           "quote": null
         }
       ]
@@ -43144,185 +43352,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/Welcome.svelte",
-          "line": 217,
+          "line": 96,
           "kind": "markup",
           "raw": "I'll explore on my own",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 302,
-          "kind": "markup",
-          "raw": "I'll explore on my own",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 391,
-          "kind": "markup",
-          "raw": "I'll explore on my own",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e146c82e8f57",
-      "text": "What kinds of communities do you care about?",
-      "words": 8,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 232,
-          "kind": "markup",
-          "raw": "What kinds of communities do you care about?",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2b97c99c1399",
-      "text": "Pick a few and we'll pull up the patches that match.",
-      "words": 11,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 233,
-          "kind": "markup",
-          "raw": "Pick a few and we'll pull up the patches that match.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "195b6169e39e",
-      "text": "{selectedInterests.size} selected",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 258,
-          "kind": "markup",
-          "raw": "{selectedInterests.size} selected",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "f954c921a68d",
-      "text": "Your quilt is ready.",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 288,
-          "kind": "markup",
-          "raw": "Your quilt is ready.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "c5b6b5eb6b89",
-      "text": "Taking you there...",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 289,
-          "kind": "markup",
-          "raw": "Taking you there...",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "24a18e4e93b2",
-      "text": "You're the first one here",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 294,
-          "kind": "markup",
-          "raw": "You're the first one here",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "333cc9191828",
-      "text": "There are no patches yet. Create one for your group, and the next person who shows up will have something to find.",
-      "words": 22,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 295,
-          "kind": "markup",
-          "raw": "There are no patches yet. Create one for your group, and the next person who shows up will have something to find.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "628295863485",
-      "text": "Create the first patch &rarr;",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 299,
-          "kind": "markup",
-          "raw": "Create the first patch &rarr;",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "cda001fb14fc",
-      "text": "Following {followedSlugs.size} {followedSlugs.size === 1 ? 'patch' : 'patches'}",
-      "words": 9,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/Welcome.svelte",
-          "line": 379,
-          "kind": "markup",
-          "raw": "Following {followedSlugs.size} {followedSlugs.size === 1 ? 'patch' : 'patches'}",
           "quote": null
         }
       ]
@@ -43656,6 +43688,42 @@
           "line": 61,
           "kind": "go-error-body",
           "raw": "that does not look like an email address",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "add025e2b83c",
+      "text": "Failed to follow",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Welcome.svelte",
+          "line": 115,
+          "kind": "js-string",
+          "raw": "Failed to follow",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c5b6b5eb6b89",
+      "text": "Taking you there...",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Welcome.svelte",
+          "line": 289,
+          "kind": "markup",
+          "raw": "Taking you there...",
           "quote": null
         }
       ]
