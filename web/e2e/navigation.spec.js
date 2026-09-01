@@ -25,11 +25,16 @@ test.describe('Navigation — Public Routes', () => {
     await page.goto('/');
     await expect(page.locator('.canvas-container')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Map', exact: true }).first().click();
+    // Links, not buttons: the switcher moved onto the canvas it changes
+    // (docs/adr/074) and these navigate between addressable surfaces
+    // (docs/adr/035), so they carry hrefs and middle-click like the rail's
+    // nav items. The role is also what separates them from the mobile pill's
+    // same-named buttons, which are display:none at this viewport.
+    await page.getByRole('link', { name: 'Map', exact: true }).first().click();
     await expect(page).toHaveURL(/\/map$/);
     await expect(page.locator('.leaflet-container')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Quilt', exact: true }).first().click();
+    await page.getByRole('link', { name: 'Quilt', exact: true }).first().click();
     await expect(page.locator('.canvas-container')).toBeVisible();
   });
 

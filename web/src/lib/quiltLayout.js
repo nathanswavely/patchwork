@@ -434,3 +434,28 @@ export function quiltLayout(patches, affinityLinks, fixedSizes) {
 
   return { tiles: placed, minCol, minRow, maxCol, maxRow };
 }
+
+/**
+ * Quilt order (docs/adr/074): the ids of the patches in the order the layout
+ * engine placed their tiles — the largest tile at the origin, then outward by
+ * affinity to whatever is already down. Centre-out by construction.
+ *
+ * This is a return value, not a computation: `quiltLayout` has always produced
+ * this order in `tiles` and every caller has thrown it away. The cards list
+ * reads it so that the list and the canvas state the same thing, and so that
+ * the ranking needs no explaining — it is drawn on screen beside it.
+ *
+ * Filler squares are not patches and drop out. Runs on whatever set it is
+ * given: pass the *filtered* patches and the order matches the re-sewn quilt
+ * the canvas is showing, which is the point of the two panes agreeing.
+ *
+ * @param {Object[]} patches - Patch data from API
+ * @param {Object[]} affinityLinks - [{source, target, strength}]
+ * @param {Object} [fixedSizes] - optional id -> size overrides
+ * @returns {string[]} patch ids, in placement order
+ */
+export function quiltOrder(patches, affinityLinks, fixedSizes) {
+  if (!patches?.length) return [];
+  const { tiles } = quiltLayout(patches, affinityLinks || [], fixedSizes);
+  return tiles.filter(t => !t.isFiller && t.data?.id).map(t => t.data.id);
+}

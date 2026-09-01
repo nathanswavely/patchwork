@@ -18,6 +18,9 @@
   // insetRight (0–1): fraction of width covered by the floating cards panel
   // on desktop, so markers fit into the visible left portion instead of
   // hiding behind the cards. 0 on mobile (cards are a separate pane).
+  // onInViewChange reports which patches are inside the visible map, for the
+  // in-view lens (docs/adr/074). The map only reports; the parent decides
+  // whether anything narrows.
   let {
     nodes = [],
     center = null,
@@ -25,6 +28,7 @@
     onMarkerClick = null,
     onBackgroundClick = null,
     insetRight = 0,
+    onInViewChange = null,
   } = $props();
 
   let mapContainer;
@@ -92,6 +96,11 @@
     });
     ro.observe(mapContainer);
 
+    // The in-view lens follows the map wherever it settles. fitBounds emits
+    // moveend too, so the first report comes from the initial fit.
+    instance.on('moveend', reportInView);
+    instance.on('zoomend', reportInView);
+
     // A pinch on the map is a map zoom, never a page zoom (iOS Safari scales
     // the document on gesture events regardless of Leaflet's touch-action).
     const unblockZoom = blockPageZoom(mapContainer);
@@ -110,7 +119,9 @@
       unblockZoom();
       instance.off('zoomend', onZoom);
       if (map) {
-        map.remove();
+        instance.off('moveend', reportInView);
+        instance.off('zoomend', reportInView);
+        instance.remove();
         map = null;
         basemap = null;
         basemapTheme = null;
@@ -260,6 +271,35 @@
       const zoom = Math.round(14 - Math.log2(radius || 10));
       map.setView([center.lat, center.lng], Math.max(zoom, 3));
     }
+
+    // A marker set can change without the map moving (a filter toggle that
+    // does not shift the fit), and moveend would never fire.
+    reportInView();
+  }
+
+  // --- The in-view lens (docs/adr/074), the map's half ---
+  // Container points rather than getBounds(), so the cards pane's strip is
+  // excluded exactly as it is on the quilt: a marker behind the floating
+  // cards is on the map but not in view. A patch with no coordinates is on
+  // neither, and drops out — which is the honest answer on this surface.
+  let lastInView = '';
+  function reportInView() {
+    if (!map || !onInViewChange) return;
+    const w = mapContainer?.clientWidth || 0;
+    const h = mapContainer?.clientHeight || 0;
+    if (!w || !h) return;
+    const rightEdge = w - w * insetRight;
+    const ids = [];
+    for (const node of nodes) {
+      if (node.latitude == null || node.longitude == null) continue;
+      const p = map.latLngToContainerPoint([node.latitude, node.longitude]);
+      if (p.x < 0 || p.x > rightEdge || p.y < 0 || p.y > h) continue;
+      ids.push(node.id);
+    }
+    const key = ids.join(',');
+    if (key === lastInView) return;
+    lastInView = key;
+    onInViewChange(ids);
   }
 
 </script>

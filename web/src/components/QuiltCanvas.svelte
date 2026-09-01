@@ -49,6 +49,11 @@
     // Clears the tag filter from the filtered-to-nothing overlay. The store
     // stays out of this component — the parent owns the lens state.
     onClearFilter = () => {},
+    // The in-view lens (docs/adr/074): reports which patches are inside the
+    // viewport, so the cards list can narrow to what a person is looking at.
+    // The canvas only ever *reports* — whether anything narrows is the
+    // parent's decision, the same way the filter works.
+    onInViewChange = null,
     // Static/compact mode (the About page hero, docs/adr/040): a live
     // miniature of the real quilt with no pan/zoom and no name badges. The
     // parent controls the footprint by sizing/positioning the wrapper —
@@ -467,6 +472,60 @@
       if (tileMap.size > 0) {
         relayout(ids);
       }
+    });
+  });
+
+  // --- The in-view lens (docs/adr/074) ---
+  // Which patches are currently inside the viewport. The mapping is the one
+  // the name badges already use: world = offset + tile position, and
+  // screen = transform.x + world x transform.k.
+  //
+  // A tile counts as in view when its rectangle *intersects* the visible
+  // region, not when its centre sits inside it. Zoom into a 4x4 and it can
+  // fill the screen with its centre off it — "the big one I am staring at
+  // is missing from the list" is the one result nobody would accept.
+  //
+  // The visible region stops short of the container's right edge on desktop:
+  // the cards pane floats over that strip (insetRight), so a tile behind the
+  // cards is on the canvas but not in view.
+  function computeInView() {
+    const t = currentTransform;
+    const { vw, vh } = getContainerSize();
+    if (!vw || !vh || !placedTiles.length) return null;
+    const rightEdge = vw - vw * insetRight;
+    const ids = [];
+    for (const tile of placedTiles) {
+      const id = tile.data?.id;
+      if (!id) continue;
+      const s = tile.pxSize * t.k;
+      const x = t.x + (canvasOffsetX + tile.px) * t.k;
+      const y = t.y + (canvasOffsetY + tile.py) * t.k;
+      if (x + s < 0 || x > rightEdge || y + s < 0 || y > vh) continue;
+      ids.push(id);
+    }
+    return ids;
+  }
+
+  // Reported on every zoom frame and every relayout, deduped. A pan is a
+  // stream of transforms and most of them do not change which tiles are on
+  // screen; without the comparison the parent re-derives its whole list on
+  // every frame of a drag. An empty layout reports nothing at all — "no
+  // layout yet" is not "nothing in view", and the difference is a list
+  // that blinks empty on load.
+  let lastInView = '';
+  $effect(() => {
+    const t = currentTransform;
+    const tiles = placedTiles;
+    const inset = insetRight;
+    untrack(() => {
+      if (!onInViewChange) return;
+      void t; void tiles; void inset;
+      const ids = computeInView();
+      if (!ids) return;
+      const key = ids.join(',');
+      if (key === lastInView) return;
+      lastInView = key;
+      onInViewChange(ids);
     });
   });
 

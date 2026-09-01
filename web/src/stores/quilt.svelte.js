@@ -35,6 +35,13 @@ let allTags = $state([]);
 // and the admin vocabulary page need more than names.
 let tagVocabulary = $state([]);
 let tagCounts = $state({}); // tag name -> public patch count, from GET /api/v1/tags
+// Whether the vocabulary round-trip has resolved. An empty `allTags` means
+// two different things before and after it does — "this quilt curates no
+// tags" and "we haven't asked yet" — and a surface that branches on the
+// vocabulary needs to tell them apart. Discovery mode shipped straight to
+// its answer for exactly this reason: it read the pre-load emptiness as a
+// quilt with no question to ask.
+let tagsLoaded = $state(false);
 let selectedTags = $state([]);
 let searchQuery = $state('');
 
@@ -57,7 +64,23 @@ export function getInstanceTimezone() { return instanceTimezone; }
 export function getAllTags() { return allTags; }
 export function getTagVocabulary() { return tagVocabulary; }
 export function getTagCounts() { return tagCounts; }
+export function areTagsLoaded() { return tagsLoaded; }
 export function getSelectedTags() { return selectedTags; }
+
+// Tags in usage order (docs/adr/075): the most-worn on this quilt first,
+// unworn ones alphabetical after. This is the whole suggestion engine —
+// what this quilt wears, identical for every viewer including anonymous
+// ones, and verifiable in one click ("nine patches wear this"). Never what
+// other people follow, which at community scale is computed from a handful
+// of humans and discloses the memberships docs/adr/006 protects.
+//
+// Raw vocabulary order was never a decision; both discovery mode and the
+// filter chips read this instead.
+export function getRankedTags() {
+  return [...allTags].sort(
+    (a, b) => (tagCounts[b] || 0) - (tagCounts[a] || 0) || a.localeCompare(b)
+  );
+}
 export function getSearchQuery() { return searchQuery; }
 
 // --- Setters ---
@@ -87,6 +110,33 @@ export function resetFilters() {
 export function getActiveFilterCount() {
   return selectedTags.length + (searchQuery.trim() ? 1 : 0);
 }
+
+// --- Order and the in-view lens (docs/adr/074) ---
+// Two things the cards list owns. They sit beside the filter because they are
+// the same kind of state — standing, session-ephemeral, never in the URL —
+// but neither is part of the filter, and clearing the filter leaves both
+// alone: touching one lens never changes another (docs/adr/022).
+
+// Order is not narrowing; it decides what comes first, not what is shown.
+// Quilt order — the layout engine's own placement order, centre-out — is the
+// default. A→Z is the one alternative, for looking a name up rather than
+// finding something, which is a job the search dropdown already does better.
+let listOrder = $state('quilt'); // 'quilt' | 'alpha'
+
+// The in-view lens narrows the list to the patches inside the canvas's
+// viewport. The first surface-local lens: it bites on the quilt and the map
+// and has no meaning on the events page, so unlike the filter it does not
+// travel. Off until someone turns it on — the canvas zoom-fits at rest, so an
+// always-on binding would look like it was doing nothing until it suddenly
+// wasn't. Deliberately not addressable: quilt space is re-sewn as membership
+// changes, so a saved viewport would come to mean different patches.
+let inViewOnly = $state(false);
+
+export function getListOrder() { return listOrder; }
+export function setListOrder(order) { listOrder = order; }
+export function getInViewOnly() { return inViewOnly; }
+export function setInViewOnly(on) { inViewOnly = !!on; }
+export function toggleInViewOnly() { inViewOnly = !inViewOnly; }
 
 // --- Chip collapse preference (docs/adr/033) ---
 // One shared preference across every chips home (canvas overlay, top of the
@@ -175,4 +225,5 @@ export async function loadTags() {
     setTagMotifs(motifs);
     tagCounts = counts;
   } catch { allTags = []; tagVocabulary = []; tagCounts = {}; }
+  finally { tagsLoaded = true; }
 }

@@ -113,8 +113,23 @@ The count states the lens: "12 of 49 in view".
 - `quiltLayout()` must return its placement order and `SocialHome` must
   sort by it; today that order is computed and thrown away.
 - A shipped control moves on a live instance: the Quilt/Map toggle leaves
-  `cards-header`. Both forms are affected — the mobile pill toggle fuses
-  Quilt/Map/List, and only List belongs to the list.
+  `cards-header` for the canvas. **Only the desktop form moves.** This ADR
+  first said both did, on the assumption that the mobile pill fusing
+  Quilt/Map/List had the same defect; building it showed otherwise. The pill
+  is not the list's header — it floats in shell chrome above *both* panes, at
+  the same z-index layer the stylesheet already calls "the canvas chrome
+  layer", and on mobile the panes toggle, so all three of its buttons answer
+  one question the shell owns: which pane am I looking at. Splitting it would
+  have cost a tap to satisfy a rule it never broke.
+- **The in-view lens is desktop-only, and that is the rule holding rather than
+  bending.** `.cards-header` is `display: none` below 768px, so there is
+  nowhere on mobile for the lens's control to live — and the panes toggle, so
+  there would be no visible canvas to see it working against either. The lens
+  is therefore gated on the same breakpoint (`lensAvailable`). This is an
+  absence, not the two-behaviours conditional the Considered options rejected:
+  the lens needs two panes on screen at once, and mobile has one. It also
+  closes the resize case, where a lens set at desktop width would otherwise
+  keep narrowing a list whose control had just disappeared.
 - Empty states gain the lens: "No patches in view — N elsewhere on the
   quilt," with the toggle as the one-step way back.
 - `relayoutGrouped()` — My Quilt with remote regions — deliberately does not

@@ -44,16 +44,15 @@ test('zero-membership user is redirected to first-run onboarding', async ({ page
 test('skip genuinely exits onboarding on an empty instance', async ({ page }) => {
   await loginAsFirstUser(page);
   await page.goto('/welcome');
-  // No agreement checkbox here anymore (docs/adr/040): the signature
-  // happened at account creation, and step 1 is orientation only.
-  await page.getByRole('button', { name: /build your quilt/i }).click();
-
-  // Empty instance: no tags, so the interests step is bypassed, and with no
-  // patches to follow the create-first-patch state shows.
-  await expect(page.getByRole('heading', { name: /first one here/i })).toBeVisible();
-
+  // No agreement checkbox here (docs/adr/040): the signature happened at
+  // account creation, and Welcome is orientation only.
+  //
   // The skip affordance ("I'll explore on my own" — Welcome.svelte's
-  // handleSkip, not a button literally labelled Skip).
+  // handleSkip, not a button literally labelled Skip) is on Welcome itself.
+  // It used to also sit on the old step 3; since docs/adr/075 split that
+  // step out to /discover, it lives only here — /discover is a standing page
+  // inside the shell, with the rail as its way onward, where /welcome is a
+  // standalone screen that must offer its own exit.
   await page.getByRole('button', { name: /explore on my own/i }).click();
   await expect(page).not.toHaveURL(/\/welcome/);
 
@@ -71,10 +70,16 @@ test('skip genuinely exits onboarding on an empty instance', async ({ page }) =>
 test('empty instance steers the first user to create a patch', async ({ page }) => {
   await loginAsFirstUser(page);
   await page.goto('/welcome');
+  // Welcome hands off to discovery mode (docs/adr/075) rather than walking
+  // its own further steps, and dismisses onboarding on the way so the
+  // zero-membership redirect can't pull the user back.
   await page.getByRole('button', { name: /build your quilt/i }).click();
+  await expect(page).toHaveURL(/\/discover/);
 
-  await expect(page.getByRole('heading', { name: /first one here/i })).toBeVisible();
-  await page.getByRole('button', { name: /create the first patch/i }).click();
+  // Empty instance: no vocabulary, so there is no question to ask, and no
+  // patches to answer with.
+  await expect(page.getByRole('heading', { name: /nothing here yet/i })).toBeVisible();
+  await page.getByRole('button', { name: /create a patch/i }).click();
 
   await expect(page).toHaveURL(/\/patches\/new/);
   await expect(page.getByRole('heading', { name: 'Create Patch' })).toBeVisible();

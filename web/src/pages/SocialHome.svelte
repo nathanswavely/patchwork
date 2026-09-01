@@ -1,11 +1,12 @@
 <script>
-  import { X, Heart, Wrench, UsersThree, LinkBreak } from 'phosphor-svelte';
+  import { X, Heart, Wrench, UsersThree, LinkBreak, FrameCorners } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
   import { textMatches } from '../lib/textMatch.js';
   import { motifComponentForPatch } from '../lib/patchIcons.js';
+  import { quiltOrder } from '../lib/quiltLayout.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
@@ -15,6 +16,11 @@
     getInstanceModules,
     getSubmissionsEnabled,
     resetFilters,
+    getListOrder,
+    setListOrder,
+    getInViewOnly,
+    setInViewOnly,
+    toggleInViewOnly,
   } from '../stores/quilt.svelte.js';
   import {
     getRemoteFollows, findRemoteFollow,
@@ -87,6 +93,10 @@
 
   // --- Patch list data ---
   let allPatches = $state([]);
+  // Affinity links from the same tree response the canvas reads. Quilt order
+  // is computed from them, so the list and the canvas are ordering on
+  // identical inputs rather than on two ideas of the same thing.
+  let affinityData = $state([]);
   let loading = $state(true);
 
   // Placed patches, from the list the cards already loaded.
@@ -94,12 +104,31 @@
     (p) => p.latitude != null && p.longitude != null,
   ));
 
+  // Patch ids the canvas last reported as inside its viewport (docs/adr/074).
+  // Null until a canvas has reported: "no layout yet" is not "nothing in
+  // view", and treating them alike blinks the list empty on load.
+  let inViewIds = $state(null);
+
+  function reportInView(ids) {
+    inViewIds = new Set(ids);
+  }
+
+  // A surface change invalidates the report: the quilt's viewport says nothing
+  // about the map's, and the two canvases never both exist. Clearing to null
+  // rather than to an empty set means the list shows everything until the new
+  // canvas reports, instead of blinking empty on the way across.
+  $effect(() => {
+    void showMap;
+    inViewIds = null;
+  });
+
   async function loadPatches() {
     loading = true;
     try {
       const resp = await api(`nodes/tree${quiltScope === 'my' ? '?scope=my' : ''}`);
       const tree = resp.tree || resp;
       allPatches = tree.children || [];
+      affinityData = resp.affinity || [];
       if (quiltScope === 'my') {
         // Remote follows join the cards list from their stored snapshots,
         // marked by source; the canvas refreshes those snapshots on
@@ -125,6 +154,7 @@
       }
     } catch {
       allPatches = [];
+      affinityData = [];
     } finally {
       loading = false;
     }
@@ -136,8 +166,10 @@
     loadPatches();
   });
 
-  // Filter patches by active search/tags
-  let filtered = $derived.by(() => {
+  // Narrowed by the filter (docs/adr/022): tags OR together, the search chip
+  // matches name or description. This is the set the canvas lays out, so it is
+  // also the set quilt order is computed from.
+  let narrowed = $derived.by(() => {
     let list = allPatches;
     const tags = getSelectedTags();
     const query = getSearchQuery();
@@ -151,6 +183,43 @@
       );
     }
     return list;
+  });
+
+  // Quilt order (docs/adr/074): the list reads the quilt. The order is the
+  // layout engine's own placement pass over the same patches the canvas is
+  // showing — largest tile at the centre, then outward by affinity — so the
+  // two panes agree, including after a filter re-sews the quilt. It makes no
+  // ranking claim of its own; it surfaces the one already drawn on screen.
+  //
+  // Remote follows (My Quilt, docs/adr/024) carry no affinity links and hold
+  // no tile in the home layout, so they keep the tail rather than being
+  // handed a place in a quilt they are not part of.
+  let ordered = $derived.by(() => {
+    const list = narrowed;
+    if (getListOrder() === 'alpha') {
+      return [...list].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    }
+    const home = list.filter(p => !p._source);
+    const remote = list.filter(p => p._source);
+    const rank = new Map(quiltOrder(home, affinityData).map((id, i) => [id, i]));
+    const place = (p) => rank.has(p.id) ? rank.get(p.id) : Number.MAX_SAFE_INTEGER;
+    return [...home].sort((a, b) => place(a) - place(b)).concat(remote);
+  });
+
+  // The in-view lens is available only where both panes are on screen at
+  // once. Below the breakpoint the panes *toggle* (mobileView) and the cards
+  // header is display:none, so there would be neither a control to set the
+  // lens nor a canvas to see it working — narrowing a list from a viewport
+  // nobody can see is the silent-lens failure docs/adr/022 exists to prevent.
+  // This is an absence, not a second behaviour: the lens needs two visible
+  // panes, and mobile has one.
+  let lensAvailable = $derived(winW > 768);
+  let inViewActive = $derived(lensAvailable && getInViewOnly());
+
+  let filtered = $derived.by(() => {
+    if (!inViewActive || !inViewIds) return ordered;
+    const ids = inViewIds;
+    return ordered.filter(p => ids.has(p.id));
   });
 
   function remoteHost(source) {
@@ -364,6 +433,7 @@
             : `/patches/${node.slug}`);
         }}
         onBackgroundClick={() => { docked = null; }}
+        onInViewChange={reportInView}
       />
     {:else}
       <QuiltCanvas
@@ -375,6 +445,7 @@
         {quiltScope}
         insetRight={quiltInset}
         onClearFilter={resetFilters}
+        onInViewChange={reportInView}
       />
     {/if}
 
@@ -393,15 +464,39 @@
 
   <!-- Patch cards panel -->
   <div class="cards-pane" class:mobile-hidden={mobileView !== 'list'}>
+    <!-- The list's header carries only the list's own controls
+         (docs/adr/074). The Quilt/Map switch used to sit here and now lives
+         on the canvas, which is the thing it changes. -->
     <div class="cards-header">
       <h2>Patches</h2>
-      <span class="cards-count">{resultCount} results</span>
-      {#if mapEnabled}
-        <div class="view-toggle">
-          <button class="view-option" class:active={!showMap} onclick={() => navigate(quiltPath)}>Quilt</button>
-          <button class="view-option" class:active={showMap} onclick={() => navigate(mapPath)}>Map</button>
-        </div>
-      {/if}
+      <span class="cards-count">
+        {#if inViewActive}{resultCount} of {ordered.length} in view{:else}{resultCount} results{/if}
+      </span>
+      <div class="list-controls">
+        {#if lensAvailable}
+          <button
+            class="list-control"
+            class:active={getInViewOnly()}
+            aria-pressed={getInViewOnly()}
+            onclick={toggleInViewOnly}
+            title={getInViewOnly()
+              ? 'Showing only the patches in view. Click to show the whole quilt.'
+              : 'Show only the patches in view'}
+          >
+            <FrameCorners size={14} weight="bold" />
+            In view
+          </button>
+        {/if}
+        <select
+          class="list-order"
+          aria-label="Order patches"
+          value={getListOrder()}
+          onchange={(e) => setListOrder(e.currentTarget.value)}
+        >
+          <option value="quilt">Quilt order</option>
+          <option value="alpha">A→Z</option>
+        </select>
+      </div>
     </div>
 
     <div class="cards-scroll">
@@ -417,7 +512,16 @@
         </div>
       {:else if filtered.length === 0}
         <div class="cards-empty">
-          {#if getSelectedTags().length > 0 || getSearchQuery().trim()}
+          {#if inViewActive && ordered.length > 0}
+            <!-- The lens narrowed to nothing while the quilt still holds
+                 patches: say how many, and offer the one step back. -->
+            <p class="muted">
+              No patches in view — {ordered.length} elsewhere on the quilt.
+            </p>
+            <div class="empty-actions">
+              <button class="btn btn-secondary" onclick={() => setInViewOnly(false)}>Show them all</button>
+            </div>
+          {:else if getSelectedTags().length > 0 || getSearchQuery().trim()}
             <!-- Name the active lenses (docs/adr/033): composed narrowing
                  must explain itself where it produces nothing. -->
             <p class="muted">
@@ -491,34 +595,6 @@
     z-index: 0;
   }
 
-  /* Quilt / Map view switcher — lives in the cards header (right-aligned) so it
-     never overlaps the full-bleed quilt tiles or the Leaflet controls. */
-  .view-toggle {
-    margin-left: auto;
-    display: flex;
-    background: var(--color-overlay);
-    border-radius: 999px;
-    padding: 3px;
-  }
-
-  .view-option {
-    padding: 4px 12px;
-    border: none;
-    background: none;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    transition: background 150ms ease, color 150ms ease;
-  }
-
-  .view-option.active {
-    background: var(--color-surface);
-    color: var(--color-text);
-    box-shadow: 0 1px 3px var(--color-shadow);
-  }
-
   /* ================================================================
      CARDS PANE — floats over the right side of the canvas; the pane
      itself is transparent so the quilt pans behind the cards
@@ -558,6 +634,44 @@
   .cards-count {
     font-size: 0.8rem;
     color: var(--color-text-muted);
+  }
+
+  /* The list's own controls (docs/adr/074) — both change the list, so both
+     live on it. */
+  .list-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .list-control,
+  .list-order {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: none;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  }
+
+  .list-control:hover,
+  .list-order:hover {
+    color: var(--color-text);
+    border-color: var(--color-primary);
+  }
+
+  .list-control.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-btn-on-primary);
   }
 
 
