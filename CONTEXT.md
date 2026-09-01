@@ -73,10 +73,11 @@ _Avoid_: unarchive, undelete, reactivate
 Something a patch hosts at a time and, optionally, a place — a show, a
 meeting, a workday. Deliberately the same word in the UI and the backend;
 the textile coinage "pin" is retired (docs/adr/027). It collided on every
-side: events literally appear as map pins on the Leaflet map, software
-readers hear "pinned post", and the UI had already grown Events pages,
-routes, and notification labels while "pin" survived mainly in docs. A
-term nobody reaches for when building the thing isn't the thing's name.
+side: the map's markers are literal teardrop pins and every one of them is
+a *patch*, software readers hear "pinned post", and the UI had already
+grown Events pages, routes, and notification labels while "pin" survived
+mainly in docs. A term nobody reaches for when building the thing isn't
+the thing's name.
 _Avoid_: pin (retired), happening, gathering
 
 **Event link**:
@@ -357,6 +358,28 @@ proposal in a list). Sections of a page are not cards: a settings section
 is the page, so it separates with a heading and a rule, not a box.
 _Avoid_: panel, box, tile (that is a patch on the quilt), section (a
 section may or may not be a card)
+
+**Patch card**:
+A patch as rendered in a list — its cover, name, counts, a line of
+description, and the viewer's standing with it. The one rendering of a
+patch outside the quilt, and deliberately the same one wherever it
+appears. It has two homes: the **cards pane** beside a discovery surface,
+and — where the screen has no room for a pane — **docked** at the foot of
+the surface, carrying the patch a person just touched. Which home a card
+lands in follows the room on screen, never which surface the person came
+from.
+
+Previewing costs a gesture the device can spare: where there is a pointer,
+pointing at a patch previews it — its card highlights in the pane — and
+clicking opens the patch. Where there is no pointer there is only one
+gesture, so the first tap previews into the docked card, and the card
+itself is how the patch is opened. The quilt and the map behave the same
+way as each other on the same hardware.
+
+Not a tile (that is a patch drawn as fabric on the quilt) and not a remote
+patch card (that is another quilt's patch, read-only).
+_Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement
+passed through, not a preview glanced at), preview, tile, popup
 
 **Interruption**:
 The one other thing that earns a border: a surface that is loud on purpose

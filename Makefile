@@ -80,7 +80,7 @@ copy-check:
 # Guards the rule that makes two review surfaces safe: an untouched draft
 # block never writes back over a decision made in the UI since.
 copy-test:
-	node --test tools/copy-ledger/drafts.test.js
+	node --test tools/copy-ledger/drafts.test.js tools/copy-ledger/errors.test.js
 
 copy-report:
 	node tools/copy-ledger/cli.js report

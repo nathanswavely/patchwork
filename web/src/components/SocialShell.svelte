@@ -1075,6 +1075,10 @@
     /* Full-width bottom bar. The extra selector outranks the desktop
        "collapsed over the quilt is fully transparent" rule — on mobile the
        bar always keeps its glass. */
+    :global(body) {
+      --shell-rail-h: 51px;
+    }
+
     .sidebar-rail,
     .sidebar-rail.quilt-mode,
     .sidebar-rail.quilt-mode.collapsed,
@@ -1088,6 +1092,10 @@
       flex-direction: row;
       padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
       background: var(--color-glass);
+      /* The rail is a bottom tab bar at this width. Surfaces that float
+         something over the foot of the screen — the docked patch card —
+         read this rather than each guessing the same number. */
+      --shell-rail-h: 51px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: none;

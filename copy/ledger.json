@@ -19442,6 +19442,13 @@
           "kind": "attr:title",
           "raw": "Dismiss",
           "quote": "\""
+        },
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 457,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss",
+          "quote": "\""
         }
       ]
     },
@@ -19815,24 +19822,6 @@
           "kind": "markup",
           "raw": "No marker placed yet.",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2a013e36edae",
-      "text": "View patch",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/MapView.svelte",
-          "line": 198,
-          "kind": "js-string",
-          "raw": "View patch",
-          "quote": "'"
         }
       ]
     },
@@ -20661,7 +20650,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 428,
+          "line": 531,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -26937,7 +26926,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 368,
+          "line": 471,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -32219,14 +32208,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 268,
+          "line": 260,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 308,
+          "line": 315,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -39255,7 +39244,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 481,
+          "line": 367,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -42370,150 +42359,6 @@
       ]
     },
     {
-      "id": "13aa3b63db4c",
-      "text": "{resultCount} of {ordered.length} in view",
-      "words": 5,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "The count states the in-view lens rather than letting it narrow silently (docs/adr/074).",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 370,
-          "kind": "markup",
-          "raw": "{resultCount} of {ordered.length} in view",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "5e592ea232d0",
-      "text": "{resultCount} results",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 370,
-          "kind": "markup",
-          "raw": "{resultCount} results",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b77da98ce745",
-      "text": "In view",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "The in-view lens toggle on the cards list (docs/adr/074).",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 384,
-          "kind": "markup",
-          "raw": "In view",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ccdc2c512b75",
-      "text": "Order patches",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Accessible label for the list order control (docs/adr/074).",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 389,
-          "kind": "attr:aria-label",
-          "raw": "Order patches",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "6bfa84ae85c9",
-      "text": "Quilt order",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "The default list order — the layout engine's own placement order (docs/adr/074, CONTEXT.md).",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 393,
-          "kind": "markup",
-          "raw": "Quilt order",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "09970debdc6a",
-      "text": "No patches in view — {ordered.length} elsewhere on the quilt.",
-      "words": 10,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Lens-aware empty state: names the active lens and how much it hid (docs/adr/022, docs/adr/074).",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 416,
-          "kind": "markup",
-          "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "870e37982f3d",
-      "text": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
-      "words": 14,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 425,
-          "kind": "markup",
-          "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "fac255956c86",
-      "text": "No patches here yet.",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 437,
-          "kind": "markup",
-          "raw": "No patches here yet.",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "f59c5e15fc31",
       "text": "Unclaimed",
       "words": 1,
@@ -42524,7 +42369,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 453,
+          "line": 339,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -42542,7 +42387,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 474,
+          "line": 360,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -42560,7 +42405,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 476,
+          "line": 362,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -42578,9 +42423,153 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 510,
+          "line": 396,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "13aa3b63db4c",
+      "text": "{resultCount} of {ordered.length} in view",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The count states the in-view lens rather than letting it narrow silently (docs/adr/074).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 473,
+          "kind": "markup",
+          "raw": "{resultCount} of {ordered.length} in view",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5e592ea232d0",
+      "text": "{resultCount} results",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 473,
+          "kind": "markup",
+          "raw": "{resultCount} results",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b77da98ce745",
+      "text": "In view",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The in-view lens toggle on the cards list (docs/adr/074).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 487,
+          "kind": "markup",
+          "raw": "In view",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ccdc2c512b75",
+      "text": "Order patches",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accessible label for the list order control (docs/adr/074).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 492,
+          "kind": "attr:aria-label",
+          "raw": "Order patches",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "6bfa84ae85c9",
+      "text": "Quilt order",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The default list order — the layout engine's own placement order (docs/adr/074, CONTEXT.md).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 496,
+          "kind": "markup",
+          "raw": "Quilt order",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "09970debdc6a",
+      "text": "No patches in view — {ordered.length} elsewhere on the quilt.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Lens-aware empty state: names the active lens and how much it hid (docs/adr/022, docs/adr/074).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 519,
+          "kind": "markup",
+          "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "870e37982f3d",
+      "text": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
+      "words": 14,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 528,
+          "kind": "markup",
+          "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fac255956c86",
+      "text": "No patches here yet.",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 540,
+          "kind": "markup",
+          "raw": "No patches here yet.",
           "quote": null
         }
       ]
@@ -43358,31 +43347,6 @@
           "quote": null
         }
       ]
-    },
-    {
-      "id": "a085a59f1538",
-      "text": "(prefers-color-scheme: dark)",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/stores/theme.svelte.js",
-          "line": 17,
-          "kind": "js-string",
-          "raw": "(prefers-color-scheme: dark)",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/stores/theme.svelte.js",
-          "line": 31,
-          "kind": "js-string",
-          "raw": "(prefers-color-scheme: dark)",
-          "quote": "'"
-        }
-      ]
     }
   ],
   "retired": [
@@ -43725,6 +43689,49 @@
           "kind": "markup",
           "raw": "Taking you there...",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2a013e36edae",
+      "text": "View patch",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/MapView.svelte",
+          "line": 198,
+          "kind": "js-string",
+          "raw": "View patch",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "a085a59f1538",
+      "text": "(prefers-color-scheme: dark)",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/stores/theme.svelte.js",
+          "line": 17,
+          "kind": "js-string",
+          "raw": "(prefers-color-scheme: dark)",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/stores/theme.svelte.js",
+          "line": 31,
+          "kind": "js-string",
+          "raw": "(prefers-color-scheme: dark)",
+          "quote": "'"
         }
       ]
     }

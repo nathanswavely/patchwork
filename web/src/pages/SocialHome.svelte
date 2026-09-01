@@ -1,5 +1,5 @@
 <script>
-  import { Heart, Wrench, UsersThree, LinkBreak, FrameCorners } from 'phosphor-svelte';
+  import { X, Heart, Wrench, UsersThree, LinkBreak, FrameCorners } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
@@ -42,59 +42,42 @@
   let showMap = $derived(surfaceForRoute(routeName) === 'map' && mapEnabled);
 
   // --- Map view data (full node records carry lat/lng; the tree doesn't) ---
-  let mapNodes = $state([]);
   let mapCenter = $state(null);
   let mapRadius = $state(10);
 
   async function loadMapData() {
     try {
-      // The map answers to the scope switcher the same way the quilt and the
-      // cards list do — otherwise "My Quilt" silently means "everything" here.
-      const scopeParam = quiltScope === 'my' ? '&scope=my' : '';
-      const [nodesResp, instance] = await Promise.all([
-        api(`nodes?limit=500${scopeParam}`),
-        api('instance'),
-      ]);
-      mapNodes = nodesResp.items || [];
-      if (quiltScope === 'my') {
-        // Remote follows with a stored position appear on the My Quilt map
-        // too — every surface renders the same quilt (CONTEXT.md).
-        const remote = getRemoteFollows()
-          .filter((f) => f.snapshot?.latitude && f.snapshot?.longitude)
-          .map((f) => ({
-            id: f.node_ap_id,
-            slug: f.node_slug,
-            name: f.node_name || f.node_slug,
-            latitude: f.snapshot.latitude,
-            longitude: f.snapshot.longitude,
-            tags: f.snapshot.tags || [],
-            appearance: f.snapshot.appearance || null,
-            _source: f.quilt_url,
-          }));
-        mapNodes = [...mapNodes, ...remote];
-      }
+      // The map reads the same source as the cards and the quilt. It used to
+      // load `nodes?limit=500`, whose payload carries neither tags nor
+      // counts — so every marker fell back to the quilt mark for want of a
+      // motif, and patchActivity was zero for every patch, quietly making
+      // label priority, marker stacking and cluster anchoring arbitrary
+      // (docs/adr/078). One source also means the map and the cards can
+      // never disagree about what a patch is.
+      const instance = await api('instance');
       if (instance.geography) {
         mapCenter = { lat: instance.geography.latitude, lng: instance.geography.longitude };
         mapRadius = instance.geography.radius || 10;
       }
     } catch {
-      mapNodes = [];
+      mapCenter = null;
     }
   }
 
-  $effect(() => {
-    // quiltScope is a dependency, not just a value read inside the call —
-    // without it the map never refetches when the scope switcher flips.
-    void quiltScope;
-    if (showMap) loadMapData();
-  });
-
   let mapNodesFiltered = $derived.by(() => {
+    const tags = getSelectedTags();
     const query = getSearchQuery();
-    if (!query.trim()) return mapNodes;
-    return mapNodes.filter(n =>
-      textMatches(n.name, query) || textMatches(n.description, query)
-    );
+    let list = mapNodes;
+
+    if (tags.length > 0) {
+      list = list.filter(n => (n.tags || []).some(t => tags.includes(t)));
+    }
+    if (query.trim()) {
+      list = list.filter(n =>
+        textMatches(n.name, query) || textMatches(n.description, query)
+      );
+    }
+    return list;
   });
 
   // On desktop the cards panel floats over the right 45% of the canvas, so
@@ -115,6 +98,11 @@
   // identical inputs rather than on two ideas of the same thing.
   let affinityData = $state([]);
   let loading = $state(true);
+
+  // Placed patches, from the list the cards already loaded.
+  let mapNodes = $derived(allPatches.filter(
+    (p) => p.latitude != null && p.longitude != null,
+  ));
 
   // Patch ids the canvas last reported as inside its viewport (docs/adr/074).
   // Null until a canvas has reported: "no layout yet" is not "nothing in
@@ -156,6 +144,10 @@
           member_count: f.snapshot?.member_count || 0,
           event_count: f.snapshot?.event_count || 0,
           is_unclaimed: !!f.snapshot?.is_unclaimed,
+          // Carried so a followed remote patch still reaches the map, which
+          // now reads this same list rather than loading its own.
+          latitude: f.snapshot?.latitude ?? null,
+          longitude: f.snapshot?.longitude ?? null,
           _source: f.quilt_url,
         }));
         allPatches = [...allPatches, ...remote];
@@ -278,7 +270,22 @@
     navigate(`/patches/${patch.slug}/governance`);
   }
 
+  // A preview costs a gesture the device can spare (docs/adr/078). With a
+  // pointer, hover previews and a click opens. Without one there is a single
+  // gesture, so the first tap docks the patch's card and the card is how the
+  // patch is opened. Same rule on the quilt and the map.
+  let docked = $state(null);
+  let hasPointer = $state(window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+
+  function touchSelect(patch) {
+    if (hasPointer) return false;
+    docked = patch;
+    return true;
+  }
+
   function handleCanvasPatchClick(slug, source = null) {
+    const patch = allPatches.find(p => p.slug === slug && (p._source || null) === source);
+    if (patch && touchSelect(patch)) return;
     if (source) {
       navigate(`/quilts/${remoteHost(source)}/patches/${slug}`);
     } else {
@@ -316,12 +323,92 @@
   let resultCount = $derived(filtered.length);
 </script>
 
+<!-- One card definition, two homes (docs/adr/078, CONTEXT.md "Patch card"):
+     the cards pane where there is room for a pane, and docked at the foot
+     of the surface where there is not. A snippet rather than a component so
+     the card keeps reaching this page's state directly instead of having
+     eight callbacks threaded through it. -->
+{#snippet patchCard(patch)}
+          {@const Motif = motifComponentForPatch(patch)}
+          <div class="patch-card" onclick={() => handlePatchCardClick(patch)} role="button" tabindex="0">
+            <div class="card-image" style="background: {identityColorForPatch(patch)}">
+              <PatchTile {patch} />
+              <!-- Same mark the quilt tile wears, same corner (docs/adr/030).
+                   The right corner is spoken for by the role/follow chip. -->
+              {#if patch.is_unclaimed}
+                <span class="card-unclaimed" title="Unclaimed" aria-label="Unclaimed">
+                  <LinkBreak size={13} weight="bold" />
+                </span>
+              {/if}
+              {#if patch._source}
+                {@const remoteFollowing = !!findRemoteFollow(patch._source, patch.slug)}
+                <button
+                  class="card-corner card-follow-btn"
+                  class:following={remoteFollowing}
+                  onclick={(e) => toggleRemoteFollow(e, patch)}
+                  disabled={busyRemote.has(`${patch._source}:${patch.slug}`)}
+                  title={remoteFollowing ? 'Unfollow' : 'Follow'}
+                  aria-pressed={remoteFollowing}
+                >
+                  <Heart size={14} weight={remoteFollowing ? 'fill' : 'duotone'} />
+                  <span>{remoteFollowing ? 'Following' : 'Follow'}</span>
+                </button>
+                <span class="card-source-chip" title="On {remoteHost(patch._source)}">
+                  {remoteHost(patch._source)}
+                </span>
+              {:else if roles.get(patch.slug) === 'admin'}
+                <button class="card-corner card-manage-chip" onclick={(e) => goManage(e, patch)} title="You manage this patch">
+                  <Wrench size={14} weight="duotone" />
+                  <span>Manage</span>
+                </button>
+              {:else if roles.get(patch.slug) === 'member'}
+                <span class="card-corner card-member-chip" title="You're a member of this patch">
+                  <UsersThree size={14} weight="duotone" />
+                  <span>Member</span>
+                </span>
+              {:else}
+                {@const following = roles.get(patch.slug) === 'follower'}
+                <button
+                  class="card-corner card-follow-btn"
+                  class:following
+                  onclick={(e) => toggleFollow(e, patch)}
+                  disabled={busySlugs.has(patch.slug)}
+                  title={following ? 'Unfollow' : 'Follow'}
+                  aria-pressed={following}
+                >
+                  <Heart size={14} weight={following ? 'fill' : 'duotone'} />
+                  <span>{following ? 'Following' : 'Follow'}</span>
+                </button>
+              {/if}
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">
+                <span class="card-motif" style="background: {identityColorForPatch(patch)}" aria-hidden="true">
+                  <Motif size={12} weight="fill" color="#fff" />
+                </span>
+                {patch.name}
+              </h3>
+              <!-- "events", not "upcoming events": event_count is every
+                   active event a patch owns, past and future, and for a
+                   remote patch it comes from a cross-quilt snapshot that
+                   carries no upcoming figure at all (CONTEXT.md
+                   "Upcoming events"). -->
+              <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events</p>
+              {#if patch.description}
+                <p class="card-desc">{patch.description}</p>
+              {/if}
+            </div>
+          </div>
+{/snippet}
+
 <svelte:window bind:innerWidth={winW} />
 
 <div class="social-home">
   <!-- Mobile header: view toggle floating below the global bar (the bar
        already carries the scope switcher on mobile) -->
-  <div class="mobile-header">
+  <!-- One temporary overlay at a time: the view pill steps aside while a
+       card is docked over the same corner of the screen. -->
+  <div class="mobile-header" class:hidden={!!docked}>
     <div class="mobile-pill-toggle">
       <button class="pill-option" class:active={mobileView === 'main' && !showMap} onclick={() => { if (showMap) navigate(quiltPath); mobileView = 'main'; }}>Quilt</button>
       {#if mapEnabled}
@@ -339,9 +426,13 @@
         center={mapCenter}
         radius={mapRadius}
         insetRight={quiltInset}
-        onMarkerClick={(node) => node._source
-          ? navigate(`/quilts/${remoteHost(node._source)}/patches/${node.slug}`)
-          : navigate(`/patches/${node.slug}`)}
+        onMarkerClick={(node) => {
+          if (touchSelect(node)) return;
+          navigate(node._source
+            ? `/quilts/${remoteHost(node._source)}/patches/${node.slug}`
+            : `/patches/${node.slug}`);
+        }}
+        onBackgroundClick={() => { docked = null; }}
         onInViewChange={reportInView}
       />
     {:else}
@@ -356,6 +447,18 @@
         onClearFilter={resetFilters}
         onInViewChange={reportInView}
       />
+    {/if}
+
+    <!-- The card, docked: where there is no pointer there is no hover, so the
+         first tap previews here and this card is how the patch is opened
+         (docs/adr/078). Serves the quilt and the map alike. -->
+    {#if docked}
+      <div class="docked-card">
+        <button class="docked-dismiss" onclick={() => { docked = null; }} aria-label="Dismiss">
+          <X size={16} weight="bold" />
+        </button>
+        {@render patchCard(docked)}
+      </div>
     {/if}
   </div>
 
@@ -443,76 +546,7 @@
       {:else}
         <div class="cards-grid">
           {#each filtered as patch (patch.id)}
-            {@const Motif = motifComponentForPatch(patch)}
-            <div class="patch-card" onclick={() => handlePatchCardClick(patch)} role="button" tabindex="0">
-              <div class="card-image" style="background: {identityColorForPatch(patch)}">
-                <PatchTile {patch} />
-                <!-- Same mark the quilt tile wears, same corner (docs/adr/030).
-                     The right corner is spoken for by the role/follow chip. -->
-                {#if patch.is_unclaimed}
-                  <span class="card-unclaimed" title="Unclaimed" aria-label="Unclaimed">
-                    <LinkBreak size={13} weight="bold" />
-                  </span>
-                {/if}
-                {#if patch._source}
-                  {@const remoteFollowing = !!findRemoteFollow(patch._source, patch.slug)}
-                  <button
-                    class="card-corner card-follow-btn"
-                    class:following={remoteFollowing}
-                    onclick={(e) => toggleRemoteFollow(e, patch)}
-                    disabled={busyRemote.has(`${patch._source}:${patch.slug}`)}
-                    title={remoteFollowing ? 'Unfollow' : 'Follow'}
-                    aria-pressed={remoteFollowing}
-                  >
-                    <Heart size={14} weight={remoteFollowing ? 'fill' : 'duotone'} />
-                    <span>{remoteFollowing ? 'Following' : 'Follow'}</span>
-                  </button>
-                  <span class="card-source-chip" title="On {remoteHost(patch._source)}">
-                    {remoteHost(patch._source)}
-                  </span>
-                {:else if roles.get(patch.slug) === 'admin'}
-                  <button class="card-corner card-manage-chip" onclick={(e) => goManage(e, patch)} title="You manage this patch">
-                    <Wrench size={14} weight="duotone" />
-                    <span>Manage</span>
-                  </button>
-                {:else if roles.get(patch.slug) === 'member'}
-                  <span class="card-corner card-member-chip" title="You're a member of this patch">
-                    <UsersThree size={14} weight="duotone" />
-                    <span>Member</span>
-                  </span>
-                {:else}
-                  {@const following = roles.get(patch.slug) === 'follower'}
-                  <button
-                    class="card-corner card-follow-btn"
-                    class:following
-                    onclick={(e) => toggleFollow(e, patch)}
-                    disabled={busySlugs.has(patch.slug)}
-                    title={following ? 'Unfollow' : 'Follow'}
-                    aria-pressed={following}
-                  >
-                    <Heart size={14} weight={following ? 'fill' : 'duotone'} />
-                    <span>{following ? 'Following' : 'Follow'}</span>
-                  </button>
-                {/if}
-              </div>
-              <div class="card-body">
-                <h3 class="card-title">
-                  <span class="card-motif" style="background: {identityColorForPatch(patch)}" aria-hidden="true">
-                    <Motif size={12} weight="fill" color="#fff" />
-                  </span>
-                  {patch.name}
-                </h3>
-                <!-- "events", not "upcoming events": event_count is every
-                     active event a patch owns, past and future, and for a
-                     remote patch it comes from a cross-quilt snapshot that
-                     carries no upcoming figure at all (CONTEXT.md
-                     "Upcoming events"). -->
-                <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events</p>
-                {#if patch.description}
-                  <p class="card-desc">{patch.description}</p>
-                {/if}
-              </div>
-            </div>
+            {@render patchCard(patch)}
           {/each}
         </div>
         {#if getSubmissionsEnabled()}
@@ -650,6 +684,57 @@
   /* ================================================================
      PATCH CARDS
      ================================================================ */
+  /* The card, docked (docs/adr/078). Sits over the foot of the surface it
+     was summoned from, leaving most of the quilt or map visible behind it —
+     a preview you glance at, not a page you land on. Touch-only: with a
+     pointer, hover previews into the pane instead. */
+  .docked-card {
+    position: absolute;
+    left: 0;
+    right: 0;
+    /* Clear of the shell's bottom rail, which is a tab bar at this width. */
+    bottom: var(--shell-rail-h, 0px);
+    /* Above Leaflet's own controls (attribution sits at 800): the card is
+       app chrome laid over the map, not a thing inside it. */
+    z-index: 900;
+    padding: 0.6rem;
+    padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -6px 20px var(--color-shadow);
+    animation: docked-rise 140ms ease-out;
+  }
+
+  @keyframes docked-rise {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .docked-card { animation: none; }
+  }
+
+  .docked-dismiss {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.45rem;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    box-shadow: 0 1px 4px var(--color-shadow);
+    cursor: pointer;
+  }
+
+  .mobile-header.hidden {
+    display: none;
+  }
+
   .cards-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
