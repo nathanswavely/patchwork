@@ -88,6 +88,7 @@ several branches are in flight.
 | [074](074-the-list-reads-the-quilt.md) | The list reads the quilt — quilt order as the default, the in-view lens, and a control belongs to the surface it changes *(amends 022; implementation pending)* |
 | [075](075-discovery-asks-a-question.md) | Discovery asks a question; the quilt shows everything — Welcome splits, the flow goes standing and public, and co-follow recommendation is refused *(beside 040; implementation pending)* |
 | [076](076-the-bulletin-is-the-one-broadcast.md) | The bulletin is the one broadcast, and it ships off — monthly, complete, unranked, opt-in *(implementation pending)* |
+| [077](077-a-dependency-every-fork-inherits-cannot-require-a-key.md) | A dependency every fork inherits cannot require a key — keyless vector basemap, raster fallback |
 
 ## Proposed — designs on record, not built
 
