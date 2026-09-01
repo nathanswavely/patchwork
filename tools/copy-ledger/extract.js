@@ -31,7 +31,15 @@ const CODEish = new RegExp([
   '\\.(js|go|svelte|css|json|md)$',   // filenames
   '^[a-z-]+\\/[a-z-]+$',              // mime types, route fragments
   '\\b\\d+(px|rem|em|vh|vw|ch)\\b',   // CSS lengths
-  '\\((min|max)-(width|height)',      // media queries
+  // Media queries, both kinds. Dimension queries were covered from the
+  // start; feature queries — `(hover: hover) and (pointer: fine)`, the
+  // prefers-* family — were not, and they slip past the sentence-shaped
+  // test below because a query opens with a bracket the way a
+  // parenthetical does. Nobody reads a media query, so it is not copy.
+  '\\((min|max)-(width|height)',
+  '\\((any-)?(hover|pointer)\\s*:',
+  '\\(prefers-[a-z-]+\\s*:',
+  '\\(orientation\\s*:',
 ].join('|'), 'i');
 
 export function collapse(s) {
