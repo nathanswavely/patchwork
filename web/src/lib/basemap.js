@@ -33,6 +33,14 @@ const RASTER_FILTERS = {
   dark: 'invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9)',
 };
 
+// These recipes are complete looks, not tints laid over a styled tile: the
+// dark one *makes* the dark map by inverting light OSM tiles. A surface that
+// also tints its whole tile pane (MapView does, to pull the basemap toward
+// the app's palette) would compose with them, and a tint written for tiles
+// that arrive already dark lands on an inverted one as near-black. So the
+// fallback marks its container and the surface stands its own tint down.
+export const RASTER_FALLBACK_CLASS = 'basemap-raster';
+
 // How long the GL map gets to draw its first frame before we give up on it.
 const GL_LOAD_TIMEOUT_MS = 12000;
 
@@ -81,6 +89,7 @@ function addRasterLayer(map, theme) {
     attribution: RASTER_ATTRIBUTION,
     maxZoom: BASEMAP_MAX_ZOOM,
   }).addTo(map);
+  map.getContainer()?.classList.add(RASTER_FALLBACK_CLASS);
   const paint = (t) => {
     const el = layer.getContainer();
     if (el) el.style.filter = RASTER_FILTERS[t] || RASTER_FILTERS.light;

@@ -202,6 +202,17 @@
     filter: brightness(0.82) sepia(0.4) hue-rotate(178deg) saturate(0.7);
   }
 
+  /* Both rules above assume tiles that already carry the target look, which
+     is true of the vector styles and false of the raster fallback: that one
+     builds dark by inverting light OSM tiles (basemap.js), and darkening an
+     inverted tile with a tint meant for an already-dark one composes to a
+     near-black rectangle. The fallback carries its own complete filter, so
+     when it is in play this pane contributes nothing. Four classes outranks
+     the dark rule's three, so this wins wherever it sits in the file. */
+  .map-wrapper :global(.leaflet-container.basemap-raster .leaflet-tile-pane) {
+    filter: none;
+  }
+
   /* The map sits full-bleed behind the fixed global bar (56px) — keep the
      zoom controls clear of it. */
   .map-wrapper :global(.leaflet-top) {
