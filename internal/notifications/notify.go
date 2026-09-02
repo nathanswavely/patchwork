@@ -176,6 +176,19 @@ func (n *Notifier) resolveRecipients(event Event, audience Audience) []string {
 	case AudienceSiteAdmins:
 		return n.queryUserIDs(`SELECT id FROM users WHERE role = 'admin'`)
 
+	case AudienceSubscribers:
+		// The one audience that is not a relationship (docs/adr/076):
+		// whoever asked for the bulletin. It defaults off on every channel,
+		// so a stored preference saying yes is the entire membership of this
+		// audience — there is deliberately no "and everyone who has not
+		// opted out". Any enabled channel puts a person in; which channels
+		// actually deliver is settled per-channel further down.
+		return n.queryUserIDs(
+			`SELECT DISTINCT user_id FROM notification_preferences
+			  WHERE notification_type = ? AND enabled = 1`,
+			string(QuiltBulletin),
+		)
+
 	default:
 		return nil
 	}

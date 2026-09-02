@@ -214,9 +214,13 @@ func GetNotificationPreferences(db *database.DB, notifier *notifications.Notifie
 
 		// Group by category for the UI.
 		type TypePref struct {
-			Type    string          `json:"type"`
-			Label   string          `json:"label"`
+			Type     string          `json:"type"`
+			Label    string          `json:"label"`
 			Channels map[string]bool `json:"channels"`
+			// Whether this person has ever answered for this type, as
+			// opposed to sitting on its default. The bulletin's offer shows
+			// only until it is answered either way (docs/adr/076).
+			Decided bool `json:"decided"`
 		}
 		type CategoryGroup struct {
 			ID          string     `json:"id"`
@@ -224,6 +228,8 @@ func GetNotificationPreferences(db *database.DB, notifier *notifications.Notifie
 			Description string     `json:"description"`
 			Types       []TypePref `json:"types"`
 		}
+
+		decided := notifications.DecidedTypes(db, user.ID)
 
 		// Build lookup from flat prefs list.
 		prefMap := make(map[string]map[string]bool) // type -> channel -> enabled
@@ -252,6 +258,7 @@ func GetNotificationPreferences(db *database.DB, notifier *notifications.Notifie
 					Type:     string(t),
 					Label:    meta.Label,
 					Channels: chMap,
+					Decided:  decided[t],
 				})
 			}
 			groups = append(groups, CategoryGroup{
@@ -316,8 +323,10 @@ func GetPatchNotifConfig(db *database.DB) http.HandlerFunc {
 			Enabled     bool   `json:"enabled"`
 		}
 
+		// PatchCategories, not AllCategories: the bulletin is not a patch's
+		// emission and a patch has no switch over it (docs/adr/076).
 		var result []CategoryToggle
-		for _, cat := range notifications.AllCategories() {
+		for _, cat := range notifications.PatchCategories() {
 			result = append(result, CategoryToggle{
 				ID:          string(cat.ID),
 				Label:       cat.Label,

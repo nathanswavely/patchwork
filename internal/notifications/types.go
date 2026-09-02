@@ -9,16 +9,25 @@ const (
 	CategoryMembership Category = "membership"
 	CategoryEvents     Category = "events"
 	CategoryAdmin      Category = "admin"
+	// The one category that is not a patch's own emission (docs/adr/076).
+	// Every other notification in this system is a consequence of a
+	// relationship the recipient already holds; this one is the quilt
+	// speaking about who arrived. It is kept separate rather than folded
+	// into Events or Admin so the exception stays legible, and the next
+	// person proposing a broadcast has to argue for it rather than inherit
+	// it.
+	CategoryQuilt Category = "quilt"
 )
 
 // AllCategories returns every category in display order.
 func AllCategories() []CategoryInfo {
 	return []CategoryInfo{
-		{CategoryProposals, "Proposals", "New proposals, voting updates, deadlines"},
-		{CategoryGovernance, "Governance", "Document and rules changes"},
-		{CategoryMembership, "Membership", "Join/leave notifications for admins"},
-		{CategoryEvents, "Events", "Event creation, updates, reminders"},
-		{CategoryAdmin, "Admin", "Claim requests, submissions"},
+		{CategoryProposals, "Proposals", "New proposals, voting updates, deadlines", true},
+		{CategoryGovernance, "Governance", "Document and rules changes", true},
+		{CategoryMembership, "Membership", "Join/leave notifications for admins", true},
+		{CategoryEvents, "Events", "Event creation, updates, reminders", true},
+		{CategoryAdmin, "Admin", "Claim requests, submissions", true},
+		{CategoryQuilt, "The quilt", "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.", false},
 	}
 }
 
@@ -27,6 +36,23 @@ type CategoryInfo struct {
 	ID          Category `json:"id"`
 	Label       string   `json:"label"`
 	Description string   `json:"description"`
+	// PatchScoped is whether a patch admin may switch this category off for
+	// their own patch. Every category is a patch's own emission except the
+	// bulletin, which belongs to no patch — offering a patch a switch over
+	// it would imply it had one.
+	PatchScoped bool `json:"-"`
+}
+
+// PatchCategories returns the categories a patch admin can configure: all of
+// them except the broadcast, which no patch emits (docs/adr/076).
+func PatchCategories() []CategoryInfo {
+	var out []CategoryInfo
+	for _, ci := range AllCategories() {
+		if ci.PatchScoped {
+			out = append(out, ci)
+		}
+	}
+	return out
 }
 
 // NotificationType is the specific notification type string stored in the DB.
@@ -106,6 +132,9 @@ const (
 	// unlike AdminClaimRequest above.
 	ClaimApproved      NotificationType = "claim.approved"
 	ClaimSetupExpiring NotificationType = "claim.setup_expiring"
+
+	// The bulletin (docs/adr/076): the one broadcast this system sends.
+	QuiltBulletin NotificationType = "quilt.bulletin"
 )
 
 // Priority determines default channel behavior.
@@ -126,6 +155,7 @@ const (
 	AudienceSpecificUser                 // A single user (e.g., proposal author)
 	AudienceParticipants                 // Users who voted/commented on a proposal
 	AudienceSiteAdmins                   // Instance-level admins
+	AudienceSubscribers                  // Everyone who asked for the bulletin (docs/adr/076)
 )
 
 // TypeMeta holds static metadata for each notification type.
@@ -187,6 +217,11 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	AdminEventLinkRequest: {CategoryAdmin, "Event link request (unclaimed patch)", AudienceSiteAdmins, PriorityNormal},
 
 	ClaimApproved:      {CategoryAdmin, "Your claim was approved", AudienceSpecificUser, PriorityHigh},
+
+	// Priority is not what gates this one — DefaultEnabled refuses it on
+	// every channel until a person turns it on, so the priority here only
+	// says what it is once they have: a monthly note, not an interruption.
+	QuiltBulletin: {CategoryQuilt, "New patches this month", AudienceSubscribers, PriorityLow},
 	ClaimSetupExpiring: {CategoryAdmin, "Your claim's setup window is closing", AudienceSpecificUser, PriorityHigh},
 }
 
@@ -215,6 +250,14 @@ func DefaultEnabled(t NotificationType, channel string) bool {
 	if !ok {
 		return false
 	}
+	// The bulletin ships off, on every channel (docs/adr/076). Opt-in is the
+	// whole of what keeps the front door's promise true: the person decided
+	// this should reach them, and the app deciding is exactly what "no
+	// algorithm runs it" rules out. In-app defaults on for everything else
+	// below, which is why this cannot be expressed as a priority.
+	if t == QuiltBulletin {
+		return false
+	}
 	switch channel {
 	case "in_app":
 		return true // Always default on for in-app.
@@ -241,6 +284,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
 		GovernanceSuccessionNeeded,
 		ClaimApproved, ClaimSetupExpiring,
+		QuiltBulletin,
 	}
 	for _, t := range allTypes {
 		if TypeRegistry[t].Category == cat {
