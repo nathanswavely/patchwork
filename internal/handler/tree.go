@@ -33,6 +33,11 @@ type TreeNode struct {
 	// the cards list's "Recently added" order (docs/adr/074). Absent on a
 	// patch that has not joined: an unclaimed listing is not an arrival.
 	ActivatedAt   *string    `json:"activated_at,omitempty"`
+	// When the row was written — for an unclaimed listing, the day someone
+	// added it to the directory. Not an arrival (docs/adr/076), and never
+	// treated as one; the cards list falls back to it so "Recently added"
+	// can order the listings too, which have no arrival to order by.
+	CreatedAt     string     `json:"created_at,omitempty"`
 	AmendedLining bool       `json:"amended_lining,omitempty"`
 	Children      []TreeNode `json:"children"`
 }
@@ -60,7 +65,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// Scoped to user's patches only (any active membership).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
@@ -74,7 +79,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// All public patches (default).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
@@ -101,6 +106,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			Latitude      *float64
 			Longitude     *float64
 			ActivatedAt   *string
+			CreatedAt     string
 			MemberCount   int
 			FollowerCount int
 			EventCount    int
@@ -109,7 +115,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		var flat []flatNode
 		for rows.Next() {
 			var fn flatNode
-			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
+			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
 				continue
 			}
 			flat = append(flat, fn)
@@ -342,6 +348,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				EventCount:    fn.EventCount,
 				IsUnclaimed:   fn.Status == "unclaimed",
 				ActivatedAt:   fn.ActivatedAt,
+				CreatedAt:     fn.CreatedAt,
 				AmendedLining: liningStates[fn.ID] == governance.LiningDiverged,
 				Children:      []TreeNode{},
 			})

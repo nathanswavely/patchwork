@@ -116,12 +116,23 @@ describe('discovery control placement', () => {
     expect(src).not.toContain('b.created_at');
   });
 
-  it('sends patches that never joined to the tail of Recently added', () => {
-    // An unclaimed listing has no arrival, and inventing one would date it to
-    // whenever an admin typed it in.
+  it('falls back to when a listing appeared, where there is no arrival', () => {
+    // Ordering by arrival alone put 47 of the reference instance's 52
+    // patches in an undated tail: an unclaimed listing has no arrival by
+    // definition. The order asks the looser question — how new is this to
+    // the quilt — which every patch can answer.
     const src = source('pages/SocialHome.svelte');
     const block = src.slice(src.indexOf("getListOrder() === 'recent'"));
-    expect(block.slice(0, 500)).toContain('if (aa) return -1;');
+    expect(block.slice(0, 400)).toContain('p.activated_at || p.created_at');
+  });
+
+  it('keeps the arrival strict where it is announced, not merely ordered', () => {
+    // The bulletin must never announce a directory import as arrivals
+    // (docs/adr/076), so the fallback lives in the sort and nowhere else.
+    const bulletin = readFileSync(
+      resolve(process.cwd(), '..', 'internal/notifications/bulletin.go'), 'utf8');
+    expect(bulletin).toContain('activated_at IS NOT NULL');
+    expect(bulletin).not.toContain('created_at');
   });
 
   it('gives the list its own order and lens controls', () => {

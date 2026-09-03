@@ -199,20 +199,28 @@
     if (getListOrder() === 'alpha') {
       return [...list].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     }
-    // Recently added (docs/adr/074) reads `activated_at` — when a community
-    // arrived, not when a row was written. A patch without one has not
-    // joined: an unclaimed listing is a directory entry nobody has claimed,
-    // and a remote follow's snapshot carries no arrival either. They keep the
-    // tail, by name, rather than being dated to the day someone typed them in.
+    // Recently added (docs/adr/074) asks how new a patch is to the quilt, and
+    // answers with when its community arrived if one has, or when its listing
+    // appeared if not.
+    //
+    // Two different questions live near each other here, and conflating them
+    // is what this fallback fixes. `activated_at` answers "when did a
+    // community arrive" — the bulletin's question (docs/adr/076), and
+    // deliberately unanswerable for a directory listing nobody has claimed.
+    // An ordering asks the looser question, which every patch can answer.
+    // They coincide for a patch someone created, differ for one that was
+    // claimed (the listing predates the arrival, and the arrival is the newer
+    // fact), and only `created_at` exists for a listing.
+    //
+    // Ordering by arrival alone sent 47 of the reference instance's 52
+    // patches to the tail as undated, throwing away the real story that 24
+    // arrived on launch day and 22 more over the following month.
     if (getListOrder() === 'recent') {
-      return [...list].sort((a, b) => {
-        const aa = a.activated_at;
-        const ba = b.activated_at;
-        if (aa && ba) return ba.localeCompare(aa) || (a.name || '').localeCompare(b.name || '');
-        if (aa) return -1;
-        if (ba) return 1;
-        return (a.name || '').localeCompare(b.name || '');
-      });
+      const newness = (p) => p.activated_at || p.created_at || '';
+      return [...list].sort(
+        (a, b) => newness(b).localeCompare(newness(a))
+          || (a.name || '').localeCompare(b.name || '')
+      );
     }
     const home = list.filter(p => !p._source);
     const remote = list.filter(p => p._source);

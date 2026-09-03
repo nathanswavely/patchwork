@@ -47,6 +47,22 @@ A→Z remains as the one alternative, for looking a name up rather than
 finding something. "Recently added" joins them once the tree carries an
 arrival timestamp (ADR 076).
 
+**Amended 2026-09-04, on first contact with the reference instance's real
+data.** "Recently added" orders by arrival *where there is one*, and falls
+back to when the listing appeared where there is not. Ordering by arrival
+alone was correct about arrivals and useless as an order: 47 of Lancaster's
+52 patches are unclaimed listings, which have no arrival by definition, so
+they all landed in an undated tail — throwing away the fact that 24 were
+seeded on launch day and 22 more were added across the month after it.
+
+The conflation was treating one timestamp as the answer to two questions.
+"When did a community arrive" is the bulletin's question and must stay
+strict, or an admin importing a directory announces arrivals that never
+happened (ADR 076). "How new is this to the quilt" is an ordering's
+question, and every patch can answer it. They coincide for a patch someone
+created, which is why the difference went unnoticed. The column keeps the
+strict meaning; only the sort takes the looser one.
+
 Activity rank was the obvious alternative, and ADR 015 already refuted it
 for tile *size*: "rank invents a winner from a field of zeros." On today's
 Lancaster a `member_count + event_count` sort is twenty-six patches tied at
