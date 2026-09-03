@@ -19,24 +19,40 @@ export const LABEL_GAP = 14;
 // survives its neighbour drifting a few pixels closer.
 export const LABEL_KEEP_GAP = 8;
 
-// Where a name may sit relative to its marker's anchor (the teardrop's
-// tip), in the order it is tried. Right of the pin reads best — it is where
-// the eye goes and it keeps the name clear of the pin's own shadow — but a
-// name that cannot go right is worth having on the left, above, or below.
-// One name in a crowd is worth more than a tidy rule.
-const LABEL_HEIGHT = 15;
-// `dir` and `offset` are how Leaflet is told to draw it; dx/dy/align are how
-// the box is measured here. They describe the same placement.
-const LABEL_POSITIONS = [
-  { dx: 18, dy: -22, align: 'left', dir: 'right', offset: [3, -22] },
-  { dx: -18, dy: -22, align: 'right', dir: 'left', offset: [-3, -22] },
-  { dx: 0, dy: -40, align: 'center', dir: 'top', offset: [0, -34] },
-  { dx: 0, dy: 12, align: 'center', dir: 'bottom', offset: [0, 2] },
-];
+export const LABEL_HEIGHT = 15;
 
-// The teardrop, as an obstacle: 26 x 34 standing on its anchor point.
-const MARKER_W = 26;
-const MARKER_H = 34;
+// The teardrop, standing on its anchor point: the tip is the coordinate, the
+// head is above it. Every offset below is derived from these rather than
+// typed, because a name is placed twice — measured here for collision, drawn
+// by Leaflet — and two hand-written copies of the same number drift.
+export const MARKER_W = 26;
+export const MARKER_H = 34;
+const HEAD_Y = -22;          // the head's centre, above the tip
+const GAP = 8;               // clear ground between a pin and its name
+
+// Leaflet anchors a tooltip on the marker's *coordinate* — the tip — and then
+// pulls it back by its own size: for `right` the left edge lands at the tip,
+// for `left` the right edge does, for `top` the bottom edge, for `bottom` the
+// top. So an offset of a few pixels put every name inside its own pin. Each
+// one has to clear the marker's half-width or its full height first.
+const SIDE_X = MARKER_W / 2 + GAP;
+const ABOVE_Y = -(MARKER_H + GAP);
+const BELOW_Y = GAP;
+
+// Where a name may sit, in the order it is tried. Right of the pin reads best
+// — it is where the eye goes — but a name that cannot go right is worth
+// having on the left, above, or below. One name in a crowd is worth more than
+// a tidy rule.
+//
+// `dir` and `offset` are how Leaflet is told to draw it; dx/dy/align are how
+// the box is measured here. They describe the same placement, and the test
+// suite holds them to it.
+export const LABEL_POSITIONS = [
+  { dx: SIDE_X, dy: HEAD_Y, align: 'left', dir: 'right', offset: [SIDE_X, HEAD_Y] },
+  { dx: -SIDE_X, dy: HEAD_Y, align: 'right', dir: 'left', offset: [-SIDE_X, HEAD_Y] },
+  { dx: 0, dy: ABOVE_Y - LABEL_HEIGHT / 2, align: 'center', dir: 'top', offset: [0, ABOVE_Y] },
+  { dx: 0, dy: BELOW_Y + LABEL_HEIGHT / 2, align: 'center', dir: 'bottom', offset: [0, BELOW_Y] },
+];
 
 // Text measurement is the expensive part and names don't change, so each is
 // measured once per font and remembered.
