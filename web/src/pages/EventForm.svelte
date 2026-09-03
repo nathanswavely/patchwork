@@ -32,6 +32,7 @@
   // refuses the pair without one.
   let imageUrl = $state('');
   let imageAlt = $state('');
+  let eventUrl = $state('');
 
   // The patch this event is for: chosen in the picker, or fixed by the door
   // that was walked in through. { id, name, slug, status }.
@@ -112,6 +113,7 @@
       location = event.location || '';
       imageUrl = event.image_url || '';
       imageAlt = event.image_alt || '';
+      eventUrl = event.event_url || '';
       // Read in the event's zone, not the editor's: an organizer editing a
       // Lancaster show sees 8:00 PM whether they are in Lancaster or on
       // tour, because 8pm is the fact they are editing.
@@ -275,6 +277,7 @@
         recurrence: recurrence || undefined,
         image_url: imageUrl.trim(),
         image_alt: imageAlt.trim(),
+        event_url: eventUrl.trim(),
       };
       if (isEdit) {
         const result = await api(`events/${eventId}`, { method: 'PATCH', body });
@@ -405,6 +408,18 @@
         <div class="field">
           <label for="location">Location</label>
           <input id="location" type="text" bind:value={location} placeholder="Where is this happening?" disabled={submitting} />
+        </div>
+
+        <!-- Where the event already lives on the web: tickets, the venue's
+             own listing, the RSVP form. Events pulled from a calendar feed
+             fill this in from the feed (docs/adr/079). -->
+        <div class="field">
+          <label for="event-url">Event page</label>
+          <input id="event-url" type="url" bind:value={eventUrl} disabled={submitting} placeholder="https://..." />
+          <p class="image-hint muted">
+            Where to buy tickets or read more, if this event has a page
+            somewhere else.
+          </p>
         </div>
 
         <div class="field">

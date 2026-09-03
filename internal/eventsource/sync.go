@@ -159,7 +159,7 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 		if err != nil || result.NotModified {
 			return nil, result, err
 		}
-		items, err := ParseSquarespace(result.Body, now)
+		items, err := ParseSquarespace(result.Body, now, src.URL)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -235,7 +235,7 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 	if err != nil || ssResult.NotModified {
 		return nil, nil, icsErr
 	}
-	ssItems, err := ParseSquarespace(ssResult.Body, now)
+	ssItems, err := ParseSquarespace(ssResult.Body, now, src.URL)
 	if err != nil {
 		return nil, nil, icsErr
 	}
@@ -289,6 +289,10 @@ type existingEvent struct {
 	Longitude   *float64
 	StartsAt    string
 	EndsAt      *string
+	// EventURL is the feed's own page for this listing (docs/adr/079).
+	// Part of what the source is authoritative about, so a venue moving a
+	// show to a new ticket link propagates like a retitle does.
+	EventURL string
 	// Removed marks a soft-removed (moderated) row. It still occupies
 	// the source-identity unique index, so the reconciler must see it —
 	// and must leave it alone: moderation outranks the feed.
@@ -321,7 +325,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 	existing := map[string]existingEvent{}
 	rows, err = db.Query(
 		`SELECT source_uid, source_occurrence, id, title, description, location,
-		 latitude, longitude, starts_at, ends_at, removed_at IS NOT NULL
+		 latitude, longitude, starts_at, ends_at, COALESCE(event_url,''), removed_at IS NOT NULL
 		 FROM events WHERE source_id = ?`, src.ID)
 	if err != nil {
 		return fmt.Errorf("load existing: %w", err)
@@ -330,7 +334,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		var uid, occ string
 		var e existingEvent
 		if err := rows.Scan(&uid, &occ, &e.ID, &e.Title, &e.Description, &e.Location,
-			&e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Removed); err != nil {
+			&e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.EventURL, &e.Removed); err != nil {
 			rows.Close()
 			return err
 		}
@@ -406,9 +410,9 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 			}
 			_, err := tx.Exec(
 				`UPDATE events SET title = ?, description = ?, location = ?, latitude = ?,
-				 longitude = ?, starts_at = ?, ends_at = ?, updated_at = ? WHERE id = ?`,
+				 longitude = ?, starts_at = ?, ends_at = ?, event_url = ?, updated_at = ? WHERE id = ?`,
 				it.Title, it.Description, it.Location, it.Latitude, it.Longitude,
-				it.StartsAt, it.EndsAt, nowStamp(), prev.ID,
+				it.StartsAt, it.EndsAt, it.URL, nowStamp(), prev.ID,
 			)
 			if err != nil {
 				return fmt.Errorf("update event %s: %w", prev.ID, err)
@@ -428,11 +432,11 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 			apID := ap.EventAPID(ap.GetDomain(), id)
 			if _, err := tx.Exec(
 				`INSERT INTO events (id, node_id, created_by, title, description, location,
-				 latitude, longitude, starts_at, ends_at, recurrence, visibility, status,
+				 latitude, longitude, starts_at, ends_at, event_url, recurrence, visibility, status,
 				 ap_id, source_id, source_uid, source_occurrence)
-				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'pending_review', ?, ?, ?, ?)`,
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'pending_review', ?, ?, ?, ?)`,
 				id, src.NodeID, src.AddedBy, it.Title, it.Description, it.Location,
-				it.Latitude, it.Longitude, it.StartsAt, it.EndsAt, apID,
+				it.Latitude, it.Longitude, it.StartsAt, it.EndsAt, it.URL, apID,
 				src.ID, it.UID, it.Occurrence,
 			); err != nil {
 				return fmt.Errorf("insert suggestion: %w", err)
@@ -476,11 +480,11 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		apID := ap.EventAPID(ap.GetDomain(), id)
 		_, err := tx.Exec(
 			`INSERT INTO events (id, node_id, created_by, title, description, location,
-			 latitude, longitude, starts_at, ends_at, recurrence, visibility, status,
+			 latitude, longitude, starts_at, ends_at, event_url, recurrence, visibility, status,
 			 ap_id, source_id, source_uid, source_occurrence)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'active', ?, ?, ?, ?)`,
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'active', ?, ?, ?, ?)`,
 			id, src.NodeID, src.AddedBy, it.Title, it.Description, it.Location,
-			it.Latitude, it.Longitude, it.StartsAt, it.EndsAt, apID,
+			it.Latitude, it.Longitude, it.StartsAt, it.EndsAt, it.URL, apID,
 			src.ID, it.UID, it.Occurrence,
 		)
 		if err != nil {
@@ -492,7 +496,8 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 				ID: id, NodeID: src.NodeID, CreatedBy: src.AddedBy,
 				Title: it.Title, Description: it.Description, Location: it.Location,
 				Latitude: it.Latitude, Longitude: it.Longitude,
-				StartsAt: it.StartsAt, EndsAt: it.EndsAt, Visibility: "public",
+				StartsAt: it.StartsAt, EndsAt: it.EndsAt, EventURL: it.URL,
+				Visibility: "public",
 			})
 		}
 	}
@@ -673,7 +678,8 @@ func changed(prev existingEvent, it Item) bool {
 		!floatEq(prev.Latitude, it.Latitude) ||
 		!floatEq(prev.Longitude, it.Longitude) ||
 		prev.StartsAt != it.StartsAt ||
-		!strEq(prev.EndsAt, it.EndsAt)
+		!strEq(prev.EndsAt, it.EndsAt) ||
+		prev.EventURL != it.URL
 }
 
 func floatEq(a, b *float64) bool {

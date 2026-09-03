@@ -56,6 +56,9 @@ const HEADER_ALIASES = {
   end: ['end', 'ends', 'ends_at', 'ends at', 'end time', 'end date'],
   location: ['location', 'venue', 'where', 'place', 'room'],
   description: ['description', 'details', 'notes', 'about', 'info'],
+  // The event's own page out on the web (docs/adr/079). A season
+  // spreadsheet nearly always has this column, under one of a dozen names.
+  url: ['url', 'link', 'event url', 'event link', 'event page', 'tickets', 'ticket link', 'ticket url', 'website', 'more info'],
 };
 
 function mapHeaders(headerRow) {
@@ -192,12 +195,29 @@ export function rowsToEvents(rows) {
     }
     if (cell(row, 'location')) event.location = cell(row, 'location');
     if (cell(row, 'description')) event.description = cell(row, 'description');
+    const link = cell(row, 'url');
+    if (link) {
+      // Same rule the server enforces: http(s) only, and a bare domain
+      // gets the scheme a spreadsheet left off rather than a row error.
+      const normalized = /^https?:\/\//i.test(link) ? link : `https://${link}`;
+      let parsed = null;
+      try {
+        parsed = new URL(normalized);
+      } catch {
+        parsed = null;
+      }
+      if (!parsed || !parsed.host) {
+        errors.push({ row: rowNum, message: `can't read the link "${link}"` });
+        continue;
+      }
+      event.event_url = parsed.href;
+    }
     events.push(event);
   }
   return { events, errors, headerMap: map };
 }
 
 export const TEMPLATE_CSV =
-  'title,date,time,end,location,description\n' +
-  'Opening Night,2026-09-12,7:00 PM,10:00 PM,Main Stage,First show of the season\n' +
-  'Artist Talk,9/19/2026,6:30 PM,,Gallery,Free and open to all\n';
+  'title,date,time,end,location,description,link\n' +
+  'Opening Night,2026-09-12,7:00 PM,10:00 PM,Main Stage,First show of the season,https://example.org/tickets/opening-night\n' +
+  'Artist Talk,9/19/2026,6:30 PM,,Gallery,Free and open to all,\n';

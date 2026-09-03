@@ -265,7 +265,7 @@ func Tables() []Table {
 			Name: "events",
 			Query: `SELECT id, node_id, created_by, title, description, location,
 				latitude, longitude, starts_at, ends_at, timezone, recurrence, visibility,
-				image_url, image_alt,
+				image_url, image_alt, event_url,
 				source_id, source_uid, source_occurrence,
 				created_at, updated_at FROM events
 				WHERE removed_at IS NULL AND status = 'active'`,
@@ -277,6 +277,10 @@ func Tables() []Table {
 				// the event inherits its patch's zone — which travels too.
 				c("starts_at"), c("ends_at"), c("timezone"), c("recurrence"), c("visibility"),
 				def("image_url", ""), def("image_alt", ""),
+				// The event's own page out on the web (docs/adr/079). Someone
+				// else's URL, like the flyer above — the fork keeps pointing
+				// at the venue's listing, which is still the venue's.
+				def("event_url", ""),
 				id("source_id"), c("source_uid"), def("source_occurrence", ""),
 				c("created_at"), c("updated_at")),
 		},

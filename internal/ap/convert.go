@@ -63,6 +63,10 @@ func EventToObject(event model.Event, domain string) Object {
 		obj.EndTime = *event.EndsAt
 	}
 
+	if event.EventURL != "" {
+		obj.Attachment = []Link{{Type: "Link", Href: event.EventURL, Name: "Tickets & details"}}
+	}
+
 	if event.Location != "" || (event.Latitude != nil && event.Longitude != nil) {
 		place := &Place{Type: "Place", Name: event.Location}
 		if event.Latitude != nil {

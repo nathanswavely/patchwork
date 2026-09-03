@@ -1,5 +1,5 @@
 <script>
-  import { CalendarBlank, MapPin, ArrowsClockwise, PencilSimple } from 'phosphor-svelte';
+  import { CalendarBlank, MapPin, ArrowsClockwise, PencilSimple, ArrowSquareOut } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isAdmin, getUser } from '../stores/auth.svelte.js';
@@ -14,6 +14,23 @@
   let event = $state(null);
   let loading = $state(true);
   let error = $state('');
+
+  // The event's own page out on the web (docs/adr/079), labelled by its
+  // host so the row says where it goes before anyone clicks. A link the
+  // browser can't parse is a link we don't render.
+  const eventLinkHost = $derived.by(() => {
+    if (!event?.event_url) return '';
+    try {
+      const u = new URL(event.event_url);
+      // Rendered as an href, so the scheme is checked here too and not
+      // only at the write path — imported events get this straight from
+      // a feed, and a feed is somebody else's input.
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') return '';
+      return u.host.replace(/^www\./, '');
+    } catch {
+      return '';
+    }
+  });
 
   $effect(() => {
     loadEvent(eventId);
@@ -204,6 +221,17 @@
           <span>{RECURRENCE_LABELS[event.recurrence]}</span>
         </div>
       {/if}
+      {#if eventLinkHost}
+        <div class="meta-row">
+          <ArrowSquareOut size={16} weight="duotone" />
+          <a
+            class="event-link"
+            href={event.event_url}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+          >Tickets &amp; details on {eventLinkHost}</a>
+        </div>
+      {/if}
     </div>
 
     <!-- The flyer, held wherever the patch keeps it (docs/adr/007). The
@@ -335,6 +363,16 @@
     gap: 0.5rem;
     font-size: 0.9rem;
     color: var(--color-text);
+  }
+
+  .event-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .event-link:hover {
+    text-decoration: underline;
   }
 
   .meta-row :global(svg) {

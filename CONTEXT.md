@@ -80,6 +80,18 @@ mainly in docs. A term nobody reaches for when building the thing isn't
 the thing's name.
 _Avoid_: pin (retired), happening, gathering
 
+**Event page** (the field):
+The event's own page out on the web, where its publisher put it — the
+ticket page, the venue's listing, the RSVP form (`events.event_url`,
+docs/adr/079). Filled from the feed on every ingest path and offered as a
+field on the event form. Distinct from the *event's page*, meaning its
+Patchwork permalink, which is derived from its id and never stored; when
+both are in play, say "the event's own page" for this one. Not an **event
+link** below, which is a patch's presence on someone else's event. On the
+detail page it reads "Tickets & details on {host}"; in outbound ICS and
+RSS it rides in the description, because `URL` there is the permalink.
+_Avoid_: external link, source URL, ticket link (it is often not tickets)
+
 **Event link**:
 An explicit, mutual association between an event and a patch beyond its
 owner — admins on one side propose, admins on the other confirm, and

@@ -49,8 +49,13 @@ type Item struct {
 	StartsAt    string
 	EndsAt      *string
 	// URL is the feed's own page for this listing, where it publishes
-	// one. Carried for aggregators, which show it to the admin deciding
-	// what a name means (docs/adr/056); ordinary event sources ignore it.
+	// one. It lands on the event as event_url (docs/adr/079) and is what
+	// an aggregator shows the admin deciding what a name means
+	// (docs/adr/056).
+	//
+	// Every parser that fills this checks the scheme first: only http and
+	// https survive. A feed is untrusted input and this value is rendered
+	// as an href, so `javascript:` must never get this far.
 	URL string
 }
 
@@ -247,10 +252,8 @@ func itemFromEvent(e *ical.Event, uid, occurrence string, zone *time.Location) (
 		Location:    location,
 		StartsAt:    start.UTC().Format(time.RFC3339),
 	}
-	// The feed's own page for this event. Only aggregators surface it
-	// (docs/adr/056): deciding whether a name means an organization
-	// often needs the listing as its publisher wrote it, and no summary
-	// substitutes for that.
+	// The feed's own page for this event — the venue's listing, where the
+	// tickets are (docs/adr/079). http(s) only; see Item.URL.
 	if u, err := e.Props.URI(ical.PropURL); err == nil && u != nil {
 		if s := u.String(); strings.HasPrefix(s, "http://") || strings.HasPrefix(s, "https://") {
 			it.URL = s

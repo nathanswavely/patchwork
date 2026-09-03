@@ -95,3 +95,39 @@ func checkPatchedImage(db *database.DB, table, id string, req map[string]interfa
 	}
 	return validateImageRef(nextURL, nextAlt)
 }
+
+// maxEventURL matches maxImageURL: both are addresses somebody pasted, and
+// ticket links carry query strings that get long.
+const maxEventURL = 2048
+
+// validateEventURL checks an event's own page out on the web (docs/adr/079).
+//
+// It lives beside the image validator because it is the same kind of rule —
+// shape, not content; the binary never fetches either — but it is a separate
+// function because the two disagree on one thing on purpose. An image over
+// plain http is a picture nobody sees (mixed content); a *link* over plain
+// http is a link that works, and half the venues in a small arts scene still
+// serve one. Refusing those would mean refusing the very listings this field
+// exists to point at.
+//
+// Empty is always fine: an event that has no page anywhere is the common case.
+func validateEventURL(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return ""
+	}
+	if len(raw) > maxEventURL {
+		return "that link is too long"
+	}
+	u, err := url.Parse(raw)
+	if err != nil || u.Host == "" {
+		return "that doesn't look like a link — it should start with https://"
+	}
+	// http and https only. Anything else is either not a page a browser can
+	// open or is a scheme (javascript:, data:) that has no business being
+	// rendered as an href on somebody else's event.
+	if u.Scheme != "https" && u.Scheme != "http" {
+		return "that doesn't look like a link — it should start with https://"
+	}
+	return ""
+}
