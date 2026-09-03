@@ -4,7 +4,13 @@ Date: 2026-07-20
 
 ## Status
 
-Accepted
+Accepted. **Corrected 2026-09-01** (docs/adr/078): the first bullet below
+asserted that events appear as markers on the map. They never have — the
+map has only ever carried patches, and `events.latitude`/`events.longitude`
+reach no surface. The decision is unaffected, because the half of the
+collision that was true is the half that mattered: the map's markers are
+literal teardrop pins, and every one of them is a *patch*. Left as written
+rather than rewritten, since an ADR is a record of what was argued.
 
 ## Context
 
@@ -17,6 +23,9 @@ you sew. In the product it collided on every side:
   means something else — `MapView.svelte` draws a literal "quilt-colored
   teardrop pin" for each patch. "Pins on the map" is unparseable when
   both readings are true at once.
+  *(Corrected: the first sentence was never true — see Status. What holds
+  is the rest: "pin" would have named events while every pin on the map is
+  a patch.)*
 - **Pinned posts.** Every social tool people arrive from uses "pin" for
   sticking an item to the top of a feed or channel. A "pin feed" reads
   as a feed of stickied posts, not upcoming events.

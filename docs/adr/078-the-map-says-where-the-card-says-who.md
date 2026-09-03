@@ -1,7 +1,10 @@
 # ADR 078: The map says where; the card says who
 
-Date: 2026-08-31. Status: **accepted**; implementation pending (the
-clustering half is prototyped and measured, the rest is not built).
+Date: 2026-08-31. Status: **accepted**; **built 2026-09-01 – 09-03**, all
+eight decisions. The last to land were the out-of-view affordance
+(decision 8) and the pointer half of decision 7 — hovering a marker or a
+tile highlights that patch's card in the pane — which waited on the
+concurrent in-view lens work (docs/adr/074) rather than racing it.
 Decided while grilling the map's UX. Applies ADR 022's lens rule to the
 one surface that never honoured it, and borrows the quilt's identity-versus-
 status discipline (docs/adr/004, docs/adr/029) to a second surface.

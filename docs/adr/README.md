@@ -89,7 +89,7 @@ several branches are in flight.
 | [075](075-discovery-asks-a-question.md) | Discovery asks a question; the quilt shows everything — Welcome splits, the flow goes standing and public, and co-follow recommendation is refused *(beside 040)* |
 | [076](076-the-bulletin-is-the-one-broadcast.md) | The bulletin is the one broadcast, and it ships off — monthly, complete, unranked, opt-in |
 | [077](077-a-dependency-every-fork-inherits-cannot-require-a-key.md) | A dependency every fork inherits cannot require a key — keyless vector basemap, raster fallback |
-| [078](078-the-map-says-where-the-card-says-who.md) | The map says where; the card says who — motif markers, names by separation, clusters, and a preview costs a gesture the device can spare *(implementation pending)* |
+| [078](078-the-map-says-where-the-card-says-who.md) | The map says where; the card says who — motif markers, names by separation, clusters, and a preview costs a gesture the device can spare |
 | [079](079-an-event-keeps-the-door-it-came-through.md) | An event keeps the door it came through — every feed carries the event's own page and Patchwork dropped it; one `event_url`, filled by ingest and by the form *(fills a gap in 031, completes 056)* |
 
 ## Proposed — designs on record, not built

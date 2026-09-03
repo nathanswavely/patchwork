@@ -29,6 +29,12 @@
     onBackgroundClick = null,
     insetRight = 0,
     onInViewChange = null,
+    announceOffscreen = true,
+    // Pointing at a patch previews it (docs/adr/078): the map reports what
+    // the pointer is over, and renders emphasis for whatever the parent says
+    // is being previewed — which may be a card the pointer is over instead.
+    onPatchHover = null,
+    hoveredId = null,
   } = $props();
 
   let mapContainer;
@@ -36,6 +42,7 @@
   let basemap = $state(null);
   let basemapTheme = null; // the theme the basemap is currently drawn in
   let markersLayer;
+  let markerById = new Map(); // id → marker, for highlighting without rebuilding
   let hasFit = false; // the viewport is the person's once they have it
 
   // A quilt-colored teardrop pin: filled with the patch's identity color
@@ -130,6 +137,24 @@
     };
   });
 
+  // Emphasis for the patch being previewed. A class toggle on the marker
+  // already on screen, never a rebuild: the pointer moves between cards far
+  // faster than a marker layer can be torn down and stitched again.
+  let emphasised = null;
+  $effect(() => {
+    const id = hoveredId;
+    void markersLayer; // re-apply after a rebuild drops the classes
+    if (emphasised && emphasised !== id) {
+      markerById.get(emphasised)?.getElement()?.classList.remove('is-previewing');
+      emphasised = null;
+    }
+    const el = id ? markerById.get(id)?.getElement() : null;
+    if (el) {
+      el.classList.add('is-previewing');
+      emphasised = id;
+    }
+  });
+
   // Tiles follow the app theme. Reruns when the basemap lands too, so a
   // theme toggled while its renderer was still loading still takes.
   $effect(() => {
@@ -172,10 +197,55 @@
     });
   }
 
+  // The map a reader can actually see, in layer-point space — which is what
+  // the placement pass projects into; container coordinates would be off by
+  // the map pane's own offset. On desktop the cards pane floats over the
+  // right of the canvas, so that strip is not visible map: a name under the
+  // pane is a name nobody reads, and a marker under it is not on screen.
+  function visibleRect() {
+    const size = map.getSize();
+    const padRight = Math.round(size.x * insetRight);
+    const topLeft = map.containerPointToLayerPoint([4, 4]);
+    const bottomRight = map.containerPointToLayerPoint([size.x - padRight - 4, size.y - 4]);
+    return {
+      left: topLeft.x,
+      top: topLeft.y,
+      right: bottomRight.x,
+      bottom: bottomRight.y,
+    };
+  }
+
+  // Bring them back: the affordance names the fact and this does the moving,
+  // which is the whole reason narrowing never moves the viewport by itself.
+  //
+  // Animated when a person asked for it — the motion is what tells them where
+  // they were taken. Never animated for the opening fit: nobody asked to be
+  // moved off a default view they never saw, and animating it means the map's
+  // first painted state is every marker piled into one disc at a zoom that
+  // was never intended, which reads as a map failing to load.
+  function showAll(animate = true) {
+    const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
+    if (!placed.length) return;
+    const padRight = Math.round((mapContainer?.clientWidth || 0) * insetRight);
+    map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), {
+      paddingTopLeft: [24, 24],
+      paddingBottomRight: [24 + padRight, 24],
+      animate,
+    });
+  }
+
   // The font the names are drawn in, read once from the rendered label so
   // measurement matches what the browser will paint.
   let labelFont = '600 12px system-ui, sans-serif';
   let labelled = new Map(); // id → the position its name took, kept across passes
+
+  // Patches that pass the lenses but sit outside what the reader can see.
+  // Only ever announced when *none* are visible: a map that has gone empty
+  // is the case a person cannot explain to themselves, and the same
+  // discipline as an empty result naming its lenses (docs/adr/022,
+  // docs/adr/078). Panning to an empty stretch of river deserves the same
+  // sentence as filtering to a tag whose patches are all uptown.
+  let offscreen = $state(0);
 
   function markerFor(node, position) {
     const marker = L.marker([node.latitude, node.longitude], {
@@ -199,32 +269,32 @@
     });
 
     marker.on('click', () => onMarkerClick && onMarkerClick(node));
+    if (onPatchHover) {
+      marker.on('mouseover', () => onPatchHover(node));
+      marker.on('mouseout', () => onPatchHover(null));
+    }
+    markerById.set(node.id, marker);
     return marker;
   }
 
   function updateMarkers() {
-    if (markersLayer) map.removeLayer(markersLayer);
-
     const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
+
+    // Frame first, then group. Grouping is a function of zoom, so grouping at
+    // the default zoom and fitting afterwards paints one 33-marker disc that
+    // exists for no reason and is gone a moment later.
+    if (!hasFit && placed.length > 0) {
+      hasFit = true;
+      showAll(false);
+    }
+
+    if (markersLayer) map.removeLayer(markersLayer);
+    markerById = new Map();
     const groups = clusterNodes(map, placed, CLUSTER_RADIUS_PX);
 
     // Names are placed by separation, never by zoom: zoom is only what moves
     // markers apart, and two patches at one address never separate at all.
-    // A name may only occupy map the reader can see: on desktop the cards
-    // pane floats over the right of the canvas, and a name under it is a
-    // name nobody reads.
-    // In layer-point space, which is what the placement pass projects into —
-    // container coordinates would be off by the map pane's own offset.
-    const size = map.getSize();
-    const padRight = Math.round(size.x * insetRight);
-    const topLeft = map.containerPointToLayerPoint([4, 4]);
-    const bottomRight = map.containerPointToLayerPoint([size.x - padRight - 4, size.y - 4]);
-    const visible = {
-      left: topLeft.x,
-      top: topLeft.y,
-      right: bottomRight.x,
-      bottom: bottomRight.y,
-    };
+    const visible = visibleRect();
 
     labelled = placeLabels(
       groups,
@@ -252,22 +322,10 @@
 
     markersLayer = L.layerGroup(layers).addTo(map);
 
-    // Fit once, on the first pass that has something to fit. The first pass
-    // runs before the fetch lands, and letting an empty one count would
-    // spend the fit on nothing and pile every marker at the default zoom.
-    // After that the viewport belongs to the person: narrowing a set is not
-    // a request to be moved somewhere else.
-    if (hasFit) return;
-
-    const fitOpts = {
-      paddingTopLeft: [24, 24],
-      paddingBottomRight: [24 + padRight, 24],
-    };
-
-    if (placed.length > 0) {
-      hasFit = true;
-      map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), fitOpts);
-    } else if (center?.lat && center?.lng) {
+    // Nothing placed yet: sit on the instance's own centre until something
+    // arrives. The fit above claims `hasFit` only when it had markers to
+    // frame, so the first real set still gets its one fit.
+    if (!hasFit && placed.length === 0 && center?.lat && center?.lng) {
       const zoom = Math.round(14 - Math.log2(radius || 10));
       map.setView([center.lat, center.lng], Math.max(zoom, 3));
     }
@@ -282,20 +340,34 @@
   // excluded exactly as it is on the quilt: a marker behind the floating
   // cards is on the map but not in view. A patch with no coordinates is on
   // neither, and drops out — which is the honest answer on this surface.
+  //
+  // The out-of-view affordance (docs/adr/078) asks the same question this
+  // does — which markers are on screen — so it is answered once here rather
+  // than by a second pass with its own idea of where the edge is. The lens
+  // wants the ids; the affordance wants only whether the answer was none.
   let lastInView = '';
   function reportInView() {
-    if (!map || !onInViewChange) return;
+    if (!map) return;
     const w = mapContainer?.clientWidth || 0;
     const h = mapContainer?.clientHeight || 0;
     if (!w || !h) return;
     const rightEdge = w - w * insetRight;
     const ids = [];
+    let placed = 0;
     for (const node of nodes) {
       if (node.latitude == null || node.longitude == null) continue;
+      placed += 1;
       const p = map.latLngToContainerPoint([node.latitude, node.longitude]);
       if (p.x < 0 || p.x > rightEdge || p.y < 0 || p.y > h) continue;
       ids.push(node.id);
     }
+
+    // Announced only when the map has gone completely empty — the one state
+    // a person cannot explain to themselves. "Some are off screen" is true
+    // at almost every street zoom and would be permanent furniture.
+    offscreen = ids.length === 0 ? placed : 0;
+
+    if (!onInViewChange) return;
     const key = ids.join(',');
     if (key === lastInView) return;
     lastInView = key;
@@ -306,6 +378,25 @@
 
 <div class="map-wrapper">
   <div bind:this={mapContainer} class="map-container"></div>
+
+  <!-- Narrowing the set never moves the viewport (docs/adr/078), which
+       leaves one case needing an explanation: everything that matches is
+       somewhere else, and the map has gone blank. Naming it beats a jump. -->
+  {#if offscreen > 0 && announceOffscreen}
+    <!-- Centred on the map a reader can see, not on the element: the cards
+         pane covers the right of the canvas on desktop. -->
+    <button class="map-offscreen" style="left: {50 - insetRight * 50}%" onclick={showAll}>
+      <!-- Written as markup rather than an interpolated string so the words
+           are visible to the copy ledger. Text inside a {…} expression is
+           stripped as markup noise, which would quietly exempt a sentence a
+           visitor reads from ever being reviewed. -->
+      {#if offscreen === 1}
+        <b>1</b> patch is outside this view
+      {:else}
+        <b>{offscreen}</b> patches are outside this view
+      {/if}
+    </button>
+  {/if}
 </div>
 
 <style>
@@ -369,6 +460,33 @@
   }
 
   /* Textile popups: surface card, hairline border, app radius + font. */
+  /* Sits over the map it is describing, clear of the zoom controls and of
+     the cards pane. Not an Interruption (CONTEXT.md) — nothing is wrong,
+     the reader has simply moved away from everything. */
+  .map-offscreen {
+    position: absolute;
+    top: 12px;
+    transform: translateX(-50%);
+    z-index: 600;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    box-shadow: 0 2px 10px var(--color-shadow);
+    cursor: pointer;
+  }
+
+  .map-offscreen b {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .map-offscreen:hover {
+    border-color: var(--color-primary);
+  }
+
   /* A name on the map is halo'd text, never a pill. The quilt's name badge
      is a pill because it floats over fabric it must stay readable against;
      a basemap is not fabric, and a field of pills reads as furniture on a
@@ -392,6 +510,30 @@
 
   .map-wrapper :global(.map-name::before) {
     display: none; /* Leaflet's tooltip arrow */
+  }
+
+  /* The previewed patch's pin lifts toward the reader — the map's half of
+     the same gesture that highlights its card.
+     The scale goes on the SVG *inside* the marker, never on the marker
+     itself. Leaflet positions a marker with `transform: translate3d(...)`,
+     and the standalone `scale` property does not sit beside a transform —
+     CSS composes them as translate → rotate → scale → transform, so scaling
+     the marker multiplies Leaflet's translation by the same factor and
+     throws the pin a quarter of its own offset across the map. Pins near
+     the pane's origin barely move; distant ones fly. The child carries no
+     Leaflet transform, so scaling it is just scaling it. */
+  .map-wrapper :global(.patch-marker svg) {
+    transition: scale 120ms ease;
+    transform-origin: 50% 100%; /* the pin's point stays on its coordinate */
+  }
+
+  .map-wrapper :global(.patch-marker.is-previewing) {
+    z-index: 650 !important;
+  }
+
+  .map-wrapper :global(.patch-marker.is-previewing svg) {
+    scale: 1.25;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
   }
 
   /* A cluster is not a patch, so it wears no identity color and no motif —
