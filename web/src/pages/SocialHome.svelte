@@ -436,6 +436,11 @@
   <!-- Main pane: quilt canvas or community map -->
   <div class="quilt-pane" class:mobile-hidden={mobileView === 'list'}>
     {#if showMap}
+      <!-- One voice per state: with the in-view lens on, the pane already
+           says nothing is in view and offers the way back, so the map does
+           not repeat it. With the lens off the pane lists everything and
+           says nothing about the blank map, which is the case the map's own
+           notice exists for (docs/adr/078). -->
       <MapView
         nodes={mapNodesFiltered}
         center={mapCenter}
@@ -448,6 +453,7 @@
             : `/patches/${node.slug}`);
         }}
         onBackgroundClick={() => { docked = null; }}
+        announceOffscreen={!inViewActive}
         onInViewChange={reportInView}
       />
     {:else}

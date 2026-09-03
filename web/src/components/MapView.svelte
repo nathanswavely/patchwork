@@ -29,6 +29,7 @@
     onBackgroundClick = null,
     insetRight = 0,
     onInViewChange = null,
+    announceOffscreen = true,
   } = $props();
 
   let mapContainer;
@@ -114,17 +115,10 @@
     const onZoom = () => { if (map) updateMarkers(); };
     instance.on('zoomend', onZoom);
 
-    // Panning cannot change the grouping (pixel separation is unchanged by
-    // it) but it does change what is on screen, so the count is recounted
-    // without rebuilding a single marker.
-    const onMove = () => { if (map) countOffscreen(); };
-    instance.on('moveend', onMove);
-
     return () => {
       ro.disconnect();
       unblockZoom();
       instance.off('zoomend', onZoom);
-      instance.off('moveend', onMove);
       if (map) {
         instance.off('moveend', reportInView);
         instance.off('zoomend', reportInView);
@@ -197,18 +191,6 @@
     };
   }
 
-  function countOffscreen() {
-    const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
-    const visible = visibleRect();
-    let inView = 0;
-    for (const n of placed) {
-      const pt = map.latLngToLayerPoint([n.latitude, n.longitude]);
-      if (pt.x >= visible.left && pt.x <= visible.right
-        && pt.y >= visible.top && pt.y <= visible.bottom) inView += 1;
-    }
-    offscreen = inView === 0 ? placed.length : 0;
-  }
-
   // Bring them back: the affordance names the fact and this does the moving,
   // which is the whole reason narrowing never moves the viewport by itself.
   function showAll() {
@@ -277,8 +259,6 @@
       visible,
     );
 
-    countOffscreen();
-
     const layers = [];
     for (const group of groups) {
       if (group.members.length === 1) {
@@ -325,20 +305,34 @@
   // excluded exactly as it is on the quilt: a marker behind the floating
   // cards is on the map but not in view. A patch with no coordinates is on
   // neither, and drops out — which is the honest answer on this surface.
+  //
+  // The out-of-view affordance (docs/adr/078) asks the same question this
+  // does — which markers are on screen — so it is answered once here rather
+  // than by a second pass with its own idea of where the edge is. The lens
+  // wants the ids; the affordance wants only whether the answer was none.
   let lastInView = '';
   function reportInView() {
-    if (!map || !onInViewChange) return;
+    if (!map) return;
     const w = mapContainer?.clientWidth || 0;
     const h = mapContainer?.clientHeight || 0;
     if (!w || !h) return;
     const rightEdge = w - w * insetRight;
     const ids = [];
+    let placed = 0;
     for (const node of nodes) {
       if (node.latitude == null || node.longitude == null) continue;
+      placed += 1;
       const p = map.latLngToContainerPoint([node.latitude, node.longitude]);
       if (p.x < 0 || p.x > rightEdge || p.y < 0 || p.y > h) continue;
       ids.push(node.id);
     }
+
+    // Announced only when the map has gone completely empty — the one state
+    // a person cannot explain to themselves. "Some are off screen" is true
+    // at almost every street zoom and would be permanent furniture.
+    offscreen = ids.length === 0 ? placed : 0;
+
+    if (!onInViewChange) return;
     const key = ids.join(',');
     if (key === lastInView) return;
     lastInView = key;
@@ -353,7 +347,7 @@
   <!-- Narrowing the set never moves the viewport (docs/adr/078), which
        leaves one case needing an explanation: everything that matches is
        somewhere else, and the map has gone blank. Naming it beats a jump. -->
-  {#if offscreen > 0}
+  {#if offscreen > 0 && announceOffscreen}
     <!-- Centred on the map a reader can see, not on the element: the cards
          pane covers the right of the canvas on desktop. -->
     <button class="map-offscreen" style="left: {50 - insetRight * 50}%" onclick={showAll}>

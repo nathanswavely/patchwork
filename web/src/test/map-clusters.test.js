@@ -104,15 +104,24 @@ describe('the out-of-view affordance', () => {
   it('announces only when nothing at all is in view', () => {
     // Not "some are off screen" — at a street zoom that is nearly always
     // true and the notice would be permanent furniture.
-    expect(src).toMatch(/offscreen\s*=\s*inView === 0 \? placed\.length : 0/);
+    expect(src).toMatch(/offscreen\s*=\s*ids\.length === 0 \? placed : 0/);
   });
 
   it('recounts on pan without rebuilding markers', () => {
     // Panning cannot change the grouping, so it must not pay for one.
-    expect(src).toMatch(/instance\.on\('moveend'/);
-    expect(src).toMatch(/countOffscreen\(\)/);
+    expect(src).toMatch(/instance\.on\('moveend', reportInView\)/);
     // updateMarkers is the expensive path; moveend must not reach it.
     expect(src).not.toMatch(/on\('moveend'[^)]*updateMarkers/);
+  });
+
+  it('shares one visibility pass with the in-view lens', () => {
+    // Both ask the same question — which markers are on screen — and this
+    // branch and the in-view lens (docs/adr/074) each arrived with their own
+    // answer to it. Two passes with two ideas of where the edge is would
+    // disagree the first time one of them changed: the list would narrow to
+    // patches the map claims are elsewhere. One pass, two consumers.
+    expect(src.match(/latLngToContainerPoint/g) || []).toHaveLength(1);
+    expect(src).not.toMatch(/countOffscreen/);
   });
 
   it('restores the same framing the map opened with', () => {
@@ -120,5 +129,19 @@ describe('the out-of-view affordance', () => {
     // they can ask back cannot drift apart.
     expect(src).toMatch(/function showAll\(\)/);
     expect(src).toMatch(/hasFit = true;[\s\S]{0,400}?showAll\(\)/);
+  });
+
+  it('stands down when the pane is already saying it', () => {
+    // The in-view lens landed on main with its own empty state — "No patches
+    // in view — 33 elsewhere on the quilt", with its own way back. Two
+    // notices and two buttons for one condition is worse than either alone,
+    // so the map speaks only when the pane does not.
+    const home = readFileSync(
+      resolve(__dirname, '../pages/SocialHome.svelte'),
+      'utf8',
+    );
+    expect(src).toMatch(/announceOffscreen = true/);
+    expect(src).toMatch(/offscreen > 0 && announceOffscreen/);
+    expect(home).toMatch(/announceOffscreen=\{!inViewActive\}/);
   });
 });
