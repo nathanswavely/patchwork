@@ -61,6 +61,10 @@
     // chrome that a small non-interactive tile has no room for.
     interactive = true,
     showLabels = true,
+    // Pointing at a patch previews it (docs/adr/078). The quilt reports what
+    // the pointer is over and the parent decides what that means — here, the
+    // patch's card highlighting in the pane beside it.
+    onPatchHover = null,
   } = $props();
 
   let containerEl = $state(null);
@@ -1029,6 +1033,7 @@
         if (interactive) {
           g.on('mouseenter', function(event) {
             d3.select(this).select('.overlay').attr('fill', 'var(--color-overlay-hover)');
+            if (onPatchHover) onPatchHover(tile.data);
             if (tooltip && !labeledPatchIds.has(tile.data.id)) {
               showTooltip(tile.data, event.clientX, event.clientY);
             }
@@ -1041,6 +1046,7 @@
           })
           .on('mouseleave', function() {
             d3.select(this).select('.overlay').attr('fill', 'transparent');
+            if (onPatchHover) onPatchHover(null);
             if (tooltip) tooltip.style.display = 'none';
           })
           .on('click', function() {

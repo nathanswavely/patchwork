@@ -30,6 +30,11 @@
     insetRight = 0,
     onInViewChange = null,
     announceOffscreen = true,
+    // Pointing at a patch previews it (docs/adr/078): the map reports what
+    // the pointer is over, and renders emphasis for whatever the parent says
+    // is being previewed — which may be a card the pointer is over instead.
+    onPatchHover = null,
+    hoveredId = null,
   } = $props();
 
   let mapContainer;
@@ -37,6 +42,7 @@
   let basemap = $state(null);
   let basemapTheme = null; // the theme the basemap is currently drawn in
   let markersLayer;
+  let markerById = new Map(); // id → marker, for highlighting without rebuilding
   let hasFit = false; // the viewport is the person's once they have it
 
   // A quilt-colored teardrop pin: filled with the patch's identity color
@@ -129,6 +135,24 @@
         markersLayer = null;
       }
     };
+  });
+
+  // Emphasis for the patch being previewed. A class toggle on the marker
+  // already on screen, never a rebuild: the pointer moves between cards far
+  // faster than a marker layer can be torn down and stitched again.
+  let emphasised = null;
+  $effect(() => {
+    const id = hoveredId;
+    void markersLayer; // re-apply after a rebuild drops the classes
+    if (emphasised && emphasised !== id) {
+      markerById.get(emphasised)?.getElement()?.classList.remove('is-previewing');
+      emphasised = null;
+    }
+    const el = id ? markerById.get(id)?.getElement() : null;
+    if (el) {
+      el.classList.add('is-previewing');
+      emphasised = id;
+    }
   });
 
   // Tiles follow the app theme. Reruns when the basemap lands too, so a
@@ -238,11 +262,17 @@
     });
 
     marker.on('click', () => onMarkerClick && onMarkerClick(node));
+    if (onPatchHover) {
+      marker.on('mouseover', () => onPatchHover(node));
+      marker.on('mouseout', () => onPatchHover(null));
+    }
+    markerById.set(node.id, marker);
     return marker;
   }
 
   function updateMarkers() {
     if (markersLayer) map.removeLayer(markersLayer);
+    markerById = new Map();
 
     const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
     const groups = clusterNodes(map, placed, CLUSTER_RADIUS_PX);
@@ -475,6 +505,20 @@
 
   .map-wrapper :global(.map-name::before) {
     display: none; /* Leaflet's tooltip arrow */
+  }
+
+  /* The previewed patch's pin lifts toward the reader — the map's half of
+     the same gesture that highlights its card. Transform only, so nothing
+     reflows and the pin keeps its point on the same coordinate. */
+  .map-wrapper :global(.patch-marker.is-previewing) {
+    z-index: 650 !important;
+    transform-origin: 50% 100%;
+    scale: 1.25;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+  }
+
+  .map-wrapper :global(.patch-marker) {
+    transition: scale 120ms ease;
   }
 
   /* A cluster is not a patch, so it wears no identity color and no motif —

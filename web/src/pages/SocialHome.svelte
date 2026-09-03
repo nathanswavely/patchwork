@@ -292,6 +292,22 @@
   let docked = $state(null);
   let hasPointer = $state(window.matchMedia('(hover: hover) and (pointer: fine)').matches);
 
+  // The previewed patch, shared by both surfaces: whichever one the pointer
+  // is over sets it, and both render emphasis from it (docs/adr/078). One
+  // id rather than one per surface, because "the thing being pointed at" is
+  // a single fact about the page.
+  let previewing = $state(null);
+
+  function preview(patch, fromMap = false) {
+    previewing = patch?.id ?? null;
+    // A preview that comes from the map brings its card to the reader; one
+    // that comes from the card must not move the list under their pointer.
+    if (!fromMap || !patch) return;
+    document
+      .querySelector(`[data-patch-id="${CSS.escape(patch.id)}"]`)
+      ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
   function touchSelect(patch) {
     if (hasPointer) return false;
     docked = patch;
@@ -345,7 +361,16 @@
      eight callbacks threaded through it. -->
 {#snippet patchCard(patch)}
           {@const Motif = motifComponentForPatch(patch)}
-          <div class="patch-card" onclick={() => handlePatchCardClick(patch)} role="button" tabindex="0">
+          <div
+            class="patch-card"
+            class:previewing={previewing === patch.id}
+            data-patch-id={patch.id}
+            onclick={() => handlePatchCardClick(patch)}
+            onmouseenter={() => hasPointer && preview(patch)}
+            onmouseleave={() => hasPointer && preview(null)}
+            role="button"
+            tabindex="0"
+          >
             <div class="card-image" style="background: {identityColorForPatch(patch)}">
               <PatchTile {patch} />
               <!-- Same mark the quilt tile wears, same corner (docs/adr/030).
@@ -454,6 +479,8 @@
         }}
         onBackgroundClick={() => { docked = null; }}
         announceOffscreen={!inViewActive}
+        onPatchHover={(node) => hasPointer && preview(node, true)}
+        hoveredId={previewing}
         onInViewChange={reportInView}
       />
     {:else}
@@ -466,6 +493,7 @@
         {quiltScope}
         insetRight={quiltInset}
         onClearFilter={resetFilters}
+        onPatchHover={(patch) => hasPointer && preview(patch, true)}
         onInViewChange={reportInView}
       />
     {/if}
@@ -775,6 +803,14 @@
     box-shadow: 0 2px 10px var(--color-shadow);
     transition: box-shadow 150ms ease, border-color 150ms ease;
     padding: 0;
+  }
+
+  /* The previewed card, whether the pointer is on it or on its pin. Border
+     and lift only — nothing that changes the card's size, or the list would
+     reflow under a pointer that is merely passing over the map. */
+  .patch-card.previewing {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 16px var(--color-shadow);
   }
 
   .patch-card:hover {
