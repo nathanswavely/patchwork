@@ -4001,14 +4001,14 @@
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 49,
+          "line": 54,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 420,
+          "line": 427,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4402,21 +4402,21 @@
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 65,
+          "line": 70,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 390,
+          "line": 393,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 577,
+          "line": 584,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4840,7 +4840,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 621,
+          "line": 641,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5342,14 +5342,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 571,
+          "line": 578,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 707,
+          "line": 727,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5682,7 +5682,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 747,
+          "line": 748,
           "kind": "go-error-body",
           "raw": "this listing is no longer in the feed",
           "quote": null
@@ -5700,14 +5700,14 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 760,
+          "line": 761,
           "kind": "go-error-body",
           "raw": "failed to create event",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 460,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "failed to create event",
           "quote": null
@@ -5725,7 +5725,7 @@
       "occurrences": [
         {
           "file": "internal/handler/aggregators.go",
-          "line": 766,
+          "line": 767,
           "kind": "go-error-body",
           "raw": "failed to clear hold",
           "quote": null
@@ -5972,7 +5972,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 688,
+          "line": 708,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
@@ -6039,21 +6039,21 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 532,
+          "line": 539,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 699,
+          "line": 719,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 730,
+          "line": 750,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -8708,7 +8708,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 57,
+          "line": 62,
           "kind": "go-error-body",
           "raw": "bulk upload is for patch admins",
           "quote": null
@@ -8726,7 +8726,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 69,
+          "line": 74,
           "kind": "go-error-body",
           "raw": "no events in upload",
           "quote": null
@@ -8744,7 +8744,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 73,
+          "line": 78,
           "kind": "go-error-body",
           "raw": "an upload is at most %d events",
           "quote": null
@@ -8762,42 +8762,42 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 121,
+          "line": 130,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 128,
+          "line": 137,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 135,
+          "line": 144,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 141,
+          "line": 150,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 164,
+          "line": 173,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 170,
+          "line": 179,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
@@ -8833,14 +8833,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 401,
+          "line": 408,
           "kind": "go-error-body",
           "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 596,
+          "line": 604,
           "kind": "go-error-body",
           "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
@@ -8872,7 +8872,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 405,
+          "line": 412,
           "kind": "go-error-body",
           "raw": "node_id, title, and starts_at are required",
           "quote": null
@@ -8890,7 +8890,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 442,
+          "line": 449,
           "kind": "go-error-body",
           "raw": "community submissions are disabled on this instance",
           "quote": null
@@ -8915,7 +8915,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 446,
+          "line": 453,
           "kind": "go-error-body",
           "raw": "this patch does not accept event suggestions",
           "quote": null
@@ -8933,7 +8933,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 540,
+          "line": 547,
           "kind": "go-error-body",
           "raw": "this event comes from an event source. Edit it in the source calendar, or detach it first",
           "quote": null
@@ -8952,7 +8952,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 636,
+          "line": 656,
           "kind": "go-error-body",
           "raw": "failed to update event",
           "quote": null
@@ -8970,14 +8970,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 718,
+          "line": 738,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 725,
+          "line": 745,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
@@ -8995,14 +8995,14 @@
       "occurrences": [
         {
           "file": "internal/handler/feeds.go",
-          "line": 337,
+          "line": 361,
           "kind": "go-error-body",
           "raw": "failed to generate feed secret",
           "quote": null
         },
         {
           "file": "internal/handler/feeds.go",
-          "line": 342,
+          "line": 366,
           "kind": "go-error-body",
           "raw": "failed to generate feed secret",
           "quote": null
@@ -9020,7 +9020,7 @@
       "occurrences": [
         {
           "file": "internal/handler/feeds.go",
-          "line": 359,
+          "line": 383,
           "kind": "go-error-body",
           "raw": "failed to disable feed",
           "quote": null
@@ -16645,7 +16645,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 365,
+          "line": 368,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -17792,7 +17792,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 200,
+          "line": 202,
           "kind": "js-string",
           "raw": "Unclaimed patches",
           "quote": "'"
@@ -18140,7 +18140,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 379,
+          "line": 382,
           "kind": "attr:title",
           "raw": "Choose a different patch",
           "quote": "\""
@@ -18172,7 +18172,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 392,
+          "line": 395,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -19270,7 +19270,7 @@
         },
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 142,
+          "line": 159,
           "kind": "markup",
           "raw": "Edit",
           "quote": null
@@ -20256,7 +20256,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 152,
+          "line": 154,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -24970,7 +24970,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 302,
+          "line": 305,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -27357,7 +27357,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 283,
+          "line": 302,
           "kind": "markup",
           "raw": "{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}",
           "quote": null
@@ -27407,7 +27407,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 297,
+          "line": 316,
           "kind": "attr:placeholder",
           "raw": "Note to the submitter (optional)",
           "quote": "\""
@@ -28787,7 +28787,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 354,
+          "line": 357,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -29067,7 +29067,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 458,
+          "line": 473,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -29128,7 +29128,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 470,
+          "line": 485,
           "kind": "markup",
           "raw": "Not a timezone this quilt knows.",
           "quote": null
@@ -30492,7 +30492,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 248,
+          "line": 250,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -32528,14 +32528,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 29,
+          "line": 46,
           "kind": "js-string",
           "raw": "Event not found",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 111,
+          "line": 128,
           "kind": "markup",
           "raw": "Event not found",
           "quote": null
@@ -32553,7 +32553,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 68,
+          "line": 85,
           "kind": "js-string",
           "raw": "Detached. This is an ordinary event now.",
           "quote": "'"
@@ -32571,7 +32571,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 71,
+          "line": 88,
           "kind": "js-string",
           "raw": "Failed to detach event",
           "quote": "'"
@@ -32589,7 +32589,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 81,
+          "line": 98,
           "kind": "js-string",
           "raw": "Submission withdrawn",
           "quote": "'"
@@ -32607,7 +32607,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 81,
+          "line": 98,
           "kind": "js-string",
           "raw": "Event deleted",
           "quote": "'"
@@ -32625,7 +32625,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 84,
+          "line": 101,
           "kind": "js-string",
           "raw": "Failed to delete event",
           "quote": "'"
@@ -32643,7 +32643,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 99,
+          "line": 116,
           "kind": "js-string",
           "raw": "Repeats daily",
           "quote": "'"
@@ -32661,7 +32661,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 100,
+          "line": 117,
           "kind": "js-string",
           "raw": "Repeats weekly",
           "quote": "'"
@@ -32679,7 +32679,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 101,
+          "line": 118,
           "kind": "js-string",
           "raw": "Repeats every two weeks",
           "quote": "'"
@@ -32697,7 +32697,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 102,
+          "line": 119,
           "kind": "js-string",
           "raw": "Repeats monthly",
           "quote": "'"
@@ -32715,7 +32715,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 108,
+          "line": 125,
           "kind": "markup",
           "raw": "Loading event...",
           "quote": null
@@ -32733,7 +32733,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 122,
+          "line": 139,
           "kind": "markup",
           "raw": "Awaiting review",
           "quote": null
@@ -32751,7 +32751,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 124,
+          "line": 141,
           "kind": "markup",
           "raw": "The {event.node_status === 'unclaimed' ? 'quilt admins' : 'patch admins'}\n          will look at this event before it appears on the calendar. Only you\n          and the reviewers can see it for now.",
           "quote": null
@@ -32769,7 +32769,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 164,
+          "line": 181,
           "kind": "markup",
           "raw": "This event comes from one of",
           "quote": null
@@ -32787,7 +32787,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 169,
+          "line": 186,
           "kind": "markup",
           "raw": "this patch's event sources",
           "quote": null
@@ -32805,7 +32805,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 170,
+          "line": 187,
           "kind": "markup",
           "raw": "and updates with it. To change it, edit the source calendar, or\n        detach it to make it an ordinary event.",
           "quote": null
@@ -32823,7 +32823,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 183,
+          "line": 200,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -32837,7 +32837,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 187,
+          "line": 200,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -32847,6 +32847,24 @@
           "line": 321,
           "kind": "markup",
           "raw": "Community-submitted",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6bd3f7d659e5",
+      "text": "Tickets &amp; details on {eventLinkHost}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventDetail.svelte",
+          "line": 232,
+          "kind": "markup",
+          "raw": "Tickets &amp; details on {eventLinkHost}",
           "quote": null
         }
       ]
@@ -32862,7 +32880,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 131,
+          "line": 133,
           "kind": "js-string",
           "raw": "Failed to load event",
           "quote": "'"
@@ -32880,7 +32898,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 249,
+          "line": 251,
           "kind": "js-string",
           "raw": "Please select a patch",
           "quote": "'"
@@ -32898,7 +32916,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 250,
+          "line": 252,
           "kind": "js-string",
           "raw": "Start date/time is required",
           "quote": "'"
@@ -32916,21 +32934,21 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 285,
+          "line": 288,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 294,
+          "line": 297,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 314,
+          "line": 317,
           "kind": "markup",
           "raw": "Submitted for review",
           "quote": null
@@ -32948,7 +32966,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 287,
+          "line": 290,
           "kind": "js-string",
           "raw": "Event updated",
           "quote": "'"
@@ -32966,7 +32984,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 296,
+          "line": 299,
           "kind": "js-string",
           "raw": "Event created",
           "quote": "'"
@@ -32984,7 +33002,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 301,
+          "line": 304,
           "kind": "js-string",
           "raw": "Failed to update event",
           "quote": "'"
@@ -33002,7 +33020,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 301,
+          "line": 304,
           "kind": "js-string",
           "raw": "Failed to create event",
           "quote": "'"
@@ -33020,7 +33038,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 316,
+          "line": 319,
           "kind": "markup",
           "raw": "The {pendingReviewers} will look at it. Your event will appear on\n            the calendar once it's approved.",
           "quote": null
@@ -33038,7 +33056,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 339,
+          "line": 342,
           "kind": "markup",
           "raw": "Update your event details.",
           "quote": null
@@ -33056,7 +33074,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 341,
+          "line": 344,
           "kind": "markup",
           "raw": "Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.",
           "quote": null
@@ -33074,7 +33092,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 343,
+          "line": 346,
           "kind": "markup",
           "raw": "Schedule a new event for your community.",
           "quote": null
@@ -33092,7 +33110,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 349,
+          "line": 352,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -33106,7 +33124,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 232,
+          "line": 247,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -33131,7 +33149,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 359,
+          "line": 362,
           "kind": "markup",
           "raw": "Hosting Patch",
           "quote": null
@@ -33149,7 +33167,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 399,
+          "line": 402,
           "kind": "markup",
           "raw": "You aren't a member of this patch, so the {reviewers} will look\n              at your event before it appears.",
           "quote": null
@@ -33167,14 +33185,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 406,
+          "line": 409,
           "kind": "markup",
           "raw": "Location",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 232,
+          "line": 247,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -33199,7 +33217,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 407,
+          "line": 410,
           "kind": "attr:placeholder",
           "raw": "Where is this happening?",
           "quote": "\""
@@ -33207,19 +33225,19 @@
       ]
     },
     {
-      "id": "e1d1bdd960ce",
-      "text": "Image address",
+      "id": "5a3adce002f6",
+      "text": "Event page",
       "words": 2,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 411,
+          "line": 417,
           "kind": "markup",
-          "raw": "Image address",
+          "raw": "Event page",
           "quote": null
         }
       ]
@@ -33235,7 +33253,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 412,
+          "line": 418,
+          "kind": "attr:placeholder",
+          "raw": "https://...",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 427,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -33285,6 +33310,42 @@
       ]
     },
     {
+      "id": "a0ebb41cfdd3",
+      "text": "Where to buy tickets or read more, if this event has a page somewhere else.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 420,
+          "kind": "markup",
+          "raw": "Where to buy tickets or read more, if this event has a page\n            somewhere else.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e1d1bdd960ce",
+      "text": "Image address",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 426,
+          "kind": "markup",
+          "raw": "Image address",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "7486cf3e215a",
       "text": "Link a flyer or photo you already have online. Patchwork points at it and never keeps a copy.",
       "words": 18,
@@ -33295,7 +33356,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 414,
+          "line": 429,
           "kind": "markup",
           "raw": "Link a flyer or photo you already have online. Patchwork points at\n            it and never keeps a copy.",
           "quote": null
@@ -33313,7 +33374,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 424,
+          "line": 439,
           "kind": "markup",
           "raw": "Describe the image",
           "quote": null
@@ -33338,7 +33399,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 425,
+          "line": 440,
           "kind": "attr:placeholder",
           "raw": "Flyer for the March show",
           "quote": "\""
@@ -33356,7 +33417,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 427,
+          "line": 442,
           "kind": "markup",
           "raw": "Read aloud by screen readers, and shown if the image stops\n              loading.",
           "quote": null
@@ -33374,7 +33435,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 435,
+          "line": 450,
           "kind": "markup",
           "raw": "Starts At",
           "quote": null
@@ -33392,7 +33453,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 439,
+          "line": 454,
           "kind": "markup",
           "raw": "Ends At",
           "quote": null
@@ -33410,7 +33471,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 452,
+          "line": 467,
           "kind": "markup",
           "raw": "Times are in {timezone.replace(/_/g, ' ')}{zoneOverridden ? '' : \", this patch's timezone\"}.",
           "quote": null
@@ -33428,7 +33489,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 467,
+          "line": 482,
           "kind": "markup",
           "raw": "An IANA name. Clear it to go back to\n              {patchTimezone ? patchTimezone.replace(/_/g, ' ') : \"the patch's timezone\"}.",
           "quote": null
@@ -33446,7 +33507,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 481,
+          "line": 496,
           "kind": "markup",
           "raw": "Recurrence",
           "quote": null
@@ -33464,7 +33525,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 483,
+          "line": 498,
           "kind": "markup",
           "raw": "One-time",
           "quote": null
@@ -33482,7 +33543,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 484,
+          "line": 499,
           "kind": "markup",
           "raw": "Daily",
           "quote": null
@@ -33500,7 +33561,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 485,
+          "line": 500,
           "kind": "markup",
           "raw": "Weekly",
           "quote": null
@@ -33518,7 +33579,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 486,
+          "line": 501,
           "kind": "markup",
           "raw": "Every Two Weeks",
           "quote": null
@@ -33536,7 +33597,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 487,
+          "line": 502,
           "kind": "markup",
           "raw": "Monthly",
           "quote": null
@@ -33754,7 +33815,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 318,
+          "line": 337,
           "kind": "markup",
           "raw": "Loading events...",
           "quote": null
@@ -34707,7 +34768,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 178,
+          "line": 191,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -36874,7 +36935,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 179,
+          "line": 192,
           "kind": "markup",
           "raw": "Become a member to access events.",
           "quote": null
@@ -36892,7 +36953,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 185,
+          "line": 198,
           "kind": "markup",
           "raw": "{events.length} events",
           "quote": null
@@ -36910,7 +36971,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 207,
+          "line": 220,
           "kind": "markup",
           "raw": "Become a member to create events.",
           "quote": null
@@ -36928,7 +36989,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 209,
+          "line": 222,
           "kind": "markup",
           "raw": "Join this patch to create events.",
           "quote": null
@@ -36946,7 +37007,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 218,
+          "line": 231,
           "kind": "markup",
           "raw": "Download template",
           "quote": null
@@ -36964,9 +37025,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 232,
+          "line": 247,
           "kind": "markup",
           "raw": "When",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a6a32dbc5618",
+      "text": "Link",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchEvents.svelte",
+          "line": 248,
+          "kind": "markup",
+          "raw": "Link",
           "quote": null
         }
       ]
@@ -36982,7 +37061,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 244,
+          "line": 263,
           "kind": "markup",
           "raw": "…and {uploadEvents.length - 8} more",
           "quote": null
@@ -37000,7 +37079,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 255,
+          "line": 274,
           "kind": "markup",
           "raw": "Fix the rows above and re-pick the file.",
           "quote": null
@@ -37018,7 +37097,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 259,
+          "line": 278,
           "kind": "markup",
           "raw": "No events found in {uploadFileName}.",
           "quote": null
@@ -37036,7 +37115,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 263,
+          "line": 282,
           "kind": "markup",
           "raw": "Times are read in your timezone. Rows matching an event already on the\n        calendar are skipped, so re-uploading a corrected file is safe.",
           "quote": null
@@ -37054,7 +37133,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 277,
+          "line": 296,
           "kind": "markup",
           "raw": "Suggested events",
           "quote": null
@@ -37072,7 +37151,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 284,
+          "line": 303,
           "kind": "markup",
           "raw": "&middot; {sub.location}",
           "quote": null
@@ -37090,7 +37169,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 290,
+          "line": 309,
           "kind": "markup",
           "raw": "Suggested by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
@@ -37108,7 +37187,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 321,
+          "line": 340,
           "kind": "markup",
           "raw": "No events scheduled.",
           "quote": null
@@ -37126,7 +37205,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 322,
+          "line": 341,
           "kind": "markup",
           "raw": "Members can create events for meetups, shows, or gatherings.",
           "quote": null
@@ -37144,7 +37223,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 338,
+          "line": 357,
           "kind": "markup",
           "raw": "&middot; {event.location}",
           "quote": null

@@ -5,20 +5,20 @@ visitor-readable string in this repository and records who wrote it.
 
 | | strings | words |
 |---|---:|---:|
-| Written by a person | 196 | 6,734 |
-| Left as drafted, deliberately | 831 | 2,025 |
-| Not yet reviewed | 937 | 6,925 |
-| **Total** | **1964** | **15,684** |
+| Written by a person | 200 | 6,841 |
+| Left as drafted, deliberately | 1068 | 4,701 |
+| Not yet reviewed | 900 | 6,390 |
+| **Total** | **2168** | **17,932** |
 
-Human-authored or deliberately accepted: **52%** of strings.
+Human-authored or deliberately accepted: **58%** of strings.
 
 ## By tier
 
 | Tier | Decided | Total |
 |---|---:|---:|
-| Paragraphs (16+ words) | 192 | 245 |
-| Helper text (6–15 words) | 11 | 418 |
-| Labels (2–5 words) | 824 | 1301 |
+| Paragraphs (16+ words) | 243 | 283 |
+| Helper text (6–15 words) | 68 | 464 |
+| Labels (2–5 words) | 957 | 1421 |
 
 ## Out of scope
 
@@ -169,21 +169,12 @@ Where a model's draft was replaced by a person, both are kept.
 - `web/src/components/SocialShell.svelte`
   - draft: "Run by real people. Yours to seamrip if it ever comes to that."
   - now: "Run by real people and open source. Feel free to build your own if you don't like this one."
-- `web/src/pages/About.svelte`
-  - draft: "Every group here is a patch. A band, a venue, a collective, a coalition. Patches are equals: none is a subcategory of another, and none owns another."
-  - now: "Every group or entity here is represented by patch. Patches are equals: none is a subcategory of another, and none owns another."
-- `web/src/pages/About.svelte`
-  - draft: "Following any public patch takes one click. Joining is for people who want to belong: members vote on proposals, appear on the member list, and help run the place."
-  - now: "You can follow any public patch with one click. Joining is for people who want to participate: members vote on proposals, appear on the member list, and help run the patch."
-- `web/src/pages/About.svelte`
-  - draft: "The quilt places patches near the other patches they share people with. When two tiles sit close, real people move between those groups. Nobody arranges the layout by hand."
-  - now: "The quilt places patches near the other patches they share people with. When two tiles sit close, it's because real people move between those groups."
-- `web/src/pages/About.svelte`
-  - draft: "Leaving is built in. A community can export its data and stand up again under new stewards, which is called a seamrip here. The"
-  - now: "\"Leaving\" is totally fine and affordances for it are built in. It's called a \"Seamrip.\" A community can export its data and stand up again under new stewards The"
 - `web/src/pages/AccountSettings.svelte`
   - draft: "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead — the patches you're part of and follow. You can always move between them from the switcher."
   - now: "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead."
+- `web/src/pages/AdminAggregators.svelte`
+  - draft: "Feed attached. Nothing arrives until you map a name."
+  - now: "Feed attached. Make sure you map any names to get the events flowing."
 - `web/src/pages/AdminLabel.svelte`
   - draft: "The page that tells people who runs this quilt and what it costs to keep up. Publishes to /label, readable without an account."
   - now: "Tells people who runs this quilt and what it costs to keep up. Publishes to /label and is readable without an account."
@@ -202,12 +193,21 @@ Where a model's draft was replaced by a person, both are kept.
 - `web/src/pages/AdminLegal.svelte`
   - draft: "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely, so keep it just as honest."
   - now: "The privacy policy and user agreement, public at /privacy and /terms and linked from every signup form. Patchwork ships honest defaults that describe what the software actually does. Anything you write here replaces the default entirely."
+- `web/src/pages/AdminQuiltSettings.svelte`
+  - draft: "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind — as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory. That's an ops practice, not this export."
+  - now: "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory."
+- `web/src/pages/AdminUsers.svelte`
+  - draft: "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth. No email required."
+  - now: "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth."
 - `web/src/pages/Label.svelte`
   - draft: "Nobody has written this quilt's Label yet. When they do, you'll see who runs the place and what it costs to keep up."
   - now: "Nobody has written this quilt's Label yet."
 - `web/src/pages/Label.svelte`
   - draft: "Real people run this, and real people sometimes run things badly. So the exit is built in: any member can export what they can already see and start the community over somewhere else, under different stewards. Nobody has to ask first."
   - now: "Real people run this, and real people sometimes run things poorly, so the exit is built in. Any member can export what they can already see and start the community over somewhere else, under different stewards."
+- `web/src/pages/Label.svelte`
+  - draft: "What travels is the community — members, events, charters, and the threads between patches. What doesn't is this quilt's addresses: a patch that leaves keeps its people and starts over with the followers it had on other sites."
+  - now: "Only the community travels: members, events, charters, and the threads between patches. This quilt's addresses do not. A patch that leaves keeps its people and starts over with the followers it had on other sites."
 - `web/src/pages/Lining.svelte`
   - draft: "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is marked."
   - now: "The shared baseline every patch on this quilt starts from. A patch can amend its copy. Amendments are public, and the patch is flagged publically if they diverge."
