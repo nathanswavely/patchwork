@@ -2,6 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { clusterNodes, patchActivity } from '../lib/mapClusters.js';
+import {
+  LABEL_POSITIONS, LABEL_HEIGHT, MARKER_W, MARKER_H,
+} from '../lib/mapLabels.js';
 
 // A fake Leaflet map: clustering only ever asks where a point lands in
 // pixels, which is the whole reason the grouping is testable without a
@@ -148,5 +151,56 @@ describe('the out-of-view affordance', () => {
     expect(src).toMatch(/announceOffscreen = true/);
     expect(src).toMatch(/offscreen > 0 && announceOffscreen/);
     expect(home).toMatch(/announceOffscreen=\{!inViewActive\}/);
+  });
+});
+
+// A name is placed twice: measured here for collision, and drawn by Leaflet
+// from an offset. Leaflet anchors a tooltip on the marker's coordinate — the
+// tip of the pin — and pulls it back by its own size, so a small offset puts
+// the name inside its own pin, which is what shipped and what this stops.
+describe('where a name sits relative to its pin', () => {
+  // The pin, with its tip at the origin.
+  const pin = { left: -MARKER_W / 2, right: MARKER_W / 2, top: -MARKER_H, bottom: 0 };
+  const W = 120; // a plausible name
+
+  const boxFor = (pos) => {
+    const left = pos.align === 'left' ? pos.dx
+      : pos.align === 'right' ? pos.dx - W
+      : -W / 2;
+    return {
+      left,
+      right: left + W,
+      top: pos.dy - LABEL_HEIGHT / 2,
+      bottom: pos.dy + LABEL_HEIGHT / 2,
+    };
+  };
+
+  it('never overlaps the pin it belongs to, in any of its positions', () => {
+    for (const pos of LABEL_POSITIONS) {
+      const b = boxFor(pos);
+      const clear = b.right < pin.left || b.left > pin.right
+        || b.bottom < pin.top || b.top > pin.bottom;
+      expect(clear, `${pos.dir} label overlaps its own pin`).toBe(true);
+    }
+  });
+
+  it('draws where it measured', () => {
+    // Leaflet's own rule, from Tooltip._setPosition: it subtracts the
+    // tooltip's size according to direction, then adds the offset. Reproducing
+    // it here means the two can never drift apart unnoticed.
+    for (const pos of LABEL_POSITIONS) {
+      const [ox, oy] = pos.offset;
+      const drawnLeft = pos.dir === 'right' ? ox
+        : pos.dir === 'left' ? ox - W
+        : ox - W / 2;
+      const drawnTop = pos.dir === 'top' ? oy - LABEL_HEIGHT
+        : pos.dir === 'bottom' ? oy
+        : oy - LABEL_HEIGHT / 2;
+      const measured = boxFor(pos);
+      expect(drawnLeft, `${pos.dir} draws at a different x than it measured`)
+        .toBeCloseTo(measured.left, 5);
+      expect(drawnTop, `${pos.dir} draws at a different y than it measured`)
+        .toBeCloseTo(measured.top, 5);
+    }
   });
 });
