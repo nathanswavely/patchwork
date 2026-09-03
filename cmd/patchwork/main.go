@@ -149,6 +149,16 @@ func main() {
 	// derive verification domains from admin-supplied websites (docs/adr/030).
 	handler.BackfillVerificationDomains(db)
 
+	// Decode HTML entities in imported event text ("Lanc Workshop &amp; Tool
+	// Library"). The reader fix only reaches listings a sync still finds; a
+	// dropped or past listing keeps what it was imported with. Warn-and-
+	// continue: encoded text reads badly, it doesn't break anything.
+	if n, err := eventsource.HealEncodedEntities(db); err != nil {
+		log.Printf("warning: entity heal: %v", err)
+	} else if n > 0 {
+		log.Printf("events: decoded HTML entities in %d stored fields", n)
+	}
+
 	// Start AP delivery worker (background goroutine) — only when the
 	// instance actually federates.
 	if cfg.Federation.Enabled {
