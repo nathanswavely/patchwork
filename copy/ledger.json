@@ -19306,14 +19306,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 58,
+          "line": 110,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 72,
+          "line": 124,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
@@ -19331,7 +19331,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 60,
+          "line": 112,
           "kind": "markup",
           "raw": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
           "quote": null
@@ -19350,14 +19350,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 63,
+          "line": 115,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 73,
+          "line": 125,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -19389,7 +19389,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 64,
+          "line": 116,
           "kind": "markup",
           "raw": "Join",
           "quote": null
@@ -19407,7 +19407,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 70,
+          "line": 122,
           "kind": "markup",
           "raw": "I'll lurk for now",
           "quote": null
@@ -19425,7 +19425,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 74,
+          "line": 126,
           "kind": "markup",
           "raw": "&times;",
           "quote": null
@@ -19457,7 +19457,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 74,
+          "line": 126,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
