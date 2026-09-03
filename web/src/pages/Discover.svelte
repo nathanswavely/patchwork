@@ -166,6 +166,69 @@
   let followedHere = $derived(
     [...allPatches].filter((p) => isFollowing(p.slug)).length
   );
+
+  // --- The bulletin's offer (docs/adr/076) ---
+  // Two named choices, neither pre-selected. Not a checkbox: docs/adr/040
+  // deleted one from Welcome, and while what it removed was a *signature*
+  // and this is a *setting*, the register binds — a pre-checked box would be
+  // default-on wearing opt-in's clothes.
+  //
+  // It lives at the end of the discovery flow rather than in onboarding
+  // because onboarding is spent: everyone already on a live instance would
+  // otherwise never be offered it.
+  //
+  // Shown only until it is answered. Declining writes an explicit "no",
+  // which is what makes it distinguishable from never having been asked —
+  // and what stops the offer coming back every visit.
+  const BULLETIN = 'quilt.bulletin';
+  let bulletinDecided = $state(true); // assume answered until told otherwise
+  let bulletinChannels = $state([]);
+  let bulletinSaving = $state(false);
+
+  async function loadBulletinOffer() {
+    if (!isLoggedIn()) return;
+    try {
+      const data = await api('notifications/preferences');
+      bulletinChannels = data.channels || [];
+      for (const cat of data.categories || []) {
+        for (const t of cat.types || []) {
+          if (t.type === BULLETIN) bulletinDecided = !!t.decided;
+        }
+      }
+    } catch {
+      // A preferences endpoint that will not answer is no reason to press
+      // an offer on someone.
+      bulletinDecided = true;
+    }
+  }
+
+  $effect(() => {
+    if (phase === 'answer') loadBulletinOffer();
+  });
+
+  async function answerBulletin(enabled) {
+    if (bulletinSaving) return;
+    bulletinSaving = true;
+    try {
+      await api('notifications/preferences', {
+        method: 'PUT',
+        body: {
+          preferences: bulletinChannels.map((channel) => ({
+            type: BULLETIN, channel, enabled,
+          })),
+        },
+      });
+      bulletinDecided = true;
+      showToast(
+        enabled ? "You'll get a note once a month." : 'No bulletin then.',
+        'success',
+      );
+    } catch (err) {
+      showToast(err.message || 'Something went wrong', 'error');
+    } finally {
+      bulletinSaving = false;
+    }
+  }
 </script>
 
 <div class="discover">
@@ -363,6 +426,27 @@
             <p class="counter">Follow a few and they become your quilt.</p>
           {:else}
             <p class="counter">Following needs an account — reading never does.</p>
+          {/if}
+
+          {#if isLoggedIn() && !bulletinDecided && bulletinChannels.length > 0}
+            <div class="bulletin-offer">
+              <p class="bulletin-ask">
+                Once a month, we can tell you which patches joined. The whole
+                list, in the order they arrived — nothing picked out for you.
+              </p>
+              <div class="bulletin-choices">
+                <button
+                  class="btn btn-secondary"
+                  disabled={bulletinSaving}
+                  onclick={() => answerBulletin(true)}
+                >Tell me who's new</button>
+                <button
+                  class="btn-plain"
+                  disabled={bulletinSaving}
+                  onclick={() => answerBulletin(false)}
+                >No thanks</button>
+              </div>
+            </div>
           {/if}
         </div>
       {/if}
@@ -575,6 +659,43 @@
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid var(--color-border);
+  }
+
+  /* Two named choices, given equal room to be read (docs/adr/076). The
+     decline is worded and clickable, like the intro card's "I'll lurk for
+     now" — not a greyed-out afterthought beside a primary button. */
+  .bulletin-offer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .bulletin-ask {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .bulletin-choices {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-plain {
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0.4rem 0;
+  }
+
+  .btn-plain:hover {
+    color: var(--color-primary);
   }
 
   @media (min-width: 640px) {

@@ -4092,14 +4092,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 824,
+          "line": 828,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 994,
+          "line": 998,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4353,7 +4353,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1175,
+          "line": 1179,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4486,21 +4486,21 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 836,
+          "line": 840,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 287,
+          "line": 294,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 349,
+          "line": 358,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4847,7 +4847,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 951,
+          "line": 955,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5363,14 +5363,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 830,
+          "line": 834,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1000,
+          "line": 1004,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -7198,7 +7198,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1200,
+          "line": 1204,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7237,7 +7237,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1204,
+          "line": 1208,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7513,7 +7513,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1187,
+          "line": 1191,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -7531,7 +7531,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1208,
+          "line": 1212,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -7549,7 +7549,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1217,
+          "line": 1221,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired — the patch is claimable again",
           "quote": null
@@ -7567,14 +7567,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1226,
+          "line": 1230,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1232,
+          "line": 1236,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -7592,7 +7592,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1235,
+          "line": 1239,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -8084,14 +8084,14 @@
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 306,
+          "line": 313,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 341,
+          "line": 350,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -8847,7 +8847,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 859,
+          "line": 863,
           "kind": "go-error-body",
           "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
@@ -11643,7 +11643,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 741,
+          "line": 745,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -11661,14 +11661,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 883,
+          "line": 887,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 890,
+          "line": 894,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -11686,7 +11686,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 901,
+          "line": 905,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -11704,7 +11704,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 963,
+          "line": 967,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -11722,7 +11722,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1008,
+          "line": 1012,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -13948,7 +13948,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tree.go",
-          "line": 85,
+          "line": 89,
           "kind": "go-error-body",
           "raw": "failed to query nodes",
           "quote": null
@@ -14423,7 +14423,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 105,
+          "line": 106,
           "kind": "go-string",
           "raw": "Voting ends soon: ",
           "quote": "\""
@@ -14441,7 +14441,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 106,
+          "line": 107,
           "kind": "go-string",
           "raw": "Less than 24 hours to vote on this proposal.",
           "quote": "\""
@@ -14459,7 +14459,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 158,
+          "line": 159,
           "kind": "go-string",
           "raw": "Tomorrow: ",
           "quote": "\""
@@ -14477,7 +14477,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 159,
+          "line": 160,
           "kind": "go-string",
           "raw": "This event starts in less than 24 hours.",
           "quote": "\""
@@ -14495,7 +14495,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 222,
+          "line": 223,
           "kind": "go-string",
           "raw": "Your approved claim on ",
           "quote": "\""
@@ -14513,7 +14513,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 236,
+          "line": 237,
           "kind": "go-string",
           "raw": "January 2, 2006",
           "quote": "\""
@@ -14531,7 +14531,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 17,
+          "line": 25,
           "kind": "go-string",
           "raw": "New proposals, voting updates, deadlines",
           "quote": "\""
@@ -14549,7 +14549,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 18,
+          "line": 26,
           "kind": "go-string",
           "raw": "Document and rules changes",
           "quote": "\""
@@ -14567,7 +14567,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 19,
+          "line": 27,
           "kind": "go-string",
           "raw": "Join/leave notifications for admins",
           "quote": "\""
@@ -14585,7 +14585,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 20,
+          "line": 28,
           "kind": "go-string",
           "raw": "Event creation, updates, reminders",
           "quote": "\""
@@ -14603,9 +14603,45 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 21,
+          "line": 29,
           "kind": "go-string",
           "raw": "Claim requests, submissions",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "93929034995d",
+      "text": "The quilt",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The sixth notification category (docs/adr/076) — named for what it is, not folded into Events or Admin.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 30,
+          "kind": "go-string",
+          "raw": "The quilt",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "7333f8c608c6",
+      "text": "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "States the doctrine where a person meets it: off unless asked for, and the one notification that is not about them.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 30,
+          "kind": "go-string",
+          "raw": "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.",
           "quote": "\""
         }
       ]
@@ -14621,7 +14657,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 141,
+          "line": 171,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -14639,7 +14675,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 142,
+          "line": 172,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -14657,7 +14693,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 143,
+          "line": 173,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -14675,7 +14711,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 144,
+          "line": 174,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -14693,7 +14729,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 145,
+          "line": 175,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -14711,7 +14747,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 146,
+          "line": 176,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -14729,7 +14765,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 147,
+          "line": 177,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -14747,7 +14783,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 148,
+          "line": 178,
           "kind": "go-string",
           "raw": "Voting ends in 24 hours",
           "quote": "\""
@@ -14765,7 +14801,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 150,
+          "line": 180,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -14783,7 +14819,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 155,
+          "line": 185,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -14801,7 +14837,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 156,
+          "line": 186,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -14819,7 +14855,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 157,
+          "line": 187,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -14837,7 +14873,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 158,
+          "line": 188,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -14855,7 +14891,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 159,
+          "line": 189,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -14873,7 +14909,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 161,
+          "line": 191,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -14891,7 +14927,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 162,
+          "line": 192,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -14909,7 +14945,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 163,
+          "line": 193,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -14927,7 +14963,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 164,
+          "line": 194,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -14945,7 +14981,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 165,
+          "line": 195,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -14963,7 +14999,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 166,
+          "line": 196,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -14981,7 +15017,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 168,
+          "line": 198,
           "kind": "go-string",
           "raw": "New event",
           "quote": "\""
@@ -14999,7 +15035,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 169,
+          "line": 199,
           "kind": "go-string",
           "raw": "Event starts in 24 hours",
           "quote": "\""
@@ -15017,7 +15053,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 170,
+          "line": 200,
           "kind": "go-string",
           "raw": "Event details changed",
           "quote": "\""
@@ -15035,7 +15071,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 171,
+          "line": 201,
           "kind": "go-string",
           "raw": "Event cancelled",
           "quote": "\""
@@ -15053,7 +15089,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 173,
+          "line": 203,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -15071,7 +15107,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 174,
+          "line": 204,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -15089,7 +15125,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 175,
+          "line": 205,
           "kind": "go-string",
           "raw": "Your event was declined",
           "quote": "\""
@@ -15107,7 +15143,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 177,
+          "line": 207,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -15125,7 +15161,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 178,
+          "line": 208,
           "kind": "go-string",
           "raw": "Event link confirmed",
           "quote": "\""
@@ -15143,7 +15179,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 182,
+          "line": 212,
           "kind": "go-string",
           "raw": "A listing matched one of your programs",
           "quote": "\""
@@ -15161,7 +15197,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 184,
+          "line": 214,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -15179,7 +15215,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 185,
+          "line": 215,
           "kind": "go-string",
           "raw": "New patch submission",
           "quote": "\""
@@ -15197,7 +15233,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 186,
+          "line": 216,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -15215,7 +15251,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 187,
+          "line": 217,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
           "quote": "\""
@@ -15233,9 +15269,27 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 189,
+          "line": 219,
           "kind": "go-string",
           "raw": "Your claim was approved",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "56a6ec6f75d2",
+      "text": "New patches this month",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The bulletin type label in notification settings (docs/adr/076).",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 224,
+          "kind": "go-string",
+          "raw": "New patches this month",
           "quote": "\""
         }
       ]
@@ -15251,7 +15305,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 190,
+          "line": 225,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -19445,7 +19499,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 457,
+          "line": 472,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -20152,14 +20206,14 @@
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 299,
+          "line": 362,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 345,
+          "line": 408,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
@@ -20650,7 +20704,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 531,
+          "line": 547,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -26926,7 +26980,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 471,
+          "line": 486,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -32119,14 +32173,14 @@
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 297,
+          "line": 360,
           "kind": "markup",
           "raw": "Following",
           "quote": null
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 343,
+          "line": 406,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -32200,6 +32254,13 @@
           "quote": "'"
         },
         {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 227,
+          "kind": "js-string",
+          "raw": "Something went wrong",
+          "quote": "'"
+        },
+        {
           "file": "web/src/pages/RemotePatch.svelte",
           "line": 70,
           "kind": "js-string",
@@ -32208,16 +32269,52 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 260,
+          "line": 275,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 315,
+          "line": 330,
           "kind": "js-string",
           "raw": "Something went wrong",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "174c607ea6e9",
+      "text": "You'll get a note once a month.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Confirms the opt-in taken at the end of the discovery flow.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 223,
+          "kind": "js-string",
+          "raw": "You'll get a note once a month.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "26895fac883b",
+      "text": "No bulletin then.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Confirms a decline — an answer, recorded, so the offer does not return.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 223,
+          "kind": "js-string",
+          "raw": "No bulletin then.",
           "quote": "'"
         }
       ]
@@ -32233,7 +32330,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 174,
+          "line": 237,
           "kind": "markup",
           "raw": "What are you drawn to?",
           "quote": null
@@ -32251,7 +32348,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 176,
+          "line": 239,
           "kind": "markup",
           "raw": "Pick a few and we'll pull up the patches that match. These are the\n        tags this quilt actually wears, most-worn first.",
           "quote": null
@@ -32269,7 +32366,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 204,
+          "line": 267,
           "kind": "markup",
           "raw": "{selectedInterests.size} selected",
           "quote": null
@@ -32287,7 +32384,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 232,
+          "line": 295,
           "kind": "markup",
           "raw": "Looking…",
           "quote": null
@@ -32305,7 +32402,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 236,
+          "line": 299,
           "kind": "markup",
           "raw": "Nothing here yet",
           "quote": null
@@ -32323,7 +32420,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 238,
+          "line": 301,
           "kind": "markup",
           "raw": "No patches on this quilt so far. Make one for your group, and the\n          next person who comes looking will have something to find.",
           "quote": null
@@ -32341,7 +32438,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 249,
+          "line": 312,
           "kind": "markup",
           "raw": "{matching.length}\n          {matching.length === 1 ? 'patch' : 'patches'}{selectedInterests.size > 0 ? ' match what you picked' : ''}{' '}\n          — the ones with something coming up are first.",
           "quote": null
@@ -32359,7 +32456,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 357,
+          "line": 420,
           "kind": "markup",
           "raw": "Following {followedHere} {followedHere === 1 ? 'patch' : 'patches'}",
           "quote": null
@@ -32377,7 +32474,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 363,
+          "line": 426,
           "kind": "markup",
           "raw": "Follow a few and they become your quilt.",
           "quote": null
@@ -32395,9 +32492,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 365,
+          "line": 428,
           "kind": "markup",
           "raw": "Following needs an account — reading never does.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2221b28f8cc3",
+      "text": "Once a month, we can tell you which patches joined. The whole list, in the order they arrived — nothing picked out for you.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The offer prose (docs/adr/076): says out loud that the list is complete and unranked.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 434,
+          "kind": "markup",
+          "raw": "Once a month, we can tell you which patches joined. The whole\n                list, in the order they arrived — nothing picked out for you.",
           "quote": null
         }
       ]
@@ -39244,7 +39359,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 367,
+          "line": 382,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -42369,7 +42484,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 339,
+          "line": 354,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -42387,7 +42502,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 360,
+          "line": 375,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -42405,7 +42520,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 362,
+          "line": 377,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -42423,7 +42538,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 396,
+          "line": 411,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
           "quote": null
@@ -42441,7 +42556,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 473,
+          "line": 488,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -42459,7 +42574,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 473,
+          "line": 488,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -42477,7 +42592,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 487,
+          "line": 502,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -42495,7 +42610,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 492,
+          "line": 507,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -42513,9 +42628,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 496,
+          "line": 511,
           "kind": "markup",
           "raw": "Quilt order",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "96ec5d338ae3",
+      "text": "Recently added",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The cards list's third order (docs/adr/074), reading when a community arrived (docs/adr/076).",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 512,
+          "kind": "markup",
+          "raw": "Recently added",
           "quote": null
         }
       ]
@@ -42531,7 +42664,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 519,
+          "line": 535,
           "kind": "markup",
           "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -42549,7 +42682,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 528,
+          "line": 544,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -42567,7 +42700,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 540,
+          "line": 556,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null

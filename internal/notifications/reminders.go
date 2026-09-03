@@ -37,6 +37,7 @@ func runReminders(n *Notifier) {
 	checkProposalDeadlines(n)
 	checkEventReminders(n)
 	checkClaimSetupExpiring(n)
+	sendBulletin(n)
 	cleanupOldNotifications(n)
 	ExpireStaleClaims(n.DB)
 	// Seats that went quiet, and the succession that catches a patch they

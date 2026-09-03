@@ -87,7 +87,7 @@ func Tables() []Table {
 				address, website, image_url, image_alt, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
-				submitted_by, submission_source, did, created_at, updated_at
+				submitted_by, submission_source, did, activated_at, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -125,6 +125,14 @@ func Tables() []Table {
 				// that one needs plc.directory to say what it means.
 				id("submitted_by"), c("submission_source"),
 				def("did", ""),
+				// When the patch joined the quilt (docs/adr/076). It travels
+				// because it is a fact about the community, not about this
+				// deployment: a fork that dropped it would date every patch to
+				// the import and announce its whole history as new arrivals.
+				// def() so archives written before the column exists import as
+				// NULL - which reads correctly as "not recorded", the same
+				// thing an unclaimed listing carries.
+				def("activated_at", nil),
 				c("created_at"), c("updated_at")),
 		},
 		{

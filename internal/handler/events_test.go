@@ -5,11 +5,22 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
+
+// daysOut is a start time n days from now. Fixture dates have to stay ahead
+// of the clock: omitting `from` means upcoming (CLAUDE.md), so an event
+// hardcoded to a date that has since arrived silently drops out of the very
+// list these tests page through. Written with September 2026 literals, they
+// began failing on 2026-09-01 for exactly that reason, and the October and
+// November literals were two more fuses behind it.
+func daysOut(n int) string {
+	return time.Now().UTC().AddDate(0, 0, n).Format("2006-01-02T15:04:05.000Z")
+}
 
 // seedEvent inserts a public event with an explicit UUIDv7, so callers control
 // creation order (id order) independently of starts_at order.
@@ -95,7 +106,7 @@ func TestListEvents_PaginationCoversAllRows(t *testing.T) {
 			node = nodeB
 		}
 		title := fmt.Sprintf("event-%02d", total-1-i)
-		seedEvent(t, db, node, user.ID, title, fmt.Sprintf("2026-09-%02dT18:00:00Z", total-i))
+		seedEvent(t, db, node, user.ID, title, daysOut(total-i))
 	}
 	// Expected order is by starts_at ascending, which is reverse insertion order.
 	for i := 0; i < total; i++ {
@@ -138,8 +149,9 @@ func TestListEvents_PaginationHandlesStartsAtTies(t *testing.T) {
 
 	// All six share one starts_at, so every page break lands inside the tie.
 	const total = 6
+	tied := daysOut(30)
 	for i := 0; i < total; i++ {
-		seedEvent(t, db, nodeID, user.ID, fmt.Sprintf("tied-%02d", i), "2026-10-01T20:00:00Z")
+		seedEvent(t, db, nodeID, user.ID, fmt.Sprintf("tied-%02d", i), tied)
 	}
 
 	got := pageThroughEvents(t, db, "", 2)
@@ -198,8 +210,8 @@ func TestListEvents_PrivatePatchHiddenFromGlobalList(t *testing.T) {
 		t.Fatalf("set private: %v", err)
 	}
 
-	seedEvent(t, db, publicNode, user.ID, "public-event", "2026-09-01T18:00:00Z")
-	seedEvent(t, db, privateNode, user.ID, "private-patch-event", "2026-09-02T18:00:00Z")
+	seedEvent(t, db, publicNode, user.ID, "public-event", daysOut(1))
+	seedEvent(t, db, privateNode, user.ID, "private-patch-event", daysOut(2))
 
 	got := listEventTitles(t, db, "")
 	if len(got) != 1 || got[0] != "public-event" {
@@ -221,8 +233,8 @@ func TestListEvents_ArchivedPatchEventsGone(t *testing.T) {
 	liveNode := createTestNode(t, db, user.ID, "Live Patch", "live-patch", "open")
 	deadNode := createTestNode(t, db, user.ID, "Dead Patch", "dead-patch", "open")
 
-	seedEvent(t, db, liveNode, user.ID, "live-event", "2026-09-01T18:00:00Z")
-	seedEvent(t, db, deadNode, user.ID, "dead-event", "2026-09-02T18:00:00Z")
+	seedEvent(t, db, liveNode, user.ID, "live-event", daysOut(1))
+	seedEvent(t, db, deadNode, user.ID, "dead-event", daysOut(2))
 
 	if _, err := db.Exec("UPDATE nodes SET status = 'archived' WHERE id = ?", deadNode); err != nil {
 		t.Fatalf("archive node: %v", err)
@@ -271,7 +283,7 @@ func TestListEvents_MalformedCursor(t *testing.T) {
 	db := setupTestDB(t)
 	user, _ := createTestUser(t, db, "events-badcursor", "member")
 	nodeID := createTestNode(t, db, user.ID, "Cursor Patch", "cursor-patch", "open")
-	seedEvent(t, db, nodeID, user.ID, "only-event", "2026-11-01T12:00:00Z")
+	seedEvent(t, db, nodeID, user.ID, "only-event", daysOut(60))
 
 	r := authedRequest("GET", "/api/v1/events?after=not-a-valid-cursor", nil, "")
 	w := servePublicMux(t, "GET", "/api/v1/events", handler.ListEvents(db), r)

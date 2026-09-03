@@ -482,10 +482,13 @@ func (s *seeder) seedNodes() {
 			fpJSON = &s
 		}
 
-		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, status, ap_id, governance_config, website, links, follower_permissions)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?)`,
+		// Seeded patches are active, so they joined when they were made
+		// (docs/adr/076). The unclaimed listings below stay NULL - a
+		// directory row is not an arrival.
+		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, governance_config, website, links, follower_permissions)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?)`,
 			id, s.userIDs[n.ownerIdx], n.name, n.slug, n.description,
-			n.lat, n.lng, n.address, n.membershipPolicy, string(appearanceJSON), createdAt, createdAt, apID, gcJSON, n.website, linksJSON, fpJSON)
+			n.lat, n.lng, n.address, n.membershipPolicy, string(appearanceJSON), createdAt, createdAt, createdAt, apID, gcJSON, n.website, linksJSON, fpJSON)
 		if err != nil {
 			log.Fatalf("seed node %s: %v", n.slug, err)
 		}

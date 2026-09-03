@@ -106,6 +106,24 @@ describe('discovery control placement', () => {
     expect(src).toContain("scopedPath('map', quiltScope)");
   });
 
+  it('offers Recently added, reading when a community arrived', () => {
+    // docs/adr/074's third order, unblocked by nodes.activated_at. It must
+    // read the arrival date, never created_at — on a directory-seeded quilt
+    // those differ by the whole backlog (docs/adr/076).
+    const src = source('pages/SocialHome.svelte');
+    expect(src).toContain('Recently added');
+    expect(src).toContain('activated_at');
+    expect(src).not.toContain('b.created_at');
+  });
+
+  it('sends patches that never joined to the tail of Recently added', () => {
+    // An unclaimed listing has no arrival, and inventing one would date it to
+    // whenever an admin typed it in.
+    const src = source('pages/SocialHome.svelte');
+    const block = src.slice(src.indexOf("getListOrder() === 'recent'"));
+    expect(block.slice(0, 500)).toContain('if (aa) return -1;');
+  });
+
   it('gives the list its own order and lens controls', () => {
     const src = source('pages/SocialHome.svelte');
     expect(src).toContain('list-controls');

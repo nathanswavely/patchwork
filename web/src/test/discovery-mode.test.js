@@ -127,9 +127,19 @@ describe('discovery mode', () => {
   });
 
   it('stores nothing about who saw what', () => {
+    // The flow records nothing about the visit: no localStorage, and none of
+    // the onboarding dismissal machinery /welcome uses. Assert the machinery
+    // rather than the word — the bulletin's offer (docs/adr/076) explains in
+    // a comment why it lives here and not in onboarding, and prose about a
+    // module is not a use of it.
+    //
+    // The bulletin preference the offer writes is not a counter-example: it
+    // is a setting the person chose, not a record of what they were shown.
     const src = source('pages/Discover.svelte');
     expect(src).not.toContain('localStorage');
-    expect(src).not.toContain('onboarding');
+    expect(src).not.toContain("lib/onboarding.js");
+    expect(src).not.toContain('dismissOnboarding');
+    expect(src).not.toContain('isOnboardingDismissed');
   });
 
   it('has a standing door in the rail', () => {
@@ -137,6 +147,32 @@ describe('discovery mode', () => {
     const src = source('components/SocialShell.svelte');
     expect(src).toContain("id: 'discover'");
     expect(src).toContain("href: '/discover'");
+  });
+});
+
+// The bulletin's offer (docs/adr/076) lives at the end of the flow.
+describe('the bulletin offer', () => {
+  it('is two named choices, not a checkbox', () => {
+    // docs/adr/040's register binds even though a mail preference is a
+    // setting rather than a signature: a pre-checked box would be
+    // default-on wearing opt-in's clothes.
+    const src = source('pages/Discover.svelte');
+    expect(src).toContain("Tell me who's new");
+    expect(src).toContain('No thanks');
+    expect(src).not.toContain('type="checkbox"');
+  });
+
+  it('records a decline, so the offer does not come back every visit', () => {
+    // Declining writes an explicit no. Without that, "no thanks" would be
+    // indistinguishable from never having been asked.
+    const src = source('pages/Discover.svelte');
+    expect(src).toContain('answerBulletin(false)');
+    expect(src).toContain('bulletinDecided');
+  });
+
+  it('asks nobody who is signed out, and nobody who already answered', () => {
+    const src = source('pages/Discover.svelte');
+    expect(src).toContain('isLoggedIn() && !bulletinDecided');
   });
 });
 

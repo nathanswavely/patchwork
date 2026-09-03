@@ -199,6 +199,21 @@
     if (getListOrder() === 'alpha') {
       return [...list].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     }
+    // Recently added (docs/adr/074) reads `activated_at` — when a community
+    // arrived, not when a row was written. A patch without one has not
+    // joined: an unclaimed listing is a directory entry nobody has claimed,
+    // and a remote follow's snapshot carries no arrival either. They keep the
+    // tail, by name, rather than being dated to the day someone typed them in.
+    if (getListOrder() === 'recent') {
+      return [...list].sort((a, b) => {
+        const aa = a.activated_at;
+        const ba = b.activated_at;
+        if (aa && ba) return ba.localeCompare(aa) || (a.name || '').localeCompare(b.name || '');
+        if (aa) return -1;
+        if (ba) return 1;
+        return (a.name || '').localeCompare(b.name || '');
+      });
+    }
     const home = list.filter(p => !p._source);
     const remote = list.filter(p => p._source);
     const rank = new Map(quiltOrder(home, affinityData).map((id, i) => [id, i]));
@@ -494,6 +509,7 @@
           onchange={(e) => setListOrder(e.currentTarget.value)}
         >
           <option value="quilt">Quilt order</option>
+          <option value="recent">Recently added</option>
           <option value="alpha">A→Z</option>
         </select>
       </div>

@@ -27,6 +27,34 @@ func IsChannelEnabled(db *database.DB, userID string, t NotificationType, channe
 	return enabled == 1
 }
 
+// DecidedTypes returns the notification types this person has an explicit
+// stored preference for, on any channel.
+//
+// GetUserPreferences merges saved rows over defaults, which answers "is this
+// on" and loses "did anyone ever say". The bulletin needs the second question
+// (docs/adr/076): it is offered as two named choices, and declining is an
+// answer. Without this, "no thanks" would be indistinguishable from never
+// having been asked, and the offer would return on every visit — a nag, which
+// is the thing the opt-in was protecting against.
+func DecidedTypes(db *database.DB, userID string) map[NotificationType]bool {
+	decided := make(map[NotificationType]bool)
+	rows, err := db.Query(
+		`SELECT DISTINCT notification_type FROM notification_preferences WHERE user_id = ?`,
+		userID,
+	)
+	if err != nil {
+		return decided
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var t string
+		if err := rows.Scan(&t); err == nil {
+			decided[NotificationType(t)] = true
+		}
+	}
+	return decided
+}
+
 // GetUserPreferences returns all preferences for a user, merged with defaults.
 // Returns a map keyed by "type:channel".
 func GetUserPreferences(db *database.DB, userID string, channels []string) []Preference {
@@ -118,7 +146,7 @@ func SetCategoryEnabled(db *database.DB, nodeID string, cat Category, enabled bo
 // GetPatchNotificationConfig returns all category toggles for a patch, merged with defaults.
 func GetPatchNotificationConfig(db *database.DB, nodeID string) map[Category]bool {
 	config := make(map[Category]bool)
-	for _, ci := range AllCategories() {
+	for _, ci := range PatchCategories() {
 		config[ci.ID] = true // Default: all enabled.
 	}
 

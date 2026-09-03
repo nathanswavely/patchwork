@@ -1125,8 +1125,12 @@ func activateClaimedNode(db *database.DB, nodeID, newOwnerID, now string) error 
 	// Conditional on still-unclaimed so two racing setups can't both
 	// activate: the status check in SetupClaim is advisory, this is the gate.
 	res, err := db.Exec(
-		"UPDATE nodes SET owner_id = ?, status = 'active', updated_at = ? WHERE id = ? AND status = 'unclaimed'",
-		newOwnerID, now, nodeID,
+		// Submitting setup is the moment the patch becomes active and its
+		// community arrives, so it is the moment it joined the quilt
+		// (docs/adr/076). updated_at cannot carry this: every later edit
+		// moves it.
+		"UPDATE nodes SET owner_id = ?, status = 'active', activated_at = ?, updated_at = ? WHERE id = ? AND status = 'unclaimed'",
+		newOwnerID, now, now, nodeID,
 	)
 	if err != nil {
 		return err
