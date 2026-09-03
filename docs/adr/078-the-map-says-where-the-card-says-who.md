@@ -5,7 +5,8 @@ eight decisions. The last to land were the out-of-view affordance
 (decision 8) and the pointer half of decision 7 — hovering a marker or a
 tile highlights that patch's card in the pane — which waited on the
 concurrent in-view lens work (docs/adr/074) rather than racing it.
-Decided while grilling the map's UX. Applies ADR 022's lens rule to the
+Decision 7 was then corrected in four places by being used on a phone —
+see "What use corrected" at the foot. Decided while grilling the map's UX. Applies ADR 022's lens rule to the
 one surface that never honoured it, and borrows the quilt's identity-versus-
 status discipline (docs/adr/004, docs/adr/029) to a second surface.
 
@@ -194,3 +195,43 @@ never geocoded", and a map location "is a separate act".
 - The measurements here were read from the DOM, not from screenshots. The
   preview pane served stale composites throughout — a single "33" disc on
   screen while the DOM held 6 clusters and 13 markers.
+
+## What use corrected, 2026-09-03
+
+Decision 7 shipped and was then read on a phone. Four corrections, none of
+which change the decision:
+
+- **The hovering tip is not built where there is no pointer.** Touch
+  synthesises the `mouseenter` on tap and never synthesises the leave, so
+  the quilt's tip arrived with the tap and stayed, over the surface the tap
+  was meant to be reading. The single gesture already has an answer, and it
+  is the better one. Not built rather than guarded at each call site: with
+  no element every `showTooltip` is a no-op.
+- **Every tile answers the hover, badge or no badge.** The tip used to be
+  suppressed on tiles that had won a name badge, which made the same gesture
+  do different things depending on a label collision the reader cannot see —
+  and the name is the one thing in the tip they already had. A badge is
+  stacked above the svg, so it now reports through the same `onPatchHover`
+  door: crossing onto a name is a `mouseleave` for the tile beneath it, and
+  without that the tip and the pane's highlight both dropped.
+- **The docked card is a sheet, and it lives outside the quilt pane.** The
+  pane is its own stacking context at `z-index: 0`, which is what keeps
+  Leaflet's ~1000s off the app's chrome; inside it, no z-index the card
+  could carry cleared the floating buttons, and the filter button sat on the
+  card's description. Out at the root it rests on the bottom edge, covers
+  the tab bar the way every other app's sheet does, and carries the surface,
+  the corners and the shadow itself — the card inside gives all four up,
+  since two frames read as a card in a box. It closes three ways: the
+  dismiss, a pull on the handle, and a tap on the surface behind it.
+- **The sheet names the tap that opens the patch, and spells out the
+  viewer's standing.** Nothing had told a reader who arrived by tapping a
+  tile that another tap opens the patch, so "View patch" says it, in an
+  action row with the standing beside it. An icon-only cluster beside the
+  dismiss — Maps' convention — was tried and rejected: Maps' own action row
+  is icon *plus* label, and the bare icons at its top are duplicates of
+  labelled things below, safe to strip because a billion people already
+  learned them. Here a wrench would have to teach "admin" to someone meeting
+  the ladder for the first time, and "Member" is a status, so as a bare disc
+  it is a button that does nothing when pressed. In the pane the standing
+  stays a corner chip: there, tapping a card is already the convention, and
+  eighteen invitations are noise.

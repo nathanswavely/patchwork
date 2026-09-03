@@ -65,6 +65,11 @@
     // the pointer is over and the parent decides what that means — here, the
     // patch's card highlighting in the pane beside it.
     onPatchHover = null,
+    // A click that landed on no patch. The map reports the same thing
+    // through the same name, so the docked card closes by tapping past it on
+    // either surface (docs/adr/078) — a sheet you can only dismiss by
+    // finding its one small button is a sheet in the reader's way.
+    onBackgroundClick = null,
   } = $props();
 
   let containerEl = $state(null);
@@ -424,6 +429,10 @@
   let weaveSettleTimer = null;
   let svgSelection = null;
   let zoomBehavior = null;
+  // Whether the gesture in flight moved the quilt — the same distinction the
+  // name badges keep (labelGestureMoved), for the same reason: a pan ends in
+  // a click, and a pan is not a tap on what happens to be underneath.
+  let quiltGestureMoved = false;
   // Container size the current layout was built against, so the observer can
   // ignore the reflows that don't actually change what we'd draw.
   let lastBuiltW = 0;
@@ -1030,13 +1039,17 @@
         // Hover + click — a static hero has nowhere for a tooltip to land
         // and nothing to navigate to, so it skips gestures entirely rather
         // than swallowing them silently.
+        //
+        // Every tile answers the hover, whether or not it won a name badge.
+        // The tip used to be suppressed on labelled tiles on the grounds that
+        // the badge already said the name, which made the same gesture do
+        // different things depending on a collision the reader can't see —
+        // and the name is the one thing in the tip they already had.
         if (interactive) {
           g.on('mouseenter', function(event) {
             d3.select(this).select('.overlay').attr('fill', 'var(--color-overlay-hover)');
             if (onPatchHover) onPatchHover(tile.data);
-            if (tooltip && !labeledPatchIds.has(tile.data.id)) {
-              showTooltip(tile.data, event.clientX, event.clientY);
-            }
+            showTooltip(tile.data, event.clientX, event.clientY);
           })
           .on('mousemove', function(event) {
             if (tooltip && tooltip.style.display === 'block') {
@@ -1128,7 +1141,11 @@
     zoomBehavior = d3.zoom()
       .scaleExtent([0.3, 6])
       .filter(event => event.type !== 'dblclick')
+      .on('start', () => { quiltGestureMoved = false; })
       .on('zoom', (event) => {
+        // A pan and a tap arrive as the same sequence, ending in the same
+        // click. Anything that actually moved the quilt was not a tap on it.
+        quiltGestureMoved = true;
         zoomG.attr('transform', event.transform);
         currentTransform = event.transform;
         updateLabels();
@@ -1142,7 +1159,19 @@
     // Static mode never binds the interaction listeners, but zoomBehavior
     // still owns the element's transform state, so the programmatic
     // fit-to-view call below (and any later relayout) works either way.
-    if (interactive) svg.call(zoomBehavior);
+    if (interactive) {
+      svg.call(zoomBehavior);
+      // Bare fabric: outside the quilt's edge, or on a filler tile, which is
+      // padding rather than a patch. A tile's own click handler runs first
+      // and this fires as the click bubbles, so the test is what it landed
+      // on, not where. The cloth is pointer-events: none, so it never stands
+      // in for the tile beneath it (see buildCloth).
+      svg.on('click', (event) => {
+        if (quiltGestureMoved) return;
+        if (event.target.closest?.('g.tile')) return;
+        if (onBackgroundClick) onBackgroundClick();
+      });
+    }
 
     // Default zoom: fit the quilt to the visible area rather than starting at
     // identity. A small or uniformly-sized quilt otherwise renders too small
@@ -1419,9 +1448,14 @@
     label.appendChild(nameSpan);
     applyBadgeShape(label, textW, lines);
 
-    // Label hover → tooltip + click → select patch.
+    // Label hover → tooltip + click → select patch. A badge is stacked above
+    // the svg, so crossing onto one is a mouseleave for the tile underneath:
+    // without these the tip and the pane's highlight would both drop the
+    // moment the pointer found the name. Same door as the tile
+    // (docs/adr/078) — the badge is part of the patch, not a thing beside it.
     const tileData = tile.data;
     label.addEventListener('mouseenter', (event) => {
+      if (onPatchHover) onPatchHover(tileData);
       showTooltip(tileData, event.clientX, event.clientY);
     });
     label.addEventListener('mousemove', (event) => {
@@ -1431,6 +1465,7 @@
       }
     });
     label.addEventListener('mouseleave', () => {
+      if (onPatchHover) onPatchHover(null);
       if (tooltip) tooltip.style.display = 'none';
     });
     label.addEventListener('click', () => {
@@ -2144,7 +2179,16 @@
     // then sweeps every following sibling, including the {#if} anchor its
     // parent needs to render the next branch (quilt → map left the pane
     // permanently empty). Its styles are already :global.
-    if (interactive) {
+    //
+    // Only where there is a pointer to hover with. Touch synthesises the
+    // mouseenter on tap and never synthesises the leave, so on a phone the
+    // tip arrived with the tap and then stayed, over the surface the tap was
+    // meant to be reading. That gesture already has an answer — the docked
+    // card (docs/adr/078, decision 7) — and it is the better one: it names
+    // the patch's card rather than a box that outlives its own hover. Built
+    // or not built rather than guarded at each call site: with no element,
+    // every showTooltip is already a no-op.
+    if (interactive && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       tooltip = document.createElement('div');
       tooltip.className = 'canvas-tooltip';
       document.body.appendChild(tooltip);

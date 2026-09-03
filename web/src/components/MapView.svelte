@@ -255,11 +255,10 @@
       zIndexOffset: Math.min(patchActivity(node), 500),
     });
 
-    // A name is a tooltip either way; what the collision pass decides is
-    // whether it stands open. The rest reveal on hover — and on touch,
-    // where Leaflet opens a tooltip on tap, which is the same promise.
     // A name is a tooltip either way; the placement pass decides only whether
-    // it stands open, and on which side it sits when it does.
+    // it stands open, and on which side it sits when it does. The rest reveal
+    // on hover — and on touch, where Leaflet opens a tooltip on tap, which is
+    // the same promise.
     marker.bindTooltip(node.name, {
       permanent: !!position,
       direction: position ? position.dir : 'right',
