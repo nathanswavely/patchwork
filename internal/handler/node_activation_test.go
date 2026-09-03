@@ -148,6 +148,7 @@ func TestTreeCarriesTheArrivalToTheList(t *testing.T) {
 			Children []struct {
 				Slug        string  `json:"slug"`
 				ActivatedAt *string `json:"activated_at"`
+				CreatedAt   string  `json:"created_at"`
 			} `json:"children"`
 		} `json:"tree"`
 	}
@@ -156,11 +157,18 @@ func TestTreeCarriesTheArrivalToTheList(t *testing.T) {
 	}
 
 	seen := map[string]*string{}
+	created := map[string]string{}
 	for _, c := range resp.Tree.Children {
 		seen[c.Slug] = c.ActivatedAt
+		created[c.Slug] = c.CreatedAt
 	}
 	if at := seen["joined-patch"]; at == nil || *at != "2026-03-03T00:00:00.000Z" {
 		t.Errorf("arrival missing from the tree payload: %v", at)
+	}
+	// The listing has no arrival and still needs a date the cards list can
+	// order by (docs/adr/074, amended): created_at is when it appeared.
+	if created["listing"] == "" {
+		t.Error("the tree sent no created_at, so Recently added cannot order a listing")
 	}
 	if at, ok := seen["listing"]; !ok {
 		t.Error("the unclaimed listing left the tree entirely")

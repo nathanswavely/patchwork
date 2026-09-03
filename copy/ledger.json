@@ -13948,7 +13948,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tree.go",
-          "line": 89,
+          "line": 94,
           "kind": "go-error-body",
           "raw": "failed to query nodes",
           "quote": null
@@ -19499,7 +19499,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 472,
+          "line": 480,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -20704,7 +20704,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 547,
+          "line": 555,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -26980,7 +26980,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 486,
+          "line": 494,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -32269,14 +32269,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 275,
+          "line": 283,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 330,
+          "line": 338,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -39359,7 +39359,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 382,
+          "line": 390,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -42484,7 +42484,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 354,
+          "line": 362,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -42502,7 +42502,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 375,
+          "line": 383,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -42520,7 +42520,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 377,
+          "line": 385,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -42538,7 +42538,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 411,
+          "line": 419,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
           "quote": null
@@ -42556,7 +42556,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 488,
+          "line": 496,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -42574,7 +42574,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 488,
+          "line": 496,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -42592,7 +42592,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 502,
+          "line": 510,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -42610,7 +42610,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 507,
+          "line": 515,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -42628,7 +42628,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 511,
+          "line": 519,
           "kind": "markup",
           "raw": "Quilt order",
           "quote": null
@@ -42646,7 +42646,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 512,
+          "line": 520,
           "kind": "markup",
           "raw": "Recently added",
           "quote": null
@@ -42664,7 +42664,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 535,
+          "line": 543,
           "kind": "markup",
           "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -42682,7 +42682,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 544,
+          "line": 552,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -42700,7 +42700,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 556,
+          "line": 564,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null

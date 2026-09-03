@@ -261,6 +261,11 @@ state the same thing in two mediums, and the ranking needs no explaining
 because it is drawn on screen beside it. Not a computed ranking: it is
 the placement order the layout already produces. A→Z is the one
 alternative offered, for looking a name up rather than finding something.
+**Recently added** is the third: how new a patch is to the quilt, which is
+when its community arrived if one has and when its listing appeared if not.
+That is a looser question than the bulletin's, deliberately — an unclaimed
+listing has no arrival (see **Bulletin**), but it does have a day someone
+added it, and an ordering can use it where an announcement must not.
 _Avoid_: relevance, recommended, ranking, sort order (as the concept —
 that is the control, not the order), alphabetical (as the default)
 
