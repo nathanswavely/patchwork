@@ -299,7 +299,7 @@ func unroutedNames(db *database.DB, ignoreFilter string) ([]model.UnroutedName, 
 		   ON es.aggregator_id = l.aggregator_id AND es.name_key = l.name_key
 		 LEFT JOIN aggregator_ignored_names ig
 		   ON ig.aggregator_id = l.aggregator_id AND ig.name_key = l.name_key
-		 WHERE l.name_key != '' AND es.id IS NULL `+test+`
+		 WHERE l.name_key != '' AND es.id IS NULL ` + test + `
 		 GROUP BY l.aggregator_id, l.name_key
 		 ORDER BY COUNT(*) DESC, MIN(l.starts_at)`)
 	if err != nil {
@@ -735,14 +735,15 @@ func DecideAggregatorHold(db *database.DB) http.HandlerFunc {
 				return
 			}
 		} else {
-			var title, description, location, startsAt string
+			var title, description, location, startsAt, listingURL string
 			var endsAt *string
 			var lat, lon *float64
 			err := db.QueryRow(
-				`SELECT title, description, location, latitude, longitude, starts_at, ends_at
+				`SELECT title, description, location, latitude, longitude, starts_at, ends_at,
+				 COALESCE(url,'')
 				 FROM aggregator_listings WHERE aggregator_id = ? AND uid = ? AND occurrence = ?`,
 				aggregatorID, uid, occurrence,
-			).Scan(&title, &description, &location, &lat, &lon, &startsAt, &endsAt)
+			).Scan(&title, &description, &location, &lat, &lon, &startsAt, &endsAt, &listingURL)
 			if err != nil {
 				http.Error(w, `{"error":"this listing is no longer in the feed"}`, http.StatusConflict)
 				return
@@ -751,11 +752,11 @@ func DecideAggregatorHold(db *database.DB) http.HandlerFunc {
 			apID := ap.EventAPID(ap.GetDomain(), id)
 			if _, err := db.Exec(
 				`INSERT INTO events (id, node_id, created_by, title, description, location,
-				 latitude, longitude, starts_at, ends_at, recurrence, visibility, status,
+				 latitude, longitude, starts_at, ends_at, event_url, recurrence, visibility, status,
 				 ap_id, source_id, source_uid, source_occurrence)
-				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'active', ?, ?, ?, ?)`,
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'active', ?, ?, ?, ?)`,
 				id, nodeID, user.ID, title, description, location, lat, lon,
-				startsAt, endsAt, apID, sourceID, uid, occurrence,
+				startsAt, endsAt, listingURL, apID, sourceID, uid, occurrence,
 			); err != nil {
 				http.Error(w, `{"error":"failed to create event"}`, http.StatusInternalServerError)
 				return

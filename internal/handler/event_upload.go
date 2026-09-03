@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
@@ -22,6 +23,10 @@ type bulkEventRow struct {
 	Location    string  `json:"location"`
 	Description string  `json:"description"`
 	Visibility  string  `json:"visibility"`
+	// The event's own page out on the web (docs/adr/079). A season
+	// spreadsheet usually has a link column, and dropping it meant forty
+	// shows arriving with no way to buy a ticket.
+	EventURL string `json:"event_url"`
 }
 
 // BulkCreateEvents handles POST /api/v1/nodes/{slug}/events/bulk — the
@@ -105,6 +110,10 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 			default:
 				fail(i, "visibility must be public, private, or unlisted")
 			}
+			if msg := validateEventURL(ev.EventURL); msg != "" {
+				fail(i, msg)
+			}
+			ev.EventURL = strings.TrimSpace(ev.EventURL)
 		}
 		if rowErrors != nil {
 			w.Header().Set("Content-Type", "application/json")
@@ -156,10 +165,10 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 			apID := ap.EventAPID(ap.GetDomain(), id)
 			if _, err := tx.Exec(
 				`INSERT INTO events (id, node_id, created_by, title, description, location,
-				 starts_at, ends_at, recurrence, visibility, status, ap_id)
-				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, '', ?, 'active', ?)`,
+				 starts_at, ends_at, event_url, recurrence, visibility, status, ap_id)
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, 'active', ?)`,
 				id, nodeID, user.ID, ev.Title, ev.Description, ev.Location,
-				ev.StartsAt, ev.EndsAt, ev.Visibility, apID,
+				ev.StartsAt, ev.EndsAt, ev.EventURL, ev.Visibility, apID,
 			); err != nil {
 				http.Error(w, `{"error":"failed to upload events"}`, http.StatusInternalServerError)
 				return

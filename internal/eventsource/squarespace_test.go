@@ -38,7 +38,7 @@ func ssFixture(now time.Time) string {
 
 func TestParseSquarespace(t *testing.T) {
 	now := time.Now().UTC()
-	items, err := ParseSquarespace([]byte(ssFixture(now)), now)
+	items, err := ParseSquarespace([]byte(ssFixture(now)), now, "https://elcapitan.example/events")
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -80,7 +80,7 @@ func TestParseSquarespace(t *testing.T) {
 }
 
 func TestParseSquarespace_RejectsNonEventsCollections(t *testing.T) {
-	_, err := ParseSquarespace([]byte(`{"collection":{"typeName":"page"},"items":[]}`), time.Now().UTC())
+	_, err := ParseSquarespace([]byte(`{"collection":{"typeName":"page"},"items":[]}`), time.Now().UTC(), "https://elcapitan.example/events")
 	if err == nil {
 		t.Fatal("a plain page must not parse as an events collection")
 	}

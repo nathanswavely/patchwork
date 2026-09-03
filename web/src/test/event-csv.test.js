@@ -69,5 +69,40 @@ describe('rowsToEvents', () => {
     expect(events).toHaveLength(2);
     expect(events[0].ends_at).toBeDefined();
     expect(events[1].ends_at).toBeUndefined();
+    // The template carries a link column, and the empty cell stays empty
+    // rather than becoming a link to nowhere (docs/adr/079).
+    expect(events[0].event_url).toBe('https://example.org/tickets/opening-night');
+    expect(events[1].event_url).toBeUndefined();
+  });
+
+  // The event's own page out on the web (docs/adr/079). Spreadsheets call
+  // this column a dozen things and half of them leave the scheme off.
+  it('reads a link column under its many names', () => {
+    const { events, errors } = rowsToEvents(
+      parseCsv('title,date,Tickets\nOpening,2026-08-01,https://venue.example/opening\n')
+    );
+    expect(errors).toEqual([]);
+    expect(events[0].event_url).toBe('https://venue.example/opening');
+  });
+
+  it('adds the scheme a spreadsheet left off', () => {
+    const { events, errors } = rowsToEvents(
+      parseCsv('title,date,link\nOpening,2026-08-01,venue.example/opening\n')
+    );
+    expect(errors).toEqual([]);
+    expect(events[0].event_url).toBe('https://venue.example/opening');
+  });
+
+  it('fails the row when the link is not a link', () => {
+    const { events, errors } = rowsToEvents(
+      parseCsv(
+        'title,date,link\n' +
+          'Good,2026-08-01,https://venue.example/x\n' +
+          'Bad,2026-08-02,"ask at the door, maybe"\n'
+      )
+    );
+    expect(events).toHaveLength(1);
+    expect(errors).toHaveLength(1);
+    expect(errors[0].row).toBe(2);
   });
 });

@@ -30,10 +30,12 @@ type feedEvent struct {
 	Longitude   *float64
 	StartsAt    string
 	EndsAt      *string
-	NodeSlug    string
-	NodeName    string
-	CreatedAt   string
-	UpdatedAt   string
+	// EventURL is the event's own page out on the web (docs/adr/079).
+	EventURL  string
+	NodeSlug  string
+	NodeName  string
+	CreatedAt string
+	UpdatedAt string
 }
 
 const feedWindowBack = 30 * 24 * time.Hour
@@ -49,13 +51,31 @@ func scanFeedEvents(db *database.DB, query string, args ...any) ([]feedEvent, er
 	for rows.Next() {
 		var e feedEvent
 		if err := rows.Scan(&e.ID, &e.Title, &e.Description, &e.Location, &e.Latitude,
-			&e.Longitude, &e.StartsAt, &e.EndsAt, &e.NodeSlug, &e.NodeName,
+			&e.Longitude, &e.StartsAt, &e.EndsAt, &e.EventURL, &e.NodeSlug, &e.NodeName,
 			&e.CreatedAt, &e.UpdatedAt); err != nil {
 			return nil, err
 		}
 		events = append(events, e)
 	}
 	return events, rows.Err()
+}
+
+// feedDescription is the description a subscriber reads, with the event's
+// own page appended when it has one (docs/adr/079).
+//
+// An imported show's whole value is often the link — that is where the
+// tickets are — and a subscriber reading this in Apple Calendar or a feed
+// reader never sees the Patchwork page it came from. ICS offers exactly one
+// URL property and it is spent on the permalink, so the second address goes
+// where every client will still render it.
+func feedDescription(e feedEvent) string {
+	if e.EventURL == "" {
+		return e.Description
+	}
+	if e.Description == "" {
+		return e.EventURL
+	}
+	return e.Description + "\n\n" + e.EventURL
 }
 
 // feedEtag derives a cache validator from the feed's contents; calendar
@@ -120,8 +140,8 @@ func writeICS(w http.ResponseWriter, r *http.Request, cfg *config.Config, calNam
 			}
 		}
 		ev.Props.SetText(ical.PropSummary, fe.Title)
-		if fe.Description != "" {
-			ev.Props.SetText(ical.PropDescription, fe.Description)
+		if desc := feedDescription(fe); desc != "" {
+			ev.Props.SetText(ical.PropDescription, desc)
 		}
 		if fe.Location != "" {
 			ev.Props.SetText(ical.PropLocation, fe.Location)
@@ -131,6 +151,10 @@ func writeICS(w http.ResponseWriter, r *http.Request, cfg *config.Config, calNam
 			geo.Value = strconv.FormatFloat(*fe.Latitude, 'f', -1, 64) + ";" + strconv.FormatFloat(*fe.Longitude, 'f', -1, 64)
 			ev.Props.Set(geo)
 		}
+		// URL stays the Patchwork page, which is the one address that
+		// always exists and always resolves; a calendar shows exactly one.
+		// The event's own page rides in the description (docs/adr/079),
+		// where every client renders it as a followable link.
 		ev.Props.SetText(ical.PropURL, weblink.Absolute(cfg.Instance.Domain, weblink.Event(fe.ID)))
 		cal.Children = append(cal.Children, ev.Component)
 	}
@@ -161,7 +185,7 @@ func publicNodeFeedEvents(db *database.DB, slug string) (nodeName string, events
 	// itself be public and alive for its events to blend here.
 	events, err = scanFeedEvents(db,
 		`SELECT e.id, e.title, e.description, e.location, e.latitude, e.longitude,
-		 e.starts_at, e.ends_at, n.slug, n.name, e.created_at, e.updated_at
+		 e.starts_at, e.ends_at, COALESCE(e.event_url,''), n.slug, n.name, e.created_at, e.updated_at
 		 FROM events e JOIN nodes n ON e.node_id = n.id
 		 WHERE (e.node_id = ? OR EXISTS (
 		    SELECT 1 FROM event_links el WHERE el.event_id = e.id
@@ -236,7 +260,7 @@ func NodeRSSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			},
 		}
 		for _, e := range events {
-			desc := e.Description
+			desc := feedDescription(e)
 			if when, err := time.Parse(time.RFC3339, e.StartsAt); err == nil {
 				stamp := when.UTC().Format("Monday, January 2 2006, 15:04 MST")
 				if desc == "" {
@@ -295,7 +319,7 @@ func PersonalICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// event's own patch; a link never widens visibility.
 		events, err := scanFeedEvents(db,
 			`SELECT DISTINCT e.id, e.title, e.description, e.location, e.latitude, e.longitude,
-			 e.starts_at, e.ends_at, n.slug, n.name, e.created_at, e.updated_at
+			 e.starts_at, e.ends_at, COALESCE(e.event_url,''), n.slug, n.name, e.created_at, e.updated_at
 			 FROM events e
 			 JOIN nodes n ON e.node_id = n.id
 			 JOIN memberships m ON m.user_id = ? AND m.status = 'active'

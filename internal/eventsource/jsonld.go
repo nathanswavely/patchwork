@@ -92,6 +92,7 @@ func ParseJSONLD(data []byte, now time.Time, zone *time.Location) ([]Item, error
 			s := end.UTC().Format(time.RFC3339)
 			it.EndsAt = &s
 		}
+		it.URL = jsonLDEventURL(ev)
 		fillJSONLDLocation(ev["location"], &it)
 		items = append(items, it)
 	}
@@ -214,4 +215,50 @@ func toFloat(v any) (float64, bool) {
 		return f, err == nil
 	}
 	return 0, false
+}
+
+// jsonLDEventURL finds the page a listing wants a reader sent to
+// (docs/adr/079). `url` on the Event is the canonical answer; when the
+// markup omits it — common on ticketing platforms, where the Event node
+// describes the show and the offer holds the buy link — the first offer
+// with a URL is the next best thing, and is usually what the visitor
+// actually wanted.
+//
+// Only http(s) survives. Some CMS plugins emit a bare path or a mailto:,
+// and a relative URL has no base here worth guessing at.
+func jsonLDEventURL(ev map[string]any) string {
+	if u := absoluteHTTPURL(str(ev["url"])); u != "" {
+		return u
+	}
+	return offerURL(ev["offers"], 0)
+}
+
+// offerURL walks schema.org offers, which appear as a bare object, an
+// array, or (rarely) nested one level.
+func offerURL(v any, depth int) string {
+	if depth > 2 {
+		return ""
+	}
+	switch node := v.(type) {
+	case map[string]any:
+		if u := absoluteHTTPURL(str(node["url"])); u != "" {
+			return u
+		}
+		return offerURL(node["offers"], depth+1)
+	case []any:
+		for _, item := range node {
+			if u := offerURL(item, depth+1); u != "" {
+				return u
+			}
+		}
+	}
+	return ""
+}
+
+func absoluteHTTPURL(s string) string {
+	s = strings.TrimSpace(s)
+	if strings.HasPrefix(s, "https://") || strings.HasPrefix(s, "http://") {
+		return s
+	}
+	return ""
 }

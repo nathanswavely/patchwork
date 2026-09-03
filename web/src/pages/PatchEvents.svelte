@@ -161,6 +161,19 @@
     URL.revokeObjectURL(url);
   }
 
+  // Shown only when the sheet had a link column, so the common upload
+  // keeps its three columns. Host only: the preview is for catching a
+  // column read wrong, and a full ticket URL would swamp the row.
+  let uploadHasLinks = $derived(uploadEvents.some((ev) => ev.event_url));
+
+  function previewHost(url) {
+    try {
+      return new URL(url).host.replace(/^www\./, '');
+    } catch {
+      return '';
+    }
+  }
+
   function previewWhen(iso) {
     return new Date(iso).toLocaleString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
@@ -229,13 +242,19 @@
       {#if uploadEvents.length > 0}
         <div class="upload-preview">
           <table>
-            <thead><tr><th>When</th><th>Title</th><th>Location</th></tr></thead>
+            <thead>
+              <tr>
+                <th>When</th><th>Title</th><th>Location</th>
+                {#if uploadHasLinks}<th>Link</th>{/if}
+              </tr>
+            </thead>
             <tbody>
               {#each uploadEvents.slice(0, 8) as ev}
                 <tr>
                   <td>{previewWhen(ev.starts_at)}</td>
                   <td>{ev.title}</td>
                   <td>{ev.location || ''}</td>
+                  {#if uploadHasLinks}<td>{ev.event_url ? previewHost(ev.event_url) : ''}</td>{/if}
                 </tr>
               {/each}
             </tbody>

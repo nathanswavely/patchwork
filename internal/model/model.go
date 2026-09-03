@@ -253,6 +253,15 @@ type Event struct {
 	// A flyer or a show photo, held wherever the patch keeps it (docs/adr/007).
 	ImageURL string `json:"image_url"`
 	ImageAlt string `json:"image_alt"`
+	// EventURL is the event's own page out on the web — the venue's
+	// listing, the ticket page, the Facebook event (docs/adr/079). Every
+	// feed carries one and Patchwork used to drop it; an imported show
+	// with no way back to where you buy a ticket is half an event.
+	//
+	// Distinct from the Patchwork permalink, which is derived from ID and
+	// never stored, and from an EventLink, which is a patch's presence on
+	// someone else's event (docs/adr/032).
+	EventURL string `json:"event_url"`
 	// Status is 'active' or 'pending_review' (docs/adr/026). Pending
 	// events are submissions awaiting whoever owns the calendar; they
 	// never appear in public listings and never federate.

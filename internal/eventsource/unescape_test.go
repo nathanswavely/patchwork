@@ -77,7 +77,7 @@ func TestParseSquarespaceUnescapesTitleAndLocation(t *testing.T) {
 	                "addressLine1": "433 Ice Avenue", "addressLine2": ""}}
 	]}`, start)
 
-	items, err := ParseSquarespace([]byte(body), testNow)
+	items, err := ParseSquarespace([]byte(body), testNow, "https://lancworkshop.example/events")
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -129,7 +129,7 @@ func TestParseSquarespaceDecodesDoubleEncodedAddress(t *testing.T) {
 	                "addressLine1": "204 N Prince St", "addressLine2": "Lancaster, PA"}}
 	]}`, start)
 
-	items, err := ParseSquarespace([]byte(body), testNow)
+	items, err := ParseSquarespace([]byte(body), testNow, "https://pcad.example/events")
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}

@@ -812,6 +812,12 @@ type eventDef struct {
 	location    string
 	daysOffset  int
 	durationH   int
+	// The event's own page out on the web (docs/adr/079), empty where a
+	// real organizer would not have one. A drop-in wrench night has no
+	// ticket page; a six-week ceramics course does. Both states are worth
+	// seeding — the field is optional, and a demo instance where every
+	// event has a link teaches the wrong thing about it.
+	eventURL string
 }
 
 func (s *seeder) seedEvents() {
@@ -869,9 +875,9 @@ func (s *seeder) seedEvents() {
 		createdAt := s.ts(-e.daysOffset + 14)
 		apID := ap.EventAPID(ap.GetDomain(), id)
 
-		_, err := s.db.Exec(`INSERT INTO events (id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, visibility, created_at, updated_at, ap_id)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?)`,
-			id, geo.id, creatorID, e.title, e.description, e.location, lat, lng, startsAt, endsAt, createdAt, createdAt, apID)
+		_, err := s.db.Exec(`INSERT INTO events (id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, event_url, visibility, created_at, updated_at, ap_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?)`,
+			id, geo.id, creatorID, e.title, e.description, e.location, lat, lng, startsAt, endsAt, e.eventURL, createdAt, createdAt, apID)
 		if err != nil {
 			log.Fatalf("seed event %s: %v", e.title, err)
 		}

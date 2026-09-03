@@ -1,0 +1,21 @@
+-- 061: an event's own page out on the web (docs/adr/079).
+--
+-- Every feed Patchwork pulls from carries one — ICS says URL, schema.org
+-- says url, the AT Protocol lexicon says uris, Squarespace says fullUrl —
+-- and until now every one of them was dropped on the floor. An imported
+-- show arrived with a title, a time, and no way back to the venue's own
+-- listing, which is where the tickets are. The parser already read the
+-- field (Item.URL, carried since docs/adr/056 so an admin deciding what a
+-- name meant could go and look); it just had nowhere to land.
+--
+-- Not named `url`, because `event_links` is already a different thing
+-- (docs/adr/032 — a patch's presence on someone else's event), and not
+-- `source_url`, because the `source_*` columns mean feed provenance and a
+-- hand-typed event has one of these too. `event_url` matches `image_url`
+-- on this same table: a reference to something the binary never fetches.
+ALTER TABLE events ADD COLUMN event_url TEXT NOT NULL DEFAULT '';
+
+-- No backfill is possible here and none is needed. The reconciler now
+-- counts this column as part of what a feed says (internal/eventsource),
+-- so the next hourly sync sees every imported event as changed and fills
+-- it in — the same path that carries a retitled show.

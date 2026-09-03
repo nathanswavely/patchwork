@@ -28,8 +28,10 @@ func squarespaceJSONURL(pageURL string) (string, error) {
 }
 
 type squarespaceItem struct {
-	ID        string `json:"id"`
-	Title     string `json:"title"`
+	ID    string `json:"id"`
+	Title string `json:"title"`
+	// The item's own page, site-relative ("/events/opening-night").
+	FullURL   string `json:"fullUrl"`
 	StartDate int64  `json:"startDate"` // epoch milliseconds
 	EndDate   int64  `json:"endDate"`
 	Excerpt   string `json:"excerpt"`
@@ -46,6 +48,12 @@ type squarespaceCollection struct {
 	Collection struct {
 		TypeName string `json:"typeName"`
 	} `json:"collection"`
+	// Where the site says it lives. Squarespace serves the same JSON from
+	// a custom domain and from the .squarespace.com staging host, and
+	// baseUrl is the one that says which the venue publishes.
+	Website struct {
+		BaseURL string `json:"baseUrl"`
+	} `json:"website"`
 	Upcoming []squarespaceItem `json:"upcoming"`
 	Past     []squarespaceItem `json:"past"`
 	Items    []squarespaceItem `json:"items"`
@@ -55,7 +63,11 @@ type squarespaceCollection struct {
 // collection JSON document, applying the same window as ParseICS.
 // It errors when the document isn't an events collection, so the
 // auto-detect path can tell "not Squarespace" from "empty calendar".
-func ParseSquarespace(data []byte, now time.Time) ([]Item, error) {
+//
+// pageURL is the collection address the admin attached; item links are
+// site-relative, so resolving them needs a base and the document's own
+// website.baseUrl is preferred where it has one (docs/adr/079).
+func ParseSquarespace(data []byte, now time.Time, pageURL string) ([]Item, error) {
 	var doc squarespaceCollection
 	if err := json.Unmarshal(data, &doc); err != nil {
 		return nil, fmt.Errorf("parse squarespace json: %w", err)
@@ -66,6 +78,7 @@ func ParseSquarespace(data []byte, now time.Time) ([]Item, error) {
 
 	windowStart := now.Add(-pastGrace)
 	windowEnd := now.Add(Horizon)
+	base := squarespaceBase(doc.Website.BaseURL, pageURL)
 
 	var items []Item
 	seen := map[string]bool{}
@@ -98,6 +111,7 @@ func ParseSquarespace(data []byte, now time.Time) ([]Item, error) {
 				end := time.UnixMilli(si.EndDate).UTC().Format(time.RFC3339)
 				it.EndsAt = &end
 			}
+			it.URL = resolveRef(base, si.FullURL)
 
 			// Squarespace ships a DEFAULT map position (lower Manhattan)
 			// even when no address was entered — location only counts
@@ -129,6 +143,55 @@ func ParseSquarespace(data []byte, now time.Time) ([]Item, error) {
 		items = items[:MaxItems]
 	}
 	return items, nil
+}
+
+// squarespaceBase picks what item links resolve against: the document's
+// declared site, falling back to the origin of the address the admin
+// pasted. Returns "" when neither is usable, which just means no links.
+func squarespaceBase(declared, pageURL string) string {
+	for _, candidate := range []string{strings.TrimSpace(declared), pageURL} {
+		u, err := url.Parse(strings.TrimSpace(candidate))
+		if err != nil || u.Host == "" {
+			continue
+		}
+		if u.Scheme != "https" && u.Scheme != "http" {
+			continue
+		}
+		return u.Scheme + "://" + u.Host
+	}
+	return ""
+}
+
+// resolveRef turns a site-relative item path into an absolute link, and
+// passes an already-absolute http(s) one through. Anything else yields "".
+//
+// The scheme is checked on the way out, not only on the way in: a ref that
+// carries its own scheme is returned by ResolveReference unchanged, so a
+// feed answering "javascript:alert(1)" would otherwise resolve to itself.
+func resolveRef(base, ref string) string {
+	ref = strings.TrimSpace(ref)
+	if ref == "" {
+		return ""
+	}
+	if strings.HasPrefix(ref, "https://") || strings.HasPrefix(ref, "http://") {
+		return ref
+	}
+	if base == "" {
+		return ""
+	}
+	b, err := url.Parse(base)
+	if err != nil {
+		return ""
+	}
+	r, err := url.Parse(ref)
+	if err != nil {
+		return ""
+	}
+	out := b.ResolveReference(r)
+	if out.Scheme != "https" && out.Scheme != "http" {
+		return ""
+	}
+	return out.String()
 }
 
 func nonEmpty(parts ...string) []string {

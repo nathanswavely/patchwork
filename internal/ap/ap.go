@@ -31,6 +31,19 @@ type Object struct {
 	StartTime string `json:"startTime,omitempty"`
 	EndTime   string `json:"endTime,omitempty"`
 	Location  *Place `json:"location,omitempty"`
+	// Attachment carries the event's own page out on the web
+	// (docs/adr/079). `url` above is this instance's permalink, which is
+	// what a remote reader needs to reach the event *here*; an AS2 Link
+	// attachment is how Mobilizon and friends express the other one — the
+	// venue's listing, the ticket page.
+	Attachment []Link `json:"attachment,omitempty"`
+}
+
+// Link is an AS2 Link object: a URL with a human label.
+type Link struct {
+	Type string `json:"type"`
+	Href string `json:"href"`
+	Name string `json:"name,omitempty"`
 }
 
 // Place represents an ActivityPub Place for location data.

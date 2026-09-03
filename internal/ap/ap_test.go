@@ -232,3 +232,36 @@ func TestNodeToActor_SummaryOnADescriptionlessPatch(t *testing.T) {
 		t.Errorf("expected the notice alone, got %q", actor.Summary)
 	}
 }
+
+// The event's own page federates as an AS2 Link attachment, and `url`
+// stays this instance's permalink (docs/adr/079). A remote reader needs
+// both: one to reach the event here, one to reach the tickets.
+func TestEventToObject_EventURLIsAnAttachment(t *testing.T) {
+	event := model.Event{
+		ID:       "test-event-id",
+		Title:    "Ticketed Show",
+		StartsAt: "2026-04-01T10:00:00Z",
+		EventURL: "https://elcapitan.example/shows/march-14",
+	}
+
+	obj := ap.EventToObject(event, "arts.lancaster.example")
+
+	if obj.URL != "https://arts.lancaster.example/events/test-event-id" {
+		t.Errorf("url is no longer the permalink: %s", obj.URL)
+	}
+	if len(obj.Attachment) != 1 {
+		t.Fatalf("expected one attachment, got %d", len(obj.Attachment))
+	}
+	if obj.Attachment[0].Type != "Link" {
+		t.Errorf("attachment type: %s", obj.Attachment[0].Type)
+	}
+	if obj.Attachment[0].Href != "https://elcapitan.example/shows/march-14" {
+		t.Errorf("attachment href: %s", obj.Attachment[0].Href)
+	}
+
+	// An event with no page of its own carries no empty attachment.
+	event.EventURL = ""
+	if obj := ap.EventToObject(event, "arts.lancaster.example"); obj.Attachment != nil {
+		t.Errorf("expected no attachment, got %+v", obj.Attachment)
+	}
+}

@@ -134,7 +134,7 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		query := `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, ` + eventZoneSQL + ` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status FROM events e JOIN nodes n ON e.node_id = n.id`
+		query := `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, ` + eventZoneSQL + ` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), COALESCE(e.event_url,''), e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status FROM events e JOIN nodes n ON e.node_id = n.id`
 		var conditions []string
 		var args []interface{}
 
@@ -261,7 +261,7 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		var events []eventWithNode
 		for rows.Next() {
 			var e eventWithNode
-			if err := rows.Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus); err != nil {
+			if err := rows.Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.EventURL, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus); err != nil {
 				continue
 			}
 			events = append(events, e)
@@ -304,11 +304,11 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 		// An archived or removed patch takes its events with it — same gate
 		// as GetNode, so an event link doesn't outlive its patch page.
 		err := db.QueryRow(
-			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.status, e.source_id, e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), COALESCE(e.event_url,''), e.status, e.source_id, e.created_at, e.updated_at, n.name AS node_name, n.slug AS node_slug, n.status AS node_status
 			 FROM events e JOIN nodes n ON e.node_id = n.id
 			 WHERE e.id = ? AND e.removed_at IS NULL
 			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`, settings.EffectiveTimezone(db), eventID,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.SourceID, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus)
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.EventURL, &e.Status, &e.SourceID, &e.CreatedAt, &e.UpdatedAt, &e.NodeName, &e.NodeSlug, &e.NodeStatus)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -385,6 +385,9 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			Visibility string `json:"visibility"`
 			ImageURL   string `json:"image_url"`
 			ImageAlt   string `json:"image_alt"`
+			// The event's own page out on the web (docs/adr/079) —
+			// tickets, the venue's listing, the RSVP form.
+			EventURL string `json:"event_url"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -393,6 +396,10 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// A flyer is a reference, and its description comes with it
 		// (docs/adr/007).
 		if msg := validateImageRef(req.ImageURL, req.ImageAlt); msg != "" {
+			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			return
+		}
+		if msg := validateEventURL(req.EventURL); msg != "" {
 			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
 			return
 		}
@@ -452,9 +459,9 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		id := auth.NewUUIDv7()
 		apID := ap.EventAPID(ap.GetDomain(), id)
 		_, err = db.Exec(
-			`INSERT INTO events (id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, timezone, recurrence, visibility, image_url, image_alt, status, ap_id)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, req.NodeID, user.ID, req.Title, req.Description, req.Location, req.Latitude, req.Longitude, req.StartsAt, req.EndsAt, nullableZone(req.Timezone), req.Recurrence, req.Visibility, strings.TrimSpace(req.ImageURL), strings.TrimSpace(req.ImageAlt), status, apID,
+			`INSERT INTO events (id, node_id, created_by, title, description, location, latitude, longitude, starts_at, ends_at, timezone, recurrence, visibility, image_url, image_alt, event_url, status, ap_id)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, req.NodeID, user.ID, req.Title, req.Description, req.Location, req.Latitude, req.Longitude, req.StartsAt, req.EndsAt, nullableZone(req.Timezone), req.Recurrence, req.Visibility, strings.TrimSpace(req.ImageURL), strings.TrimSpace(req.ImageAlt), strings.TrimSpace(req.EventURL), status, apID,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create event"}`, http.StatusInternalServerError)
@@ -465,9 +472,9 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		var e model.Event
 		db.QueryRow(
-			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.status, e.created_at, e.updated_at
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), COALESCE(e.event_url,''), e.status, e.created_at, e.updated_at
 			 FROM events e JOIN nodes n ON e.node_id = n.id WHERE e.id = ?`, settings.EffectiveTimezone(db), id,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.CreatedAt, &e.UpdatedAt)
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.EventURL, &e.Status, &e.CreatedAt, &e.UpdatedAt)
 
 		var nodeSlugN, nodeNameN string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", req.NodeID).Scan(&nodeSlugN, &nodeNameN)
@@ -583,6 +590,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			"latitude": true, "longitude": true, "starts_at": true,
 			"ends_at": true, "timezone": true, "recurrence": true,
 			"visibility": true, "image_url": true, "image_alt": true,
+			"event_url": true,
 		}
 
 		// A zone that isn't a zone would resolve to nothing and silently
@@ -605,6 +613,18 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		if msg := checkPatchedImage(db, "events", eventID, req); msg != "" {
 			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
 			return
+		}
+
+		// Unlike the image pair, this one is judged alone: it has no second
+		// half to be valid against. Sending "" clears it.
+		if raw, present := req["event_url"]; present {
+			link, _ := raw.(string)
+			link = strings.TrimSpace(link)
+			if msg := validateEventURL(link); msg != "" {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				return
+			}
+			req["event_url"] = link
 		}
 
 		var setClauses []string
@@ -641,9 +661,9 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 
 		var e model.Event
 		db.QueryRow(
-			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), e.status, e.created_at, e.updated_at
+			`SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location, e.latitude, e.longitude, e.starts_at, e.ends_at, `+eventZoneSQL+` AS timezone, e.recurrence, e.visibility, COALESCE(e.image_url,''), COALESCE(e.image_alt,''), COALESCE(e.event_url,''), e.status, e.created_at, e.updated_at
 			 FROM events e JOIN nodes n ON e.node_id = n.id WHERE e.id = ?`, settings.EffectiveTimezone(db), eventID,
-		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.Status, &e.CreatedAt, &e.UpdatedAt)
+		).Scan(&e.ID, &e.NodeID, &e.CreatedBy, &e.Title, &e.Description, &e.Location, &e.Latitude, &e.Longitude, &e.StartsAt, &e.EndsAt, &e.Timezone, &e.Recurrence, &e.Visibility, &e.ImageURL, &e.ImageAlt, &e.EventURL, &e.Status, &e.CreatedAt, &e.UpdatedAt)
 
 		var nodeSlugN, nodeNameN string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&nodeSlugN, &nodeNameN)
