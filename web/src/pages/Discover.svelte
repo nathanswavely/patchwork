@@ -23,7 +23,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
-  import { getRankedTags, areTagsLoaded } from '../stores/quilt.svelte.js';
+  import { getRankedTags, areTagsLoaded, getTagCounts } from '../stores/quilt.svelte.js';
   import { getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
@@ -34,6 +34,13 @@
   // baked-in vocabulary: a disc golf quilt surfaces its own.
   const SHORTLIST_SIZE = 8;
   let rankedTags = $derived(getRankedTags());
+  // How many patches wear each tag, whole-quilt and public — the same number
+  // the ranking is built from, said out loud. docs/adr/022 refused these on
+  // the filter chips and still does: those narrow scoped surfaces and the
+  // events list, where a whole-quilt patch count is a different quantity.
+  // The question is the one place it is simply true — no scope, no lens, and
+  // the person is choosing rather than narrowing.
+  let tagCounts = $derived(getTagCounts());
   let shortlist = $derived(rankedTags.slice(0, SHORTLIST_SIZE));
   let remainingTags = $derived(rankedTags.slice(SHORTLIST_SIZE));
   let showAllTags = $state(false);
@@ -253,6 +260,7 @@
               <Check size={14} weight="bold" />
             {/if}
             {tag}
+            <span class="tag-count">{tagCounts[tag] || 0}</span>
           </button>
         {/each}
       </div>
@@ -519,6 +527,14 @@
 
   .tag-chip:hover {
     border-color: var(--lt-resin-color, var(--color-border));
+  }
+
+  /* Subdued: the tag is the choice, the count is a fact about it. */
+  .tag-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.65;
+    font-variant-numeric: tabular-nums;
   }
 
   .show-all-link {

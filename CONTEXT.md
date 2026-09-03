@@ -284,7 +284,10 @@ spent by being used. Its whole distinction from the quilt is the asking:
 the quilt shows everything and asks nothing, so discovery mode carries no
 canvas and ends in follows rather than navigation. What it puts forward
 comes from what this quilt wears and what is happening on it, never from
-what other people follow.
+what other people follow. Its question is the one place a tag says how many
+patches wear it: unscoped and whole-quilt, where that number is simply true.
+The filter chips stay plain, because there the same number would describe a
+corpus the person is not looking at (docs/adr/022).
 _Avoid_: recommendations, for you, personalized, browse, onboarding (that
 is Welcome's first step, which discovery mode is not)
 
