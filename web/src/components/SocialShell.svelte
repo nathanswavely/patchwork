@@ -1079,6 +1079,17 @@
       --shell-rail-h: 51px;
     }
 
+    /* Room for the intro card, which floats above the tab bar at this width
+       (IntroCard publishes its measured height). Without this it lands on
+       whatever a short page keeps at its foot — discovery mode's primary
+       button — and the card's contract is that it never covers a control.
+       Reserved once, here, rather than by every page surface separately:
+       the shell owns the gutter. Costs nothing once the card is dismissed,
+       since the variable goes away with it. */
+    :global(body) .social-main {
+      padding-bottom: calc(var(--intro-card-h, 0px) + 12px);
+    }
+
     .sidebar-rail,
     .sidebar-rail.quilt-mode,
     .sidebar-rail.quilt-mode.collapsed,

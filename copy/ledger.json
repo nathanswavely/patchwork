@@ -19306,14 +19306,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 58,
+          "line": 110,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 72,
+          "line": 124,
           "kind": "markup",
           "raw": "{instanceName} is a quilt of the communities around you.",
           "quote": null
@@ -19331,7 +19331,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 60,
+          "line": 112,
           "kind": "markup",
           "raw": "Every tile is a real group, placed near the groups it shares people with. No ads, no personalized algorithm. Run by people here.",
           "quote": null
@@ -19350,14 +19350,14 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 63,
+          "line": 115,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
         },
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 73,
+          "line": 125,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -19389,7 +19389,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 64,
+          "line": 116,
           "kind": "markup",
           "raw": "Join",
           "quote": null
@@ -19407,7 +19407,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 70,
+          "line": 122,
           "kind": "markup",
           "raw": "I'll lurk for now",
           "quote": null
@@ -19425,7 +19425,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 74,
+          "line": 126,
           "kind": "markup",
           "raw": "&times;",
           "quote": null
@@ -19457,7 +19457,7 @@
       "occurrences": [
         {
           "file": "web/src/components/IntroCard.svelte",
-          "line": 74,
+          "line": 126,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -20206,14 +20206,14 @@
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 362,
+          "line": 370,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 408,
+          "line": 416,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
@@ -32173,14 +32173,14 @@
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 360,
+          "line": 368,
           "kind": "markup",
           "raw": "Following",
           "quote": null
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 406,
+          "line": 414,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -32248,14 +32248,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 158,
+          "line": 165,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 227,
+          "line": 234,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -32294,7 +32294,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 223,
+          "line": 230,
           "kind": "js-string",
           "raw": "You'll get a note once a month.",
           "quote": "\""
@@ -32312,7 +32312,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 223,
+          "line": 230,
           "kind": "js-string",
           "raw": "No bulletin then.",
           "quote": "'"
@@ -32330,7 +32330,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 237,
+          "line": 244,
           "kind": "markup",
           "raw": "What are you drawn to?",
           "quote": null
@@ -32348,7 +32348,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 239,
+          "line": 246,
           "kind": "markup",
           "raw": "Pick a few and we'll pull up the patches that match. These are the\n        tags this quilt actually wears, most-worn first.",
           "quote": null
@@ -32366,7 +32366,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 267,
+          "line": 275,
           "kind": "markup",
           "raw": "{selectedInterests.size} selected",
           "quote": null
@@ -32384,7 +32384,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 295,
+          "line": 303,
           "kind": "markup",
           "raw": "Looking…",
           "quote": null
@@ -32402,7 +32402,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 299,
+          "line": 307,
           "kind": "markup",
           "raw": "Nothing here yet",
           "quote": null
@@ -32420,7 +32420,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 301,
+          "line": 309,
           "kind": "markup",
           "raw": "No patches on this quilt so far. Make one for your group, and the\n          next person who comes looking will have something to find.",
           "quote": null
@@ -32438,7 +32438,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 312,
+          "line": 320,
           "kind": "markup",
           "raw": "{matching.length}\n          {matching.length === 1 ? 'patch' : 'patches'}{selectedInterests.size > 0 ? ' match what you picked' : ''}{' '}\n          — the ones with something coming up are first.",
           "quote": null
@@ -32456,7 +32456,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 420,
+          "line": 428,
           "kind": "markup",
           "raw": "Following {followedHere} {followedHere === 1 ? 'patch' : 'patches'}",
           "quote": null
@@ -32474,7 +32474,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 426,
+          "line": 434,
           "kind": "markup",
           "raw": "Follow a few and they become your quilt.",
           "quote": null
@@ -32492,7 +32492,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 428,
+          "line": 436,
           "kind": "markup",
           "raw": "Following needs an account — reading never does.",
           "quote": null
@@ -32510,7 +32510,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 434,
+          "line": 442,
           "kind": "markup",
           "raw": "Once a month, we can tell you which patches joined. The whole\n                list, in the order they arrived — nothing picked out for you.",
           "quote": null

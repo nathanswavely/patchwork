@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"html"
 	"regexp"
 	"sort"
 	"strconv"
@@ -78,7 +77,7 @@ func ParseJSONLD(data []byte, now time.Time, zone *time.Location) ([]Item, error
 		}
 		seen[uid] = true
 
-		title := strings.TrimSpace(html.UnescapeString(str(ev["name"])))
+		title := strings.TrimSpace(plainText(str(ev["name"])))
 		if title == "" {
 			title = "(untitled)"
 		}
@@ -173,10 +172,14 @@ func parseJSONLDTime(s string, zone *time.Location) (time.Time, error) {
 
 // fillJSONLDLocation maps schema.org's location shapes (a plain string,
 // or a Place with a string-or-PostalAddress address and optional geo).
+//
+// Both shapes get decoded. Only the plain-string one used to: a Place's
+// name is the field a venue's own markup almost always uses, so the
+// branch that skipped decoding was the branch nearly every feed took.
 func fillJSONLDLocation(loc any, it *Item) {
 	switch l := loc.(type) {
 	case string:
-		it.Location = strings.TrimSpace(html.UnescapeString(l))
+		it.Location = strings.TrimSpace(plainText(l))
 	case map[string]any:
 		parts := nonEmpty(str(l["name"]))
 		switch addr := l["address"].(type) {
@@ -187,7 +190,7 @@ func fillJSONLDLocation(loc any, it *Item) {
 				parts = append(parts, s)
 			}
 		}
-		it.Location = strings.Join(nonEmpty(parts...), ", ")
+		it.Location = plainText(strings.Join(nonEmpty(parts...), ", "))
 		if geo, ok := l["geo"].(map[string]any); ok {
 			lat, latOK := toFloat(geo["latitude"])
 			lng, lngOK := toFloat(geo["longitude"])

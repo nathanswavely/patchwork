@@ -19,11 +19,25 @@
 
   let { routeName = 'home' } = $props();
 
-  // Full form on the canvas views (home quilt and map) — the first thing a
-  // cold landing sees. Every other public surface (a deep-linked event, a
-  // patch profile, the events list) gets the compact one-liner so the card
-  // never competes with the content someone actually came to see.
-  const FULL_ROUTES = new Set(['home', 'map']);
+  // Full form on a discovery surface — the first thing a cold landing sees,
+  // and the only form that carries what this quilt actually promises ("no
+  // ads, no personalized algorithm") along with Join and a worded decline.
+  // A deep link (an event someone was sent, a patch profile) gets the compact
+  // one-liner instead, so the card never competes with the content they came
+  // for.
+  //
+  // That was always the intent; the set had drifted from it. The scope
+  // variants of the two canvases were missing, and discovery mode and the
+  // events list — both cold-landing surfaces in their own right — were
+  // getting the deep-link treatment, which is how the surface built for
+  // newcomers (docs/adr/075) came to show them the thinnest version of the
+  // card.
+  const FULL_ROUTES = new Set([
+    'home', 'homeMy', 'map', 'mapMy', 'discover', 'eventList', 'eventListMy',
+  ]);
+  // The canvas views float their own chrome over the foot of the screen on
+  // mobile — the Quilt/Map/List pill — so the card has further to rise there.
+  const CANVAS_ROUTES = new Set(['home', 'homeMy', 'map', 'mapMy']);
   // No card where the card's own destinations render — pointing someone at
   // the page they're already reading is noise, not orientation.
   const SUPPRESSED_ROUTES = new Set(['about', 'lining', 'label', 'legalDoc']);
@@ -35,6 +49,39 @@
     isAuthChecked() && !isLoggedIn() && !dismissed &&
     !SUPPRESSED_ROUTES.has(routeName)
   );
+
+  // The card floats over the foot of the screen on mobile, so the shell has
+  // to leave room for it or it lands on whatever sits at the bottom of a
+  // short page — on discovery mode, its primary button. The contract is that
+  // this card may overlap dismissible content and never a control
+  // (CONTEXT.md), so publish the measured height and let the shell pad by it.
+  // Measured rather than assumed: the heading wraps to two lines or three
+  // depending on the quilt's name, and a guessed number would be wrong for
+  // every instance but this one.
+  let cardEl = $state(null);
+  $effect(() => {
+    const root = document.body;
+    if (!visible || !cardEl) {
+      root.style.removeProperty('--intro-card-h');
+      return;
+    }
+    const publish = () => {
+      // How much of the foot the card occupies, offset included — not just
+      // its own height. The shell pads by this, and padding by the height
+      // alone would leave the card's own gap uncovered.
+      const fromBottom = window.innerHeight - cardEl.getBoundingClientRect().top;
+      root.style.setProperty('--intro-card-h', `${Math.max(0, Math.ceil(fromBottom))}px`);
+    };
+    publish();
+    const ro = new ResizeObserver(publish);
+    ro.observe(cardEl);
+    window.addEventListener('resize', publish);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', publish);
+      root.style.removeProperty('--intro-card-h');
+    };
+  });
 
   function dismiss() {
     dismissed = true;
@@ -53,7 +100,12 @@
 </script>
 
 {#if visible}
-  <div class="intro-card" class:compact={variant === 'compact'}>
+  <div
+    class="intro-card"
+    class:compact={variant === 'compact'}
+    class:canvas={CANVAS_ROUTES.has(routeName)}
+    bind:this={cardEl}
+  >
     {#if variant === 'full'}
       <h2 class="intro-heading">{instanceName} is a quilt of the communities around you.</h2>
       <p class="intro-body">
@@ -79,12 +131,18 @@
 <style>
   /* Overlay, never a modal — no backdrop, nothing beneath it is inert.
      Sits below the global bar (z-index 60) and above the sidebar rail
-     (55), matching the label/filter sheets' layer. Desktop placement is
-     per-variant: the full card sits bottom-left on the canvas views,
-     clear of the results pane, the Quilt/Map toggle, and the bottom-right
-     corner (Label overlay, FABs, toasts); the compact strip centers just
-     under the global bar. It may overlap dismissible content, never a
-     control. */
+     (55), matching the label/filter sheets' layer. Both variants share one
+     placement: the bottom-left corner, clear of the results pane, the
+     Quilt/Map toggle, and the bottom-right corner (Label overlay, FABs,
+     toasts). It may overlap dismissible content, never a control.
+
+     The compact strip used to centre itself just under the global bar,
+     which is empty space over a canvas and exactly where a page surface
+     puts its heading — it covered 22px of every 30px <h1> on the events
+     list and discovery mode. One corner for both variants is what
+     CONTEXT.md already promises ("overlaid on a corner of the surface,
+     never covering it"), and it is one rule rather than a margin every
+     future page surface has to remember to leave. */
   .intro-card {
     position: fixed;
     z-index: 56;
@@ -96,7 +154,7 @@
     box-shadow: 0 8px 24px var(--color-shadow);
   }
 
-  .intro-card:not(.compact) {
+  .intro-card {
     left: 16px;
     bottom: 16px;
   }
@@ -177,17 +235,13 @@
   }
 
   /* Compact: one line, wraps to fit content instead of the full card's
-     fixed measure — deep links never compete with the card for space.
-     Centered just under the global bar on desktop. */
+     fixed measure — deep links never compete with the card for space. */
   .intro-card.compact {
     display: flex;
     align-items: center;
     gap: 10px;
-    max-width: 92vw;
+    max-width: min(92vw, 420px);
     padding: 10px 34px 10px 14px;
-    top: calc(56px + 12px);
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .intro-card.compact .intro-line {
@@ -200,20 +254,39 @@
     white-space: nowrap;
   }
 
-  /* Mobile keeps the full-width strip under the bar for both variants.
-     Both selectors carry two classes so they outrank the desktop
-     `.intro-card:not(.compact)` placement — a one-class override loses to
-     it and leaves the full card pinned top *and* bottom, stretched to the
-     whole viewport instead of hugging its text. */
-  @media (max-width: 640px) {
-    .intro-card:not(.compact),
-    .intro-card.compact {
+  /* Mobile: full width, and at the foot rather than under the bar. Under
+     the bar is where a page surface puts its heading — the card covered the
+     whole of it and the first row of controls beneath it — and the top is
+     also where the canvas views keep their Quilt/Map/List pill, which is a
+     control the card must never sit on.
+
+     `--shell-rail-h` clears the sidebar rail, which is a bottom tab bar at
+     this width; SocialShell declares it on :global(body) precisely so the
+     surfaces that float something over the foot of the screen read one
+     number instead of each guessing it.
+
+     768px, not 640px, because that is where SocialShell turns the rail into
+     that tab bar — and the two have to agree. They did not: between 641 and
+     768 the card kept its desktop bottom-left placement while the rail had
+     already become a bar beneath it, so the card sat on 35px of it. A card
+     that may never cover a control cannot own a breakpoint the control does
+     not share. */
+  @media (max-width: 768px) {
+    .intro-card {
       left: 12px;
       right: 12px;
-      top: calc(56px + 8px);
-      bottom: auto;
-      transform: none;
+      top: auto;
+      /* app.css's standing offset for anything floating above the mobile tab
+         bar, safe-area included — the same one the canvas chrome uses. */
+      bottom: var(--pw-canvas-chrome-bottom, 12px);
       max-width: none;
+    }
+
+    /* On a canvas the Quilt/Map/List pill is already sitting at that offset,
+       and a control is the one thing this card may never cover (CONTEXT.md).
+       36px pill plus the same 12px gap it keeps from everything else. */
+    .intro-card.canvas {
+      bottom: calc(var(--pw-canvas-chrome-bottom, 12px) + 48px);
     }
   }
 </style>

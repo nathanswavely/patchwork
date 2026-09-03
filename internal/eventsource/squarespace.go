@@ -3,7 +3,6 @@ package eventsource
 import (
 	"encoding/json"
 	"fmt"
-	"html"
 	"net/url"
 	"sort"
 	"strings"
@@ -94,10 +93,10 @@ func ParseSquarespace(data []byte, now time.Time, pageURL string) ([]Item, error
 			}
 			seen[si.ID] = true
 
-			// Entities, same as the excerpt below: only stripHTML unescaped
+			// Entities, same as the excerpt below: only stripHTML decoded
 			// before, so a title kept its &amp; while its description lost
 			// one.
-			title := strings.TrimSpace(html.UnescapeString(si.Title))
+			title := strings.TrimSpace(plainText(si.Title))
 			if title == "" {
 				title = "(untitled)"
 			}
@@ -121,7 +120,7 @@ func ParseSquarespace(data []byte, now time.Time, pageURL string) ([]Item, error
 			// CMS. Location is where it showed: it is name-first
 			// (docs/adr/046), so an entity sits in the half that survives
 			// truncation on a narrow row.
-			addr := strings.TrimSpace(html.UnescapeString(strings.Join(nonEmpty(
+			addr := strings.TrimSpace(plainText(strings.Join(nonEmpty(
 				si.Location.AddressTitle, si.Location.AddressLine1, si.Location.AddressLine2), ", ")))
 			if addr != "" {
 				it.Location = addr
@@ -221,5 +220,5 @@ func stripHTML(s string) string {
 			b.WriteRune(r)
 		}
 	}
-	return strings.Join(strings.Fields(html.UnescapeString(b.String())), " ")
+	return strings.Join(strings.Fields(plainText(b.String())), " ")
 }

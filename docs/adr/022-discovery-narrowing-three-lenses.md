@@ -2,8 +2,10 @@
 
 Date: 2026-07-20. Status: accepted; amended by ADR 033 (typing no longer
 sets the query lens — search is a dropdown, the lens is set explicitly;
-the filter's home moves to a standing button). Decided while grilling the
-tag-filter UI rethink after PR #67.
+the filter's home moves to a standing button). Per-tag counts re-decided
+2026-09-04: the rejection stands for the filter chips, on reasons that
+outlived the one that went stale — see Considered options. Decided while
+grilling the tag-filter UI rethink after PR #67.
 
 ## Context
 
@@ -74,6 +76,31 @@ query** — governed by one rule set:
 - **Per-tag counts, AND semantics, localStorage persistence**: each
   rejected for v1 as recorded above; all three are additive if real usage
   argues for them.
+
+  **Per-tag counts, re-decided 2026-09-04. The rejection stands, and one
+  of its three reasons has to be withdrawn.** "The tags endpoint doesn't
+  serve them" is no longer true: `node_count` ships on `GET /api/v1/tags`
+  (added by ADR 021's work) and the filter chips already read it to order
+  themselves by usage (ADR 075). Leaving that sentence standing would have
+  had the next reader re-litigate a settled question from a false premise.
+
+  The other two reasons not only survive, they are stronger than when
+  written, because ADR 033 spread the chips onto more surfaces than the
+  quilt. `node_count` is a whole-quilt, public, patch count — so on `/my`,
+  `/map/my` and `/events/my` it states a number about a corpus the person
+  is not looking at, and on the events list, where the chips narrow
+  *events* through their patches, it states a different quantity
+  altogether. And the honest count is still the one already on screen: the
+  results header says "37 results", or "12 of 37 in view" under the lens
+  (ADR 074). A per-chip number would have to be right on four surfaces to
+  earn its place, and it is right on one.
+
+  **Where the count is true, it now appears.** Discovery mode's question
+  (ADR 075) is unscoped, whole-quilt and patch-oriented, and its chips are
+  a choice rather than a narrowing — "music 9, radio 1" tells a newcomer
+  where this quilt is dense, which is exactly what its usage ranking is
+  built on. That is the count's one home, and the filter chips remain
+  plain.
 
 ## Consequences
 

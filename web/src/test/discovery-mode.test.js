@@ -183,3 +183,21 @@ describe('filter chips', () => {
     expect(src).toContain('{#each getRankedTags() as tag (tag)}');
   });
 });
+
+// Per-tag counts (docs/adr/022, re-decided). The count is true on the
+// question and a different quantity on the filter, so it lives on one only.
+describe('tag counts', () => {
+  it('says how many patches wear each tag, on the question', () => {
+    const src = source('pages/Discover.svelte');
+    expect(src).toContain('getTagCounts');
+    expect(src).toContain('tag-count');
+  });
+
+  it('keeps the filter chips plain', () => {
+    // node_count is whole-quilt and public. The chips narrow My Quilt, the
+    // map, and the events list — where it would describe a corpus the person
+    // is not looking at, or count patches beside a list of events.
+    const src = source('components/FilterChips.svelte');
+    expect(src).not.toContain('getTagCounts');
+  });
+});
