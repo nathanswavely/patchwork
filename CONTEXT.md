@@ -396,6 +396,16 @@ gesture, so the first tap previews into the docked card, and the card
 itself is how the patch is opened. The quilt and the map behave the same
 way as each other on the same hardware.
 
+The two homes are the same card, and differ only in what the room affords.
+Docked, it stands alone above every other thing on screen, spends the width
+on a longer description, and ends in an **action row** naming what it can
+do — "View patch", and the viewer's standing beside it. In the pane it sits
+in a grid where tapping a card is already the convention, so the standing
+stays a chip in the cover's corner and no card repeats the invitation
+eighteen times. The standing is spelled out in both: follower, member and
+admin are the ladder a reader is here to learn, and an unlabelled glyph
+teaches nobody a word.
+
 Not a tile (that is a patch drawn as fabric on the quilt) and not a remote
 patch card (that is another quilt's patch, read-only).
 _Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement

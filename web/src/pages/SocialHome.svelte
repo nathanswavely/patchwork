@@ -1,5 +1,5 @@
 <script>
-  import { X, Heart, Wrench, UsersThree, LinkBreak, FrameCorners } from 'phosphor-svelte';
+  import { X, Heart, Wrench, UsersThree, LinkBreak, FrameCorners, CaretRight } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
@@ -319,7 +319,49 @@
   function touchSelect(patch) {
     if (hasPointer) return false;
     docked = patch;
+    dragY = 0; // a sheet that was half-pulled down when it changed patches
     return true;
+  }
+
+  // Pulling the sheet down. It follows the finger only downward — a sheet
+  // that rose past its own top would be promising a taller state it does not
+  // have — and lets go past a third of its height, far enough that a scroll
+  // that starts on the handle by accident doesn't dismiss what the reader was
+  // about to read.
+  let dragY = $state(0);
+  let dragFrom = null;
+  // A pull that fell short still ends in a click on the handle, and a handle
+  // that is also a button would dismiss what the reader had just decided to
+  // keep. Same rule the name badges keep about a pan that ends in a click.
+  let dragPulled = false;
+
+  function dragStart(e) {
+    dragFrom = e.clientY;
+    dragY = 0;
+    dragPulled = false;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+
+  function dragMove(e) {
+    if (dragFrom === null) return;
+    dragY = Math.max(0, e.clientY - dragFrom);
+    if (dragY > 4) dragPulled = true;
+  }
+
+  function dragEnd(e) {
+    if (dragFrom === null) return;
+    dragFrom = null;
+    const sheet = e.currentTarget.closest('.docked-card');
+    if (dragY > (sheet?.offsetHeight || 240) / 3) docked = null;
+    dragY = 0;
+  }
+
+  function handlePress() {
+    if (dragPulled) {
+      dragPulled = false; // a pull that sprang back, not a press
+      return;
+    }
+    docked = null;
   }
 
   function handleCanvasPatchClick(slug, source = null) {
@@ -366,11 +408,68 @@
      the cards pane where there is room for a pane, and docked at the foot
      of the surface where there is not. A snippet rather than a component so
      the card keeps reaching this page's state directly instead of having
-     eight callbacks threaded through it. -->
-{#snippet patchCard(patch)}
+     eight callbacks threaded through it.
+     `atFoot` is the second home, not a second card: same image, same chip,
+     same body. What it changes is what the home can afford — a card standing
+     alone gets the room for a longer description than one in a two-column
+     grid, and it names the tap that opens the patch, which in a grid of
+     cards is a convention and here is a guess. -->
+<!-- What the viewer is to this patch, and the one thing they can do about it
+     from a card: admin → "Manage", member → "Member", anyone else → the
+     follow heart. One definition, two placements — a labelled chip in the
+     tile's corner in the pane, and a labelled button in the docked sheet's
+     action row, where it stands beside "View patch" rather than floating
+     over the tile with the dismiss button landing on it. Labelled in both:
+     the ladder these three name (follower → member → admin) is the pattern
+     a reader is here to learn, and an unlabelled wrench teaches nobody
+     what an admin is. -->
+{#snippet relationship(patch, inRow = false)}
+  {#if patch._source}
+    {@const remoteFollowing = !!findRemoteFollow(patch._source, patch.slug)}
+    <button
+      class="card-corner card-follow-btn"
+      class:in-row={inRow}
+      class:following={remoteFollowing}
+      onclick={(e) => toggleRemoteFollow(e, patch)}
+      disabled={busyRemote.has(`${patch._source}:${patch.slug}`)}
+      title={remoteFollowing ? 'Unfollow' : 'Follow'}
+      aria-pressed={remoteFollowing}
+    >
+      <Heart size={14} weight={remoteFollowing ? 'fill' : 'duotone'} />
+      <span>{remoteFollowing ? 'Following' : 'Follow'}</span>
+    </button>
+  {:else if roles.get(patch.slug) === 'admin'}
+    <button class="card-corner card-manage-chip" class:in-row={inRow} onclick={(e) => goManage(e, patch)} title="You manage this patch">
+      <Wrench size={14} weight="duotone" />
+      <span>Manage</span>
+    </button>
+  {:else if roles.get(patch.slug) === 'member'}
+    <span class="card-corner card-member-chip" class:in-row={inRow} title="You're a member of this patch">
+      <UsersThree size={14} weight="duotone" />
+      <span>Member</span>
+    </span>
+  {:else}
+    {@const following = roles.get(patch.slug) === 'follower'}
+    <button
+      class="card-corner card-follow-btn"
+      class:in-row={inRow}
+      class:following
+      onclick={(e) => toggleFollow(e, patch)}
+      disabled={busySlugs.has(patch.slug)}
+      title={following ? 'Unfollow' : 'Follow'}
+      aria-pressed={following}
+    >
+      <Heart size={14} weight={following ? 'fill' : 'duotone'} />
+      <span>{following ? 'Following' : 'Follow'}</span>
+    </button>
+  {/if}
+{/snippet}
+
+{#snippet patchCard(patch, atFoot = false)}
           {@const Motif = motifComponentForPatch(patch)}
           <div
             class="patch-card"
+            class:at-foot={atFoot}
             class:previewing={previewing === patch.id}
             data-patch-id={patch.id}
             onclick={() => handlePatchCardClick(patch)}
@@ -389,44 +488,12 @@
                 </span>
               {/if}
               {#if patch._source}
-                {@const remoteFollowing = !!findRemoteFollow(patch._source, patch.slug)}
-                <button
-                  class="card-corner card-follow-btn"
-                  class:following={remoteFollowing}
-                  onclick={(e) => toggleRemoteFollow(e, patch)}
-                  disabled={busyRemote.has(`${patch._source}:${patch.slug}`)}
-                  title={remoteFollowing ? 'Unfollow' : 'Follow'}
-                  aria-pressed={remoteFollowing}
-                >
-                  <Heart size={14} weight={remoteFollowing ? 'fill' : 'duotone'} />
-                  <span>{remoteFollowing ? 'Following' : 'Follow'}</span>
-                </button>
                 <span class="card-source-chip" title="On {remoteHost(patch._source)}">
                   {remoteHost(patch._source)}
                 </span>
-              {:else if roles.get(patch.slug) === 'admin'}
-                <button class="card-corner card-manage-chip" onclick={(e) => goManage(e, patch)} title="You manage this patch">
-                  <Wrench size={14} weight="duotone" />
-                  <span>Manage</span>
-                </button>
-              {:else if roles.get(patch.slug) === 'member'}
-                <span class="card-corner card-member-chip" title="You're a member of this patch">
-                  <UsersThree size={14} weight="duotone" />
-                  <span>Member</span>
-                </span>
-              {:else}
-                {@const following = roles.get(patch.slug) === 'follower'}
-                <button
-                  class="card-corner card-follow-btn"
-                  class:following
-                  onclick={(e) => toggleFollow(e, patch)}
-                  disabled={busySlugs.has(patch.slug)}
-                  title={following ? 'Unfollow' : 'Follow'}
-                  aria-pressed={following}
-                >
-                  <Heart size={14} weight={following ? 'fill' : 'duotone'} />
-                  <span>{following ? 'Following' : 'Follow'}</span>
-                </button>
+              {/if}
+              {#if !atFoot}
+                {@render relationship(patch)}
               {/if}
             </div>
             <div class="card-body">
@@ -444,6 +511,22 @@
               <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events</p>
               {#if patch.description}
                 <p class="card-desc">{patch.description}</p>
+              {/if}
+              <!-- The actions, in a row at the foot of the sheet. The card
+                   is reached by a tap on the quilt, so nothing has told the
+                   reader that another tap opens the patch — say it, next to
+                   the one other thing they can do from here. In the pane the
+                   card sits in a grid where tapping one is the convention it
+                   already is, and eighteen of these would be noise, so the
+                   relationship stays a corner chip over the tile there. -->
+              {#if atFoot}
+                <div class="card-actions">
+                  <span class="card-view">
+                    View patch
+                    <CaretRight size={13} weight="bold" />
+                  </span>
+                  {@render relationship(patch, true)}
+                </div>
               {/if}
             </div>
           </div>
@@ -502,21 +585,11 @@
         insetRight={quiltInset}
         onClearFilter={resetFilters}
         onPatchHover={(patch) => hasPointer && preview(patch, true)}
+        onBackgroundClick={() => { docked = null; }}
         onInViewChange={reportInView}
       />
     {/if}
 
-    <!-- The card, docked: where there is no pointer there is no hover, so the
-         first tap previews here and this card is how the patch is opened
-         (docs/adr/078). Serves the quilt and the map alike. -->
-    {#if docked}
-      <div class="docked-card">
-        <button class="docked-dismiss" onclick={() => { docked = null; }} aria-label="Dismiss">
-          <X size={16} weight="bold" />
-        </button>
-        {@render patchCard(docked)}
-      </div>
-    {/if}
   </div>
 
   <!-- Patch cards panel -->
@@ -615,6 +688,39 @@
       {/if}
     </div>
   </div>
+
+  <!-- The card, docked: where there is no pointer there is no hover, so the
+       first tap previews here and this card is how the patch is opened
+       (docs/adr/078). Serves the quilt and the map alike.
+
+       A sibling of the panes rather than a child of the quilt pane, which is
+       its own stacking context at z-index 0 to keep Leaflet's ~1000s off the
+       chrome — inside it, no z-index the card could carry would clear the
+       floating buttons, and the filter button sat on the card's description.
+       Out here it answers to the root context, where it can sit above the
+       chrome it was summoned over. -->
+  {#if docked}
+    <div class="docked-card" style={dragY ? `transform: translateY(${dragY}px)` : ''}>
+      <!-- Both ways out of a sheet, because each is the one somebody
+           reaches for: the handle is dragged down, and the dismiss is
+           pressed. The handle is also a button — a drag is not a gesture
+           every reader has, and it is the only control a keyboard would
+           otherwise find nothing behind. -->
+      <button
+        class="docked-handle"
+        aria-label="Dismiss"
+        onpointerdown={dragStart}
+        onpointermove={dragMove}
+        onpointerup={dragEnd}
+        onpointercancel={dragEnd}
+        onclick={handlePress}
+      ></button>
+      <button class="docked-dismiss" onclick={() => { docked = null; }} aria-label="Dismiss">
+        <X size={16} weight="bold" />
+      </button>
+      {@render patchCard(docked, true)}
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -742,25 +848,30 @@
   /* ================================================================
      PATCH CARDS
      ================================================================ */
-  /* The card, docked (docs/adr/078). Sits over the foot of the surface it
-     was summoned from, leaving most of the quilt or map visible behind it —
-     a preview you glance at, not a page you land on. Touch-only: with a
-     pointer, hover previews into the pane instead. */
+  /* The card, docked (docs/adr/078) — a sheet at the foot of the screen,
+     resting on the bottom edge and covering the tab bar the way every other
+     app's sheet does. Not a card inside a container: the sheet *is* the
+     card, so it carries the surface, the shadow and the two top corners,
+     and the card inside it gives all four up (.patch-card.at-foot).
+     Touch-only: with a pointer, hover previews into the pane instead. */
   .docked-card {
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
-    /* Clear of the shell's bottom rail, which is a tab bar at this width. */
-    bottom: var(--shell-rail-h, 0px);
-    /* Above Leaflet's own controls (attribution sits at 800): the card is
-       app chrome laid over the map, not a thing inside it. */
-    z-index: 900;
-    padding: 0.6rem;
-    padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
-    background: var(--color-bg);
-    border-top: 1px solid var(--color-border);
-    box-shadow: 0 -6px 20px var(--color-shadow);
-    animation: docked-rise 140ms ease-out;
+    bottom: 0;
+    /* Over everything it was summoned across: the canvas and its floating
+       buttons (20), the rail (55), the global bar (60). It is the answer to
+       the tap that is still on screen, so nothing may draw on top of it —
+       the view pill steps aside for the same reason
+       (.mobile-header.hidden), and the two FABs sit behind it. */
+    z-index: 65;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--color-surface);
+    border-radius: 14px 14px 0 0;
+    /* The cover reaches the sheet's own top corners. */
+    overflow: hidden;
+    box-shadow: 0 -6px 24px var(--color-shadow);
+    animation: docked-rise 160ms ease-out;
   }
 
   @keyframes docked-rise {
@@ -772,11 +883,43 @@
     .docked-card { animation: none; }
   }
 
+  /* The pull handle: a grabber over the cover, where a thumb arrives. Sized
+     to its 20px-tall hit area rather than to the 4px bar it draws, so the
+     thing you can grab is as big as the thing it looks like you should. */
+  .docked-handle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: 64px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .docked-handle::after {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    margin: 8px auto 0;
+    border-radius: 999px;
+    /* Filled and shadowed like the dismiss beside it, rather than glass: the
+       bar lies on the patch's own fabric, which is any colour a patch chose,
+       and a translucent one disappears on half of them. */
+    background: var(--color-surface);
+    box-shadow: 0 1px 3px var(--color-shadow);
+  }
+
   .docked-dismiss {
     position: absolute;
-    top: 0.35rem;
-    right: 0.45rem;
-    z-index: 1;
+    top: 0.45rem;
+    right: 0.5rem;
+    z-index: 2;
     display: grid;
     place-items: center;
     width: 28px;
@@ -947,6 +1090,78 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* Inside the sheet the card stops being a card: the sheet already carries
+     the surface, the corners and the shadow, and a second border inside them
+     is the frame-within-a-frame that made it read as a card in a box rather
+     than a sheet on the screen. */
+  .patch-card.at-foot {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    cursor: default;
+  }
+
+  /* The card at the foot is one card across the full width, not one of a
+     pair in a grid, so it can spend height the grid can't: two clamped lines
+     were a teaser where there is room for a description. */
+  .patch-card.at-foot .card-desc {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 4;
+  }
+
+  .patch-card.at-foot .card-image {
+    height: 116px;
+  }
+
+  .patch-card.at-foot .card-body {
+    padding: 12px 16px 16px;
+  }
+
+  /* The sheet's action row: what you can do with this patch from here,
+     spelled out, rather than one chip floating over the tile and one
+     unwritten rule about tapping the card. */
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  /* Reads as the button it behaves like. Not a <button>: the whole card is
+     already the control, and a nested one would put a second tap target
+     inside a target that does the same thing. */
+  .card-view {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: var(--color-btn-on-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* The same chip, out of the corner and into the row. Glass reads as a chip
+     laid over a tile; against the card's own surface it needs an edge. */
+  .card-corner.in-row {
+    position: static;
+    padding: 7px 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: 0.8rem;
+  }
+
+  /* Except this one, which is not a button: "Member" is what you already
+     are, and in a row of things you can press it must not look pressable. */
+  .card-member-chip.in-row {
+    background: none;
+    border: none;
+    padding: 7px 2px;
+    color: var(--color-text-muted);
   }
 
   /* Skeletons */

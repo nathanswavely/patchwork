@@ -17767,7 +17767,7 @@
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2206,
+          "line": 2256,
           "kind": "markup",
           "raw": "Try Again",
           "quote": null
@@ -19499,7 +19499,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 480,
+          "line": 711,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 718,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -19890,7 +19897,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 365,
+          "line": 393,
           "kind": "markup",
           "raw": "patch is outside this view",
           "quote": null
@@ -19908,7 +19915,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 367,
+          "line": 395,
           "kind": "markup",
           "raw": "patches are outside this view",
           "quote": null
@@ -19971,7 +19978,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -20007,7 +20014,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
         }
       ]
@@ -20640,7 +20647,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 590,
+          "line": 603,
           "kind": "js-string",
           "raw": "This quilt",
           "quote": "'"
@@ -20658,7 +20665,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 957,
+          "line": 970,
           "kind": "js-string",
           "raw": "'Space Grotesk Variable', system-ui, sans-serif",
           "quote": "\""
@@ -20676,7 +20683,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2201,
+          "line": 2251,
           "kind": "markup",
           "raw": "Loading quilt...",
           "quote": null
@@ -20694,14 +20701,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2212,
+          "line": 2262,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2239,
+          "line": 2289,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -20719,14 +20726,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2219,
+          "line": 2269,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2246,
+          "line": 2296,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -20740,7 +20747,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 555,
+          "line": 662,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -20758,14 +20765,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2222,
+          "line": 2272,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2249,
+          "line": 2299,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
@@ -20783,7 +20790,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2227,
+          "line": 2277,
           "kind": "markup",
           "raw": "This quilt is empty.",
           "quote": null
@@ -20801,7 +20808,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2228,
+          "line": 2278,
           "kind": "markup",
           "raw": "Create the first patch to get started.",
           "quote": null
@@ -27016,7 +27023,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 494,
+          "line": 601,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -28408,7 +28415,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
+          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -29915,7 +29922,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -32312,7 +32319,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 338,
+          "line": 396,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -35496,7 +35503,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -35639,7 +35646,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
@@ -36292,7 +36299,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -36703,7 +36710,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
           "quote": null
         }
       ]
@@ -38382,7 +38389,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -38472,7 +38479,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -39474,7 +39481,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 390,
+          "line": 449,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -40376,7 +40383,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -40448,7 +40455,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
           "quote": null
         }
       ]
@@ -42061,7 +42068,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
           "quote": null
         }
       ]
@@ -42205,7 +42212,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
           "quote": null
         }
       ]
@@ -42223,7 +42230,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
           "quote": null
         }
       ]
@@ -42277,7 +42284,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
           "quote": null
         }
       ]
@@ -42331,7 +42338,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
           "quote": null
         }
       ]
@@ -42589,24 +42596,6 @@
       ]
     },
     {
-      "id": "f59c5e15fc31",
-      "text": "Unclaimed",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 362,
-          "kind": "attr:title",
-          "raw": "Unclaimed",
-          "quote": "\""
-        }
-      ]
-    },
-    {
       "id": "87a27b440941",
       "text": "You manage this patch",
       "words": 4,
@@ -42617,7 +42606,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 383,
+          "line": 442,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -42635,10 +42624,28 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 385,
+          "line": 444,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f59c5e15fc31",
+      "text": "Unclaimed",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 486,
+          "kind": "attr:title",
+          "raw": "Unclaimed",
+          "quote": "\""
         }
       ]
     },
@@ -42653,9 +42660,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 419,
+          "line": 511,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2a013e36edae",
+      "text": "View patch",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 525,
+          "kind": "markup",
+          "raw": "View patch",
           "quote": null
         }
       ]
@@ -42671,7 +42696,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 496,
+          "line": 603,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -42689,7 +42714,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 496,
+          "line": 603,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -42707,7 +42732,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 510,
+          "line": 617,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -42725,7 +42750,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 515,
+          "line": 622,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -42743,7 +42768,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 519,
+          "line": 626,
           "kind": "markup",
           "raw": "Quilt order",
           "quote": null
@@ -42761,7 +42786,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 520,
+          "line": 627,
           "kind": "markup",
           "raw": "Recently added",
           "quote": null
@@ -42779,7 +42804,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 543,
+          "line": 650,
           "kind": "markup",
           "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -42797,7 +42822,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 552,
+          "line": 659,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -42815,7 +42840,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 564,
+          "line": 671,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null
@@ -43937,24 +43962,6 @@
           "kind": "markup",
           "raw": "Taking you there...",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2a013e36edae",
-      "text": "View patch",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/MapView.svelte",
-          "line": 198,
-          "kind": "js-string",
-          "raw": "View patch",
-          "quote": "'"
         }
       ]
     },
