@@ -217,13 +217,20 @@
 
   // Bring them back: the affordance names the fact and this does the moving,
   // which is the whole reason narrowing never moves the viewport by itself.
-  function showAll() {
+  //
+  // Animated when a person asked for it — the motion is what tells them where
+  // they were taken. Never animated for the opening fit: nobody asked to be
+  // moved off a default view they never saw, and animating it means the map's
+  // first painted state is every marker piled into one disc at a zoom that
+  // was never intended, which reads as a map failing to load.
+  function showAll(animate = true) {
     const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
     if (!placed.length) return;
     const padRight = Math.round((mapContainer?.clientWidth || 0) * insetRight);
     map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), {
       paddingTopLeft: [24, 24],
       paddingBottomRight: [24 + padRight, 24],
+      animate,
     });
   }
 
@@ -271,10 +278,18 @@
   }
 
   function updateMarkers() {
+    const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
+
+    // Frame first, then group. Grouping is a function of zoom, so grouping at
+    // the default zoom and fitting afterwards paints one 33-marker disc that
+    // exists for no reason and is gone a moment later.
+    if (!hasFit && placed.length > 0) {
+      hasFit = true;
+      showAll(false);
+    }
+
     if (markersLayer) map.removeLayer(markersLayer);
     markerById = new Map();
-
-    const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
     const groups = clusterNodes(map, placed, CLUSTER_RADIUS_PX);
 
     // Names are placed by separation, never by zoom: zoom is only what moves
@@ -307,20 +322,10 @@
 
     markersLayer = L.layerGroup(layers).addTo(map);
 
-    // Fit once, on the first pass that has something to fit. The first pass
-    // runs before the fetch lands, and letting an empty one count would
-    // spend the fit on nothing and pile every marker at the default zoom.
-    // After that the viewport belongs to the person: narrowing a set is not
-    // a request to be moved somewhere else.
-    if (hasFit) return;
-
-    if (placed.length > 0) {
-      hasFit = true;
-      // The same framing the out-of-view affordance restores — one function,
-      // so the view a person is given at the start and the view they can ask
-      // for later cannot drift apart.
-      showAll();
-    } else if (center?.lat && center?.lng) {
+    // Nothing placed yet: sit on the instance's own centre until something
+    // arrives. The fit above claims `hasFit` only when it had markers to
+    // frame, so the first real set still gets its one fit.
+    if (!hasFit && placed.length === 0 && center?.lat && center?.lng) {
       const zoom = Math.round(14 - Math.log2(radius || 10));
       map.setView([center.lat, center.lng], Math.max(zoom, 3));
     }
@@ -508,17 +513,27 @@
   }
 
   /* The previewed patch's pin lifts toward the reader — the map's half of
-     the same gesture that highlights its card. Transform only, so nothing
-     reflows and the pin keeps its point on the same coordinate. */
-  .map-wrapper :global(.patch-marker.is-previewing) {
-    z-index: 650 !important;
-    transform-origin: 50% 100%;
-    scale: 1.25;
-    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+     the same gesture that highlights its card.
+     The scale goes on the SVG *inside* the marker, never on the marker
+     itself. Leaflet positions a marker with `transform: translate3d(...)`,
+     and the standalone `scale` property does not sit beside a transform —
+     CSS composes them as translate → rotate → scale → transform, so scaling
+     the marker multiplies Leaflet's translation by the same factor and
+     throws the pin a quarter of its own offset across the map. Pins near
+     the pane's origin barely move; distant ones fly. The child carries no
+     Leaflet transform, so scaling it is just scaling it. */
+  .map-wrapper :global(.patch-marker svg) {
+    transition: scale 120ms ease;
+    transform-origin: 50% 100%; /* the pin's point stays on its coordinate */
   }
 
-  .map-wrapper :global(.patch-marker) {
-    transition: scale 120ms ease;
+  .map-wrapper :global(.patch-marker.is-previewing) {
+    z-index: 650 !important;
+  }
+
+  .map-wrapper :global(.patch-marker.is-previewing svg) {
+    scale: 1.25;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
   }
 
   /* A cluster is not a patch, so it wears no identity color and no motif —

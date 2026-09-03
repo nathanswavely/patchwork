@@ -127,8 +127,13 @@ describe('the out-of-view affordance', () => {
   it('restores the same framing the map opened with', () => {
     // One function behind both, so the view a person is given and the view
     // they can ask back cannot drift apart.
-    expect(src).toMatch(/function showAll\(\)/);
-    expect(src).toMatch(/hasFit = true;[\s\S]{0,400}?showAll\(\)/);
+    expect(src).toMatch(/function showAll\(animate = true\)/);
+    expect(src).toMatch(/hasFit = true;[\s\S]{0,400}?showAll\(false\)/);
+    // The opening fit is not animated and the restore is: nobody asked to be
+    // moved off a default view they never saw, but a person who presses the
+    // notice is owed the motion that shows them where they went.
+    expect(src).toMatch(/showAll\(false\)/);
+    expect(src).toMatch(/onclick=\{showAll\}/);
   });
 
   it('stands down when the pane is already saying it', () => {

@@ -57,6 +57,11 @@ describe('previewing a patch', () => {
     // its footprint moves off its own coordinate.
     expect(home).toMatch(/\.patch-card\.previewing \{[^}]*border-color/);
     expect(home).not.toMatch(/\.patch-card\.previewing \{[^}]*(width|height|padding|margin):/);
-    expect(map).toMatch(/\.patch-marker\.is-previewing\) \{[^}]*scale:/);
+    // And the scale goes on the child, never the marker: Leaflet positions
+    // the marker with a transform, and CSS composes `scale` *with* it rather
+    // than beside it — scaling the marker multiplies its translation and
+    // throws the pin across the map.
+    expect(map).toMatch(/\.patch-marker\.is-previewing svg\) \{[^}]*scale:/);
+    expect(map).not.toMatch(/\.patch-marker\.is-previewing\) \{[^}]*scale:/);
   });
 });
