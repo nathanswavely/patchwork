@@ -434,102 +434,102 @@ var artsExtraMemberships = []extraMembershipDef{
 
 var artsEvents = []eventDef{
 	// First Friday (recurring)
-	{"First Friday Gallery Walk", "Monthly art walk through downtown Lancaster galleries. Meet the artists, enjoy refreshments, discover new work. 30+ participating venues.", "first-friday-collective", "Downtown Lancaster", -56, 4},
-	{"First Friday Gallery Walk", "Spring exhibitions and live music at participating galleries. Special printmaking demos at Brayer & Press.", "first-friday-collective", "Downtown Lancaster", -28, 4},
-	{"First Friday Gallery Walk", "April edition with a focus on local photography and mixed media. New gallery openings on Prince Street.", "first-friday-collective", "Downtown Lancaster", 7, 4},
-	{"First Friday Gallery Walk", "Summer kickoff edition. Extended hours until 10pm. Food trucks on Queen Street.", "first-friday-collective", "Downtown Lancaster", 35, 4},
+	{"First Friday Gallery Walk", "Monthly art walk through downtown Lancaster galleries. Meet the artists, enjoy refreshments, discover new work. 30+ participating venues.", "first-friday-collective", "Downtown Lancaster", -56, 4, "https://artsdistrict.example/first-friday"},
+	{"First Friday Gallery Walk", "Spring exhibitions and live music at participating galleries. Special printmaking demos at Brayer & Press.", "first-friday-collective", "Downtown Lancaster", -28, 4, "https://artsdistrict.example/first-friday"},
+	{"First Friday Gallery Walk", "April edition with a focus on local photography and mixed media. New gallery openings on Prince Street.", "first-friday-collective", "Downtown Lancaster", 7, 4, "https://artsdistrict.example/first-friday"},
+	{"First Friday Gallery Walk", "Summer kickoff edition. Extended hours until 10pm. Food trucks on Queen Street.", "first-friday-collective", "Downtown Lancaster", 35, 4, "https://artsdistrict.example/first-friday"},
 
 	// Printmakers Guild
-	{"Printmaking Workshop: Intro to Linocut", "Learn the basics of linocut printing. All materials provided. No experience necessary. Leave with your own print.", "brayer-and-press-guild", "Brayer & Press Guild", -21, 3},
-	{"Letterpress Open Studio", "Drop in and explore our vintage Vandercook and Chandler & Price presses. Print a broadside to take home.", "brayer-and-press-guild", "Brayer & Press Guild", 14, 3},
-	{"Risograph Print Party", "Bring your artwork and we'll run it through our Riso. Learn color separation and registration. $5 materials fee.", "brayer-and-press-guild", "Brayer & Press Guild", 28, 3},
+	{"Printmaking Workshop: Intro to Linocut", "Learn the basics of linocut printing. All materials provided. No experience necessary. Leave with your own print.", "brayer-and-press-guild", "Brayer & Press Guild", -21, 3, "https://eventbrite.example/e/intro-to-linocut"},
+	{"Letterpress Open Studio", "Drop in and explore our vintage Vandercook and Chandler & Price presses. Print a broadside to take home.", "brayer-and-press-guild", "Brayer & Press Guild", 14, 3, ""},
+	{"Risograph Print Party", "Bring your artwork and we'll run it through our Riso. Learn color separation and registration. $5 materials fee.", "brayer-and-press-guild", "Brayer & Press Guild", 28, 3, "https://eventbrite.example/e/riso-print-party"},
 
 	// The Selvage
-	{"Open Mic Night", "Weekly open mic for musicians, poets, and comedians. Sign up starts at 7pm. House PA and backline provided.", "the-selvage", "The Selvage, E King St", -14, 3},
-	{"Mill 72 Live in the Underground", "Original jazz compositions and standards in the underground hall. $10 cover, $5 students.", "the-selvage", "The Selvage Underground", -7, 2},
-	{"Live Music: Lancaster Roots Revival", "Americana and folk showcase with three regional acts. Rooftop show, weather permitting.", "the-selvage", "The Selvage Rooftop", 21, 3},
-	{"Irish Session Night", "Traditional Irish session in the pub. Bring your fiddle, tin whistle, or bodhrán. Listeners welcome.", "the-selvage", "The Selvage Pub", 3, 3},
+	{"Open Mic Night", "Weekly open mic for musicians, poets, and comedians. Sign up starts at 7pm. House PA and backline provided.", "the-selvage", "The Selvage, E King St", -14, 3, "https://theselvage.example/events/open-mic"},
+	{"Mill 72 Live in the Underground", "Original jazz compositions and standards in the underground hall. $10 cover, $5 students.", "the-selvage", "The Selvage Underground", -7, 2, "https://theselvage.example/events/mill-72-underground"},
+	{"Live Music: Lancaster Roots Revival", "Americana and folk showcase with three regional acts. Rooftop show, weather permitting.", "the-selvage", "The Selvage Rooftop", 21, 3, "https://theselvage.example/events/roots-revival"},
+	{"Irish Session Night", "Traditional Irish session in the pub. Bring your fiddle, tin whistle, or bodhrán. Listeners welcome.", "the-selvage", "The Selvage Pub", 3, 3, ""},
 
 	// Mural Arts
-	{"Community Mural Planning Session", "Help design the next neighborhood mural. Bring your ideas and sketches. All skill levels welcome.", "wallflower-mural-project", "Southside Rec Center, S Duke St", -10, 2},
-	{"Mural Painting Day: Chestnut Street Wall", "Volunteers needed to paint the approved design. Supplies and lunch provided. Wear old clothes.", "wallflower-mural-project", "Chestnut St & Lime St", 10, 6},
-	{"Youth Mural Apprenticeship Info Session", "Learn about the summer apprenticeship for ages 15-19. Paid stipend, professional training, public portfolio piece.", "wallflower-mural-project", "Southside Rec Center", 18, 2},
+	{"Community Mural Planning Session", "Help design the next neighborhood mural. Bring your ideas and sketches. All skill levels welcome.", "wallflower-mural-project", "Southside Rec Center, S Duke St", -10, 2, ""},
+	{"Mural Painting Day: Chestnut Street Wall", "Volunteers needed to paint the approved design. Supplies and lunch provided. Wear old clothes.", "wallflower-mural-project", "Chestnut St & Lime St", 10, 6, "https://eventbrite.example/e/chestnut-street-paint-day"},
+	{"Youth Mural Apprenticeship Info Session", "Learn about the summer apprenticeship for ages 15-19. Paid stipend, professional training, public portfolio piece.", "wallflower-mural-project", "Southside Rec Center", 18, 2, "https://eventbrite.example/e/youth-mural-apprenticeship"},
 
 	// Ceramics
-	{"Ceramic Raku Firing Day", "Outdoor raku firing event. Bring your bisqueware or use studio pieces. Dramatic results guaranteed. Weather permitting.", "common-ground-ceramics", "Common Ground Ceramics", -18, 5},
-	{"Wheel Throwing for Beginners", "Six-week introductory course. Wednesdays 6-8pm. Materials included. $120 members / $160 non-members.", "common-ground-ceramics", "Common Ground Ceramics", 3, 2},
-	{"Spring Ceramics Sale", "Annual sale of member-made pottery, sculpture, and functional ware. All proceeds support the co-op.", "common-ground-ceramics", "Common Ground Ceramics", 30, 5},
+	{"Ceramic Raku Firing Day", "Outdoor raku firing event. Bring your bisqueware or use studio pieces. Dramatic results guaranteed. Weather permitting.", "common-ground-ceramics", "Common Ground Ceramics", -18, 5, "https://commongroundceramics.example/events/raku-firing"},
+	{"Wheel Throwing for Beginners", "Six-week introductory course. Wednesdays 6-8pm. Materials included. $120 members / $160 non-members.", "common-ground-ceramics", "Common Ground Ceramics", 3, 2, "https://commongroundceramics.example/classes"},
+	{"Spring Ceramics Sale", "Annual sale of member-made pottery, sculpture, and functional ware. All proceeds support the co-op.", "common-ground-ceramics", "Common Ground Ceramics", 30, 5, "https://commongroundceramics.example/events/spring-sale"},
 
 	// Flicker & Still
-	{"Documentary Screening: Local Voices", "New short doc exploring Lancaster's immigrant food traditions. Discussion with filmmaker Lily Martinez to follow.", "flicker-still", "Flicker & Still Cinema", -30, 2},
-	{"Indie Film Night: Regional Shorts", "Curated shorts by Mid-Atlantic filmmakers. Q&A with directors. $8 admission includes a craft spirit tasting.", "flicker-still", "Flicker & Still Cinema", 17, 3},
-	{"Spoken Word Night", "Featured performer: Nina Scott. Open list follows. Sign up at the bar. Free admission.", "flicker-still", "Flicker & Still Cinema", -3, 2},
-	{"Zine Reading & Swap", "Authors read from new zines followed by a free swap table. Bring copies of your work to trade.", "flicker-still", "Flicker & Still Cinema", 25, 2},
+	{"Documentary Screening: Local Voices", "New short doc exploring Lancaster's immigrant food traditions. Discussion with filmmaker Lily Martinez to follow.", "flicker-still", "Flicker & Still Cinema", -30, 2, "https://flickerandstill.example/films/local-voices"},
+	{"Indie Film Night: Regional Shorts", "Curated shorts by Mid-Atlantic filmmakers. Q&A with directors. $8 admission includes a craft spirit tasting.", "flicker-still", "Flicker & Still Cinema", 17, 3, "https://flickerandstill.example/films/regional-shorts"},
+	{"Spoken Word Night", "Featured performer: Nina Scott. Open list follows. Sign up at the bar. Free admission.", "flicker-still", "Flicker & Still Cinema", -3, 2, ""},
+	{"Zine Reading & Swap", "Authors read from new zines followed by a free swap table. Bring copies of your work to trade.", "flicker-still", "Flicker & Still Cinema", 25, 2, "https://flickerandstill.example/events/zine-reading"},
 
 	// Radio
-	{"Community Radio Fundraiser", "Annual fundraiser for Red Rose Radio. Live bands, food trucks, silent auction. Help us stay on the air.", "red-rose-radio", "Millrace Park, Lancaster", -42, 5},
-	{"Radio Workshop: Intro to Podcasting", "Plan, record, and edit a podcast using our studio. Leave with a published episode. No experience needed.", "red-rose-radio", "Red Rose Radio Studio", 24, 3},
+	{"Community Radio Fundraiser", "Annual fundraiser for Red Rose Radio. Live bands, food trucks, silent auction. Help us stay on the air.", "red-rose-radio", "Millrace Park, Lancaster", -42, 5, "https://redroseradio.example/fundraiser"},
+	{"Radio Workshop: Intro to Podcasting", "Plan, record, and edit a podcast using our studio. Leave with a published episode. No experience needed.", "red-rose-radio", "Red Rose Radio Studio", 24, 3, "https://redroseradio.example/workshops/podcasting"},
 
 	// Dance
-	{"Dance Collective Showcase: Spring Movement", "New works by collective members. Two performances. $15 general / $10 students. At Stonegate Hall.", "floorwork-dance-collective", "Stonegate Hall, Lancaster", 28, 2},
-	{"Contact Improvisation Jam", "Open jam for movers of all levels. Warm-up at 6pm, open dancing at 6:30. Soft-soled shoes or bare feet.", "floorwork-dance-collective", "W King St Studio", 5, 2},
+	{"Dance Collective Showcase: Spring Movement", "New works by collective members. Two performances. $15 general / $10 students. At Stonegate Hall.", "floorwork-dance-collective", "Stonegate Hall, Lancaster", 28, 2, "https://eventbrite.example/e/spring-movement-showcase"},
+	{"Contact Improvisation Jam", "Open jam for movers of all levels. Warm-up at 6pm, open dancing at 6:30. Soft-soled shoes or bare feet.", "floorwork-dance-collective", "W King St Studio", 5, 2, ""},
 
 	// Theater
-	{"Improv Night: No Script Required", "Fast-paced improv comedy driven by audience suggestions. $8 at the door. BYOB.", "orange-street-players", "Orange Street Playhouse, E Orange St", -5, 2},
-	{"Auditions: Summer One-Act Festival", "Open auditions for three one-act plays. Prepare a 2-minute monologue. All roles available.", "orange-street-players", "Orange Street Playhouse", 12, 3},
+	{"Improv Night: No Script Required", "Fast-paced improv comedy driven by audience suggestions. $8 at the door. BYOB.", "orange-street-players", "Orange Street Playhouse, E Orange St", -5, 2, ""},
+	{"Auditions: Summer One-Act Festival", "Open auditions for three one-act plays. Prepare a 2-minute monologue. All roles available.", "orange-street-players", "Orange Street Playhouse", 12, 3, "https://eventbrite.example/e/summer-one-act-auditions"},
 
 	// Warehouse / Sculpture Yard
-	{"Open Studio Weekend", "Tour 18 artist studios. Works for sale, live demos, refreshments. Free admission.", "warehouse-arts-collective", "Warehouse Arts Collective", -35, 8},
-	{"Iron Pour", "Annual iron pour in the Sculpture Yard. Watch molten metal become art. Bring the kids. Hot dogs provided.", "sculpture-yard", "Sculpture Yard, N Plum St", 22, 4},
+	{"Open Studio Weekend", "Tour 18 artist studios. Works for sale, live demos, refreshments. Free admission.", "warehouse-arts-collective", "Warehouse Arts Collective", -35, 8, "https://eventbrite.example/e/open-studio-weekend"},
+	{"Iron Pour", "Annual iron pour in the Sculpture Yard. Watch molten metal become art. Bring the kids. Hot dogs provided.", "sculpture-yard", "Sculpture Yard, N Plum St", 22, 4, ""},
 
 	// The Tinker's Damn
-	{"Intro to Laser Cutting", "Learn to design and cut with our Glowforge. Bring a simple design or use our templates. Materials provided.", "tinkers-damn", "The Tinker's Damn", 8, 2},
-	{"Fix-It Clinic", "Bring your broken stuff — toasters, lamps, bikes, clothing. Volunteer fixers will help you repair instead of replace.", "tinkers-damn", "The Tinker's Damn", 15, 3},
+	{"Intro to Laser Cutting", "Learn to design and cut with our Glowforge. Bring a simple design or use our templates. Materials provided.", "tinkers-damn", "The Tinker's Damn", 8, 2, "https://tinkersdamn.example/classes/laser-cutting"},
+	{"Fix-It Clinic", "Bring your broken stuff — toasters, lamps, bikes, clothing. Volunteer fixers will help you repair instead of replace.", "tinkers-damn", "The Tinker's Damn", 15, 3, "https://tinkersdamn.example/events/fix-it-clinic"},
 
 	// Garden
-	{"Spring Plot Assignments", "Annual plot lottery and orientation for the growing season. Bring proof of SW Lancaster residency. Free.", "sowe-garden", "SoWe Community Garden", 4, 2},
-	{"Composting Workshop", "Learn to build and maintain a backyard compost bin. Take home a starter kit. Presented by Theo Baker.", "sowe-garden", "SoWe Community Garden", 20, 2},
+	{"Spring Plot Assignments", "Annual plot lottery and orientation for the growing season. Bring proof of SW Lancaster residency. Free.", "sowe-garden", "SoWe Community Garden", 4, 2, ""},
+	{"Composting Workshop", "Learn to build and maintain a backyard compost bin. Take home a starter kit. Presented by Theo Baker.", "sowe-garden", "SoWe Community Garden", 20, 2, "https://eventbrite.example/e/backyard-composting"},
 
 	// Bike Co-op
-	{"Open Wrench Night", "Fix your bike with our tools and volunteer help. Tubes and basic parts available by donation.", "freewheelery", "The Freewheelery", -7, 3},
-	{"Earn-a-Bike Orientation", "Start the earn-a-bike program: volunteer 10 hours and take home a refurbished bicycle. Orientation required.", "freewheelery", "The Freewheelery", 6, 2},
+	{"Open Wrench Night", "Fix your bike with our tools and volunteer help. Tubes and basic parts available by donation.", "freewheelery", "The Freewheelery", -7, 3, ""},
+	{"Earn-a-Bike Orientation", "Start the earn-a-bike program: volunteer 10 hours and take home a refurbished bicycle. Orientation required.", "freewheelery", "The Freewheelery", 6, 2, "https://eventbrite.example/e/earn-a-bike-orientation"},
 
 	// Beats Lab
-	{"Beat Battle", "16 producers, one night. Bring your best beat on a USB stick. Audience votes. Prizes from local music shops.", "low-end-lab", "Low End Lab", 9, 3},
-	{"Intro to Ableton Live", "Free workshop for youth. Learn the basics of digital music production. Laptops provided.", "low-end-lab", "Low End Lab", 16, 3},
+	{"Beat Battle", "16 producers, one night. Bring your best beat on a USB stick. Audience votes. Prizes from local music shops.", "low-end-lab", "Low End Lab", 9, 3, "https://lowendlab.example/events/beat-battle"},
+	{"Intro to Ableton Live", "Free workshop for youth. Learn the basics of digital music production. Laptops provided.", "low-end-lab", "Low End Lab", 16, 3, "https://lowendlab.example/workshops/ableton"},
 
 	// Raíces
-	{"Noche de Poesía", "Bilingual poetry night. Read in English, Spanish, or both. Open mic after featured readers. Free. Refreshments.", "el-telar", "El Telar", 11, 2},
-	{"Community Kitchen: Pupusas", "Learn to make pupusas with Doña Carmen. All ingredients provided. Donation suggested. Space limited to 15.", "el-telar", "El Telar", 19, 3},
+	{"Noche de Poesía", "Bilingual poetry night. Read in English, Spanish, or both. Open mic after featured readers. Free. Refreshments.", "el-telar", "El Telar", 11, 2, ""},
+	{"Community Kitchen: Pupusas", "Learn to make pupusas with Doña Carmen. All ingredients provided. Donation suggested. Space limited to 15.", "el-telar", "El Telar", 19, 3, "https://eventbrite.example/e/community-kitchen-pupusas"},
 
 	// Writers Guild
-	{"Monthly Critique Group: Fiction", "Bring 3,000 words of fiction. Read, discuss, improve. Constructive feedback only. All levels welcome.", "longhand-writers-guild", "Inkhorn Books, W King St", -12, 2},
-	{"Poetry Open Mic", "Read your work or just listen. Hosted by Nina Scott. At the Linotype on Queen Street.", "longhand-writers-guild", "The Linotype", 13, 2},
+	{"Monthly Critique Group: Fiction", "Bring 3,000 words of fiction. Read, discuss, improve. Constructive feedback only. All levels welcome.", "longhand-writers-guild", "Inkhorn Books, W King St", -12, 2, ""},
+	{"Poetry Open Mic", "Read your work or just listen. Hosted by Nina Scott. At the Linotype on Queen Street.", "longhand-writers-guild", "The Linotype", 13, 2, ""},
 
 	// Yoga
-	{"Sunset Yoga in Musser Park", "Donation-based vinyasa flow. All levels. Bring your own mat. Rain moves us to the pavilion.", "yoga-in-the-park", "Musser Park, Lancaster", 2, 1},
+	{"Sunset Yoga in Musser Park", "Donation-based vinyasa flow. All levels. Bring your own mat. Rain moves us to the pavilion.", "yoga-in-the-park", "Musser Park, Lancaster", 2, 1, ""},
 
 	// Commits & Coffee
-	{"Commits & Coffee: Saturday Session", "Bring a laptop or just come to learn. This week: intro to web scraping with Python.", "code-and-coffee", "The Percolator, S Duke St", 1, 3},
+	{"Commits & Coffee: Saturday Session", "Bring a laptop or just come to learn. This week: intro to web scraping with Python.", "code-and-coffee", "The Percolator, S Duke St", 1, 3, ""},
 
 	// Zine Library
-	{"Zine Making Workshop", "Learn to fold, print, and bind a one-sheet zine. All supplies provided. Take home 20 copies.", "half-fold-zine-library", "Half-Fold Zine Library", 10, 2},
+	{"Zine Making Workshop", "Learn to fold, print, and bind a one-sheet zine. All supplies provided. Take home 20 copies.", "half-fold-zine-library", "Half-Fold Zine Library", 10, 2, "https://eventbrite.example/e/zine-making-workshop"},
 
 	// Mutual Aid
-	{"Mutual Aid Potluck & Planning", "Monthly gathering to coordinate rides, groceries, and emergency support. Bring a dish. Everyone welcome.", "screen-door-mutual-aid", "Rodney Park Pavilion", 7, 3},
+	{"Mutual Aid Potluck & Planning", "Monthly gathering to coordinate rides, groceries, and emergency support. Bring a dish. Everyone welcome.", "screen-door-mutual-aid", "Rodney Park Pavilion", 7, 3, ""},
 
 	// Fermentation Collective
-	{"Sourdough Starter Swap", "Bring your starter, take someone else's. Compare notes on hydration, flour blends, and feeding schedules.", "fermentation-collective", "Market Row, Lancaster", 14, 2},
+	{"Sourdough Starter Swap", "Bring your starter, take someone else's. Compare notes on hydration, flour blends, and feeding schedules.", "fermentation-collective", "Market Row, Lancaster", 14, 2, ""},
 
 	// Arts District
-	{"Youth Art Workshop: Zine Making", "Free workshop for teens at the public library. Design, print, and bind your own zine. Materials provided.", "lancaster-arts-district", "Vine Street Free Library", 8, 3},
-	{"Artist Talk: Public Art and Community", "Devon Watts on the role of murals in neighborhood identity. Gallery Row, 7pm. Free.", "gallery-row", "Gallery Row, Prince St", 15, 2},
+	{"Youth Art Workshop: Zine Making", "Free workshop for teens at the public library. Design, print, and bind your own zine. Materials provided.", "lancaster-arts-district", "Vine Street Free Library", 8, 3, "https://artsdistrict.example/events/youth-zine-workshop"},
+	{"Artist Talk: Public Art and Community", "Devon Watts on the role of murals in neighborhood identity. Gallery Row, 7pm. Free.", "gallery-row", "Gallery Row, Prince St", 15, 2, "https://galleryrow.example/events/artist-talk-public-art"},
 
 	// Bands
-	{"Mill 72 Rehearsal / Listening Session", "Working rehearsal, followed by a listening session of new material. Drop in quietly.", "mill-72", "Rehearsal space, Lancaster", 2, 2},
-	{"Static Season Benefit Show", "All-ages benefit for the community fridge. $5 suggested, nobody turned away.", "static-season", "Basement show, SW Lancaster", 9, 3},
-	{"Chestnut Hollow Songwriting Circle", "Informal songwriting circle hosted by the duo. Bring a work-in-progress.", "chestnut-hollow", "Living room show, Lancaster", 27, 2},
-	{"Conestoga Drift Rehearsal Open House", "Rare open rehearsal — come watch the new record take shape.", "conestoga-drift", "Practice space, Cabbage Hill", 16, 2},
+	{"Mill 72 Rehearsal / Listening Session", "Working rehearsal, followed by a listening session of new material. Drop in quietly.", "mill-72", "Rehearsal space, Lancaster", 2, 2, ""},
+	{"Static Season Benefit Show", "All-ages benefit for the community fridge. $5 suggested, nobody turned away.", "static-season", "Basement show, SW Lancaster", 9, 3, "https://facebook.example/events/static-season-benefit"},
+	{"Chestnut Hollow Songwriting Circle", "Informal songwriting circle hosted by the duo. Bring a work-in-progress.", "chestnut-hollow", "Living room show, Lancaster", 27, 2, ""},
+	{"Conestoga Drift Rehearsal Open House", "Rare open rehearsal — come watch the new record take shape.", "conestoga-drift", "Practice space, Cabbage Hill", 16, 2, ""},
 }
 
 var artsProposals = []proposalDef{
