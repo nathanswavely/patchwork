@@ -19880,6 +19880,42 @@
       ]
     },
     {
+      "id": "0c01f3c5e205",
+      "text": "patch is outside this view",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Count line stating a fact the map cannot show: everything matching is off screen. Mechanical, not voice-bearing. Drafted by Claude 2026-09-01; rewrite freely at make copy-review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/MapView.svelte",
+          "line": 365,
+          "kind": "markup",
+          "raw": "patch is outside this view",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cd76291bdd7f",
+      "text": "patches are outside this view",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Count line stating a fact the map cannot show: everything matching is off screen. Mechanical, not voice-bearing. Drafted by Claude 2026-09-01; rewrite freely at make copy-review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/MapView.svelte",
+          "line": 367,
+          "kind": "markup",
+          "raw": "patches are outside this view",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "7d9eb7acb13e",
       "text": "Close",
       "words": 1,
@@ -19935,7 +19971,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 16,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\r\n    one enrolled yet.",
           "quote": null
         }
       ]
@@ -19971,7 +20007,7 @@
           "file": "web/src/components/PasskeyNotice.svelte",
           "line": 17,
           "kind": "markup",
-          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first.\r\n    It takes a moment and uses the sign-in you already have.",
           "quote": null
         }
       ]
@@ -28372,7 +28408,7 @@
           "file": "web/src/pages/AdminNeighborQuilts.svelte",
           "line": 63,
           "kind": "markup",
-          "raw": "visitor,\n    including people without accounts. Neighboring is a public statement that\n    your community stands beside theirs. People connect their own quilts\n    privately on top of this list.",
+          "raw": "visitor,\r\n    including people without accounts. Neighboring is a public statement that\r\n    your community stands beside theirs. People connect their own quilts\r\n    privately on top of this list.",
           "quote": null
         }
       ]
@@ -29879,7 +29915,7 @@
           "file": "web/src/pages/AdminTags.svelte",
           "line": 84,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\r\n    and pull patches with shared tags together on the quilt. A tag's motif\r\n    is the mark shown for patches that chose no motif of their own.\r\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
         }
       ]
@@ -35399,7 +35435,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 117,
           "kind": "markup",
-          "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
+          "raw": "This invite link may have expired or already been used.\r\n          Ask your community admin for a new one.",
           "quote": null
         }
       ]
@@ -35542,7 +35578,7 @@
           "file": "web/src/pages/InviteLanding.svelte",
           "line": 135,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\r\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
@@ -36195,7 +36231,7 @@
           "file": "web/src/pages/LegalDoc.svelte",
           "line": 76,
           "kind": "markup",
-          "raw": "says\n      who runs {instanceName} and what it costs to keep up.",
+          "raw": "says\r\n      who runs {instanceName} and what it costs to keep up.",
           "quote": null
         }
       ]
@@ -36606,7 +36642,7 @@
           "file": "web/src/pages/Login.svelte",
           "line": 199,
           "kind": "markup",
-          "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
+          "raw": "Enter your username and one of your saved recovery codes. Each\r\n            code works once.",
           "quote": null
         }
       ]
@@ -38267,7 +38303,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 179,
           "kind": "markup",
-          "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
+          "raw": "Choose how this patch appears on the quilt. The first fabric of the\r\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
         }
       ]
@@ -38357,7 +38393,7 @@
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 218,
           "kind": "markup",
-          "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
+          "raw": "After a reset, the tile gets an automatically assigned look, which\r\n          may change as the quilt grows.",
           "quote": null
         }
       ]
@@ -40261,7 +40297,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 75,
           "kind": "markup",
-          "raw": "The one domain the platform has vetted as belonging to this organization.\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\n      it empty to require admin review for every claim. This is separate from\n      the website field, which carries no trust.",
+          "raw": "The one domain the platform has vetted as belonging to this organization.\r\n      Self-service claims prove control of it (DNS record or a meta tag). Leave\r\n      it empty to require admin review for every claim. This is separate from\r\n      the website field, which carries no trust.",
           "quote": null
         }
       ]
@@ -40333,7 +40369,7 @@
           "file": "web/src/pages/PatchSettingsVerification.svelte",
           "line": 111,
           "kind": "markup",
-          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\n      it into their patch.",
+          "raw": "This patch is unclaimed. When someone proves they run it, claiming turns\r\n      it into their patch.",
           "quote": null
         }
       ]
@@ -41946,7 +41982,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 357,
           "kind": "markup",
-          "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
+          "raw": "One passkey is one lost phone away from a locked account. Add a\r\n        second on another device.",
           "quote": null
         }
       ]
@@ -42090,7 +42126,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 417,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\r\n      once.",
           "quote": null
         }
       ]
@@ -42108,7 +42144,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
+          "raw": "Write these down or save them somewhere safe. This is the only time\r\n          they're shown.",
           "quote": null
         }
       ]
@@ -42162,7 +42198,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 456,
           "kind": "markup",
-          "raw": "New codes replace the old set. Anything already written down\n            stops working.",
+          "raw": "New codes replace the old set. Anything already written down\r\n            stops working.",
           "quote": null
         }
       ]
@@ -42216,7 +42252,7 @@
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 475,
           "kind": "markup",
-          "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
+          "raw": "It's saved and ready to use. A name helps you tell it apart from your\r\n    others later.",
           "quote": null
         }
       ]

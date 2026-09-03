@@ -114,10 +114,17 @@
     const onZoom = () => { if (map) updateMarkers(); };
     instance.on('zoomend', onZoom);
 
+    // Panning cannot change the grouping (pixel separation is unchanged by
+    // it) but it does change what is on screen, so the count is recounted
+    // without rebuilding a single marker.
+    const onMove = () => { if (map) countOffscreen(); };
+    instance.on('moveend', onMove);
+
     return () => {
       ro.disconnect();
       unblockZoom();
       instance.off('zoomend', onZoom);
+      instance.off('moveend', onMove);
       if (map) {
         instance.off('moveend', reportInView);
         instance.off('zoomend', reportInView);
@@ -172,10 +179,60 @@
     });
   }
 
+  // The map a reader can actually see, in layer-point space — which is what
+  // the placement pass projects into; container coordinates would be off by
+  // the map pane's own offset. On desktop the cards pane floats over the
+  // right of the canvas, so that strip is not visible map: a name under the
+  // pane is a name nobody reads, and a marker under it is not on screen.
+  function visibleRect() {
+    const size = map.getSize();
+    const padRight = Math.round(size.x * insetRight);
+    const topLeft = map.containerPointToLayerPoint([4, 4]);
+    const bottomRight = map.containerPointToLayerPoint([size.x - padRight - 4, size.y - 4]);
+    return {
+      left: topLeft.x,
+      top: topLeft.y,
+      right: bottomRight.x,
+      bottom: bottomRight.y,
+    };
+  }
+
+  function countOffscreen() {
+    const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
+    const visible = visibleRect();
+    let inView = 0;
+    for (const n of placed) {
+      const pt = map.latLngToLayerPoint([n.latitude, n.longitude]);
+      if (pt.x >= visible.left && pt.x <= visible.right
+        && pt.y >= visible.top && pt.y <= visible.bottom) inView += 1;
+    }
+    offscreen = inView === 0 ? placed.length : 0;
+  }
+
+  // Bring them back: the affordance names the fact and this does the moving,
+  // which is the whole reason narrowing never moves the viewport by itself.
+  function showAll() {
+    const placed = nodes.filter((n) => n.latitude != null && n.longitude != null);
+    if (!placed.length) return;
+    const padRight = Math.round((mapContainer?.clientWidth || 0) * insetRight);
+    map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), {
+      paddingTopLeft: [24, 24],
+      paddingBottomRight: [24 + padRight, 24],
+    });
+  }
+
   // The font the names are drawn in, read once from the rendered label so
   // measurement matches what the browser will paint.
   let labelFont = '600 12px system-ui, sans-serif';
   let labelled = new Map(); // id → the position its name took, kept across passes
+
+  // Patches that pass the lenses but sit outside what the reader can see.
+  // Only ever announced when *none* are visible: a map that has gone empty
+  // is the case a person cannot explain to themselves, and the same
+  // discipline as an empty result naming its lenses (docs/adr/022,
+  // docs/adr/078). Panning to an empty stretch of river deserves the same
+  // sentence as filtering to a tag whose patches are all uptown.
+  let offscreen = $state(0);
 
   function markerFor(node, position) {
     const marker = L.marker([node.latitude, node.longitude], {
@@ -210,21 +267,7 @@
 
     // Names are placed by separation, never by zoom: zoom is only what moves
     // markers apart, and two patches at one address never separate at all.
-    // A name may only occupy map the reader can see: on desktop the cards
-    // pane floats over the right of the canvas, and a name under it is a
-    // name nobody reads.
-    // In layer-point space, which is what the placement pass projects into —
-    // container coordinates would be off by the map pane's own offset.
-    const size = map.getSize();
-    const padRight = Math.round(size.x * insetRight);
-    const topLeft = map.containerPointToLayerPoint([4, 4]);
-    const bottomRight = map.containerPointToLayerPoint([size.x - padRight - 4, size.y - 4]);
-    const visible = {
-      left: topLeft.x,
-      top: topLeft.y,
-      right: bottomRight.x,
-      bottom: bottomRight.y,
-    };
+    const visible = visibleRect();
 
     labelled = placeLabels(
       groups,
@@ -233,6 +276,8 @@
       labelled,
       visible,
     );
+
+    countOffscreen();
 
     const layers = [];
     for (const group of groups) {
@@ -259,14 +304,12 @@
     // a request to be moved somewhere else.
     if (hasFit) return;
 
-    const fitOpts = {
-      paddingTopLeft: [24, 24],
-      paddingBottomRight: [24 + padRight, 24],
-    };
-
     if (placed.length > 0) {
       hasFit = true;
-      map.fitBounds(L.latLngBounds(placed.map((n) => [n.latitude, n.longitude])), fitOpts);
+      // The same framing the out-of-view affordance restores — one function,
+      // so the view a person is given at the start and the view they can ask
+      // for later cannot drift apart.
+      showAll();
     } else if (center?.lat && center?.lng) {
       const zoom = Math.round(14 - Math.log2(radius || 10));
       map.setView([center.lat, center.lng], Math.max(zoom, 3));
@@ -306,6 +349,25 @@
 
 <div class="map-wrapper">
   <div bind:this={mapContainer} class="map-container"></div>
+
+  <!-- Narrowing the set never moves the viewport (docs/adr/078), which
+       leaves one case needing an explanation: everything that matches is
+       somewhere else, and the map has gone blank. Naming it beats a jump. -->
+  {#if offscreen > 0}
+    <!-- Centred on the map a reader can see, not on the element: the cards
+         pane covers the right of the canvas on desktop. -->
+    <button class="map-offscreen" style="left: {50 - insetRight * 50}%" onclick={showAll}>
+      <!-- Written as markup rather than an interpolated string so the words
+           are visible to the copy ledger. Text inside a {…} expression is
+           stripped as markup noise, which would quietly exempt a sentence a
+           visitor reads from ever being reviewed. -->
+      {#if offscreen === 1}
+        <b>1</b> patch is outside this view
+      {:else}
+        <b>{offscreen}</b> patches are outside this view
+      {/if}
+    </button>
+  {/if}
 </div>
 
 <style>
@@ -369,6 +431,33 @@
   }
 
   /* Textile popups: surface card, hairline border, app radius + font. */
+  /* Sits over the map it is describing, clear of the zoom controls and of
+     the cards pane. Not an Interruption (CONTEXT.md) — nothing is wrong,
+     the reader has simply moved away from everything. */
+  .map-offscreen {
+    position: absolute;
+    top: 12px;
+    transform: translateX(-50%);
+    z-index: 600;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    box-shadow: 0 2px 10px var(--color-shadow);
+    cursor: pointer;
+  }
+
+  .map-offscreen b {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .map-offscreen:hover {
+    border-color: var(--color-primary);
+  }
+
   /* A name on the map is halo'd text, never a pill. The quilt's name badge
      is a pill because it floats over fabric it must stay readable against;
      a basemap is not fabric, and a field of pills reads as furniture on a
