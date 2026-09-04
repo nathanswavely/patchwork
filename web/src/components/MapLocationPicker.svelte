@@ -20,7 +20,6 @@
     center = null,
     saving = false,
     suggestion = null,
-    confirmLabel = 'Save location',
     onSave = null,
     onCancel = null,
   } = $props();
@@ -123,6 +122,13 @@
     // Click anywhere to place or move the marker.
     instance.on('click', (e) => placeAt(e.latlng.lat, e.latlng.lng));
 
+    // The picker opens wherever it sits in a long settings form, which since
+    // the Location fields were grouped together is below the fold. Somebody
+    // clicking "Set map location" and seeing nothing move has been given no
+    // feedback at all, so bring it into view — `nearest` scrolls the minimum
+    // needed and does nothing when it is already visible.
+    mapContainer.scrollIntoView({ block: 'nearest' });
+
     const ro = new ResizeObserver(() => instance.invalidateSize());
     ro.observe(mapContainer);
     const unblockZoom = blockPageZoom(mapContainer);
@@ -165,6 +171,11 @@
     </p>
   {/if}
 
+  <!-- The second branch is written copy, kept verbatim (copy/ledger.json
+       records it as human-written). An earlier pass interpolated the button
+       label into its last sentence to let a caller rename the button, which
+       silently rewrote somebody's sentence to do it. The button keeps one
+       name instead. -->
   <p class="picker-hint">
     {#if provisional}
       This is a guess, not a placement. Drag the marker or click elsewhere to
@@ -172,7 +183,7 @@
     {:else}
       Click the map to drop the marker, then drag it to adjust. Place it as
       precisely or as loosely as you like. Nothing is saved until you hit
-      {confirmLabel}.
+      Save location.
     {/if}
   </p>
 
@@ -186,7 +197,7 @@
 
   <div class="picker-actions">
     <button class="btn btn-primary btn-sm" onclick={save} disabled={!hasDraft || saving}>
-      {saving ? 'Saving...' : provisional ? 'Use this spot' : confirmLabel}
+      {saving ? 'Saving...' : provisional ? 'Use this spot' : 'Save location'}
     </button>
     <button class="btn btn-secondary btn-sm" onclick={() => onCancel && onCancel()} disabled={saving}>
       Cancel

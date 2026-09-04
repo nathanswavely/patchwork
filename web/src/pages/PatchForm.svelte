@@ -340,7 +340,6 @@
               lng={longitude}
               center={mapCenter}
               {suggestion}
-              confirmLabel="Put it on the map"
               onSave={confirmPlacement}
               onCancel={clearPlacement}
             />
