@@ -28,10 +28,14 @@ type User struct {
 	// HideAmendedLinings is the personal discovery filter (docs/adr/037):
 	// hide amended-lining patches from this user's quilt, search, map, and
 	// public feeds. Populated by the Me handler, not by session validation.
-	HideAmendedLinings bool    `json:"hide_amended_linings"`
-	SuspendedAt        *string `json:"suspended_at,omitempty"`
-	CreatedAt          string  `json:"created_at"`
-	UpdatedAt          string  `json:"updated_at"`
+	HideAmendedLinings bool `json:"hide_amended_linings"`
+	// ContactCard is the phone, email and note a person shares patch by
+	// patch (docs/adr/080). Populated by the Me handlers only — it never
+	// rides along on a login response, a public profile, or an AP actor.
+	ContactCard *ContactCard `json:"contact_card,omitempty"`
+	SuspendedAt *string      `json:"suspended_at,omitempty"`
+	CreatedAt   string       `json:"created_at"`
+	UpdatedAt   string       `json:"updated_at"`
 }
 
 type Notification struct {
@@ -95,6 +99,22 @@ type Credential struct {
 type NodeLink struct {
 	URL   string `json:"url"`
 	Label string `json:"label"`
+}
+
+// ContactCard is how a person can be reached, kept once on the account and
+// shown only inside the patches whose membership they have switched
+// contact sharing on for (docs/adr/080). Email here is an address to be
+// reached at, deliberately separate from the sign-in address: sharing how
+// to reach you must never hand out the key to your account.
+type ContactCard struct {
+	Phone string `json:"phone"`
+	Email string `json:"email"`
+	Note  string `json:"note"`
+}
+
+// Empty reports whether the card carries nothing to show.
+func (c ContactCard) Empty() bool {
+	return c.Phone == "" && c.Email == "" && c.Note == ""
 }
 
 type FollowerPermissions struct {
@@ -202,7 +222,7 @@ type Node struct {
 	// event_count, which is every active event past and future
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
 	// response only; the tree carries the all-time figure.
-	UpcomingEventCount int    `json:"upcoming_event_count"`
+	UpcomingEventCount int `json:"upcoming_event_count"`
 	// ActivatedAt is when this patch joined the quilt - created, or claimed
 	// through patch setup. NULL while it is only a directory listing: an
 	// unclaimed patch has not joined, because no community has arrived
@@ -484,6 +504,13 @@ type Membership struct {
 	// requests shown to that patch's admins — never in public member
 	// listings, and nulled once the request is resolved.
 	JoinMessage string `json:"join_message,omitempty"`
+	// ShareContact is the per-membership contact-sharing switch
+	// (docs/adr/080): when on, this patch's admins and members see the
+	// person's contact card in the Members room. Default off. A second
+	// axis beside Visible, not a second visibility switch — visibility
+	// says whether the membership is known, sharing says whether the
+	// people already in the room can reach you.
+	ShareContact bool `json:"share_contact"`
 }
 
 type Proposal struct {

@@ -97,15 +97,59 @@
     stewardSaving = false;
   }
 
+  // Contact card (docs/adr/080): how to reach you, kept once here and
+  // shared patch by patch at My Patches. Nothing on it is public, and it
+  // is saved whole — one Save, not a field at a time.
+  let contactPhone = $state('');
+  let contactEmail = $state('');
+  let contactNote = $state('');
+  let contactSaving = $state(false);
+  let sharedWithCount = $state(0);
+
   $effect(() => {
     if (user && !hydrated) {
       displayName = user.display_name || '';
       bio = user.bio || '';
       links = (user.links || []).map((l) => ({ ...l }));
       startOnMyQuilt = !!user.start_on_my_quilt;
+      contactPhone = user.contact_card?.phone || '';
+      contactEmail = user.contact_card?.email || '';
+      contactNote = user.contact_card?.note || '';
       hydrated = true;
     }
   });
+
+  $effect(() => {
+    api('me/nodes')
+      .then((data) => {
+        const items = data.items || data || [];
+        sharedWithCount = items.filter((m) => m.share_contact).length;
+      })
+      .catch(() => { sharedWithCount = 0; });
+  });
+
+  async function saveContactCard() {
+    contactSaving = true;
+    try {
+      await api('auth/me', {
+        method: 'PATCH',
+        body: {
+          contact_card: {
+            phone: contactPhone.trim(),
+            email: contactEmail.trim(),
+            note: contactNote.trim(),
+          },
+        },
+      });
+      await checkAuth();
+      hydrated = false;
+      showToast('Contact card saved', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    } finally {
+      contactSaving = false;
+    }
+  }
 
   function addLink() {
     links = [...links, { url: '', label: '' }];
@@ -233,6 +277,43 @@
               {saveMessage}
             </span>
           {/if}
+        </div>
+      </form>
+    </section>
+
+    <section class="pw-section">
+      <h2>Contact card</h2>
+      <p class="muted profile-hint">
+        How the people you organize with can reach you. Nothing here is public:
+        a patch's admins and members see your card only once you share it
+        with that patch, in
+        <a href="/settings/patches" onclick={(e) => { e.preventDefault(); navigate('/settings/patches'); }}>My Patches</a>.
+        {#if sharedWithCount === 1}
+          Shared with 1 patch.
+        {:else if sharedWithCount > 1}
+          Shared with {sharedWithCount} patches.
+        {:else}
+          Not shared with any patch yet.
+        {/if}
+      </p>
+      <form onsubmit={(e) => { e.preventDefault(); saveContactCard(); }}>
+        <div class="field">
+          <label for="contact-phone">Phone</label>
+          <input id="contact-phone" type="text" bind:value={contactPhone} disabled={contactSaving} maxlength="60" autocomplete="tel" />
+        </div>
+        <div class="field">
+          <label for="contact-email">Email to reach you at</label>
+          <input id="contact-email" type="email" bind:value={contactEmail} disabled={contactSaving} maxlength="254" />
+          <small class="muted">Separate from the address you sign in with. That one is never shared.</small>
+        </div>
+        <div class="field">
+          <label for="contact-note">Note</label>
+          <input id="contact-note" type="text" bind:value={contactNote} disabled={contactSaving} maxlength="200" placeholder="Signal preferred, text before calling" />
+        </div>
+        <div class="field-actions">
+          <button type="submit" class="btn btn-primary" disabled={contactSaving}>
+            {contactSaving ? 'Saving...' : 'Save contact card'}
+          </button>
         </div>
       </form>
     </section>

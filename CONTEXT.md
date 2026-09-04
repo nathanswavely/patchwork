@@ -460,6 +460,22 @@ hiding; the two surfaces never disagree.
 _Avoid_: private membership (collides with private patches), profile
 visibility (it is per-membership, not per-profile)
 
+**Contact card**:
+How a person can be reached — a phone number, an email address to reach
+them at (not the sign-in address), and a short note — kept once on the
+account and shared patch by patch. **Contact sharing** is the per-membership
+switch that shows it, owned by the member and off for every patch until
+they turn it on; on, that patch's admins and members see the card in its
+Members room, including people who join later. It is never on the profile,
+never in a public member list, and never federates; a follower has no room
+to share into and cannot switch it on. A second axis beside membership
+visibility, not a second visibility switch: visibility says whether a
+membership is *known*, sharing says whether the people already in the room
+can *reach* you (docs/adr/080).
+_Avoid_: contact info (unbounded — the card is three fields), phone number
+(one field of it), private contact (everything about it is private; say
+"shared with" a patch), directory (there is no people search)
+
 **Role mark**:
 The icon that carries a person's relationship to a patch, used the same
 way everywhere the relationship shows: heart = follower, three users =

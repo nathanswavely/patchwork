@@ -96,6 +96,9 @@ func seedSource(t *testing.T, db *database.DB) {
 	// (docs/adr/006), a patch that closed its door to event suggestions
 	// (docs/adr/026), and a person's profile links.
 	mustExec(t, db, `UPDATE memberships SET visible = 0 WHERE user_id = ? AND node_id = ?`, u2, n1)
+	// user2 shares a contact card with n1 only (docs/adr/080).
+	mustExec(t, db, `UPDATE users SET contact_phone = '+1 717 555 0100', contact_note = 'Signal only' WHERE id = ?`, u2)
+	mustExec(t, db, `UPDATE memberships SET share_contact = 1 WHERE user_id = ? AND node_id = ?`, u2, n1)
 	mustExec(t, db, `UPDATE nodes SET accept_event_suggestions = 0 WHERE id = ?`, n2)
 	mustExec(t, db, `UPDATE users SET links = '[{"url":"https://example.com","label":"Site"}]' WHERE id = ?`, u1)
 
@@ -341,6 +344,20 @@ func TestRoundTrip(t *testing.T) {
 	              WHERE u.username = 'user2' AND m.visible = 0`).Scan(&hidden)
 	if hidden != 1 {
 		t.Errorf("a hidden membership was re-exposed by the fork: got %d hidden, want 1", hidden)
+	}
+
+	// The contact card travels with the switch that shows it (docs/adr/080):
+	// the fork shows user2's card in exactly the room user2 chose.
+	var phone, note string
+	var shared int
+	dst.QueryRow(`SELECT contact_phone, contact_note FROM users WHERE username = 'user2'`).Scan(&phone, &note)
+	if phone != "+1 717 555 0100" || note != "Signal only" {
+		t.Errorf("contact card lost in the fork: phone=%q note=%q", phone, note)
+	}
+	dst.QueryRow(`SELECT COUNT(*) FROM memberships m JOIN users u ON u.id = m.user_id
+	              WHERE u.username = 'user2' AND m.share_contact = 1`).Scan(&shared)
+	if shared != 1 {
+		t.Errorf("contact sharing went silent on the fork: got %d shared, want 1", shared)
 	}
 
 	// When each patch joined the quilt travels (docs/adr/076). Without it a

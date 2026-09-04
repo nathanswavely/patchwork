@@ -409,7 +409,7 @@ func main() {
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/attestation-names/{id}", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.LinkAttestationName(db))))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthOptional(db, handler.ListAmendmentAttestations(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAmendmentAttestation(db))))
-	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembershipVisibility(db)))
+	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembership(db)))
 
 	// Cross-quilt following (docs/adr/024): remote follows and personal
 	// connected quilts live on the follower's home instance.

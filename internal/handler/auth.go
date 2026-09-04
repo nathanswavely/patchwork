@@ -577,11 +577,31 @@ func loadUserLinks(db *database.DB, user *model.User) {
 	json.Unmarshal([]byte(linksJSON), &user.Links)
 }
 
+// loadContactCard populates user.ContactCard from the users.contact_*
+// columns (docs/adr/080). Only the Me handlers call it: the card is the
+// person's own to see in full, and everyone else sees it patch by patch
+// through ListMembers.
+func loadContactCard(db *database.DB, user *model.User) {
+	card := &model.ContactCard{}
+	db.QueryRow("SELECT contact_phone, contact_email, contact_note FROM users WHERE id = ?", user.ID).
+		Scan(&card.Phone, &card.Email, &card.Note)
+	user.ContactCard = card
+}
+
+// Contact card field limits. Phone is free text on purpose — "+1 717 555
+// 0100, Signal only" is a phone field as people actually fill it in.
+const (
+	maxContactPhone = 60
+	maxContactEmail = 254
+	maxContactNote  = 200
+)
+
 // Me handles GET /api/v1/auth/me.
 func Me(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
 		loadUserLinks(db, user)
+		loadContactCard(db, user)
 		var hide int
 		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
 		user.HideAmendedLinings = hide == 1
@@ -601,10 +621,42 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 			Links              *[]model.NodeLink `json:"links"`
 			StartOnMyQuilt     *bool             `json:"start_on_my_quilt"`
 			HideAmendedLinings *bool             `json:"hide_amended_linings"`
+			// ContactCard replaces the whole card (docs/adr/080). One
+			// object rather than three fields, so a form that spreads the
+			// card back never half-updates it.
+			ContactCard *model.ContactCard `json:"contact_card"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
+		}
+
+		if req.ContactCard != nil {
+			card := model.ContactCard{
+				Phone: strings.TrimSpace(req.ContactCard.Phone),
+				Email: strings.TrimSpace(req.ContactCard.Email),
+				Note:  strings.TrimSpace(req.ContactCard.Note),
+			}
+			switch {
+			case len(card.Phone) > maxContactPhone:
+				http.Error(w, `{"error":"phone must be 60 characters or fewer"}`, http.StatusBadRequest)
+				return
+			case len(card.Email) > maxContactEmail:
+				http.Error(w, `{"error":"email must be 254 characters or fewer"}`, http.StatusBadRequest)
+				return
+			case card.Email != "" && (!strings.Contains(card.Email, "@") || strings.ContainsAny(card.Email, " \t\n")):
+				http.Error(w, `{"error":"that doesn't look like an email address"}`, http.StatusBadRequest)
+				return
+			case len(card.Note) > maxContactNote:
+				http.Error(w, `{"error":"note must be 200 characters or fewer"}`, http.StatusBadRequest)
+				return
+			}
+			_, err := db.Exec("UPDATE users SET contact_phone = ?, contact_email = ?, contact_note = ?, updated_at = ? WHERE id = ?",
+				card.Phone, card.Email, card.Note, time.Now().UTC().Format(time.RFC3339), user.ID)
+			if err != nil {
+				http.Error(w, `{"error":"failed to update contact card"}`, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		if req.DisplayName != nil {
@@ -659,6 +711,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 			}
 		}
 		loadUserLinks(db, user)
+		loadContactCard(db, user)
 		var hide int
 		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
 		user.HideAmendedLinings = hide == 1

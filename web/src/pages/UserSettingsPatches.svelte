@@ -3,6 +3,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { loadMemberships } from '../stores/memberships.svelte.js';
+  import { getUser } from '../stores/auth.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
 
@@ -27,6 +28,10 @@
       loading = false;
     }
   }
+
+  // Whether there is anything on the contact card to share (docs/adr/080).
+  let user = $derived(getUser());
+  let cardEmpty = $derived(!(user?.contact_card?.phone || user?.contact_card?.email || user?.contact_card?.note));
 
   let adminPatches = $derived(patches.filter(m => m.role === 'admin'));
   let memberPatches = $derived(patches.filter(m => m.role === 'member'));
@@ -70,7 +75,37 @@
       showToast(e.message || 'Failed to update visibility', 'error');
     }
   }
+
+  // Contact sharing (docs/adr/080): the other switch a member owns. On,
+  // this patch's admins and members see your contact card in its Members
+  // room — including people who join later. Off for every patch until you
+  // turn it on.
+  async function toggleShareContact(m) {
+    try {
+      await api(`users/me/memberships/${m.node_id}`, {
+        method: 'PATCH',
+        body: { share_contact: !m.share_contact },
+      });
+      m.share_contact = !m.share_contact;
+      showToast(m.share_contact ? `Contact card shared with ${m.node_name || m.node_slug}` : `Contact card no longer shared with ${m.node_name || m.node_slug}`, 'info');
+    } catch (e) {
+      showToast(e.message || 'Failed to update contact sharing', 'error');
+    }
+  }
 </script>
+
+{#snippet contactToggle(m)}
+  <button
+    class="btn btn-sm vis-toggle"
+    class:contact-shared={m.share_contact}
+    title={m.share_contact
+      ? 'Your contact card is shown to this patch\'s admins and members in its Members room, including anyone who joins later. Click to stop sharing.'
+      : 'Your contact card is not shown to this patch. Click to share it with its admins and members.'}
+    onclick={() => toggleShareContact(m)}
+  >
+    {m.share_contact ? 'Contact shared' : 'Contact private'}
+  </button>
+{/snippet}
 
 {#snippet visibilityToggle(m)}
   <button
@@ -93,6 +128,13 @@
   {:else if patches.length === 0}
     <p class="muted">You haven't joined any patches yet.</p>
   {:else}
+    {#if cardEmpty && (adminPatches.length > 0 || memberPatches.length > 0)}
+      <p class="muted contact-hint">
+        Your contact card is empty. Fill it in under
+        <a href="/settings" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>Profile</a>
+        and share it patch by patch here.
+      </p>
+    {/if}
     {#if adminPatches.length > 0}
       <section class="patch-section">
         <h3 class="section-heading">Managing</h3>
@@ -107,6 +149,7 @@
             </div>
             <div class="patch-actions">
               {@render visibilityToggle(m)}
+              {@render contactToggle(m)}
             </div>
           </div>
         {/each}
@@ -127,6 +170,7 @@
             </div>
             <div class="patch-actions">
               {@render visibilityToggle(m)}
+              {@render contactToggle(m)}
               <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m.node_slug)} />
             </div>
           </div>
@@ -232,5 +276,15 @@
   .vis-toggle.vis-hidden {
     color: var(--color-warning, #b45309);
     border-color: currentColor;
+  }
+
+  .vis-toggle.contact-shared {
+    color: var(--color-primary);
+    border-color: currentColor;
+  }
+
+  .contact-hint {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
   }
 </style>

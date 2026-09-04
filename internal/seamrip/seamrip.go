@@ -66,13 +66,20 @@ func Tables() []Table {
 			File: "users.json",
 			Name: "users",
 			Query: `SELECT id, email, username, display_name, bio, avatar_url, links, role,
+				contact_phone, contact_email, contact_note,
 				suspended_at, created_at, updated_at FROM users WHERE username != '_system'`,
 			// `links` is the same shape as a patch's, and a patch's travelled
 			// while a person's did not (docs/adr/006). A profile arrived on
 			// the fork with its bio and no way to reach anybody.
+			// The contact card travels the way `email` does (docs/adr/080):
+			// this export already moves other people's secrets and is
+			// admin-gated for it. The card is only ever shown through
+			// memberships.share_contact, which travels beside it, so the
+			// fork shows each card to exactly the rooms the person chose.
 			Columns: cols(id("id"), c("email"), c("username"), c("display_name"),
-				c("bio"), c("avatar_url"), def("links", "[]"), c("role"), c("suspended_at"),
-				c("created_at"), c("updated_at")),
+				c("bio"), c("avatar_url"), def("links", "[]"), c("role"),
+				def("contact_phone", ""), def("contact_email", ""), def("contact_note", ""),
+				c("suspended_at"), c("created_at"), c("updated_at")),
 		},
 		{
 			File:    "tags.json",
@@ -144,7 +151,7 @@ func Tables() []Table {
 		{
 			File: "memberships.json",
 			Name: "memberships",
-			Query: `SELECT id, user_id, node_id, role, status, visible, joined_at
+			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at
 				FROM memberships`,
 			// `visible` is the member's own switch (docs/adr/006), and it
 			// defaults to 1. Leaving it behind meant a fork re-exposed every
@@ -152,8 +159,12 @@ func Tables() []Table {
 			// in the patch's public member list at once, since one switch
 			// drives both. A seamrip is the moment that choice matters most:
 			// it is what a community does when its leadership goes sideways.
+			// `share_contact` is the other switch the member owns
+			// (docs/adr/080) and defaults to 0, so leaving it behind would
+			// fail the other way: every card the person had chosen to
+			// share would go silent on the fork. It travels with the card.
 			Columns: cols(id("id"), id("user_id"), id("node_id"), c("role"),
-				c("status"), def("visible", 1), c("joined_at")),
+				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at")),
 		},
 		{
 			// The council's chairs (docs/adr/051). A seat outlives its holder,
