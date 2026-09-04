@@ -411,6 +411,20 @@ func main() {
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAmendmentAttestation(db))))
 	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembership(db)))
 
+	// The noticeboard — members-only, the check in every handler (docs/adr/081).
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.ListNotices(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.CreateNotice(db)))
+	mux.HandleFunc("GET /api/v1/notices/{id}", middleware.AuthRequired(db, handler.GetNotice(db)))
+	mux.HandleFunc("PATCH /api/v1/notices/{id}", middleware.AuthRequired(db, handler.UpdateNotice(db)))
+	mux.HandleFunc("DELETE /api/v1/notices/{id}", middleware.AuthRequired(db, handler.DeleteNotice(db)))
+	mux.HandleFunc("GET /api/v1/notices/{id}/replies", middleware.AuthRequired(db, handler.ListReplies(db)))
+	mux.HandleFunc("POST /api/v1/notices/{id}/replies", middleware.AuthRequired(db, handler.CreateReply(db)))
+	mux.HandleFunc("PATCH /api/v1/replies/{id}", middleware.AuthRequired(db, handler.UpdateReply(db)))
+	mux.HandleFunc("DELETE /api/v1/replies/{id}", middleware.AuthRequired(db, handler.DeleteReply(db)))
+	// The patch's own report queue for its noticeboard (docs/adr/081, tool 3).
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/reports", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.ListPatchReports(db))))
+	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/reports/{id}", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.UpdatePatchReport(db))))
+
 	// Cross-quilt following (docs/adr/024): remote follows and personal
 	// connected quilts live on the follower's home instance.
 	mux.HandleFunc("GET /api/v1/users/me/remote-follows", middleware.AuthRequired(db, handler.ListRemoteFollows(db)))

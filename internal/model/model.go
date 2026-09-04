@@ -213,11 +213,16 @@ type Node struct {
 	SubmissionSource string      `json:"submission_source,omitempty"`
 	// AcceptEventSuggestions is the patch-admin-owned switch for whether
 	// non-members may suggest events to this (active) patch (docs/adr/026).
-	AcceptEventSuggestions bool                 `json:"accept_event_suggestions"`
-	FollowerPermissions    *FollowerPermissions `json:"follower_permissions,omitempty"`
-	GovernanceConfig       *GovernanceConfig    `json:"governance_config,omitempty"`
-	MemberCount            int                  `json:"member_count,omitempty"`
-	FollowerCount          int                  `json:"follower_count,omitempty"`
+	AcceptEventSuggestions bool `json:"accept_event_suggestions"`
+	// The noticeboard's two settings (docs/adr/081): who may put up a
+	// notice ("admins" or "members"), and whether a new notice takes
+	// replies unless its author says otherwise. Set on the detail response.
+	NoticePosting        string               `json:"notice_posting,omitempty"`
+	NoticeRepliesDefault bool                 `json:"notice_replies_default"`
+	FollowerPermissions  *FollowerPermissions `json:"follower_permissions,omitempty"`
+	GovernanceConfig     *GovernanceConfig    `json:"governance_config,omitempty"`
+	MemberCount          int                  `json:"member_count,omitempty"`
+	FollowerCount        int                  `json:"follower_count,omitempty"`
 	// Events not yet started — distinct from the tree endpoint's
 	// event_count, which is every active event past and future
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
@@ -513,6 +518,37 @@ type Membership struct {
 	ShareContact bool `json:"share_contact"`
 }
 
+// Notice is something put up on a patch's noticeboard (docs/adr/081):
+// read by that patch's active admins and members and by nobody else.
+type Notice struct {
+	ID       string `json:"id"`
+	NodeID   string `json:"node_id"`
+	AuthorID string `json:"author_id"`
+	Title    string `json:"title"`
+	// Body is markdown, rendered by the same component charters use.
+	Body     string `json:"body"`
+	ImageURL string `json:"image_url"`
+	ImageAlt string `json:"image_alt"`
+	// RepliesOpen is the per-notice switch, flippable at any time by the
+	// author or a patch admin. Off keeps existing replies and removes the box.
+	RepliesOpen bool `json:"replies_open"`
+	// MembersTold records that the author checked "Tell members" — the one
+	// way a notice reaches the bell. Shown on the notice afterwards.
+	MembersTold bool   `json:"members_told"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+}
+
+// NoticeReply is a flat response under a notice: no parent, no reactions.
+type NoticeReply struct {
+	ID        string `json:"id"`
+	NoticeID  string `json:"notice_id"`
+	AuthorID  string `json:"author_id"`
+	Body      string `json:"body"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
 type Proposal struct {
 	ID            string  `json:"id"`
 	NodeID        string  `json:"node_id"`
@@ -591,4 +627,7 @@ type ContentReport struct {
 	ResolutionNote string  `json:"resolution_note"`
 	CreatedAt      string  `json:"created_at"`
 	UpdatedAt      string  `json:"updated_at"`
+	// NodeID routes a report about a notice or a reply to that patch's
+	// admins (docs/adr/081). NULL for the kinds the instance panel handles.
+	NodeID *string `json:"node_id,omitempty"`
 }

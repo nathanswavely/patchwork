@@ -525,7 +525,7 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 		"ap_following":                "same, outbound",
 		"ap_outbox_queue":             "delivery state, not a record of anything",
 		"audit_log":                   "instance operations, not community data",
-		"content_reports":             "moderation history is about the old instance's handling",
+		"content_reports":             "moderation history is about the old instance's handling — a reported notice arrives on the fork as an ordinary notice for its admins to judge fresh (docs/adr/081)",
 		"credentials":                 "passkeys are bound to the old domain",
 		"edges":                       "retired concept: connections are inferred (CLAUDE.md)",
 		"instance_actor":              "the fork is a different actor",

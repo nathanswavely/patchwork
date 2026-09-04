@@ -77,6 +77,23 @@ func GovernanceDoc(slug, docID string) string {
 	return Patch(slug) + "/governance/docs/" + docID
 }
 
+// PatchNoticeboard is a patch's members-only noticeboard —
+// /patches/:slug/noticeboard (docs/adr/081).
+func PatchNoticeboard(slug string) string {
+	return Patch(slug) + "/noticeboard"
+}
+
+// Notice is a notice's detail page — /patches/:slug/noticeboard/:id.
+func Notice(slug, noticeID string) string {
+	return PatchNoticeboard(slug) + "/" + noticeID
+}
+
+// PatchNoticeboardReports is the patch admins' report queue for their
+// noticeboard — /patches/:slug/settings/noticeboard (docs/adr/081).
+func PatchNoticeboardReports(slug string) string {
+	return Patch(slug) + "/settings/noticeboard"
+}
+
 // RemotePatch is the read-only card for a patch on another quilt —
 // /quilts/:host/patches/:slug (docs/adr/024).
 func RemotePatch(host, slug string) string {

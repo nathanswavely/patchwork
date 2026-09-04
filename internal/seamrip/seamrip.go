@@ -94,7 +94,8 @@ func Tables() []Table {
 				address, website, image_url, image_alt, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
-				submitted_by, submission_source, did, activated_at, created_at, updated_at
+				submitted_by, submission_source, did, activated_at,
+				notice_posting, notice_replies_default, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -140,6 +141,9 @@ func Tables() []Table {
 				// NULL - which reads correctly as "not recorded", the same
 				// thing an unclaimed listing carries.
 				def("activated_at", nil),
+				// Who may put up a notice, and whether notices take replies
+				// by default: rules the community set (docs/adr/081).
+				def("notice_posting", "members"), def("notice_replies_default", 1),
 				c("created_at"), c("updated_at")),
 		},
 		{
@@ -457,6 +461,30 @@ func Tables() []Table {
 				FROM comment_reactions`,
 			Columns: cols(id("id"), id("comment_id"), id("user_id"), c("emoji"),
 				c("created_at")),
+		},
+		{
+			// The noticeboard travels the way proposal comments do
+			// (docs/adr/081, decision 7): it is where "the PA is broken"
+			// and "the landlord called" live, and a fork arriving with its
+			// charters and votes and an empty noticeboard would have lost
+			// the community's working memory. The reply switch travels so
+			// a locked argument stays locked; `members_told` travels as a
+			// fact about the notice, and no notification is re-sent.
+			File: "notices.json",
+			Name: "notices",
+			Query: `SELECT id, node_id, author_id, title, body, image_url, image_alt,
+				replies_open, members_told, created_at, updated_at FROM notices`,
+			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"), c("body"),
+				def("image_url", ""), def("image_alt", ""), def("replies_open", 1),
+				def("members_told", 0), c("created_at"), c("updated_at")),
+		},
+		{
+			File: "notice_replies.json",
+			Name: "notice_replies",
+			Query: `SELECT id, notice_id, author_id, body, created_at, updated_at
+				FROM notice_replies`,
+			Columns: cols(id("id"), id("notice_id"), id("author_id"), c("body"),
+				c("created_at"), c("updated_at")),
 		},
 		{
 			File: "proposal_revisions.json",
