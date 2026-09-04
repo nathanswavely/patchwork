@@ -35841,7 +35841,7 @@
         },
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 45,
+          "line": 51,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -39273,7 +39273,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 46,
+          "line": 52,
           "kind": "markup",
           "raw": "Become a member to access the member list.",
           "quote": null
@@ -39291,7 +39291,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 51,
+          "line": 57,
           "kind": "markup",
           "raw": "Loading members...",
           "quote": null
@@ -39309,7 +39309,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 54,
+          "line": 60,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -39341,27 +39341,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 55,
+          "line": 61,
           "kind": "markup",
           "raw": "Share your patch's invite link to grow your community.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "785215f53b25",
-      "text": "{members.length} members",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchMembers.svelte",
-          "line": 59,
-          "kind": "markup",
-          "raw": "{members.length} members",
           "quote": null
         }
       ]
@@ -39377,7 +39359,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 64,
+          "line": 70,
           "kind": "markup",
           "raw": "Contact cards here are shared only with this patch's admins and members.",
           "quote": null
@@ -39395,7 +39377,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 66,
+          "line": 72,
           "kind": "markup",
           "raw": "Share yours with this patch in",
           "quote": null
@@ -46150,6 +46132,24 @@
           "kind": "js-string",
           "raw": "(prefers-color-scheme: dark)",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "785215f53b25",
+      "text": "{members.length} members",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 59,
+          "kind": "markup",
+          "raw": "{members.length} members",
+          "quote": null
         }
       ]
     }
