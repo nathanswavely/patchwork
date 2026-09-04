@@ -17,7 +17,10 @@
 <style>
   .toast-container {
     position: fixed;
-    bottom: 1.5rem;
+    /* Above the mobile tab bar, which overlays the foot of the page.
+       --pw-nav-h is 0px above that breakpoint, so this is still the plain
+       1.5rem on desktop. */
+    bottom: calc(var(--pw-nav-h) + 1.5rem);
     right: 1.5rem;
     display: flex;
     flex-direction: column;

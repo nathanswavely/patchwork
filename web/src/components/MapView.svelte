@@ -446,10 +446,12 @@
   }
 
   /* On mobile the bottom nav bar overlaps the map's lower edge — lift the
-     attribution above it. */
+     attribution above it, by the bar's own footprint (app.css) rather than
+     a number of our own: a hardcoded 60px left the attribution under the
+     bar on a phone with a home-indicator inset, which --pw-nav-h carries. */
   @media (max-width: 768px) {
     .map-wrapper :global(.leaflet-bottom) {
-      bottom: 60px;
+      bottom: var(--pw-nav-h);
     }
   }
 

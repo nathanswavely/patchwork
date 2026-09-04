@@ -27,6 +27,18 @@
      by a page or by a surface inside one. */
   --pw-gutter: clamp(0.75rem, 3vw, 1.5rem);
 
+  /* What the shell's own chrome occupies at the FOOT of the screen, safe
+     area included. Zero here: above SocialShell's 768px breakpoint the rail
+     is a left sidebar and nothing sits at the foot. Below it the rail is a
+     translucent tab bar that overlays the page, so everything ending at the
+     bottom of the screen — page content, a floating sheet, a toast, the
+     map's attribution — must clear it, and every one of them reads THIS
+     rather than repeating a number. Because it is 0px above the breakpoint,
+     `calc(var(--pw-nav-h) + <your own gap>)` is correct at every width and
+     needs no media query of its own. Set for real in the one media query
+     below, which is also where the bar is given exactly this height. */
+  --pw-nav-h: 0px;
+
   /* The mobile canvas-chrome row — the Label's info button, the view
      switcher and the filter button float here, just above the bottom nav
      bar. One token because all three must sit at the SAME height and they
@@ -101,6 +113,30 @@
      hairline grid under them, which must stay quieter than a seam. */
   --color-fabric-mark: rgba(0, 0, 0, 0.55);
   --color-fabric-rule: rgba(0, 0, 0, 0.18);
+}
+
+/* ---- The mobile bottom tab bar's footprint ----
+   768px because that is where SocialShell turns its left rail into a bottom
+   tab bar; the number lives here, with the token, so nothing has to guess
+   it. 51px is not an assumption: SocialShell gives .sidebar-rail exactly
+   this height (border-box) at this width, so what the bar occupies and what
+   the page reserves for it are one declaration and cannot drift.
+
+   This is a media query redefining tokens on :root, which docs/adr/038
+   rules out for the SPACING scale (--pw-gutter, --pw-pad, --pw-stack,
+   --pw-gap, --pw-measure) so that a future [data-density] layer stays
+   purely additive. These two are not spacing: they are the measurement of a
+   piece of chrome that exists only below this breakpoint, and a density
+   setting has no claim on how tall the tab bar is. Adding a spacing token
+   here would be the thing that ADR forbids. */
+@media (max-width: 768px) {
+  :root {
+    --pw-nav-h: calc(51px + env(safe-area-inset-bottom, 0px));
+
+    /* The floating canvas row rides one 13px gap above the bar, so it moves
+       with it rather than being re-measured from the viewport. */
+    --pw-canvas-chrome-bottom: calc(var(--pw-nav-h) + 13px);
+  }
 }
 
 /* Touch targets: small buttons are finger-sized on coarse pointers. */

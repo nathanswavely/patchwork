@@ -260,10 +260,10 @@
      also where the canvas views keep their Quilt/Map/List pill, which is a
      control the card must never sit on.
 
-     `--shell-rail-h` clears the sidebar rail, which is a bottom tab bar at
-     this width; SocialShell declares it on :global(body) precisely so the
-     surfaces that float something over the foot of the screen read one
-     number instead of each guessing it.
+     The offset clears the sidebar rail, which is a bottom tab bar at this
+     width. It comes from app.css (`--pw-nav-h`, the bar's footprint, plus
+     the canvas row's gap) precisely so every surface that floats something
+     over the foot of the screen reads one number instead of guessing it.
 
      768px, not 640px, because that is where SocialShell turns the rail into
      that tab bar — and the two have to agree. They did not: between 641 and
