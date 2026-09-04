@@ -1227,10 +1227,14 @@ pointer points; people choose)
 **Address**:
 A patch's free-text description of where it is, in its own words —
 "Lancaster, PA", "above the record shop on Prince St", or nothing at all.
-Prose meant for people to read, never parsed and never geocoded. Naming a
-place here does not put the patch on the map: an address and a map position
-are separate acts, so a patch can say where it is without being findable
-there. Backend column: `nodes.address`. The word `location` is reserved for
+Prose meant for people to read, never parsed and never stored as anything
+but itself. Naming a place here does not put the patch on the map: an
+address and a map position are separate acts, so a patch can say where it
+is without being findable there. Where a **gazetteer** is installed the
+text is looked up to offer a **suggested placement**, but that is a
+proposal shown to a person, never a value written from prose — the third
+example above is the reason, and it resolves to nothing by design. Backend
+column: `nodes.address`. The word `location` is reserved for
 an event's venue text (`events.location`) and never names this field.
 _Avoid_: location (it means the event field), place, venue (events have
 those), where
@@ -1251,16 +1255,35 @@ fields (it is one), place, where
 **Map location**:
 A patch's placed marker on the map — a numeric latitude/longitude pair a
 patch admin sets by dragging a marker on the Leaflet map the app already
-ships, never geocoded from any text. Deliberately plain, no textile
-coinage: it is a coordinate, not a woven thing. Independent of the address
-above it — an address is prose, a map location is a placed point, and
-naming one never sets the other. Unset position means the patch is simply
-off the map; there is no separate on/off flag. Placement is manual and
-explicit (open the picker, drop or drag the marker, save), so its
-coarseness is the admin's to choose — a marker can sit at neighbourhood
-level on purpose. Backend columns: `nodes.latitude`, `nodes.longitude`.
-_Avoid_: pin (retired — docs/adr/027), geocode, coordinates (as the UI
-label), address (that is the prose field, not the marker)
+ships. Deliberately plain, no textile coinage: it is a coordinate, not a
+woven thing. Independent of the address above it — an address is prose, a
+map location is a placed point, and naming one never sets the other. Unset
+position means the patch is simply off the map; there is no separate on/off
+flag. Placement is always an explicit act (drop or drag the marker,
+confirm), so its coarseness is the admin's to choose — a marker can sit at
+neighbourhood level on purpose, and a **suggested placement** becomes a map
+location only when someone confirms it. Backend columns: `nodes.latitude`,
+`nodes.longitude`.
+_Avoid_: pin (retired — docs/adr/027), coordinates (as the UI label),
+address (that is the prose field, not the marker), geocoded location (a
+lookup proposes, a person places)
+
+**Suggested placement**:
+A marker the **gazetteer** proposes from a patch's **address**, shown
+provisionally and saved only when a person confirms it. It is not a map
+location until then: an unconfirmed suggestion leaves the patch off the
+map, which is what keeps a placed point placed rather than derived.
+_Avoid_: guess, auto-location, geocoded marker, best guess
+
+**Gazetteer**:
+An index of the places inside an instance's own geographic radius — named
+venues and street addresses — built offline from an OpenStreetMap extract
+and copied onto the server as a file beside the database. Optional
+infrastructure, never community data: an instance without one simply
+offers no **suggested placement**, and it is a cache of somebody else's
+dataset, so it does not travel in a seamrip.
+_Avoid_: geocoder (it names the process, not the thing), place index,
+address book, place database
 
 ## Tile appearance
 

@@ -251,7 +251,10 @@
         </div>
 
         <div class="field">
-          <label for="address">Location</label>
+          <!-- "Location" names an event's venue and never this field
+               (CONTEXT.md, docs/adr/046). The patch's own prose field is
+               the Address, which is what Patch Settings calls it too. -->
+          <label for="address">Address</label>
           <input id="address" type="text" bind:value={address} disabled={submitting} placeholder="Where is this based?" />
         </div>
 
