@@ -973,7 +973,22 @@
      global bar. */
   .social-main {
     margin-left: 200px;
-    padding: calc(56px + 2rem) var(--pw-gutter) 2rem;
+    padding: calc(56px + 2rem) var(--pw-gutter) 0;
+    /* Foot of the page, all widths, ONE declaration. Two things can sit
+       over the bottom of the screen: the mobile tab bar (--pw-nav-h, 0px
+       above its breakpoint, so this line is also the desktop 2rem) and the
+       intro card. max(), not a sum — the card publishes how much of the
+       foot it occupies measured from the viewport bottom, so its number
+       already contains the bar's.
+
+       One declaration on purpose. This was two rules — a 2rem/84px pair
+       here and an intro-card gutter written as `:global(body) .social-main`
+       inside the mobile block — and the body-prefixed one outranked the
+       84px on specificity regardless of order. So a phone with no intro
+       card up (i.e. anyone signed in) reserved 12px for a 51px bar and
+       every non-quilt page ended underneath it. Reserving the foot in one
+       place is what keeps that from being re-derivable. */
+    padding-bottom: max(calc(var(--pw-nav-h) + 2rem), calc(var(--intro-card-h, 0px) + 12px));
     min-height: 100vh;
     transition: margin-left 150ms ease;
   }
@@ -983,7 +998,10 @@
   }
 
   /* Quilt mode: full bleed to the top of the window — the bar paints nothing
-     over the canvas — and the rail floats on it */
+     over the canvas — and the rail floats on it. The shorthand is also what
+     opts the canvas out of the foot gutter above: a canvas is meant to run
+     under the translucent tab bar rather than stop above it, and its own
+     chrome clears the bar by --pw-canvas-chrome-bottom instead. */
   .social-main.quilt-mode {
     margin-left: 0;
     padding: 0;
@@ -1061,7 +1079,9 @@
       position: fixed;
       left: 8px;
       right: 8px;
-      bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+      /* Clear of the floating canvas row (a 36px button plus its 8px gap)
+         so the toggle that opened this sheet stays visible. */
+      bottom: calc(var(--pw-canvas-chrome-bottom) + 44px);
       z-index: 56; /* just above the rail (55), under the bar (60) */
       background: var(--color-surface);
       border: 1px solid var(--color-border);
@@ -1072,24 +1092,9 @@
       overflow-y: auto;
     }
 
-    /* Full-width bottom bar. The extra selector outranks the desktop
+    /* Full-width bottom bar. The extra selectors outrank the desktop
        "collapsed over the quilt is fully transparent" rule — on mobile the
        bar always keeps its glass. */
-    :global(body) {
-      --shell-rail-h: 51px;
-    }
-
-    /* Room for the intro card, which floats above the tab bar at this width
-       (IntroCard publishes its measured height). Without this it lands on
-       whatever a short page keeps at its foot — discovery mode's primary
-       button — and the card's contract is that it never covers a control.
-       Reserved once, here, rather than by every page surface separately:
-       the shell owns the gutter. Costs nothing once the card is dismissed,
-       since the variable goes away with it. */
-    :global(body) .social-main {
-      padding-bottom: calc(var(--intro-card-h, 0px) + 12px);
-    }
-
     .sidebar-rail,
     .sidebar-rail.quilt-mode,
     .sidebar-rail.quilt-mode.collapsed,
@@ -1099,14 +1104,16 @@
       left: 0;
       right: 0;
       width: auto !important;
-      height: auto;
       flex-direction: row;
       padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+      /* The rail is a bottom tab bar at this width, and it OVERLAYS the
+         page — so its height is not left to its contents. It is exactly
+         what app.css's --pw-nav-h reserves at the foot of every surface,
+         safe area and border included (border-box), which is what makes
+         that token a fact rather than a guess about this bar. */
+      height: var(--pw-nav-h);
+      box-sizing: border-box;
       background: var(--color-glass);
-      /* The rail is a bottom tab bar at this width. Surfaces that float
-         something over the foot of the screen — the docked patch card —
-         read this rather than each guessing the same number. */
-      --shell-rail-h: 51px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: none;
@@ -1159,7 +1166,9 @@
       position: fixed;
       left: 8px;
       right: 8px;
-      bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+      /* Clear of the floating canvas row (a 36px button plus its 8px gap)
+         so the toggle that opened this sheet stays visible. */
+      bottom: calc(var(--pw-canvas-chrome-bottom) + 44px);
       z-index: 56; /* just above the rail (55), under the bar (60) */
       background: var(--color-surface);
       border: 1px solid var(--color-border);
@@ -1238,13 +1247,6 @@
 
     .social-main {
       margin-left: 0 !important;
-      padding-bottom: 84px;
-    }
-
-    /* Quilt routes are full bleed — the canvas shows through the
-       translucent pill nav instead of stopping above it. */
-    .social-main.quilt-mode {
-      padding-bottom: 0;
     }
 
     .social-main:not(.quilt-mode) {
