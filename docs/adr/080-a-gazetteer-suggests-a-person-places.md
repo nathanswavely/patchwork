@@ -165,6 +165,28 @@ derived one and hides wrong answers behind a button nobody read.
   extract: pass one keeps coordinates only for nodes inside it. That is the
   reason the radius is read from the instance's own config rather than asked
   for again.
+- **Scale was measured, on a generated extract rather than a downloaded one.**
+  The egress policy of the environment this was built in blocks
+  `download.geofabrik.de`, `overpass-api.de` and `api.openstreetmap.org`, so a
+  real regional extract was never in reach. A 264 MB extract shaped like a
+  Geofabrik one — 1.2M nodes, 180k ways, 5k relations, with escaped entities,
+  multi-byte street names and the version/timestamp/uid attributes a real file
+  carries — cropped to a 25 km radius in 18 seconds, peaked at 29 MB of RSS,
+  and produced a 4.3 MB index of 22,092 places answering in single-digit
+  milliseconds. What that run cannot speak to is real-world data messiness
+  nobody thought to simulate, which is exactly the blind spot a synthetic
+  fixture has.
+- **It found a real scoring bug, which is the argument for running it.** A
+  matching city earned nothing beyond the token it contributed, and that token
+  is often already in the street: "Millersville Road, Millersville" tokenizes
+  to one `millersville`, so the same housenumber on the same street in the
+  next town scored identically, the pair cancelled out under the ambiguity
+  rule, and a *unique* address returned nothing. Naming the city bought
+  exactly zero at the one moment it was the only thing that could help. A city
+  the query named now scores, and the round-trip over indexed addresses went
+  from 288/300 to 292/300 — the remaining eight are the generator inventing
+  the same address twice, 27 km apart, which the ambiguity rule is right to
+  refuse.
 - **The volume is in events, and this does not serve them.** The event form
   has no coordinate input at all, and `events.latitude`/`longitude` are
   written by the JSON-LD importer and the aggregator and then read by

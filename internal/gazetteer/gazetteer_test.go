@@ -114,6 +114,44 @@ func TestATieAtTheSameSpotStillAnswers(t *testing.T) {
 	}
 }
 
+// Found by building an index at county scale: a unique address was being
+// suppressed as ambiguous. "Millersville Road, Millersville" tokenizes to one
+// `millersville`, so the same number on the same street in the next town over
+// scored identically and the pair cancelled out — naming the city bought
+// nothing at the one moment it was the only thing that could help.
+func TestTheCityNamedBreaksATieBetweenTowns(t *testing.T) {
+	g := build(t,
+		Place{HouseNumber: "2130", Street: "Millersville Road", City: "Millersville", Latitude: 39.9975, Longitude: -76.3550},
+		Place{HouseNumber: "2130", Street: "Millersville Road", City: "Lancaster", Latitude: 40.2490, Longitude: -76.1000},
+	)
+	got, ok := g.Suggest("2130 Millersville Road, Millersville")
+	if !ok {
+		t.Fatal("a unique address was suppressed as ambiguous")
+	}
+	if got.City != "Millersville" {
+		t.Fatalf("picked the wrong town: %+v", got)
+	}
+
+	// And the other way round, so this is the city deciding rather than the
+	// first row winning.
+	got, ok = g.Suggest("2130 Millersville Road, Lancaster")
+	if !ok || got.City != "Lancaster" {
+		t.Fatalf("naming the other city did not pick it: ok=%v %+v", ok, got)
+	}
+}
+
+// A city nobody typed must not score. Otherwise every row in the county gets
+// a bonus and the tie-break stops meaning anything.
+func TestAnUnmentionedCityScoresNothing(t *testing.T) {
+	g := build(t,
+		Place{HouseNumber: "12", Street: "Ice Avenue", City: "Lititz", Latitude: 40.1573, Longitude: -76.3077},
+		Place{HouseNumber: "12", Street: "Ice Avenue", City: "Mountville", Latitude: 40.0384, Longitude: -76.4319},
+	)
+	if got, ok := g.Suggest("12 Ice Avenue"); ok {
+		t.Fatalf("naming no city still picked a town: %+v", got)
+	}
+}
+
 // CONTEXT.md blesses this exact string as a valid address. It resolves to
 // nothing, and that has to be quiet rather than an error.
 func TestProseAddressIsNotAnError(t *testing.T) {

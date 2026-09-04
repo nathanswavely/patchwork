@@ -147,7 +147,16 @@ func (g *Gazetteer) Count() int {
 const (
 	weightHouseNumber = 3
 	weightWholeName   = 2
-	minScore          = 2
+
+	// A named city is worth more than the bare token it contributes, because
+	// the token often contributes nothing at all: "Millersville Road,
+	// Millersville" tokenizes to one `millersville`, so the same housenumber
+	// on the same street in the next town over scored identically and the
+	// pair cancelled each other out as ambiguous. Naming the city has to
+	// break that tie, which is the whole reason somebody typed it.
+	weightCity = 2
+
+	minScore = 2
 
 	// Two candidates tied on score are only ambiguous if they are far
 	// enough apart for the difference to matter. Within this distance
@@ -223,20 +232,15 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 				}
 			}
 		}
+		// The city the query named beats the same street and number in a
+		// different town.
+		if p.City != "" && containsAll(query, Tokenize(p.City)) {
+			score += weightCity
+		}
 		// A named venue whose whole name was typed beats an address that
 		// happens to share a word with it.
-		if p.Name != "" {
-			nameTokens := Tokenize(p.Name)
-			whole := len(nameTokens) > 0
-			for _, nt := range nameTokens {
-				if !query[nt] {
-					whole = false
-					break
-				}
-			}
-			if whole {
-				score += weightWholeName
-			}
+		if p.Name != "" && containsAll(query, Tokenize(p.Name)) {
+			score += weightWholeName
 		}
 		c := candidate{place: p, score: score}
 		switch {
@@ -261,6 +265,21 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 		return Place{}, false
 	}
 	return best.place, true
+}
+
+// containsAll reports whether every one of these tokens was in the query.
+// Empty tokens are not "all of them" — a place with no city has not matched
+// the city somebody typed.
+func containsAll(query map[string]bool, tokens []string) bool {
+	if len(tokens) == 0 {
+		return false
+	}
+	for _, t := range tokens {
+		if !query[t] {
+			return false
+		}
+	}
+	return true
 }
 
 // DistanceMetres is the great-circle distance between two points. Used to

@@ -68,6 +68,34 @@ func TestAWayCarryingAnAddressIsIndexed(t *testing.T) {
 	}
 }
 
+// A real extract is XML with escapes and multi-byte characters in it, and it
+// carries version/timestamp/uid/changeset attributes this parser ignores.
+// Building one at county scale is what prompted covering these here: an
+// ampersand or an apostrophe reaching the index still escaped would be
+// invisible until somebody typed the venue's actual name.
+func TestEscapesAndNonASCIISurviveTheParse(t *testing.T) {
+	g := buildFrom(t, "testdata/mini.osm", 40.0379, -76.3055, 25)
+
+	got, ok := g.Suggest("Lanc Workshop & Tool Library, Lancaster")
+	if !ok {
+		t.Fatal("a name written with &amp; was not findable by its real name")
+	}
+	if got.Name != "Lanc Workshop & Tool Library" {
+		t.Fatalf("the ampersand did not survive: %q", got.Name)
+	}
+
+	got, ok = g.Suggest("O'Malley's Tavern, Lancaster")
+	if !ok {
+		t.Fatal("a name written with &#39; was not findable")
+	}
+	if got.Name != "O'Malley's Tavern" {
+		t.Fatalf("the apostrophe did not survive: %q", got.Name)
+	}
+	if got.Street != "Cañada Road" {
+		t.Fatalf("the non-ASCII street did not survive: %q", got.Street)
+	}
+}
+
 // The radius is the instance's own declared reach. A state extract is mostly
 // somewhere else, and keeping all of it would defeat the point of cropping.
 func TestPlacesOutsideTheRadiusAreDropped(t *testing.T) {

@@ -164,10 +164,17 @@ make gazetteer IN=pennsylvania.osm.bz2
 # or: go run ./cmd/gazetteer/ -in pennsylvania.osm.bz2 -out data/gazetteer.db
 ```
 
-Do this on a machine with room to work. It reads the extract twice and holds
-the in-radius nodes in memory, which is bounded by your radius rather than by
-the size of the extract — but a Raspberry Pi is not where you want to find
-that out. The server never parses an extract; it only reads the result.
+It reads the extract twice and holds the in-radius nodes in memory, which is
+bounded by your radius rather than by the size of the extract. To give you an
+order of magnitude, a 264 MB extract (1.2 million nodes, 180 thousand ways)
+cropped to a 25 km radius took **18 seconds, peaked at 29 MB of memory, and
+produced a 4.3 MB index of about 22 thousand places**. Those figures come from
+a generated extract of that size rather than a real regional download, so
+treat them as the right order of magnitude and not a promise — the memory in
+particular scales with how many nodes fall inside your radius, not with the
+file.
+
+The server never parses an extract; it only reads the result.
 
 **3. Copy the file to the server**, next to `patchwork.db`:
 
@@ -175,6 +182,9 @@ that out. The server never parses an extract; it only reads the result.
 scp data/gazetteer.db you@your-server:/srv/patchwork/data/gazetteer.db
 docker compose restart patchwork
 ```
+
+Lookups run in single-digit milliseconds against an index that size, so it
+comfortably sits behind a form field somebody just tabbed out of.
 
 Startup logs how many places it loaded:
 
