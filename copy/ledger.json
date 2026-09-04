@@ -6540,7 +6540,7 @@
       "text": "failed to generate invite link",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6590,7 +6590,7 @@
       "text": "token and username are required",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6615,7 +6615,7 @@
       "text": "email is required so you can sign in again later",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6633,7 +6633,7 @@
       "text": "failed to create session",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6672,7 +6672,7 @@
       "text": "failed to begin registration",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6715,7 +6715,7 @@
       "text": "failed to begin step-up",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6783,7 +6783,7 @@
       "text": "failed to open confirmation window",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6801,7 +6801,7 @@
       "text": "failed to begin login",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6819,7 +6819,7 @@
       "text": "failed to update display name",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6837,7 +6837,7 @@
       "text": "failed to update bio",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6855,7 +6855,7 @@
       "text": "failed to update links",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6873,7 +6873,7 @@
       "text": "failed to update landing preference",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6891,7 +6891,7 @@
       "text": "failed to update setting",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6909,7 +6909,7 @@
       "text": "failed to list credentials",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6952,7 +6952,7 @@
       "text": "failed to rename credential",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6995,7 +6995,7 @@
       "text": "failed to delete credential",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24310,7 +24310,7 @@
       "text": "This browser cannot use passkeys. Open the site in Chrome, Safari, or Firefox and try again.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24328,7 +24328,7 @@
       "text": "Passkey setup was cancelled or timed out. You can try again.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24346,7 +24346,7 @@
       "text": "Passkey check was cancelled or timed out. You can try again.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24364,7 +24364,7 @@
       "text": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24382,7 +24382,7 @@
       "text": "This device already has a passkey for your account.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24400,7 +24400,7 @@
       "text": "This device cannot create the kind of passkey this site needs. Use an email link instead.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24418,7 +24418,7 @@
       "text": "This page address does not match the one your passkey was created for.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24436,7 +24436,7 @@
       "text": "Passkey prompt was closed.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24461,7 +24461,7 @@
       "text": "Passkey request failed.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25187,7 +25187,7 @@
       "text": "Something went wrong. Please try again.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35542,7 +35542,7 @@
       "text": "At least 3 characters.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35567,7 +35567,7 @@
       "text": "Lowercase letters, numbers, and hyphens only, starting and ending with a letter or number.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35592,7 +35592,7 @@
       "text": "Invalid or expired invite link",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35628,7 +35628,7 @@
       "text": "Could not generate recovery codes",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35664,7 +35664,7 @@
       "text": "This invite didn't work",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35682,7 +35682,7 @@
       "text": "This invite link may have expired or already been used. Ask your community admin for a new one.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35750,7 +35750,7 @@
       "text": "This device can sign you in from now on.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35775,7 +35775,7 @@
       "text": "Take a look around",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35807,7 +35807,7 @@
       "text": "Write these down before you go.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35825,7 +35825,7 @@
       "text": "This quilt cannot send email, so these codes are the only way back into your account if you lose this device. Each one works once.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35843,7 +35843,7 @@
       "text": "Copy codes",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35861,7 +35861,7 @@
       "text": "I have saved these somewhere safe",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35879,7 +35879,7 @@
       "text": "Create a passkey and this device signs you in with one tap.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35900,11 +35900,11 @@
       ]
     },
     {
-      "id": "76655d8550e5",
-      "text": "The key stays on your device, and we never hold a password for you. Nothing to leak, and email can break without locking you out.",
-      "words": 25,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "8f4060c60fbd",
+      "text": "The key stays on your device, and we never hold a password for you.",
+      "words": 14,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35922,14 +35922,15 @@
           "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "The key stays on your device, and we never hold a password for you. Nothing to leak, and email can break without locking you out."
     },
     {
       "id": "ee5a9de2c06a",
       "text": "This browser cannot create a passkey.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35972,7 +35973,7 @@
       "text": "You can sign in with an email link any time, and add a passkey later from Settings → Security.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -35990,7 +35991,7 @@
       "text": "This quilt cannot send email, so a passkey or recovery codes are the only ways back into your account.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36022,11 +36023,11 @@
       ]
     },
     {
-      "id": "15b6bc664abf",
-      "text": "Someone here sent you this link. Pick a username and you're in.",
+      "id": "f9f37071d1a8",
+      "text": "A patchwork user sent you this link. Pick a username to join.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36037,7 +36038,8 @@
           "raw": "Someone here sent you this link. Pick a username and you're in.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Someone here sent you this link. Pick a username and you're in."
     },
     {
       "id": "a5eec3f72adb",
@@ -36062,7 +36064,7 @@
       "text": "3-30 characters: lowercase letters, numbers, hyphens. This becomes your profile address and can't be changed later.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36112,7 +36114,7 @@
       "text": "How you sign in if you ever lose your passkey. We send sign-in links to it and nothing else.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36130,7 +36132,7 @@
       "text": "By creating an account you agree to the",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36734,7 +36736,7 @@
       "text": "Failed to send link",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36788,7 +36790,7 @@
       "text": "We sent a sign-in link to",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36806,7 +36808,7 @@
       "text": "It should arrive within a minute or two. Click the link to continue.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36842,7 +36844,7 @@
       "text": "Set up your account to claim and manage your patch on {instanceName}.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36860,7 +36862,7 @@
       "text": "Enter your email and we'll send you a sign-in link. No password needed.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36896,7 +36898,7 @@
       "text": "Already have an account?",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36932,7 +36934,7 @@
       "text": "Sign in to {instanceName}.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36975,7 +36977,7 @@
       "text": "This browser cannot use passkeys. Sign in with an email link below.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36993,7 +36995,7 @@
       "text": "The quickest way in. Your key stays on your device.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37011,7 +37013,7 @@
       "text": "On a device without your passkey? We'll send you a sign-in link.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37047,7 +37049,7 @@
       "text": "Enter your username and one of your saved recovery codes. Each code works once.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41984,7 +41986,7 @@
       "text": "Failed to sign out session",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42002,7 +42004,7 @@
       "text": "Signed out everywhere else",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42020,7 +42022,7 @@
       "text": "Failed to sign out other sessions",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42038,7 +42040,7 @@
       "text": "Failed to generate codes",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42074,7 +42076,7 @@
       "text": "Copy failed. Select and copy them by hand.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42164,7 +42166,7 @@
       "text": "Passkey setup was closed.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42207,7 +42209,7 @@
       "text": "Could not rename. Your passkey still works.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42315,7 +42317,7 @@
       "text": "Passkeys sign you in without a password or email.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42333,7 +42335,7 @@
       "text": "No passkeys enrolled yet.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42408,11 +42410,11 @@
       ]
     },
     {
-      "id": "a1109f182e3b",
-      "text": "One passkey is one lost phone away from a locked account. Add a second on another device.",
+      "id": "db1f9ec37a81",
+      "text": "This passkey is attached to one device. We recommend adding a second on another device as backup.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42423,7 +42425,8 @@
           "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "One passkey is one lost phone away from a locked account. Add a second on another device."
     },
     {
       "id": "61ad990902e7",
@@ -42448,7 +42451,7 @@
       "text": "Where you're signed in. Sign out any session you don't recognize.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42520,7 +42523,7 @@
       "text": "· Signed in {new Date(s.created_at).toLocaleDateString()}",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42556,7 +42559,7 @@
       "text": "If you lose your passkey, a recovery code signs you in. Each code works once.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42574,7 +42577,7 @@
       "text": "Write these down or save them somewhere safe. This is the only time they're shown.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42592,7 +42595,7 @@
       "text": "{recoveryStatus.remaining} of {recoveryStatus.total} codes left.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42610,7 +42613,7 @@
       "text": "Running low. Generate a fresh set.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42628,7 +42631,7 @@
       "text": "New codes replace the old set. Anything already written down stops working.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42646,7 +42649,7 @@
       "text": "No recovery codes yet.",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42678,11 +42681,11 @@
       ]
     },
     {
-      "id": "72d35755e4e5",
-      "text": "It's saved and ready to use. A name helps you tell it apart from your others later.",
-      "words": 17,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "717b35c25f4a",
+      "text": "It's saved and ready to use.",
+      "words": 6,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42693,7 +42696,8 @@
           "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "It's saved and ready to use. A name helps you tell it apart from your others later."
     },
     {
       "id": "f44d2a8c7740",

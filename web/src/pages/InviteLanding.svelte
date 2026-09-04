@@ -198,8 +198,7 @@
           {#if canUsePasskeys}
             <p>Create a passkey and this device signs you in with one tap.</p>
             <p class="muted" style="margin-top: 0.5rem;">
-              The key stays on your device, and we never hold a password for
-              you. Nothing to leak, and email can break without locking you out.
+              The key stays on your device, and we never hold a password for you.
             </p>
             <button
               class="btn btn-primary"
@@ -247,7 +246,7 @@
       <div class="state-block">
         <h1>You're invited</h1>
         <p class="muted" style="margin-bottom: 1.5rem;">
-          Someone here sent you this link. Pick a username and you're in.
+          A patchwork user sent you this link. Pick a username to join.
         </p>
 
         <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>

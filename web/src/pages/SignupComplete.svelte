@@ -155,8 +155,7 @@
         {:else}
           <p>Create a passkey and this device signs you in with one tap.</p>
           <p class="muted" style="margin-top: 0.5rem;">
-            The key stays on your device, and we never hold a password for
-            you. Nothing to leak, and email can break without locking you out.
+            The key stays on your device, and we never hold a password for you.
           </p>
           <button
             class="btn btn-primary"
