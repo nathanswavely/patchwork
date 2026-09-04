@@ -38,7 +38,7 @@ describe('#6: workspace tabs for unclaimed patches', () => {
 describe('#6: workspace tabs for claimed patches are unchanged', () => {
   it('an admin gets the full row', () => {
     const tabs = workspaceTabs({ isUnclaimed: false, isAdmin: true, membershipRole: 'admin' });
-    expect(ids(tabs)).toEqual(['governance', 'members', 'events', 'settings']);
+    expect(ids(tabs)).toEqual(['governance', 'members', 'events', 'noticeboard', 'settings']);
   });
 
   it('a follower gets governance plus its permitted tabs, no settings', () => {
@@ -53,7 +53,14 @@ describe('#6: workspace tabs for claimed patches are unchanged', () => {
 
   it('a plain member gets governance, members, events', () => {
     const tabs = workspaceTabs({ isUnclaimed: false, isAdmin: false, membershipRole: 'member' });
-    expect(ids(tabs)).toEqual(['governance', 'members', 'events']);
+    expect(ids(tabs)).toEqual(['governance', 'members', 'events', 'noticeboard']);
+  });
+
+  // The noticeboard is the room's (docs/adr/081): an instance admin with no
+  // role here has isAdmin set by the node payload and still gets no tab.
+  it('an instance admin with no role gets settings but not the noticeboard', () => {
+    const tabs = workspaceTabs({ isUnclaimed: false, isAdmin: true, membershipRole: '' });
+    expect(ids(tabs)).toEqual(['governance', 'members', 'events', 'settings']);
   });
 });
 
@@ -73,7 +80,7 @@ describe('#6: settings sections filter on claim state', () => {
 
   it('claimed patches keep the full section list without Verification', () => {
     const secs = patchSettingsSections({ isUnclaimed: false }).map((s) => s.id);
-    expect(secs).toEqual(['info', 'appearance', 'members', 'sources', 'notifications', 'danger']);
+    expect(secs).toEqual(['info', 'appearance', 'members', 'sources', 'noticeboard', 'notifications', 'danger']);
     expect(secs).not.toContain('verification');
   });
 });

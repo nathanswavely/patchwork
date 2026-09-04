@@ -36,6 +36,8 @@
   import PatchShell from './components/PatchShell.svelte';
   import PatchMembers from './pages/PatchMembers.svelte';
   import PatchEvents from './pages/PatchEvents.svelte';
+  import PatchNoticeboard from './pages/PatchNoticeboard.svelte';
+  import NoticeDetail from './pages/NoticeDetail.svelte';
   import EventForm from './pages/EventForm.svelte';
   import PatchForm from './pages/PatchForm.svelte';
   import PatchSetup from './pages/PatchSetup.svelte';
@@ -158,11 +160,15 @@
   addRoute('/patches/:slug/governance', 'governanceHub');
   addRoute('/patches/:slug/members', 'patchMembers');
   addRoute('/patches/:slug/events', 'patchEvents');
+  addRoute('/patches/:slug/noticeboard/new', 'patchNoticeNew');
+  addRoute('/patches/:slug/noticeboard/:id', 'patchNotice');
+  addRoute('/patches/:slug/noticeboard', 'patchNoticeboard');
   addRoute('/patches/:slug/settings/info', 'patchSettingsInfo');
   addRoute('/patches/:slug/settings/appearance', 'patchSettingsAppearance');
   addRoute('/patches/:slug/settings/members', 'patchSettingsMembers');
   addRoute('/patches/:slug/settings/sources', 'patchSettingsSources');
   addRoute('/patches/:slug/settings/notifications', 'patchSettingsNotifications');
+  addRoute('/patches/:slug/settings/noticeboard', 'patchSettingsNoticeboard');
   addRoute('/patches/:slug/settings/verification', 'patchSettingsVerification');
   addRoute('/patches/:slug/settings/danger', 'patchSettingsDanger');
   addRoute('/patches/:slug/settings', 'patchSettings');
@@ -240,7 +246,8 @@
     'governanceRecord',
     'governanceDocs', 'governanceDocNew', 'governanceDocDetail', 'governanceDocHistory', 'governanceDocPropose', 'governanceRulesPropose',
     'patchMembers', 'patchEvents',
-    'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsSources', 'patchSettingsNotifications', 'patchSettingsVerification', 'patchSettingsDanger',
+    'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
+    'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsSources', 'patchSettingsNotifications', 'patchSettingsNoticeboard', 'patchSettingsVerification', 'patchSettingsDanger',
   ]);
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 
@@ -265,7 +272,10 @@
   function derivePatchTab(name) {
     if (name === 'patchMembers') return 'members';
     if (name === 'patchEvents') return 'events';
+    // Before the settings check: 'patchSettingsNoticeboard' is a settings
+    // page, and 'patchNotice*' are the room's.
     if (name.startsWith('patchSettings')) return 'settings';
+    if (name.startsWith('patchNotice')) return 'noticeboard';
     if (name === 'claimPatch') return 'claim';
     return 'governance';
   }
@@ -275,6 +285,7 @@
   let authRequired = $derived(
     ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchSetup', 'patchNew', 'eventNew', 'eventEdit',
      'governanceProposalNew', 'governanceDocNew',
+     'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
      'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal'].includes(routeName)
   );
 
@@ -549,6 +560,10 @@
           <PatchMembers />
         {:else if routeName === 'patchEvents'}
           <PatchEvents />
+        {:else if routeName === 'patchNoticeboard' || routeName === 'patchNoticeNew'}
+          <PatchNoticeboard />
+        {:else if routeName === 'patchNotice'}
+          <NoticeDetail />
         {:else if routeName === 'claimPatch'}
           <ClaimPatch />
         {:else if routeName.startsWith('patchSettings')}

@@ -41,6 +41,13 @@ export function workspaceTabs({
     t.push({ id: 'members', label: 'Members' });
   if (!isFollower || fp?.events !== false)
     t.push({ id: 'events', label: 'Events' });
+  // The noticeboard is the room's, and only the room's (docs/adr/081): a
+  // member or admin, never a follower, and never a follower-permissions
+  // key — those hide tabs over public reads, and this read is withheld.
+  // `isAdmin` is not enough on its own, since the node payload sets it for
+  // an instance admin with no role here.
+  if (membershipRole === 'member' || membershipRole === 'admin')
+    t.push({ id: 'noticeboard', label: 'Noticeboard' });
   if (isAdmin)
     t.push({ id: 'settings', label: 'Settings' });
 
@@ -115,6 +122,7 @@ export function patchSettingsSections({ isUnclaimed = false } = {}) {
     { id: 'appearance', label: 'Appearance' },
     { id: 'members', label: 'Members' },
     { id: 'sources', label: 'Event Sources' },
+    { id: 'noticeboard', label: 'Noticeboard' },
     { id: 'notifications', label: 'Notifications' },
     { id: 'danger', label: 'Danger Zone' },
   ];

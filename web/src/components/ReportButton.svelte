@@ -16,7 +16,7 @@
   import { showToast } from '../stores/toast.svelte.js';
 
   let {
-    entityType,       // 'node' | 'event' | 'user'
+    entityType,       // 'node' | 'event' | 'user' | 'notice' | 'reply'
     entityId = '',
     entityName = '',
     // 'headless' renders the modal with no trigger of its own, for a host
@@ -37,7 +37,7 @@
     'Something else',
   ];
 
-  const NOUN = { node: 'patch', event: 'event', user: 'person' };
+  const NOUN = { node: 'patch', event: 'event', user: 'person', notice: 'notice', reply: 'reply' };
 
   let reason = $state(REASONS[0]);
   let details = $state('');

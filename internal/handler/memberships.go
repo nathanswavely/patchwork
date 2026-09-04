@@ -10,6 +10,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -360,9 +361,30 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		// the active/public listing (docs/adr/040).
 		includeMessage := statusFilter == "pending"
 
+		// Contact cards are shown to the people in the room: the patch's own
+		// active admins and members, and nobody else (docs/adr/080). That is
+		// narrower than `insider` — an instance admin with no role here
+		// curates the quilt but was not who the person chose to be reachable
+		// by. Only member/admin rows that switched sharing on carry a card,
+		// and only on the active listing.
+		inRoom := false
+		if user != nil && statusFilter == "active" {
+			var role string
+			db.QueryRow(
+				"SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active' AND role IN ('member','admin')",
+				user.ID, nodeID,
+			).Scan(&role)
+			inRoom = role != ""
+		}
+
 		cols := "m.id, m.user_id, m.node_id, m.role, m.status, m.joined_at, u.username, u.display_name, u.avatar_url"
 		if includeMessage {
 			cols += ", m.join_message"
+		}
+		if inRoom {
+			cols += `, CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_phone ELSE '' END,
+				CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_email ELSE '' END,
+				CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_note ELSE '' END`
 		}
 		query := `SELECT ` + cols + `
 			FROM memberships m JOIN users u ON m.user_id = u.id
@@ -399,22 +421,31 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			// JoinMessage is the join sheet's intro note. Present only on the
 			// admin-only pending listing (docs/adr/040).
 			JoinMessage string `json:"join_message,omitempty"`
+			// Contact is the member's contact card. Present only for a viewer
+			// who is an active admin or member of this patch, and only for
+			// members who switched sharing on for it (docs/adr/080).
+			Contact *model.ContactCard `json:"contact,omitempty"`
 		}
 		var members []memberResponse
 		for rows.Next() {
 			var m memberResponse
+			dest := []interface{}{&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.JoinedAt, &m.Username, &m.DisplayName, &m.AvatarURL}
+			var jm sql.NullString
 			if includeMessage {
-				var jm sql.NullString
-				if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.JoinedAt, &m.Username, &m.DisplayName, &m.AvatarURL, &jm); err != nil {
-					continue
-				}
-				if jm.Valid {
-					m.JoinMessage = jm.String
-				}
-			} else {
-				if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.JoinedAt, &m.Username, &m.DisplayName, &m.AvatarURL); err != nil {
-					continue
-				}
+				dest = append(dest, &jm)
+			}
+			var card model.ContactCard
+			if inRoom {
+				dest = append(dest, &card.Phone, &card.Email, &card.Note)
+			}
+			if err := rows.Scan(dest...); err != nil {
+				continue
+			}
+			if jm.Valid {
+				m.JoinMessage = jm.String
+			}
+			if inRoom && !card.Empty() {
+				m.Contact = &card
 			}
 			members = append(members, m)
 		}
@@ -442,7 +473,7 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 		after, limit := parsePaginationParams(r)
 
-		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.visible, m.joined_at,
+		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.visible, m.share_contact, m.joined_at,
 			n.name, n.slug, n.description, n.visibility, n.membership_policy
 			FROM memberships m JOIN nodes n ON m.node_id = n.id
 			WHERE m.user_id = ? AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')`
@@ -469,6 +500,7 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			Role             string `json:"role"`
 			Status           string `json:"status"`
 			Visible          bool   `json:"visible"`
+			ShareContact     bool   `json:"share_contact"`
 			JoinedAt         string `json:"joined_at"`
 			NodeName         string `json:"node_name"`
 			NodeSlug         string `json:"node_slug"`
@@ -479,7 +511,7 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		var memberships []membershipResponse
 		for rows.Next() {
 			var m membershipResponse
-			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.JoinedAt,
+			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.ShareContact, &m.JoinedAt,
 				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy); err != nil {
 				continue
 			}

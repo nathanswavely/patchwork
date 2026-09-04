@@ -34,7 +34,7 @@ patchwork/
 │   ├── auth/               # magic links, invite links, WebAuthn, sessions
 │   ├── handler/            # HTTP handlers (nodes, events, proposals, admin, tree,
 │   │                       #   governance hub, claims/unclaimed, notifications, AP inbox,
-│   │                       #   user profiles)
+│   │                       #   user profiles, noticeboard + its patch report queue)
 │   ├── middleware/          # auth, rate limiting, CSRF, CORS, logging
 │   ├── model/              # Go structs for all entities
 │   ├── ap/                 # ActivityPub: actors, HTTP signatures, keypairs, delivery worker
@@ -254,7 +254,7 @@ Key endpoints:
 - `GET /api/v1/nodes/{slug}` — single patch detail
 - `POST /api/v1/nodes/{slug}/join` — join or follow a patch (body: `{"role": "follower"}` for follow)
 - `GET /api/v1/users/{username}` — public user profile (visible memberships only)
-- `PATCH /api/v1/users/me/memberships/{nodeId}` — flip a membership's visibility switch
+- `PATCH /api/v1/users/me/memberships/{nodeId}` — the two switches a member owns on their own membership: `visible` (docs/adr/006) and `share_contact` (docs/adr/080). The contact card itself is `contact_card` on `PATCH /api/v1/auth/me`, replaced whole; `GET /api/v1/nodes/{slug}/members` carries `contact` per member only for a viewer who is an active admin/member of that patch — not for an instance admin holding no role there
 - `GET /api/v1/events` — **omitting `from` means upcoming.** The list sorts `starts_at` ascending, so an unbounded list would be a patch's *oldest* events; three surfaces headed "upcoming events" shipped that bug at once. Pass `include_past=true` for the whole calendar (workspace calendar, scoped search, "any events yet" probes). An explicit `from` always wins, including one in the past. Date-only `from`/`to` are widened to the instants they mean, in UTC (docs/adr/045). `scope=my` narrows to the caller's own patches, defined exactly as `PersonalICSFeed` defines My Quilt — every active relationship including follower, confirmed event links carried along, members-only events only for a member/admin of the event's own patch. The quilt (`/nodes/tree`) and the map (`/nodes`) take the same parameter; all three surfaces of docs/adr/035 must answer the scope switcher or "My Quilt" silently means "everything" on the one that doesn't
 - `POST /api/v1/events` — members/admins post directly; anyone else submits for review (`status: pending_review`) per docs/adr/026; trusted contributors (users flag) post directly to unclaimed patches. `event_url` is the event's **own page out on the web** (docs/adr/079) — tickets, the venue's listing — distinct from the Patchwork permalink and from an `event_link`. http(s) only, checked at every write path *and* at every parser, because it is rendered as an href and a feed is somebody else's input
 - `PATCH /api/v1/events/{id}/review` — approve/reject an event submission (instance admin for unclaimed patches, patch admins for active)
@@ -273,6 +273,7 @@ Key endpoints:
 - `POST /api/v1/proposals/{id}/candidates`, `PUT /api/v1/proposals/{id}/ballot` — elections: standing is a member act, the ballot is a PUT of the whole approved set (approval voting replaces wholesale)
 - `GET|POST /api/v1/nodes/{slug}/attestations`, `PATCH /api/v1/nodes/{slug}/attestation-names/{id}` — leadership decided elsewhere (docs/adr/052); public read, step-up write
 - `GET|POST /api/v1/nodes/{slug}/amendment-attestations` — texts a meeting adopted (docs/adr/053); replaces the whole charter, checks no base
+- `GET|POST /api/v1/nodes/{slug}/notices`, `GET|PATCH|DELETE /api/v1/notices/{id}`, `GET|POST .../{id}/replies`, `PATCH|DELETE /api/v1/replies/{id}` — the noticeboard (docs/adr/081). **Every route checks the room in the handler**: active admins and members of that patch, never followers, never an instance admin with no role there (a 404, not a 403 — the room's existence is not the caller's to learn). A notice rings the bell only with `tell_members: true` at creation; replies are flat and notify participants only. `GET|PATCH /api/v1/nodes/{slug}/reports` is the patch's own report queue for notices and replies (actions: `dismiss`, `remove`, `close_replies`); `POST /api/v1/reports` with `entity_type` notice/reply routes there and never to the instance panel
 - `GET /api/v1/nodes/{slug}/governance/rules` — **sends the whole rule set, and must.** The editor builds its submission by spreading what it loaded, so a field this drops is a field the next unrelated rules edit resets to its default
 
 ## Multi-Quilt / Cross-Quilt Following (docs/adr/024)

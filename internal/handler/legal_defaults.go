@@ -39,6 +39,10 @@ Profiles are public pages showing your username, display name, bio, avatar, and 
 
 Your email address is never shown publicly. Only this site's administrators can see it.
 
+A patch's noticeboard, meaning its notices and the replies under them, is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.
+
+You can add a contact card (a phone number, an email address to reach you at, and a short note) and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.
+
 ## Federation: where your public content travels
 
 This site can speak ActivityPub, the protocol behind Mastodon and similar networks. With federation enabled, public content can be copied to other servers when someone there follows a patch here. That covers patch profiles, public events, and public posts. Two things to understand:

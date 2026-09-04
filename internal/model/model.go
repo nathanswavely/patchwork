@@ -28,10 +28,14 @@ type User struct {
 	// HideAmendedLinings is the personal discovery filter (docs/adr/037):
 	// hide amended-lining patches from this user's quilt, search, map, and
 	// public feeds. Populated by the Me handler, not by session validation.
-	HideAmendedLinings bool    `json:"hide_amended_linings"`
-	SuspendedAt        *string `json:"suspended_at,omitempty"`
-	CreatedAt          string  `json:"created_at"`
-	UpdatedAt          string  `json:"updated_at"`
+	HideAmendedLinings bool `json:"hide_amended_linings"`
+	// ContactCard is the phone, email and note a person shares patch by
+	// patch (docs/adr/080). Populated by the Me handlers only — it never
+	// rides along on a login response, a public profile, or an AP actor.
+	ContactCard *ContactCard `json:"contact_card,omitempty"`
+	SuspendedAt *string      `json:"suspended_at,omitempty"`
+	CreatedAt   string       `json:"created_at"`
+	UpdatedAt   string       `json:"updated_at"`
 }
 
 type Notification struct {
@@ -95,6 +99,22 @@ type Credential struct {
 type NodeLink struct {
 	URL   string `json:"url"`
 	Label string `json:"label"`
+}
+
+// ContactCard is how a person can be reached, kept once on the account and
+// shown only inside the patches whose membership they have switched
+// contact sharing on for (docs/adr/080). Email here is an address to be
+// reached at, deliberately separate from the sign-in address: sharing how
+// to reach you must never hand out the key to your account.
+type ContactCard struct {
+	Phone string `json:"phone"`
+	Email string `json:"email"`
+	Note  string `json:"note"`
+}
+
+// Empty reports whether the card carries nothing to show.
+func (c ContactCard) Empty() bool {
+	return c.Phone == "" && c.Email == "" && c.Note == ""
 }
 
 type FollowerPermissions struct {
@@ -193,16 +213,21 @@ type Node struct {
 	SubmissionSource string      `json:"submission_source,omitempty"`
 	// AcceptEventSuggestions is the patch-admin-owned switch for whether
 	// non-members may suggest events to this (active) patch (docs/adr/026).
-	AcceptEventSuggestions bool                 `json:"accept_event_suggestions"`
-	FollowerPermissions    *FollowerPermissions `json:"follower_permissions,omitempty"`
-	GovernanceConfig       *GovernanceConfig    `json:"governance_config,omitempty"`
-	MemberCount            int                  `json:"member_count,omitempty"`
-	FollowerCount          int                  `json:"follower_count,omitempty"`
+	AcceptEventSuggestions bool `json:"accept_event_suggestions"`
+	// The noticeboard's two settings (docs/adr/081): who may put up a
+	// notice ("admins" or "members"), and whether a new notice takes
+	// replies unless its author says otherwise. Set on the detail response.
+	NoticePosting        string               `json:"notice_posting,omitempty"`
+	NoticeRepliesDefault bool                 `json:"notice_replies_default"`
+	FollowerPermissions  *FollowerPermissions `json:"follower_permissions,omitempty"`
+	GovernanceConfig     *GovernanceConfig    `json:"governance_config,omitempty"`
+	MemberCount          int                  `json:"member_count,omitempty"`
+	FollowerCount        int                  `json:"follower_count,omitempty"`
 	// Events not yet started — distinct from the tree endpoint's
 	// event_count, which is every active event past and future
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
 	// response only; the tree carries the all-time figure.
-	UpcomingEventCount int    `json:"upcoming_event_count"`
+	UpcomingEventCount int `json:"upcoming_event_count"`
 	// ActivatedAt is when this patch joined the quilt - created, or claimed
 	// through patch setup. NULL while it is only a directory listing: an
 	// unclaimed patch has not joined, because no community has arrived
@@ -484,6 +509,44 @@ type Membership struct {
 	// requests shown to that patch's admins — never in public member
 	// listings, and nulled once the request is resolved.
 	JoinMessage string `json:"join_message,omitempty"`
+	// ShareContact is the per-membership contact-sharing switch
+	// (docs/adr/080): when on, this patch's admins and members see the
+	// person's contact card in the Members room. Default off. A second
+	// axis beside Visible, not a second visibility switch — visibility
+	// says whether the membership is known, sharing says whether the
+	// people already in the room can reach you.
+	ShareContact bool `json:"share_contact"`
+}
+
+// Notice is something put up on a patch's noticeboard (docs/adr/081):
+// read by that patch's active admins and members and by nobody else.
+type Notice struct {
+	ID       string `json:"id"`
+	NodeID   string `json:"node_id"`
+	AuthorID string `json:"author_id"`
+	Title    string `json:"title"`
+	// Body is markdown, rendered by the same component charters use.
+	Body     string `json:"body"`
+	ImageURL string `json:"image_url"`
+	ImageAlt string `json:"image_alt"`
+	// RepliesOpen is the per-notice switch, flippable at any time by the
+	// author or a patch admin. Off keeps existing replies and removes the box.
+	RepliesOpen bool `json:"replies_open"`
+	// MembersTold records that the author checked "Tell members" — the one
+	// way a notice reaches the bell. Shown on the notice afterwards.
+	MembersTold bool   `json:"members_told"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+}
+
+// NoticeReply is a flat response under a notice: no parent, no reactions.
+type NoticeReply struct {
+	ID        string `json:"id"`
+	NoticeID  string `json:"notice_id"`
+	AuthorID  string `json:"author_id"`
+	Body      string `json:"body"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type Proposal struct {
@@ -564,4 +627,7 @@ type ContentReport struct {
 	ResolutionNote string  `json:"resolution_note"`
 	CreatedAt      string  `json:"created_at"`
 	UpdatedAt      string  `json:"updated_at"`
+	// NodeID routes a report about a notice or a reply to that patch's
+	// admins (docs/adr/081). NULL for the kinds the instance panel handles.
+	NodeID *string `json:"node_id,omitempty"`
 }

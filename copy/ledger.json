@@ -4057,28 +4057,28 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 25,
+          "line": 26,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 271,
+          "line": 272,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 318,
+          "line": 319,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 515,
+          "line": 547,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4099,7 +4099,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 998,
+          "line": 1015,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4311,14 +4311,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 606,
+          "line": 630,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 744,
+          "line": 797,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4472,7 +4472,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 541,
+          "line": 573,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4487,6 +4487,41 @@
         {
           "file": "internal/handler/nodes.go",
           "line": 840,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notice_reports.go",
+          "line": 137,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 191,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 284,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 437,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 506,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4556,14 +4591,14 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 28,
+          "line": 30,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 168,
+          "line": 210,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4700,7 +4735,7 @@
         },
         {
           "file": "internal/handler/users.go",
-          "line": 41,
+          "line": 42,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -4847,7 +4882,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 955,
+          "line": 972,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5356,7 +5391,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 521,
+          "line": 553,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5370,7 +5405,28 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1004,
+          "line": 1021,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 321,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 348,
+          "kind": "go-error-body",
+          "raw": "insufficient permissions",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 536,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6797,6 +6853,96 @@
       ]
     },
     {
+      "id": "7e73a072b643",
+      "text": "phone must be 60 characters or fewer",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 642,
+          "kind": "go-error-body",
+          "raw": "phone must be 60 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fc64434edc90",
+      "text": "email must be 254 characters or fewer",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 645,
+          "kind": "go-error-body",
+          "raw": "email must be 254 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bb75052389a1",
+      "text": "that doesn't look like an email address",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 648,
+          "kind": "go-error-body",
+          "raw": "that doesn't look like an email address",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d17d2e208ef7",
+      "text": "note must be 200 characters or fewer",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 651,
+          "kind": "go-error-body",
+          "raw": "note must be 200 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2e2fd53f6b10",
+      "text": "failed to update contact card",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 657,
+          "kind": "go-error-body",
+          "raw": "failed to update contact card",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "b30c353ac239",
       "text": "failed to update display name",
       "words": 5,
@@ -6807,7 +6953,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 614,
+          "line": 666,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -6825,7 +6971,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 624,
+          "line": 676,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -6843,7 +6989,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 635,
+          "line": 687,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -6861,7 +7007,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 643,
+          "line": 695,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -6879,7 +7025,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 657,
+          "line": 709,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -6897,7 +7043,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 700,
+          "line": 753,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -6915,14 +7061,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 736,
+          "line": 789,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 777,
+          "line": 830,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -6940,7 +7086,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 756,
+          "line": 809,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -6958,14 +7104,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 760,
+          "line": 813,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 791,
+          "line": 844,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -6983,7 +7129,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 786,
+          "line": 839,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -8847,7 +8993,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 863,
+          "line": 864,
           "kind": "go-error-body",
           "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
@@ -10006,7 +10152,7 @@
         },
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 81,
+          "line": 85,
           "kind": "go-doc-block",
           "raw": "## The short version",
           "quote": null
@@ -10159,6 +10305,42 @@
       ]
     },
     {
+      "id": "1c1f6a90767a",
+      "text": "A patch's noticeboard, meaning its notices and the replies under them, is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
+      "words": 53,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 42,
+          "kind": "go-doc-block",
+          "raw": "A patch's noticeboard, meaning its notices and the replies under them, is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "db8a0008d35f",
+      "text": "You can add a contact card (a phone number, an email address to reach you at, and a short note) and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
+      "words": 76,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 44,
+          "kind": "go-doc-block",
+          "raw": "You can add a contact card (a phone number, an email address to reach you at, and a short note) and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "de18763bf680",
       "text": "## Federation: where your public content travels",
       "words": 7,
@@ -10169,7 +10351,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 42,
+          "line": 46,
           "kind": "go-doc-block",
           "raw": "## Federation: where your public content travels",
           "quote": null
@@ -10187,7 +10369,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 44,
+          "line": 48,
           "kind": "go-doc-block",
           "raw": "This site can speak ActivityPub, the protocol behind Mastodon and similar networks. With federation enabled, public content can be copied to other servers when someone there follows a patch here. That covers patch profiles, public events, and public posts. Two things to understand:",
           "quote": null
@@ -10205,7 +10387,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 46,
+          "line": 50,
           "kind": "go-doc-block",
           "raw": "- Other servers keep their own copies under their own policies. Deleting something here sends a deletion notice, but this site cannot force another server to honor it.\n- When you follow a patch on another quilt, the follow is relayed through this site's shared service account rather than your own identity, so your name never appears in a remote follower list.",
           "quote": null
@@ -10223,7 +10405,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 49,
+          "line": 53,
           "kind": "go-doc-block",
           "raw": "Membership records never federate. What leaves this server is only what was already public on it.",
           "quote": null
@@ -10241,7 +10423,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 51,
+          "line": 55,
           "kind": "go-doc-block",
           "raw": "## Cookies",
           "quote": null
@@ -10259,7 +10441,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 53,
+          "line": 57,
           "kind": "go-doc-block",
           "raw": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
           "quote": null
@@ -10277,7 +10459,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 55,
+          "line": 59,
           "kind": "go-doc-block",
           "raw": "## Email",
           "quote": null
@@ -10295,7 +10477,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 57,
+          "line": 61,
           "kind": "go-doc-block",
           "raw": "Sign-in links and any notifications you turn on go out through the email server this site's stewards configured. Email always passes through the providers involved on both ends, yours and this site's.",
           "quote": null
@@ -10313,7 +10495,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 59,
+          "line": 63,
           "kind": "go-doc-block",
           "raw": "## The seamrip: data portability",
           "quote": null
@@ -10331,7 +10513,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 61,
+          "line": 65,
           "kind": "go-doc-block",
           "raw": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.",
           "quote": null
@@ -10349,7 +10531,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 63,
+          "line": 67,
           "kind": "go-doc-block",
           "raw": "## How long things are kept, and deletion",
           "quote": null
@@ -10367,7 +10549,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 65,
+          "line": 69,
           "kind": "go-doc-block",
           "raw": "Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.",
           "quote": null
@@ -10385,7 +10567,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 67,
+          "line": 71,
           "kind": "go-doc-block",
           "raw": "## Age",
           "quote": null
@@ -10403,7 +10585,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 69,
+          "line": 73,
           "kind": "go-doc-block",
           "raw": "This site is not directed at children under 13, and nobody under 13 may create an account.",
           "quote": null
@@ -10421,7 +10603,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 71,
+          "line": 75,
           "kind": "go-doc-block",
           "raw": "## Changes",
           "quote": null
@@ -10439,7 +10621,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 73,
+          "line": 77,
           "kind": "go-doc-block",
           "raw": "If this policy changes, the change shows up on this page. The software keeps no hidden version of it. What you read here is what the site operates under.",
           "quote": null
@@ -10457,7 +10639,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 75,
+          "line": 79,
           "kind": "go-doc-block",
           "raw": "## Who to talk to",
           "quote": null
@@ -10475,7 +10657,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 77,
+          "line": 81,
           "kind": "go-doc-block",
           "raw": "The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.",
           "quote": null
@@ -10493,7 +10675,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 79,
+          "line": 83,
           "kind": "go-doc-block",
           "raw": "*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
           "quote": null
@@ -10511,7 +10693,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 83,
+          "line": 87,
           "kind": "go-doc-block",
           "raw": "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
           "quote": null
@@ -10530,7 +10712,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 85,
+          "line": 89,
           "kind": "go-doc-block",
           "raw": "## What this is",
           "quote": null
@@ -10548,7 +10730,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 89,
+          "line": 93,
           "kind": "go-doc-block",
           "raw": "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
           "quote": null
@@ -10567,7 +10749,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 91,
+          "line": 95,
           "kind": "go-doc-block",
           "raw": "## Who can join",
           "quote": null
@@ -10585,7 +10767,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 93,
+          "line": 97,
           "kind": "go-doc-block",
           "raw": "You must be at least 13 years old to have an account. Accounts are for people. Bots and automated posters don't get one.",
           "quote": null
@@ -10603,7 +10785,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 95,
+          "line": 99,
           "kind": "go-doc-block",
           "raw": "## Your account",
           "quote": null
@@ -10621,7 +10803,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 97,
+          "line": 101,
           "kind": "go-doc-block",
           "raw": "Sign-in is by email links and passkeys, so there is no password to guard. The email account and devices you use to sign in are still your responsibility, and what happens through your account is yours to answer for. Don't share access to your account or use someone else's.",
           "quote": null
@@ -10639,7 +10821,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 99,
+          "line": 103,
           "kind": "go-doc-block",
           "raw": "## Your content",
           "quote": null
@@ -10657,7 +10839,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 101,
+          "line": 105,
           "kind": "go-doc-block",
           "raw": "What you post is yours, and you keep every right you already had. So the site can function, you give {quilt_name} permission to store your content, show it to the people it's addressed to, and, where federation applies to public content, pass it along to other servers that follow this one. The same permission covers the seamrip: if this community exports its data to continue elsewhere, public content and membership records go with it, as described in the privacy policy. Anything you post publicly can be seen, copied, and shared the way public things on the internet are, and you agree to that too.",
           "quote": null
@@ -10675,7 +10857,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 103,
+          "line": 107,
           "kind": "go-doc-block",
           "raw": "## Conduct",
           "quote": null
@@ -10693,7 +10875,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 105,
+          "line": 109,
           "kind": "go-doc-block",
           "raw": "These rules apply everywhere on this site:",
           "quote": null
@@ -10711,7 +10893,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 107,
+          "line": 111,
           "kind": "go-doc-block",
           "raw": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
           "quote": null
@@ -10730,7 +10912,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 111,
+          "line": 115,
           "kind": "go-doc-block",
           "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
           "quote": null
@@ -10748,7 +10930,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 113,
+          "line": 117,
           "kind": "go-doc-block",
           "raw": "## Moderation",
           "quote": null
@@ -10766,7 +10948,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 115,
+          "line": 119,
           "kind": "go-doc-block",
           "raw": "The stewards can remove content, restrict accounts, or close accounts that violate this agreement, without prior notice where they judge that necessary to protect people or the site. Posting content that infringes someone else's copyright will, if repeated, cost you your account. To report copyright infringement or any other abuse, contact the stewards through the [Label](/label).",
           "quote": null
@@ -10784,7 +10966,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 117,
+          "line": 121,
           "kind": "go-doc-block",
           "raw": "## If you don't like how this place is run",
           "quote": null
@@ -10802,7 +10984,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 119,
+          "line": 123,
           "kind": "go-doc-block",
           "raw": "Disagreement is not a violation. Patchwork keeps governance visible and makes leaving real: any member can export what they can already see, and a community can seamrip itself to new stewards. The [Label](/label) explains how this site is run, what it costs, and where the exit is.",
           "quote": null
@@ -10820,7 +11002,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 121,
+          "line": 125,
           "kind": "go-doc-block",
           "raw": "## No warranty",
           "quote": null
@@ -10838,7 +11020,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 123,
+          "line": 127,
           "kind": "go-doc-block",
           "raw": "Volunteers run this site on real hardware, with no promise of uptime, availability, or permanence. It is provided **as is**, without warranty of any kind. To the fullest extent permitted by law, the stewards are not liable for damages arising from your use of the site or from content other people post, so back up anything you can't afford to lose.",
           "quote": null
@@ -10856,7 +11038,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 125,
+          "line": 129,
           "kind": "go-doc-block",
           "raw": "## Changes and ending",
           "quote": null
@@ -10874,7 +11056,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 127,
+          "line": 131,
           "kind": "go-doc-block",
           "raw": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.",
           "quote": null
@@ -10996,7 +11178,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 43,
+          "line": 44,
           "kind": "go-error-body",
           "raw": "message must be 500 characters or fewer",
           "quote": null
@@ -11014,7 +11196,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 52,
+          "line": 53,
           "kind": "go-error-body",
           "raw": "can only follow public patches",
           "quote": null
@@ -11032,7 +11214,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 63,
+          "line": 64,
           "kind": "go-error-body",
           "raw": "this patch hasn't been claimed yet — you can follow it",
           "quote": null
@@ -11050,7 +11232,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 68,
+          "line": 69,
           "kind": "go-error-body",
           "raw": "this node is invite only",
           "quote": null
@@ -11068,7 +11250,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 78,
+          "line": 79,
           "kind": "go-error-body",
           "raw": "You have been removed from this community",
           "quote": null
@@ -11086,7 +11268,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 83,
+          "line": 84,
           "kind": "go-error-body",
           "raw": "already following",
           "quote": null
@@ -11104,14 +11286,14 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 88,
+          "line": 89,
           "kind": "go-error-body",
           "raw": "already a member",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 133,
+          "line": 134,
           "kind": "go-error-body",
           "raw": "already a member",
           "quote": null
@@ -11129,7 +11311,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 110,
+          "line": 111,
           "kind": "go-error-body",
           "raw": "failed to upgrade membership",
           "quote": null
@@ -11147,7 +11329,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 137,
+          "line": 138,
           "kind": "go-error-body",
           "raw": "membership request already pending",
           "quote": null
@@ -11165,7 +11347,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 161,
+          "line": 162,
           "kind": "go-error-body",
           "raw": "failed to rejoin node",
           "quote": null
@@ -11183,7 +11365,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 224,
+          "line": 225,
           "kind": "go-error-body",
           "raw": "failed to join node",
           "quote": null
@@ -11201,7 +11383,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 279,
+          "line": 280,
           "kind": "go-error-body",
           "raw": "not a member",
           "quote": null
@@ -11219,7 +11401,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 294,
+          "line": 295,
           "kind": "go-error-body",
           "raw": "cannot leave as the only admin",
           "quote": null
@@ -11237,7 +11419,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 301,
+          "line": 302,
           "kind": "go-error-body",
           "raw": "failed to leave node",
           "quote": null
@@ -11255,7 +11437,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 384,
+          "line": 406,
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
@@ -11273,7 +11455,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 460,
+          "line": 491,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -11291,14 +11473,14 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 532,
+          "line": 564,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
         },
         {
           "file": "internal/handler/users.go",
-          "line": 108,
+          "line": 114,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -11316,7 +11498,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 551,
+          "line": 583,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -11334,7 +11516,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 556,
+          "line": 588,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -11352,7 +11534,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 579,
+          "line": 611,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -11370,7 +11552,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 584,
+          "line": 616,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -11388,7 +11570,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 592,
+          "line": 624,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -11406,7 +11588,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 598,
+          "line": 630,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -11424,7 +11606,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 623,
+          "line": 655,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -11442,7 +11624,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 631,
+          "line": 663,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -11460,7 +11642,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 651,
+          "line": 683,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -11478,7 +11660,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 656,
+          "line": 688,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -11496,7 +11678,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 665,
+          "line": 697,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -11514,7 +11696,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 674,
+          "line": 706,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -11532,7 +11714,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 684,
+          "line": 716,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -11550,7 +11732,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 696,
+          "line": 728,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -11568,7 +11750,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 711,
+          "line": 743,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -11651,6 +11833,42 @@
       ]
     },
     {
+      "id": "e79c3294c708",
+      "text": "notice_posting must be admins or members",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 876,
+          "kind": "go-error-body",
+          "raw": "notice_posting must be admins or members",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "95b8d6b1dc57",
+      "text": "notice_replies_default must be true or false",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 882,
+          "kind": "go-error-body",
+          "raw": "notice_replies_default must be true or false",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "8bc234ecdc98",
       "text": "tags must be an array of tag names",
       "words": 8,
@@ -11661,14 +11879,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 887,
+          "line": 904,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 894,
+          "line": 911,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -11686,7 +11904,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 905,
+          "line": 922,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -11704,7 +11922,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 967,
+          "line": 984,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -11722,9 +11940,436 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1012,
+          "line": 1029,
           "kind": "go-error-body",
           "raw": "failed to archive node",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "907ba78b4545",
+      "text": "not found",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notice_reports.go",
+          "line": 34,
+          "kind": "go-error-body",
+          "raw": "not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 95,
+          "kind": "go-error-body",
+          "raw": "not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 181,
+          "kind": "go-error-body",
+          "raw": "not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0ef048630cec",
+      "text": "failed to list reports",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/notice_reports.go",
+          "line": 80,
+          "kind": "go-error-body",
+          "raw": "failed to list reports",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/reports.go",
+          "line": 146,
+          "kind": "go-error-body",
+          "raw": "failed to list reports",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ab57d24cb11b",
+      "text": "report not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notice_reports.go",
+          "line": 147,
+          "kind": "go-error-body",
+          "raw": "report not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/reports.go",
+          "line": 220,
+          "kind": "go-error-body",
+          "raw": "report not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "790031e0f84b",
+      "text": "this report has already been reviewed",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notice_reports.go",
+          "line": 151,
+          "kind": "go-error-body",
+          "raw": "this report has already been reviewed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "29f25386f2e3",
+      "text": "action must be dismiss, remove, or close_replies",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notice_reports.go",
+          "line": 179,
+          "kind": "go-error-body",
+          "raw": "action must be dismiss, remove, or close_replies",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e1c982634f7f",
+      "text": "failed to update report",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/notice_reports.go",
+          "line": 187,
+          "kind": "go-error-body",
+          "raw": "failed to update report",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/reports.go",
+          "line": 245,
+          "kind": "go-error-body",
+          "raw": "failed to update report",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "da9506215567",
+      "text": "notice not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 83,
+          "kind": "go-error-body",
+          "raw": "notice not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e1b8a6c794ba",
+      "text": "failed to list notices",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 111,
+          "kind": "go-error-body",
+          "raw": "failed to list notices",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "21a1b7b34bf9",
+      "text": "this patch's admins put up its notices",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 185,
+          "kind": "go-error-body",
+          "raw": "this patch's admins put up its notices",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e9b4f015b0be",
+      "text": "failed to create notice",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 211,
+          "kind": "go-error-body",
+          "raw": "failed to create notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a7a4f6016569",
+      "text": "only the author can edit a notice",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 291,
+          "kind": "go-error-body",
+          "raw": "only the author can edit a notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c9dc6ef9074c",
+      "text": "failed to update notice",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 313,
+          "kind": "go-error-body",
+          "raw": "failed to update notice",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 325,
+          "kind": "go-error-body",
+          "raw": "failed to update notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9eb6e7baf6a4",
+      "text": "failed to delete notice",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 352,
+          "kind": "go-error-body",
+          "raw": "failed to delete notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "739ad69f5046",
+      "text": "failed to list replies",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 398,
+          "kind": "go-error-body",
+          "raw": "failed to list replies",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "93d1549581fb",
+      "text": "replies are off on this notice",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 430,
+          "kind": "go-error-body",
+          "raw": "replies are off on this notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "585ccb827473",
+      "text": "a reply needs a body under 5000 characters",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 442,
+          "kind": "go-error-body",
+          "raw": "a reply needs a body under 5000 characters",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notices.go",
+          "line": 511,
+          "kind": "go-error-body",
+          "raw": "a reply needs a body under 5000 characters",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2034219669ee",
+      "text": "failed to create reply",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 450,
+          "kind": "go-error-body",
+          "raw": "failed to create reply",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "84ccdbc27652",
+      "text": "reply not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 483,
+          "kind": "go-error-body",
+          "raw": "reply not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "01b5c25036fe",
+      "text": "only the author can edit a reply",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 499,
+          "kind": "go-error-body",
+          "raw": "only the author can edit a reply",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "455d24360555",
+      "text": "failed to update reply",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 516,
+          "kind": "go-error-body",
+          "raw": "failed to update reply",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0e97e1fe9a6e",
+      "text": "failed to delete reply",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/notices.go",
+          "line": 540,
+          "kind": "go-error-body",
+          "raw": "failed to delete reply",
           "quote": null
         }
       ]
@@ -13052,7 +13697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/reports.go",
-          "line": 32,
+          "line": 34,
           "kind": "go-error-body",
           "raw": "entity_type, entity_id, and reason are required",
           "quote": null
@@ -13060,19 +13705,19 @@
       ]
     },
     {
-      "id": "36140cedb3b0",
-      "text": "entity_type must be node, event, or user",
-      "words": 7,
+      "id": "e49b1a3a85b1",
+      "text": "entity_type must be node, event, user, notice, or reply",
+      "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
       "occurrences": [
         {
           "file": "internal/handler/reports.go",
-          "line": 38,
+          "line": 42,
           "kind": "go-error-body",
-          "raw": "entity_type must be node, event, or user",
+          "raw": "entity_type must be node, event, user, notice, or reply",
           "quote": null
         }
       ]
@@ -13088,7 +13733,7 @@
       "occurrences": [
         {
           "file": "internal/handler/reports.go",
-          "line": 53,
+          "line": 68,
           "kind": "go-error-body",
           "raw": "target entity not found",
           "quote": null
@@ -13106,63 +13751,9 @@
       "occurrences": [
         {
           "file": "internal/handler/reports.go",
-          "line": 63,
+          "line": 82,
           "kind": "go-error-body",
           "raw": "failed to create report",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "0ef048630cec",
-      "text": "failed to list reports",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/reports.go",
-          "line": 109,
-          "kind": "go-error-body",
-          "raw": "failed to list reports",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ab57d24cb11b",
-      "text": "report not found",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/handler/reports.go",
-          "line": 178,
-          "kind": "go-error-body",
-          "raw": "report not found",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e1c982634f7f",
-      "text": "failed to update report",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/reports.go",
-          "line": 203,
-          "kind": "go-error-body",
-          "raw": "failed to update report",
           "quote": null
         }
       ]
@@ -14038,7 +14629,7 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 58,
+          "line": 59,
           "kind": "go-error-body",
           "raw": "failed to load profile",
           "quote": null
@@ -14046,19 +14637,19 @@
       ]
     },
     {
-      "id": "bb6a0a928ee9",
-      "text": "body must include visible: true|false",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
+      "id": "54ee10529f02",
+      "text": "body must include visible: true|false or share_contact: true|false",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 99,
+          "line": 101,
           "kind": "go-error-body",
-          "raw": "body must include visible: true|false",
+          "raw": "body must include visible: true|false or share_contact: true|false",
           "quote": null
         }
       ]
@@ -14074,9 +14665,45 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 117,
+          "line": 121,
           "kind": "go-error-body",
           "raw": "failed to update visibility",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6249462c7fc8",
+      "text": "become a member to share your contact card with this patch",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/users.go",
+          "line": 132,
+          "kind": "go-error-body",
+          "raw": "become a member to share your contact card with this patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fed7e9c62d99",
+      "text": "failed to update contact sharing",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/users.go",
+          "line": 137,
+          "kind": "go-error-body",
+          "raw": "failed to update contact sharing",
           "quote": null
         }
       ]
@@ -14531,7 +15158,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 25,
+          "line": 30,
           "kind": "go-string",
           "raw": "New proposals, voting updates, deadlines",
           "quote": "\""
@@ -14549,7 +15176,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 26,
+          "line": 31,
           "kind": "go-string",
           "raw": "Document and rules changes",
           "quote": "\""
@@ -14567,7 +15194,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 27,
+          "line": 32,
           "kind": "go-string",
           "raw": "Join/leave notifications for admins",
           "quote": "\""
@@ -14585,7 +15212,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 28,
+          "line": 33,
           "kind": "go-string",
           "raw": "Event creation, updates, reminders",
           "quote": "\""
@@ -14603,9 +15230,27 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 29,
+          "line": 34,
           "kind": "go-string",
           "raw": "Claim requests, submissions",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "67c3ec217834",
+      "text": "A notice whose author chose to tell members, replies on notices you're in, and reports for admins",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 35,
+          "kind": "go-string",
+          "raw": "A notice whose author chose to tell members, replies on notices you're in, and reports for admins",
           "quote": "\""
         }
       ]
@@ -14621,7 +15266,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 30,
+          "line": 36,
           "kind": "go-string",
           "raw": "The quilt",
           "quote": "\""
@@ -14639,7 +15284,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 30,
+          "line": 36,
           "kind": "go-string",
           "raw": "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.",
           "quote": "\""
@@ -14657,7 +15302,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 171,
+          "line": 187,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -14675,7 +15320,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 172,
+          "line": 188,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -14693,7 +15338,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 173,
+          "line": 189,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -14711,7 +15356,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 174,
+          "line": 190,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -14729,7 +15374,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 175,
+          "line": 191,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -14747,7 +15392,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 176,
+          "line": 192,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -14765,7 +15410,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 177,
+          "line": 193,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -14783,7 +15428,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 178,
+          "line": 194,
           "kind": "go-string",
           "raw": "Voting ends in 24 hours",
           "quote": "\""
@@ -14801,7 +15446,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 180,
+          "line": 196,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -14819,7 +15464,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 185,
+          "line": 201,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -14837,7 +15482,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 186,
+          "line": 202,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -14855,7 +15500,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 187,
+          "line": 203,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -14873,7 +15518,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 188,
+          "line": 204,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -14891,7 +15536,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 189,
+          "line": 205,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -14909,7 +15554,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 191,
+          "line": 207,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -14927,7 +15572,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 192,
+          "line": 208,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -14945,7 +15590,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 193,
+          "line": 209,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -14963,7 +15608,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 194,
+          "line": 210,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -14981,7 +15626,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 195,
+          "line": 211,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -14999,7 +15644,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 196,
+          "line": 212,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -15017,7 +15662,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 198,
+          "line": 214,
           "kind": "go-string",
           "raw": "New event",
           "quote": "\""
@@ -15035,7 +15680,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 199,
+          "line": 215,
           "kind": "go-string",
           "raw": "Event starts in 24 hours",
           "quote": "\""
@@ -15053,7 +15698,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 200,
+          "line": 216,
           "kind": "go-string",
           "raw": "Event details changed",
           "quote": "\""
@@ -15071,7 +15716,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 201,
+          "line": 217,
           "kind": "go-string",
           "raw": "Event cancelled",
           "quote": "\""
@@ -15089,7 +15734,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 203,
+          "line": 219,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -15107,7 +15752,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 204,
+          "line": 220,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -15125,7 +15770,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 205,
+          "line": 221,
           "kind": "go-string",
           "raw": "Your event was declined",
           "quote": "\""
@@ -15143,7 +15788,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 207,
+          "line": 223,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -15161,7 +15806,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 208,
+          "line": 224,
           "kind": "go-string",
           "raw": "Event link confirmed",
           "quote": "\""
@@ -15179,9 +15824,63 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 212,
+          "line": 228,
           "kind": "go-string",
           "raw": "A listing matched one of your programs",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "f1717332049e",
+      "text": "A notice for your patch",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 233,
+          "kind": "go-string",
+          "raw": "A notice for your patch",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "8aaa49fd5d9b",
+      "text": "Reply on a notice you're in",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 234,
+          "kind": "go-string",
+          "raw": "Reply on a notice you're in",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "873f5a22678e",
+      "text": "A notice or reply was reported",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 235,
+          "kind": "go-string",
+          "raw": "A notice or reply was reported",
           "quote": "\""
         }
       ]
@@ -15197,7 +15896,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 214,
+          "line": 237,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -15215,7 +15914,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 215,
+          "line": 238,
           "kind": "go-string",
           "raw": "New patch submission",
           "quote": "\""
@@ -15233,7 +15932,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 216,
+          "line": 239,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -15251,7 +15950,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 217,
+          "line": 240,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
           "quote": "\""
@@ -15269,7 +15968,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 219,
+          "line": 242,
           "kind": "go-string",
           "raw": "Your claim was approved",
           "quote": "\""
@@ -15287,7 +15986,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 224,
+          "line": 247,
           "kind": "go-string",
           "raw": "New patches this month",
           "quote": "\""
@@ -15305,7 +16004,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 225,
+          "line": 248,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -15907,21 +16606,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 472,
+          "line": 483,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 518,
+          "line": 529,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 567,
+          "line": 582,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -15939,21 +16638,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 473,
+          "line": 484,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 519,
+          "line": 530,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 568,
+          "line": 583,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -15971,7 +16670,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 662,
+          "line": 677,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -15989,7 +16688,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 663,
+          "line": 678,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -17968,7 +18667,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 220,
+          "line": 264,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -18116,6 +18815,13 @@
         {
           "file": "web/src/pages/AdminReports.svelte",
           "line": 172,
+          "kind": "markup",
+          "raw": "Confirm",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 175,
           "kind": "markup",
           "raw": "Confirm",
           "quote": null
@@ -18450,6 +19156,13 @@
           "quote": null
         },
         {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 153,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/NotificationPreferences.svelte",
           "line": 75,
           "kind": "markup",
@@ -18466,6 +19179,13 @@
         {
           "file": "web/src/pages/PatchForm.svelte",
           "line": 390,
+          "kind": "markup",
+          "raw": "Loading...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 130,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -18493,7 +19213,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 90,
+          "line": 125,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -18589,7 +19309,14 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 184,
+          "line": 148,
+          "kind": "js-string",
+          "raw": "Failed to save",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 228,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -18625,6 +19352,13 @@
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 226,
+          "kind": "js-string",
+          "raw": "Failed to save",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 36,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -19271,6 +20005,13 @@
         {
           "file": "web/src/pages/EventDetail.svelte",
           "line": 159,
+          "kind": "markup",
+          "raw": "Edit",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 203,
           "kind": "markup",
           "raw": "Edit",
           "quote": null
@@ -20188,7 +20929,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 41,
+          "line": 46,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
@@ -20324,14 +21065,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 149,
+          "line": 150,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 150,
+          "line": 151,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -20349,7 +21090,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 157,
+          "line": 158,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -20367,7 +21108,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 172,
+          "line": 173,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -20392,7 +21133,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 175,
+          "line": 176,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -22446,7 +23187,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 161,
+          "line": 205,
           "kind": "js-string",
           "raw": "Copy failed. Select the address instead.",
           "quote": "'"
@@ -23626,14 +24367,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 105,
+          "line": 112,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 114,
+          "line": 121,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
@@ -23651,14 +24392,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 107,
+          "line": 114,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 117,
+          "line": 124,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
@@ -23683,14 +24424,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 109,
+          "line": 116,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 119,
+          "line": 127,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
@@ -24924,6 +25665,24 @@
       ]
     },
     {
+      "id": "6ab6ea32c3e1",
+      "text": "Contact card saved",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 146,
+          "kind": "js-string",
+          "raw": "Contact card saved",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "d341057d75a1",
       "text": "Failed to create feed",
       "words": 4,
@@ -24934,7 +25693,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 138,
+          "line": 182,
           "kind": "js-string",
           "raw": "Failed to create feed",
           "quote": "'"
@@ -24952,7 +25711,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 149,
+          "line": 193,
           "kind": "js-string",
           "raw": "Personal feed disabled",
           "quote": "'"
@@ -24970,7 +25729,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 151,
+          "line": 195,
           "kind": "js-string",
           "raw": "Failed to disable feed",
           "quote": "'"
@@ -24988,7 +25747,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 182,
+          "line": 226,
           "kind": "js-string",
           "raw": "Profile saved",
           "quote": "'"
@@ -25006,7 +25765,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 185,
+          "line": 229,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -25052,7 +25811,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 195,
+          "line": 239,
           "kind": "markup",
           "raw": "Profile",
           "quote": null
@@ -25070,7 +25829,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 197,
+          "line": 241,
           "kind": "markup",
           "raw": "Your",
           "quote": null
@@ -25088,7 +25847,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 198,
+          "line": 242,
           "kind": "markup",
           "raw": "shows your name, bio, links, and the memberships you keep visible.",
           "quote": null
@@ -25106,7 +25865,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 202,
+          "line": 246,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -25145,7 +25904,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 204,
+          "line": 248,
           "kind": "markup",
           "raw": "Username cannot be changed.",
           "quote": null
@@ -25163,7 +25922,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 207,
+          "line": 251,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -25202,7 +25961,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 211,
+          "line": 255,
           "kind": "markup",
           "raw": "Bio",
           "quote": null
@@ -25220,7 +25979,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 215,
+          "line": 259,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -25259,7 +26018,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 218,
+          "line": 262,
           "kind": "attr:placeholder",
           "raw": "Label",
           "quote": "\""
@@ -25277,7 +26036,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 219,
+          "line": 263,
           "kind": "attr:placeholder",
           "raw": "https://…",
           "quote": "\""
@@ -25295,10 +26054,197 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 224,
+          "line": 268,
           "kind": "markup",
           "raw": "Add link",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "56b934fcd244",
+      "text": "Contact card",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 285,
+          "kind": "markup",
+          "raw": "Contact card",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "48d125c0590b",
+      "text": "How the people you organize with can reach you. Nothing here is public: a patch's admins and members see your card only once you share it with that patch, in",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 287,
+          "kind": "markup",
+          "raw": "How the people you organize with can reach you. Nothing here is public:\n        a patch's admins and members see your card only once you share it\n        with that patch, in",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "840c17afd411",
+      "text": "Shared with 1 patch.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 292,
+          "kind": "markup",
+          "raw": "Shared with 1 patch.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ec8ec8a44a70",
+      "text": "Shared with {sharedWithCount} patches.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 294,
+          "kind": "markup",
+          "raw": "Shared with {sharedWithCount} patches.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e40cf9245a5b",
+      "text": "Not shared with any patch yet.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 296,
+          "kind": "markup",
+          "raw": "Not shared with any patch yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "63dceb8800b2",
+      "text": "Phone",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 301,
+          "kind": "markup",
+          "raw": "Phone",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a9b8d0da649f",
+      "text": "Email to reach you at",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 305,
+          "kind": "markup",
+          "raw": "Email to reach you at",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "59c477f473ca",
+      "text": "Separate from the address you sign in with. That one is never shared.",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 307,
+          "kind": "markup",
+          "raw": "Separate from the address you sign in with. That one is never shared.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d8da2c49df39",
+      "text": "Note",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 310,
+          "kind": "markup",
+          "raw": "Note",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 168,
+          "kind": "markup",
+          "raw": "Note",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e4053b293c6f",
+      "text": "How you prefer to be reached",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 311,
+          "kind": "attr:placeholder",
+          "raw": "How you prefer to be reached",
+          "quote": "\""
         }
       ]
     },
@@ -25313,7 +26259,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 241,
+          "line": 322,
           "kind": "markup",
           "raw": "When you open Patchwork",
           "quote": null
@@ -25331,7 +26277,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 243,
+          "line": 324,
           "kind": "markup",
           "raw": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
           "quote": null
@@ -25350,7 +26296,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 252,
+          "line": 333,
           "kind": "markup",
           "raw": "Start on My Quilt",
           "quote": null
@@ -25368,7 +26314,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 257,
+          "line": 338,
           "kind": "markup",
           "raw": "Discovery",
           "quote": null
@@ -25386,7 +26332,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 265,
+          "line": 346,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -25411,7 +26357,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 268,
+          "line": 349,
           "kind": "markup",
           "raw": "Keeps patches that changed the shared community standards out of your\n        quilt, search, map, and event feed. Direct links still work.",
           "quote": null
@@ -25429,7 +26375,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 274,
+          "line": 355,
           "kind": "markup",
           "raw": "Personal feed",
           "quote": null
@@ -25447,7 +26393,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 276,
+          "line": 357,
           "kind": "markup",
           "raw": "A calendar feed of every event on your My Quilt, for your calendar\n        app. The address is a secret. Anyone who has it can read your feed.",
           "quote": null
@@ -25465,7 +26411,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 282,
+          "line": 363,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -25490,7 +26436,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 285,
+          "line": 366,
           "kind": "markup",
           "raw": "Copy it now. This address won't be shown again, and regenerating\n          replaces it.",
           "quote": null
@@ -25508,7 +26454,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 292,
+          "line": 373,
           "kind": "markup",
           "raw": "Regenerate address",
           "quote": null
@@ -25526,7 +26472,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 295,
+          "line": 376,
           "kind": "markup",
           "raw": "Disable",
           "quote": null
@@ -25544,7 +26490,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 299,
+          "line": 380,
           "kind": "markup",
           "raw": "Create feed",
           "quote": null
@@ -25562,7 +26508,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 307,
+          "line": 388,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -25580,7 +26526,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 310,
+          "line": 391,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -25598,7 +26544,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 311,
+          "line": 392,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
@@ -25616,7 +26562,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 316,
+          "line": 397,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -25634,7 +26580,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 318,
+          "line": 399,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
@@ -25652,7 +26598,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 323,
+          "line": 404,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -25670,7 +26616,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 325,
+          "line": 406,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -25688,7 +26634,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 341,
+          "line": 422,
           "kind": "markup",
           "raw": "Decline",
           "quote": null
@@ -26445,6 +27391,13 @@
         {
           "file": "web/src/pages/AdminReports.svelte",
           "line": 140,
+          "kind": "markup",
+          "raw": "Action",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 158,
           "kind": "markup",
           "raw": "Action",
           "quote": null
@@ -30374,7 +31327,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 125,
+          "line": 168,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -30406,7 +31359,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 105,
+          "line": 147,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -32123,7 +33076,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 98,
+          "line": 140,
           "kind": "markup",
           "raw": "Managing",
           "quote": null
@@ -32173,7 +33126,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 118,
+          "line": 161,
           "kind": "markup",
           "raw": "Member of",
           "quote": null
@@ -32230,7 +33183,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 139,
+          "line": 183,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -32255,7 +33208,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 94,
+          "line": 129,
           "kind": "markup",
           "raw": "You haven't joined any patches yet.",
           "quote": null
@@ -33166,8 +34119,22 @@
           "quote": null
         },
         {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 159,
+          "kind": "markup",
+          "raw": "Title",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/PatchEvents.svelte",
           "line": 247,
+          "kind": "markup",
+          "raw": "Title",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 104,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -33309,8 +34276,22 @@
           "quote": "\""
         },
         {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 168,
+          "kind": "attr:placeholder",
+          "raw": "https://...",
+          "quote": "\""
+        },
+        {
           "file": "web/src/pages/PatchForm.svelte",
           "line": 260,
+          "kind": "attr:placeholder",
+          "raw": "https://...",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 132,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -33385,6 +34366,20 @@
           "kind": "markup",
           "raw": "Image address",
           "quote": null
+        },
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 167,
+          "kind": "markup",
+          "raw": "Image address",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 131,
+          "kind": "markup",
+          "raw": "Image address",
+          "quote": null
         }
       ]
     },
@@ -33403,6 +34398,13 @@
           "kind": "markup",
           "raw": "Link a flyer or photo you already have online. Patchwork points at\n            it and never keeps a copy.",
           "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 133,
+          "kind": "markup",
+          "raw": "Link a flyer or photo you already have online. Patchwork points at it and never keeps a copy.",
+          "quote": null
         }
       ]
     },
@@ -33418,6 +34420,20 @@
         {
           "file": "web/src/pages/EventForm.svelte",
           "line": 439,
+          "kind": "markup",
+          "raw": "Describe the image",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 172,
+          "kind": "markup",
+          "raw": "Describe the image",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 137,
           "kind": "markup",
           "raw": "Describe the image",
           "quote": null
@@ -34695,6 +35711,13 @@
           "quote": null
         },
         {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 121,
+          "kind": "markup",
+          "raw": "Nothing to preview",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/ProposalForm.svelte",
           "line": 141,
           "kind": "markup",
@@ -34818,7 +35841,7 @@
         },
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 36,
+          "line": 45,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -36752,6 +37775,297 @@
       ]
     },
     {
+      "id": "b5e276105d28",
+      "text": "Notice not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 47,
+          "kind": "js-string",
+          "raw": "Notice not found",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "70081e0d0420",
+      "text": "Replies are on",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 66,
+          "kind": "js-string",
+          "raw": "Replies are on",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "d2aa7686f74f",
+      "text": "Replies are off. Existing replies stay.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 66,
+          "kind": "js-string",
+          "raw": "Replies are off. Existing replies stay.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "971dfc1ac97b",
+      "text": "Could not change replies",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 68,
+          "kind": "js-string",
+          "raw": "Could not change replies",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3347fe959891",
+      "text": "Notice taken down",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 75,
+          "kind": "js-string",
+          "raw": "Notice taken down",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "62df97601353",
+      "text": "Could not take the notice down",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 78,
+          "kind": "js-string",
+          "raw": "Could not take the notice down",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "02cc4ef841c0",
+      "text": "Notice updated",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 106,
+          "kind": "js-string",
+          "raw": "Notice updated",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "16efcd21d74f",
+      "text": "Could not save",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 108,
+          "kind": "js-string",
+          "raw": "Could not save",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "724ffbce0ce4",
+      "text": "Could not reply",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 128,
+          "kind": "js-string",
+          "raw": "Could not reply",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "50c53a120719",
+      "text": "Could not remove the reply",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 142,
+          "kind": "js-string",
+          "raw": "Could not remove the reply",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "65659145569b",
+      "text": "Notice",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 163,
+          "kind": "markup",
+          "raw": "Notice",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 110,
+          "kind": "markup",
+          "raw": "Notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4866cb5a96bc",
+      "text": "members told",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 187,
+          "kind": "markup",
+          "raw": "members told",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 200,
+          "kind": "markup",
+          "raw": "members told",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0b9a3f903ed6",
+      "text": "replies off",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 188,
+          "kind": "markup",
+          "raw": "replies off",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "replies off",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "55772e2dd44b",
+      "text": "{' · '}Replies are off on this notice.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 220,
+          "kind": "markup",
+          "raw": "{' · '}Replies are off on this notice.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3bdb702846f6",
+      "text": "Reply to this notice",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/NoticeDetail.svelte",
+          "line": 252,
+          "kind": "attr:placeholder",
+          "raw": "Reply to this notice",
+          "quote": "\""
+        }
+      ]
+    },
+    {
       "id": "d6a803a0e321",
       "text": "Failed to load preferences",
       "words": 4,
@@ -37959,7 +39273,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 37,
+          "line": 46,
           "kind": "markup",
           "raw": "Become a member to access the member list.",
           "quote": null
@@ -37977,7 +39291,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 42,
+          "line": 51,
           "kind": "markup",
           "raw": "Loading members...",
           "quote": null
@@ -37995,7 +39309,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 45,
+          "line": 54,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -38027,7 +39341,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 46,
+          "line": 55,
           "kind": "markup",
           "raw": "Share your patch's invite link to grow your community.",
           "quote": null
@@ -38045,9 +39359,437 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 50,
+          "line": 59,
           "kind": "markup",
           "raw": "{members.length} members",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ab094160c1d1",
+      "text": "Contact cards here are shared only with this patch's admins and members.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 64,
+          "kind": "markup",
+          "raw": "Contact cards here are shared only with this patch's admins and members.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d21422c85198",
+      "text": "Share yours with this patch in",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 66,
+          "kind": "markup",
+          "raw": "Share yours with this patch in",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aeca4e1a67f2",
+      "text": "Failed to load the noticeboard",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 42,
+          "kind": "js-string",
+          "raw": "Failed to load the noticeboard",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "a2ca37316419",
+      "text": "A notice needs a title",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 70,
+          "kind": "js-string",
+          "raw": "A notice needs a title",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ea36dd513077",
+      "text": "Notice put up and members told",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 84,
+          "kind": "js-string",
+          "raw": "Notice put up and members told",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "366229c79837",
+      "text": "Notice put up",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 84,
+          "kind": "js-string",
+          "raw": "Notice put up",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3542f5026c08",
+      "text": "Could not put up the notice",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 87,
+          "kind": "js-string",
+          "raw": "Could not put up the notice",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "5d0cffb35bfe",
+      "text": "The noticeboard is for this patch's members.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 96,
+          "kind": "markup",
+          "raw": "The noticeboard is for this patch's members.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b1a854fd002b",
+      "text": "Become a member to read and put up notices.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 97,
+          "kind": "markup",
+          "raw": "Become a member to read and put up notices.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f954ddc70cd2",
+      "text": "Put up a notice",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 101,
+          "kind": "markup",
+          "raw": "Put up a notice",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 174,
+          "kind": "markup",
+          "raw": "Put up a notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f1d946d60662",
+      "text": "Notice title",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 105,
+          "kind": "attr:placeholder",
+          "raw": "Notice title",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "8079acce90c0",
+      "text": "Markdown is supported.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 126,
+          "kind": "attr:placeholder",
+          "raw": "Markdown is supported.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "20166801df17",
+      "text": "Alt text for the image",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 138,
+          "kind": "attr:placeholder",
+          "raw": "Alt text for the image",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "db5ad997c693",
+      "text": "Take replies",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 145,
+          "kind": "markup",
+          "raw": "Take replies",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "016a295c3160",
+      "text": "You or an admin can switch this off later. Existing replies stay.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 146,
+          "kind": "markup",
+          "raw": "You or an admin can switch this off later. Existing replies stay.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4e8c7fc8cfd8",
+      "text": "Tell members",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 153,
+          "kind": "markup",
+          "raw": "Tell members",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6d6987338162",
+      "text": "Rings the bell for every member of this patch. Off, the notice waits here for people to walk in.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 154,
+          "kind": "markup",
+          "raw": "Rings the bell for every member of this patch. Off, the notice waits here for people to walk in.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1f9680896a0a",
+      "text": "Read by this patch's admins and members, and nobody else.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 168,
+          "kind": "markup",
+          "raw": "Read by this patch's admins and members, and nobody else.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 95,
+          "kind": "markup",
+          "raw": "Read by this patch's admins and members, and nobody else.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e729691209e2",
+      "text": "Its admins put up the notices.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 170,
+          "kind": "markup",
+          "raw": "Its admins put up the notices.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "394ff3bd3138",
+      "text": "Loading the noticeboard...",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 179,
+          "kind": "markup",
+          "raw": "Loading the noticeboard...",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5e81d2627e69",
+      "text": "Nothing on the board yet.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 184,
+          "kind": "markup",
+          "raw": "Nothing on the board yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4e32059024d9",
+      "text": "Put up the first notice.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 186,
+          "kind": "markup",
+          "raw": "Put up the first notice.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ad31a5fdd92d",
+      "text": "{' · '}{n.reply_count} kept",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchNoticeboard.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "{' · '}{n.reply_count} kept",
           "quote": null
         }
       ]
@@ -38279,7 +40021,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 58,
+          "line": 60,
           "kind": "markup",
           "raw": "You do not have permission to view settings.",
           "quote": null
@@ -38297,7 +40039,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 60,
+          "line": 62,
           "kind": "attr:title",
           "raw": "Patch Settings",
           "quote": "\""
@@ -39556,6 +41298,373 @@
           "line": 249,
           "kind": "markup",
           "raw": "removed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7314c3cfe731",
+      "text": "Only admins put up notices now",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 43,
+          "kind": "js-string",
+          "raw": "Only admins put up notices now",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7e42c9aee2c3",
+      "text": "Members can put up notices",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 43,
+          "kind": "js-string",
+          "raw": "Members can put up notices",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "886fd7debc26",
+      "text": "New notices take replies",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 48,
+          "kind": "js-string",
+          "raw": "New notices take replies",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 112,
+          "kind": "markup",
+          "raw": "New notices take replies",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aedeab814fb5",
+      "text": "New notices start with replies off",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 48,
+          "kind": "js-string",
+          "raw": "New notices start with replies off",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "feb067745f7a",
+      "text": "Report reviewed",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 84,
+          "kind": "js-string",
+          "raw": "Report reviewed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "f3434e3598c8",
+      "text": "Could not resolve the report",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 88,
+          "kind": "js-string",
+          "raw": "Could not resolve the report",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7e265a9a797b",
+      "text": "Noticeboard",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 94,
+          "kind": "markup",
+          "raw": "Noticeboard",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "117aea6b7031",
+      "text": "Who puts up notices",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 99,
+          "kind": "markup",
+          "raw": "Who puts up notices",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "da796a38f25c",
+      "text": "Members too, or only this patch's admins. Anyone in the room can reply either way.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 100,
+          "kind": "markup",
+          "raw": "Members too, or only this patch's admins. Anyone in the room can reply either way.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ef12d738d214",
+      "text": "The starting position. Each notice's author decides for their own, and can change it later.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 113,
+          "kind": "markup",
+          "raw": "The starting position. Each notice's author decides for their own, and can change it later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dacca3cba3f3",
+      "text": "Reports",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 118,
+          "kind": "markup",
+          "raw": "Reports",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3c6eb5a671ed",
+      "text": "Reports about notices and replies come to this patch's admins. Three things can be done with one: dismiss it, remove what was reported, or switch replies off on the notice.",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 120,
+          "kind": "markup",
+          "raw": "Reports about notices and replies come to this patch's admins. Three things can be done with one: dismiss it, remove what was reported, or switch replies off on the notice.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bc706131e851",
+      "text": "No {tab} reports.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 132,
+          "kind": "markup",
+          "raw": "No {tab} reports.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "62f22ed68fa6",
+      "text": "reported by {r.reporter_name}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 140,
+          "kind": "markup",
+          "raw": "reported by {r.reporter_name}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6c4f99e6cd4b",
+      "text": "Already taken down.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 144,
+          "kind": "markup",
+          "raw": "Already taken down.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ffe0955ad749",
+      "text": "Dismiss, leave it up",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 160,
+          "kind": "markup",
+          "raw": "Dismiss, leave it up",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "05d48d028148",
+      "text": "Remove the {r.entity_type}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 162,
+          "kind": "markup",
+          "raw": "Remove the {r.entity_type}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9dce3029c155",
+      "text": "Switch replies off on the notice",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 163,
+          "kind": "markup",
+          "raw": "Switch replies off on the notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "59be71333c96",
+      "text": "Optional",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 169,
+          "kind": "attr:placeholder",
+          "raw": "Optional",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "1d934712dce2",
+      "text": "Note: {r.resolution_note}",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 184,
+          "kind": "markup",
+          "raw": "Note: {r.resolution_note}",
           "quote": null
         }
       ]
@@ -43128,7 +45237,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 24,
+          "line": 25,
           "kind": "js-string",
           "raw": "Failed to load patches",
           "quote": "'"
@@ -43146,7 +45255,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 43,
+          "line": 48,
           "kind": "js-string",
           "raw": "Failed to leave",
           "quote": "'"
@@ -43164,7 +45273,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 52,
+          "line": 57,
           "kind": "js-string",
           "raw": "Joined as member",
           "quote": "'"
@@ -43182,7 +45291,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 54,
+          "line": 59,
           "kind": "js-string",
           "raw": "Failed to join",
           "quote": "'"
@@ -43200,7 +45309,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 68,
+          "line": 73,
           "kind": "js-string",
           "raw": "Membership visible to the public",
           "quote": "'"
@@ -43218,7 +45327,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 68,
+          "line": 73,
           "kind": "js-string",
           "raw": "Membership hidden from the public",
           "quote": "'"
@@ -43236,10 +45345,64 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 70,
+          "line": 75,
           "kind": "js-string",
           "raw": "Failed to update visibility",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b5ea56fd9c97",
+      "text": "Failed to update contact sharing",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 92,
+          "kind": "js-string",
+          "raw": "Failed to update contact sharing",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "6e56f899e486",
+      "text": "Your contact card is empty. Fill it in under",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 133,
+          "kind": "markup",
+          "raw": "Your contact card is empty. Fill it in under",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3f2d60c9153e",
+      "text": "and share it patch by patch here.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "and share it patch by patch here.",
+          "quote": null
         }
       ]
     },
@@ -43254,7 +45417,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 146,
+          "line": 190,
           "kind": "markup",
           "raw": "following",
           "quote": null
