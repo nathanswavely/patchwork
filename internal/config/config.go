@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -26,6 +27,7 @@ type Config struct {
 	Submissions Submissions `yaml:"submissions"`
 	Server      Server      `yaml:"server"`
 	Database    Database    `yaml:"database"`
+	Gazetteer   Gazetteer   `yaml:"gazetteer"`
 	Session     Session     `yaml:"session"`
 }
 
@@ -226,6 +228,36 @@ type Server struct {
 
 type Database struct {
 	Path string `yaml:"path"`
+}
+
+// Gazetteer points at the optional local place index (docs/adr/080). The file
+// is built offline by cmd/gazetteer and copied onto the server; nothing here
+// downloads or generates it.
+type Gazetteer struct {
+	// Path to the index file. Left empty, the server looks for
+	// "gazetteer.db" beside the database and uses it if it happens to be
+	// there — so installing the feature is copying one file in, and an
+	// instance that never does stays silent rather than warning about a
+	// convenience it did not ask for.
+	//
+	// Set explicitly, a path that cannot be opened is reported: an admin who
+	// named a file meant it.
+	Path string `yaml:"path"`
+}
+
+// GazetteerPath resolves the configured path, falling back to the
+// conventional location beside the database. The second return says whether
+// the path was named by the admin, which is what decides how loudly a broken
+// file is reported.
+func (c *Config) GazetteerPath() (path string, explicit bool) {
+	if p := strings.TrimSpace(c.Gazetteer.Path); p != "" {
+		return p, true
+	}
+	db := strings.TrimSpace(c.Database.Path)
+	if db == "" {
+		return "", false
+	}
+	return filepath.Join(filepath.Dir(db), "gazetteer.db"), false
 }
 
 // Load reads and parses a patchwork.yaml file. It applies sensible defaults

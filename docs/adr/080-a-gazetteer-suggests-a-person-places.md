@@ -1,6 +1,6 @@
 # ADR 080: A gazetteer suggests; a person places
 
-Date: 2026-09-04. Status: **proposed**, not implemented. Applies docs/adr/077
+Date: 2026-09-04. Status: **accepted**; implemented. Applies docs/adr/077
 (a dependency every fork inherits cannot require a key) to a dataset rather
 than to a tile server, and amends the **Address** and **Map location**
 entries in CONTEXT.md.
@@ -139,10 +139,32 @@ derived one and hides wrong answers behind a button nobody read.
 - The lookup endpoint is authenticated and rate-limited. There is nothing
   confidential in it — the data is ODbL-derived and public — so the limit is
   about load, not secrecy.
-- **Unresolved: the extract parser.** Reading `.osm.pbf` needs a Go library
-  this project does not have, and adding one to build a file that ships
-  separately argues for the CLI living behind a build tag, or in its own
-  module, so the server binary does not carry it. Decide before implementing.
+- **The extract is read as XML, with the standard library.** This was left
+  open above and resolved during the build, in a way that dissolved half the
+  question. The premise that the CLI needed a build tag or its own module was
+  simply wrong: `cmd/gazetteer` is its own main package and `cmd/patchwork`
+  does not import it, so Go never links its dependencies into the server
+  binary either way. The real cost was `go.mod`, which every fork inherits —
+  a `.osm.pbf` reader would put protocol buffers in a module that has none,
+  forever, to build a file that ships separately. `encoding/xml`,
+  `compress/bzip2` and `compress/gzip` cost nothing and read `.osm`, `.osm.gz`
+  and `.osm.bz2`. An extract held as `.pbf` converts in one command
+  (`osmium cat in.osm.pbf -o out.osm.bz2`), which is a fair ask of somebody
+  already running a command-line build step.
+- **No FTS5, because this driver has none.** `mattn/go-sqlite3` compiles FTS5
+  only under the `sqlite_fts5` build tag and this project sets no tags;
+  `CREATE VIRTUAL TABLE ... USING fts5` fails at runtime with "no such module:
+  fts5". Verified rather than assumed. The index is a plain token table with
+  one index on it, which is enough for a bounded local corpus.
+- **A way is placed at its first node, not its centroid.** Buildings carry
+  the address on the way rather than on the nodes that draw it, and resolving
+  a true centroid means holding geometry the crop cannot bound. The error is
+  the width of a building, and somebody is about to look at the marker and
+  confirm it.
+- **Memory at build time is bounded by the configured radius**, not by the
+  extract: pass one keeps coordinates only for nodes inside it. That is the
+  reason the radius is read from the instance's own config rather than asked
+  for again.
 - **The volume is in events, and this does not serve them.** The event form
   has no coordinate input at all, and `events.latitude`/`longitude` are
   written by the JSON-LD importer and the aggregator and then read by

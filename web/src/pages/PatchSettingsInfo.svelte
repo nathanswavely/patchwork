@@ -7,6 +7,7 @@
   import TagPicker from '../components/TagPicker.svelte';
   import MapLocationPicker from '../components/MapLocationPicker.svelte';
   import { hasMapLocation, formatCoord } from '../lib/mapLocation.js';
+  import { suggestPlace, worthLookingUp } from '../lib/placeSuggestion.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -22,6 +23,34 @@
   // leaving it empty actually means rather than just looking unset.
   let instanceTimezone = $state('');
   let onMap = $derived(hasMapLocation(node?.latitude, node?.longitude));
+
+  // A suggested placement from the address (docs/adr/080), offered only to a
+  // patch that is not on the map yet. A patch someone already placed keeps
+  // the point they chose: proposing over a deliberate placement is the one
+  // thing the confirm step exists to prevent.
+  let suggestion = $state(null);
+  let lookingUp = $state(false);
+
+  // The lookup runs when the picker opens rather than on page load, so
+  // visiting settings costs nothing for a patch nobody is placing.
+  async function openPicker() {
+    placingLocation = true;
+    suggestion = null;
+    if (onMap) return;
+    const address = (node?.address || '').trim();
+    if (!worthLookingUp(address)) return;
+    lookingUp = true;
+    try {
+      suggestion = await suggestPlace(address);
+    } finally {
+      lookingUp = false;
+    }
+  }
+
+  function closePicker() {
+    placingLocation = false;
+    suggestion = null;
+  }
   let locationReadout = $derived(
     onMap ? formatCoord(node.latitude, node.longitude) : ''
   );
@@ -337,18 +366,23 @@
         approximate, and is separate from the address above.
       </p>
 
+      {#if lookingUp}
+        <p class="muted tags-hint">Looking for this address...</p>
+      {/if}
+
       {#if placingLocation}
         <MapLocationPicker
           lat={node?.latitude ?? null}
           lng={node?.longitude ?? null}
           center={mapCenter}
           saving={savingLocation}
+          {suggestion}
           onSave={saveLocation}
-          onCancel={() => (placingLocation = false)}
+          onCancel={closePicker}
         />
       {:else}
         <div class="location-actions">
-          <button class="btn btn-secondary btn-sm" onclick={() => (placingLocation = true)}>
+          <button class="btn btn-secondary btn-sm" onclick={openPicker}>
             {onMap ? 'Adjust map location' : 'Set map location'}
           </button>
           {#if onMap}

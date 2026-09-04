@@ -15,6 +15,7 @@ Patchwork is a platform for grassroots communities to organize, govern, and disc
 - **Deployment:** Docker Compose (single container + Caddy)
 - **Auth:** Magic links (SMTP, optional) + invite links (no SMTP) + WebAuthn/passkeys (go-webauthn/webauthn)
 - **Maps:** Leaflet, with MapLibre GL drawing OpenFreeMap vector tiles (no API key — docs/adr/077, `web/src/lib/basemap.js`)
+- **Address suggestions:** an optional local **gazetteer** — an OpenStreetMap extract cropped to the instance radius, built offline by `cmd/gazetteer` and copied in as a SQLite file (docs/adr/080). No geocoding service, no key, nothing fetched at runtime. It only ever *proposes* a marker; a coordinate is saved when a person confirms it, so an instance without the file behaves exactly as before
 - **Visualization:** D3.js treemap (quilt view — the signature visual)
 
 ## Project Structure
@@ -23,6 +24,7 @@ Patchwork is a platform for grassroots communities to organize, govern, and disc
 patchwork/
 ├── cmd/
 │   ├── patchwork/          # main.go entry point
+│   ├── gazetteer/          # local place index builder (seamrip-free, offline)
 │   ├── seed/               # seed data generator
 │   ├── export/             # data export CLI (seamrip)
 │   └── import/             # data import CLI (seamrip)
@@ -37,6 +39,7 @@ patchwork/
 │   ├── model/              # Go structs for all entities
 │   ├── ap/                 # ActivityPub: actors, HTTP signatures, keypairs, delivery worker
 │   ├── eventsource/        # event sources: ICS fetch/parse/expand, sync reconciler, worker (docs/adr/031)
+│   ├── gazetteer/          # optional local place index — reader + builder (docs/adr/080)
 │   ├── safehttp/           # SSRF-guarded HTTP client shared by ap and eventsource
 │   ├── governance/         # git-backed charter repos, templates, rules, defaults
 │   ├── notifications/      # notification channels, email, reminder worker
@@ -165,6 +168,22 @@ A **seat** (`seats` table) is a governed admin position that outlives its holder
 
 **Never attestable:** the lining (docs/adr/037 — checked by `kind`, not by title) and `governance-rules.json`, which is machine configuration rather than a text anyone adopts. Excluding the rules file closes a two-step route around the leadership gate. On an elsewhere patch a rules change is a **direct change** an admin applies.
 
+### Where a patch is (docs/adr/080)
+
+Three separate fields, and naming one never sets another: the **address** is
+prose a person reads, the **timezone** is the clock it keeps, and the **map
+location** is a placed marker. Patch Settings groups them under one Location
+heading because they answer one question in three units; they remain three
+fields because an address never implies a map position.
+
+Where a **gazetteer** is installed, leaving the address field offers a
+**suggested placement** — a provisional marker, drawn hollow and dashed, that
+becomes a map location only when someone confirms it. Unconfirmed means the
+patch keeps its address and stays off the map. Suggestions reach patch
+creation and reach settings only for a patch that is not yet placed: proposing
+over a marker a human chose is the inversion the confirm step exists to
+prevent.
+
 ### Inferred Threads & Placement Affinity
 
 A **thread** — the user-facing connection concept — is inferred from shared admin/member overlap only; followers don't create threads. **Placement affinity**, the internal weight table the quilt layout runs on (`internal/handler/tree.go`), is broader: shared admins/members ×3, shared event participation ×2, shared followers ×1, plus a weak shared-tag term (mass-scaled toward the larger patch's member count, capped below one shared member) so brand-new patches with no people-overlap still land near their kind. Tag attraction is a placement detail, never a thread. The tree endpoint returns these links and the frontend layout engine places strongly connected patches adjacently in the quilt treemap.
@@ -246,6 +265,7 @@ Key endpoints:
 - `GET /api/v1/nodes/{slug}/events.{ics|rss}` — public subscribable feeds per patch; `GET /api/v1/feeds/{secret}/events.ics` + `GET|POST|DELETE /api/v1/users/me/feed-secret` — the personal My Quilt calendar behind a regenerable URL secret
 - `GET /api/v1/admin/export` — zip download of all instance data (admin only)
 - `PUT /api/v1/admin/users/{id}/email` — set a user's email address (docs/adr/072): the in-product repair for an account with no way back in, and for a typo'd address. Its own route rather than a field on `PATCH /api/v1/admin/users/{id}`, because pointing an account at a mailbox lets whoever holds that mailbox magic-link in — so it takes the step-up gate (docs/adr/017) that promotion takes. Normalized through `auth.NormalizeEmail` (sign-in is an exact `WHERE email = ?` match), refuses an address another account holds, audited as `admin.user_email_set`, and announced to the old address as well as the new one
+- `GET /api/v1/gazetteer/suggest?q=` — one **suggested placement** for an address (docs/adr/080). Authed and rate-limited. A miss and an instance with no gazetteer both answer `200 {"found": false}` — not 404, because a miss is the ordinary answer for a valid prose address and an error code would put a red console line under a form that is working. The confirm step is the point: the create form sends `latitude`/`longitude` only once somebody has confirmed a marker, so submitting the form never accepts a guess by silence
 - `GET /api/v1/instance/icon` — the public quilt icon, rendered to SVG from the drafted design (docs/adr/043); an instance that has drafted none wears a starter block assigned from its name
 - `GET|PATCH /api/v1/admin/settings`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, the icon design (`icon_design`: a drafted block plus its fabrics; `null` clears it), danger-zone wipe (docs/adr/014, docs/adr/043)
 - `GET /api/v1/legal/{privacy|terms}` — public legal documents: shipped defaults or admin overrides, rendered at /privacy and /terms; admin editing via `GET /api/v1/admin/legal` + `PUT|DELETE /api/v1/admin/legal/{doc}` (docs/adr/028)

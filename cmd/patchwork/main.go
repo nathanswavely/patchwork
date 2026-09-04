@@ -18,6 +18,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
+	"github.com/patchwork-toolkit/patchwork/internal/gazetteer"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -271,6 +272,27 @@ func main() {
 		log.Fatalf("webauthn: %v", err)
 	}
 
+	// The gazetteer is optional infrastructure (docs/adr/080): a place index
+	// built offline and copied in. Absent, the server runs exactly as it did
+	// before it existed and every address is placed by hand.
+	//
+	// How loudly a failure is reported depends on whether the admin named the
+	// file. An explicit path that will not open is a mistake worth a warning;
+	// the conventional path beside the database is a convention, and its
+	// absence is the normal state of most instances.
+	gazPath, gazExplicit := cfg.GazetteerPath()
+	gaz, err := gazetteer.Open(gazPath)
+	switch {
+	case err == nil:
+		log.Printf("gazetteer: %d places from %s", gaz.Count(), gazPath)
+		defer gaz.Close()
+	case gazExplicit:
+		log.Printf("warning: gazetteer %s could not be opened, address suggestions are off: %v", gazPath, err)
+		gaz = nil
+	default:
+		gaz = nil
+	}
+
 	// Build router.
 	mux := http.NewServeMux()
 
@@ -279,6 +301,11 @@ func main() {
 	mux.HandleFunc("GET /api/v1/instance", handler.Instance(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance/icon", handler.InstanceIcon(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance/lining", handler.GetInstanceLining(db))
+
+	// Suggesting a placement from an address. Authenticated and throttled;
+	// answers "no suggestion" rather than an error when there is no index or
+	// no match, because both are ordinary.
+	mux.HandleFunc("GET /api/v1/gazetteer/suggest", middleware.AuthRequired(db, handler.SuggestPlace(gaz)))
 
 	// The Label (docs/adr/023) — public read: its most important reader
 	// has no account yet. Steward self-listing is the person's own switch.

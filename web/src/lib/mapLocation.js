@@ -5,8 +5,10 @@
 // address is prose a person reads, a map location is a placed marker, and
 // naming one never implies the other (CONTEXT.md → "Map location").
 //
-// Placement is map-drag only — no geocoder — so these helpers only ever
-// format and range-check numbers the map already produced.
+// These helpers only ever format and range-check numbers the map produced.
+// A gazetteer may propose a starting marker from the address (docs/adr/080),
+// but the coordinate that gets saved is still one a person confirmed on the
+// map, so nothing here parses text.
 
 export const LAT_MIN = -90;
 export const LAT_MAX = 90;

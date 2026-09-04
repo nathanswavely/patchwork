@@ -95,7 +95,6 @@ var (
 	recoveryRedeemLimiter = NewRateLimiterStore(rate.Every(2*time.Minute), 5)
 )
 
-
 // CheckMagicLinkRate checks rate limits for magic link. Returns error message if limited.
 func CheckMagicLinkRate(email, ip string) error {
 	if !magicLinkEmailLimiter.Allow("email:" + email) {
@@ -150,4 +149,22 @@ func CheckInviteGenerationRate(adminID string) error {
 		return fmt.Errorf("rate limit exceeded")
 	}
 	return nil
+}
+
+// gazetteerLimiter throttles place lookups. The address field fires one
+// lookup per person per patch they create, so a generous per-user allowance
+// is still far above honest use, and the ceiling exists to stop the endpoint
+// being used to walk the whole index a token at a time.
+var gazetteerLimiter = NewRateLimiterStore(rate.Every(2*time.Second), 15)
+
+// GazetteerRateLimit reports whether this caller may make another place
+// lookup. Keyed on the authenticated user where there is one and on the
+// client IP otherwise, so one busy instance member cannot exhaust everybody's
+// allowance and a forged header cannot mint a fresh bucket.
+func GazetteerRateLimit(r *http.Request) bool {
+	key := "ip:" + ClientIP(r)
+	if user := UserFromContext(r.Context()); user != nil {
+		key = "user:" + user.ID
+	}
+	return gazetteerLimiter.Allow(key)
 }

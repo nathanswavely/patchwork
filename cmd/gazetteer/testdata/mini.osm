@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="test">
+  <node id="1" lat="40.0300" lon="-76.3000">
+    <tag k="addr:housenumber" v="433"/>
+    <tag k="addr:street" v="Ice Avenue"/>
+    <tag k="addr:city" v="Lancaster"/>
+    <tag k="addr:postcode" v="17602"/>
+    <tag k="name" v="Lanc Workshop &amp; Tool Library"/>
+  </node>
+  <node id="2" lat="40.0392" lon="-76.3050">
+    <tag k="name" v="The Selvage"/>
+    <tag k="addr:street" v="North Prince Street"/>
+    <tag k="addr:city" v="Lancaster"/>
+  </node>
+  <node id="3" lat="41.9000" lon="-79.9000">
+    <tag k="addr:housenumber" v="1"/>
+    <tag k="addr:street" v="Far Away Road"/>
+    <tag k="addr:city" v="Erie"/>
+  </node>
+  <node id="4" lat="40.0380" lon="-76.3060"/>
+  <node id="5" lat="40.0381" lon="-76.3061"/>
+  <node id="6" lat="40.0300" lon="-76.3001">
+    <tag k="natural" v="tree"/>
+  </node>
+  <way id="100">
+    <nd ref="4"/>
+    <nd ref="5"/>
+    <tag k="building" v="yes"/>
+    <tag k="name" v="Gallery Row"/>
+    <tag k="addr:housenumber" v="12"/>
+    <tag k="addr:street" v="West King Street"/>
+    <tag k="addr:city" v="Lancaster"/>
+  </way>
+  <relation id="200"><member type="way" ref="100" role="outer"/><tag k="type" v="multipolygon"/></relation>
+</osm>
