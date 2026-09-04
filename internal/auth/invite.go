@@ -80,7 +80,12 @@ func ValidateInviteLink(db *database.DB, rawToken string) error {
 }
 
 // RedeemInviteLink validates a raw invite token, creates a user, and increments the use count.
-func RedeemInviteLink(db *database.DB, rawToken, username, displayName string) (*model.User, error) {
+//
+// email may be empty only on an instance with no SMTP, where nothing could be
+// sent to it anyway; the handler enforces that. Where it is present it is the
+// account's floor — the one way back in that survives a lost or never-enrolled
+// passkey (docs/adr/071).
+func RedeemInviteLink(db *database.DB, rawToken, username, displayName, email string) (*model.User, error) {
 	hash := sha256.Sum256([]byte(rawToken))
 	tokenHash := hex.EncodeToString(hash[:])
 
@@ -126,6 +131,19 @@ func RedeemInviteLink(db *database.DB, rawToken, username, displayName string) (
 		return nil, err
 	}
 
+	// An address already on another account is a person who has been here
+	// before. Caught ahead of the INSERT so it reads as advice rather than a
+	// UNIQUE violation.
+	if email != "" {
+		var n int
+		if err := tx.QueryRow(`SELECT COUNT(*) FROM users WHERE email = ?`, email).Scan(&n); err != nil {
+			return nil, fmt.Errorf("check email: %w", err)
+		}
+		if n > 0 {
+			return nil, fmt.Errorf("an account with this email already exists — sign in instead")
+		}
+	}
+
 	userID := NewUUIDv7()
 	now := time.Now().UTC().Format(time.RFC3339)
 	if displayName == "" {
@@ -133,10 +151,17 @@ func RedeemInviteLink(db *database.DB, rawToken, username, displayName string) (
 	}
 	role := roleForNewUser(tx)
 
+	// NULL, not "": email is UNIQUE, and SQLite counts every "" as equal, so
+	// storing the empty string would let exactly one email-less account exist.
+	var emailArg any
+	if email != "" {
+		emailArg = email
+	}
+
 	apID := ap.UserAPID(ap.GetDomain(), userID)
 	_, err = tx.Exec(
-		`INSERT INTO users (id, username, display_name, role, created_at, updated_at, ap_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		userID, username, displayName, role, now, now, apID,
+		`INSERT INTO users (id, email, username, display_name, role, created_at, updated_at, ap_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		userID, emailArg, username, displayName, role, now, now, apID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
@@ -160,6 +185,7 @@ func RedeemInviteLink(db *database.DB, rawToken, username, displayName string) (
 
 	return &model.User{
 		ID:          userID,
+		Email:       email,
 		Username:    username,
 		DisplayName: displayName,
 		Role:        role,

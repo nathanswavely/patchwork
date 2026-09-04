@@ -5,6 +5,7 @@
   import {
     prepareCreationOptions,
     serializeCreationResponse,
+    passkeyErrorMessage,
   } from '../lib/webauthn.js';
 
   let query = $derived(getQuery());
@@ -100,6 +101,7 @@
 
       const credentialOptions = prepareCreationOptions(beginData);
       const credential = await navigator.credentials.create(credentialOptions);
+      if (!credential) throw new Error('Passkey setup was closed.');
       const serialized = serializeCreationResponse(credential);
 
       await api('auth/webauthn/register/finish', {
@@ -109,7 +111,7 @@
 
       passkeyDone = true;
     } catch (e) {
-      passkeyError = e.message || 'Passkey enrollment failed';
+      passkeyError = passkeyErrorMessage(e, 'enroll');
     } finally {
       enrollingPasskey = false;
     }

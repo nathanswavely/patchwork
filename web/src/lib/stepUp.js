@@ -8,7 +8,11 @@
  * for presence, prove it and try once more.
  */
 import { api } from './api.js';
-import { prepareRequestOptions, serializeAssertionResponse } from './webauthn.js';
+import {
+  prepareRequestOptions,
+  serializeAssertionResponse,
+  passkeyErrorMessage,
+} from './webauthn.js';
 
 /** The server's 403 code meaning "confirm with your passkey". */
 export const SUDO_REQUIRED = 'sudo_required';
@@ -45,7 +49,12 @@ export async function stepUp() {
     throw err;
   }
 
-  const credential = await navigator.credentials.get(prepareRequestOptions(options));
+  let credential;
+  try {
+    credential = await navigator.credentials.get(prepareRequestOptions(options));
+  } catch (err) {
+    throw new Error(passkeyErrorMessage(err, 'stepup'));
+  }
   if (!credential) throw new Error('Confirmation was cancelled.');
 
   return api('auth/step-up/finish', {

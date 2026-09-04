@@ -297,7 +297,7 @@ func main() {
 	// has no other throttle in front of it. Magic link routes keep their own
 	// per-email and per-IP limits inside the handlers.
 	rl := middleware.UnauthedAuthRateLimit
-	mux.HandleFunc("POST /api/v1/auth/invite", rl(handler.RedeemInviteLink(db)))
+	mux.HandleFunc("POST /api/v1/auth/invite", rl(handler.RedeemInviteLink(db, cfg)))
 	mux.HandleFunc("GET /api/v1/auth/invite/{token}/validate", rl(handler.ValidateInviteLink(db)))
 	mux.HandleFunc("POST /api/v1/auth/magic-link", handler.RequestMagicLink(db, cfg))
 	mux.HandleFunc("GET /api/v1/auth/verify/{token}", handler.VerifyMagicLink(db))

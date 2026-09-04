@@ -4297,28 +4297,28 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 109,
+          "line": 119,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 347,
+          "line": 372,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 606,
+          "line": 631,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 744,
+          "line": 769,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -6571,14 +6571,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 243,
+          "line": 268,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 309,
+          "line": 334,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
@@ -6596,16 +6596,34 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 113,
+          "line": 123,
           "kind": "go-error-body",
           "raw": "token and username are required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 351,
+          "line": 376,
           "kind": "go-error-body",
           "raw": "token and username are required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2b5180b7ef4f",
+      "text": "email is required so you can sign in again later",
+      "words": 10,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 138,
+          "kind": "go-error-body",
+          "raw": "email is required so you can sign in again later",
           "quote": null
         }
       ]
@@ -6621,21 +6639,21 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 128,
+          "line": 153,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 365,
+          "line": 390,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 560,
+          "line": 585,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
@@ -6660,7 +6678,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 391,
+          "line": 416,
           "kind": "go-error-body",
           "raw": "failed to begin registration",
           "quote": null
@@ -6678,14 +6696,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 410,
+          "line": 435,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 421,
+          "line": 446,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
@@ -6703,7 +6721,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 478,
+          "line": 503,
           "kind": "go-error-body",
           "raw": "failed to begin step-up",
           "quote": null
@@ -6721,14 +6739,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 495,
+          "line": 520,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 546,
+          "line": 571,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
@@ -6746,7 +6764,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 508,
+          "line": 533,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
@@ -6771,7 +6789,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 513,
+          "line": 538,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
           "quote": null
@@ -6789,7 +6807,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 532,
+          "line": 557,
           "kind": "go-error-body",
           "raw": "failed to begin login",
           "quote": null
@@ -6807,7 +6825,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 614,
+          "line": 639,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -6825,7 +6843,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 624,
+          "line": 649,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -6843,7 +6861,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 635,
+          "line": 660,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -6861,7 +6879,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 643,
+          "line": 668,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -6879,7 +6897,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 657,
+          "line": 682,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -6897,7 +6915,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 700,
+          "line": 725,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -6915,14 +6933,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 736,
+          "line": 761,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 777,
+          "line": 802,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -6940,7 +6958,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 756,
+          "line": 781,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -6958,14 +6976,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 760,
+          "line": 785,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 791,
+          "line": 816,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -6983,7 +7001,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 786,
+          "line": 811,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -17465,7 +17483,7 @@
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 317,
+          "line": 319,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -24136,7 +24154,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/stepUp.js",
-          "line": 22,
+          "line": 26,
           "kind": "js-string",
           "raw": "This action needs a passkey. Enroll one in Security settings first.",
           "quote": "'"
@@ -24154,7 +24172,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/stepUp.js",
-          "line": 49,
+          "line": 58,
           "kind": "js-string",
           "raw": "Confirmation was cancelled.",
           "quote": "'"
@@ -24283,6 +24301,175 @@
           "line": 40,
           "kind": "js-string",
           "raw": "A community that branched off from another",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "58176a419185",
+      "text": "This browser cannot use passkeys. Open the site in Chrome, Safari, or Firefox and try again.",
+      "words": 16,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 132,
+          "kind": "js-string",
+          "raw": "This browser cannot use passkeys. Open the site in Chrome, Safari, or Firefox and try again.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "759730f54bab",
+      "text": "Passkey setup was cancelled or timed out. You can try again.",
+      "words": 11,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 141,
+          "kind": "js-string",
+          "raw": "Passkey setup was cancelled or timed out. You can try again.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ab6d7a8d5289",
+      "text": "Passkey check was cancelled or timed out. You can try again.",
+      "words": 11,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 144,
+          "kind": "js-string",
+          "raw": "Passkey check was cancelled or timed out. You can try again.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "5d6b76c5726d",
+      "text": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.",
+      "words": 30,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 146,
+          "kind": "js-string",
+          "raw": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "d3ed38585324",
+      "text": "This device already has a passkey for your account.",
+      "words": 9,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 149,
+          "kind": "js-string",
+          "raw": "This device already has a passkey for your account.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "bb9954aa5253",
+      "text": "This device cannot create the kind of passkey this site needs. Use an email link instead.",
+      "words": 16,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 152,
+          "kind": "js-string",
+          "raw": "This device cannot create the kind of passkey this site needs. Use an email link instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "f5b236ea4c76",
+      "text": "This page address does not match the one your passkey was created for.",
+      "words": 13,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 154,
+          "kind": "js-string",
+          "raw": "This page address does not match the one your passkey was created for.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "85eb3fd8334f",
+      "text": "Passkey prompt was closed.",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 156,
+          "kind": "js-string",
+          "raw": "Passkey prompt was closed.",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 93,
+          "kind": "js-string",
+          "raw": "Passkey prompt was closed.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "24e323f179e1",
+      "text": "Passkey request failed.",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 158,
+          "kind": "js-string",
+          "raw": "Passkey request failed.",
           "quote": "'"
         }
       ]
@@ -24776,7 +24963,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 122,
+          "line": 129,
           "kind": "markup",
           "raw": "Join {instanceName}",
           "quote": null
@@ -25034,7 +25221,7 @@
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 201,
+          "line": 203,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -25120,14 +25307,14 @@
         },
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 162,
+          "line": 254,
           "kind": "markup",
           "raw": "Username",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 185,
+          "line": 187,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -25177,14 +25364,14 @@
         },
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 183,
+          "line": 275,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 206,
+          "line": 208,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -27748,7 +27935,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 206,
+          "line": 219,
           "kind": "attr:placeholder",
           "raw": "username",
           "quote": "\""
@@ -30233,8 +30420,15 @@
           "quote": null
         },
         {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 285,
+          "kind": "markup",
+          "raw": "Email",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/Login.svelte",
-          "line": 175,
+          "line": 188,
           "kind": "markup",
           "raw": "Email",
           "quote": null
@@ -35354,14 +35548,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 30,
+          "line": 51,
           "kind": "js-string",
           "raw": "At least 3 characters.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 37,
+          "line": 38,
           "kind": "js-string",
           "raw": "At least 3 characters.",
           "quote": "'"
@@ -35379,14 +35573,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 32,
+          "line": 53,
           "kind": "js-string",
           "raw": "Lowercase letters, numbers, and hyphens only, starting and ending with a letter or number.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 39,
+          "line": 40,
           "kind": "js-string",
           "raw": "Lowercase letters, numbers, and hyphens only, starting and ending with a letter or number.",
           "quote": "'"
@@ -35404,7 +35598,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 49,
+          "line": 70,
           "kind": "js-string",
           "raw": "Invalid or expired invite link",
           "quote": "'"
@@ -35422,7 +35616,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 70,
+          "line": 92,
           "kind": "js-string",
           "raw": "Registration failed",
           "quote": "'"
@@ -35430,26 +35624,19 @@
       ]
     },
     {
-      "id": "82ac2926f802",
-      "text": "Passkey enrollment failed",
-      "words": 3,
+      "id": "9e3413d4769f",
+      "text": "Could not generate recovery codes",
+      "words": 5,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 95,
+          "line": 130,
           "kind": "js-string",
-          "raw": "Passkey enrollment failed",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/SignupComplete.svelte",
-          "line": 112,
-          "kind": "js-string",
-          "raw": "Passkey enrollment failed",
+          "raw": "Could not generate recovery codes",
           "quote": "'"
         }
       ]
@@ -35465,7 +35652,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 110,
+          "line": 149,
           "kind": "markup",
           "raw": "Checking your invite...",
           "quote": null
@@ -35483,7 +35670,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 114,
+          "line": 153,
           "kind": "markup",
           "raw": "This invite didn't work",
           "quote": null
@@ -35501,7 +35688,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 117,
+          "line": 156,
           "kind": "markup",
           "raw": "This invite link may have expired or already been used.\n          Ask your community admin for a new one.",
           "quote": null
@@ -35519,14 +35706,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 123,
+          "line": 162,
           "kind": "markup",
           "raw": "You're in",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 144,
+          "line": 146,
           "kind": "markup",
           "raw": "You're in",
           "quote": null
@@ -35544,14 +35731,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 125,
+          "line": 164,
           "kind": "markup",
           "raw": "Passkey saved.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 146,
+          "line": 148,
           "kind": "markup",
           "raw": "Passkey saved.",
           "quote": null
@@ -35569,14 +35756,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 127,
+          "line": 166,
           "kind": "markup",
           "raw": "This device can sign you in from now on.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 148,
+          "line": 150,
           "kind": "markup",
           "raw": "This device can sign you in from now on.",
           "quote": null
@@ -35594,16 +35781,95 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 130,
+          "line": 169,
+          "kind": "markup",
+          "raw": "Take a look around",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 195,
           "kind": "markup",
           "raw": "Take a look around",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 151,
+          "line": 153,
           "kind": "markup",
           "raw": "Take a look around",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0d00526a7931",
+      "text": "Write these down before you go.",
+      "words": 6,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 172,
+          "kind": "markup",
+          "raw": "Write these down before you go.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "800a3caeba76",
+      "text": "This quilt cannot send email, so these codes are the only way back into your account if you lose this device. Each one works once.",
+      "words": 25,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 174,
+          "kind": "markup",
+          "raw": "This quilt cannot send email, so these codes are the only way back\n            into your account if you lose this device. Each one works once.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9a62a4e9c79a",
+      "text": "Copy codes",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 183,
+          "kind": "markup",
+          "raw": "Copy codes",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "76b6d0286f61",
+      "text": "I have saved these somewhere safe",
+      "words": 6,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 187,
+          "kind": "markup",
+          "raw": "I have saved these somewhere safe",
           "quote": null
         }
       ]
@@ -35619,14 +35885,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 133,
+          "line": 199,
           "kind": "markup",
           "raw": "Create a passkey and this device signs you in with one tap.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 154,
+          "line": 156,
           "kind": "markup",
           "raw": "Create a passkey and this device signs you in with one tap.",
           "quote": null
@@ -35644,16 +35910,34 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 135,
+          "line": 201,
           "kind": "markup",
-          "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "raw": "The key stays on your device, and we never hold a password for\n              you. Nothing to leak, and email can break without locking you out.",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 156,
+          "line": 158,
           "kind": "markup",
           "raw": "The key stays on your device, and we never hold a password for\n            you. Nothing to leak, and email can break without locking you out.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ee5a9de2c06a",
+      "text": "This browser cannot create a passkey.",
+      "words": 6,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 216,
+          "kind": "markup",
+          "raw": "This browser cannot create a passkey.",
           "quote": null
         }
       ]
@@ -35669,16 +35953,52 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 150,
+          "line": 221,
           "kind": "markup",
           "raw": "Skip for now",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 171,
+          "line": 173,
           "kind": "markup",
           "raw": "Skip for now",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2554cd8b77bc",
+      "text": "You can sign in with an email link any time, and add a passkey later from Settings → Security.",
+      "words": 19,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 224,
+          "kind": "markup",
+          "raw": "You can sign in with an email link any time, and add a passkey\n              later from Settings → Security.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fd8d494445f8",
+      "text": "This quilt cannot send email, so a passkey or recovery codes are the only ways back into your account.",
+      "words": 19,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 240,
+          "kind": "markup",
+          "raw": "This quilt cannot send email, so a passkey or recovery codes are\n              the only ways back into your account.",
           "quote": null
         }
       ]
@@ -35694,7 +36014,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 156,
+          "line": 248,
           "kind": "markup",
           "raw": "You're invited",
           "quote": null
@@ -35712,7 +36032,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 158,
+          "line": 250,
           "kind": "markup",
           "raw": "Someone here sent you this link. Pick a username and you're in.",
           "quote": null
@@ -35730,7 +36050,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 167,
+          "line": 259,
           "kind": "attr:placeholder",
           "raw": "Choose a username",
           "quote": "\""
@@ -35748,9 +36068,59 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 180,
+          "line": 272,
           "kind": "markup",
           "raw": "3-30 characters: lowercase letters, numbers, hyphens. This becomes your profile address and can't be changed later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "53e6cdc30765",
+      "text": "you@example.com",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 290,
+          "kind": "attr:placeholder",
+          "raw": "you@example.com",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 139,
+          "kind": "attr:placeholder",
+          "raw": "you@example.com",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 194,
+          "kind": "attr:placeholder",
+          "raw": "you@example.com",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "c3b96dedbcaa",
+      "text": "How you sign in if you ever lose your passkey. We send sign-in links to it and nothing else.",
+      "words": 19,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 298,
+          "kind": "markup",
+          "raw": "How you sign in if you ever lose your passkey. We send sign-in\n              links to it and nothing else.",
           "quote": null
         }
       ]
@@ -35766,14 +36136,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 201,
+          "line": 312,
           "kind": "markup",
           "raw": "By creating an account you agree to the",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 245,
+          "line": 247,
           "kind": "markup",
           "raw": "By creating an account you agree to the",
           "quote": null
@@ -35791,7 +36161,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 202,
+          "line": 313,
           "kind": "markup",
           "raw": "User Agreement",
           "quote": null
@@ -35805,7 +36175,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 246,
+          "line": 248,
           "kind": "markup",
           "raw": "User Agreement",
           "quote": null
@@ -35823,14 +36193,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 203,
+          "line": 314,
           "kind": "markup",
           "raw": "and",
           "quote": null
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 247,
+          "line": 249,
           "kind": "markup",
           "raw": "and",
           "quote": null
@@ -35848,7 +36218,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/InviteLanding.svelte",
-          "line": 203,
+          "line": 314,
           "kind": "markup",
           "raw": "Privacy Policy",
           "quote": null
@@ -35862,7 +36232,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 247,
+          "line": 249,
           "kind": "markup",
           "raw": "Privacy Policy",
           "quote": null
@@ -36370,7 +36740,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 53,
+          "line": 59,
           "kind": "js-string",
           "raw": "Failed to send link",
           "quote": "'"
@@ -36388,27 +36758,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 72,
+          "line": 78,
           "kind": "js-string",
           "raw": "Recovery failed",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "3663819cf0b7",
-      "text": "Passkey login failed",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Login.svelte",
-          "line": 95,
-          "kind": "js-string",
-          "raw": "Passkey login failed",
           "quote": "'"
         }
       ]
@@ -36424,7 +36776,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 108,
+          "line": 115,
           "kind": "markup",
           "raw": "Check your email",
           "quote": null
@@ -36442,7 +36794,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 109,
+          "line": 116,
           "kind": "markup",
           "raw": "We sent a sign-in link to",
           "quote": null
@@ -36460,7 +36812,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 110,
+          "line": 117,
           "kind": "markup",
           "raw": "It should arrive within a minute or two. Click the link to continue.",
           "quote": null
@@ -36478,7 +36830,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 119,
+          "line": 126,
           "kind": "markup",
           "raw": "Create your account",
           "quote": null
@@ -36496,7 +36848,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 120,
+          "line": 127,
           "kind": "markup",
           "raw": "Set up your account to claim and manage your patch on {instanceName}.",
           "quote": null
@@ -36514,7 +36866,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 123,
+          "line": 130,
           "kind": "markup",
           "raw": "Enter your email and we'll send you a sign-in link. No password needed.",
           "quote": null
@@ -36532,35 +36884,10 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 127,
+          "line": 134,
           "kind": "markup",
           "raw": "Email address",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "53e6cdc30765",
-      "text": "you@example.com",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Login.svelte",
-          "line": 132,
-          "kind": "attr:placeholder",
-          "raw": "you@example.com",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/pages/Login.svelte",
-          "line": 181,
-          "kind": "attr:placeholder",
-          "raw": "you@example.com",
-          "quote": "\""
         }
       ]
     },
@@ -36575,7 +36902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 145,
+          "line": 152,
           "kind": "markup",
           "raw": "Already have an account?",
           "quote": null
@@ -36593,7 +36920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 151,
+          "line": 158,
           "kind": "markup",
           "raw": "Welcome back",
           "quote": null
@@ -36611,7 +36938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 152,
+          "line": 159,
           "kind": "markup",
           "raw": "Sign in to {instanceName}.",
           "quote": null
@@ -36629,17 +36956,35 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 156,
+          "line": 163,
           "kind": "markup",
           "raw": "Passkey",
           "quote": null
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 490,
+          "line": 492,
           "kind": "attr:placeholder",
           "raw": "Passkey",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "79e32f4ae52f",
+      "text": "This browser cannot use passkeys. Sign in with an email link below.",
+      "words": 12,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 166,
+          "kind": "markup",
+          "raw": "This browser cannot use passkeys. Sign in with an email link below.",
+          "quote": null
         }
       ]
     },
@@ -36654,7 +36999,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 157,
+          "line": 169,
           "kind": "markup",
           "raw": "The quickest way in. Your key stays on your device.",
           "quote": null
@@ -36672,7 +37017,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 176,
+          "line": 189,
           "kind": "markup",
           "raw": "On a device without your passkey? We'll send you a sign-in link.",
           "quote": null
@@ -36690,7 +37035,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 197,
+          "line": 210,
           "kind": "markup",
           "raw": "Recovery code",
           "quote": null
@@ -36708,7 +37053,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 199,
+          "line": 212,
           "kind": "markup",
           "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
           "quote": null
@@ -36726,7 +37071,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 215,
+          "line": 228,
           "kind": "attr:placeholder",
           "raw": "xxxx-xxxx-xxxx",
           "quote": "\""
@@ -36744,7 +37089,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 242,
+          "line": 255,
           "kind": "markup",
           "raw": "New here?",
           "quote": null
@@ -41627,7 +41972,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 71,
+          "line": 72,
           "kind": "js-string",
           "raw": "Session signed out",
           "quote": "'"
@@ -41645,7 +41990,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 73,
+          "line": 74,
           "kind": "js-string",
           "raw": "Failed to sign out session",
           "quote": "'"
@@ -41663,7 +42008,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 82,
+          "line": 83,
           "kind": "js-string",
           "raw": "Signed out everywhere else",
           "quote": "'"
@@ -41681,7 +42026,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 84,
+          "line": 85,
           "kind": "js-string",
           "raw": "Failed to sign out other sessions",
           "quote": "'"
@@ -41699,7 +42044,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 123,
+          "line": 124,
           "kind": "js-string",
           "raw": "Failed to generate codes",
           "quote": "'"
@@ -41717,7 +42062,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 133,
+          "line": 134,
           "kind": "js-string",
           "raw": "Codes copied",
           "quote": "'"
@@ -41735,7 +42080,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 135,
+          "line": 136,
           "kind": "js-string",
           "raw": "Copy failed. Select and copy them by hand.",
           "quote": "'"
@@ -41753,7 +42098,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 144,
+          "line": 145,
           "kind": "js-string",
           "raw": "This device",
           "quote": "'"
@@ -41771,7 +42116,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 147,
+          "line": 148,
           "kind": "js-string",
           "raw": "Android phone",
           "quote": "'"
@@ -41789,7 +42134,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 149,
+          "line": 150,
           "kind": "js-string",
           "raw": "Windows PC",
           "quote": "'"
@@ -41807,9 +42152,34 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 150,
+          "line": 151,
           "kind": "js-string",
           "raw": "Linux PC",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "64e7ce7b13ac",
+      "text": "Passkey setup was closed.",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/SecuritySettings.svelte",
+          "line": 182,
+          "kind": "js-string",
+          "raw": "Passkey setup was closed.",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/SignupComplete.svelte",
+          "line": 104,
+          "kind": "js-string",
+          "raw": "Passkey setup was closed.",
           "quote": "'"
         }
       ]
@@ -41825,27 +42195,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 192,
+          "line": 194,
           "kind": "js-string",
           "raw": "Passkey added",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "ae611a4c1466",
-      "text": "Failed to add passkey",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 200,
-          "kind": "js-string",
-          "raw": "Failed to add passkey",
           "quote": "'"
         }
       ]
@@ -41861,7 +42213,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 235,
+          "line": 237,
           "kind": "js-string",
           "raw": "Could not rename. Your passkey still works.",
           "quote": "'"
@@ -41879,7 +42231,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 267,
+          "line": 269,
           "kind": "js-string",
           "raw": "Passkey renamed",
           "quote": "'"
@@ -41897,7 +42249,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 269,
+          "line": 271,
           "kind": "js-string",
           "raw": "Failed to rename",
           "quote": "'"
@@ -41915,7 +42267,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 277,
+          "line": 279,
           "kind": "js-string",
           "raw": "Passkey revoked",
           "quote": "'"
@@ -41933,7 +42285,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 279,
+          "line": 281,
           "kind": "js-string",
           "raw": "Failed to revoke",
           "quote": "'"
@@ -41951,7 +42303,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 286,
+          "line": 288,
           "kind": "markup",
           "raw": "Passkeys",
           "quote": null
@@ -41969,7 +42321,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 288,
+          "line": 290,
           "kind": "markup",
           "raw": "Passkeys sign you in without a password or email.",
           "quote": null
@@ -41987,7 +42339,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 294,
+          "line": 296,
           "kind": "markup",
           "raw": "No passkeys enrolled yet.",
           "quote": null
@@ -42005,14 +42357,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 312,
+          "line": 314,
           "kind": "attr:aria-label",
           "raw": "Passkey name",
           "quote": "\""
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 489,
+          "line": 491,
           "kind": "attr:aria-label",
           "raw": "Passkey name",
           "quote": "\""
@@ -42030,7 +42382,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 315,
+          "line": 317,
           "kind": "markup",
           "raw": "Save",
           "quote": null
@@ -42048,7 +42400,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 325,
+          "line": 327,
           "kind": "markup",
           "raw": "Added {new Date(cred.created_at).toLocaleDateString()}",
           "quote": null
@@ -42066,7 +42418,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 357,
+          "line": 359,
           "kind": "markup",
           "raw": "One passkey is one lost phone away from a locked account. Add a\n        second on another device.",
           "quote": null
@@ -42084,7 +42436,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 364,
+          "line": 366,
           "kind": "markup",
           "raw": "Active sessions",
           "quote": null
@@ -42102,7 +42454,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 366,
+          "line": 368,
           "kind": "markup",
           "raw": "Where you're signed in. Sign out any session you don't recognize.",
           "quote": null
@@ -42120,7 +42472,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 372,
+          "line": 374,
           "kind": "markup",
           "raw": "No active sessions.",
           "quote": null
@@ -42138,7 +42490,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 380,
+          "line": 382,
           "kind": "markup",
           "raw": "This session",
           "quote": null
@@ -42156,7 +42508,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 383,
+          "line": 385,
           "kind": "markup",
           "raw": "Last active {timeAgo(s.last_used_at)}",
           "quote": null
@@ -42174,7 +42526,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 385,
+          "line": 387,
           "kind": "markup",
           "raw": "· Signed in {new Date(s.created_at).toLocaleDateString()}",
           "quote": null
@@ -42192,7 +42544,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 415,
+          "line": 417,
           "kind": "markup",
           "raw": "Recovery codes",
           "quote": null
@@ -42210,7 +42562,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 417,
+          "line": 419,
           "kind": "markup",
           "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
           "quote": null
@@ -42228,7 +42580,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 424,
+          "line": 426,
           "kind": "markup",
           "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
           "quote": null
@@ -42246,7 +42598,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 444,
+          "line": 446,
           "kind": "markup",
           "raw": "{recoveryStatus.remaining} of {recoveryStatus.total} codes left.",
           "quote": null
@@ -42264,7 +42616,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 447,
+          "line": 449,
           "kind": "markup",
           "raw": "Running low. Generate a fresh set.",
           "quote": null
@@ -42282,7 +42634,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 456,
+          "line": 458,
           "kind": "markup",
           "raw": "New codes replace the old set. Anything already written down\n            stops working.",
           "quote": null
@@ -42300,7 +42652,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 461,
+          "line": 463,
           "kind": "markup",
           "raw": "No recovery codes yet.",
           "quote": null
@@ -42318,7 +42670,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 473,
+          "line": 475,
           "kind": "markup",
           "raw": "Name this passkey",
           "quote": null
@@ -42336,7 +42688,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 475,
+          "line": 477,
           "kind": "markup",
           "raw": "It's saved and ready to use. A name helps you tell it apart from your\n    others later.",
           "quote": null
@@ -42354,7 +42706,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 498,
+          "line": 500,
           "kind": "markup",
           "raw": "Keep \"{namingDefault}\"",
           "quote": null
@@ -42372,7 +42724,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 49,
+          "line": 50,
           "kind": "js-string",
           "raw": "Missing signup token",
           "quote": "'"
@@ -42390,7 +42742,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 61,
+          "line": 62,
           "kind": "js-string",
           "raw": "Invalid or expired signup link",
           "quote": "'"
@@ -42408,7 +42760,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 87,
+          "line": 88,
           "kind": "js-string",
           "raw": "Signup failed",
           "quote": "'"
@@ -42426,7 +42778,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 127,
+          "line": 129,
           "kind": "markup",
           "raw": "Checking your link...",
           "quote": null
@@ -42444,7 +42796,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 131,
+          "line": 133,
           "kind": "markup",
           "raw": "Link expired",
           "quote": null
@@ -42462,7 +42814,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 134,
+          "line": 136,
           "kind": "markup",
           "raw": "No account was created yet. Request a new sign-in link and\n          you'll be right back here.",
           "quote": null
@@ -42480,7 +42832,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 177,
+          "line": 179,
           "kind": "markup",
           "raw": "Choose your username",
           "quote": null
@@ -42498,7 +42850,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 179,
+          "line": 181,
           "kind": "markup",
           "raw": "You're signing up as",
           "quote": null
@@ -42516,7 +42868,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 179,
+          "line": 181,
           "kind": "markup",
           "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
           "quote": null
@@ -42534,7 +42886,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 190,
+          "line": 192,
           "kind": "attr:placeholder",
           "raw": "e.g. gallery-row-gal",
           "quote": "\""
@@ -42552,7 +42904,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 203,
+          "line": 205,
           "kind": "markup",
           "raw": "3-30 characters: lowercase letters, numbers, hyphens.",
           "quote": null
@@ -42570,7 +42922,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 219,
+          "line": 221,
           "kind": "markup",
           "raw": "Bootstrap token",
           "quote": null
@@ -42588,7 +42940,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 231,
+          "line": 233,
           "kind": "markup",
           "raw": "This account will run the quilt. The token is in the server's\n              first-run log, unless it was set in configuration.",
           "quote": null
@@ -43986,6 +44338,49 @@
           "line": 31,
           "kind": "js-string",
           "raw": "(prefers-color-scheme: dark)",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "82ac2926f802",
+      "text": "Passkey enrollment failed",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 95,
+          "kind": "js-string",
+          "raw": "Passkey enrollment failed",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/SignupComplete.svelte",
+          "line": 112,
+          "kind": "js-string",
+          "raw": "Passkey enrollment failed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3663819cf0b7",
+      "text": "Passkey login failed",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 95,
+          "kind": "js-string",
+          "raw": "Passkey login failed",
           "quote": "'"
         }
       ]

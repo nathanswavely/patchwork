@@ -97,13 +97,23 @@ func ValidateInviteLink(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// RedeemInviteLink handles POST /api/v1/auth/invite with {token, username} body.
-func RedeemInviteLink(db *database.DB) http.HandlerFunc {
+// RedeemInviteLink handles POST /api/v1/auth/invite with
+// {token, username, email} body.
+//
+// Where SMTP is configured the email is required, and that is the whole point
+// (docs/adr/071): an invite used to hand out an account whose only way back in
+// was a passkey the next screen let you skip, so skipping it left an account
+// nobody — not even an instance admin — could ever sign into again. With mail
+// available, the address is the floor and the passkey is the fast path on top
+// of it. Without mail there is nothing to send, so the floor is recovery codes
+// and the invite page collects no address it could not use.
+func RedeemInviteLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
 			Token       string `json:"token"`
 			Username    string `json:"username"`
 			DisplayName string `json:"display_name"`
+			Email       string `json:"email"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -114,7 +124,22 @@ func RedeemInviteLink(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		user, err := auth.RedeemInviteLink(db, req.Token, req.Username, req.DisplayName)
+		// Normalized even when optional, so the stored form always matches
+		// what the person will later type into the sign-in box.
+		var email string
+		if strings.TrimSpace(req.Email) != "" {
+			normalized, err := auth.NormalizeEmail(req.Email)
+			if err != nil {
+				http.Error(w, `{"error":"`+err.Error()+`"}`, http.StatusBadRequest)
+				return
+			}
+			email = normalized
+		} else if cfg.SMTP.Configured() {
+			http.Error(w, `{"error":"email is required so you can sign in again later"}`, http.StatusBadRequest)
+			return
+		}
+
+		user, err := auth.RedeemInviteLink(db, req.Token, req.Username, req.DisplayName, email)
 		if err != nil {
 			http.Error(w, `{"error":"`+err.Error()+`"}`, http.StatusBadRequest)
 			return

@@ -6,9 +6,15 @@
   import {
     prepareRequestOptions,
     serializeAssertionResponse,
+    passkeyErrorMessage,
+    passkeysSupported,
   } from '../lib/webauthn.js';
 
   let instanceName = $derived(getInstanceName());
+
+  // Read once, not derived: WebAuthn availability is a property of the
+  // browser, and cannot change while the page is open.
+  const canUsePasskeys = passkeysSupported();
 
   // Support redirect after auth and owner-specific context. Only accept a
   // same-origin relative path — anything else falls back to '/' rather
@@ -84,6 +90,7 @@
       });
       const credentialOptions = prepareRequestOptions(beginData);
       const credential = await navigator.credentials.get(credentialOptions);
+      if (!credential) throw new Error('Passkey prompt was closed.');
       const serialized = serializeAssertionResponse(credential);
       await api('auth/webauthn/login/finish', {
         method: 'POST',
@@ -92,7 +99,7 @@
       await login();
       navigate(redirectTo);
     } catch (e) {
-      passKeyError = e.message || 'Passkey login failed';
+      passKeyError = passkeyErrorMessage(e, 'login');
     } finally {
       passKeyLoading = false;
     }
@@ -154,16 +161,22 @@
       <div class="signin-options">
         <div class="signin-option">
           <h2>Passkey</h2>
-          <p class="muted">The quickest way in. Your key stays on your device.</p>
-          <button
-            class="btn btn-primary passkey-btn"
-            onclick={handlePasskeyLogin}
-            disabled={passKeyLoading}
-          >
-            {passKeyLoading ? 'Authenticating...' : 'Sign in with passkey'}
-          </button>
-          {#if passKeyError}
-            <p class="error-text">{passKeyError}</p>
+          {#if !canUsePasskeys}
+            <p class="muted">
+              This browser cannot use passkeys. Sign in with an email link below.
+            </p>
+          {:else}
+            <p class="muted">The quickest way in. Your key stays on your device.</p>
+            <button
+              class="btn btn-primary passkey-btn"
+              onclick={handlePasskeyLogin}
+              disabled={passKeyLoading}
+            >
+              {passKeyLoading ? 'Authenticating...' : 'Sign in with passkey'}
+            </button>
+            {#if passKeyError}
+              <p class="error-text">{passKeyError}</p>
+            {/if}
           {/if}
         </div>
 

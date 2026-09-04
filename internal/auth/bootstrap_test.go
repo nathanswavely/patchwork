@@ -89,7 +89,7 @@ func TestFirstInviteUserBecomesAdmin(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	first, err := RedeemInviteLink(db, token, "founder", "")
+	first, err := RedeemInviteLink(db, token, "founder", "", "")
 	if err != nil {
 		t.Fatalf("RedeemInviteLink (first): %v", err)
 	}
@@ -105,7 +105,7 @@ func TestFirstInviteUserBecomesAdmin(t *testing.T) {
 		t.Errorf("stored role = %q, want admin", stored)
 	}
 
-	second, err := RedeemInviteLink(db, token, "second", "")
+	second, err := RedeemInviteLink(db, token, "second", "", "")
 	if err != nil {
 		t.Fatalf("RedeemInviteLink (second): %v", err)
 	}

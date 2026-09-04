@@ -146,6 +146,22 @@ func NewWebAuthnService(db *database.DB, cfg *config.Config) (*WebAuthnService, 
 		RPDisplayName: cfg.Instance.Name,
 		RPID:          rpID,
 		RPOrigins:     rpOrigins,
+		// Sign-in is BeginDiscoverableLogin — an empty allowCredentials, which
+		// only a client-side discoverable credential can answer. Leaving this
+		// unset sent an empty authenticatorSelection, and an absent residentKey
+		// means "discouraged": the authenticator was free to hand back a
+		// credential that sign-in could never find again. Syncing passkey
+		// providers store everything discoverably and hid this, but a security
+		// key would enroll happily and then be unusable. Ask for what we
+		// actually require.
+		//
+		// RequireResidentKey is the WebAuthn L1 spelling of the same thing,
+		// sent alongside for authenticators that predate residentKey.
+		AuthenticatorSelection: protocol.AuthenticatorSelection{
+			ResidentKey:        protocol.ResidentKeyRequirementRequired,
+			RequireResidentKey: protocol.ResidentKeyRequired(),
+			UserVerification:   protocol.VerificationPreferred,
+		},
 	})
 	if err != nil {
 		return nil, fmt.Errorf("init webauthn: %w", err)

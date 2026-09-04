@@ -22,6 +22,12 @@ let instanceDomain = $state('');
 // Subscribe: without it the actor endpoints are not mounted, so the
 // address would resolve to nothing.
 let instanceFederation = $state(false);
+// Whether this quilt can send mail (docs/adr/071). Signup reads it to decide
+// which floor a new account gets — an emailable address, or recovery codes —
+// and the sign-in page to decide whether offering to email a link is honest.
+// Defaults true so a failed /instance fetch still shows the email option
+// rather than hiding the only door someone may have.
+let instanceEmailEnabled = $state(true);
 
 // --- Filter state (docs/adr/033) ---
 // The filter — tag selection plus the search chip — is standing state that
@@ -51,6 +57,7 @@ export function getInstanceDescription() { return instanceDescription; }
 export function getNeighborQuilts() { return neighborQuilts; }
 export function getInstanceDomain() { return instanceDomain; }
 export function getInstanceFederation() { return instanceFederation; }
+export function getEmailEnabled() { return instanceEmailEnabled; }
 export function getInstanceIconUrl() { return instanceIconUrl; }
 export function getInstanceModules() { return instanceModules; }
 export function getInstanceStats() { return instanceStats; }
@@ -191,6 +198,7 @@ export async function loadInstance() {
     if (data?.neighbor_quilts) neighborQuilts = data.neighbor_quilts;
     if (data?.domain) instanceDomain = data.domain;
     if (data?.federation !== undefined) instanceFederation = data.federation;
+    if (data?.email_enabled !== undefined) instanceEmailEnabled = data.email_enabled;
     if (data?.geography?.timezone) instanceTimezone = data.geography.timezone;
     instanceLoaded = true;
   } catch { /* keep defaults */ }

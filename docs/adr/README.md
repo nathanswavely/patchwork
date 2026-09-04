@@ -83,6 +83,7 @@ several branches are in flight.
 | [054](054-attested-decisions-federate-through-their-objects.md) | Attested decisions federate through their objects, or not at all — closes the question 052 and 053 both left open *(the behaviour already shipped; this adds the gate's test)* |
 | [068](068-a-second-explaining-surface.md) | A second explaining surface — /governance, and the test that keeps it the last one *(amends 040)* |
 | [070](070-the-first-account-is-claimed-with-a-token.md) | The first account is claimed with a token, not a race — a bootstrap token gates bootstrap, never registration *(implementation pending)* |
+| [071](071-every-account-leaves-signup-with-a-way-back-in.md) | Every account leaves signup with a way back in — the invite path could mint an account with no passkey, no codes, and no address |
 | [073](073-a-feed-can-be-wrong-about-its-own-zone.md) | A feed can be wrong about its own zone — a per-source switch for a publisher that stamps local time as UTC *(beside 045/067, applies 069's test)* |
 | [072](072-an-admin-can-attach-an-address-and-the-old-one-is-told.md) | An admin can attach an address, and the old one is told — the in-product repair for an account 071 came too late for, gated like promotion *(answers the endpoint 071 rejected)* |
 | [074](074-the-list-reads-the-quilt.md) | The list reads the quilt — quilt order as the default, the in-view lens, and a control belongs to the surface it changes *(amends 022)* |
