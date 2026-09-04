@@ -17,6 +17,11 @@ const (
 	// person proposing a broadcast has to argue for it rather than inherit
 	// it.
 	CategoryQuilt Category = "quilt"
+	// The noticeboard (docs/adr/081). Its own category, named for the
+	// surface, so a busy patch's board can be silenced per patch without
+	// touching its events or proposals — the per-patch config and the
+	// per-user preferences both key on category.
+	CategoryNoticeboard Category = "noticeboard"
 )
 
 // AllCategories returns every category in display order.
@@ -27,6 +32,7 @@ func AllCategories() []CategoryInfo {
 		{CategoryMembership, "Membership", "Join/leave notifications for admins", true},
 		{CategoryEvents, "Events", "Event creation, updates, reminders", true},
 		{CategoryAdmin, "Admin", "Claim requests, submissions", true},
+		{CategoryNoticeboard, "Noticeboard", "A notice whose author chose to tell members, replies on notices you're in, and reports for admins", true},
 		{CategoryQuilt, "The quilt", "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.", false},
 	}
 }
@@ -135,6 +141,15 @@ const (
 
 	// The bulletin (docs/adr/076): the one broadcast this system sends.
 	QuiltBulletin NotificationType = "quilt.bulletin"
+
+	// The noticeboard (docs/adr/081). A notice is born quiet: NoticePosted
+	// fires only when its author checked "Tell members". A reply reaches
+	// the notice's participants — its author and those who already replied
+	// — and nobody else; there is no way to summon someone in. A report
+	// reaches the patch's admins, who are the room's stewards.
+	NoticePosted   NotificationType = "notice.posted"
+	NoticeReply    NotificationType = "notice.reply"
+	NoticeReported NotificationType = "notice.reported"
 )
 
 // Priority determines default channel behavior.
@@ -150,12 +165,13 @@ const (
 type Audience int
 
 const (
-	AudienceAllMembers   Audience = iota // All active members + admins of the patch
-	AudienceAdminsOnly                   // Only patch admins
-	AudienceSpecificUser                 // A single user (e.g., proposal author)
-	AudienceParticipants                 // Users who voted/commented on a proposal
-	AudienceSiteAdmins                   // Instance-level admins
-	AudienceSubscribers                  // Everyone who asked for the bulletin (docs/adr/076)
+	AudienceAllMembers         Audience = iota // All active members + admins of the patch
+	AudienceAdminsOnly                         // Only patch admins
+	AudienceSpecificUser                       // A single user (e.g., proposal author)
+	AudienceParticipants                       // Users who voted/commented on a proposal
+	AudienceSiteAdmins                         // Instance-level admins
+	AudienceSubscribers                        // Everyone who asked for the bulletin (docs/adr/076)
+	AudienceNoticeParticipants                 // A notice's author and everyone who replied (docs/adr/081)
 )
 
 // TypeMeta holds static metadata for each notification type.
@@ -211,17 +227,24 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	// already on the quilt under its venue whether or not anyone acts.
 	ProgramOffer: {CategoryEvents, "A listing matched one of your programs", AudienceAdminsOnly, PriorityNormal},
 
+	// Normal, not high, for the first two: the checkbox must not become a
+	// "send everyone an email" button. Whether the bell reaches a mailbox
+	// belongs to the recipient's preference, not the author (docs/adr/081).
+	NoticePosted:   {CategoryNoticeboard, "A notice for your patch", AudienceAllMembers, PriorityNormal},
+	NoticeReply:    {CategoryNoticeboard, "Reply on a notice you're in", AudienceNoticeParticipants, PriorityNormal},
+	NoticeReported: {CategoryNoticeboard, "A notice or reply was reported", AudienceAdminsOnly, PriorityHigh},
+
 	AdminClaimRequest:     {CategoryAdmin, "New patch claim request", AudienceSiteAdmins, PriorityHigh},
 	AdminSubmission:       {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventSubmission:  {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventLinkRequest: {CategoryAdmin, "Event link request (unclaimed patch)", AudienceSiteAdmins, PriorityNormal},
 
-	ClaimApproved:      {CategoryAdmin, "Your claim was approved", AudienceSpecificUser, PriorityHigh},
+	ClaimApproved: {CategoryAdmin, "Your claim was approved", AudienceSpecificUser, PriorityHigh},
 
 	// Priority is not what gates this one — DefaultEnabled refuses it on
 	// every channel until a person turns it on, so the priority here only
 	// says what it is once they have: a monthly note, not an interruption.
-	QuiltBulletin: {CategoryQuilt, "New patches this month", AudienceSubscribers, PriorityLow},
+	QuiltBulletin:      {CategoryQuilt, "New patches this month", AudienceSubscribers, PriorityLow},
 	ClaimSetupExpiring: {CategoryAdmin, "Your claim's setup window is closing", AudienceSpecificUser, PriorityHigh},
 }
 
@@ -285,6 +308,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		GovernanceSuccessionNeeded,
 		ClaimApproved, ClaimSetupExpiring,
 		QuiltBulletin,
+		NoticePosted, NoticeReply, NoticeReported,
 	}
 	for _, t := range allTypes {
 		if TypeRegistry[t].Category == cat {

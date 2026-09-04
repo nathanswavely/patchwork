@@ -3,6 +3,7 @@ package handler_test
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -143,7 +144,7 @@ func TestUpdateMembershipVisibility(t *testing.T) {
 
 	body := map[string]bool{"visible": false}
 	r := authedRequest("PATCH", "/api/v1/users/me/memberships/"+nodeID, body, userToken)
-	w := serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembershipVisibility(db), r)
+	w := serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembership(db), r)
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
 	}
@@ -164,7 +165,7 @@ func TestUpdateMembershipVisibility(t *testing.T) {
 
 	// Toggling a membership you don't have is a 404.
 	r = authedRequest("PATCH", "/api/v1/users/me/memberships/"+auth.NewUUIDv7(), body, userToken)
-	w = serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembershipVisibility(db), r)
+	w = serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembership(db), r)
 	if w.Code != http.StatusNotFound {
 		t.Errorf("expected 404 for unknown membership, got %d", w.Code)
 	}
@@ -192,5 +193,165 @@ func TestUpdateMeLinks(t *testing.T) {
 	links, _ = decodeJSON(t, w)["links"].([]interface{})
 	if len(links) != 1 {
 		t.Errorf("expected 1 link from GET me, got %v", links)
+	}
+}
+
+// The contact card (docs/adr/080) is shown to the people in the room — a
+// patch's own active admins and members — and to nobody else: not the
+// public member list, not followers, not an instance admin who holds no
+// role in the patch, not another patch the person is in but didn't share
+// with, and never the public profile.
+func TestContactCardIsSharedPatchByPatch(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "ccowner", "member")
+	sharer, sharerToken := createTestUser(t, db, "ccsharer", "member")
+	fellow, fellowToken := createTestUser(t, db, "ccfellow", "member")
+	follower, followerToken := createTestUser(t, db, "ccfollower", "member")
+	elsewhere, elsewhereToken := createTestUser(t, db, "ccelsewhere", "member")
+	_, siteAdminToken := createTestUser(t, db, "ccsiteadmin", "admin")
+
+	shared := createTestNode(t, db, owner.ID, "Shared Room", "shared-room", "open")
+	other := createTestNode(t, db, owner.ID, "Other Room", "other-room", "open")
+	createTestMembership(t, db, owner.ID, shared, "admin", "active")
+	createTestMembership(t, db, owner.ID, other, "admin", "active")
+	createTestMembership(t, db, sharer.ID, shared, "member", "active")
+	createTestMembership(t, db, sharer.ID, other, "member", "active")
+	createTestMembership(t, db, fellow.ID, shared, "member", "active")
+	createTestMembership(t, db, follower.ID, shared, "follower", "active")
+	createTestMembership(t, db, elsewhere.ID, other, "member", "active")
+
+	// The sharer fills in a card...
+	r := authedRequest("PATCH", "/api/v1/auth/me", map[string]interface{}{
+		"contact_card": map[string]string{"phone": " +1 717 555 0100 ", "email": "reach@example.com", "note": "Signal preferred"},
+	}, sharerToken)
+	w := serveMux(t, db, "PATCH", "/api/v1/auth/me", handler.UpdateMe(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("update card: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	card, _ := decodeJSON(t, w)["contact_card"].(map[string]interface{})
+	if card["phone"] != "+1 717 555 0100" || card["email"] != "reach@example.com" || card["note"] != "Signal preferred" {
+		t.Fatalf("card not stored as trimmed: %v", card)
+	}
+
+	// ...and shares it with one patch of the two.
+	r = authedRequest("PATCH", "/api/v1/users/me/memberships/"+shared, map[string]bool{"share_contact": true}, sharerToken)
+	w = serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembership(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("share: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	if res := decodeJSON(t, w); res["share_contact"] != true || res["visible"] != true {
+		t.Errorf("switch response should carry both switches: %v", res)
+	}
+
+	contactOf := func(t *testing.T, slug, token string) interface{} {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/nodes/"+slug+"/members", nil, token)
+		w := serveOptionalMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("list members: expected 200, got %d: %s", w.Code, w.Body.String())
+		}
+		items, _ := decodeJSON(t, w)["items"].([]interface{})
+		for _, it := range items {
+			m := it.(map[string]interface{})
+			if m["username"] == "ccsharer" {
+				return m["contact"]
+			}
+		}
+		t.Fatalf("sharer missing from %s listing", slug)
+		return nil
+	}
+
+	cases := []struct {
+		name  string
+		slug  string
+		token string
+		want  bool
+	}{
+		{"anonymous never", "shared-room", "", false},
+		{"follower is not in the room", "shared-room", followerToken, false},
+		{"instance admin with no role here", "shared-room", siteAdminToken, false},
+		{"fellow member of the shared patch", "shared-room", fellowToken, true},
+		{"the sharer sees their own card", "shared-room", sharerToken, true},
+		{"fellow member of the other patch", "other-room", elsewhereToken, false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got := contactOf(t, c.slug, c.token)
+			if (got != nil) != c.want {
+				t.Errorf("want contact present=%v, got %v", c.want, got)
+			}
+			if c.want {
+				card := got.(map[string]interface{})
+				if card["phone"] != "+1 717 555 0100" || card["note"] != "Signal preferred" {
+					t.Errorf("wrong card: %v", card)
+				}
+			}
+		})
+	}
+
+	// The public profile never carries it, whoever asks.
+	pr := authedRequest("GET", "/api/v1/users/ccsharer", nil, "")
+	pw := servePublicMux(t, "GET", "/api/v1/users/{username}", handler.GetUserProfile(db), pr)
+	if body := pw.Body.String(); strings.Contains(body, "555 0100") || strings.Contains(body, "contact") {
+		t.Errorf("profile leaks the contact card: %s", body)
+	}
+
+	// A follower cannot share: there is no room for a follower to be in.
+	r = authedRequest("PATCH", "/api/v1/users/me/memberships/"+shared, map[string]bool{"share_contact": true}, followerToken)
+	w = serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembership(db), r)
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("follower sharing: expected 400, got %d: %s", w.Code, w.Body.String())
+	}
+
+	// Switching off takes effect at once; the empty body is refused.
+	r = authedRequest("PATCH", "/api/v1/users/me/memberships/"+shared, map[string]bool{"share_contact": false}, sharerToken)
+	w = serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembership(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("unshare: expected 200, got %d", w.Code)
+	}
+	if got := contactOf(t, "shared-room", fellowToken); got != nil {
+		t.Errorf("card still shown after unsharing: %v", got)
+	}
+	r = authedRequest("PATCH", "/api/v1/users/me/memberships/"+shared, map[string]string{}, sharerToken)
+	w = serveMux(t, db, "PATCH", "/api/v1/users/me/memberships/{nodeId}", handler.UpdateMyMembership(db), r)
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("empty switch body: expected 400, got %d", w.Code)
+	}
+}
+
+func TestContactCardValidation(t *testing.T) {
+	db := setupTestDB(t)
+	_, token := createTestUser(t, db, "ccvalid", "member")
+
+	bad := []map[string]string{
+		{"phone": strings.Repeat("1", 61)},
+		{"email": "not-an-address"},
+		{"email": "two words@example.com"},
+		{"note": strings.Repeat("n", 201)},
+	}
+	for _, card := range bad {
+		r := authedRequest("PATCH", "/api/v1/auth/me", map[string]interface{}{"contact_card": card}, token)
+		w := serveMux(t, db, "PATCH", "/api/v1/auth/me", handler.UpdateMe(db), r)
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("card %v: expected 400, got %d: %s", card, w.Code, w.Body.String())
+		}
+	}
+
+	// A card is replaced whole: sending only a phone clears the rest.
+	for _, card := range []map[string]string{
+		{"phone": "555", "email": "a@b.example", "note": "hi"},
+		{"phone": "555"},
+	} {
+		r := authedRequest("PATCH", "/api/v1/auth/me", map[string]interface{}{"contact_card": card}, token)
+		w := serveMux(t, db, "PATCH", "/api/v1/auth/me", handler.UpdateMe(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("card %v: expected 200, got %d: %s", card, w.Code, w.Body.String())
+		}
+	}
+	r := authedRequest("GET", "/api/v1/auth/me", nil, token)
+	w := serveMux(t, db, "GET", "/api/v1/auth/me", handler.Me(db), r)
+	got, _ := decodeJSON(t, w)["contact_card"].(map[string]interface{})
+	if got["phone"] != "555" || got["email"] != "" || got["note"] != "" {
+		t.Errorf("card should be replaced whole, got %v", got)
 	}
 }

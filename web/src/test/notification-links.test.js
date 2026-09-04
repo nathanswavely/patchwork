@@ -56,6 +56,9 @@ describe('notification and feed link targets', () => {
     { built: 'Event', path: '/events/019f-abc', route: 'eventDetail' },
     { built: 'Proposal', path: '/patches/gallery-row/governance/019f-pr', route: 'governanceProposal' },
     { built: 'GovernanceDoc', path: '/patches/gallery-row/governance/docs/019f-doc', route: 'governanceDocDetail' },
+    { built: 'PatchNoticeboard', path: '/patches/gallery-row/noticeboard', route: 'patchNoticeboard' },
+    { built: 'Notice', path: '/patches/gallery-row/noticeboard/019f-n', route: 'patchNotice' },
+    { built: 'PatchNoticeboardReports', path: '/patches/gallery-row/settings/noticeboard', route: 'patchSettingsNoticeboard' },
     { built: 'RemotePatch', path: '/quilts/other.example/patches/their-patch', route: 'remotePatch' },
   ];
 

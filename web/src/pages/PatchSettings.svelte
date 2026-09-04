@@ -8,6 +8,7 @@
   import PatchSettingsMembers from './PatchSettingsMembers.svelte';
   import PatchSettingsDanger from './PatchSettingsDanger.svelte';
   import PatchSettingsNotifications from './PatchSettingsNotifications.svelte';
+  import PatchSettingsNoticeboard from './PatchSettingsNoticeboard.svelte';
   import PatchSettingsSources from './PatchSettingsSources.svelte';
   import PatchSettingsVerification from './PatchSettingsVerification.svelte';
 
@@ -31,6 +32,7 @@
     if (currentPath.endsWith('/members')) return 'members';
     if (currentPath.endsWith('/sources')) return 'sources';
     if (currentPath.endsWith('/notifications')) return 'notifications';
+    if (currentPath.endsWith('/noticeboard')) return 'noticeboard';
     if (currentPath.endsWith('/verification')) return 'verification';
     if (currentPath.endsWith('/danger')) return 'danger';
     return 'info';
@@ -68,6 +70,8 @@
       <PatchSettingsSources />
     {:else if activePage === 'notifications'}
       <PatchSettingsNotifications />
+    {:else if activePage === 'noticeboard'}
+      <PatchSettingsNoticeboard />
     {:else if activePage === 'verification'}
       <PatchSettingsVerification />
     {:else if activePage === 'danger'}
