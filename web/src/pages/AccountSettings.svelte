@@ -308,7 +308,7 @@
         </div>
         <div class="field">
           <label for="contact-note">Note</label>
-          <input id="contact-note" type="text" bind:value={contactNote} disabled={contactSaving} maxlength="200" placeholder="Signal preferred, text before calling" />
+          <input id="contact-note" type="text" bind:value={contactNote} disabled={contactSaving} maxlength="200" placeholder="How you prefer to be reached" />
         </div>
         <div class="field-actions">
           <button type="submit" class="btn btn-primary" disabled={contactSaving}>

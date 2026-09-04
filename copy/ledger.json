@@ -10305,37 +10305,37 @@
       ]
     },
     {
-      "id": "a9b35e814fa6",
-      "text": "A patch's noticeboard — its notices and the replies under them — is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
-      "words": 54,
+      "id": "1c1f6a90767a",
+      "text": "A patch's noticeboard, meaning its notices and the replies under them, is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
+      "words": 53,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
           "line": 42,
           "kind": "go-doc-block",
-          "raw": "A patch's noticeboard — its notices and the replies under them — is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
+          "raw": "A patch's noticeboard, meaning its notices and the replies under them, is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
           "quote": null
         }
       ]
     },
     {
-      "id": "61e3f3337270",
-      "text": "You can add a contact card — a phone number, an email address to reach you at, and a short note — and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
-      "words": 78,
+      "id": "db8a0008d35f",
+      "text": "You can add a contact card (a phone number, an email address to reach you at, and a short note) and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
+      "words": 76,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
           "line": 44,
           "kind": "go-doc-block",
-          "raw": "You can add a contact card — a phone number, an email address to reach you at, and a short note — and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
+          "raw": "You can add a contact card (a phone number, an email address to reach you at, and a short note) and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
           "quote": null
         }
       ]
@@ -15242,9 +15242,9 @@
       "text": "A notice whose author chose to tell members, replies on notices you're in, and reports for admins",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
@@ -15836,9 +15836,9 @@
       "text": "A notice for your patch",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
@@ -15854,9 +15854,9 @@
       "text": "Reply on a notice you're in",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
@@ -15872,9 +15872,9 @@
       "text": "A notice or reply was reported",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
@@ -26066,9 +26066,9 @@
       "text": "Contact card",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26084,9 +26084,9 @@
       "text": "How the people you organize with can reach you. Nothing here is public: a patch's admins and members see your card only once you share it with that patch, in",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26138,9 +26138,9 @@
       "text": "Not shared with any patch yet.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26156,9 +26156,9 @@
       "text": "Phone",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26174,9 +26174,9 @@
       "text": "Email to reach you at",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26192,9 +26192,9 @@
       "text": "Separate from the address you sign in with. That one is never shared.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26210,9 +26210,9 @@
       "text": "Note",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26231,19 +26231,19 @@
       ]
     },
     {
-      "id": "1804c897d64f",
-      "text": "Signal preferred, text before calling",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
+      "id": "e4053b293c6f",
+      "text": "How you prefer to be reached",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 311,
           "kind": "attr:placeholder",
-          "raw": "Signal preferred, text before calling",
+          "raw": "How you prefer to be reached",
           "quote": "\""
         }
       ]
@@ -37959,9 +37959,9 @@
       "text": "Notice",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/NoticeDetail.svelte",
@@ -37984,9 +37984,9 @@
       "text": "members told",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/NoticeDetail.svelte",
@@ -38009,9 +38009,9 @@
       "text": "replies off",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/NoticeDetail.svelte",
@@ -38034,9 +38034,9 @@
       "text": "{' · '}Replies are off on this notice.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/NoticeDetail.svelte",
@@ -38052,9 +38052,9 @@
       "text": "Reply to this notice",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/NoticeDetail.svelte",
@@ -39371,9 +39371,9 @@
       "text": "Contact cards here are shared only with this patch's admins and members.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
@@ -39389,9 +39389,9 @@
       "text": "Share yours with this patch in",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
@@ -39497,9 +39497,9 @@
       "text": "The noticeboard is for this patch's members.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39515,9 +39515,9 @@
       "text": "Become a member to read and put up notices.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39533,9 +39533,9 @@
       "text": "Put up a notice",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39554,55 +39554,55 @@
       ]
     },
     {
-      "id": "181d9f75f18f",
-      "text": "PA is broken — who has one?",
-      "words": 7,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "f1d946d60662",
+      "text": "Notice title",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
           "line": 105,
           "kind": "attr:placeholder",
-          "raw": "PA is broken — who has one?",
+          "raw": "Notice title",
           "quote": "\""
         }
       ]
     },
     {
-      "id": "8aea907dbef2",
-      "text": "Say what the room needs to know. Use **bold**, *italic*, links, and - lists.",
-      "words": 14,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "8079acce90c0",
+      "text": "Markdown is supported.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
           "line": 126,
           "kind": "attr:placeholder",
-          "raw": "Say what the room needs to know. Use **bold**, *italic*, links, and - lists.",
+          "raw": "Markdown is supported.",
           "quote": "\""
         }
       ]
     },
     {
-      "id": "a5d4f9a0476f",
-      "text": "Flyer for the potluck",
-      "words": 4,
+      "id": "20166801df17",
+      "text": "Alt text for the image",
+      "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
           "line": 138,
           "kind": "attr:placeholder",
-          "raw": "Flyer for the potluck",
+          "raw": "Alt text for the image",
           "quote": "\""
         }
       ]
@@ -39612,9 +39612,9 @@
       "text": "Take replies",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39630,9 +39630,9 @@
       "text": "You or an admin can switch this off later. Existing replies stay.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39648,9 +39648,9 @@
       "text": "Tell members",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39666,9 +39666,9 @@
       "text": "Rings the bell for every member of this patch. Off, the notice waits here for people to walk in.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39684,9 +39684,9 @@
       "text": "Read by this patch's admins and members, and nobody else.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39709,9 +39709,9 @@
       "text": "Its admins put up the notices.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39745,9 +39745,9 @@
       "text": "Nothing on the board yet.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -39763,9 +39763,9 @@
       "text": "Put up the first notice.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchNoticeboard.svelte",
@@ -41422,9 +41422,9 @@
       "text": "Noticeboard",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41440,9 +41440,9 @@
       "text": "Who puts up notices",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41458,9 +41458,9 @@
       "text": "Members too, or only this patch's admins. Anyone in the room can reply either way.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41476,9 +41476,9 @@
       "text": "The starting position. Each notice's author decides for their own, and can change it later.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41494,9 +41494,9 @@
       "text": "Reports",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41512,9 +41512,9 @@
       "text": "Reports about notices and replies come to this patch's admins. Three things can be done with one: dismiss it, remove what was reported, or switch replies off on the notice.",
       "words": 30,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41566,9 +41566,9 @@
       "text": "Already taken down.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41580,19 +41580,19 @@
       ]
     },
     {
-      "id": "cdb0ccf3b72b",
-      "text": "Dismiss — leave it up",
-      "words": 5,
+      "id": "ffe0955ad749",
+      "text": "Dismiss, leave it up",
+      "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
           "line": 160,
           "kind": "markup",
-          "raw": "Dismiss — leave it up",
+          "raw": "Dismiss, leave it up",
           "quote": null
         }
       ]
@@ -41620,9 +41620,9 @@
       "text": "Switch replies off on the notice",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
@@ -41634,19 +41634,19 @@
       ]
     },
     {
-      "id": "6f37abb9c25f",
-      "text": "Optional, for the record",
-      "words": 4,
+      "id": "59be71333c96",
+      "text": "Optional",
+      "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
           "line": 169,
           "kind": "attr:placeholder",
-          "raw": "Optional, for the record",
+          "raw": "Optional",
           "quote": "\""
         }
       ]
@@ -45375,9 +45375,9 @@
       "text": "Your contact card is empty. Fill it in under",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
@@ -45393,9 +45393,9 @@
       "text": "and share it patch by patch here.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",

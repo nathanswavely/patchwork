@@ -157,7 +157,7 @@
                 <label class="form-label">
                   Action
                   <select bind:value={action}>
-                    <option value="dismiss">Dismiss — leave it up</option>
+                    <option value="dismiss">Dismiss, leave it up</option>
                     {#if !r.gone}
                       <option value="remove">Remove the {r.entity_type}</option>
                       <option value="close_replies">Switch replies off on the notice</option>
@@ -166,7 +166,7 @@
                 </label>
                 <label class="form-label">
                   Note
-                  <textarea bind:value={note} rows="2" placeholder="Optional, for the record"></textarea>
+                  <textarea bind:value={note} rows="2" placeholder="Optional"></textarea>
                 </label>
                 <div class="resolve-actions">
                   {#if action === 'remove'}

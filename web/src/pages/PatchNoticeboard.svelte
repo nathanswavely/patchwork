@@ -102,7 +102,7 @@
     <form class="notice-form" onsubmit={(e) => { e.preventDefault(); putUp(); }}>
       <div class="field">
         <label for="notice-title">Title</label>
-        <input id="notice-title" type="text" bind:value={title} maxlength="140" disabled={submitting} placeholder="PA is broken — who has one?" />
+        <input id="notice-title" type="text" bind:value={title} maxlength="140" disabled={submitting} placeholder="Notice title" />
       </div>
 
       <div class="field">
@@ -123,7 +123,7 @@
           </div>
         {:else}
           <textarea id="notice-body" bind:value={body} rows="8" disabled={submitting}
-            placeholder="Say what the room needs to know. Use **bold**, *italic*, links, and - lists."></textarea>
+            placeholder="Markdown is supported."></textarea>
         {/if}
       </div>
 
@@ -135,7 +135,7 @@
       {#if imageUrl.trim()}
         <div class="field">
           <label for="notice-image-alt">Describe the image</label>
-          <input id="notice-image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Flyer for the potluck" />
+          <input id="notice-image-alt" type="text" bind:value={imageAlt} disabled={submitting} placeholder="Alt text for the image" />
         </div>
       {/if}
 
