@@ -814,7 +814,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 115,
+          "line": 173,
           "kind": "js-string",
           "raw": "Bands, solo artists, pop-up projects",
           "quote": "'"
@@ -839,7 +839,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 116,
+          "line": 174,
           "kind": "js-string",
           "raw": "Small group. Majority rules.",
           "quote": "'"
@@ -901,7 +901,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 117,
+          "line": 175,
           "kind": "js-string",
           "raw": "Open community, structured process. Trust builds through contribution.",
           "quote": "'"
@@ -945,7 +945,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 118,
+          "line": 176,
           "kind": "js-string",
           "raw": "Coalition-scale governance. Elected council, term limits, full accountability.",
           "quote": "'"
@@ -977,7 +977,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 118,
+          "line": 176,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -6585,6 +6585,13 @@
         {
           "file": "internal/handler/auth.go",
           "line": 44,
+          "kind": "go-error-body",
+          "raw": "rate limit exceeded",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/gazetteer.go",
+          "line": 29,
           "kind": "go-error-body",
           "raw": "rate limit exceeded",
           "quote": null
@@ -18157,7 +18164,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 443,
+          "line": 509,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -18606,7 +18613,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 241,
+          "line": 270,
           "kind": "js-string",
           "raw": "Failed to remove link",
           "quote": "'"
@@ -19178,7 +19185,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 390,
+          "line": 481,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -19351,7 +19358,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 226,
+          "line": 255,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -20592,6 +20599,42 @@
       ]
     },
     {
+      "id": "14e393ebb080",
+      "text": "Suggested from the address:",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Names what the gazetteer proposed so there is something to judge before confirming (docs/adr/082). Mechanical label.",
+      "occurrences": [
+        {
+          "file": "web/src/components/MapLocationPicker.svelte",
+          "line": 170,
+          "kind": "markup",
+          "raw": "Suggested from the address:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "61a3dc48be23",
+      "text": "This is a guess, not a placement. Drag the marker or click elsewhere to correct it, and nothing goes on the map until you confirm.",
+      "words": 25,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Carries the distinction ADR 082 rests on: a suggestion is not a placement. AI-drafted and kept for now — the voice-bearing one of this set, worth a writing pass.",
+      "occurrences": [
+        {
+          "file": "web/src/components/MapLocationPicker.svelte",
+          "line": 181,
+          "kind": "markup",
+          "raw": "This is a guess, not a placement. Drag the marker or click elsewhere to\n      correct it, and nothing goes on the map until you confirm.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "3c729cd9eb95",
       "text": "Click the map to drop the marker, then drag it to adjust. Place it as precisely or as loosely as you like. Nothing is saved until you hit Save location.",
       "words": 30,
@@ -20602,9 +20645,9 @@
       "occurrences": [
         {
           "file": "web/src/components/MapLocationPicker.svelte",
-          "line": 121,
+          "line": 184,
           "kind": "markup",
-          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n    precisely or as loosely as you like. Nothing is saved until you hit\n    Save location.",
+          "raw": "Click the map to drop the marker, then drag it to adjust. Place it as\n      precisely or as loosely as you like. Nothing is saved until you hit\n      Save location.",
           "quote": null
         }
       ]
@@ -20620,7 +20663,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapLocationPicker.svelte",
-          "line": 130,
+          "line": 194,
           "kind": "markup",
           "raw": "No marker placed yet.",
           "quote": null
@@ -23331,6 +23374,13 @@
           "kind": "attr:title",
           "raw": "Remove",
           "quote": "\""
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 331,
+          "kind": "markup",
+          "raw": "Remove",
+          "quote": null
         }
       ]
     },
@@ -25779,14 +25829,14 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 166,
+          "line": 224,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 210,
+          "line": 272,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -25986,7 +26036,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 471,
+          "line": 436,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -29452,7 +29502,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 137,
+          "line": 166,
           "kind": "js-string",
           "raw": "That is not a timezone this quilt knows",
           "quote": "'"
@@ -29790,7 +29840,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 249,
+          "line": 311,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -30643,14 +30693,14 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 264,
+          "line": 355,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 430,
+          "line": 496,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -33033,7 +33083,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 227,
+          "line": 289,
           "kind": "markup",
           "raw": "Create Patch",
           "quote": null
@@ -34208,8 +34258,8 @@
           "quote": null
         },
         {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 254,
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 320,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -34284,7 +34334,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 260,
+          "line": 351,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -34298,21 +34348,21 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 365,
+          "line": 407,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 375,
+          "line": 417,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 503,
+          "line": 468,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -34440,7 +34490,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 377,
+          "line": 419,
           "kind": "attr:placeholder",
           "raw": "Describe the image",
           "quote": "\""
@@ -35999,7 +36049,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 375,
+          "line": 466,
           "kind": "markup",
           "raw": "The lining",
           "quote": null
@@ -38598,7 +38648,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 118,
+          "line": 176,
           "kind": "js-string",
           "raw": "Arts districts, coalitions (100+ people)",
           "quote": "'"
@@ -38616,7 +38666,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 122,
+          "line": 180,
           "kind": "js-string",
           "raw": "Name is required",
           "quote": "'"
@@ -38641,7 +38691,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 159,
+          "line": 217,
           "kind": "js-string",
           "raw": "Your setup window has expired. The patch is claimable again.",
           "quote": "'"
@@ -38659,7 +38709,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 162,
+          "line": 220,
           "kind": "js-string",
           "raw": "This patch is no longer claimable.",
           "quote": "'"
@@ -38677,7 +38727,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 165,
+          "line": 223,
           "kind": "js-string",
           "raw": "Failed to complete setup",
           "quote": "'"
@@ -38695,7 +38745,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 185,
+          "line": 245,
           "kind": "js-string",
           "raw": "This patch is yours",
           "quote": "'"
@@ -38713,7 +38763,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 187,
+          "line": 247,
           "kind": "js-string",
           "raw": "Patch set up. Finish edits in Patch Settings.",
           "quote": "'"
@@ -38731,7 +38781,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 206,
+          "line": 268,
           "kind": "js-string",
           "raw": "Patch created",
           "quote": "'"
@@ -38749,7 +38799,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 209,
+          "line": 271,
           "kind": "js-string",
           "raw": "Failed to create patch",
           "quote": "'"
@@ -38767,7 +38817,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 221,
+          "line": 283,
           "kind": "markup",
           "raw": "Set up your patch",
           "quote": null
@@ -38785,7 +38835,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 222,
+          "line": 284,
           "kind": "markup",
           "raw": "Complete this patch's details to activate it.",
           "quote": null
@@ -38803,7 +38853,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 224,
+          "line": 286,
           "kind": "markup",
           "raw": "Approval expires {formatExpiry(expiresAt)}.",
           "quote": null
@@ -38821,7 +38871,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 228,
+          "line": 290,
           "kind": "markup",
           "raw": "Start a new community, collective, venue, or group.",
           "quote": null
@@ -38839,7 +38889,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 230,
+          "line": 292,
           "kind": "markup",
           "raw": "Creating a patch makes you its admin. Know a group that isn't yours to run?",
           "quote": null
@@ -38857,7 +38907,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 230,
+          "line": 292,
           "kind": "markup",
           "raw": "instead.",
           "quote": null
@@ -38875,7 +38925,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 237,
+          "line": 299,
+          "kind": "markup",
+          "raw": "Address",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 319,
           "kind": "markup",
           "raw": "Address",
           "quote": null
@@ -38900,7 +38957,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 239,
+          "line": 301,
           "kind": "markup",
           "raw": "This is the patch's existing address.",
           "quote": null
@@ -38918,7 +38975,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 244,
+          "line": 306,
           "kind": "markup",
           "raw": "Name",
           "quote": null
@@ -38943,7 +39000,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 245,
+          "line": 307,
           "kind": "attr:placeholder",
           "raw": "e.g. Gallery Row, Lancaster Beats Lab",
           "quote": "\""
@@ -38961,7 +39018,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 250,
+          "line": 312,
           "kind": "attr:placeholder",
           "raw": "What is this patch about?",
           "quote": "\""
@@ -38979,10 +39036,53 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 255,
+          "line": 325,
           "kind": "attr:placeholder",
           "raw": "Where is this based?",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "ea8ffbb7ade7",
+      "text": "On the map.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "State readout beside the create form's Remove control. Mechanical label.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 331,
+          "kind": "markup",
+          "raw": "On the map.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9aa1e753859f",
+      "text": "Looking for this address...",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Transient status while the gazetteer lookup runs. Mechanical label.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 334,
+          "kind": "markup",
+          "raw": "Looking for this address...",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 370,
+          "kind": "markup",
+          "raw": "Looking for this address...",
+          "quote": null
         }
       ]
     },
@@ -38997,7 +39097,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 259,
+          "line": 350,
           "kind": "markup",
           "raw": "Website",
           "quote": null
@@ -39022,7 +39122,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 266,
+          "line": 357,
           "kind": "markup",
           "raw": "What kind of patch is this? Tags help people find you, and new\n            patches are placed near others with the same tags on the quilt.\n            The first tag decides your default motif.",
           "quote": null
@@ -39040,7 +39140,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 274,
+          "line": 365,
           "kind": "markup",
           "raw": "Tile",
           "quote": null
@@ -39058,7 +39158,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 276,
+          "line": 367,
           "kind": "markup",
           "raw": "How this patch looks on the quilt. You can change it anytime\n            in Patch Settings → Appearance, and draft your own block there too.",
           "quote": null
@@ -39076,7 +39176,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 288,
+          "line": 379,
           "kind": "attr:aria-label",
           "raw": "Tile preview",
           "quote": "\""
@@ -39101,7 +39201,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 295,
+          "line": 386,
           "kind": "attr:title",
           "raw": "Rotate 90°",
           "quote": "\""
@@ -39126,7 +39226,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 301,
+          "line": 392,
           "kind": "attr:aria-label",
           "raw": "Palette",
           "quote": "\""
@@ -39151,7 +39251,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 320,
+          "line": 411,
           "kind": "attr:aria-label",
           "raw": "Block",
           "quote": "\""
@@ -39176,7 +39276,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 348,
+          "line": 439,
           "kind": "markup",
           "raw": "Motif",
           "quote": null
@@ -39201,7 +39301,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 350,
+          "line": 441,
           "kind": "markup",
           "raw": "Optional. The mark that appears beside the name on the quilt.\n            Unset, it follows your first tag. You can change it later in\n            Patch Settings.",
           "quote": null
@@ -39219,7 +39319,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 377,
+          "line": 468,
           "kind": "markup",
           "raw": "Every patch starts with the lining — this quilt's shared community\n            standards. It is always public, and if your patch amends it, the\n            changes are public and the patch is marked as having amended the\n            lining.",
           "quote": null
@@ -39237,7 +39337,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 397,
+          "line": 488,
           "kind": "markup",
           "raw": "Governance Template",
           "quote": null
@@ -39255,7 +39355,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 398,
+          "line": 489,
           "kind": "markup",
           "raw": "How should this patch be organized? You can change this later.",
           "quote": null
@@ -40345,7 +40445,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 50,
+          "line": 79,
           "kind": "js-string",
           "raw": "Map location saved",
           "quote": "'"
@@ -40363,7 +40463,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 54,
+          "line": 83,
           "kind": "js-string",
           "raw": "Failed to save map location",
           "quote": "'"
@@ -40381,7 +40481,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 67,
+          "line": 96,
           "kind": "js-string",
           "raw": "Removed from map",
           "quote": "'"
@@ -40399,7 +40499,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 71,
+          "line": 100,
           "kind": "js-string",
           "raw": "Failed to remove from map",
           "quote": "'"
@@ -40417,7 +40517,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 114,
+          "line": 143,
           "kind": "js-string",
           "raw": "Tags saved",
           "quote": "'"
@@ -40435,7 +40535,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 118,
+          "line": 147,
           "kind": "js-string",
           "raw": "Failed to save tags",
           "quote": "'"
@@ -40453,7 +40553,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 181,
+          "line": 210,
           "kind": "js-string",
           "raw": "Could not save the image",
           "quote": "'"
@@ -40471,7 +40571,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 194,
+          "line": 223,
           "kind": "js-string",
           "raw": "On the quilt. Anyone can find this patch through the quilt, search, the map, and public event feeds, and other quilts can follow it.",
           "quote": "'"
@@ -40489,7 +40589,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 200,
+          "line": 229,
           "kind": "js-string",
           "raw": "Off the quilt. Kept out of the quilt, search, the map, and public feeds, and it does not federate.",
           "quote": "'"
@@ -40507,7 +40607,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 212,
+          "line": 241,
           "kind": "js-string",
           "raw": "Failed to save visibility",
           "quote": "'"
@@ -40525,7 +40625,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 238,
+          "line": 267,
           "kind": "js-string",
           "raw": "Link removed",
           "quote": "'"
@@ -40543,7 +40643,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 257,
+          "line": 286,
           "kind": "js-string",
           "raw": "Link added",
           "quote": "'"
@@ -40561,7 +40661,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 260,
+          "line": 289,
           "kind": "js-string",
           "raw": "Failed to add link",
           "quote": "'"
@@ -40579,7 +40679,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 273,
+          "line": 302,
           "kind": "attr:placeholder",
           "raw": "Patch name",
           "quote": "\""
@@ -40597,7 +40697,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 281,
+          "line": 310,
           "kind": "attr:placeholder",
           "raw": "Describe this patch",
           "quote": "\""
@@ -40615,7 +40715,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 289,
+          "line": 327,
           "kind": "attr:placeholder",
           "raw": "e.g. Lancaster, PA",
           "quote": "\""
@@ -40633,9 +40733,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 310,
+          "line": 348,
           "kind": "markup",
-          "raw": "An IANA name. Leave it empty to follow the quilt{instanceTimezone\n      ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n      : ''}.",
+          "raw": "An IANA name. Leave it empty to follow the quilt{instanceTimezone\n        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n        : ''}.",
           "quote": null
         }
       ]
@@ -40651,7 +40751,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 319,
+          "line": 356,
           "kind": "markup",
           "raw": "Map location",
           "quote": null
@@ -40669,7 +40769,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 323,
+          "line": 359,
           "kind": "markup",
           "raw": "On the map at",
           "quote": null
@@ -40687,7 +40787,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 326,
+          "line": 362,
           "kind": "markup",
           "raw": "Not on the map.",
           "quote": null
@@ -40705,9 +40805,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 329,
+          "line": 365,
           "kind": "markup",
-          "raw": "Placing a marker adds this patch to the map. The marker can be\n      approximate, and is separate from the address above.",
+          "raw": "Placing a marker adds this patch to the map. The marker can be\n        approximate, and is separate from the address above.",
           "quote": null
         }
       ]
@@ -40723,7 +40823,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 374,
+          "line": 416,
           "kind": "markup",
           "raw": "Image",
           "quote": null
@@ -40741,135 +40841,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 380,
-          "kind": "markup",
-          "raw": "Link a picture you already have online. Patchwork points at it and never\n      keeps a copy, so it stays yours.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "7448611d5f93",
-      "text": "Visibility",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 397,
-          "kind": "markup",
-          "raw": "Visibility",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "1974b0f46aa7",
-      "text": "This is about the patch itself — where it shows up. Events, members, and documents each carry their own visibility.",
-      "words": 20,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 400,
-          "kind": "markup",
-          "raw": "This is about the patch itself — where it shows up. Events, members, and\n      documents each carry their own visibility.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "bdbcb49c174d",
-      "text": "Either way, anyone holding a direct link can open this patch's page. Private keeps it from being found, not from being visited.",
-      "words": 22,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 422,
           "kind": "markup",
-          "raw": "Either way, anyone holding a direct link can open this patch's page. Private\n      keeps it from being found, not from being visited.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "39390c4e13ed",
-      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
-      "words": 24,
-      "tier": "prose",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 433,
-          "kind": "markup",
-          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "54d95a186127",
-      "text": "Event suggestions",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 452,
-          "kind": "markup",
-          "raw": "Event suggestions",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "dfad4265d056",
-      "text": "Let non-members suggest events to this patch",
-      "words": 7,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 461,
-          "kind": "markup",
-          "raw": "Let non-members suggest events to this patch",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d7126c87c934",
-      "text": "Suggestions wait in your events queue until an admin approves them.",
-      "words": 11,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 464,
-          "kind": "markup",
-          "raw": "Suggestions wait in your events queue until an admin approves them.",
+          "raw": "Link a picture you already have online. Patchwork points at it and never\n      keeps a copy, so it stays yours.",
           "quote": null
         }
       ]
@@ -40885,7 +40859,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 495,
+          "line": 460,
           "kind": "markup",
           "raw": "No links added.",
           "quote": null
@@ -40903,7 +40877,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 509,
+          "line": 474,
           "kind": "attr:placeholder",
           "raw": "Label (optional)",
           "quote": "\""
@@ -40914,6 +40888,132 @@
           "kind": "attr:placeholder",
           "raw": "Label (optional)",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "39390c4e13ed",
+      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
+      "words": 24,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 499,
+          "kind": "markup",
+          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7448611d5f93",
+      "text": "Visibility",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 521,
+          "kind": "markup",
+          "raw": "Visibility",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1974b0f46aa7",
+      "text": "This is about the patch itself — where it shows up. Events, members, and documents each carry their own visibility.",
+      "words": 20,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 524,
+          "kind": "markup",
+          "raw": "This is about the patch itself — where it shows up. Events, members, and\n      documents each carry their own visibility.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bdbcb49c174d",
+      "text": "Either way, anyone holding a direct link can open this patch's page. Private keeps it from being found, not from being visited.",
+      "words": 22,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 546,
+          "kind": "markup",
+          "raw": "Either way, anyone holding a direct link can open this patch's page. Private\n      keeps it from being found, not from being visited.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "54d95a186127",
+      "text": "Event suggestions",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 554,
+          "kind": "markup",
+          "raw": "Event suggestions",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dfad4265d056",
+      "text": "Let non-members suggest events to this patch",
+      "words": 7,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 563,
+          "kind": "markup",
+          "raw": "Let non-members suggest events to this patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d7126c87c934",
+      "text": "Suggestions wait in your events queue until an admin approves them.",
+      "words": 11,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 566,
+          "kind": "markup",
+          "raw": "Suggestions wait in your events queue until an admin approves them.",
+          "quote": null
         }
       ]
     },

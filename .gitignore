@@ -64,3 +64,7 @@ web/e2e-empty/.session.json
 # separate (private) checkout to edit them from anywhere — see
 # tools/copy-ledger/README.md.
 /copy/drafts/
+
+# Built by `go build ./cmd/gazetteer/`; the index it writes is not committed either.
+/gazetteer
+gazetteer.db

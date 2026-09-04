@@ -1,4 +1,4 @@
-.PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate \
+.PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate gazetteer \
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
         copy-test copy-report
 
@@ -20,6 +20,15 @@ dev: build
 	$(PATCHWORK_BIN) & \
 	cd web && npm run dev & \
 	wait
+
+# Build the local place index from an OpenStreetMap extract (docs/adr/082).
+# Run this on a machine with disk and memory to spare, then copy the result
+# next to patchwork.db — the server never parses an extract.
+#   make gazetteer IN=pennsylvania-latest.osm.bz2
+# An extract you hold as .pbf converts first:
+#   osmium cat in.osm.pbf -o out.osm.bz2
+gazetteer:
+	go run ./cmd/gazetteer/ -in $(IN)
 
 seed:
 	go run ./cmd/seed/

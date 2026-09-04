@@ -134,6 +134,89 @@ an optional expiry. Share them out-of-band: Signal, email, a QR code on a
 flyer. Whoever clicks one creates an account and enrolls a passkey, no email
 round-trip needed.
 
+## Address suggestions (optional)
+
+Start by asking whether you need it. Without any of this, a patch admin places
+their marker by dragging it on a map, which works and is what the reference
+instance did for months. What a gazetteer adds is that typing an address
+offers a marker to confirm, so more patches end up on the map instead of
+stopping at the address field.
+
+It is one file, built on your laptop and copied to the server. Nothing is
+fetched at runtime and there is no account, key or third-party service
+anywhere in it (docs/adr/082).
+
+**1. Get an extract of your region.** Any OpenStreetMap XML extract covering
+your community will do — Geofabrik publishes them per country and state. The
+build reads `.osm`, `.osm.gz` and `.osm.bz2`. If what you have is the denser
+`.osm.pbf`, convert it once:
+
+```sh
+osmium cat pennsylvania-latest.osm.pbf -o pennsylvania.osm.bz2
+```
+
+**2. Crop it to your radius.** The build reads `geographic.latitude`,
+`longitude` and `radius` from your `patchwork.yaml`, so it keeps only the
+places your instance actually covers:
+
+```sh
+make gazetteer IN=pennsylvania.osm.bz2
+# or: go run ./cmd/gazetteer/ -in pennsylvania.osm.bz2 -out data/gazetteer.db
+```
+
+It reads the extract twice and holds the in-radius nodes in memory, which is
+bounded by your radius rather than by the size of the extract. To give you an
+order of magnitude, a 264 MB extract (1.2 million nodes, 180 thousand ways)
+cropped to a 25 km radius took **18 seconds, peaked at 29 MB of memory, and
+produced a 4.3 MB index of about 22 thousand places**. Those figures come from
+a generated extract of that size rather than a real regional download, so
+treat them as the right order of magnitude and not a promise — the memory in
+particular scales with how many nodes fall inside your radius, not with the
+file.
+
+The server never parses an extract; it only reads the result.
+
+**3. Copy the file to the server**, next to `patchwork.db`:
+
+```sh
+scp data/gazetteer.db you@your-server:/srv/patchwork/data/gazetteer.db
+docker compose restart patchwork
+```
+
+Lookups run in single-digit milliseconds against an index that size, so it
+comfortably sits behind a form field somebody just tabbed out of.
+
+Startup logs how many places it loaded:
+
+```
+gazetteer: 214803 places from data/gazetteer.db
+```
+
+That is the whole installation. The server looks for `gazetteer.db` beside the
+database, so there is nothing to configure. Set `gazetteer.path` only if you
+keep it somewhere else — and note that a path you name explicitly is one the
+server will warn about at startup if it cannot open it, whereas the default
+location is allowed to be simply absent.
+
+**Refreshing** is replacing the file and restarting. **Removing** the feature
+is deleting the file and restarting.
+
+A few things worth knowing before you field questions about it:
+
+- **A suggestion is never saved on its own.** It appears as a hollow, dashed
+  marker that somebody has to confirm. A patch created without confirming one
+  keeps its address and stays off the map, which is deliberate.
+- **Plenty of addresses resolve to nothing**, and that is not a fault. "Above
+  the record shop on Prince St" is a perfectly good address that no index can
+  place. The picker just opens with no marker in it.
+- **A street name that exists in three townships suggests nothing** rather
+  than picking one, since a confident wrong answer is worse than none.
+- **The index does not travel in a seamrip.** It is a cache of somebody
+  else's dataset, not community data. A fork rebuilds or re-copies it.
+- **Attribution.** The data is OpenStreetMap's, under ODbL. Your maps already
+  carry the OpenStreetMap credit, so this adds no new obligation, but it is
+  the same data and the same licence.
+
 ## Email (optional)
 
 Start by asking whether you need it. Invite links and passkeys run a full

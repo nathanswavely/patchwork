@@ -104,6 +104,22 @@ server:
 database:
   path: "data/patchwork.db"
 
+# The gazetteer: an optional local place index (docs/adr/082). With one
+# installed, typing a patch's address offers a suggested marker to confirm;
+# without one, every marker is placed by hand exactly as before. Nothing here
+# is fetched at runtime — the file is built offline and copied in:
+#
+#   osmium cat pennsylvania-latest.osm.pbf -o pennsylvania.osm.bz2   # if .pbf
+#   go run ./cmd/gazetteer -in pennsylvania.osm.bz2
+#
+# The build reads the centre and radius from geographic: above, so an instance
+# states where it is once. Leave path unset and the server picks up
+# "gazetteer.db" beside the database if it is there, which makes installing
+# the feature a file copy. Name a path and a file that will not open is
+# reported at startup.
+# gazetteer:
+#   path: "data/gazetteer.db"
+
 # How long a signed-in session lasts (docs/adr/017).
 #
 # Sessions are deliberately long. Volunteer organizers check in from a phone

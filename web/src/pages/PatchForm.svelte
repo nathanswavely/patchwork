@@ -7,6 +7,9 @@
   import TemplatePreviewDrawer from '../components/TemplatePreviewDrawer.svelte';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
   import TagPicker from '../components/TagPicker.svelte';
+  import MapLocationPicker from '../components/MapLocationPicker.svelte';
+  import { suggestPlace, worthLookingUp } from '../lib/placeSuggestion.js';
+  import { hasMapLocation } from '../lib/mapLocation.js';
   import { MOTIFS, MOTIF_KEYS } from '../lib/patchIcons.js';
   import { PALETTES, PALETTE_KEYS, paletteForPatch } from '../lib/quiltTheme.js';
   import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
@@ -29,6 +32,61 @@
   let description = $state(initial?.description || '');
   let address = $state(initial?.address || '');
   let website = $state(initial?.website || '');
+
+  // Map location, offered here rather than only in settings (docs/adr/082).
+  // The address and the marker stay separate acts: leaving the address field
+  // opens the picker and may propose a marker, and the patch is created with
+  // no coordinates unless somebody confirms one. Accepting by submitting the
+  // form would make the point derived rather than placed, which is the thing
+  // the ADR exists to prevent.
+  let latitude = $state(initial?.latitude ?? null);
+  let longitude = $state(initial?.longitude ?? null);
+  let showPicker = $state(hasMapLocation(initial?.latitude, initial?.longitude));
+  let suggestion = $state(null);
+  let lookingUp = $state(false);
+  let lastLookedUp = '';
+  let mapCenter = $state(null);
+  let placed = $derived(hasMapLocation(latitude, longitude));
+
+  api('instance')
+    .then((inst) => {
+      if (inst?.geography?.latitude != null && inst?.geography?.longitude != null) {
+        mapCenter = { lat: inst.geography.latitude, lng: inst.geography.longitude };
+      }
+    })
+    .catch(() => {});
+
+  // Fired when the address field loses focus, not on every keystroke: a map
+  // that materializes mid-typing shoves every control below it down the page
+  // while somebody is still using one.
+  async function addressSettled() {
+    const q = address.trim();
+    if (!worthLookingUp(q)) return;
+    if (q === lastLookedUp) return;
+    lastLookedUp = q;
+    showPicker = true;
+    // A marker the person already placed is theirs; never propose over it.
+    if (placed) return;
+    lookingUp = true;
+    try {
+      suggestion = await suggestPlace(q);
+    } finally {
+      lookingUp = false;
+    }
+  }
+
+  function confirmPlacement(lat, lng) {
+    latitude = lat;
+    longitude = lng;
+    suggestion = null;
+  }
+
+  function clearPlacement() {
+    latitude = null;
+    longitude = null;
+    suggestion = null;
+    showPicker = false;
+  }
   let visibility = $state(initial?.visibility || 'public');
   // Minimal is the default (docs/adr/041): the typical new patch is one
   // person running a listing; ceremony is opted into, not inherited.
@@ -177,6 +235,8 @@
             description: description.trim() || undefined,
             address: address.trim() || undefined,
             website: website.trim() || undefined,
+            latitude: placed ? latitude : undefined,
+            longitude: placed ? longitude : undefined,
             visibility,
             appearance,
             tags: tags.length > 0 ? tags : undefined,
@@ -197,6 +257,8 @@
         description: description.trim() || undefined,
         address: address.trim() || undefined,
         website: website.trim() || undefined,
+        latitude: placed ? latitude : undefined,
+        longitude: placed ? longitude : undefined,
         visibility,
         template,
         appearance,
@@ -251,8 +313,37 @@
         </div>
 
         <div class="field">
-          <label for="address">Location</label>
-          <input id="address" type="text" bind:value={address} disabled={submitting} placeholder="Where is this based?" />
+          <!-- "Location" names an event's venue and never this field
+               (CONTEXT.md, docs/adr/046). The patch's own prose field is
+               the Address, which is what Patch Settings calls it too. -->
+          <label for="address">Address</label>
+          <input
+            id="address"
+            type="text"
+            bind:value={address}
+            disabled={submitting}
+            placeholder="Where is this based?"
+            onblur={addressSettled}
+          />
+
+          {#if placed}
+            <p class="place-state">
+              On the map. <button type="button" class="link-btn" onclick={clearPlacement}>Remove</button>
+            </p>
+          {:else if lookingUp}
+            <p class="place-state muted">Looking for this address...</p>
+          {/if}
+
+          {#if showPicker && !placed}
+            <MapLocationPicker
+              lat={latitude}
+              lng={longitude}
+              center={mapCenter}
+              {suggestion}
+              onSave={confirmPlacement}
+              onCancel={clearPlacement}
+            />
+          {/if}
         </div>
 
         <div class="field">
@@ -458,6 +549,21 @@
     flex-direction: column;
     gap: 0.25rem;
     flex: 1;
+  }
+
+  .place-state {
+    font-size: 0.82rem;
+    margin: 0.4rem 0 0;
+  }
+
+  .link-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   .field label {

@@ -7,6 +7,7 @@
   import TagPicker from '../components/TagPicker.svelte';
   import MapLocationPicker from '../components/MapLocationPicker.svelte';
   import { hasMapLocation, formatCoord } from '../lib/mapLocation.js';
+  import { suggestPlace, worthLookingUp } from '../lib/placeSuggestion.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -22,6 +23,34 @@
   // leaving it empty actually means rather than just looking unset.
   let instanceTimezone = $state('');
   let onMap = $derived(hasMapLocation(node?.latitude, node?.longitude));
+
+  // A suggested placement from the address (docs/adr/082), offered only to a
+  // patch that is not on the map yet. A patch someone already placed keeps
+  // the point they chose: proposing over a deliberate placement is the one
+  // thing the confirm step exists to prevent.
+  let suggestion = $state(null);
+  let lookingUp = $state(false);
+
+  // The lookup runs when the picker opens rather than on page load, so
+  // visiting settings costs nothing for a patch nobody is placing.
+  async function openPicker() {
+    placingLocation = true;
+    suggestion = null;
+    if (onMap) return;
+    const address = (node?.address || '').trim();
+    if (!worthLookingUp(address)) return;
+    lookingUp = true;
+    try {
+      suggestion = await suggestPlace(address);
+    } finally {
+      lookingUp = false;
+    }
+  }
+
+  function closePicker() {
+    placingLocation = false;
+    suggestion = null;
+  }
   let locationReadout = $derived(
     onMap ? formatCoord(node.latitude, node.longitude) : ''
   );
@@ -281,80 +310,93 @@
     placeholder="Describe this patch"
   />
 
-  <InlineEdit
-    label="Location"
-    value={node?.address || ''}
-    type="text"
-    onSave={(v) => saveField('address', v)}
-    placeholder="e.g. Lancaster, PA"
-  />
-
-  <!--
-    Where this patch keeps time (docs/adr/045). Next to the address because
-    it is the same claim in the units a clock uses, and separate from the
-    map marker for the same reason the address is: a pin is a position, a
-    zone is what its clock reads.
-
-    Every event this patch hosts inherits it, and a calendar feed the patch
-    attaches is read in it — so a blank here is not neutral, it means the
-    quilt's zone.
-  -->
-  <InlineEdit
-    label="Timezone"
-    value={node?.timezone || ''}
-    type="text"
-    onSave={(v) => saveTimezone(v)}
-    placeholder={instanceTimezone || 'e.g. America/New_York'}
-  />
-  <p class="field-hint muted">
-    An IANA name. Leave it empty to follow the quilt{instanceTimezone
-      ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`
-      : ''}.
-  </p>
-
-  <!-- Map location section (issue #4). Separate from the address prose
-       above: an address never implies a map position. -->
-  <div class="links-section">
+  <!-- Location: the address, the clock it keeps, and the marker on the map,
+       together because they all say where this patch is — in three different
+       units. Each stays its own field: an address never implies a map
+       position, and a pin is a position where a zone is what its clock
+       reads (docs/adr/045). -->
+  <div class="links-section location-section">
     <div class="links-header">
-      <span class="links-label">Map location</span>
+      <span class="links-label">Location</span>
     </div>
-    {#if onMap}
-      <p class="location-state">
-        On the map at <span class="location-coords">{locationReadout}</span>
-      </p>
-    {:else}
-      <p class="muted">Not on the map.</p>
-    {/if}
-    <p class="muted tags-hint">
-      Placing a marker adds this patch to the map. The marker can be
-      approximate, and is separate from the address above.
+    <InlineEdit
+      label="Address"
+      value={node?.address || ''}
+      type="text"
+      onSave={(v) => saveField('address', v)}
+      placeholder="e.g. Lancaster, PA"
+    />
+
+    <!--
+      Where this patch keeps time (docs/adr/045). Next to the address because
+      it is the same claim in the units a clock uses, and separate from the
+      map marker for the same reason the address is: a pin is a position, a
+      zone is what its clock reads.
+
+      Every event this patch hosts inherits it, and a calendar feed the patch
+      attaches is read in it — so a blank here is not neutral, it means the
+      quilt's zone.
+    -->
+    <InlineEdit
+      label="Timezone"
+      value={node?.timezone || ''}
+      type="text"
+      onSave={(v) => saveTimezone(v)}
+      placeholder={instanceTimezone || 'e.g. America/New_York'}
+    />
+    <p class="field-hint muted">
+      An IANA name. Leave it empty to follow the quilt{instanceTimezone
+        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`
+        : ''}.
     </p>
 
-    {#if placingLocation}
-      <MapLocationPicker
-        lat={node?.latitude ?? null}
-        lng={node?.longitude ?? null}
-        center={mapCenter}
-        saving={savingLocation}
-        onSave={saveLocation}
-        onCancel={() => (placingLocation = false)}
-      />
-    {:else}
-      <div class="location-actions">
-        <button class="btn btn-secondary btn-sm" onclick={() => (placingLocation = true)}>
-          {onMap ? 'Adjust map location' : 'Set map location'}
-        </button>
-        {#if onMap}
-          <ConfirmAction
-            label="Remove from map"
-            confirmLabel="Remove"
-            variant="danger"
-            disabled={savingLocation}
-            onConfirm={removeLocation}
-          />
-        {/if}
-      </div>
-    {/if}
+    <!-- Map location (issue #4). Sharing a section with the address does
+         not make them one claim: an address never implies a map position. -->
+    <div class="map-block">
+      <span class="sub-label">Map location</span>
+      {#if onMap}
+        <p class="location-state">
+          On the map at <span class="location-coords">{locationReadout}</span>
+        </p>
+      {:else}
+        <p class="muted">Not on the map.</p>
+      {/if}
+      <p class="muted tags-hint">
+        Placing a marker adds this patch to the map. The marker can be
+        approximate, and is separate from the address above.
+      </p>
+
+      {#if lookingUp}
+        <p class="muted tags-hint">Looking for this address...</p>
+      {/if}
+
+      {#if placingLocation}
+        <MapLocationPicker
+          lat={node?.latitude ?? null}
+          lng={node?.longitude ?? null}
+          center={mapCenter}
+          saving={savingLocation}
+          {suggestion}
+          onSave={saveLocation}
+          onCancel={closePicker}
+        />
+      {:else}
+        <div class="location-actions">
+          <button class="btn btn-secondary btn-sm" onclick={openPicker}>
+            {onMap ? 'Adjust map location' : 'Set map location'}
+          </button>
+          {#if onMap}
+            <ConfirmAction
+              label="Remove from map"
+              confirmLabel="Remove"
+              variant="danger"
+              disabled={savingLocation}
+              onConfirm={removeLocation}
+            />
+          {/if}
+        </div>
+      {/if}
+    </div>
   </div>
 
   <InlineEdit
@@ -386,83 +428,6 @@
         {savingImage ? 'Saving...' : 'Save image'}
       </button>
     {/if}
-  </div>
-
-  <!-- Visibility. The old control was a bare Public/Private select, which
-       named a state without saying what it does — and said nothing about the
-       one thing admins asked: whether it covers the patch's documents too
-       (it doesn't; charters carry their own switch, docs/adr/036). -->
-  <div class="links-section">
-    <div class="links-header">
-      <span class="links-label">Visibility</span>
-    </div>
-    <p class="muted tags-hint">
-      This is about the patch itself — where it shows up. Events, members, and
-      documents each carry their own visibility.
-    </p>
-    <div class="choice-list">
-      {#each visibilityOptions as opt}
-        <label class="choice" class:selected={currentVisibility === opt.value}>
-          <input
-            type="radio"
-            name="patch-visibility"
-            value={opt.value}
-            checked={currentVisibility === opt.value}
-            disabled={savingVisibility}
-            onchange={() => saveVisibility(opt.value)}
-          />
-          <span class="choice-text">
-            <span class="choice-label">{opt.label}</span>
-            <span class="muted choice-desc">{opt.description}</span>
-          </span>
-        </label>
-      {/each}
-    </div>
-    <p class="muted tags-hint caveat">
-      Either way, anyone holding a direct link can open this patch's page. Private
-      keeps it from being found, not from being visited.
-    </p>
-  </div>
-
-  <!-- Tags section -->
-  <div class="links-section">
-    <div class="links-header">
-      <span class="links-label">Tags</span>
-    </div>
-    <p class="muted tags-hint">
-      Tags help people find this patch, and the quilt places patches with
-      shared tags near each other. The first tag decides the default motif.
-    </p>
-    <TagPicker bind:selected={tags} disabled={savingTags} />
-    {#if tagsDirty}
-      <div class="tags-actions">
-        <button class="btn btn-primary btn-sm" onclick={saveTags} disabled={savingTags}>
-          {savingTags ? 'Saving...' : 'Save tags'}
-        </button>
-        <button class="btn btn-secondary btn-sm" onclick={resetTags} disabled={savingTags}>
-          Cancel
-        </button>
-      </div>
-    {/if}
-  </div>
-
-  <!-- Event suggestions section (docs/adr/026) -->
-  <div class="links-section">
-    <div class="links-header">
-      <span class="links-label">Event suggestions</span>
-    </div>
-    <label class="toggle-row">
-      <input
-        type="checkbox"
-        checked={node?.accept_event_suggestions === true}
-        disabled={savingSuggestions}
-        onchange={(e) => saveSuggestions(e.target.checked)}
-      />
-      <span>Let non-members suggest events to this patch</span>
-    </label>
-    <p class="muted tags-hint" style="margin-top: 0.35rem;">
-      Suggestions wait in your events queue until an admin approves them.
-    </p>
   </div>
 
   <!-- Links section -->
@@ -524,6 +489,84 @@
       </button>
     {/if}
   </div>
+
+  <!-- Tags section -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Tags</span>
+    </div>
+    <p class="muted tags-hint">
+      Tags help people find this patch, and the quilt places patches with
+      shared tags near each other. The first tag decides the default motif.
+    </p>
+    <TagPicker bind:selected={tags} disabled={savingTags} />
+    {#if tagsDirty}
+      <div class="tags-actions">
+        <button class="btn btn-primary btn-sm" onclick={saveTags} disabled={savingTags}>
+          {savingTags ? 'Saving...' : 'Save tags'}
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick={resetTags} disabled={savingTags}>
+          Cancel
+        </button>
+      </div>
+    {/if}
+  </div>
+
+  <!-- Visibility. The old control was a bare Public/Private select, which
+       named a state without saying what it does — and said nothing about the
+       one thing admins asked: whether it covers the patch's documents too
+       (it doesn't; charters carry their own switch, docs/adr/036). -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Visibility</span>
+    </div>
+    <p class="muted tags-hint">
+      This is about the patch itself — where it shows up. Events, members, and
+      documents each carry their own visibility.
+    </p>
+    <div class="choice-list">
+      {#each visibilityOptions as opt}
+        <label class="choice" class:selected={currentVisibility === opt.value}>
+          <input
+            type="radio"
+            name="patch-visibility"
+            value={opt.value}
+            checked={currentVisibility === opt.value}
+            disabled={savingVisibility}
+            onchange={() => saveVisibility(opt.value)}
+          />
+          <span class="choice-text">
+            <span class="choice-label">{opt.label}</span>
+            <span class="muted choice-desc">{opt.description}</span>
+          </span>
+        </label>
+      {/each}
+    </div>
+    <p class="muted tags-hint caveat">
+      Either way, anyone holding a direct link can open this patch's page. Private
+      keeps it from being found, not from being visited.
+    </p>
+  </div>
+
+  <!-- Event suggestions section (docs/adr/026) -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Event suggestions</span>
+    </div>
+    <label class="toggle-row">
+      <input
+        type="checkbox"
+        checked={node?.accept_event_suggestions === true}
+        disabled={savingSuggestions}
+        onchange={(e) => saveSuggestions(e.target.checked)}
+      />
+      <span>Let non-members suggest events to this patch</span>
+    </label>
+    <p class="muted tags-hint" style="margin-top: 0.35rem;">
+      Suggestions wait in your events queue until an admin approves them.
+    </p>
+  </div>
+
 
 </div>
 
@@ -730,6 +773,45 @@
     display: flex;
     gap: 0.4rem;
     margin-top: 0.5rem;
+  }
+
+  /* The address, timezone and map marker are sub-fields of one Location
+     section, so their labels step down from the section's own. */
+  .location-section :global(.inline-edit) {
+    padding: 0.4rem 0;
+    border-top: none;
+  }
+
+  .location-section :global(.inline-edit-label),
+  .sub-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--color-text-muted);
+  }
+
+  /* The field after the section gets the same rule the fields draw between
+     themselves; without it the section just runs into Website. */
+  .location-section + :global(.inline-edit) {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .location-section .field-hint {
+    margin: -0.25rem 0 0.75rem;
+  }
+
+  .map-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-top: 0.4rem;
+  }
+
+  .map-block .tags-hint,
+  .map-block .location-state,
+  .map-block .location-actions {
+    margin: 0;
   }
 
   .location-state {
