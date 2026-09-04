@@ -1,8 +1,10 @@
 # ADR 081: A noticeboard with replies, not a feed
 
-Date: 2026-09-04. Status: **proposed** — grilled in session against
-CONTEXT.md and the ADRs below; not yet built. Two questions remain open at
-the end (seamrip, notice body) and are listed as such rather than guessed.
+Date: 2026-09-04. Status: **accepted**; not yet built. Grilled in session
+against CONTEXT.md and the ADRs below, one branch of the design tree at a
+time; every decision here was put as a question with a recommendation and
+answered, and the two that went the other way (replies, and who gets
+told) are recorded as the first recommendation being overruled.
 
 ## Context
 
@@ -125,6 +127,33 @@ proposal's word so "replies are off" never reads as a closed deliberation.
 textile route — a *bee*, the quilters' gathering where the talking happens
 — was considered and refused: a bee is an event, and Events is a tab.
 
+**7. Notices and replies travel in a seamrip; reports stay behind.** The
+same two precedents the boundary already holds: proposal comments travel,
+because deliberation is community data and a fork that lost it would lose
+the record of why things were decided; content reports stay, because
+moderation history is about the old instance's handling. The noticeboard
+is where "the PA is broken" and "the landlord called" live — a fork
+arriving with its charters and votes and an empty noticeboard would have
+lost the community's working memory. The per-notice reply switch travels
+with the notice, so a locked argument stays locked; the two patch settings
+travel as governance configuration; the *members told* mark travels as a
+fact about the notice and no notification is re-sent, since the fork's
+bell starts empty like everything else. A reported-but-unresolved notice
+arrives on the fork as an ordinary notice for the fork's admins to judge
+fresh, which is the right default for a fork whose reason may be that the
+old admins were the problem. A notice removed before the fork is gone from
+the fork: removal is a hard delete, and this is the tombstone decision
+restated.
+
+**8. A notice body is markdown, with links and an image reference.** The
+treatment a charter, a proposal, the Label, and the legal documents
+already get: rendered through `MarkdownRenderer` (marked, sanitized by
+DOMPurify), so the noticeboard inherits whatever that component allows
+and forbids and adds no second rendering path. An image is a reference,
+never bytes (ADR 007), validated by the same `validateImageRef` patches and
+events use — the binary never fetches it. No upload flow rides in on this
+feature; when ADR 007's upload lands, notices get it with everything else.
+
 ## Parked, not rejected
 
 - **A public noticeboard.** A patch that wants to put notices in front of
@@ -152,20 +181,15 @@ textile route — a *bee*, the quilters' gathering where the talking happens
 - **An unread count on the tab.** Rejected — decision 4.
 - **"Board" as the tab name.** Rejected — decision 6.
 
-## Open
-
-- **Seamrip.** Whether notices and replies travel with a fork.
-- **Notice body.** Plain text, markdown, links, an image reference (ADR
-  007).
-
 ## Consequences
 
 - A migration: a `notices` table, a target generalization on
   `proposal_comments` (or a parallel table — an implementation choice, not
   a decision here), a `report` entity type for notices and replies with a
   patch-admin queue, two patch settings, and one notification category
-  with two types. Every new table needs a seamrip decision
-  (`TestEveryTableHasABoundaryDecision`) — see Open.
+  with two types. The `notices` table goes in `Tables()`; reports on
+  notices are covered by `content_reports` staying behind
+  (`TestEveryTableHasABoundaryDecision`, decision 7).
 - The workspace grows a fourth tab. `patchWorkspace.js` decides tab
   subsets; an unclaimed patch has no members and therefore no noticeboard.
 - The privacy policy gains one sentence, beside the contact card's.

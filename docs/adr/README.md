@@ -92,7 +92,7 @@ several branches are in flight.
 | [078](078-the-map-says-where-the-card-says-who.md) | The map says where; the card says who — motif markers, names by separation, clusters, and a preview costs a gesture the device can spare |
 | [079](079-an-event-keeps-the-door-it-came-through.md) | An event keeps the door it came through — every feed carries the event's own page and Patchwork dropped it; one `event_url`, filled by ingest and by the form *(fills a gap in 031, completes 056)* |
 | [080](080-a-contact-card-is-shared-patch-by-patch.md) | A contact card is shared patch by patch — one card on the account, one switch per membership, shown only in the room; a second axis beside 006's one switch, not a second visibility toggle |
-| [081](081-a-noticeboard-with-replies-not-a-feed.md) | A noticeboard with replies, not a feed — members-only, replies per notice, a closed moderation kit, quiet by default *(grilled 2026-09-04; seamrip and notice body still open)* |
+| [081](081-a-noticeboard-with-replies-not-a-feed.md) | A noticeboard with replies, not a feed — members-only, replies per notice, a closed moderation kit, quiet by default; travels in a seamrip; markdown with an image reference *(accepted, not yet built)* |
 
 ## Proposed — designs on record, not built
 

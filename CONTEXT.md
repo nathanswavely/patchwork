@@ -896,7 +896,9 @@ be), forum, wall, timeline, channel
 
 **Notice**:
 Something put up on the noticeboard by an admin or member — a title and a
-body, read by the room. Born quiet: it reaches the bell only when its
+markdown body with, at most, one image reference (docs/adr/007), read by
+the room. Travels with the patch in a seamrip, as proposal comments do;
+reports about it do not. Born quiet: it reaches the bell only when its
 author checks **Tell members**, off by default, and a notice that did
 wears a *members told* mark afterwards so the room can see who pages
 everyone and how often. Whether a notice takes replies is the author's
