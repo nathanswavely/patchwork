@@ -10,7 +10,7 @@
   // single marker, sees the chosen coordinates, and saves explicitly. Nothing
   // is written on drag — the parent owns the save call.
   //
-  // A `suggestion` seeds that marker from the gazetteer (docs/adr/080). It is
+  // A `suggestion` seeds that marker from the gazetteer (docs/adr/082). It is
   // drawn as a proposal, not a placement: hollow, dashed, and captioned with
   // what it thinks it found. It becomes an ordinary marker the moment the
   // person moves it, and it becomes a map location only when they confirm.

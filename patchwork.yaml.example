@@ -104,7 +104,7 @@ server:
 database:
   path: "data/patchwork.db"
 
-# The gazetteer: an optional local place index (docs/adr/080). With one
+# The gazetteer: an optional local place index (docs/adr/082). With one
 # installed, typing a patch's address offers a suggested marker to confirm;
 # without one, every marker is placed by hand exactly as before. Nothing here
 # is fetched at runtime — the file is built offline and copied in:

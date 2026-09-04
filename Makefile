@@ -21,7 +21,7 @@ dev: build
 	cd web && npm run dev & \
 	wait
 
-# Build the local place index from an OpenStreetMap extract (docs/adr/080).
+# Build the local place index from an OpenStreetMap extract (docs/adr/082).
 # Run this on a machine with disk and memory to spare, then copy the result
 # next to patchwork.db — the server never parses an extract.
 #   make gazetteer IN=pennsylvania-latest.osm.bz2

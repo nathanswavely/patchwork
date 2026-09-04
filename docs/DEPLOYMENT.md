@@ -144,7 +144,7 @@ stopping at the address field.
 
 It is one file, built on your laptop and copied to the server. Nothing is
 fetched at runtime and there is no account, key or third-party service
-anywhere in it (docs/adr/080).
+anywhere in it (docs/adr/082).
 
 **1. Get an extract of your region.** Any OpenStreetMap XML extract covering
 your community will do — Geofabrik publishes them per country and state. The

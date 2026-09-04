@@ -33,7 +33,7 @@
   let address = $state(initial?.address || '');
   let website = $state(initial?.website || '');
 
-  // Map location, offered here rather than only in settings (docs/adr/080).
+  // Map location, offered here rather than only in settings (docs/adr/082).
   // The address and the marker stay separate acts: leaving the address field
   // opens the picker and may propose a marker, and the patch is created with
   // no coordinates unless somebody confirms one. Accepting by submitting the

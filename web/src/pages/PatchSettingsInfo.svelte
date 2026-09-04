@@ -24,7 +24,7 @@
   let instanceTimezone = $state('');
   let onMap = $derived(hasMapLocation(node?.latitude, node?.longitude));
 
-  // A suggested placement from the address (docs/adr/080), offered only to a
+  // A suggested placement from the address (docs/adr/082), offered only to a
   // patch that is not on the map yet. A patch someone already placed keeps
   // the point they chose: proposing over a deliberate placement is the one
   // thing the confirm step exists to prevent.

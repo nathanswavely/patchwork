@@ -1,4 +1,4 @@
-// Command gazetteer builds the local place index described in docs/adr/080.
+// Command gazetteer builds the local place index described in docs/adr/082.
 //
 // It reads an OpenStreetMap XML extract, keeps the places inside an
 // instance's configured radius, and writes a SQLite file the server opens

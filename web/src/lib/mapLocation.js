@@ -6,7 +6,7 @@
 // naming one never implies the other (CONTEXT.md → "Map location").
 //
 // These helpers only ever format and range-check numbers the map produced.
-// A gazetteer may propose a starting marker from the address (docs/adr/080),
+// A gazetteer may propose a starting marker from the address (docs/adr/082),
 // but the coordinate that gets saved is still one a person confirmed on the
 // map, so nothing here parses text.
 

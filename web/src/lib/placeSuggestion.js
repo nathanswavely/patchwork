@@ -1,4 +1,4 @@
-// Asking the gazetteer where an address is (docs/adr/080).
+// Asking the gazetteer where an address is (docs/adr/082).
 //
 // The answer is a *suggested placement*: a marker proposed for a person to
 // look at and confirm. It is never a map location until they do, which is

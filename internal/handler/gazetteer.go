@@ -13,7 +13,7 @@ import (
 //
 // It answers with one suggested placement, or with a body saying there is
 // none. Not-found is 200 with `found: false`, not 404: a miss is the ordinary
-// answer for a valid address (docs/adr/080), and a status code that reads as
+// answer for a valid address (docs/adr/082), and a status code that reads as
 // an error would put a broken-looking console message under a form that is
 // working exactly as designed.
 //

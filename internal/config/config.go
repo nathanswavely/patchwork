@@ -230,7 +230,7 @@ type Database struct {
 	Path string `yaml:"path"`
 }
 
-// Gazetteer points at the optional local place index (docs/adr/080). The file
+// Gazetteer points at the optional local place index (docs/adr/082). The file
 // is built offline by cmd/gazetteer and copied onto the server; nothing here
 // downloads or generates it.
 type Gazetteer struct {

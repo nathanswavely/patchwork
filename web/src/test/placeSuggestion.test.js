@@ -1,5 +1,5 @@
 /**
- * A gazetteer suggests; a person places (docs/adr/080).
+ * A gazetteer suggests; a person places (docs/adr/082).
  *
  * The behaviour these guard is a *refusal*: the suggestion must not become a
  * saved coordinate on its own. Nothing in this project renders Svelte in a
@@ -84,7 +84,7 @@ describe('suggestPlace', () => {
 describe('the create form asks, and waits to be told', () => {
   const src = source('pages/PatchForm.svelte');
 
-  // The whole point of ADR 080. An auto-filled marker plus a submit button is
+  // The whole point of ADR 082. An auto-filled marker plus a submit button is
   // acceptance by silence: nobody has to look at the coordinate for it to be
   // saved, so a wrong guess ships because the form was submitted.
   it('sends coordinates only once something is placed', () => {

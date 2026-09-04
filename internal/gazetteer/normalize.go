@@ -1,5 +1,5 @@
 // Package gazetteer reads the optional local place index described in
-// docs/adr/080. The index is built offline by cmd/gazetteer and copied onto
+// docs/adr/082. The index is built offline by cmd/gazetteer and copied onto
 // the server as a file beside patchwork.db; nothing here fetches anything.
 //
 // An instance without the file simply has no gazetteer, and every caller must

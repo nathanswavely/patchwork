@@ -272,7 +272,7 @@ func main() {
 		log.Fatalf("webauthn: %v", err)
 	}
 
-	// The gazetteer is optional infrastructure (docs/adr/080): a place index
+	// The gazetteer is optional infrastructure (docs/adr/082): a place index
 	// built offline and copied in. Absent, the server runs exactly as it did
 	// before it existed and every address is placed by hand.
 	//

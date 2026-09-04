@@ -1,4 +1,4 @@
-# ADR 080: A gazetteer suggests; a person places
+# ADR 082: A gazetteer suggests; a person places
 
 Date: 2026-09-04. Status: **accepted**; implemented. Applies docs/adr/077
 (a dependency every fork inherits cannot require a key) to a dataset rather
