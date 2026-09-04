@@ -2,9 +2,12 @@
   import { api } from '../lib/api.js';
   import { login } from '../stores/auth.svelte.js';
   import { getParams, navigate } from '../stores/router.svelte.js';
+  import { getEmailEnabled } from '../stores/quilt.svelte.js';
   import {
     prepareCreationOptions,
     serializeCreationResponse,
+    passkeyErrorMessage,
+    passkeysSupported,
   } from '../lib/webauthn.js';
 
   let token = $derived(getParams().token || '');
@@ -14,6 +17,7 @@
 
   let username = $state('');
   let displayName = $state('');
+  let email = $state('');
   let submitError = $state('');
   let submitting = $state(false);
 
@@ -21,6 +25,23 @@
   let enrollingPasskey = $state(false);
   let passkeyError = $state('');
   let passkeyDone = $state(false);
+
+  const canUsePasskeys = passkeysSupported();
+
+  // An account must leave this page with at least one way back into it
+  // (docs/adr/071). Where the quilt can send mail, the address collected
+  // below is that way and the passkey is a convenience on top. Where it
+  // cannot, recovery codes are the only floor available, so they are not
+  // optional and there is no plain "skip".
+  let emailIsFloor = $derived(getEmailEnabled());
+
+  let recoveryCodes = $state(null);
+  let recoveryError = $state('');
+  let loadingRecovery = $state(false);
+  let recoverySaved = $state(false);
+
+  // True once this account has something that survives losing the session.
+  let hasWayBackIn = $derived(emailIsFloor || passkeyDone || recoverySaved);
 
   // Chosen, not derived: same rules the server enforces (docs/adr/013).
   const USERNAME_PATTERN = '[a-z0-9][a-z0-9\\-]{1,28}[a-z0-9]';
@@ -62,6 +83,7 @@
           token,
           username: username.trim().toLowerCase(),
           display_name: displayName.trim() || undefined,
+          email: emailIsFloor ? email.trim() : undefined,
         },
       });
       await login();
@@ -92,10 +114,27 @@
 
       passkeyDone = true;
     } catch (e) {
-      passkeyError = e.message || 'Passkey enrollment failed';
+      passkeyError = passkeyErrorMessage(e, 'enroll');
     } finally {
       enrollingPasskey = false;
     }
+  }
+
+  async function generateRecoveryCodes() {
+    recoveryError = '';
+    loadingRecovery = true;
+    try {
+      const data = await api('auth/recovery-codes', { method: 'POST' });
+      recoveryCodes = data.codes || [];
+    } catch (e) {
+      recoveryError = e.message || 'Could not generate recovery codes';
+    } finally {
+      loadingRecovery = false;
+    }
+  }
+
+  function copyRecoveryCodes() {
+    navigator.clipboard?.writeText(recoveryCodes.join('\n'));
   }
 
   function goToDashboard() {
@@ -129,33 +168,85 @@
           <button class="btn btn-primary" style="margin-top: 1.5rem;" onclick={goToDashboard}>
             Take a look around
           </button>
-        {:else}
-          <p>Create a passkey and this device signs you in with one tap.</p>
+        {:else if recoveryCodes}
+          <p>Write these down before you go.</p>
           <p class="muted" style="margin-top: 0.5rem;">
-            The key stays on your device, and we never hold a password for
-            you. Nothing to leak, and email can break without locking you out.
+            This quilt cannot send email, so these codes are the only way back
+            into your account if you lose this device. Each one works once.
           </p>
+          <ul class="recovery-codes">
+            {#each recoveryCodes as code}
+              <li>{code}</li>
+            {/each}
+          </ul>
+          <button class="btn btn-secondary" style="margin-top: 0.75rem;" onclick={copyRecoveryCodes}>
+            Copy codes
+          </button>
+          <label class="ack">
+            <input type="checkbox" bind:checked={recoverySaved} />
+            I have saved these somewhere safe
+          </label>
           <button
             class="btn btn-primary"
             style="margin-top: 1rem;"
-            onclick={enrollPasskey}
-            disabled={enrollingPasskey}
+            onclick={goToDashboard}
+            disabled={!recoverySaved}
           >
-            {enrollingPasskey ? 'Waiting for your browser...' : 'Create a passkey'}
+            Take a look around
           </button>
-          {#if passkeyError}
-            <p class="error-text">{passkeyError}</p>
+        {:else}
+          {#if canUsePasskeys}
+            <p>Create a passkey and this device signs you in with one tap.</p>
+            <p class="muted" style="margin-top: 0.5rem;">
+              The key stays on your device, and we never hold a password for you.
+            </p>
+            <button
+              class="btn btn-primary"
+              style="margin-top: 1rem;"
+              onclick={enrollPasskey}
+              disabled={enrollingPasskey}
+            >
+              {enrollingPasskey ? 'Waiting for your browser...' : 'Create a passkey'}
+            </button>
+            {#if passkeyError}
+              <p class="error-text">{passkeyError}</p>
+            {/if}
+          {:else}
+            <p>This browser cannot create a passkey.</p>
           {/if}
-          <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick={goToDashboard}>
-            Skip for now
-          </button>
+
+          {#if hasWayBackIn}
+            <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick={goToDashboard}>
+              Skip for now
+            </button>
+            <p class="hint muted" style="margin-top: 0.5rem;">
+              You can sign in with an email link any time, and add a passkey
+              later from Settings → Security.
+            </p>
+          {:else}
+            <button
+              class="btn btn-secondary"
+              style="margin-top: 0.5rem;"
+              onclick={generateRecoveryCodes}
+              disabled={loadingRecovery}
+            >
+              {loadingRecovery ? 'Generating...' : 'Use recovery codes instead'}
+            </button>
+            {#if recoveryError}
+              <p class="error-text">{recoveryError}</p>
+            {/if}
+            <p class="hint muted" style="margin-top: 0.5rem;">
+              This quilt cannot send email, so a passkey or recovery codes are
+              the only ways back into your account.
+            </p>
+          {/if}
         {/if}
       </div>
     {:else}
       <div class="state-block">
         <h1>You're invited</h1>
         <p class="muted" style="margin-bottom: 1.5rem;">
-          Someone here sent you this link. Pick a username and you're in.
+          A patchwork user sent you this link. Pick a username to join.
         </p>
 
         <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
@@ -189,10 +280,29 @@
             disabled={submitting}
           />
 
+          {#if emailIsFloor}
+            <label for="invite-email">Email <span class="required">*</span></label>
+            <input
+              id="invite-email"
+              type="email"
+              bind:value={email}
+              placeholder="you@example.com"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              required
+              disabled={submitting}
+            />
+            <p class="hint muted">
+              How you sign in if you ever lose your passkey. We send sign-in
+              links to it and nothing else.
+            </p>
+          {/if}
+
           <button
             type="submit"
             class="btn btn-primary"
-            disabled={submitting || !username.trim()}
+            disabled={submitting || !username.trim() || (emailIsFloor && !email.trim())}
           >
             {submitting ? 'Creating Account...' : 'Create Account'}
           </button>
@@ -213,6 +323,35 @@
 </div>
 
 <style>
+  .recovery-codes {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.35rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-alt, transparent);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .ack {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .ack input {
+    width: auto;
+    margin: 0;
+  }
+
   .invite-page {
     padding-top: 3rem;
     padding-bottom: 3rem;

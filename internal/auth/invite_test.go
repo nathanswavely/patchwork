@@ -59,7 +59,7 @@ func TestGenerateAndRedeemInviteLink(t *testing.T) {
 		t.Fatal("expected non-empty token")
 	}
 
-	user, err := RedeemInviteLink(db, rawToken, "testuser", "Test User")
+	user, err := RedeemInviteLink(db, rawToken, "testuser", "Test User", "")
 	if err != nil {
 		t.Fatalf("RedeemInviteLink: %v", err)
 	}
@@ -85,7 +85,7 @@ func TestInviteLinkExpiry(t *testing.T) {
 		t.Fatalf("GenerateInviteLink: %v", err)
 	}
 
-	_, err = RedeemInviteLink(db, rawToken, "expired_user", "")
+	_, err = RedeemInviteLink(db, rawToken, "expired_user", "", "")
 	if err == nil {
 		t.Fatal("expected error for expired invite link")
 	}
@@ -104,13 +104,13 @@ func TestInviteLinkMaxUses(t *testing.T) {
 	}
 
 	// First use: should succeed.
-	_, err = RedeemInviteLink(db, rawToken, "user1", "")
+	_, err = RedeemInviteLink(db, rawToken, "user1", "", "")
 	if err != nil {
 		t.Fatalf("first redeem: %v", err)
 	}
 
 	// Second use: should fail.
-	_, err = RedeemInviteLink(db, rawToken, "user2", "")
+	_, err = RedeemInviteLink(db, rawToken, "user2", "", "")
 	if err == nil {
 		t.Fatal("expected error for max uses exceeded")
 	}
@@ -137,7 +137,7 @@ func TestValidateInviteLink(t *testing.T) {
 	}
 
 	// Still redeemable after validation.
-	if _, err := RedeemInviteLink(db, rawToken, "validated-user", ""); err != nil {
+	if _, err := RedeemInviteLink(db, rawToken, "validated-user", "", ""); err != nil {
 		t.Fatalf("redeem after validate: %v", err)
 	}
 
@@ -173,7 +173,7 @@ func TestValidateInviteLink(t *testing.T) {
 func TestInviteLinkInvalidToken(t *testing.T) {
 	db := setupTestDB(t)
 
-	_, err := RedeemInviteLink(db, "not-a-real-token", "baduser", "")
+	_, err := RedeemInviteLink(db, "not-a-real-token", "baduser", "", "")
 	if err == nil {
 		t.Fatal("expected error for invalid token")
 	}
@@ -188,7 +188,7 @@ func TestRedeemInviteLinkUsernameRules(t *testing.T) {
 		if err != nil {
 			t.Fatalf("GenerateInviteLink: %v", err)
 		}
-		_, err = RedeemInviteLink(db, rawToken, username, "")
+		_, err = RedeemInviteLink(db, rawToken, username, "", "")
 		return err
 	}
 
@@ -197,7 +197,7 @@ func TestRedeemInviteLinkUsernameRules(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	user, err := RedeemInviteLink(db, rawToken, "  MixedCase  ", "")
+	user, err := RedeemInviteLink(db, rawToken, "  MixedCase  ", "", "")
 	if err != nil {
 		t.Fatalf("mixed case should normalize: %v", err)
 	}
@@ -245,14 +245,14 @@ func TestInviteLinkMultipleUses(t *testing.T) {
 	}
 
 	for i := 0; i < 3; i++ {
-		_, err = RedeemInviteLink(db, rawToken, "multi-user-"+string(rune('a'+i)), "")
+		_, err = RedeemInviteLink(db, rawToken, "multi-user-"+string(rune('a'+i)), "", "")
 		if err != nil {
 			t.Fatalf("redeem %d: %v", i+1, err)
 		}
 	}
 
 	// Fourth use should fail.
-	_, err = RedeemInviteLink(db, rawToken, "multi-user-d", "")
+	_, err = RedeemInviteLink(db, rawToken, "multi-user-d", "", "")
 	if err == nil {
 		t.Fatal("expected error for max uses exceeded")
 	}

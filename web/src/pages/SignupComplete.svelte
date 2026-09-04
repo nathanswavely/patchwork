@@ -5,6 +5,7 @@
   import {
     prepareCreationOptions,
     serializeCreationResponse,
+    passkeyErrorMessage,
   } from '../lib/webauthn.js';
 
   let query = $derived(getQuery());
@@ -100,6 +101,7 @@
 
       const credentialOptions = prepareCreationOptions(beginData);
       const credential = await navigator.credentials.create(credentialOptions);
+      if (!credential) throw new Error('Passkey setup was closed.');
       const serialized = serializeCreationResponse(credential);
 
       await api('auth/webauthn/register/finish', {
@@ -109,7 +111,7 @@
 
       passkeyDone = true;
     } catch (e) {
-      passkeyError = e.message || 'Passkey enrollment failed';
+      passkeyError = passkeyErrorMessage(e, 'enroll');
     } finally {
       enrollingPasskey = false;
     }
@@ -153,8 +155,7 @@
         {:else}
           <p>Create a passkey and this device signs you in with one tap.</p>
           <p class="muted" style="margin-top: 0.5rem;">
-            The key stays on your device, and we never hold a password for
-            you. Nothing to leak, and email can break without locking you out.
+            The key stays on your device, and we never hold a password for you.
           </p>
           <button
             class="btn btn-primary"

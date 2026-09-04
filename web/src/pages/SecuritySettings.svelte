@@ -4,6 +4,7 @@
   import {
     prepareCreationOptions,
     serializeCreationResponse,
+    passkeyErrorMessage,
   } from '../lib/webauthn.js';
   import Skeleton from '../components/Skeleton.svelte';
   import { showToast } from '../stores/toast.svelte.js';
@@ -178,6 +179,7 @@
       });
       const credentialOptions = prepareCreationOptions(beginData);
       const credential = await navigator.credentials.create(credentialOptions);
+      if (!credential) throw new Error('Passkey setup was closed.');
       const serialized = serializeCreationResponse(credential);
 
       // Enroll with the guess. The name is settled in the modal below, which
@@ -197,7 +199,7 @@
         namingDefault = created.name || 'Passkey';
       }
     } catch (e) {
-      passkeyError = e.message || 'Failed to add passkey';
+      passkeyError = passkeyErrorMessage(e, 'enroll');
       showToast('Something went wrong. Please try again.', 'error');
     } finally {
       addingPasskey = false;
@@ -354,8 +356,7 @@
 
     {#if credentials.length === 1}
       <p class="muted second-passkey-nudge">
-        One passkey is one lost phone away from a locked account. Add a
-        second on another device.
+        This passkey is attached to one device. We recommend adding a second on another device as backup.
       </p>
     {/if}
   </section>
@@ -472,8 +473,7 @@
 <Modal open={namingId !== null} label="Name this passkey" onClose={closeNaming}>
   <h3 class="naming-title">Name this passkey</h3>
   <p class="muted naming-help">
-    It's saved and ready to use. A name helps you tell it apart from your
-    others later.
+    It's saved and ready to use.
   </p>
   <form
     class="naming-form"

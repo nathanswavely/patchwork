@@ -23,6 +23,11 @@ type InstanceResponse struct {
 	Federation  bool              `json:"federation"`
 	Modules     map[string]bool   `json:"modules"`
 	Submissions bool              `json:"submissions_enabled"`
+	// Whether this quilt can send mail. Signup reads it to decide which
+	// floor an account gets — a magic-link address, or recovery codes
+	// (docs/adr/071) — and the sign-in page to decide whether offering to
+	// email a link is honest. It says nothing about who the mail server is.
+	EmailEnabled bool `json:"email_enabled"`
 	// Neighbor quilts are the instance's public statement of adjacency
 	// (docs/adr/024) — visible to every visitor, anonymous included.
 	NeighborQuilts []NeighborQuiltPublic `json:"neighbor_quilts"`
@@ -115,11 +120,12 @@ func Instance(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				Color:   cfg.Branding.Color,
 				LogoURL: cfg.Branding.LogoURL,
 			},
-			Stats:      stats,
-			Tags:       tags,
-			Version:    Version,
-			MultiQuilt: cfg.MultiQuilt,
-			Federation: cfg.Federation.Enabled,
+			Stats:        stats,
+			Tags:         tags,
+			EmailEnabled: cfg.SMTP.Configured(),
+			Version:      Version,
+			MultiQuilt:   cfg.MultiQuilt,
+			Federation:   cfg.Federation.Enabled,
 			// Module toggles are hints for the SPA (which views to offer);
 			// the underlying data endpoints stay available.
 			Modules: map[string]bool{
