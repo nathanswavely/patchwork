@@ -66,13 +66,20 @@ func Tables() []Table {
 			File: "users.json",
 			Name: "users",
 			Query: `SELECT id, email, username, display_name, bio, avatar_url, links, role,
+				contact_phone, contact_email, contact_note,
 				suspended_at, created_at, updated_at FROM users WHERE username != '_system'`,
 			// `links` is the same shape as a patch's, and a patch's travelled
 			// while a person's did not (docs/adr/006). A profile arrived on
 			// the fork with its bio and no way to reach anybody.
+			// The contact card travels the way `email` does (docs/adr/080):
+			// this export already moves other people's secrets and is
+			// admin-gated for it. The card is only ever shown through
+			// memberships.share_contact, which travels beside it, so the
+			// fork shows each card to exactly the rooms the person chose.
 			Columns: cols(id("id"), c("email"), c("username"), c("display_name"),
-				c("bio"), c("avatar_url"), def("links", "[]"), c("role"), c("suspended_at"),
-				c("created_at"), c("updated_at")),
+				c("bio"), c("avatar_url"), def("links", "[]"), c("role"),
+				def("contact_phone", ""), def("contact_email", ""), def("contact_note", ""),
+				c("suspended_at"), c("created_at"), c("updated_at")),
 		},
 		{
 			File:    "tags.json",
@@ -87,7 +94,8 @@ func Tables() []Table {
 				address, website, image_url, image_alt, links, visibility, membership_policy, status, archived_from, appearance,
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
-				submitted_by, submission_source, did, activated_at, created_at, updated_at
+				submitted_by, submission_source, did, activated_at,
+				notice_posting, notice_replies_default, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -133,6 +141,9 @@ func Tables() []Table {
 				// NULL - which reads correctly as "not recorded", the same
 				// thing an unclaimed listing carries.
 				def("activated_at", nil),
+				// Who may put up a notice, and whether notices take replies
+				// by default: rules the community set (docs/adr/081).
+				def("notice_posting", "members"), def("notice_replies_default", 1),
 				c("created_at"), c("updated_at")),
 		},
 		{
@@ -144,7 +155,7 @@ func Tables() []Table {
 		{
 			File: "memberships.json",
 			Name: "memberships",
-			Query: `SELECT id, user_id, node_id, role, status, visible, joined_at
+			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at
 				FROM memberships`,
 			// `visible` is the member's own switch (docs/adr/006), and it
 			// defaults to 1. Leaving it behind meant a fork re-exposed every
@@ -152,8 +163,12 @@ func Tables() []Table {
 			// in the patch's public member list at once, since one switch
 			// drives both. A seamrip is the moment that choice matters most:
 			// it is what a community does when its leadership goes sideways.
+			// `share_contact` is the other switch the member owns
+			// (docs/adr/080) and defaults to 0, so leaving it behind would
+			// fail the other way: every card the person had chosen to
+			// share would go silent on the fork. It travels with the card.
 			Columns: cols(id("id"), id("user_id"), id("node_id"), c("role"),
-				c("status"), def("visible", 1), c("joined_at")),
+				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at")),
 		},
 		{
 			// The council's chairs (docs/adr/051). A seat outlives its holder,
@@ -446,6 +461,30 @@ func Tables() []Table {
 				FROM comment_reactions`,
 			Columns: cols(id("id"), id("comment_id"), id("user_id"), c("emoji"),
 				c("created_at")),
+		},
+		{
+			// The noticeboard travels the way proposal comments do
+			// (docs/adr/081, decision 7): it is where "the PA is broken"
+			// and "the landlord called" live, and a fork arriving with its
+			// charters and votes and an empty noticeboard would have lost
+			// the community's working memory. The reply switch travels so
+			// a locked argument stays locked; `members_told` travels as a
+			// fact about the notice, and no notification is re-sent.
+			File: "notices.json",
+			Name: "notices",
+			Query: `SELECT id, node_id, author_id, title, body, image_url, image_alt,
+				replies_open, members_told, created_at, updated_at FROM notices`,
+			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"), c("body"),
+				def("image_url", ""), def("image_alt", ""), def("replies_open", 1),
+				def("members_told", 0), c("created_at"), c("updated_at")),
+		},
+		{
+			File: "notice_replies.json",
+			Name: "notice_replies",
+			Query: `SELECT id, notice_id, author_id, body, created_at, updated_at
+				FROM notice_replies`,
+			Columns: cols(id("id"), id("notice_id"), id("author_id"), c("body"),
+				c("created_at"), c("updated_at")),
 		},
 		{
 			File: "proposal_revisions.json",

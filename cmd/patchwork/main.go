@@ -18,6 +18,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
+	"github.com/patchwork-toolkit/patchwork/internal/gazetteer"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -271,6 +272,27 @@ func main() {
 		log.Fatalf("webauthn: %v", err)
 	}
 
+	// The gazetteer is optional infrastructure (docs/adr/082): a place index
+	// built offline and copied in. Absent, the server runs exactly as it did
+	// before it existed and every address is placed by hand.
+	//
+	// How loudly a failure is reported depends on whether the admin named the
+	// file. An explicit path that will not open is a mistake worth a warning;
+	// the conventional path beside the database is a convention, and its
+	// absence is the normal state of most instances.
+	gazPath, gazExplicit := cfg.GazetteerPath()
+	gaz, err := gazetteer.Open(gazPath)
+	switch {
+	case err == nil:
+		log.Printf("gazetteer: %d places from %s", gaz.Count(), gazPath)
+		defer gaz.Close()
+	case gazExplicit:
+		log.Printf("warning: gazetteer %s could not be opened, address suggestions are off: %v", gazPath, err)
+		gaz = nil
+	default:
+		gaz = nil
+	}
+
 	// Build router.
 	mux := http.NewServeMux()
 
@@ -279,6 +301,11 @@ func main() {
 	mux.HandleFunc("GET /api/v1/instance", handler.Instance(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance/icon", handler.InstanceIcon(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance/lining", handler.GetInstanceLining(db))
+
+	// Suggesting a placement from an address. Authenticated and throttled;
+	// answers "no suggestion" rather than an error when there is no index or
+	// no match, because both are ordinary.
+	mux.HandleFunc("GET /api/v1/gazetteer/suggest", middleware.AuthRequired(db, handler.SuggestPlace(gaz)))
 
 	// The Label (docs/adr/023) — public read: its most important reader
 	// has no account yet. Steward self-listing is the person's own switch.
@@ -409,7 +436,21 @@ func main() {
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/attestation-names/{id}", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.LinkAttestationName(db))))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthOptional(db, handler.ListAmendmentAttestations(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAmendmentAttestation(db))))
-	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembershipVisibility(db)))
+	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembership(db)))
+
+	// The noticeboard — members-only, the check in every handler (docs/adr/081).
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.ListNotices(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.CreateNotice(db)))
+	mux.HandleFunc("GET /api/v1/notices/{id}", middleware.AuthRequired(db, handler.GetNotice(db)))
+	mux.HandleFunc("PATCH /api/v1/notices/{id}", middleware.AuthRequired(db, handler.UpdateNotice(db)))
+	mux.HandleFunc("DELETE /api/v1/notices/{id}", middleware.AuthRequired(db, handler.DeleteNotice(db)))
+	mux.HandleFunc("GET /api/v1/notices/{id}/replies", middleware.AuthRequired(db, handler.ListReplies(db)))
+	mux.HandleFunc("POST /api/v1/notices/{id}/replies", middleware.AuthRequired(db, handler.CreateReply(db)))
+	mux.HandleFunc("PATCH /api/v1/replies/{id}", middleware.AuthRequired(db, handler.UpdateReply(db)))
+	mux.HandleFunc("DELETE /api/v1/replies/{id}", middleware.AuthRequired(db, handler.DeleteReply(db)))
+	// The patch's own report queue for its noticeboard (docs/adr/081, tool 3).
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/reports", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.ListPatchReports(db))))
+	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/reports/{id}", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.UpdatePatchReport(db))))
 
 	// Cross-quilt following (docs/adr/024): remote follows and personal
 	// connected quilts live on the follower's home instance.

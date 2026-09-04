@@ -11,6 +11,8 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // CreateReport handles POST /api/v1/reports.
@@ -34,13 +36,19 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 		}
 
 		// Validate entity_type.
-		if req.EntityType != "node" && req.EntityType != "event" && req.EntityType != "user" {
-			http.Error(w, `{"error":"entity_type must be node, event, or user"}`, http.StatusBadRequest)
+		switch req.EntityType {
+		case "node", "event", "user", "notice", "reply":
+		default:
+			http.Error(w, `{"error":"entity_type must be node, event, user, notice, or reply"}`, http.StatusBadRequest)
 			return
 		}
 
-		// Validate the target exists.
+		// Validate the target exists. A notice or a reply also resolves to
+		// its patch: the report goes to that patch's admins, not the
+		// instance's, who cannot read the room (docs/adr/081) — and only
+		// someone in the room can have seen the thing they are reporting.
 		var exists int
+		var roomNodeID string
 		switch req.EntityType {
 		case "node":
 			db.QueryRow("SELECT COUNT(*) FROM nodes WHERE id = ?", req.EntityID).Scan(&exists)
@@ -48,6 +56,13 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 			db.QueryRow("SELECT COUNT(*) FROM events WHERE id = ?", req.EntityID).Scan(&exists)
 		case "user":
 			db.QueryRow("SELECT COUNT(*) FROM users WHERE id = ?", req.EntityID).Scan(&exists)
+		case "notice":
+			db.QueryRow("SELECT node_id FROM notices WHERE id = ?", req.EntityID).Scan(&roomNodeID)
+		case "reply":
+			db.QueryRow("SELECT n.node_id FROM notice_replies r JOIN notices n ON n.id = r.notice_id WHERE r.id = ?", req.EntityID).Scan(&roomNodeID)
+		}
+		if roomNodeID != "" && inRoom(db, user, roomNodeID) {
+			exists = 1
 		}
 		if exists == 0 {
 			http.Error(w, `{"error":"target entity not found"}`, http.StatusNotFound)
@@ -55,9 +70,13 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 		}
 
 		id := auth.NewUUIDv7()
+		var nodeIDArg interface{}
+		if roomNodeID != "" {
+			nodeIDArg = roomNodeID
+		}
 		_, err := db.Exec(
-			`INSERT INTO content_reports (id, reporter_id, entity_type, entity_id, reason, details) VALUES (?, ?, ?, ?, ?, ?)`,
-			id, user.ID, req.EntityType, req.EntityID, req.Reason, req.Details,
+			`INSERT INTO content_reports (id, reporter_id, entity_type, entity_id, reason, details, node_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			id, user.ID, req.EntityType, req.EntityID, req.Reason, req.Details, nodeIDArg,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create report"}`, http.StatusInternalServerError)
@@ -65,6 +84,22 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 		}
 
 		auth.LogAuditEvent(db, user.ID, "report.create", "report", id, fmt.Sprintf(`{"entity_type":"%s","entity_id":"%s"}`, req.EntityType, req.EntityID), clientIP(r))
+
+		if roomNodeID != "" {
+			var slug, name string
+			db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", roomNodeID).Scan(&slug, &name)
+			notify(notifications.Event{
+				Type:     notifications.NoticeReported,
+				NodeID:   roomNodeID,
+				NodeSlug: slug,
+				NodeName: name,
+				ActorID:  user.ID,
+				EntityID: req.EntityID,
+				Title:    "A " + req.EntityType + " on the noticeboard was reported",
+				Body:     req.Reason,
+				Link:     weblink.PatchNoticeboardReports(slug),
+			})
+		}
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
@@ -86,7 +121,9 @@ func ListReports(db *database.DB) http.HandlerFunc {
 		status := r.URL.Query().Get("status")
 
 		query := `SELECT id, reporter_id, entity_type, entity_id, reason, details, status, reviewed_by, resolution_note, created_at, updated_at FROM content_reports`
-		var conditions []string
+		// A report routed to a patch's admins is theirs, not the instance's
+		// (docs/adr/081): the instance panel cannot read the room it is about.
+		conditions := []string{"node_id IS NULL"}
 		var args []interface{}
 
 		if status != "" {
@@ -131,6 +168,11 @@ func ListReports(db *database.DB) http.HandlerFunc {
 				db.QueryRow("SELECT title FROM events WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
 			case "user":
 				db.QueryRow("SELECT COALESCE(display_name, username) FROM users WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
+			case "notice":
+				db.QueryRow("SELECT title FROM notices WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
+			case "reply":
+				db.QueryRow("SELECT body FROM notice_replies WHERE id = ?", rpt.EntityID).Scan(&rpt.TargetName)
+				rpt.TargetName = excerpt(rpt.TargetName, 120)
 			}
 
 			reports = append(reports, rpt)

@@ -48,6 +48,11 @@ test.describe('Map location placement', () => {
     // (a click stands in for a drag — drag is flaky in Leaflet e2e).
     const map = page.locator('.picker-map');
     await expect(map).toBeVisible();
+    // page.mouse works in viewport coordinates, so the map has to actually be
+    // in the viewport before its box is measured. Without this the click lands
+    // outside the window the moment anything above the picker grows, which is
+    // a layout change breaking a test that is not about layout.
+    await map.scrollIntoViewIfNeeded();
     const box = await map.boundingBox();
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 

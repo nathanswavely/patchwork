@@ -460,6 +460,22 @@ hiding; the two surfaces never disagree.
 _Avoid_: private membership (collides with private patches), profile
 visibility (it is per-membership, not per-profile)
 
+**Contact card**:
+How a person can be reached — a phone number, an email address to reach
+them at (not the sign-in address), and a short note — kept once on the
+account and shared patch by patch. **Contact sharing** is the per-membership
+switch that shows it, owned by the member and off for every patch until
+they turn it on; on, that patch's admins and members see the card in its
+Members room, including people who join later. It is never on the profile,
+never in a public member list, and never federates; a follower has no room
+to share into and cannot switch it on. A second axis beside membership
+visibility, not a second visibility switch: visibility says whether a
+membership is *known*, sharing says whether the people already in the room
+can *reach* you (docs/adr/080).
+_Avoid_: contact info (unbounded — the card is three fields), phone number
+(one field of it), private contact (everything about it is private; say
+"shared with" a patch), directory (there is no people search)
+
 **Role mark**:
 The icon that carries a person's relationship to a patch, used the same
 way everywhere the relationship shows: heart = follower, three users =
@@ -862,6 +878,51 @@ is what the ballots add up to, and from the **electorate**, which is who
 was entitled to cast one.
 _Avoid_: vote (the act of casting), ranking, preference
 
+## Noticeboard
+
+**Noticeboard**:
+A patch's members-only room for notices: the fourth workspace tab beside
+Governance, Members, and Events. Read by the patch's active admins and
+members and by nobody else — never followers, never the public, never
+another quilt — and so the second genuinely withheld thing in a workspace
+after members-only charters (docs/adr/050 names the first). A patch
+setting says who may put up a notice: its admins, or its members too. It
+is a place a member walks into, not a stream that arrives: no unread
+count, no badge. One word, because *board* alone is a governing body
+(see **Council**) and *bulletin* is the quilt's monthly note (docs/adr/081).
+_Avoid_: board (a governing body), bulletin (the monthly broadcast),
+feed (the calendar feeds, and the thing the front door promises not to
+be), forum, wall, timeline, channel
+
+**Notice**:
+Something put up on the noticeboard by an admin or member — a title and a
+markdown body with, at most, one image reference (docs/adr/007), read by
+the room. Travels with the patch in a seamrip, as proposal comments do;
+reports about it do not. Born quiet: it reaches the bell only when its
+author checks **Tell members**, off by default, and a notice that did
+wears a *members told* mark afterwards so the room can see who pages
+everyone and how often. Whether a notice takes replies is the author's
+choice per notice, changeable at any time by the author or a patch admin;
+switching replies off keeps the replies already made and removes the box.
+A notice can be taken down by its author or a patch admin, and reported
+to the patch's admins — not the instance's, who cannot read the room.
+_Avoid_: post (the event verb — members *post* events), announcement (a
+notice that told members is still a notice, not a second kind), pin
+(retired, docs/adr/027), message, update, status
+
+**Reply**:
+A member's response under a notice, in a flat list — no reply to a reply,
+no reactions. Made by anyone who can read the room. Reaches the bell only
+for the notice's participants: its author and the people who already
+replied; nobody is told about a conversation they have not joined, and
+there is no way to summon someone into one (no @mentions, no @patch —
+docs/adr/081 parks the first and refuses the second). Removed by its
+author or a patch admin, and reportable to them. Deliberately not
+*comment*, which stays the proposal's word, so "replies are off" never
+reads as a closed deliberation.
+_Avoid_: comment (proposals), thread (the inferred connection between
+patches), discussion (the proposal's tab), conversation (as a UI noun)
+
 ## Event sources
 
 **Event source**:
@@ -1227,10 +1288,14 @@ pointer points; people choose)
 **Address**:
 A patch's free-text description of where it is, in its own words —
 "Lancaster, PA", "above the record shop on Prince St", or nothing at all.
-Prose meant for people to read, never parsed and never geocoded. Naming a
-place here does not put the patch on the map: an address and a map position
-are separate acts, so a patch can say where it is without being findable
-there. Backend column: `nodes.address`. The word `location` is reserved for
+Prose meant for people to read, never parsed and never stored as anything
+but itself. Naming a place here does not put the patch on the map: an
+address and a map position are separate acts, so a patch can say where it
+is without being findable there. Where a **gazetteer** is installed the
+text is looked up to offer a **suggested placement**, but that is a
+proposal shown to a person, never a value written from prose — the third
+example above is the reason, and it resolves to nothing by design. Backend
+column: `nodes.address`. The word `location` is reserved for
 an event's venue text (`events.location`) and never names this field.
 _Avoid_: location (it means the event field), place, venue (events have
 those), where
@@ -1251,16 +1316,35 @@ fields (it is one), place, where
 **Map location**:
 A patch's placed marker on the map — a numeric latitude/longitude pair a
 patch admin sets by dragging a marker on the Leaflet map the app already
-ships, never geocoded from any text. Deliberately plain, no textile
-coinage: it is a coordinate, not a woven thing. Independent of the address
-above it — an address is prose, a map location is a placed point, and
-naming one never sets the other. Unset position means the patch is simply
-off the map; there is no separate on/off flag. Placement is manual and
-explicit (open the picker, drop or drag the marker, save), so its
-coarseness is the admin's to choose — a marker can sit at neighbourhood
-level on purpose. Backend columns: `nodes.latitude`, `nodes.longitude`.
-_Avoid_: pin (retired — docs/adr/027), geocode, coordinates (as the UI
-label), address (that is the prose field, not the marker)
+ships. Deliberately plain, no textile coinage: it is a coordinate, not a
+woven thing. Independent of the address above it — an address is prose, a
+map location is a placed point, and naming one never sets the other. Unset
+position means the patch is simply off the map; there is no separate on/off
+flag. Placement is always an explicit act (drop or drag the marker,
+confirm), so its coarseness is the admin's to choose — a marker can sit at
+neighbourhood level on purpose, and a **suggested placement** becomes a map
+location only when someone confirms it. Backend columns: `nodes.latitude`,
+`nodes.longitude`.
+_Avoid_: pin (retired — docs/adr/027), coordinates (as the UI label),
+address (that is the prose field, not the marker), geocoded location (a
+lookup proposes, a person places)
+
+**Suggested placement**:
+A marker the **gazetteer** proposes from a patch's **address**, shown
+provisionally and saved only when a person confirms it. It is not a map
+location until then: an unconfirmed suggestion leaves the patch off the
+map, which is what keeps a placed point placed rather than derived.
+_Avoid_: guess, auto-location, geocoded marker, best guess
+
+**Gazetteer**:
+An index of the places inside an instance's own geographic radius — named
+venues and street addresses — built offline from an OpenStreetMap extract
+and copied onto the server as a file beside the database. Optional
+infrastructure, never community data: an instance without one simply
+offers no **suggested placement**, and it is a cache of somebody else's
+dataset, so it does not travel in a seamrip.
+_Avoid_: geocoder (it names the process, not the thing), place index,
+address book, place database
 
 ## Tile appearance
 

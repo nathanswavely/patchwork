@@ -173,6 +173,21 @@ func (n *Notifier) resolveRecipients(event Event, audience Audience) []string {
 			event.EntityID, event.EntityID, event.EntityID,
 		)
 
+	case AudienceNoticeParticipants:
+		if event.EntityID == "" {
+			return nil
+		}
+		// The notice's author and everyone who replied (docs/adr/081): nobody
+		// is told about a conversation they have not joined.
+		return n.queryUserIDs(
+			`SELECT DISTINCT user_id FROM (
+				SELECT author_id AS user_id FROM notices WHERE id = ?
+				UNION
+				SELECT author_id AS user_id FROM notice_replies WHERE notice_id = ?
+			)`,
+			event.EntityID, event.EntityID,
+		)
+
 	case AudienceSiteAdmins:
 		return n.queryUserIDs(`SELECT id FROM users WHERE role = 'admin'`)
 
