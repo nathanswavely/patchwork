@@ -32,7 +32,7 @@ patchwork/
 │   ├── auth/               # magic links, invite links, WebAuthn, sessions
 │   ├── handler/            # HTTP handlers (nodes, events, proposals, admin, tree,
 │   │                       #   governance hub, claims/unclaimed, notifications, AP inbox,
-│   │                       #   user profiles)
+│   │                       #   user profiles, noticeboard + its patch report queue)
 │   ├── middleware/          # auth, rate limiting, CSRF, CORS, logging
 │   ├── model/              # Go structs for all entities
 │   ├── ap/                 # ActivityPub: actors, HTTP signatures, keypairs, delivery worker
@@ -253,6 +253,7 @@ Key endpoints:
 - `POST /api/v1/proposals/{id}/candidates`, `PUT /api/v1/proposals/{id}/ballot` — elections: standing is a member act, the ballot is a PUT of the whole approved set (approval voting replaces wholesale)
 - `GET|POST /api/v1/nodes/{slug}/attestations`, `PATCH /api/v1/nodes/{slug}/attestation-names/{id}` — leadership decided elsewhere (docs/adr/052); public read, step-up write
 - `GET|POST /api/v1/nodes/{slug}/amendment-attestations` — texts a meeting adopted (docs/adr/053); replaces the whole charter, checks no base
+- `GET|POST /api/v1/nodes/{slug}/notices`, `GET|PATCH|DELETE /api/v1/notices/{id}`, `GET|POST .../{id}/replies`, `PATCH|DELETE /api/v1/replies/{id}` — the noticeboard (docs/adr/081). **Every route checks the room in the handler**: active admins and members of that patch, never followers, never an instance admin with no role there (a 404, not a 403 — the room's existence is not the caller's to learn). A notice rings the bell only with `tell_members: true` at creation; replies are flat and notify participants only. `GET|PATCH /api/v1/nodes/{slug}/reports` is the patch's own report queue for notices and replies (actions: `dismiss`, `remove`, `close_replies`); `POST /api/v1/reports` with `entity_type` notice/reply routes there and never to the instance panel
 - `GET /api/v1/nodes/{slug}/governance/rules` — **sends the whole rule set, and must.** The editor builds its submission by spreading what it loaded, so a field this drops is a field the next unrelated rules edit resets to its default
 
 ## Multi-Quilt / Cross-Quilt Following (docs/adr/024)

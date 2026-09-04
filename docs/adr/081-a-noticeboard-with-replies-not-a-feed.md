@@ -1,6 +1,6 @@
 # ADR 081: A noticeboard with replies, not a feed
 
-Date: 2026-09-04. Status: **accepted**; not yet built. Grilled in session
+Date: 2026-09-04. Status: **accepted**; implemented (migration 063). Grilled in session
 against CONTEXT.md and the ADRs below, one branch of the design tree at a
 time; every decision here was put as a question with a recommendation and
 answered, and the two that went the other way (replies, and who gets
@@ -183,13 +183,18 @@ feature; when ADR 007's upload lands, notices get it with everything else.
 
 ## Consequences
 
-- A migration: a `notices` table, a target generalization on
-  `proposal_comments` (or a parallel table — an implementation choice, not
-  a decision here), a `report` entity type for notices and replies with a
-  patch-admin queue, two patch settings, and one notification category
-  with two types. The `notices` table goes in `Tables()`; reports on
-  notices are covered by `content_reports` staying behind
-  (`TestEveryTableHasABoundaryDecision`, decision 7).
+- Migration 063: `notices`, and a parallel `notice_replies` table rather
+  than a target generalization of `proposal_comments` — flat replies share
+  none of that table's shape (parent, reactions, AP id), so what was reused
+  is the look of a comment row, not the rows. Two patch settings on
+  `nodes`, a `node_id` on `content_reports` that routes a report to the
+  patch, and one notification category with three types (posted, reply,
+  reported). `notices` and `notice_replies` are in `Tables()`; reports stay
+  behind (`TestEveryTableHasABoundaryDecision`, decision 7).
+- The patch's report queue is `GET|PATCH /api/v1/nodes/{slug}/reports`,
+  at Patch Settings → Noticeboard. It is patch-admin only in the handler,
+  narrower than `RequireNodeRole`, which lets an instance admin through: a
+  queue that quotes the room is the room.
 - The workspace grows a fourth tab. `patchWorkspace.js` decides tab
   subsets; an unclaimed patch has no members and therefore no noticeboard.
 - The privacy policy gains one sentence, beside the contact card's.

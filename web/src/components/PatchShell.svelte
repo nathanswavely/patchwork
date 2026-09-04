@@ -18,7 +18,7 @@
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
   import PatchRelationship from './PatchRelationship.svelte';
-  import { Scales, UsersThree, CalendarBlank, GearSix, Eye } from 'phosphor-svelte';
+  import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard } from 'phosphor-svelte';
 
   let { slug = '', activeTab = 'governance', children } = $props();
 
@@ -105,6 +105,7 @@
     governance: Scales,
     members: UsersThree,
     events: CalendarBlank,
+    noticeboard: Chalkboard,
     settings: GearSix,
   };
 
