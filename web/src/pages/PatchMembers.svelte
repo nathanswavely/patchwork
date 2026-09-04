@@ -23,6 +23,12 @@
   let offerSharing = $derived(inRoom && myRow && !myRow.contact);
   let anyContact = $derived(members.some((m) => m.contact));
 
+  // Member count is admins plus members, never followers (CONTEXT.md).
+  // The insider listing carries follower rows too, so the two are counted
+  // apart and never summed.
+  let memberCount = $derived(members.filter((m) => m.role === 'member' || m.role === 'admin').length);
+  let followerCount = $derived(members.filter((m) => m.role === 'follower').length);
+
   $effect(() => {
     if (slug) loadMembers();
   });
@@ -56,7 +62,7 @@
     </div>
   {:else}
     <div class="members-header">
-      <span class="muted">{members.length} members</span>
+      <span class="muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}{#if followerCount > 0}{' · '}{followerCount === 1 ? '1 following' : `${followerCount} following`}{/if}</span>
     </div>
     {#if offerSharing}
       <p class="muted contact-offer">

@@ -63,6 +63,16 @@ describe('Members room: the card shows only where the API sent it', () => {
   });
 });
 
+describe('Members room: the count is admins plus members, never followers', () => {
+  const src = source('pages/PatchMembers.svelte');
+
+  it('counts members and followers apart and never sums them', () => {
+    expect(src).toContain("members.filter((m) => m.role === 'member' || m.role === 'admin').length");
+    expect(src).toContain("members.filter((m) => m.role === 'follower').length");
+    expect(src).not.toMatch(/\{members\.length\} members/);
+  });
+});
+
 describe('The public profile never learns the card', () => {
   it('UserProfile.svelte does not reach for contact', () => {
     expect(source('pages/UserProfile.svelte')).not.toMatch(/contact/i);
