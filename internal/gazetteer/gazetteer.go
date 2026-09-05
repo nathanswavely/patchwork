@@ -143,7 +143,9 @@ func (g *Gazetteer) Count() int {
 }
 
 // Scoring weights. A housenumber that matches is worth more than any other
-// single token because every building on a street shares everything else.
+// single token because every building on a street shares everything else —
+// which is also why it is the one weight with a precondition: it only pays on
+// a row whose street the query named. See the gate in Suggest.
 const (
 	weightHouseNumber = 3
 	weightWholeName   = 2
@@ -223,8 +225,21 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 			return Place{}, false
 		}
 		score := hits
-		// The housenumber only counts when the query actually carried it.
-		if p.HouseNumber != "" {
+		// The housenumber only counts when the query carried it *and* named
+		// the street it stands on. Without the second half, a number that
+		// matched on the wrong street outscored the right street with no
+		// such number: "150 N Prince St" shares {150, street, lancaster}
+		// with the East King Street Garage at 150 East King Street and beat
+		// every genuine North Prince Street row, because the generic word
+		// "Street" carried the match and the housenumber paid for it.
+		//
+		// The check is a gate on the bonus rather than a filter on the row.
+		// A filter would need to know that the query named a street at all,
+		// and it never does — "The Selvage, Lancaster" names none, and OSM
+		// spells plenty of streets in ways nobody types. Withholding a bonus
+		// we cannot justify leaves those rows scoring on what they did
+		// match; dropping them would answer nothing.
+		if p.HouseNumber != "" && streetNamed(query, p.Street) {
 			for _, ht := range Tokenize(p.HouseNumber) {
 				if query[ht] {
 					score += weightHouseNumber
@@ -265,6 +280,20 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 		return Place{}, false
 	}
 	return best.place, true
+}
+
+// streetNamed reports whether the query named this street, judged on the
+// words that distinguish it — one is enough, because "Philadelphia Pike" is
+// what somebody types for Old Philadelphia Pike. A street with no
+// distinguishing word cannot be confirmed, and neither can a row with no
+// street at all: there is nothing there for the query to have named.
+func streetNamed(query map[string]bool, street string) bool {
+	for _, t := range streetCore(street) {
+		if query[t] {
+			return true
+		}
+	}
+	return false
 }
 
 // containsAll reports whether every one of these tokens was in the query.
