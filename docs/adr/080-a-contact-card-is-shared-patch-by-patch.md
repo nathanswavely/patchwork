@@ -1,11 +1,13 @@
 # ADR 080: A contact card is shared patch by patch
 
-Date: 2026-09-04. Status: **accepted**; implemented. Sits beside docs/adr/006
-(one membership-visibility switch) without amending it. **docs/adr/083 is
-proposed to supersede this** — same audience rule, but the card becomes
-typed items shared one patch at a time, and the profile joins the Members
-room as a second window onto that audience. Until 083 is built, this ADR
-describes what runs.
+Date: 2026-09-04. Status: **superseded by docs/adr/083**. Sits beside
+docs/adr/006 (one membership-visibility switch) without amending it.
+083 keeps this ADR's audience rule exactly — the same people can read the
+same values — and changes two things: the card becomes typed items shared
+one patch at a time, because one boolean gave every room byte-identical
+fields; and the profile joins the Members room as a second window onto that
+audience, which this ADR rejected as widening a public page and which does
+not widen it. What follows is the reasoning 083 was built on, kept whole.
 
 ## Context
 

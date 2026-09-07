@@ -1,8 +1,8 @@
 # ADR 083: A contact item is shared one patch at a time
 
-Date: 2026-09-07. Status: **proposed**; supersedes docs/adr/080 when built.
-Sits beside docs/adr/006 (one membership-visibility switch) without amending
-it.
+Date: 2026-09-07. Status: **accepted**; implemented, superseding
+docs/adr/080. Sits beside docs/adr/006 (one membership-visibility switch)
+without amending it.
 
 ## Context
 
@@ -158,3 +158,29 @@ is built from named fields and gains none.
   a way to the profile.
 - CONTEXT.md gains *contact item*, splits *contact sharing* out of
   *contact card*, and gains *person card* beside *patch card*.
+
+## What building it found
+
+Two bugs that existed only where this decision met another, and neither
+branch could have seen alone.
+
+**A card outlived the person.** docs/adr/086 deletes an account by keeping
+the users row as a tombstone, so every FK declared ON DELETE CASCADE never
+fires — that ADR carries the schema's intent out by hand for
+`seats.holder_id`, and `contact_items.user_id` was not on the list because
+the table did not exist when the list was written. Deleting the memberships
+ended every disclosure, so nothing was visible; but ending a disclosure is
+not erasing a value, and a card is the person rather than an act.
+
+**A fork arrived unreachable.** `make import` builds a database after the
+process has started, so the startup conversion has already run against an
+empty schema and does not run again. Every card in a pre-066 archive would
+have landed in columns nothing reads — a silent loss in the one mechanism a
+community has for leaving with what is theirs (docs/adr/002), with the fork
+coming up looking complete.
+
+Both have the same shape, and it is worth stating for the next table
+somebody adds: **a new table joins the cross-cutting machinery only when
+someone adds it by hand.** Deletion, import, and export each keep a list.
+Only the seamrip boundary has a test that fails when you forget
+(`TestEveryTableHasABoundaryDecision`); deletion and import do not.
