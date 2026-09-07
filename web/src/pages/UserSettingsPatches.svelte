@@ -33,9 +33,15 @@
   let user = $derived(getUser());
   let cardEmpty = $derived(!(user?.contact_card?.phone || user?.contact_card?.email || user?.contact_card?.note));
 
-  let adminPatches = $derived(patches.filter(m => m.role === 'admin'));
-  let memberPatches = $derived(patches.filter(m => m.role === 'member'));
-  let followerPatches = $derived(patches.filter(m => m.role === 'follower'));
+  // me/nodes serves pending join requests alongside active rows, and a
+  // pending row carries role='member' — so status has to be read before
+  // role, or a request nobody has answered files itself under "Member of"
+  // with the switches an actual member owns.
+  let active = $derived(patches.filter(m => m.status === 'active'));
+  let adminPatches = $derived(active.filter(m => m.role === 'admin'));
+  let memberPatches = $derived(active.filter(m => m.role === 'member'));
+  let followerPatches = $derived(active.filter(m => m.role === 'follower'));
+  let pendingPatches = $derived(patches.filter(m => m.status === 'pending'));
 
 
   async function handleLeave(slug) {
@@ -46,6 +52,20 @@
       showToast('Left patch', 'info');
     } catch (e) {
       showToast(e.message || 'Failed to leave', 'error');
+    }
+  }
+
+  // Withdrawing is its own verb, not leave with a different label: the
+  // server keeps them apart because nobody admitted this person, so there
+  // is no community to exit (memberships.go, WithdrawMembershipRequest).
+  async function handleWithdraw(slug) {
+    try {
+      await api(`nodes/${slug}/withdraw`, { method: 'POST' });
+      await loadMemberships();
+      await loadPatches();
+      showToast('Request withdrawn', 'info');
+    } catch (e) {
+      showToast(e.message || 'Failed to withdraw request', 'error');
     }
   }
 
@@ -198,6 +218,31 @@
         {/each}
       </section>
     {/if}
+
+    <!-- Requests waiting on a patch's admins. Their own section rather
+         than a badge under "Member of": the switches a member owns
+         (visibility, contact sharing) govern a standing this person does
+         not have yet, and the date is when they asked, not when they
+         joined. Withdraw, not Leave: there is nothing here to leave. -->
+    {#if pendingPatches.length > 0}
+      <section class="patch-section">
+        <h3 class="section-heading">Requested</h3>
+        {#each pendingPatches as m (m.node_slug)}
+          <div class="patch-row">
+            <div class="patch-info">
+              <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
+                {m.node_name || m.node_slug}
+              </a>
+              <span class="badge badge-pending">awaiting approval</span>
+              <span class="muted joined-date">asked {formatDate(m.joined_at)}</span>
+            </div>
+            <div class="patch-actions">
+              <ConfirmAction label="Withdraw" variant="default" onConfirm={() => handleWithdraw(m.node_slug)} />
+            </div>
+          </div>
+        {/each}
+      </section>
+    {/if}
   {/if}
 </div>
 
@@ -281,6 +326,11 @@
   .vis-toggle.contact-shared {
     color: var(--color-primary);
     border-color: currentColor;
+  }
+
+  .badge-pending {
+    color: var(--color-text-muted);
+    font-style: italic;
   }
 
   .contact-hint {

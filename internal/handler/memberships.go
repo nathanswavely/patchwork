@@ -261,6 +261,68 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// WithdrawMembershipRequest handles POST /api/v1/nodes/{slug}/withdraw.
+//
+// A requester rescinds their own unanswered membership request. Distinct
+// from leaving, the way WithdrawClaim is distinct from rejection: nobody
+// admitted this person, so there is no community to exit and no admin
+// decision to undo. Keeping the two verbs apart is what lets the audit log
+// tell "changed their mind before anyone answered" from "was here and
+// left" — and stops a patch's record showing a departure by somebody who
+// was never a member.
+//
+// Its own route rather than a relaxed LeaveNode for the same reason: that
+// handler's only-admin floor and its 'active' precondition are about a
+// standing this row does not have, and widening the status it accepts
+// would have made both of those read as if they applied.
+//
+// join_message goes with the request, as it does on rejection: the intro
+// was written for a request that no longer exists.
+func WithdrawMembershipRequest(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		slug := r.PathValue("slug")
+
+		nodeID := NodeIDFromSlug(db, slug)
+		if nodeID == "" {
+			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// Scoped to this caller's own row: there is no admin path in here.
+		// An admin turning a request down is UpdateMember's reject, which
+		// is a decision and is logged as one.
+		var memID, status string
+		err := db.QueryRow(
+			"SELECT id, status FROM memberships WHERE user_id = ? AND node_id = ?",
+			user.ID, nodeID,
+		).Scan(&memID, &status)
+		if err != nil {
+			http.Error(w, `{"error":"no membership request to withdraw"}`, http.StatusBadRequest)
+			return
+		}
+		if status != "pending" {
+			http.Error(w, `{"error":"no membership request to withdraw"}`, http.StatusBadRequest)
+			return
+		}
+
+		_, err = db.Exec("UPDATE memberships SET status = 'left', join_message = NULL WHERE id = ?", memID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to withdraw request"}`, http.StatusInternalServerError)
+			return
+		}
+
+		auth.LogAuditEvent(db, user.ID, "membership.withdraw", "membership", memID, "{}", clientIP(r))
+
+		// Nobody is notified, matching WithdrawClaim and matching rejection:
+		// the request simply leaves the pending queue. An admin who never
+		// got round to it has nothing to act on and nothing to be told.
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "withdrawn"})
+	}
+}
+
 // LeaveNode handles POST /api/v1/nodes/{slug}/leave.
 func LeaveNode(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

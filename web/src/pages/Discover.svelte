@@ -24,7 +24,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
   import { getRankedTags, areTagsLoaded, getTagCounts } from '../stores/quilt.svelte.js';
-  import { getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
+  import { getMembershipRoles, getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
   import { formatDay } from '../lib/datetime.js';
@@ -137,10 +137,36 @@
 
   // --- Follows: the thing people leave with ---
   let roles = $derived(getMembershipRoles());
+  // A join request nobody has answered yet. The role map holds active rows
+  // only, so without asking for this the requester would be shown a Follow
+  // button the server refuses with a 409 (memberships.go: "membership
+  // request already pending").
+  let requested = $derived(getPendingMembershipSlugs());
   let busy = $state(new Set());
 
   function isFollowing(slug) {
     return roles.get(slug) === 'follower';
+  }
+
+  /**
+   * Where the viewer already stands, for the rows Follow has nothing to
+   * offer. Following and never-met are the two states this page is built
+   * for and they keep the button; every other standing gets a statement,
+   * because Follow here posts a join the server refuses — 409 "already a
+   * member" for a member or an admin, 409 "membership request already
+   * pending" for a request still out (memberships.go). An absent door
+   * beats a 403 at the end of a ceremony (docs/adr/042).
+   *
+   * The words are the relationship row's own (PatchRelationship's
+   * STANDING): a reader meeting "Member" here and "Member" on the patch's
+   * page should not have to work out whether they mean the same thing.
+   */
+  function standingLabel(slug) {
+    if (requested.has(slug)) return 'Requested';
+    const role = roles.get(slug);
+    if (role === 'admin') return 'Admin';
+    if (role === 'member') return 'Member';
+    return null;
   }
 
   async function toggleFollow(patch) {
@@ -237,6 +263,33 @@
     }
   }
 </script>
+
+<!-- One follow control, rendered in both patch lists. Standing that Follow
+     cannot change — member, admin, or a request already made — is stated
+     rather than offered: the button would only be refused. -->
+{#snippet followControl(patch)}
+  {@const standing = standingLabel(patch.slug)}
+  {#if standing}
+    <span class="standing-chip" class:awaiting={standing === 'Requested'}>{standing}</span>
+  {:else}
+    {@const following = isFollowing(patch.slug)}
+    <button
+      class="btn follow-btn"
+      class:following
+      class:btn-secondary={!following}
+      onclick={() => toggleFollow(patch)}
+      disabled={busy.has(patch.slug)}
+      aria-pressed={following}
+    >
+      {#if following}
+        <Heart size={12} weight="fill" />
+        Following
+      {:else}
+        Follow
+      {/if}
+    </button>
+  {/if}
+{/snippet}
 
 <div class="discover">
   {#if phase === 'ask'}
@@ -355,21 +408,7 @@
                   </span>
                 {/if}
               </div>
-              <button
-                class="btn follow-btn"
-                class:following={isFollowing(patch.slug)}
-                class:btn-secondary={!isFollowing(patch.slug)}
-                onclick={() => toggleFollow(patch)}
-                disabled={busy.has(patch.slug)}
-                aria-pressed={isFollowing(patch.slug)}
-              >
-                {#if isFollowing(patch.slug)}
-                  <Heart size={12} weight="fill" />
-                  Following
-                {:else}
-                  Follow
-                {/if}
-              </button>
+              {@render followControl(patch)}
             </div>
           {/each}
         </div>
@@ -401,21 +440,7 @@
                       </span>
                     </span>
                   </div>
-                  <button
-                    class="btn follow-btn"
-                    class:following={isFollowing(patch.slug)}
-                    class:btn-secondary={!isFollowing(patch.slug)}
-                    onclick={() => toggleFollow(patch)}
-                    disabled={busy.has(patch.slug)}
-                    aria-pressed={isFollowing(patch.slug)}
-                  >
-                    {#if isFollowing(patch.slug)}
-                      <Heart size={12} weight="fill" />
-                      Following
-                    {:else}
-                      Follow
-                    {/if}
-                  </button>
+                  {@render followControl(patch)}
                 </div>
               {/each}
             </div>
@@ -669,6 +694,26 @@
     background: color-mix(in srgb, var(--color-error) 8%, transparent);
     border-color: var(--color-error);
     color: var(--color-error);
+  }
+
+  /* Standing Follow cannot change: the follow control's footprint, without
+     the control. Muted rather than coloured — it reports a state, and the
+     two colours in this row already mean following (heart red) and not yet
+     (secondary). Italic only for the request, which is a wait rather than
+     a standing. */
+  .standing-chip {
+    flex-shrink: 0;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+    min-width: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+  }
+
+  .standing-chip.awaiting {
+    font-style: italic;
   }
 
   .bottom-bar {

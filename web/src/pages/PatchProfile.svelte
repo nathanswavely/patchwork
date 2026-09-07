@@ -24,6 +24,7 @@
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import PatchCover from '../components/PatchCover.svelte';
   import PatchRelationship from '../components/PatchRelationship.svelte';
+  import { getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import PatchOverflow from '../components/PatchOverflow.svelte';
   import { GearSix } from 'phosphor-svelte';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
@@ -61,6 +62,11 @@
   // Standing is the membership relationship, never instance-admin power:
   // an instance admin can manage any patch without standing in it.
   let hasStanding = $derived(['follower', 'member', 'admin'].includes(membershipRole));
+
+  // A join request nobody has answered. The node payload deliberately does
+  // not carry it — membership_role is set only for an active row — so it
+  // comes from the viewer's own memberships, which me/nodes does serve.
+  let requestPending = $derived(getPendingMembershipSlugs().has(slug));
 
   let canSeeGovernance = $derived(
     !isUnclaimed && (isMember || isAdmin || followerPermissions?.proposals === true || followerPermissions?.charters === true)
@@ -112,6 +118,14 @@
     hasOpenClaim = false;
     if (slug && isUnclaimed && isLoggedIn()) loadClaimState();
   });
+
+  // Joining or following changes two things the page reads: the node
+  // payload's membership_role, and the memberships store a pending request
+  // lives in. Refresh both, or asking to join leaves the row offering to
+  // join again until the next full load.
+  async function reloadStanding() {
+    await Promise.all([loadNode(), loadMemberships()]);
+  }
 
   async function loadNode() {
     loading = true;
@@ -264,8 +278,9 @@
         {isUnclaimed}
         {isBanned}
         {membershipRole}
+        {requestPending}
         {liningStatus}
-        onChanged={loadNode}
+        onChanged={reloadStanding}
       />
     </div>
 
