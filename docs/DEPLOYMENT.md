@@ -731,7 +731,69 @@ actually use after merging.
 To roll back a prebuilt-image deployment, pin the previous tag in the
 override file (instead of `:latest`) and re-run `docker compose up -d`.
 
-**Updating a deployment from before 2026-07-19?** Older images had their
+### Deciding whether an update is safe to apply
+
+If you update on a schedule rather than by hand, you need an answer to "can
+this one go out unattended?" that isn't a person reading a diff. Each GitHub
+release carries a `release.json` asset for exactly that (docs/adr/085):
+
+```json
+{
+  "version": "v0.26.0",
+  "image": "ghcr.io/patchwork-toolkit/patchwork:0.26.0",
+  "breaking": false,
+  "irreversible_migrations": false,
+  "summary": "the noticeboard, and events keep their own link"
+}
+```
+
+- **`breaking`** — true when updating without reading can leave you worse off
+  than you were: a config key renamed, removed or newly required; a changed
+  volume path, port or working directory; an API change an existing client
+  notices. Hold these for a human and read the release page.
+- **`irreversible_migrations`** — true when this release's migrations cannot be
+  undone by putting the previous image back against the same database. A
+  release can be perfectly compatible and still be one you cannot walk back, so
+  this is a separate flag from `breaking`. Take a backup you have actually
+  restored from before applying one.
+- **`summary`** — the one line that is also the release title.
+
+Both flags are asserted by the person cutting the tag, in
+`release-notes/vX.Y.Z.md` in the repo. They are a judgement, not a heuristic
+over the diff — which is the whole reason they are trustworthy.
+
+Fetch it with the GitHub CLI:
+
+```bash
+gh release download v0.26.0 --repo patchwork-toolkit/patchwork \
+  --pattern release.json --clobber
+jq -r '.breaking, .irreversible_migrations' release.json
+```
+
+Or with no `gh` on the box, straight off the API — this picks the newest
+release and prints its flags:
+
+```bash
+curl -sL https://api.github.com/repos/patchwork-toolkit/patchwork/releases/latest \
+  | jq -r '.assets[] | select(.name == "release.json") | .browser_download_url' \
+  | xargs curl -sL | jq .
+```
+
+A gate in an unattended updater is then two lines:
+
+```bash
+# Refuse to proceed unless the release says both flags are false.
+[ "$(jq -r .breaking release.json)" = "false" ] || exit 1
+[ "$(jq -r .irreversible_migrations release.json)" = "false" ] || exit 1
+```
+
+**Treat a missing `release.json` as "ask a human."** Releases cut before this
+existed have no asset, and neither does anything you built yourself from a
+branch. Absence is not `false`.
+
+**Updating a deployment from before 2026-07-19?** (This warning is the prose
+ancestor of the flag above: today that release would ship
+`breaking: true`.) Older images had their
 working directory on the ephemeral container layer, so a relative
 `database.path` silently wrote *outside* the `data` volume — and recreating
 the container destroyed the database. Before updating: check where your data

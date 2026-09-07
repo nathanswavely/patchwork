@@ -63,6 +63,7 @@ several branches are in flight.
 | [066](066-a-seam-belongs-to-the-boundary-not-to-either-tile.md) | A seam belongs to the boundary, not to either tile — the quilt's shared lattice, warped blocks and cloth *(inside 004 and 029)* |
 | [069](069-bespoke-calendars-are-adapters.md) | Bespoke calendars are adapters, not source types — a vendor type only where the vendor fixes the schema; the ICS URL is the extension point *(amends 031's type list)* |
 | [082](082-a-gazetteer-suggests-a-person-places.md) | A gazetteer suggests; a person places — an offline-built local place index proposes a marker from a patch's address, and only a confirmed proposal becomes a map location *(applies 077, amends CONTEXT.md)* |
+| [085](085-only-a-person-can-call-a-release-breaking.md) | Only a person can call a release breaking — hand-written `release-notes/vX.Y.Z.md`, a `release.json` asset on every release, and no tag publishes an image without one |
 | [087](087-an-admin-proves-the-role-not-the-person.md) | An admin proves the role, not the person — the instance actor signs a verifier's nonce for fifteen minutes; the statement names the domain and nobody *(preserves 023's unpublished roster, takes 017's step-up gate)* |
 
 ## Partly implemented
