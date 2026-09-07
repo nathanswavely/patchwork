@@ -474,7 +474,7 @@ func scanCrosswalk(db *database.DB, nodeID string) ([]model.EventSource, error) 
 		 es.created_at, es.updated_at, es.aggregator_id, es.name_key,
 		 a.name, COALESCE((SELECT MIN(l.display_name) FROM aggregator_listings l
 		   WHERE l.aggregator_id = es.aggregator_id AND l.name_key = es.name_key), es.name_key),
-		 es.suggests, COALESCE(u.display_name, u.username, ''),
+		 es.suggests, `+displayNameExpr("u")+`,
 		 (SELECT COUNT(*) FROM events e WHERE e.source_id = es.id
 		    AND e.removed_at IS NULL AND e.status = 'pending_review')
 		 FROM event_sources es

@@ -25,6 +25,10 @@ type profileMembership struct {
 // fields plus visible member/admin memberships in public patches. Follower
 // relationships and hidden memberships never appear here, for any viewer
 // (docs/adr/006).
+//
+// A deleted account is a 404 here even though its row is still present
+// (docs/adr/086). The tombstone exists to keep the community's record whole,
+// not to keep serving a page about somebody who left.
 func GetUserProfile(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		username := r.PathValue("username")
@@ -35,7 +39,7 @@ func GetUserProfile(db *database.DB) http.HandlerFunc {
 		)
 		err := db.QueryRow(
 			`SELECT id, username, display_name, bio, avatar_url, COALESCE(links,'[]'), created_at
-			 FROM users WHERE username = ? AND suspended_at IS NULL AND id != ?`,
+			 FROM users WHERE username = ? AND suspended_at IS NULL AND deleted_at IS NULL AND id != ?`,
 			username, model.SystemUserID,
 		).Scan(&u.ID, &u.Username, &u.DisplayName, &u.Bio, &u.AvatarURL, &linksJSON, &u.CreatedAt)
 		if err != nil {

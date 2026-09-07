@@ -23,7 +23,7 @@ func ListRevisions(db *database.DB) http.HandlerFunc {
 
 		rows, err := db.Query(
 			`SELECT r.id, r.proposal_id, r.title, r.body, COALESCE(r.proposed_body,''), r.revision_number, r.author_id, r.change_note, r.created_at,
-			 COALESCE(u.display_name, u.username) as author_name
+			 `+displayNameExpr("u")+` as author_name
 			 FROM proposal_revisions r
 			 LEFT JOIN users u ON u.id = r.author_id
 			 WHERE r.proposal_id = ?

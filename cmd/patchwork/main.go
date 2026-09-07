@@ -473,6 +473,11 @@ func main() {
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAmendmentAttestation(db))))
 	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembership(db)))
 
+	// Self-serve account deletion (docs/adr/086). Step-up gated for the same
+	// reason the wipe is: a valid cookie is proof of identity, and this is
+	// irreversible enough to need proof of presence too (docs/adr/017).
+	mux.HandleFunc("DELETE /api/v1/users/me", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.DeleteMyAccount(db, cfg))))
+
 	// The noticeboard — members-only, the check in every handler (docs/adr/081).
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.ListNotices(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.CreateNotice(db)))

@@ -59,9 +59,9 @@ type noticeItem struct {
 	ReplyCount        int    `json:"reply_count"`
 }
 
-const noticeSelect = `SELECT n.id, n.node_id, n.author_id, n.title, n.body, n.image_url, n.image_alt,
+var noticeSelect = `SELECT n.id, n.node_id, n.author_id, n.title, n.body, n.image_url, n.image_alt,
 	n.replies_open, n.members_told, n.created_at, n.updated_at,
-	u.username, u.display_name,
+	` + usernameExpr("u") + `, ` + displayNameExpr("u") + `,
 	(SELECT COUNT(*) FROM notice_replies r WHERE r.notice_id = n.id)
 	FROM notices n JOIN users u ON u.id = n.author_id`
 
@@ -366,7 +366,7 @@ type replyItem struct {
 	AuthorDisplayName string `json:"author_display_name"`
 }
 
-const replySelect = `SELECT r.id, r.notice_id, r.author_id, r.body, r.created_at, r.updated_at, u.username, u.display_name
+var replySelect = `SELECT r.id, r.notice_id, r.author_id, r.body, r.created_at, r.updated_at, ` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
 	FROM notice_replies r JOIN users u ON u.id = r.author_id`
 
 func scanReply(row interface{ Scan(...interface{}) error }) (replyItem, error) {
