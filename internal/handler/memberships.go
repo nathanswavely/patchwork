@@ -65,7 +65,7 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 		// what the patch is and what would change it, not what the reader
 		// could already have done.
 		if nodeStatus == "unclaimed" && !isFollow {
-			http.Error(w, `{"error":"no one runs this patch yet — it takes followers until someone claims it"}`, http.StatusForbidden)
+			http.Error(w, `{"error":"Patch must be claimed to accept members"}`, http.StatusForbidden)
 			return
 		}
 

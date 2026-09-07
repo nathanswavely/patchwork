@@ -68,8 +68,8 @@ func TestMyMembershipsCarriesNodeStatus(t *testing.T) {
 }
 
 // The message the follower used to be handed told them to do the thing
-// they had already done. It now says what the patch is and what would
-// change that.
+// they had already done ("you can follow it"). It now names the patch's
+// state and what would change it.
 func TestJoinUnclaimedTellsTheFollowerSomethingNew(t *testing.T) {
 	db := setupTestDB(t)
 	owner, _ := createTestUser(t, db, "owner-unclaimed", "member")
@@ -85,11 +85,11 @@ func TestJoinUnclaimedTellsTheFollowerSomethingNew(t *testing.T) {
 		t.Fatalf("expected 403, got %d: %s", w.Code, w.Body.String())
 	}
 	body := w.Body.String()
-	if !strings.Contains(body, "no one runs this patch yet") || !strings.Contains(body, "claims it") {
+	if !strings.Contains(body, "must be claimed") {
 		t.Errorf("message should state the patch's state and what would change it, got %s", body)
 	}
-	if strings.Contains(body, "you can follow it") {
-		t.Errorf("message still tells a follower to follow: %s", body)
+	if strings.Contains(body, "follow") {
+		t.Errorf("message tells a follower to follow, which they already have: %s", body)
 	}
 }
 

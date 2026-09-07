@@ -245,7 +245,7 @@
           <section class="proposal-section">
             <h2>Vote</h2>
             {#if soleVoter}
-              <p class="sole-voter-note">You're the only eligible voter — your vote decides this immediately.</p>
+              <p class="sole-voter-note">You're the only eligible voter, so your vote decides this immediately.</p>
             {/if}
             <VoteSection
               proposalId={proposal.id}

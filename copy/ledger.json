@@ -153,7 +153,7 @@
       "text": "CI runs the same suites plus `go vet`, `govulncheck`, and npm audit.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -484,7 +484,7 @@
       "text": "## What running a quilt asks of you",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -502,7 +502,7 @@
       "text": "Be honest with yourself about this part first.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -633,7 +633,7 @@
       "text": "## Ways to get one running",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -708,7 +708,7 @@
       "text": "## The promises that keep it honest",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -914,7 +914,7 @@
       "text": "Venues, co-ops, makerspaces, community radio (20–100 people)",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -932,7 +932,7 @@
       "text": "Coalition-scale governance. Elected council, term limits, full accountability.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -989,7 +989,7 @@
       "text": "Arts districts, mutual aid networks, coalitions (100+ people)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1724,7 +1724,7 @@
       "text": "These thresholds can be adjusted by amending this document.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1785,7 +1785,7 @@
       "text": "Changes to financial policies require a supermajority vote.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1962,7 +1962,7 @@
       "text": "Admins will respond within 7 days with a proposed resolution.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2319,7 +2319,7 @@
       "text": "Followers stay informed about events and activities. They can participate in discussions but cannot vote.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2715,7 +2715,7 @@
       "text": "## Article 5: Dissolution and Seamrip",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2967,7 +2967,7 @@
       "text": "Changes to financial policies require a supermajority vote with 50% quorum.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3147,7 +3147,7 @@
       "text": "The council responds within 14 days with a proposed resolution.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4837,7 +4837,7 @@
       "text": "role must be member or admin",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5811,7 +5811,7 @@
       "text": "only an admin of this patch can record what was adopted",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5829,7 +5829,7 @@
       "text": "this patch decides its proposals in Patchwork; amend the charter with a proposal",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5847,7 +5847,7 @@
       "text": "decided_at is required: a record of what happened has to say when",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5926,7 +5926,7 @@
       "text": "failed to record what was adopted",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6348,7 +6348,7 @@
       "text": "only an admin of this patch can record a decision",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6366,7 +6366,7 @@
       "text": "this patch chooses its admins in Patchwork; there is nothing to record",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6384,7 +6384,7 @@
       "text": "only a patch with elected leadership has terms; this one fills admin seats another way",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6402,7 +6402,7 @@
       "text": "the record being corrected does not belong to this patch",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6420,7 +6420,7 @@
       "text": "that record has already been corrected; correct the correction instead",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6456,7 +6456,7 @@
       "text": "only an admin of this patch can link a name",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6474,7 +6474,7 @@
       "text": "name not found on this patch",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6492,7 +6492,7 @@
       "text": "that name is already linked to a person",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6542,7 +6542,7 @@
       "text": "a recorded name can only be linked to an active member of this patch",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7166,7 +7166,7 @@
       "text": "this patch is not available for claiming",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7184,7 +7184,7 @@
       "text": "this patch has an approved claim awaiting setup",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7202,7 +7202,7 @@
       "text": "you already have an open claim for this patch",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7241,11 +7241,11 @@
       ]
     },
     {
-      "id": "6552507b1897",
-      "text": "this patch has no verified domain — choose admin review",
-      "words": 10,
+      "id": "7017dc620ac7",
+      "text": "this patch has no verified domain. Choose admin review",
+      "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7256,14 +7256,15 @@
           "raw": "this patch has no verified domain — choose admin review",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this patch has no verified domain — choose admin review"
     },
     {
       "id": "68a7c7a414f2",
       "text": "a valid email address is required for email verification",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7281,7 +7282,7 @@
       "text": "the email must be at @%s",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7445,7 +7446,7 @@
       "text": "this claim has no email verification to resend",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7459,11 +7460,11 @@
       ]
     },
     {
-      "id": "8855c9883aa2",
-      "text": "resend limit reached — try again tomorrow",
-      "words": 7,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "3755f434f202",
+      "text": "resend limit reached",
+      "words": 3,
+      "tier": "label",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7474,7 +7475,8 @@
           "raw": "resend limit reached — try again tomorrow",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "resend limit reached — try again tomorrow"
     },
     {
       "id": "92abfc915c9e",
@@ -7502,11 +7504,11 @@
       ]
     },
     {
-      "id": "eeb6b3d56593",
-      "text": "this verification link has expired — request a new email from the claim page",
-      "words": 14,
+      "id": "3f4e4f93607a",
+      "text": "this verification link has expired. Request a new email from the claim page",
+      "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7517,7 +7519,8 @@
           "raw": "this verification link has expired — request a new email from the claim page",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this verification link has expired — request a new email from the claim page"
     },
     {
       "id": "89699d04b138",
@@ -7592,7 +7595,7 @@
       "text": "action must be 'approve' or 'reject'",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7624,7 +7627,7 @@
       "text": "verification domains only apply to unclaimed patches",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7710,11 +7713,11 @@
       ]
     },
     {
-      "id": "ef2433075e6d",
-      "text": "this claim's setup window has expired — the patch is claimable again",
-      "words": 12,
+      "id": "8cd22cf5e185",
+      "text": "this claim's setup window has expired. The patch is claimable again",
+      "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7725,14 +7728,15 @@
           "raw": "this claim's setup window has expired — the patch is claimable again",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this claim's setup window has expired — the patch is claimable again"
     },
     {
       "id": "b4d6e8c59790",
       "text": "this patch is no longer unclaimed",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7818,7 +7822,7 @@
       "text": "this patch does not include followers in its proposals",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7861,7 +7865,7 @@
       "text": "parent comment not found or belongs to different proposal",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7929,7 +7933,7 @@
       "text": "only the author can edit this comment",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8080,7 +8084,7 @@
       "text": "must be a member of this patch to nominate",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8098,7 +8102,7 @@
       "text": "a candidate must be an active member of this patch",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8152,7 +8156,7 @@
       "text": "nominations are still open; voting has not started",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8188,7 +8192,7 @@
       "text": "only active events can be linked",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8206,7 +8210,7 @@
       "text": "only this patch's admins can add a mention",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8274,7 +8278,7 @@
       "text": "an event is already on its own patch",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8292,7 +8296,7 @@
       "text": "only admins of either patch can link",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8310,7 +8314,7 @@
       "text": "only the linked patch's admins choose an event to absorb",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8335,7 +8339,7 @@
       "text": "absorb_event_id must be an event on the linked patch",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8421,7 +8425,7 @@
       "text": "only the other patch's admins can confirm",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8457,7 +8461,7 @@
       "text": "only admins of either patch can remove a link",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8511,7 +8515,7 @@
       "text": "only this patch's admins can remove a mention",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8572,7 +8576,7 @@
       "text": "this patch already has the maximum number of event sources",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8668,11 +8672,11 @@
       ]
     },
     {
-      "id": "66290a809a1b",
-      "text": "this source just synced — try again in a minute",
-      "words": 10,
+      "id": "af764bbde65c",
+      "text": "this source just synced, try again in a minute",
+      "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8683,7 +8687,8 @@
           "raw": "this source just synced — try again in a minute",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this source just synced — try again in a minute"
     },
     {
       "id": "e32c8be0ce9a",
@@ -8708,7 +8713,7 @@
       "text": "this event is not attached to an event source",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8873,7 +8878,7 @@
       "text": "bulk upload is for patch admins",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8909,7 +8914,7 @@
       "text": "an upload is at most %d events",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9037,7 +9042,7 @@
       "text": "node_id, title, and starts_at are required",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9055,7 +9060,7 @@
       "text": "community submissions are disabled on this instance",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9080,7 +9085,7 @@
       "text": "this patch does not accept event suggestions",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9253,7 +9258,7 @@
       "text": "visibility must be public or members",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9278,7 +9283,7 @@
       "text": "that title is reserved for the lining",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9339,7 +9344,7 @@
       "text": "title, body, or visibility is required",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9375,7 +9380,7 @@
       "text": "the lining's title cannot be changed",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9411,7 +9416,7 @@
       "text": "the lining can only be changed by amendment proposal",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9447,7 +9452,7 @@
       "text": "from and to query params are required",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9565,7 +9570,7 @@
       "text": "activity actor does not match signature",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9722,7 +9727,7 @@
       "text": "prose must be 20000 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9740,7 +9745,7 @@
       "text": "support link must be an http(s) URL",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9758,7 +9763,7 @@
       "text": "feedback link must be an http(s) URL",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9776,7 +9781,7 @@
       "text": "currency must be a 3-letter code",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9794,7 +9799,7 @@
       "text": "seamripped-from link must be an http(s) URL",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9812,7 +9817,7 @@
       "text": "the Label needs at least one listed steward before it can publish",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9884,7 +9889,7 @@
       "text": "every cost item needs a service name",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9920,7 +9925,7 @@
       "text": "period must be monthly or yearly",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9938,7 +9943,7 @@
       "text": "stated_on must be a YYYY-MM-DD date",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10013,7 +10018,7 @@
       "text": "that person is already on the stewards list",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10067,7 +10072,7 @@
       "text": "you are not on the stewards list",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10085,7 +10090,7 @@
       "text": "blurb must be 200 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10280,7 +10285,7 @@
       "text": "## What other people can see",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10316,7 +10321,7 @@
       "text": "Your email address is never shown publicly. Only this site's administrators can see it.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10370,7 +10375,7 @@
       "text": "## Federation: where your public content travels",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10550,7 +10555,7 @@
       "text": "## How long things are kept, and deletion",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10894,7 +10899,7 @@
       "text": "These rules apply everywhere on this site:",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10985,7 +10990,7 @@
       "text": "## If you don't like how this place is run",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11121,11 +11126,11 @@
       ]
     },
     {
-      "id": "9a3e79467b38",
-      "text": "document cannot be empty — use reset to restore the default",
-      "words": 11,
+      "id": "bd0c7f3db4c0",
+      "text": "document cannot be empty, use reset to restore the default",
+      "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11136,7 +11141,8 @@
           "raw": "document cannot be empty — use reset to restore the default",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "document cannot be empty — use reset to restore the default"
     },
     {
       "id": "db62d44cbd29",
@@ -11197,7 +11203,7 @@
       "text": "message must be 500 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11229,11 +11235,11 @@
       ]
     },
     {
-      "id": "01f47c985bf6",
-      "text": "no one runs this patch yet — it takes followers until someone claims it",
-      "words": 14,
+      "id": "dc01113daba3",
+      "text": "Patch must be claimed to accept members",
+      "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11244,7 +11250,8 @@
           "raw": "no one runs this patch yet — it takes followers until someone claims it",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "no one runs this patch yet — it takes followers until someone claims it"
     },
     {
       "id": "506d061a2faa",
@@ -11269,7 +11276,7 @@
       "text": "You have been removed from this community",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11420,7 +11427,7 @@
       "text": "cannot leave as the only admin",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11661,7 +11668,7 @@
       "text": "can only reject pending or reinstate banned members",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11733,7 +11740,7 @@
       "text": "this patch chooses its admins elsewhere: record that decision instead",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11751,7 +11758,7 @@
       "text": "this patch ratifies admins by proposal: nominate them instead",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11898,7 +11905,7 @@
       "text": "tags must be an array of tag names",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12465,7 +12472,7 @@
       "text": "notification not found or already read",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12483,7 +12490,7 @@
       "text": "failed to mark all notifications read",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12846,7 +12853,7 @@
       "text": "a proposal about a person must be of type membership",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12882,7 +12889,7 @@
       "text": "failed to create amendment branch: %s",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12918,7 +12925,7 @@
       "text": "proposal is not open for voting",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12936,7 +12943,7 @@
       "text": "this patch decides elsewhere; the decision is recorded here after it is made",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12972,7 +12979,7 @@
       "text": "value must be approve, reject, or abstain",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13026,7 +13033,7 @@
       "text": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13062,7 +13069,7 @@
       "text": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13123,7 +13130,7 @@
       "text": "only admins can make proposals official",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13141,7 +13148,7 @@
       "text": "proposal cannot be applied in its current state",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13195,7 +13202,7 @@
       "text": "failed to load recovery code status",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13227,11 +13234,11 @@
       ]
     },
     {
-      "id": "0a768851d94b",
-      "text": "too many attempts — wait a couple of minutes",
-      "words": 9,
+      "id": "5ad04702ddd5",
+      "text": "too many attempts. Wait a couple of minutes",
+      "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13242,7 +13249,8 @@
           "raw": "too many attempts — wait a couple of minutes",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "too many attempts — wait a couple of minutes"
     },
     {
       "id": "56eb9ed0d58a",
@@ -13285,7 +13293,7 @@
       "text": "quilt_url must be an http(s) URL",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13303,7 +13311,7 @@
       "text": "node_ap_id must be an http(s) URL",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13382,7 +13390,7 @@
       "text": "snapshot must be a JSON object",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13529,7 +13537,7 @@
       "text": "url must be an http(s) URL",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13716,7 +13724,7 @@
       "text": "entity_type, entity_id, and reason are required",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13806,7 +13814,7 @@
       "text": "only the author can create revisions",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13950,7 +13958,7 @@
       "text": "failed to sign out other sessions",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14022,7 +14030,7 @@
       "text": "name must be 100 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14076,7 +14084,7 @@
       "text": "description must be 500 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14238,7 +14246,7 @@
       "text": "confirmation name does not match the quilt name",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14252,11 +14260,11 @@
       ]
     },
     {
-      "id": "c323ba82884a",
-      "text": "wipe failed — no data was deleted",
-      "words": 7,
+      "id": "d1c50d4d8a24",
+      "text": "wipe failed, no data was deleted",
+      "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14267,14 +14275,15 @@
           "raw": "wipe failed — no data was deleted",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "wipe failed — no data was deleted"
     },
     {
       "id": "11004bae4b33",
       "text": "only an admin of this patch can name a successor",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14292,7 +14301,7 @@
       "text": "naming a successor is the maintainer model's mechanic; this patch fills admin seats another way",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14310,7 +14319,7 @@
       "text": "you cannot name yourself as your own successor",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14328,7 +14337,7 @@
       "text": "a successor must be an active member of this patch",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14364,7 +14373,7 @@
       "text": "only an admin of this patch can clear a successor",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14418,7 +14427,7 @@
       "text": "tag already exists or failed to create",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14461,7 +14470,7 @@
       "text": "motif is required (empty string clears it)",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14756,7 +14765,7 @@
       "text": "resource must be an acct: URI",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14828,7 +14837,7 @@
       "text": "<!DOCTYPE html><html><body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 20px;\">",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14846,7 +14855,7 @@
       "text": "<p style=\"color: #666; font-size: 13px; margin: 0 0 4px;\">%s</p>",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14864,7 +14873,7 @@
       "text": "<h2 style=\"margin: 0 0 12px; font-size: 18px; color: #1a1a1a;\">%s</h2>",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14882,7 +14891,7 @@
       "text": "<p style=\"color: #444; font-size: 14px; line-height: 1.5; margin: 0 0 16px;\">%s</p>",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14918,7 +14927,7 @@
       "text": "<hr style=\"border: none; border-top: 1px solid #eee; margin: 24px 0;\">",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14979,7 +14988,7 @@
       "text": "You have not taken part in governance here for",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15033,7 +15042,7 @@
       "text": "You are now an interim admin of",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15087,7 +15096,7 @@
       "text": "Less than 24 hours to vote on this proposal.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15123,7 +15132,7 @@
       "text": "This event starts in less than 24 hours.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15429,7 +15438,7 @@
       "text": "Comment on a proposal you're in",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15501,7 +15510,7 @@
       "text": "Rules changed while votes are open",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15555,7 +15564,7 @@
       "text": "A patch has no admins left",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15807,7 +15816,7 @@
       "text": "Event link request for your patch",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16023,7 +16032,7 @@
       "text": "Your claim's setup window is closing",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16227,7 +16236,7 @@
       "text": "Requirements: Go 1.25+, Node 20+ (to build the frontend), or just Docker.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16245,7 +16254,7 @@
       "text": "### Demo data: try it as different people",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16300,7 +16309,7 @@
       "text": "Or with Docker Compose (includes Caddy for automatic HTTPS):",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16657,7 +16666,7 @@
       "text": "You need to be logged in to view this page.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16707,7 +16716,7 @@
       "text": "The page you're looking for doesn't exist.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16811,7 +16820,7 @@
       "text": "Paste the text the meeting adopted",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16829,7 +16838,7 @@
       "text": "Name the document that was adopted",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16847,7 +16856,7 @@
       "text": "Recording an adopted text needs a passkey. Enroll one in Security settings first.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16983,7 +16992,7 @@
       "text": "The adopted text is visible to members.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17080,7 +17089,7 @@
       "text": "If this patch has no document by that name, one is created.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17177,7 +17186,7 @@
       "text": "Paste the whole document as it now reads",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17213,7 +17222,7 @@
       "text": "Say when the decision was made",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17231,7 +17240,7 @@
       "text": "Name at least one person the decision put in place",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17249,7 +17258,7 @@
       "text": "Recording a decision needs a passkey. Enroll one in Security settings first.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17267,7 +17276,7 @@
       "text": "Linking a name needs a passkey. Enroll one in Security settings first.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17424,7 +17433,7 @@
       "text": "Term ended {formatDay(current.term_ends_at)}. The council serves until a successor is elected.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17496,7 +17505,7 @@
       "text": "{earlier.length} earlier record{earlier.length > 1 ? 's' : ''}",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17676,7 +17685,7 @@
       "text": "Changing the grid clears your seams (colors of surviving cells stay). Continue?",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17767,7 +17776,7 @@
       "text": "Click a piece to color it with fabric {selectedSlot + 1}.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17785,7 +17794,7 @@
       "text": "Click a seam to unpick it. Pieces keep their fabric where they survive.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18309,7 +18318,7 @@
       "text": "{seats} seat{seats === 1 ? '' : 's'}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18327,7 +18336,7 @@
       "text": "Anyone who is a member can stand.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18345,7 +18354,7 @@
       "text": "Nominations close {formatDay(proposal.nominations_close_at)}, and voting opens then.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18363,7 +18372,7 @@
       "text": "Approve as many candidates as you like. The {seats} most approved take the seats.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18381,7 +18390,7 @@
       "text": "{c.approvals} approval{c.approvals === 1 ? '' : 's'}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18417,7 +18426,7 @@
       "text": "You are standing in this election.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18435,7 +18444,7 @@
       "text": "You can change this until voting closes. Approving nobody is the same as not voting.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18758,7 +18767,7 @@
       "text": "asked to link to this event",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19275,7 +19284,7 @@
       "text": "Naming a successor needs a passkey. Enroll one in Security settings first.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19409,7 +19418,7 @@
       "text": "The maintainer makes all decisions for this patch.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19427,7 +19436,7 @@
       "text": "Your patch decides things by majority vote. More than half must agree.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19445,7 +19454,7 @@
       "text": "Decisions require a supermajority: at least 2 out of 3 voters must agree.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19463,7 +19472,7 @@
       "text": "Decisions require consensus. Everyone, or nearly everyone, must agree.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19481,7 +19490,7 @@
       "text": "Any number of votes counts. No minimum participation required.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19499,7 +19508,7 @@
       "text": "One person maintains this patch. They handle day-to-day decisions and can designate a successor.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19535,7 +19544,7 @@
       "text": "The community elects admins for fixed terms. Regular elections ensure power rotates.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19589,7 +19598,7 @@
       "text": "Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19662,7 +19671,7 @@
       "text": "An admin changes these rules directly.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19716,7 +19725,7 @@
       "text": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19752,7 +19761,7 @@
       "text": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19770,7 +19779,7 @@
       "text": "Admins are chosen outside Patchwork. What the community decided is recorded below.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19802,11 +19811,11 @@
       ]
     },
     {
-      "id": "5f02e2975dff",
-      "text": "— if the current admin steps away, the patch passes to them.",
+      "id": "e3f5fe15e5e7",
+      "text": ". If the current admin steps away, the patch passes to them.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19817,7 +19826,8 @@
           "raw": "— if the current admin steps away, the patch passes to them.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "— if the current admin steps away, the patch passes to them."
     },
     {
       "id": "c485c7ce16f0",
@@ -19860,7 +19870,7 @@
       "text": "Naming a successor is also what lets you leave a patch you run alone.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19973,7 +19983,7 @@
       "text": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20066,7 +20076,7 @@
       "text": "{instanceName} is a quilt of the communities around you.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20302,7 +20312,7 @@
       "text": "Membership is admin-approved. This sends a request.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20320,7 +20330,7 @@
       "text": "Membership is open. Joining makes you a member.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20338,7 +20348,7 @@
       "text": "This patch has amended the lining.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20428,7 +20438,7 @@
       "text": "Introduce yourself to the admins (optional)",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20564,7 +20574,7 @@
       "text": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20808,7 +20818,7 @@
       "text": "first. It takes a moment and uses the sign-in you already have.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20894,7 +20904,7 @@
       "text": "You are now a member",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21388,7 +21398,7 @@
       "text": "Nominations are open. Voting starts when they close.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21424,7 +21434,7 @@
       "text": "The community approved this change. An admin needs to make it official.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21442,7 +21452,7 @@
       "text": "This proposal did not pass. {approveCount} approved, {rejectCount} rejected.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21639,7 +21649,7 @@
       "text": "Create the first patch to get started.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21765,7 +21775,7 @@
       "text": "Report submitted. An admin will review it.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21944,7 +21954,7 @@
       "text": "Anything that helps an admin understand what happened.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22142,7 +22152,7 @@
       "text": "Copy failed. Select the address instead",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22325,7 +22335,7 @@
       "text": "Stewarded by {(label.stewards || []).map((s) => `@${s.username}`).join(', ')}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23012,7 +23022,7 @@
       "text": "({unchangedCount} field{unchangedCount > 1 ? 's' : ''} unchanged)",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23066,7 +23076,7 @@
       "text": "People don't vote on proposals about themselves",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23270,7 +23280,7 @@
       "text": "Copy failed. Select the address instead.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23349,7 +23359,7 @@
       "text": "Paste the calendar address into your calendar app to follow this patch's events.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23460,7 +23470,7 @@
       "text": "No tags yet. The instance admin curates the list.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23496,7 +23506,7 @@
       "text": "Decisions pass when more than half of voters agree.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23514,7 +23524,7 @@
       "text": "Decisions require at least 2 out of 3 voters to agree.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23532,7 +23542,7 @@
       "text": "Decisions require everyone (or nearly everyone) to agree.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23586,7 +23596,7 @@
       "text": "One person (the founder) maintains this patch and makes day-to-day decisions.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23604,7 +23614,7 @@
       "text": "Admins earn their role through sustained contribution. Existing admins nominate new ones.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23622,7 +23632,7 @@
       "text": "The community elects admins for fixed terms. Power rotates through regular elections.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23838,7 +23848,7 @@
       "text": "are open to you, including your vote.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24043,7 +24053,7 @@
       "text": "Quorum met ({totalVotes} of {electorateSize} voted, {quorumPercent}% needed)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24061,7 +24071,7 @@
       "text": "Quorum not yet met ({totalVotes} of {quorumNeeded} needed)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24956,7 +24966,7 @@
       "text": "Invalid registry format: missing quilts array",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24974,7 +24984,7 @@
       "text": "This action needs a passkey. Enroll one in Security settings first.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25028,7 +25038,7 @@
       "text": "An inferred link from shared members between patches",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25064,7 +25074,7 @@
       "text": "A proposal for the community to vote on",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25118,7 +25128,7 @@
       "text": "A community that branched off from another",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25801,7 +25811,7 @@
       "text": "Patchwork is open source. Start your own quilt &rarr;",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25819,7 +25829,7 @@
       "text": "Patchwork will open on My Quilt",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25837,7 +25847,7 @@
       "text": "Patchwork will open on the whole quilt",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25855,7 +25865,7 @@
       "text": "You are listed on the Label",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25873,7 +25883,7 @@
       "text": "You are no longer listed on the Label",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26113,7 +26123,7 @@
       "text": "shows your name, bio, links, and the memberships you keep visible.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26598,7 +26608,7 @@
       "text": "Hide patches that amended the lining",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26702,7 +26712,7 @@
       "text": "Copy it now. This address won't be shown again, and regenerating replaces it.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26828,7 +26838,7 @@
       "text": "An instance admin wants to name you on this quilt's",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26846,7 +26856,7 @@
       "text": "as a steward. Nothing appears until you accept, and you can take it back later.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26864,7 +26874,7 @@
       "text": "What you look after (in your own words)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26882,7 +26892,7 @@
       "text": "keeps the lights on and pays the bill",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -26954,7 +26964,7 @@
       "text": "Activity from your patches will show up here.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27624,7 +27634,7 @@
       "text": "The \"From\" date must be before the \"To\" date.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28037,7 +28047,7 @@
       "text": "Claim approved. The claimant can now complete setup.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28091,7 +28101,7 @@
       "text": "Users requesting ownership of unclaimed patches.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28127,7 +28137,7 @@
       "text": "Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28490,7 +28500,7 @@
       "text": "Download all community data as a zip: patches, members, events, governance",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28569,7 +28579,7 @@
       "text": "Community-submitted events on unclaimed patches awaiting review.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28637,7 +28647,7 @@
       "text": "Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28705,7 +28715,7 @@
       "text": "Every cost item needs a service name",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28759,7 +28769,7 @@
       "text": "You are listed as a steward",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28813,7 +28823,7 @@
       "text": "The Label is public at /label",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28868,7 +28878,7 @@
       "text": "Anyone can read the Label, signed in or not.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28905,7 +28915,7 @@
       "text": "Ready to publish whenever you are.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29137,7 +29147,7 @@
       "text": "Worth keeping if the history is friendly. Remove it if it isn't.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29307,7 +29317,7 @@
       "text": "When this figure was stated or last reviewed",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29325,7 +29335,7 @@
       "text": "Why this one? (cheap, EU-based, no contract)",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29434,7 +29444,7 @@
       "text": "Custom text, last saved {current.updated_at?.slice(0, 10) || 'recently'}.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29488,7 +29498,7 @@
       "text": "Markdown. Links like [the Label](/label) work.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29596,7 +29606,7 @@
       "text": "Neighbor quilts appear in the quilt switcher for",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -32608,7 +32618,7 @@
       "text": "You're cleared to set up this patch. Setup is where it becomes active. Until then, it still reads as unclaimed to everyone else.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33173,7 +33183,7 @@
       "text": "This proves the account that opened the claim controls this email address. You'll complete setup next to activate the patch.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33474,7 +33484,7 @@
       "text": "You haven't joined any patches yet.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34020,7 +34030,7 @@
       "text": "The {event.node_status === 'unclaimed' ? 'quilt admins' : 'patch admins'} will look at this event before it appears on the calendar. Only you and the reviewers can see it for now.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34074,7 +34084,7 @@
       "text": "and updates with it. To change it, edit the source calendar, or detach it to make it an ordinary event.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34307,7 +34317,7 @@
       "text": "The {pendingReviewers} will look at it. Your event will appear on the calendar once it's approved.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34667,7 +34677,7 @@
       "text": "Link a flyer or photo you already have online. Patchwork points at it and never keeps a copy.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -37427,7 +37437,7 @@
       "text": "Quilts carry a label on the back that says who made them and when. This is ours.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39498,7 +39508,7 @@
       "text": "What kind of patch is this? Tags help people find you, and new patches are placed near others with the same tags on the quilt. The first tag decides your default motif.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39534,7 +39544,7 @@
       "text": "How this patch looks on the quilt. You can change it anytime in Patch Settings → Appearance, and draft your own block there too.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39677,7 +39687,7 @@
       "text": "Optional. The mark that appears beside the name on the quilt. Unset, it follows your first tag. You can change it later in Patch Settings.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39691,11 +39701,11 @@
       ]
     },
     {
-      "id": "a8bce03d1204",
-      "text": "Every patch starts with the lining — this quilt's shared community standards. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
-      "words": 36,
+      "id": "72683dfe71f1",
+      "text": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
+      "words": 35,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39706,7 +39716,8 @@
           "raw": "Every patch starts with the lining — this quilt's shared community\n            standards. It is always public, and if your patch amends it, the\n            changes are public and the patch is marked as having amended the\n            lining.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Every patch starts with the lining — this quilt's shared community standards. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining."
     },
     {
       "id": "22c8f55478fa",
@@ -40281,7 +40292,7 @@
       "text": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40407,7 +40418,7 @@
       "text": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40587,7 +40598,7 @@
       "text": "Choose how this patch appears on the quilt. The first fabric of the bundle also becomes the patch's color on cards and labels.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40677,7 +40688,7 @@
       "text": "After a reset, the tile gets an automatically assigned look, which may change as the quilt grows.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40785,7 +40796,7 @@
       "text": "Archiving hides this patch from the quilt and closes its workspace. Nothing is deleted, but only an instance admin can restore it.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40929,7 +40940,7 @@
       "text": "On the quilt. Anyone can find this patch through the quilt, search, the map, and public event feeds, and other quilts can follow it.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40947,7 +40958,7 @@
       "text": "Off the quilt. Kept out of the quilt, search, the map, and public feeds, and it does not federate.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41163,7 +41174,7 @@
       "text": "Placing a marker adds this patch to the map. The marker can be approximate, and is separate from the address above.",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41199,7 +41210,7 @@
       "text": "Link a picture you already have online. Patchwork points at it and never keeps a copy, so it stays yours.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41260,7 +41271,7 @@
       "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41292,11 +41303,11 @@
       ]
     },
     {
-      "id": "1974b0f46aa7",
-      "text": "This is about the patch itself — where it shows up. Events, members, and documents each carry their own visibility.",
-      "words": 20,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "b5aa46d9bda8",
+      "text": "Patch specific configuration. Events, members, and documents carry their own visibility.",
+      "words": 11,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41307,14 +41318,15 @@
           "raw": "This is about the patch itself — where it shows up. Events, members, and\n      documents each carry their own visibility.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "This is about the patch itself — where it shows up. Events, members, and documents each carry their own visibility."
     },
     {
       "id": "bdbcb49c174d",
       "text": "Either way, anyone holding a direct link can open this patch's page. Private keeps it from being found, not from being visited.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42948,7 +42960,7 @@
       "text": "The one domain the platform has vetted as belonging to this organization. Self-service claims prove control of it (DNS record or a meta tag). Leave it empty to require admin review for every claim. This is separate from the website field, which carries no trust.",
       "words": 45,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43020,7 +43032,7 @@
       "text": "This patch is unclaimed. When someone proves they run it, claiming turns it into their patch.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43160,7 +43172,7 @@
       "text": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''}, after this was drafted. The changes below compare against the older text.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43228,11 +43240,11 @@
       ]
     },
     {
-      "id": "ff8be53e7a20",
-      "text": "You're the only eligible voter — your vote decides this immediately.",
+      "id": "a561c9ff9e11",
+      "text": "You're the only eligible voter, so your vote decides this immediately.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43243,7 +43255,8 @@
           "raw": "You're the only eligible voter — your vote decides this immediately.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "You're the only eligible voter — your vote decides this immediately."
     },
     {
       "id": "1b12f8ed703b",
@@ -43683,7 +43696,7 @@
       "text": "Connect other Patchworks to keep them a click away in the quilt switcher. Each opens on its own site. Your connections are part of your account, so they follow you to any device.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43719,7 +43732,7 @@
       "text": "Found a patch while visiting another quilt? Paste its link (or drop it in the search bar) and it opens here, with a Follow button. Followed patches join your My Quilt.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43881,7 +43894,7 @@
       "text": "Couldn't reach this patch. Its quilt may be unreachable or may not allow browsing from other quilts.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -44007,7 +44020,7 @@
       "text": "You're viewing this patch's public face from your own quilt. Joining, RSVPs, and everything deeper live on",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45038,7 +45051,7 @@
       "text": "No account was created yet. Request a new sign-in link and you'll be right back here.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45088,11 +45101,11 @@
       ]
     },
     {
-      "id": "a6cb716b85b5",
-      "text": ". Pick the name you'll go by here. It becomes your profile address, so it can't change later.",
-      "words": 18,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "796f1a85c8b8",
+      "text": ". Pick the name for this quilt. Choose wisely, it can't be changed.",
+      "words": 13,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45103,7 +45116,8 @@
           "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": ". Pick the name you'll go by here. It becomes your profile address, so it can't change later."
     },
     {
       "id": "cdb27dfdb066",
@@ -45236,7 +45250,7 @@
       "text": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45502,11 +45516,11 @@
       ]
     },
     {
-      "id": "3c01717c8f08",
-      "text": "Know a place or group that should be on the map? The real owner can claim it later.",
-      "words": 18,
+      "id": "89a83df44f76",
+      "text": "Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.",
+      "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45517,7 +45531,8 @@
           "raw": "Know a place or group that should be on the map? The real owner can claim it later.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Know a place or group that should be on the map? The real owner can claim it later."
     },
     {
       "id": "8a08dbb8e597",
@@ -45704,7 +45719,7 @@
       "text": "Failed to load patches",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45722,7 +45737,7 @@
       "text": "Send request",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45736,11 +45751,11 @@
       ]
     },
     {
-      "id": "11c863d86718",
-      "text": "No one runs this patch yet. Until someone claims it, following is the only rung.",
-      "words": 15,
+      "id": "ec4930c8b228",
+      "text": "No one runs this patch yet. User can follow, but not join.",
+      "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45751,14 +45766,15 @@
           "raw": "No one runs this patch yet. Until someone claims it, following is the only rung.",
           "quote": "'"
         }
-      ]
+      ],
+      "previous_ai_text": "No one runs this patch yet. Until someone claims it, following is the only rung."
     },
     {
       "id": "328e0a9f779e",
       "text": "This patch adds members by invitation. An admin has to invite you.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45776,7 +45792,7 @@
       "text": "Request withdrawn",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45812,7 +45828,7 @@
       "text": "Membership visible to the public",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45830,7 +45846,7 @@
       "text": "Membership hidden from the public",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45848,7 +45864,7 @@
       "text": "Failed to update visibility",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45920,7 +45936,7 @@
       "text": "Requested",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45938,7 +45954,7 @@
       "text": "awaiting approval",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45992,7 +46008,7 @@
       "text": "Each patch here is a group. Follow the ones you care about and your corner of the quilt takes shape.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [

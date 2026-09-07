@@ -36,7 +36,7 @@ describe('My Patches: the member rung renders only where it can succeed', () => 
   });
 
   it('wears the reason as state where the rung is absent', () => {
-    expect(src).toContain('No one runs this patch yet. Until someone claims it, following is the only rung.');
+    expect(src).toContain('No one runs this patch yet. User can follow, but not join.');
     expect(src).toContain('This patch adds members by invitation. An admin has to invite you.');
     expect(src).toMatch(/\{#if note\}[\s\S]{0,200}state-badge/);
   });

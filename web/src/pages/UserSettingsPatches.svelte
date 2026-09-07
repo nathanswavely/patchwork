@@ -59,7 +59,7 @@
   const STATE_NOTE = {
     unclaimed: {
       label: 'unclaimed',
-      title: 'No one runs this patch yet. Until someone claims it, following is the only rung.',
+      title: 'No one runs this patch yet. User can follow, but not join.',
     },
     invite_only: {
       label: 'invite only',
