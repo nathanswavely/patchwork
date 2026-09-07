@@ -15,8 +15,27 @@
   // following carries no governance rights.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
+  // The patch's decision method decides what this form is (docs/adr/092).
+  // On an admin-decides patch the maintainer decides every proposal: an
+  // admin's is a direct change unless they ask the members first, and a
+  // member's is a request to the maintainer. The form used to offer everyone
+  // a voting duration and a "Submit Proposal" button, then apply an admin's
+  // instantly — docs/adr/041 says the UI never says "propose", "submit" or
+  // "vote" for a direct change, and the rules editor honoured that while
+  // this page did not. `membershipRole`, not `isAdmin`: the node payload
+  // sets is_admin for instance admins too, and deciding here needs the
+  // patch's own role.
+  let decisionMethod = $derived(patch.value.node?.governance_config?.decision_method || '');
+  let adminDecides = $derived(decisionMethod === 'admin');
+  let isPatchAdmin = $derived(membershipRole === 'admin');
+  let putToVote = $state(false);
+  let directChange = $derived(adminDecides && isPatchAdmin && !putToVote);
+  let advisoryVote = $derived(adminDecides && isPatchAdmin && putToVote);
+  let toMaintainer = $derived(adminDecides && !isPatchAdmin);
+  let asksDuration = $derived(!adminDecides || advisoryVote);
+
   $effect(() => {
-    patch.value.setBreadcrumbExtra?.([{ label: 'New Proposal' }]);
+    patch.value.setBreadcrumbExtra?.([{ label: adminDecides && isPatchAdmin ? 'New change' : 'New Proposal' }]);
     return () => patch.value.setBreadcrumbExtra?.([]);
   });
 
@@ -51,10 +70,10 @@
   let canNominate = $derived(isAdmin && isMeritocratic);
 
   $effect(() => {
-    if (slug) loadNominationContext();
+    if (slug) loadGovernanceContext();
   });
 
-  async function loadNominationContext() {
+  async function loadGovernanceContext() {
     try {
       const ov = await api(`nodes/${slug}/governance/overview`);
       isMeritocratic = ov?.rules?.leadership_model === 'meritocratic';
@@ -86,8 +105,12 @@
         title: title.trim(),
         body: body.trim() || '',
         proposal_type: proposalType,
-        duration_hours: durationHours,
       };
+      // A window only where a vote will run. A direct change and a request
+      // to the maintainer have no ballot, so sending one would be a number
+      // the server ignores and the form pretended to mean something.
+      if (asksDuration) payload.duration_hours = durationHours;
+      if (adminDecides && isPatchAdmin) payload.put_to_vote = putToVote;
       // Only a membership proposal carries a subject, and only where the
       // community ratifies admins.
       if (proposalType === 'membership' && canNominate && nomineeId) {
@@ -195,15 +218,47 @@
           {/if}
         </div>
 
-        <div class="field">
-          <label for="duration">Voting Duration</label>
-          <select id="duration" bind:value={durationHours} disabled={submitting}>
-            {#each durationOptions as opt}
-              <option value={opt.value}>{opt.label}</option>
-            {/each}
-          </select>
-          <span class="duration-tip">Tip: 72 hours gives everyone a chance to vote before the question goes stale.</span>
-        </div>
+        <!-- Who decides this (docs/adr/092). On an admin-decides patch an
+             admin chooses between applying now and asking the members first;
+             a member is told their proposal goes to the maintainer. On every
+             voting patch nothing appears here: the vote is the decision. -->
+        {#if adminDecides && isPatchAdmin}
+          <div class="field">
+            <label>How this gets decided</label>
+            <div class="type-radio-group">
+              <label class="type-radio-option" class:selected={!putToVote}>
+                <input type="radio" name="ceremony" value={false} bind:group={putToVote} disabled={submitting} />
+                <div class="type-radio-content">
+                  <span class="type-radio-label">Apply it now</span>
+                  <span class="type-radio-desc">You decide this patch's proposals. This takes effect as soon as you save it.</span>
+                </div>
+              </label>
+              <label class="type-radio-option" class:selected={putToVote}>
+                <input type="radio" name="ceremony" value={true} bind:group={putToVote} disabled={submitting} />
+                <div class="type-radio-content">
+                  <span class="type-radio-label">Ask the members first</span>
+                  <span class="type-radio-desc">Opens an advisory vote. You still decide, at any time, with the tally in front of you.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        {:else if toMaintainer}
+          <p class="ceremony-note muted">
+            This patch's maintainer decides proposals. Yours goes to them, and they may ask the members before deciding.
+          </p>
+        {/if}
+
+        {#if asksDuration}
+          <div class="field">
+            <label for="duration">{advisoryVote ? 'How long to ask' : 'Voting Duration'}</label>
+            <select id="duration" bind:value={durationHours} disabled={submitting}>
+              {#each durationOptions as opt}
+                <option value={opt.value}>{opt.label}</option>
+              {/each}
+            </select>
+            <span class="duration-tip">Tip: 72 hours gives everyone a chance to vote before the question goes stale.</span>
+          </div>
+        {/if}
 
         {#if error}
           <p class="error-text">{error}</p>
@@ -211,7 +266,15 @@
 
         <div class="field-actions">
           <button type="submit" class="btn btn-primary" disabled={submitting}>
-            {submitting ? 'Creating...' : 'Submit Proposal'}
+            {#if directChange}
+              {submitting ? 'Applying...' : 'Apply change'}
+            {:else if advisoryVote}
+              {submitting ? 'Opening...' : 'Open advisory vote'}
+            {:else if toMaintainer}
+              {submitting ? 'Sending...' : 'Send to the maintainer'}
+            {:else}
+              {submitting ? 'Creating...' : 'Submit Proposal'}
+            {/if}
           </button>
           <button
             type="button"
@@ -368,6 +431,11 @@
   .type-radio-desc {
     font-size: 0.8rem;
     color: var(--color-text-muted);
+  }
+
+  .ceremony-note {
+    font-size: 0.88rem;
+    margin: 0 0 1.25rem;
   }
 
   .duration-tip {

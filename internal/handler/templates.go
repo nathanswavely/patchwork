@@ -100,7 +100,10 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	//
 	//   - A proposal on a patch that decides elsewhere has no ballot at all
 	//     (docs/adr/053). Counting it produces "1 proposal needs your vote"
-	//     pointing at a page with no vote buttons.
+	//     pointing at a page with no vote buttons. One waiting on the
+	//     maintainer (docs/adr/092) has none either, until an admin opens
+	//     an advisory vote — at which point its state is 'voting' and it
+	//     counts like any other.
 	//   - An election's ballot is rows in `election_ballots`, not `votes`
 	//     (docs/adr/051), so a NOT EXISTS against `votes` is true for every
 	//     election forever — during nominations, when no ballot may be cast,
@@ -110,7 +113,7 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	rows, err := db.Query(
 		`SELECT COALESCE(p.voting_terms,''), COALESCE(p.target_user_id,'') FROM proposals p
 		 WHERE p.node_id = ? AND p.status = 'open'
-		 AND COALESCE(p.state,'') != 'elsewhere'
+		 AND COALESCE(p.state,'') NOT IN ('elsewhere', 'awaiting_admin')
 		 AND (p.seats_contested = 0 OR (
 		       p.voting_ends_at IS NOT NULL
 		       AND NOT EXISTS (SELECT 1 FROM election_ballots b
@@ -247,8 +250,8 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// The contest this patch is running, and when its council next
 			// faces the electorate (docs/adr/051). Both nil/empty on a patch
 			// that does not elect, so the hub renders neither.
-			"election":      currentElection(db, nodeID),
-			"next_term_end": nextTermEnd(db, nodeID),
+			"election":           currentElection(db, nodeID),
+			"next_term_end":      nextTermEnd(db, nodeID),
 			"membership_policy":  membershipPolicy,
 			"admins":             admins,
 			"successor":          successor,

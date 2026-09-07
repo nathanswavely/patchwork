@@ -372,7 +372,7 @@ func Tables() []Table {
 			Query: `SELECT id, node_id, author_id, title, body, status, state,
 				proposal_type, duration_hours, voting_ends_at, voting_terms,
 				target_doc, target_user_id, seats_contested, nominations_close_at,
-				proposed_title, proposed_body, applied_at, applied_by,
+				proposed_title, proposed_body, applied_at, applied_by, declined_by,
 				created_at, updated_at FROM proposals`,
 			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"),
 				c("body"), c("status"), c("state"), c("proposal_type"),
@@ -395,7 +395,11 @@ func Tables() []Table {
 				// migration 050 have neither key.
 				def("seats_contested", 0), c("nominations_close_at"),
 				c("proposed_title"), c("proposed_body"), c("applied_at"),
-				id("applied_by"), c("created_at"), c("updated_at")),
+				id("applied_by"),
+				// Who declined a proposal on an admin-decides patch
+				// (docs/adr/092, migration 067). Remapped like applied_by;
+				// NULL wherever the electorate decided.
+				id("declined_by"), c("created_at"), c("updated_at")),
 		},
 		{
 			// A community's record of what it decided elsewhere travels with

@@ -95,7 +95,11 @@ describe('VoteSection — the terms it shows', () => {
 
   it('derives quorum and threshold from the vote terms, not from bare props', () => {
     expect(src).toMatch(/quorumPercent = \$derived\(terms\?\.quorum_percent/);
-    expect(src).toMatch(/terms\?\.amendment_threshold \|\| terms\?\.decision_method/);
+    // The amendment threshold applies to amendments only — resolveProposal
+    // reads it for proposal_type 'amendment' and nothing else — so the label
+    // has to ask what kind of proposal this is before preferring it.
+    expect(src).toMatch(/proposalType === 'amendment' && terms\?\.amendment_threshold/);
+    expect(src).toMatch(/: terms\?\.decision_method \|\| 'majority'/);
     // The old prop names must not come back as inputs.
     expect(src).not.toMatch(/^\s*quorumPercent = 0,/m);
     expect(src).not.toMatch(/^\s*threshold = 'majority',/m);

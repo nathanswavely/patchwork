@@ -6,6 +6,7 @@ import (
 	"sort"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
 // What a patch has decided, in order (docs/adr/055).
@@ -87,9 +88,14 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 		SELECT p.id, p.title, p.status, COALESCE(p.state,''), p.seats_contested,
 		       COALESCE(p.applied_at, p.updated_at) AS decided_at,
 		       `+displayNameExpr("u")+` AS author_name,
+		       COALESCE(`+displayNameExpr("ap")+`, '') AS applier_name,
+		       COALESCE(`+displayNameExpr("dc")+`, '') AS decliner_name,
+		       COALESCE(p.voting_terms,'') AS terms,
 		       (SELECT COUNT(*) FROM votes v WHERE v.proposal_id = p.id) AS any_votes
 		FROM proposals p
 		LEFT JOIN users u ON u.id = p.author_id
+		LEFT JOIN users ap ON ap.id = p.applied_by
+		LEFT JOIN users dc ON dc.id = p.declined_by
 		WHERE p.node_id = ? AND p.status IN ('approved','rejected')
 		ORDER BY decided_at DESC`, nodeID)
 	if err != nil {
@@ -98,11 +104,13 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id, title, status, state, decidedAt, author string
+		var id, title, status, state, decidedAt, author, applier, decliner, termsJSON string
 		var seats, anyVotes int
-		if rows.Scan(&id, &title, &status, &state, &seats, &decidedAt, &author, &anyVotes) != nil {
+		if rows.Scan(&id, &title, &status, &state, &seats, &decidedAt, &author, &applier, &decliner, &termsJSON, &anyVotes) != nil {
 			continue
 		}
+		var terms model.GovernanceConfig
+		json.Unmarshal([]byte(termsJSON), &terms)
 
 		e := recordEntry{At: decidedAt, Title: title, Link: "/patches/" + slug + "/governance/" + id}
 		switch {
@@ -116,12 +124,26 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 			} else {
 				e.Outcome = "unsettled"
 			}
-		case anyVotes == 0 && state == "in_effect":
-			// Born applied under admin-decides rules (docs/adr/041). No vote
-			// happened, so the record names who applied it instead of a tally.
+		case decliner != "":
+			// The maintainer said no (docs/adr/092). Never "failed": a
+			// tally, if there was one, was advice, and the record must not
+			// say the members turned it down when one person did.
+			e.Kind = "direct"
+			e.Outcome = "declined"
+			e.Actor = decliner
+		case terms.DecisionMethod == "admin" && state == "in_effect", anyVotes == 0 && state == "in_effect":
+			// Born applied under admin-decides rules (docs/adr/041), or
+			// approved by the maintainer after asking the members
+			// (docs/adr/092). Either way a person decided, and the record
+			// names them instead of a tally. Proposals from before terms
+			// were photographed carry none, so the vote-less in_effect
+			// case still recognises them.
 			e.Kind = "direct"
 			e.Outcome = "applied"
 			e.Actor = author
+			if applier != "" {
+				e.Actor = applier
+			}
 		default:
 			e.Kind = "vote"
 			if status == "approved" {
