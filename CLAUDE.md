@@ -358,6 +358,17 @@ The seamrip mechanism is a governance safety valve: if a community's leadership 
 
 **Adding a table means deciding whether it travels.** `TestEveryTableHasABoundaryDecision` requires every table in the schema to be either in `Tables()` or in an explicit stays-behind list with a reason — a new table fails the build until someone chooses. This exists because migration 050's `seats` silently didn't travel, and since election dueness is derived from `seats.term_ends_at`, a forked elected patch stopped holding elections forever.
 
+## Cutting a release
+
+A `v*` tag publishes an image only if `release-notes/vX.Y.Z.md` is already on
+main (docs/adr/085). Front matter carries `breaking`, `irreversible_migrations`
+and a one-line `summary`; the body becomes the GitHub release notes and CI
+attaches a `release.json` an unattended updater gates on. Write the file, run
+`make release-notes-check TAG=vX.Y.Z`, *then* push the tag — the CI gate is on
+the `image` job, so forgetting means no image at all, and the repair is a
+commit plus moving the tag. Only a person can say a release is breaking; when
+it is arguable, say `true`.
+
 ## Key Principles
 
 - Single-process. No Redis, no queues, no workers.

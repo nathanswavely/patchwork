@@ -63,6 +63,7 @@ several branches are in flight.
 | [066](066-a-seam-belongs-to-the-boundary-not-to-either-tile.md) | A seam belongs to the boundary, not to either tile — the quilt's shared lattice, warped blocks and cloth *(inside 004 and 029)* |
 | [069](069-bespoke-calendars-are-adapters.md) | Bespoke calendars are adapters, not source types — a vendor type only where the vendor fixes the schema; the ICS URL is the extension point *(amends 031's type list)* |
 | [082](082-a-gazetteer-suggests-a-person-places.md) | A gazetteer suggests; a person places — an offline-built local place index proposes a marker from a patch's address, and only a confirmed proposal becomes a map location *(applies 077, amends CONTEXT.md)* |
+| [085](085-only-a-person-can-call-a-release-breaking.md) | Only a person can call a release breaking — hand-written `release-notes/vX.Y.Z.md`, a `release.json` asset on every release, and no tag publishes an image without one |
 | [086](086-erase-the-person-keep-the-acts.md) | Erase the person, keep the acts — self-serve account deletion leaves a tombstone so every vote still has a voter and every proposal a proposer; the username is retired, not freed; refused for a sole patch admin or the last instance admin *(extends 017, 012, 002)* |
 
 ## Partly implemented
