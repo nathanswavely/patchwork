@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"sort"
 	"strings"
 	"testing"
 
@@ -1104,5 +1105,132 @@ func TestWarnNotifiesTheReportedUser(t *testing.T) {
 		owner.ID).Scan(&warned)
 	if warned != 3 {
 		t.Errorf("dismissing a report warned somebody: now %d warnings", warned)
+	}
+}
+
+// The notifications list is filtered by category server-side. The mapping used
+// to be derived from the category name — "proposals" → "proposal.%" — which
+// held only while every category was one prefix with an s on the end.
+// Moderation is neither: it spans account. and report., and leaves one
+// account. type out deliberately.
+func TestNotificationCategoryFilter(t *testing.T) {
+	db := setupTestDB(t)
+	user, tok := createTestUser(t, db, "notif-cat", "member")
+
+	for _, n := range []struct{ typ, title string }{
+		{"account.warned", "warned"},
+		{"account.suspended", "suspended"},
+		{"account.unsuspended", "restored"},
+		{"report.resolved", "report reviewed"},
+		{"account.email_changed", "email changed"},
+		{"proposal.created", "a proposal"},
+		{"membership.banned", "removed"},
+		{"notice.posted", "a notice"},
+	} {
+		if _, err := db.Exec(
+			`INSERT INTO notifications (id, user_id, type, title, body, link) VALUES (?, ?, ?, ?, '', '')`,
+			auth.NewUUIDv7(), user.ID, n.typ, n.title); err != nil {
+			t.Fatalf("seed %s: %v", n.typ, err)
+		}
+	}
+
+	list := func(category string) (*httptest.ResponseRecorder, []string) {
+		t.Helper()
+		path := "/api/v1/notifications"
+		if category != "" {
+			path += "?category=" + category
+		}
+		r := authedRequest("GET", path, nil, tok)
+		w := serveMux(t, db, "GET", "/api/v1/notifications", handler.ListNotifications(db), r)
+		var got []string
+		if w.Code == http.StatusOK {
+			var resp struct {
+				Items []struct {
+					Type string `json:"type"`
+				} `json:"items"`
+			}
+			json.Unmarshal(w.Body.Bytes(), &resp)
+			for _, it := range resp.Items {
+				got = append(got, it.Type)
+			}
+			sort.Strings(got)
+		}
+		return w, got
+	}
+
+	_, moderation := list("moderation")
+	want := []string{"account.suspended", "account.unsuspended", "account.warned", "report.resolved"}
+	if strings.Join(moderation, " ") != strings.Join(want, " ") {
+		t.Errorf("moderation filter\n got: %v\nwant: %v", moderation, want)
+	}
+
+	// An admin setting an address (docs/adr/072) is account security, not a
+	// moderation outcome. Filing it here would tell somebody they had been
+	// moderated when they had not.
+	for _, typ := range moderation {
+		if typ == "account.email_changed" {
+			t.Error("account.email_changed is not a moderation outcome")
+		}
+	}
+
+	// The categories that already worked still do, and none of them picks up
+	// a moderation notice.
+	for category, want := range map[string]string{
+		"proposals":  "proposal.created",
+		"membership": "membership.banned",
+	} {
+		_, got := list(category)
+		if strings.Join(got, " ") != want {
+			t.Errorf("%s filter: got %v, want [%s]", category, got, want)
+		}
+	}
+
+	// Everything is still reachable unfiltered, including the two types that
+	// belong to no tab.
+	if _, all := list(""); len(all) != 8 {
+		t.Errorf("unfiltered list: got %d notifications, want 8 (%v)", len(all), all)
+	}
+
+	// A category now contributes several bound parameters where it used to
+	// contribute one, and the cursor's binds follow them. Paging within a
+	// category is where that ordering would come apart.
+	r := authedRequest("GET", "/api/v1/notifications?category=moderation&limit=2", nil, tok)
+	w := serveMux(t, db, "GET", "/api/v1/notifications", handler.ListNotifications(db), r)
+	var page struct {
+		Items []struct {
+			Type string `json:"type"`
+		} `json:"items"`
+		NextCursor string `json:"next_cursor"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &page)
+	if len(page.Items) != 2 || page.NextCursor == "" {
+		t.Fatalf("first page: got %d items, cursor %q", len(page.Items), page.NextCursor)
+	}
+	r = authedRequest("GET", "/api/v1/notifications?category=moderation&limit=2&after="+page.NextCursor, nil, tok)
+	w = serveMux(t, db, "GET", "/api/v1/notifications", handler.ListNotifications(db), r)
+	var rest struct {
+		Items []struct {
+			Type string `json:"type"`
+		} `json:"items"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &rest)
+	if len(rest.Items) != 2 {
+		t.Errorf("second page of a filtered list: got %d items, want 2", len(rest.Items))
+	}
+	for _, it := range rest.Items {
+		if it.Type == "account.email_changed" || it.Type == "proposal.created" {
+			t.Errorf("paging past the first page dropped the category filter: %s", it.Type)
+		}
+	}
+
+	// A category with no mapping is refused rather than answered with an empty
+	// list, which reads as "you have no notifications". The noticeboard is the
+	// live example: its types are notice.*, so the old derivation would have
+	// served a Noticeboard tab an empty list forever.
+	for _, bogus := range []string{"noticeboard", "banana"} {
+		w, _ := list(bogus)
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("category=%s: expected 400, got %d: %s", bogus, w.Code, w.Body.String())
+		}
 	}
 }

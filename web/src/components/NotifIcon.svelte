@@ -1,5 +1,5 @@
 <script>
-  import { ClipboardText, Scroll, UsersThree, MapPin, Wrench, Bell, ChatCircle, Heart } from 'phosphor-svelte';
+  import { ClipboardText, Scroll, UsersThree, MapPin, Wrench, Bell, ChatCircle, Heart, ShieldWarning } from 'phosphor-svelte';
 
   let { type = '', size = 18 } = $props();
 
@@ -12,6 +12,11 @@
     ['comment.', ChatCircle],
     // Cross-quilt: a followed remote patch said something (docs/adr/024).
     ['remote.', Heart],
+    // Moderation: a warning, a suspension, or a report of yours reviewed.
+    // These carried the default bell, which made a warning look like any
+    // other notice in a list.
+    ['account.', ShieldWarning],
+    ['report.', ShieldWarning],
   ];
 
   let Icon = $derived.by(() => {
