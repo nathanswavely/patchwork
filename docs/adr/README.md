@@ -68,6 +68,7 @@ several branches are in flight.
 | [086](086-erase-the-person-keep-the-acts.md) | Erase the person, keep the acts — self-serve account deletion leaves a tombstone so every vote still has a voter and every proposal a proposer; the username is retired, not freed; refused for a sole patch admin or the last instance admin *(extends 017, 012, 002)* |
 | [087](087-an-admin-proves-the-role-not-the-person.md) | An admin proves the role, not the person — the instance actor signs a verifier's nonce for fifteen minutes; the statement names the domain and nobody *(preserves 023's unpublished roster, takes 017's step-up gate)* |
 | [088](088-withdrawing-a-request-is-not-leaving.md) | Withdrawing a request is not leaving — a requester is outside the ladder, so `me/nodes` stops sending a role for a row with no standing and withdraw gets its own route *(supersedes PR #219's LeaveNode relaxation, amends CONTEXT.md)* |
+| [090](090-a-notification-follows-an-obligation-not-an-event.md) | A notification follows an obligation, not an event — Patchwork publishes and does not broadcast; the four event notifications are deleted, cancellation is refused as the test case that proves the rule, and the calendar keeps the reminder with a per-event `.ics` *(completes 076, applies 018, corrects CLAUDE.md's follower row)* |
 
 ## Partly implemented
 
