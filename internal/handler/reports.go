@@ -195,6 +195,57 @@ func ListReports(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// reportedParty resolves the person a report is about, and names the thing of
+// theirs that was reported. A report names content; moderation lands on the
+// account behind it — the patch's owner, the event's creator, or, for a report
+// about an account, that account.
+//
+// suspend_user resolved this inline first. The warning uses it too, and the
+// two must agree: a warning that reaches somebody a suspension would not is a
+// warning delivered to the wrong person.
+//
+// `what` and `link` describe only the reported party's own content, so they
+// are safe to put in front of them. Nothing the reporter wrote — the reason,
+// the details, the admin's resolution note — belongs in a message to the
+// person reported: those are written for moderators, and can name the
+// reporter.
+func reportedParty(db *database.DB, rpt model.ContentReport) (userID, what, link string) {
+	switch rpt.EntityType {
+	case "user":
+		return rpt.EntityID, "your account", "/settings"
+	case "node":
+		var owner, name, slug string
+		db.QueryRow("SELECT owner_id, name, slug FROM nodes WHERE id = ?", rpt.EntityID).
+			Scan(&owner, &name, &slug)
+		if owner == "" {
+			return "", "", ""
+		}
+		return owner, fmt.Sprintf("your patch %q", name), weblink.Patch(slug)
+	case "event":
+		var creator, title string
+		db.QueryRow("SELECT created_by, title FROM events WHERE id = ?", rpt.EntityID).
+			Scan(&creator, &title)
+		if creator == "" {
+			return "", "", ""
+		}
+		return creator, fmt.Sprintf("your event %q", title), weblink.Event(rpt.EntityID)
+	}
+	return "", "", ""
+}
+
+// The content_reports.status CHECK from migrations/001. A value added there
+// must be added here.
+var reportStatuses = []string{"pending", "reviewed", "resolved", "dismissed"}
+
+// Every action this queue accepts. Two of them — dismiss and warn — carry no
+// side effect beyond the status the caller sends with them, so they have no
+// case in the switch below and are easy to mistake for typos. They are not:
+// the admin panel's action menu offers both, and dismiss is its default. A
+// value dropped from this list is an admin button that stops working.
+var reportActions = []string{
+	"dismiss", "warn", "remove_content", "reset_appearance", "suspend_user", "remove_image",
+}
+
 // UpdateReport handles PATCH /api/v1/admin/reports/{id}.
 func UpdateReport(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -218,6 +269,29 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 		).Scan(&rpt.ID, &rpt.ReporterID, &rpt.EntityType, &rpt.EntityID, &rpt.Status)
 		if err != nil {
 			http.Error(w, `{"error":"report not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// status is CHECK-constrained, so an unrecognized value is refused
+		// here rather than by the database — the constraint would reject it
+		// too, but as a 500 the caller cannot act on. The patch-side queue
+		// (notice_reports.go) never had this hole: it maps an action to a
+		// status itself and never takes one from the request.
+		if req.Status != nil && !oneOf(*req.Status, reportStatuses) {
+			http.Error(w, fmt.Sprintf(`{"error":"status must be one of %s"}`,
+				strings.Join(reportStatuses, ", ")), http.StatusBadRequest)
+			return
+		}
+
+		// An unrecognized action used to fall through the switch below in
+		// silence: the report was marked resolved, the moderation the admin
+		// asked for never happened, and the response said it had. Refused
+		// here rather than in the switch because the status is written first,
+		// and a refusal after that write would leave the half of the request
+		// that did land in place.
+		if req.Action != nil && !oneOf(*req.Action, reportActions) {
+			http.Error(w, fmt.Sprintf(`{"error":"action must be one of %s"}`,
+				strings.Join(reportActions, ", ")), http.StatusBadRequest)
 			return
 		}
 
@@ -249,18 +323,35 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 		// Execute action if provided.
 		if req.Action != nil {
 			switch *req.Action {
-			case "suspend_user":
-				// For user reports, suspend the target user.
-				// For node/event reports, find the owner/creator and suspend them.
-				var targetUserID string
-				switch rpt.EntityType {
-				case "user":
-					targetUserID = rpt.EntityID
-				case "node":
-					db.QueryRow("SELECT owner_id FROM nodes WHERE id = ?", rpt.EntityID).Scan(&targetUserID)
-				case "event":
-					db.QueryRow("SELECT created_by FROM events WHERE id = ?", rpt.EntityID).Scan(&targetUserID)
+			case "dismiss":
+				// Nothing to carry out: dismissing is a decision about the
+				// report rather than an action on what was reported, and the
+				// status the caller sent alongside records it.
+
+			case "warn":
+				// A warning is the one moderation outcome the reported person
+				// is supposed to hear about — it is the whole of the remedy.
+				// Until now it did nothing at all: it set the status to
+				// resolved, and the only notification went to the reporter, so
+				// "Warn" warned nobody.
+				//
+				// It says what was reported and leaves the content alone. It
+				// does not say who reported it, or repeat anything they or the
+				// reviewing admin wrote.
+				warnedID, what, link := reportedParty(db, rpt)
+				if warnedID != "" {
+					CreateNotification(db, warnedID, "account.warned",
+						"A moderator reviewed a report about "+what,
+						"An instance admin reviewed a report about "+what+" and issued a warning. "+
+							"Nothing was changed or removed.", link)
+					auth.LogAuditEvent(db, user.ID, "admin.user_warn", "user", warnedID,
+						fmt.Sprintf(`{"report_id":%q,"entity_type":%q}`, reportID, rpt.EntityType), clientIP(r))
 				}
+
+			case "suspend_user":
+				// The account behind the reported content: for a user report
+				// the user, otherwise the patch's owner or the event's creator.
+				targetUserID, _, _ := reportedParty(db, rpt)
 				if targetUserID != "" {
 					db.Exec(
 						`UPDATE users SET suspended_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
