@@ -12250,9 +12250,9 @@
       "text": "this patch has moved. Take part at its new home instead.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "internal/handler/moved_to.go",
@@ -21306,9 +21306,9 @@
       "text": "This person has moved to",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/components/MovedNotice.svelte",
@@ -21324,9 +21324,9 @@
       "text": "This patch has moved to",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/components/MovedNotice.svelte",
@@ -21342,9 +21342,9 @@
       "text": "Open the new patch here",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/components/MovedNotice.svelte",
@@ -27091,9 +27091,9 @@
       "text": "I have moved",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -27109,9 +27109,9 @@
       "text": "Point your profile at wherever you are now. Your page here keeps working and says where you went. This is only about you, not about the patches you belong to. Clear the field to undo it.",
       "words": 36,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -27127,9 +27127,9 @@
       "text": "New address",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -35126,9 +35126,9 @@
       "text": "Moved",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
@@ -42850,9 +42850,9 @@
       "text": "We have moved",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
@@ -42868,9 +42868,9 @@
       "text": "Point this patch at its new home. The page here keeps working and stays readable, with a banner saying where the patch went. New joins, new follows and event suggestions from outside are turned away and sent to the new address. Members and admins keep everything they had. Clear the field to undo it.",
       "words": 54,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
