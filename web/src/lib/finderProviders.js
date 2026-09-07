@@ -117,7 +117,7 @@ export function adminFinderProvider() {
     });
     items.push({
       type: 'Settings',
-      label: 'Prove Admin',
+      label: 'Prove admin',
       sublabel: 'sign an outside party’s nonce as this quilt',
       href: '/admin/attestation',
     });

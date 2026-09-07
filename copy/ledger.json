@@ -16898,6 +16898,13 @@
           "kind": "js-string",
           "raw": "Prove admin",
           "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 120,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
         }
       ]
     },
@@ -24444,24 +24451,6 @@
           "kind": "markup",
           "raw": "Quilt Settings",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "0afb8f70dea9",
-      "text": "Prove Admin",
-      "words": 2,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/lib/finderProviders.js",
-          "line": 120,
-          "kind": "js-string",
-          "raw": "Prove Admin",
-          "quote": "'"
         }
       ]
     },
