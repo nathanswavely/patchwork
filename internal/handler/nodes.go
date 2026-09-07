@@ -424,7 +424,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, n.created_at, n.updated_at FROM nodes n"
+		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, COALESCE(n.moved_to,''), n.created_at, n.updated_at FROM nodes n"
 		var conditions []string
 		var args []interface{}
 
@@ -511,7 +511,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 		for rows.Next() {
 			var n model.Node
 			var linksJSON, fpJSON, gcJSON, apJSON string
-			if err := rows.Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.AcceptEventSuggestions,
+			if err := rows.Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.AcceptEventSuggestions, &n.MovedTo,
 				&n.CreatedAt, &n.UpdatedAt); err != nil {
 				continue
 			}
@@ -552,9 +552,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, COALESCE(moved_to,''), created_at, updated_at
 			 FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, slug,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -849,6 +849,25 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			"appearance": true, "accept_event_suggestions": true,
 			"notice_posting": true, "notice_replies_default": true,
 			"image_url": true, "image_alt": true,
+			"moved_to": true,
+		}
+
+		// The moved-to pointer (docs/adr/090). Checked here, at the one write
+		// path a patch has, because it renders as an href on the patch's own
+		// page and on its card — the rule events.event_url follows
+		// (docs/adr/079), plus the clause that a new home cannot be this
+		// quilt. "" clears the pointer: a move called off is a move undone.
+		if raw, present := req["moved_to"]; present {
+			v, _ := raw.(string)
+			if msg := validateMovedTo(v); msg != "" {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				return
+			}
+			if v = strings.TrimSpace(v); v == "" {
+				req["moved_to"] = nil
+			} else {
+				req["moved_to"] = v
+			}
 		}
 
 		// Where this patch keeps time (docs/adr/045). Every event it hosts
@@ -990,9 +1009,9 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), notice_posting, notice_replies_default, created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), notice_posting, notice_replies_default, COALESCE(moved_to,''), created_at, updated_at
 			 FROM nodes WHERE id = ?`, nodeID,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.NoticePosting, &n.NoticeRepliesDefault, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.NoticePosting, &n.NoticeRepliesDefault, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt)
 		scanNodeLinks(linksJSON, &n)
 		scanFollowerPermissions(fpJSON, &n)
 		scanGovernanceConfig(gcJSON, &n)

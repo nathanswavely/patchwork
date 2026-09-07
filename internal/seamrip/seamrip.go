@@ -66,7 +66,7 @@ func Tables() []Table {
 			File: "users.json",
 			Name: "users",
 			Query: `SELECT id, email, username, display_name, bio, avatar_url, links, role,
-				contact_phone, contact_email, contact_note,
+				contact_phone, contact_email, contact_note, moved_to,
 				suspended_at, deleted_at, created_at, updated_at FROM users WHERE username != '_system'`,
 			// `links` is the same shape as a patch's, and a patch's travelled
 			// while a person's did not (docs/adr/006). A profile arrived on
@@ -81,9 +81,14 @@ func Tables() []Table {
 			// the old handle free to sign in under and a profile page back on
 			// the web. The fork inherits the record and therefore inherits
 			// the erasure that made the record safe to keep (docs/adr/086).
+			// `moved_to` travels because a fork of a fork still has to know
+			// where people went (docs/adr/090). Nothing sets it on import:
+			// the pointer is a statement its owner made, and the instance
+			// being left is the last one that should get to write it.
 			Columns: cols(id("id"), c("email"), c("username"), c("display_name"),
 				c("bio"), c("avatar_url"), def("links", "[]"), c("role"),
 				def("contact_phone", ""), def("contact_email", ""), def("contact_note", ""),
+				def("moved_to", nil),
 				c("suspended_at"), c("deleted_at"), c("created_at"), c("updated_at")),
 		},
 		{
@@ -100,7 +105,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, created_at, updated_at
+				notice_posting, notice_replies_default, moved_to, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -149,6 +154,13 @@ func Tables() []Table {
 				// Who may put up a notice, and whether notices take replies
 				// by default: rules the community set (docs/adr/081).
 				def("notice_posting", "members"), def("notice_replies_default", 1),
+				// Where this patch says it went (docs/adr/090). It travels
+				// for the same reason a person's does: the fork is the thing
+				// somebody followed the pointer to, and a chain of moves that
+				// forgets its own last hop strands anyone reading it from the
+				// far end. def() so archives written before the column import
+				// as NULL, which is "hasn't moved".
+				def("moved_to", nil),
 				c("created_at"), c("updated_at")),
 		},
 		{

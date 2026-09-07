@@ -70,9 +70,9 @@ func APUser(db *database.DB) http.HandlerFunc {
 		var u model.User
 		var publicKey sql.NullString
 		err := db.QueryRow(
-			`SELECT id, username, display_name, bio, avatar_url, role, created_at, updated_at, public_key
+			`SELECT id, username, display_name, bio, avatar_url, role, COALESCE(moved_to,''), created_at, updated_at, public_key
 			 FROM users WHERE id = ? AND suspended_at IS NULL`, userID,
-		).Scan(&u.ID, &u.Username, &u.DisplayName, &u.Bio, &u.AvatarURL, &u.Role, &u.CreatedAt, &u.UpdatedAt, &publicKey)
+		).Scan(&u.ID, &u.Username, &u.DisplayName, &u.Bio, &u.AvatarURL, &u.Role, &u.MovedTo, &u.CreatedAt, &u.UpdatedAt, &publicKey)
 		if err != nil {
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
@@ -97,6 +97,13 @@ func APUser(db *database.DB) http.HandlerFunc {
 		}
 		if publicKey.Valid && publicKey.String != "" {
 			resp["publicKey"] = publicKeyObject(actor.ID, publicKey.String)
+		}
+		// The moved-to pointer, and the context term that gives it meaning
+		// (docs/adr/090). Both only when there is a pointer: an actor that
+		// has not moved keeps exactly the document it had.
+		if actor.MovedTo != "" {
+			resp["movedTo"] = actor.MovedTo
+			resp["@context"] = ap.MovedToContext()
 		}
 
 		writeAP(w, resp)
@@ -135,9 +142,9 @@ func APNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var publicKey sql.NullString
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, website, visibility, membership_policy, created_at, updated_at, public_key
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, website, visibility, membership_policy, COALESCE(moved_to,''), created_at, updated_at, public_key
 			 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'`, nodeID,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Website, &n.Visibility, &n.MembershipPolicy, &n.CreatedAt, &n.UpdatedAt, &publicKey)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Website, &n.Visibility, &n.MembershipPolicy, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt, &publicKey)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -161,6 +168,13 @@ func APNode(db *database.DB) http.HandlerFunc {
 		}
 		if publicKey.Valid && publicKey.String != "" {
 			resp["publicKey"] = publicKeyObject(actor.ID, publicKey.String)
+		}
+		// The moved-to pointer, and the context term that gives it meaning
+		// (docs/adr/090). Both only when there is a pointer: an actor that
+		// has not moved keeps exactly the document it had.
+		if actor.MovedTo != "" {
+			resp["movedTo"] = actor.MovedTo
+			resp["@context"] = ap.MovedToContext()
 		}
 
 		writeAP(w, resp)

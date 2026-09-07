@@ -626,12 +626,20 @@ const (
 	maxContactNote  = 200
 )
 
+// loadMovedTo populates user.MovedTo from the users.moved_to column
+// (docs/adr/090). Session validation does not carry it, so every handler
+// that answers with the person's own record reads it here.
+func loadMovedTo(db *database.DB, user *model.User) {
+	db.QueryRow("SELECT COALESCE(moved_to,'') FROM users WHERE id = ?", user.ID).Scan(&user.MovedTo)
+}
+
 // Me handles GET /api/v1/auth/me.
 func Me(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
 		loadUserLinks(db, user)
 		loadContactCard(db, user)
+		loadMovedTo(db, user)
 		var hide int
 		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
 		user.HideAmendedLinings = hide == 1
@@ -655,6 +663,9 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 			// object rather than three fields, so a form that spreads the
 			// card back never half-updates it.
 			ContactCard *model.ContactCard `json:"contact_card"`
+			// MovedTo is the person's own "we've moved" pointer
+			// (docs/adr/090). "" clears it.
+			MovedTo *string `json:"moved_to"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -685,6 +696,27 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 				card.Phone, card.Email, card.Note, time.Now().UTC().Format(time.RFC3339), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update contact card"}`, http.StatusInternalServerError)
+				return
+			}
+		}
+
+		// The moved-to pointer (docs/adr/090). Checked here because the
+		// public profile renders it as an href, the same reason
+		// events.event_url is checked at every write path (docs/adr/079).
+		if req.MovedTo != nil {
+			moved := strings.TrimSpace(*req.MovedTo)
+			if msg := validateMovedTo(moved); msg != "" {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				return
+			}
+			var stored interface{}
+			if moved != "" {
+				stored = moved
+			}
+			_, err := db.Exec("UPDATE users SET moved_to = ?, updated_at = ? WHERE id = ?",
+				stored, time.Now().UTC().Format(time.RFC3339), user.ID)
+			if err != nil {
+				http.Error(w, `{"error":"failed to update where you moved to"}`, http.StatusInternalServerError)
 				return
 			}
 		}
@@ -742,6 +774,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		}
 		loadUserLinks(db, user)
 		loadContactCard(db, user)
+		loadMovedTo(db, user)
 		var hide int
 		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
 		user.HideAmendedLinings = hide == 1
