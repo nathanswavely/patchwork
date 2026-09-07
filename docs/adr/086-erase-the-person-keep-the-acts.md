@@ -40,7 +40,7 @@ statement about privacy that a tombstone can make just as well.
 ## Decision
 
 **1. Deletion erases the person and keeps the acts.** The `users` row
-survives as a **tombstone**: `deleted_at` set (migration 067), every
+survives as a **tombstone**: `deleted_at` set (migration 064), every
 identity column emptied — email, display name, bio, avatar, links, contact
 card, keypair, feed secret, and the preference flags that reveal how
 somebody browses. Every RESTRICT foreign key is satisfied because nothing
@@ -165,10 +165,10 @@ leaks a retired handle and nothing will fail. `displayNameExpr` and
 `usernameExpr` exist to be reached for; the tests cover the surfaces that
 exist today, not the ones somebody adds next year.
 
-**Migration numbering.** 067, leaving 064–066 open for three sibling
-branches in flight beside this one (they hold ADRs 083–085). Gaps are
-already normal here — `migrations/006` is intentionally absent — and a gap
-is cheaper than two branches claiming one number.
+**Migration numbering.** 064. Three sibling branches were in flight beside
+this one (they hold ADRs 083–085) and none of them adds a migration, so
+the next number after main's 063 is the right one. Re-check before merge
+per CLAUDE.md; a collision is renumbered on the side with fewer citations.
 
 ## Rejected alternatives
 

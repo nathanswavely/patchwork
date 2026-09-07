@@ -3755,510 +3755,6 @@
       ]
     },
     {
-      "id": "1a3abec3d33b",
-      "text": "failed to load activity",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/activity.go",
-          "line": 86,
-          "kind": "go-error-body",
-          "raw": "failed to load activity",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "c292fcb80972",
-      "text": "only status=archived is supported",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/admin_archived.go",
-          "line": 51,
-          "kind": "go-error-body",
-          "raw": "only status=archived is supported",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d1cbaa08dda3",
-      "text": "failed to list archived nodes",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/admin_archived.go",
-          "line": 70,
-          "kind": "go-error-body",
-          "raw": "failed to list archived nodes",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "8c15937d79bf",
-      "text": "node not found",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/handler/admin_archived.go",
-          "line": 120,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/aggregators.go",
-          "line": 448,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/aggregators.go",
-          "line": 510,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/aggregators.go",
-          "line": 538,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/aggregators.go",
-          "line": 622,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/aggregators.go",
-          "line": 657,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/amendment_attestations.go",
-          "line": 94,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/amendment_attestations.go",
-          "line": 145,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap_preview.go",
-          "line": 29,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 118,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 132,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 321,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 386,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/attestations.go",
-          "line": 90,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/attestations.go",
-          "line": 155,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/attestations.go",
-          "line": 362,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/claims.go",
-          "line": 291,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/claims.go",
-          "line": 442,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/claims.go",
-          "line": 960,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/claims.go",
-          "line": 998,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 94,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 119,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 207,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 244,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_sources.go",
-          "line": 409,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_submissions.go",
-          "line": 106,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/event_upload.go",
-          "line": 54,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/events.go",
-          "line": 427,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/governance_record.go",
-          "line": 64,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/governance.go",
-          "line": 140,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/governance.go",
-          "line": 226,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/governance.go",
-          "line": 580,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/inbox.go",
-          "line": 208,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/inbox.go",
-          "line": 283,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/memberships.go",
-          "line": 26,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/memberships.go",
-          "line": 272,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/memberships.go",
-          "line": 319,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/memberships.go",
-          "line": 547,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/nodes.go",
-          "line": 559,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/nodes.go",
-          "line": 828,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/nodes.go",
-          "line": 1015,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/programs.go",
-          "line": 220,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/programs.go",
-          "line": 262,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/programs.go",
-          "line": 342,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/programs.go",
-          "line": 376,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/proposals.go",
-          "line": 75,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/proposals.go",
-          "line": 161,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/succession.go",
-          "line": 163,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/succession.go",
-          "line": 249,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/templates.go",
-          "line": 161,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "193aa1dba234",
-      "text": "node is not archived",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/admin_archived.go",
-          "line": 124,
-          "kind": "go-error-body",
-          "raw": "node is not archived",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "131a75b126d1",
-      "text": "failed to restore node",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/admin_archived.go",
-          "line": 134,
-          "kind": "go-error-body",
-          "raw": "failed to restore node",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "111227382359",
-      "text": "user id required",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/handler/admin_user_email.go",
-          "line": 40,
-          "kind": "go-error-body",
-          "raw": "user id required",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/admin.go",
-          "line": 85,
-          "kind": "go-error-body",
-          "raw": "user id required",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 43,
-          "kind": "go-error-body",
-          "raw": "user id required",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 448,
-          "kind": "go-error-body",
-          "raw": "user id required",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/ap.go",
-          "line": 480,
-          "kind": "go-error-body",
-          "raw": "user id required",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/inbox.go",
-          "line": 148,
-          "kind": "go-error-body",
-          "raw": "user id required",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "6f148e463f2c",
       "text": "invalid request body",
       "words": 3,
@@ -4268,6 +3764,13 @@
       "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
       "occurrences": [
         {
+          "file": "internal/handler/account_deletion.go",
+          "line": 120,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
           "file": "internal/handler/admin_user_email.go",
           "line": 48,
           "kind": "go-error-body",
@@ -4276,7 +3779,7 @@
         },
         {
           "file": "internal/handler/admin.go",
-          "line": 97,
+          "line": 100,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4662,6 +4165,582 @@
       ]
     },
     {
+      "id": "a8d2161175a8",
+      "text": "type your username exactly to confirm",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/account_deletion.go",
+          "line": 124,
+          "kind": "go-error-body",
+          "raw": "type your username exactly to confirm",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c29fe4888010",
+      "text": "failed to check your patches",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/account_deletion.go",
+          "line": 130,
+          "kind": "go-error-body",
+          "raw": "failed to check your patches",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aa9dc2b83d9a",
+      "text": "failed to load your account",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/account_deletion.go",
+          "line": 161,
+          "kind": "go-error-body",
+          "raw": "failed to load your account",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7d34a555bdae",
+      "text": "failed to delete your account",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/account_deletion.go",
+          "line": 182,
+          "kind": "go-error-body",
+          "raw": "failed to delete your account",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1a3abec3d33b",
+      "text": "failed to load activity",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/activity.go",
+          "line": 86,
+          "kind": "go-error-body",
+          "raw": "failed to load activity",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c292fcb80972",
+      "text": "only status=archived is supported",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_archived.go",
+          "line": 51,
+          "kind": "go-error-body",
+          "raw": "only status=archived is supported",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d1cbaa08dda3",
+      "text": "failed to list archived nodes",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_archived.go",
+          "line": 70,
+          "kind": "go-error-body",
+          "raw": "failed to list archived nodes",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8c15937d79bf",
+      "text": "node not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_archived.go",
+          "line": 120,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 448,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 510,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 538,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 622,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/aggregators.go",
+          "line": 657,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/amendment_attestations.go",
+          "line": 94,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/amendment_attestations.go",
+          "line": 145,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap_preview.go",
+          "line": 29,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 128,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 142,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 331,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 396,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/attestations.go",
+          "line": 90,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/attestations.go",
+          "line": 155,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/attestations.go",
+          "line": 362,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/claims.go",
+          "line": 291,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/claims.go",
+          "line": 442,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/claims.go",
+          "line": 960,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/claims.go",
+          "line": 998,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 94,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 119,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 207,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 244,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_sources.go",
+          "line": 409,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_submissions.go",
+          "line": 106,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_upload.go",
+          "line": 54,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/events.go",
+          "line": 427,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/governance_record.go",
+          "line": 64,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/governance.go",
+          "line": 140,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/governance.go",
+          "line": 226,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/governance.go",
+          "line": 580,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/inbox.go",
+          "line": 208,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/inbox.go",
+          "line": 283,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 26,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 272,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 319,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 547,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 559,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 828,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 1015,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 220,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 262,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 342,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/programs.go",
+          "line": 376,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/proposals.go",
+          "line": 75,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/proposals.go",
+          "line": 161,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/succession.go",
+          "line": 163,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/succession.go",
+          "line": 249,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/templates.go",
+          "line": 161,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "193aa1dba234",
+      "text": "node is not archived",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_archived.go",
+          "line": 124,
+          "kind": "go-error-body",
+          "raw": "node is not archived",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "131a75b126d1",
+      "text": "failed to restore node",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_archived.go",
+          "line": 134,
+          "kind": "go-error-body",
+          "raw": "failed to restore node",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "111227382359",
+      "text": "user id required",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 40,
+          "kind": "go-error-body",
+          "raw": "user id required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/admin.go",
+          "line": 88,
+          "kind": "go-error-body",
+          "raw": "user id required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 43,
+          "kind": "go-error-body",
+          "raw": "user id required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 458,
+          "kind": "go-error-body",
+          "raw": "user id required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/ap.go",
+          "line": 490,
+          "kind": "go-error-body",
+          "raw": "user id required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/inbox.go",
+          "line": 148,
+          "kind": "go-error-body",
+          "raw": "user id required",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "036932891ffe",
       "text": "user not found",
       "words": 3,
@@ -4672,49 +4751,49 @@
       "occurrences": [
         {
           "file": "internal/handler/admin_user_email.go",
-          "line": 68,
+          "line": 69,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
         },
         {
           "file": "internal/handler/admin_user_email.go",
-          "line": 118,
+          "line": 128,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
         },
         {
           "file": "internal/handler/admin.go",
-          "line": 160,
+          "line": 163,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
         },
         {
           "file": "internal/handler/ap.go",
-          "line": 53,
+          "line": 63,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
         },
         {
           "file": "internal/handler/ap.go",
-          "line": 67,
+          "line": 77,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
         },
         {
           "file": "internal/handler/ap.go",
-          "line": 455,
+          "line": 465,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
         },
         {
           "file": "internal/handler/ap.go",
-          "line": 487,
+          "line": 497,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -4735,7 +4814,7 @@
         },
         {
           "file": "internal/handler/users.go",
-          "line": 42,
+          "line": 46,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -4753,9 +4832,27 @@
       "occurrences": [
         {
           "file": "internal/handler/admin_user_email.go",
-          "line": 71,
+          "line": 72,
           "kind": "go-error-body",
           "raw": "failed to load user",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1e0c2d8cf785",
+      "text": "that account was deleted; there is nothing to sign in to",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/admin_user_email.go",
+          "line": 81,
+          "kind": "go-error-body",
+          "raw": "that account was deleted; there is nothing to sign in to",
           "quote": null
         }
       ]
@@ -4771,7 +4868,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin_user_email.go",
-          "line": 100,
+          "line": 110,
           "kind": "go-error-body",
           "raw": "failed to check the address",
           "quote": null
@@ -4789,7 +4886,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin_user_email.go",
-          "line": 111,
+          "line": 121,
           "kind": "go-error-body",
           "raw": "another account already uses that address",
           "quote": null
@@ -4807,7 +4904,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin_user_email.go",
-          "line": 114,
+          "line": 124,
           "kind": "go-error-body",
           "raw": "failed to set the email address",
           "quote": null
@@ -4825,7 +4922,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 44,
+          "line": 47,
           "kind": "go-error-body",
           "raw": "failed to list users",
           "quote": null
@@ -4843,7 +4940,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 106,
+          "line": 109,
           "kind": "go-error-body",
           "raw": "role must be member or admin",
           "quote": null
@@ -4861,7 +4958,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 143,
+          "line": 146,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -4907,7 +5004,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 155,
+          "line": 158,
           "kind": "go-error-body",
           "raw": "failed to update user",
           "quote": null
@@ -4925,7 +5022,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 243,
+          "line": 246,
           "kind": "go-error-body",
           "raw": "failed to list audit log",
           "quote": null
@@ -5965,6 +6062,24 @@
       ]
     },
     {
+      "id": "5b7f8d90d5d9",
+      "text": "account deleted",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/ap.go",
+          "line": 53,
+          "kind": "go-error-body",
+          "raw": "account deleted",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "a07d02d54b9e",
       "text": "node id required",
       "words": 3,
@@ -5975,21 +6090,21 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 109,
+          "line": 119,
           "kind": "go-error-body",
           "raw": "node id required",
           "quote": null
         },
         {
           "file": "internal/handler/ap.go",
-          "line": 313,
+          "line": 323,
           "kind": "go-error-body",
           "raw": "node id required",
           "quote": null
         },
         {
           "file": "internal/handler/ap.go",
-          "line": 377,
+          "line": 387,
           "kind": "go-error-body",
           "raw": "node id required",
           "quote": null
@@ -6014,7 +6129,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 166,
+          "line": 176,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
@@ -6046,7 +6161,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 187,
+          "line": 197,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6127,7 +6242,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 204,
+          "line": 214,
           "kind": "go-error-body",
           "raw": "proposal id required",
           "quote": null
@@ -6145,7 +6260,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 221,
+          "line": 231,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -6212,7 +6327,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 262,
+          "line": 272,
           "kind": "go-error-body",
           "raw": "governance doc id required",
           "quote": null
@@ -6230,7 +6345,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 281,
+          "line": 291,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
@@ -6297,7 +6412,7 @@
       "occurrences": [
         {
           "file": "internal/handler/ap.go",
-          "line": 336,
+          "line": 346,
           "kind": "go-error-body",
           "raw": "database error",
           "quote": null
@@ -10152,7 +10267,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 22,
+          "line": 27,
           "kind": "go-doc-block",
           "raw": "*This is the default privacy policy that ships with the Patchwork software. It describes what the software actually does. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
           "quote": null
@@ -10170,14 +10285,14 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 24,
+          "line": 29,
           "kind": "go-doc-block",
           "raw": "## The short version",
           "quote": null
         },
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 85,
+          "line": 102,
           "kind": "go-doc-block",
           "raw": "## The short version",
           "quote": null
@@ -10195,7 +10310,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 26,
+          "line": 31,
           "kind": "go-doc-block",
           "raw": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.",
           "quote": null
@@ -10213,7 +10328,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 28,
+          "line": 33,
           "kind": "go-doc-block",
           "raw": "## What this site collects",
           "quote": null
@@ -10231,7 +10346,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 30,
+          "line": 35,
           "kind": "go-doc-block",
           "raw": "**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.",
           "quote": null
@@ -10250,7 +10365,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 32,
+          "line": 37,
           "kind": "go-doc-block",
           "raw": "**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.",
           "quote": null
@@ -10268,7 +10383,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 34,
+          "line": 39,
           "kind": "go-doc-block",
           "raw": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.",
           "quote": null
@@ -10286,7 +10401,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 36,
+          "line": 41,
           "kind": "go-doc-block",
           "raw": "## What other people can see",
           "quote": null
@@ -10304,7 +10419,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 38,
+          "line": 43,
           "kind": "go-doc-block",
           "raw": "Profiles are public pages showing your username, display name, bio, avatar, and whichever memberships you have chosen to show. Each membership has its own visibility switch, and you hold it. The same switch controls both your profile and the patch's public member list, so the two never disagree. A membership you hide stays visible to that patch's admins and members inside the patch workspace, since the people you organize with can already see you in the room. The list of patches you follow never appears on your profile.",
           "quote": null
@@ -10322,7 +10437,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 40,
+          "line": 45,
           "kind": "go-doc-block",
           "raw": "Your email address is never shown publicly. Only this site's administrators can see it.",
           "quote": null
@@ -10340,7 +10455,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 42,
+          "line": 47,
           "kind": "go-doc-block",
           "raw": "A patch's noticeboard, meaning its notices and the replies under them, is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
           "quote": null
@@ -10358,7 +10473,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 44,
+          "line": 49,
           "kind": "go-doc-block",
           "raw": "You can add a contact card (a phone number, an email address to reach you at, and a short note) and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
           "quote": null
@@ -10376,7 +10491,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 46,
+          "line": 51,
           "kind": "go-doc-block",
           "raw": "## Federation: where your public content travels",
           "quote": null
@@ -10394,7 +10509,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 48,
+          "line": 53,
           "kind": "go-doc-block",
           "raw": "This site can speak ActivityPub, the protocol behind Mastodon and similar networks. With federation enabled, public content can be copied to other servers when someone there follows a patch here. That covers patch profiles, public events, and public posts. Two things to understand:",
           "quote": null
@@ -10412,7 +10527,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 50,
+          "line": 55,
           "kind": "go-doc-block",
           "raw": "- Other servers keep their own copies under their own policies. Deleting something here sends a deletion notice, but this site cannot force another server to honor it.\n- When you follow a patch on another quilt, the follow is relayed through this site's shared service account rather than your own identity, so your name never appears in a remote follower list.",
           "quote": null
@@ -10430,7 +10545,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 53,
+          "line": 58,
           "kind": "go-doc-block",
           "raw": "Membership records never federate. What leaves this server is only what was already public on it.",
           "quote": null
@@ -10448,7 +10563,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 55,
+          "line": 60,
           "kind": "go-doc-block",
           "raw": "## Cookies",
           "quote": null
@@ -10466,7 +10581,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 57,
+          "line": 62,
           "kind": "go-doc-block",
           "raw": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
           "quote": null
@@ -10484,7 +10599,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 59,
+          "line": 64,
           "kind": "go-doc-block",
           "raw": "## Email",
           "quote": null
@@ -10502,7 +10617,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 61,
+          "line": 66,
           "kind": "go-doc-block",
           "raw": "Sign-in links and any notifications you turn on go out through the email server this site's stewards configured. Email always passes through the providers involved on both ends, yours and this site's.",
           "quote": null
@@ -10520,7 +10635,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 63,
+          "line": 68,
           "kind": "go-doc-block",
           "raw": "## The seamrip: data portability",
           "quote": null
@@ -10528,19 +10643,19 @@
       ]
     },
     {
-      "id": "71e4755538ca",
-      "text": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.",
-      "words": 74,
+      "id": "251ecb72355b",
+      "text": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export. A deleted account travels as the emptied record it became, not as an account: the successor site inherits the erasure along with everything else.",
+      "words": 98,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 65,
+          "line": 70,
           "kind": "go-doc-block",
-          "raw": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.",
+          "raw": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export. A deleted account travels as the emptied record it became, not as an account: the successor site inherits the erasure along with everything else.",
           "quote": null
         }
       ]
@@ -10556,7 +10671,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 67,
+          "line": 72,
           "kind": "go-doc-block",
           "raw": "## How long things are kept, and deletion",
           "quote": null
@@ -10564,19 +10679,127 @@
       ]
     },
     {
-      "id": "6672cfddf9c2",
-      "text": "Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.",
-      "words": 63,
+      "id": "cdecd850b154",
+      "text": "Your content and account stay until you delete the account yourself, from Settings. Deleting is immediate and cannot be undone. It asks you to confirm with a passkey and to type your username, and it does two different things to two different kinds of data.",
+      "words": 45,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 69,
+          "line": 74,
           "kind": "go-doc-block",
-          "raw": "Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.",
+          "raw": "Your content and account stay until you delete the account yourself, from Settings. Deleting is immediate and cannot be undone. It asks you to confirm with a passkey and to type your username, and it does two different things to two different kinds of data.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bd9a32edf96c",
+      "text": "**Erased.** Your email address, display name, bio, links, avatar, and contact card. Your passkeys, recovery codes, and sessions, so nobody can sign in as you again. Your personal calendar link, your notification settings and any unread notifications, the quilts you had connected, the patches you followed on other quilts, and every membership you held here. Any claim on a patch that was still waiting for review, and any standing candidacy in an election that had not closed.",
+      "words": 77,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 76,
+          "kind": "go-doc-block",
+          "raw": "**Erased.** Your email address, display name, bio, links, avatar, and contact card. Your passkeys, recovery codes, and sessions, so nobody can sign in as you again. Your personal calendar link, your notification settings and any unread notifications, the quilts you had connected, the patches you followed on other quilts, and every membership you held here. Any claim on a patch that was still waiting for review, and any standing candidacy in an election that had not closed.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ff586508472c",
+      "text": "**Kept, with your name removed.** The things you took part in: proposals you wrote, votes and ballots you cast, comments, notices and replies, events you posted, calendar feeds you attached, and decisions you recorded on a patch's behalf. This site exists to hold a community's record of what it decided, and a tally that quietly loses a voter is not a record anyone can check. Those entries stay, and they now read as \"Deleted account\" with no name and no link. Your account row survives with nothing in it, and your username stays retired rather than freed for someone else, so no stranger inherits links that pointed at you. Your profile page stops existing.",
+      "words": 114,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 78,
+          "kind": "go-doc-block",
+          "raw": "**Kept, with your name removed.** The things you took part in: proposals you wrote, votes and ballots you cast, comments, notices and replies, events you posted, calendar feeds you attached, and decisions you recorded on a patch's behalf. This site exists to hold a community's record of what it decided, and a tally that quietly loses a voter is not a record anyone can check. Those entries stay, and they now read as \"Deleted account\" with no name and no link. Your account row survives with nothing in it, and your username stays retired rather than freed for someone else, so no stranger inherits links that pointed at you. Your profile page stops existing.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b30fb169756a",
+      "text": "One consequence worth stating plainly: a vote of yours on a proposal that is still open stops counting toward its result, because the tally counts current members and you are no longer one. This is exactly what happens when anybody leaves a patch. Anything already decided stays decided.",
+      "words": 48,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 80,
+          "kind": "go-doc-block",
+          "raw": "One consequence worth stating plainly: a vote of yours on a proposal that is still open stops counting toward its result, because the tally counts current members and you are no longer one. This is exactly what happens when anybody leaves a patch. Anything already decided stays decided.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c80cbbb5932d",
+      "text": "**Two refusals.** You cannot delete your account while you are the only admin of a patch — the site names those patches and asks you to hand them over first, since the alternative is a community nobody can administer. And the last remaining administrator of this whole site cannot delete their account either.",
+      "words": 53,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 82,
+          "kind": "go-doc-block",
+          "raw": "**Two refusals.** You cannot delete your account while you are the only admin of a patch — the site names those patches and asks you to hand them over first, since the alternative is a community nobody can administer. And the last remaining administrator of this whole site cannot delete their account either.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b6891c12771b",
+      "text": "Deletion cannot reach outside this server. Anything federation already copied elsewhere is held by those servers under their policies. This site sends a deletion notice for your account to every server known to follow it, and stops answering for it afterwards, but it cannot make anyone honor that notice. Data that went out in an export made before you deleted is likewise a copy nobody here can reach into.",
+      "words": 69,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 84,
+          "kind": "go-doc-block",
+          "raw": "Deletion cannot reach outside this server. Anything federation already copied elsewhere is held by those servers under their policies. This site sends a deletion notice for your account to every server known to follow it, and stops answering for it afterwards, but it cannot make anyone honor that notice. Data that went out in an export made before you deleted is likewise a copy nobody here can reach into.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a0b5fe53f1b7",
+      "text": "If you would rather have a steward do this, or want specific content removed without closing your account, the people on the [Label](/label) can help. Their tools can hide content and suspend an account; the erasure described above is the one you perform yourself.",
+      "words": 44,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 86,
+          "kind": "go-doc-block",
+          "raw": "If you would rather have a steward do this, or want specific content removed without closing your account, the people on the [Label](/label) can help. Their tools can hide content and suspend an account; the erasure described above is the one you perform yourself.",
           "quote": null
         }
       ]
@@ -10592,7 +10815,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 71,
+          "line": 88,
           "kind": "go-doc-block",
           "raw": "## Age",
           "quote": null
@@ -10610,7 +10833,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 73,
+          "line": 90,
           "kind": "go-doc-block",
           "raw": "This site is not directed at children under 13, and nobody under 13 may create an account.",
           "quote": null
@@ -10628,7 +10851,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 75,
+          "line": 92,
           "kind": "go-doc-block",
           "raw": "## Changes",
           "quote": null
@@ -10646,7 +10869,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 77,
+          "line": 94,
           "kind": "go-doc-block",
           "raw": "If this policy changes, the change shows up on this page. The software keeps no hidden version of it. What you read here is what the site operates under.",
           "quote": null
@@ -10664,7 +10887,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 79,
+          "line": 96,
           "kind": "go-doc-block",
           "raw": "## Who to talk to",
           "quote": null
@@ -10682,7 +10905,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 81,
+          "line": 98,
           "kind": "go-doc-block",
           "raw": "The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.",
           "quote": null
@@ -10700,7 +10923,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 83,
+          "line": 100,
           "kind": "go-doc-block",
           "raw": "*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
           "quote": null
@@ -10718,7 +10941,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 87,
+          "line": 104,
           "kind": "go-doc-block",
           "raw": "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
           "quote": null
@@ -10737,7 +10960,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 89,
+          "line": 106,
           "kind": "go-doc-block",
           "raw": "## What this is",
           "quote": null
@@ -10755,7 +10978,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 93,
+          "line": 110,
           "kind": "go-doc-block",
           "raw": "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
           "quote": null
@@ -10774,7 +10997,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 95,
+          "line": 112,
           "kind": "go-doc-block",
           "raw": "## Who can join",
           "quote": null
@@ -10792,7 +11015,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 97,
+          "line": 114,
           "kind": "go-doc-block",
           "raw": "You must be at least 13 years old to have an account. Accounts are for people. Bots and automated posters don't get one.",
           "quote": null
@@ -10810,7 +11033,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 99,
+          "line": 116,
           "kind": "go-doc-block",
           "raw": "## Your account",
           "quote": null
@@ -10828,7 +11051,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 101,
+          "line": 118,
           "kind": "go-doc-block",
           "raw": "Sign-in is by email links and passkeys, so there is no password to guard. The email account and devices you use to sign in are still your responsibility, and what happens through your account is yours to answer for. Don't share access to your account or use someone else's.",
           "quote": null
@@ -10846,7 +11069,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 103,
+          "line": 120,
           "kind": "go-doc-block",
           "raw": "## Your content",
           "quote": null
@@ -10864,7 +11087,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 105,
+          "line": 122,
           "kind": "go-doc-block",
           "raw": "What you post is yours, and you keep every right you already had. So the site can function, you give {quilt_name} permission to store your content, show it to the people it's addressed to, and, where federation applies to public content, pass it along to other servers that follow this one. The same permission covers the seamrip: if this community exports its data to continue elsewhere, public content and membership records go with it, as described in the privacy policy. Anything you post publicly can be seen, copied, and shared the way public things on the internet are, and you agree to that too.",
           "quote": null
@@ -10882,7 +11105,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 107,
+          "line": 124,
           "kind": "go-doc-block",
           "raw": "## Conduct",
           "quote": null
@@ -10900,7 +11123,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 109,
+          "line": 126,
           "kind": "go-doc-block",
           "raw": "These rules apply everywhere on this site:",
           "quote": null
@@ -10918,7 +11141,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 111,
+          "line": 128,
           "kind": "go-doc-block",
           "raw": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
           "quote": null
@@ -10937,7 +11160,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 115,
+          "line": 132,
           "kind": "go-doc-block",
           "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
           "quote": null
@@ -10955,7 +11178,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 117,
+          "line": 134,
           "kind": "go-doc-block",
           "raw": "## Moderation",
           "quote": null
@@ -10973,7 +11196,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 119,
+          "line": 136,
           "kind": "go-doc-block",
           "raw": "The stewards can remove content, restrict accounts, or close accounts that violate this agreement, without prior notice where they judge that necessary to protect people or the site. Posting content that infringes someone else's copyright will, if repeated, cost you your account. To report copyright infringement or any other abuse, contact the stewards through the [Label](/label).",
           "quote": null
@@ -10991,7 +11214,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 121,
+          "line": 138,
           "kind": "go-doc-block",
           "raw": "## If you don't like how this place is run",
           "quote": null
@@ -11009,7 +11232,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 123,
+          "line": 140,
           "kind": "go-doc-block",
           "raw": "Disagreement is not a violation. Patchwork keeps governance visible and makes leaving real: any member can export what they can already see, and a community can seamrip itself to new stewards. The [Label](/label) explains how this site is run, what it costs, and where the exit is.",
           "quote": null
@@ -11027,7 +11250,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 125,
+          "line": 142,
           "kind": "go-doc-block",
           "raw": "## No warranty",
           "quote": null
@@ -11045,7 +11268,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 127,
+          "line": 144,
           "kind": "go-doc-block",
           "raw": "Volunteers run this site on real hardware, with no promise of uptime, availability, or permanence. It is provided **as is**, without warranty of any kind. To the fullest extent permitted by law, the stewards are not liable for damages arising from your use of the site or from content other people post, so back up anything you can't afford to lose.",
           "quote": null
@@ -11063,7 +11286,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 129,
+          "line": 146,
           "kind": "go-doc-block",
           "raw": "## Changes and ending",
           "quote": null
@@ -11071,19 +11294,19 @@
       ]
     },
     {
-      "id": "3b8ae446d45f",
-      "text": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.",
-      "words": 48,
+      "id": "4eaf00cc5966",
+      "text": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and you can delete your account yourself from Settings — the privacy policy sets out exactly what that erases and what stays in the community's record. Two things it won't let you do: walk out as the only admin of a patch, or as the last administrator of the site. Hand those over first. The stewards can end the agreement on their side by closing your account as described under Moderation.",
+      "words": 101,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 131,
+          "line": 148,
           "kind": "go-doc-block",
-          "raw": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.",
+          "raw": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and you can delete your account yourself from Settings — the privacy policy sets out exactly what that erases and what stays in the community's record. Two things it won't let you do: walk out as the only admin of a patch, or as the last administrator of the site. Hand those over first. The stewards can end the agreement on their side by closing your account as described under Moderation.",
           "quote": null
         }
       ]
@@ -11505,7 +11728,7 @@
         },
         {
           "file": "internal/handler/users.go",
-          "line": 114,
+          "line": 118,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -14654,7 +14877,7 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 59,
+          "line": 63,
           "kind": "go-error-body",
           "raw": "failed to load profile",
           "quote": null
@@ -14672,7 +14895,7 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 101,
+          "line": 105,
           "kind": "go-error-body",
           "raw": "body must include visible: true|false or share_contact: true|false",
           "quote": null
@@ -14690,7 +14913,7 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 121,
+          "line": 125,
           "kind": "go-error-body",
           "raw": "failed to update visibility",
           "quote": null
@@ -14708,7 +14931,7 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 132,
+          "line": 136,
           "kind": "go-error-body",
           "raw": "become a member to share your contact card with this patch",
           "quote": null
@@ -14726,7 +14949,7 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 137,
+          "line": 141,
           "kind": "go-error-body",
           "raw": "failed to update contact sharing",
           "quote": null
@@ -18692,7 +18915,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 264,
+          "line": 301,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -19313,35 +19536,35 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 32,
+          "line": 34,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 56,
+          "line": 58,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 83,
+          "line": 85,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 148,
+          "line": 150,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 228,
+          "line": 230,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -23248,7 +23471,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 205,
+          "line": 207,
           "kind": "js-string",
           "raw": "Copy failed. Select the address instead.",
           "quote": "'"
@@ -24503,6 +24726,13 @@
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 468,
+          "kind": "markup",
+          "raw": "Danger Zone",
+          "quote": null
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
@@ -25790,7 +26020,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 30,
+          "line": 32,
           "kind": "js-string",
           "raw": "Patchwork will open on My Quilt",
           "quote": "'"
@@ -25808,7 +26038,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 30,
+          "line": 32,
           "kind": "js-string",
           "raw": "Patchwork will open on the whole quilt",
           "quote": "'"
@@ -25826,7 +26056,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 80,
+          "line": 82,
           "kind": "js-string",
           "raw": "You are listed on the Label",
           "quote": "'"
@@ -25844,7 +26074,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 81,
+          "line": 83,
           "kind": "js-string",
           "raw": "You are no longer listed on the Label",
           "quote": "'"
@@ -25862,7 +26092,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 93,
+          "line": 95,
           "kind": "js-string",
           "raw": "Removed from the stewards list",
           "quote": "'"
@@ -25880,7 +26110,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 95,
+          "line": 97,
           "kind": "js-string",
           "raw": "Failed to remove",
           "quote": "'"
@@ -25912,7 +26142,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 146,
+          "line": 148,
           "kind": "js-string",
           "raw": "Contact card saved",
           "quote": "'"
@@ -25930,7 +26160,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 182,
+          "line": 184,
           "kind": "js-string",
           "raw": "Failed to create feed",
           "quote": "'"
@@ -25948,7 +26178,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 193,
+          "line": 195,
           "kind": "js-string",
           "raw": "Personal feed disabled",
           "quote": "'"
@@ -25966,7 +26196,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 195,
+          "line": 197,
           "kind": "js-string",
           "raw": "Failed to disable feed",
           "quote": "'"
@@ -25984,7 +26214,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 226,
+          "line": 228,
           "kind": "js-string",
           "raw": "Profile saved",
           "quote": "'"
@@ -26002,7 +26232,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 229,
+          "line": 231,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -26038,6 +26268,24 @@
       ]
     },
     {
+      "id": "6f01c1653250",
+      "text": "Failed to delete account",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 266,
+          "kind": "js-string",
+          "raw": "Failed to delete account",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "d696a35bdd18",
       "text": "Profile",
       "words": 1,
@@ -26048,7 +26296,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 239,
+          "line": 276,
           "kind": "markup",
           "raw": "Profile",
           "quote": null
@@ -26066,7 +26314,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 241,
+          "line": 278,
           "kind": "markup",
           "raw": "Your",
           "quote": null
@@ -26084,7 +26332,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 242,
+          "line": 279,
           "kind": "markup",
           "raw": "shows your name, bio, links, and the memberships you keep visible.",
           "quote": null
@@ -26102,7 +26350,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 246,
+          "line": 283,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -26141,7 +26389,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 248,
+          "line": 285,
           "kind": "markup",
           "raw": "Username cannot be changed.",
           "quote": null
@@ -26159,7 +26407,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 251,
+          "line": 288,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -26198,7 +26446,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 255,
+          "line": 292,
           "kind": "markup",
           "raw": "Bio",
           "quote": null
@@ -26216,7 +26464,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 259,
+          "line": 296,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -26255,7 +26503,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 262,
+          "line": 299,
           "kind": "attr:placeholder",
           "raw": "Label",
           "quote": "\""
@@ -26273,7 +26521,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 263,
+          "line": 300,
           "kind": "attr:placeholder",
           "raw": "https://…",
           "quote": "\""
@@ -26291,7 +26539,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 268,
+          "line": 305,
           "kind": "markup",
           "raw": "Add link",
           "quote": null
@@ -26309,7 +26557,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 285,
+          "line": 322,
           "kind": "markup",
           "raw": "Contact card",
           "quote": null
@@ -26327,7 +26575,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 287,
+          "line": 324,
           "kind": "markup",
           "raw": "How the people you organize with can reach you. Nothing here is public:\n        a patch's admins and members see your card only once you share it\n        with that patch, in",
           "quote": null
@@ -26345,7 +26593,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 292,
+          "line": 329,
           "kind": "markup",
           "raw": "Shared with 1 patch.",
           "quote": null
@@ -26363,7 +26611,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 294,
+          "line": 331,
           "kind": "markup",
           "raw": "Shared with {sharedWithCount} patches.",
           "quote": null
@@ -26381,7 +26629,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 296,
+          "line": 333,
           "kind": "markup",
           "raw": "Not shared with any patch yet.",
           "quote": null
@@ -26399,7 +26647,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 301,
+          "line": 338,
           "kind": "markup",
           "raw": "Phone",
           "quote": null
@@ -26417,7 +26665,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 305,
+          "line": 342,
           "kind": "markup",
           "raw": "Email to reach you at",
           "quote": null
@@ -26435,7 +26683,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 307,
+          "line": 344,
           "kind": "markup",
           "raw": "Separate from the address you sign in with. That one is never shared.",
           "quote": null
@@ -26453,7 +26701,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 310,
+          "line": 347,
           "kind": "markup",
           "raw": "Note",
           "quote": null
@@ -26478,7 +26726,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 311,
+          "line": 348,
           "kind": "attr:placeholder",
           "raw": "How you prefer to be reached",
           "quote": "\""
@@ -26496,7 +26744,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 322,
+          "line": 359,
           "kind": "markup",
           "raw": "When you open Patchwork",
           "quote": null
@@ -26514,7 +26762,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 324,
+          "line": 361,
           "kind": "markup",
           "raw": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
           "quote": null
@@ -26533,7 +26781,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 333,
+          "line": 370,
           "kind": "markup",
           "raw": "Start on My Quilt",
           "quote": null
@@ -26551,7 +26799,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 338,
+          "line": 375,
           "kind": "markup",
           "raw": "Discovery",
           "quote": null
@@ -26569,7 +26817,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 346,
+          "line": 383,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -26594,7 +26842,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 349,
+          "line": 386,
           "kind": "markup",
           "raw": "Keeps patches that changed the shared community standards out of your\n        quilt, search, map, and event feed. Direct links still work.",
           "quote": null
@@ -26612,7 +26860,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 355,
+          "line": 392,
           "kind": "markup",
           "raw": "Personal feed",
           "quote": null
@@ -26630,7 +26878,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 357,
+          "line": 394,
           "kind": "markup",
           "raw": "A calendar feed of every event on your My Quilt, for your calendar\n        app. The address is a secret. Anyone who has it can read your feed.",
           "quote": null
@@ -26648,7 +26896,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 363,
+          "line": 400,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -26673,7 +26921,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 366,
+          "line": 403,
           "kind": "markup",
           "raw": "Copy it now. This address won't be shown again, and regenerating\n          replaces it.",
           "quote": null
@@ -26691,7 +26939,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 373,
+          "line": 410,
           "kind": "markup",
           "raw": "Regenerate address",
           "quote": null
@@ -26709,7 +26957,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 376,
+          "line": 413,
           "kind": "markup",
           "raw": "Disable",
           "quote": null
@@ -26727,7 +26975,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 380,
+          "line": 417,
           "kind": "markup",
           "raw": "Create feed",
           "quote": null
@@ -26745,7 +26993,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 388,
+          "line": 425,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -26763,7 +27011,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 391,
+          "line": 428,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -26781,7 +27029,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 392,
+          "line": 429,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
@@ -26799,7 +27047,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 397,
+          "line": 434,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -26817,7 +27065,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 399,
+          "line": 436,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
@@ -26835,7 +27083,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 404,
+          "line": 441,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -26853,7 +27101,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 406,
+          "line": 443,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -26871,9 +27119,225 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 422,
+          "line": 459,
           "kind": "markup",
           "raw": "Decline",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7ab60595358e",
+      "text": "Delete your account",
+      "words": 3,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 470,
+          "kind": "markup",
+          "raw": "Delete your account",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9ae12868b84f",
+      "text": "This happens immediately and cannot be undone.",
+      "words": 7,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 473,
+          "kind": "markup",
+          "raw": "This happens immediately and cannot be undone.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8eaaa5aa20cc",
+      "text": "Erased:",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 476,
+          "kind": "markup",
+          "raw": "Erased:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2d89dbbca4ee",
+      "text": "your email address, display name, bio, links, avatar and contact card; your passkeys, recovery codes and sessions; your personal calendar link; your notification settings; every patch membership you hold; the quilts you have connected or followed; any claim still awaiting review.",
+      "words": 41,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 476,
+          "kind": "markup",
+          "raw": "your email address, display name, bio, links,\n          avatar and contact card; your passkeys, recovery codes and sessions;\n          your personal calendar link; your notification settings; every patch\n          membership you hold; the quilts you have connected or followed; any\n          claim still awaiting review.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b0df4b64f4a1",
+      "text": "Kept:",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 483,
+          "kind": "markup",
+          "raw": "Kept:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f351b6ddbc6d",
+      "text": "what you took part in — proposals, votes, comments, notices, events and recorded decisions — so the community's record stays whole. They will read as",
+      "words": 25,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 483,
+          "kind": "markup",
+          "raw": "what you took part in — proposals, votes,\n          comments, notices, events and recorded decisions — so the community's\n          record stays whole. They will read as",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3763770f121d",
+      "text": "&ldquo;Deleted account&rdquo;",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 486,
+          "kind": "markup",
+          "raw": "&ldquo;Deleted account&rdquo;",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "584694fb1bab",
+      "text": "with no name and no link. Your profile page stops existing, and your username stays retired so nobody else can take it.",
+      "words": 22,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 486,
+          "kind": "markup",
+          "raw": "with no name and no\n          link. Your profile page stops existing, and your username stays\n          retired so nobody else can take it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d6e1efa97152",
+      "text": "Copies that already federated to other servers, or that went out in an export taken before today, are outside this site's reach.",
+      "words": 22,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 491,
+          "kind": "markup",
+          "raw": "Copies that already federated to other servers, or that went out in an\n          export taken before today, are outside this site's reach.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f8ae6cdd059c",
+      "text": "You are the only admin of {blockingPatches.length === 1 ? 'this patch' : 'these patches'}. Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first — name a successor, promote another admin, or hold an election — and then come back.",
+      "words": 41,
+      "tier": "prose",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 498,
+          "kind": "markup",
+          "raw": "You are the only admin of\n              {blockingPatches.length === 1 ? 'this patch' : 'these patches'}.\n              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first —\n              name a successor, promote another admin, or hold an election —\n              and then come back.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "46dc70b5c356",
+      "text": "Type your username to confirm:",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 515,
+          "kind": "markup",
+          "raw": "Type your username to confirm:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "275e239c2518",
+      "text": "Really delete your account? You will be signed out.",
+      "words": 9,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 534,
+          "kind": "markup",
+          "raw": "Really delete your account? You will be signed out.",
           "quote": null
         }
       ]
@@ -46649,6 +47113,60 @@
           "kind": "js-string",
           "raw": "Passkey login failed",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "71e4755538ca",
+      "text": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.",
+      "words": 74,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 65,
+          "kind": "go-doc-block",
+          "raw": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6672cfddf9c2",
+      "text": "Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.",
+      "words": 63,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 69,
+          "kind": "go-doc-block",
+          "raw": "Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3b8ae446d45f",
+      "text": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.",
+      "words": 48,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 131,
+          "kind": "go-doc-block",
+          "raw": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.",
+          "quote": null
         }
       ]
     }
