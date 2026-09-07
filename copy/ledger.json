@@ -31867,7 +31867,7 @@
         },
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 53,
+          "line": 60,
           "kind": "js-string",
           "raw": "Failed to load document",
           "quote": "'"
@@ -36637,9 +36637,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 115,
+          "line": 122,
           "kind": "markup",
           "raw": "Version history &middot; {versions.length} version{versions.length !== 1 ? 's' : ''}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0920372a7a9d",
+      "text": "History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is intact; versions from before the rebuild are not available.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceVersionHistory.svelte",
+          "line": 127,
+          "kind": "markup",
+          "raw": "History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is\n            intact; versions from before the rebuild are not available.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "15b93152b23e",
+      "text": "This is the oldest version available. It was written from the database when the document's history was rebuilt, so there is nothing to compare it against.",
+      "words": 26,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceVersionHistory.svelte",
+          "line": 162,
+          "kind": "markup",
+          "raw": "This is the oldest version available. It was written from the\n                            database when the document's history was rebuilt, so there is\n                            nothing to compare it against.",
           "quote": null
         }
       ]
@@ -36655,7 +36691,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 141,
+          "line": 167,
           "kind": "markup",
           "raw": "This is the initial version.",
           "quote": null
@@ -36673,7 +36709,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 154,
+          "line": 181,
           "kind": "markup",
           "raw": "Diff not available.",
           "quote": null
@@ -36691,7 +36727,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 166,
+          "line": 193,
           "kind": "markup",
           "raw": "Compare versions",
           "quote": null
@@ -36709,7 +36745,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 169,
+          "line": 196,
           "kind": "markup",
           "raw": "From...",
           "quote": null
@@ -36727,7 +36763,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 176,
+          "line": 203,
           "kind": "markup",
           "raw": "To...",
           "quote": null
@@ -36745,7 +36781,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 198,
+          "line": 225,
           "kind": "markup",
           "raw": "No differences found.",
           "quote": null
@@ -36763,7 +36799,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 205,
+          "line": 232,
           "kind": "markup",
           "raw": "No version history available.",
           "quote": null

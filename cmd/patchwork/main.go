@@ -30,11 +30,18 @@ import (
 func main() {
 	configPath := flag.String("config", "patchwork.yaml", "path to config file")
 	healthcheck := flag.Bool("healthcheck", false, "probe the running instance's health endpoint and exit 0 (healthy) or 1")
+	repairGovernance := flag.Bool("repair-governance", false, "rebuild governance repos from the database, print a summary, and exit (run with the server stopped)")
 	flag.Parse()
 
 	// Probe mode: no database, no server. Used by the image's HEALTHCHECK.
 	if *healthcheck {
 		runHealthcheck(*configPath)
+		return
+	}
+
+	// Repair mode: database and repos, no server (docs/adr/084).
+	if *repairGovernance {
+		runGovernanceRepair(*configPath)
 		return
 	}
 
@@ -127,12 +134,16 @@ func main() {
 		log.Fatalf("governance init: %v", err)
 	}
 
-	// Heal nodes whose repo creation failed at runtime (e.g. instances that
-	// ran a pre-pure-go-git build in a container without a git binary).
+	// Create the repos that are absent, from the canonical DB rows — a patch
+	// whose repo creation failed at runtime, and every patch on an instance
+	// restored from a database backup alone, which carries no repos at all
+	// (docs/adr/084). Strictly create-missing: a repo that is already there is
+	// never written into on a boot. Repairing one that exists but has drifted
+	// is `patchwork -repair-governance`, an operator's decision.
 	if n, err := handler.BackfillNodeGovernanceRepos(db); err != nil {
 		log.Fatalf("governance backfill: %v", err)
 	} else if n > 0 {
-		log.Printf("governance: backfilled repos for %d nodes", n)
+		log.Printf("governance: rebuilt repos for %d patches from the database", n)
 	}
 
 	// Fill the governance_config cache for nodes created while CreateNode
