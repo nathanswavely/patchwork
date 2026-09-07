@@ -27242,9 +27242,9 @@
       "text": "https://their-quilt.example.com/users/you",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
