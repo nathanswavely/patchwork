@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-// docs/adr/090 decision 5. Patchwork tells nobody an event is coming, so
+// docs/adr/093 decision 5. Patchwork tells nobody an event is coming, so
 // this control and subscribing to the patch are the whole of how an event
 // reaches somebody who asked for it. These assert against source text,
 // which is all this project's frontend suite can do — the control was also

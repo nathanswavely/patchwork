@@ -31,7 +31,7 @@ func AllCategories() []CategoryInfo {
 		{CategoryGovernance, "Governance", "Document and rules changes", true},
 		{CategoryMembership, "Membership", "Join/leave notifications for admins", true},
 		// Named for the surface, not for its old contents: nothing here
-		// announces an event any more (docs/adr/090). What is left is an
+		// announces an event any more (docs/adr/093). What is left is an
 		// admin queue's duties and answers to something a person did.
 		{CategoryEvents, "Events", "Submissions, links, and program offers", true},
 		{CategoryAdmin, "Admin", "Claim requests, submissions", true},
@@ -107,7 +107,7 @@ const (
 	MembershipReinstated  NotificationType = "membership.reinstated"
 
 	// There is deliberately no type for an event being created, updated,
-	// cancelled or about to start (docs/adr/090). An event is a fact
+	// cancelled or about to start (docs/adr/093). An event is a fact
 	// about the world; a notification follows an obligation the person
 	// took on. Events reach people through the patch's calendar feed,
 	// the quilt and the map. The four types that used to live here were

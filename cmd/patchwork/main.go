@@ -547,7 +547,7 @@ func main() {
 	// submission is visible only to its submitter and reviewers.
 	mux.HandleFunc("GET /api/v1/events", middleware.AuthOptional(db, handler.ListEvents(db)))
 	mux.HandleFunc("GET /api/v1/events/{id}", middleware.AuthOptional(db, handler.GetEvent(db)))
-	// One event as a downloadable calendar file (docs/adr/090). Auth is
+	// One event as a downloadable calendar file (docs/adr/093). Auth is
 	// optional because a public event is anonymous, and a members-only
 	// one has to see who is asking. The wildcard needs its own segment:
 	// a pattern cannot mix a wildcard and a literal in one segment.

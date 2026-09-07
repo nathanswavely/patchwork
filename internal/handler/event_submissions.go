@@ -202,7 +202,7 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 			})
 			// The submitter hears that their event was approved, because
 			// that answers something they did. The patch hears nothing:
-			// the event itself is a fact about the world (docs/adr/090).
+			// the event itself is a fact about the world (docs/adr/093).
 
 			var full model.Event
 			db.QueryRow(

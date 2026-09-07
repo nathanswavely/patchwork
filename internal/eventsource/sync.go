@@ -379,7 +379,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 
 	// The first successful sync adopts the whole calendar quietly rather
 	// than treating forty backfilled events as arrivals. Nothing rings a
-	// bell either way since docs/adr/090, but these still federate and
+	// bell either way since docs/adr/093, but these still federate and
 	// still match programs, and a backfill is not news to those either.
 	announce := src.LastSuccessAt.Valid
 	now := time.Now().UTC().Format(time.RFC3339)
@@ -531,7 +531,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		return fmt.Errorf("commit reconcile: %w", err)
 	}
 
-	// An imported event announces to nobody (docs/adr/090). It is
+	// An imported event announces to nobody (docs/adr/093). It is
 	// published: it appears on the patch's calendar feed, the quilt and
 	// the map, and federates to the patch's AP followers below.
 	for _, e := range announcements {

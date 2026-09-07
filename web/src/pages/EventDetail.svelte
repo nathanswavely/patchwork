@@ -246,7 +246,7 @@
       <p class="description">{event.description}</p>
     {/if}
 
-    <!-- One night, in your own calendar (docs/adr/090). Patchwork tells
+    <!-- One night, in your own calendar (docs/adr/093). Patchwork tells
          nobody an event is coming, so this and subscribing to the patch
          are the whole of how one reaches a person who asked for it. A
          plain href: the server sends the file as an attachment, and a

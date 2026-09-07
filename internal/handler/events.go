@@ -506,7 +506,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			}
 		} else {
 			// No notification: an event is a fact about the world, and
-			// Patchwork publishes rather than broadcasts (docs/adr/090).
+			// Patchwork publishes rather than broadcasts (docs/adr/093).
 			// It reaches people through the patch's calendar feed, the
 			// quilt, and the map. Federation is publication, so the AP
 			// delivery below stays.
@@ -675,7 +675,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 				Link:     "/admin/event-submissions",
 			})
 		}
-		// An active event's edit notifies nobody (docs/adr/090): a
+		// An active event's edit notifies nobody (docs/adr/093): a
 		// subscribed calendar takes the change on its next refresh, and a
 		// changed detail is not an obligation anyone took on.
 
@@ -696,7 +696,7 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 
 		// Get the event to check permissions and to find its feed item.
 		// Title and status used to be read here for the cancellation
-		// notice; nothing announces a deletion now (docs/adr/090).
+		// notice; nothing announces a deletion now (docs/adr/093).
 		var nodeID, createdBy string
 		var sourceID, sourceUID *string
 		var sourceOccurrence string
@@ -741,7 +741,7 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 		auth.LogAuditEvent(db, user.ID, "event.delete", "event", eventID, "{}", clientIP(r))
 
 		// A cancellation notifies nobody, and refusing this is the point
-		// (docs/adr/090). It is the strongest case for an exception, so
+		// (docs/adr/093). It is the strongest case for an exception, so
 		// granting it would mean granting every later one. Telling people
 		// the show is off is the venue's job; Patchwork's is that the
 		// record is right when somebody looks, and the row is gone.

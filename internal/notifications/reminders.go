@@ -13,7 +13,7 @@ import (
 // StartReminderWorker runs a background goroutine for the sweeps that are
 // time-based rather than act-based: voting deadlines, expiring claim
 // setups, the bulletin, and hygiene. It no longer reminds anyone about an
-// event (docs/adr/090). Same pattern as ap/delivery.go — ticker + context
+// event (docs/adr/093). Same pattern as ap/delivery.go — ticker + context
 // cancellation.
 func StartReminderWorker(ctx context.Context, notifier *Notifier) {
 	go func() {

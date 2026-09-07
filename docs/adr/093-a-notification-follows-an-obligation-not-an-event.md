@@ -1,4 +1,4 @@
-# ADR 090: A notification follows an obligation, not an event
+# ADR 093: A notification follows an obligation, not an event
 
 Date: 2026-09-07. Status: **accepted and implemented**; decisions 3 and 5
 both ship with this record. Reached by grilling the question "what should

@@ -271,7 +271,7 @@ func TestPersonalFeed_Lifecycle(t *testing.T) {
 	}
 }
 
-// TestEventICS_OneEventForOneNight covers docs/adr/090 decision 5: the
+// TestEventICS_OneEventForOneNight covers docs/adr/093 decision 5: the
 // single-event download that replaces the notification Patchwork no longer
 // sends. It must carry the same UID the patch feed gives the event, so a
 // person who downloads tonight's show and later subscribes to the venue

@@ -216,7 +216,7 @@ func NodeICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 }
 
 // EventICS handles GET /api/v1/events/{id}/event.ics — one event as a
-// file you can open (docs/adr/090 decision 5).
+// file you can open (docs/adr/093 decision 5).
 //
 // The subscribable feeds above answer "keep me current with this patch".
 // This answers the other half: somebody saw one show on the quilt and

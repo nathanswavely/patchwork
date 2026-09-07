@@ -10422,7 +10422,7 @@
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Was your prose, marked human. Only the false clause moved: \"which patches you join and which events you RSVP to\" became \"which patches you join and what you post there\", since there is no RSVP feature (docs/adr/090). You reviewed and accepted the replacement.",
+      "note": "Was your prose, marked human. Only the false clause moved: \"which patches you join and which events you RSVP to\" became \"which patches you join and what you post there\", since there is no RSVP feature (docs/adr/093). You reviewed and accepted the replacement.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
@@ -10477,7 +10477,7 @@
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Was your prose, marked human. Dropped \"the events you RSVP to\" and added a sentence saying attendance is not recorded, which docs/adr/090 makes permanent. You reviewed and accepted the replacement.",
+      "note": "Was your prose, marked human. Dropped \"the events you RSVP to\" and added a sentence saying attendance is not recorded, which docs/adr/093 makes permanent. You reviewed and accepted the replacement.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
@@ -11290,7 +11290,7 @@
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Was your prose, marked human. One word: \"RSVPing\" became \"reading\" (docs/adr/090). You reviewed and accepted the replacement.",
+      "note": "Was your prose, marked human. One word: \"RSVPing\" became \"reading\" (docs/adr/093). You reviewed and accepted the replacement.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
@@ -15651,7 +15651,7 @@
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Replaces \"Event creation, updates, reminders\", which docs/adr/090 falsified by deleting the four event notification types. Same shape as the sibling category description \"Claim requests, submissions\".",
+      "note": "Replaces \"Event creation, updates, reminders\", which docs/adr/093 falsified by deleting the four event notification types. Same shape as the sibling category description \"Claim requests, submissions\".",
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
@@ -35178,7 +35178,7 @@
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "The standard label for this control across calendar software; docs/adr/090 decision 5.",
+      "note": "The standard label for this control across calendar software; docs/adr/093 decision 5.",
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
@@ -45093,7 +45093,7 @@
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Was ai-fine before the edit. Dropped \"RSVPs\" from the list of things that live on the remote quilt, since no Patchwork quilt has them (docs/adr/090).",
+      "note": "Was ai-fine before the edit. Dropped \"RSVPs\" from the list of things that live on the remote quilt, since no Patchwork quilt has them (docs/adr/093).",
       "occurrences": [
         {
           "file": "web/src/pages/RemotePatch.svelte",

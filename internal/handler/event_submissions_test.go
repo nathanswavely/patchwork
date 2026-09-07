@@ -461,7 +461,7 @@ func TestAdminQueueNotificationsReachTheirActor(t *testing.T) {
 	}
 
 	// An event posted straight to a patch notifies nobody at all
-	// (docs/adr/090) — not its author, and not the other admin who did
+	// (docs/adr/093) — not its author, and not the other admin who did
 	// not post it. An event is published, never announced.
 	activeID := createTestNode(t, db, stranger.ID, "Gallery Row", "gallery-row-q", "open")
 	createTestMembership(t, db, stranger.ID, activeID, "admin", "active")
