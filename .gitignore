@@ -68,3 +68,9 @@ web/e2e-empty/.session.json
 # Built by `go build ./cmd/gazetteer/`; the index it writes is not committed either.
 /gazetteer
 gazetteer.db
+
+# Scratch preview harnesses served by `npm run dev` — a bare page that mounts
+# one component against the real app.css so it can be looked at on its own.
+# Throwaway by design: keep yours locally, don't ship it to anyone else.
+web/_*-preview.html
+web/_*-preview.js
