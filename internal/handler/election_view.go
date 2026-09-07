@@ -47,7 +47,7 @@ type candidateView struct {
 func electionCandidates(db *database.DB, proposalID, viewerID string) []candidateView {
 	out := []candidateView{}
 	rows, err := db.Query(`
-		SELECT c.id, c.user_id, COALESCE(u.username,''), COALESCE(u.display_name, u.username, ''),
+		SELECT c.id, c.user_id, `+usernameExpr("u")+`, `+displayNameExpr("u")+`,
 		       (SELECT COUNT(*) FROM election_ballots b
 		          JOIN memberships m ON m.user_id = b.voter_id AND m.node_id = p.node_id
 		          WHERE b.candidate_id = c.id AND `+countedBallot+`) AS approvals,

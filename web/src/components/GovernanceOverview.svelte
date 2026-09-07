@@ -365,8 +365,7 @@
         <div class="successor">
           {#if overview.successor?.user_id}
             <p class="successor-line">
-              Successor: <strong>{overview.successor.display_name || overview.successor.username}</strong>
-              — if the current admin steps away, the patch passes to them.
+              Successor: <strong>{overview.successor.display_name || overview.successor.username}</strong>. If the current admin steps away, the patch passes to them.
             </p>
           {:else}
             <p class="successor-line muted">No successor named.</p>

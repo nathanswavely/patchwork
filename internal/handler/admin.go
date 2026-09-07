@@ -14,13 +14,18 @@ import (
 )
 
 // ListUsers handles GET /api/v1/admin/users.
+//
+// Tombstones are not listed (docs/adr/086). A deleted account is not an
+// account to administer: there is nobody to suspend, promote, or write to,
+// and every control this screen offers would act on an empty row. The row
+// itself lives on so the community's record does.
 func ListUsers(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		after, limit := parsePaginationParams(r)
 		search := r.URL.Query().Get("search")
 
 		query := `SELECT id, email, username, display_name, bio, avatar_url, role, trusted_contributor, suspended_at, created_at, updated_at FROM users`
-		var conditions []string
+		conditions := []string{"deleted_at IS NULL"}
 		var args []interface{}
 
 		if search != "" {
@@ -33,9 +38,7 @@ func ListUsers(db *database.DB) http.HandlerFunc {
 			args = append(args, after)
 		}
 
-		if len(conditions) > 0 {
-			query += " WHERE " + strings.Join(conditions, " AND ")
-		}
+		query += " WHERE " + strings.Join(conditions, " AND ")
 		query += " ORDER BY id ASC LIMIT ?"
 		args = append(args, limit+1)
 
@@ -202,7 +205,7 @@ func AuditLog(db *database.DB) http.HandlerFunc {
 		to := r.URL.Query().Get("to")
 
 		query := `SELECT a.id, a.user_id, a.action, a.entity_type, a.entity_id, a.metadata, a.ip_address, a.created_at,
-			COALESCE(u.username, '') AS username, COALESCE(u.display_name, '') AS display_name
+			` + usernameExpr("u") + ` AS username, ` + displayNameExpr("u") + ` AS display_name
 			FROM audit_log a LEFT JOIN users u ON a.user_id = u.id`
 		var conditions []string
 		var args []interface{}

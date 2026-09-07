@@ -66,10 +66,19 @@ describe('Members room: the card shows only where the API sent it', () => {
 describe('Members room: the count is admins plus members, never followers', () => {
   const src = source('pages/PatchMembers.svelte');
 
-  it('counts members and followers apart and never sums them', () => {
-    expect(src).toContain("members.filter((m) => m.role === 'member' || m.role === 'admin').length");
-    expect(src).toContain("members.filter((m) => m.role === 'follower').length");
+  it('takes both counts from the server, never from the loaded page', () => {
+    expect(src).toContain('memberCount = data.member_count');
+    expect(src).toContain('followerCount = data.follower_count');
+    // A paged listing counted client-side reports the page size as the
+    // patch's size — the header said "20 members" of a patch with 60.
+    expect(src).not.toMatch(/members\.filter\(.*\)\.length/);
     expect(src).not.toMatch(/\{members\.length\} members/);
+  });
+
+  it('follows next_cursor so a patch bigger than one page is reachable', () => {
+    expect(src).toContain("nextCursor = data.next_cursor || ''");
+    expect(src).toContain('loadMembers(nextCursor)');
+    expect(src).toMatch(/members = after \? \[\.\.\.members, \.\.\.items\]/);
   });
 });
 

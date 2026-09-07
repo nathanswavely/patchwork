@@ -335,7 +335,7 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// Self-service methods prove control of the vetted domain; without
 		// one there is nothing to prove against.
 		if req.Method != "admin" && verificationDomain == "" {
-			http.Error(w, `{"error":"this patch has no verified domain — choose admin review"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"this patch has no verified domain. Choose admin review"}`, http.StatusBadRequest)
 			return
 		}
 
@@ -562,7 +562,7 @@ func ResendClaimEmail(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			sendCount = 0
 		}
 		if sendCount >= claimEmailSendLimit {
-			http.Error(w, `{"error":"resend limit reached — try again tomorrow"}`, http.StatusTooManyRequests)
+			http.Error(w, `{"error":"resend limit reached"}`, http.StatusTooManyRequests)
 			return
 		}
 
@@ -635,7 +635,7 @@ func CompleteEmailClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if emailClaimExpired(expiresAt) {
-			http.Error(w, `{"error":"this verification link has expired — request a new email from the claim page"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"this verification link has expired. Request a new email from the claim page"}`, http.StatusBadRequest)
 			return
 		}
 
@@ -812,7 +812,7 @@ func ListClaims(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 
 		query := `SELECT cr.id, cr.node_id, cr.user_id, cr.method, cr.evidence, cr.status, cr.created_at, COALESCE(cr.email,''),
-			n.name, n.slug, COALESCE(n.verification_domain,''), COALESCE(u.username,''), COALESCE(u.display_name,'')
+			n.name, n.slug, COALESCE(n.verification_domain,''), ` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
 			FROM claim_requests cr
 			JOIN nodes n ON cr.node_id = n.id
 			JOIN users u ON cr.user_id = u.id
@@ -1218,7 +1218,7 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 		if setupExpiresAt.Valid && setupExpiresAt.String != "" {
 			if exp, perr := time.Parse("2006-01-02T15:04:05.000Z", setupExpiresAt.String); perr == nil && now.After(exp) {
 				db.Exec("UPDATE claim_requests SET status = 'expired', updated_at = ? WHERE id = ?", nowStr, claimID)
-				http.Error(w, `{"error":"this claim's setup window has expired — the patch is claimable again"}`, http.StatusGone)
+				http.Error(w, `{"error":"this claim's setup window has expired. The patch is claimable again"}`, http.StatusGone)
 				return
 			}
 		}

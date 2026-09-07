@@ -3,61 +3,35 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 )
 
 // BackfillNodeGovernanceRepos creates governance repos for live nodes that
-// don't have one, then mirrors each node's DB-canonical governance docs into
-// the fresh repo (docs/adr/011: the governance_docs row is canonical, the git
-// file is its history mirror). Nodes normally get their repo at creation
-// time; a missing repo means creation failed at runtime — e.g. the gitless
-// distroless container before repo init went pure go-git. Returns the number
-// of repos created.
+// don't have one, built from that node's own canonical governance_docs rows
+// (docs/adr/011: the row is canonical, the repo file is its history mirror).
+// Nodes normally get their repo at creation time; a missing repo means either
+// that creation failed at runtime — e.g. the distroless container with no git
+// binary, before repo init went pure go-git — or that the instance was
+// restored from a database backup alone, which carries no repos at all
+// (docs/adr/084). Returns the number of repos created.
 //
 // Scoped to active nodes only — unclaimed patches carry no governance repo
 // at all (docs/adr/039); one is created only when a claim's setup completes.
 //
-// The template chosen at node creation is not persisted, so backfilled repos
-// start from the default template; admins can re-run governance setup to
-// change the rules.
+// This is the strictly-create-missing half of governance.Repair: it never
+// writes inside a repo that already exists, which is what makes it safe on
+// every boot. The other half — adding a document an existing repo lacks and
+// bringing a stale file current — is the operator's `-repair-governance`
+// pass, because it commits into live history and should be somebody's
+// decision rather than something a restart does.
 func BackfillNodeGovernanceRepos(db *database.DB) (int, error) {
-	dataDir := governance.GetDataDir()
-	if dataDir == "" {
-		return 0, fmt.Errorf("governance data dir not set")
-	}
-
-	rows, err := db.Query(`SELECT id FROM nodes WHERE status = 'active' AND removed_at IS NULL`)
+	rep, err := governance.Repair(db, governance.GetDataDir(), governance.RepairOptions{})
 	if err != nil {
-		return 0, fmt.Errorf("list nodes: %w", err)
+		return 0, err
 	}
-	var nodeIDs []string
-	for rows.Next() {
-		var id string
-		if err := rows.Scan(&id); err != nil {
-			rows.Close()
-			return 0, fmt.Errorf("scan node: %w", err)
-		}
-		nodeIDs = append(nodeIDs, id)
-	}
-	rows.Close()
-
-	created := 0
-	for _, nodeID := range nodeIDs {
-		if _, err := os.Stat(governance.NodeRepoPath(dataDir, nodeID)); err == nil {
-			continue
-		}
-		if err := governance.ForkForNode(dataDir, nodeID, ""); err != nil {
-			return created, fmt.Errorf("fork for node %s: %w", nodeID, err)
-		}
-		created++
-
-		if err := mirrorDocsToRepo(db, dataDir, nodeID); err != nil {
-			return created, err
-		}
-	}
+	_, created, _, _ := rep.Counts()
 	return created, nil
 }
 
@@ -133,37 +107,4 @@ func BackfillGovernanceConfig(db *database.DB) (int, error) {
 		synced++
 	}
 	return synced, nil
-}
-
-// mirrorDocsToRepo writes a node's governance_docs bodies into its git repo
-// wherever the repo content differs from the canonical DB row.
-func mirrorDocsToRepo(db *database.DB, dataDir, nodeID string) error {
-	rows, err := db.Query(`SELECT title, body FROM governance_docs WHERE node_id = ?`, nodeID)
-	if err != nil {
-		return fmt.Errorf("list governance docs for node %s: %w", nodeID, err)
-	}
-	defer rows.Close()
-
-	type doc struct{ title, body string }
-	var docs []doc
-	for rows.Next() {
-		var d doc
-		if err := rows.Scan(&d.title, &d.body); err != nil {
-			return fmt.Errorf("scan governance doc: %w", err)
-		}
-		docs = append(docs, d)
-	}
-
-	for _, d := range docs {
-		filename := governanceFilename(d.title)
-		if cur, err := governance.GetDocument(dataDir, nodeID, filename); err == nil && cur == d.body {
-			continue
-		}
-		_, err := governance.DirectEdit(dataDir, nodeID, filename, d.body,
-			"Patchwork System", "system@patchwork.local", "Backfill "+d.title+" from database")
-		if err != nil {
-			return fmt.Errorf("mirror doc %q for node %s: %w", d.title, nodeID, err)
-		}
-	}
-	return nil
 }

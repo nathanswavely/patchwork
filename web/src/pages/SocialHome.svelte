@@ -8,7 +8,7 @@
   import { motifComponentForPatch } from '../lib/patchIcons.js';
   import { quiltOrder } from '../lib/quiltLayout.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
-  import { getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
+  import { getMembershipRoles, getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import {
     getSelectedTags,
@@ -259,8 +259,14 @@
 
   // --- Card corner: the user's relationship to each patch ---
   // admin → "Manage" chip (link to workspace); member → "Member" chip;
-  // follower/none → follow heart that actually follows.
+  // pending request → "Requested" chip; follower/none → follow heart that
+  // actually follows.
+  //
+  // The role map holds active rows only, so a pending request has no role
+  // and would otherwise fall through to the follow heart — a button the
+  // server refuses with a 409. It gets its own chip: the wait is the state.
   let roles = $derived(getMembershipRoles());
+  let requested = $derived(getPendingMembershipSlugs());
   let busySlugs = $state(new Set());
 
   async function toggleFollow(e, patch) {
@@ -447,6 +453,11 @@
     <span class="card-corner card-member-chip" class:in-row={inRow} title="You're a member of this patch">
       <UsersThree size={14} weight="duotone" />
       <span>Member</span>
+    </span>
+  {:else if requested.has(patch.slug)}
+    <span class="card-corner card-requested-chip" class:in-row={inRow} title="Your membership request is waiting on this patch's admins">
+      <UsersThree size={14} weight="duotone" />
+      <span>Requested</span>
     </span>
   {:else}
     {@const following = roles.get(patch.slug) === 'follower'}
@@ -1023,6 +1034,7 @@
 
   .card-manage-chip,
   .card-member-chip,
+  .card-requested-chip,
   .card-follow-btn {
     gap: 4px;
     padding: 5px 10px;
@@ -1155,13 +1167,22 @@
     font-size: 0.8rem;
   }
 
-  /* Except this one, which is not a button: "Member" is what you already
-     are, and in a row of things you can press it must not look pressable. */
-  .card-member-chip.in-row {
+  /* Except these two, which are not buttons: "Member" is what you already
+     are and "Requested" is what you are waiting on, and in a row of things
+     you can press neither must look pressable. */
+  .card-member-chip.in-row,
+  .card-requested-chip.in-row {
     background: none;
     border: none;
     padding: 7px 2px;
     color: var(--color-text-muted);
+  }
+
+  /* A request nobody has answered: stated, not offered. Muted and italic
+     so it reads as a state beside the chips that report standing. */
+  .card-requested-chip {
+    color: var(--color-text-muted);
+    font-style: italic;
   }
 
   /* Skeletons */

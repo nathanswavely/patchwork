@@ -57,7 +57,7 @@ func ListComments(db *database.DB) http.HandlerFunc {
 
 		// Fetch all comments for this proposal.
 		rows, err := db.Query(
-			`SELECT c.id, c.body, COALESCE(u.display_name, u.username) as author_name, c.author_id, c.created_at, c.updated_at, c.parent_id
+			`SELECT c.id, c.body, `+displayNameExpr("u")+` as author_name, c.author_id, c.created_at, c.updated_at, c.parent_id
 			 FROM proposal_comments c
 			 LEFT JOIN users u ON u.id = c.author_id
 			 WHERE c.proposal_id = ?
@@ -248,7 +248,7 @@ func CreateComment(db *database.DB) http.HandlerFunc {
 		// Return the created comment.
 		var c commentItem
 		db.QueryRow(
-			`SELECT c.id, c.body, COALESCE(u.display_name, u.username), c.author_id, c.created_at, c.updated_at, c.parent_id
+			`SELECT c.id, c.body, `+displayNameExpr("u")+`, c.author_id, c.created_at, c.updated_at, c.parent_id
 			 FROM proposal_comments c LEFT JOIN users u ON u.id = c.author_id
 			 WHERE c.id = ?`, id,
 		).Scan(&c.ID, &c.Body, &c.AuthorName, &c.AuthorID, &c.CreatedAt, &c.UpdatedAt, &c.ParentID)
@@ -304,7 +304,7 @@ func UpdateComment(db *database.DB) http.HandlerFunc {
 
 		var c commentItem
 		db.QueryRow(
-			`SELECT c.id, c.body, COALESCE(u.display_name, u.username), c.author_id, c.created_at, c.updated_at, c.parent_id
+			`SELECT c.id, c.body, `+displayNameExpr("u")+`, c.author_id, c.created_at, c.updated_at, c.parent_id
 			 FROM proposal_comments c LEFT JOIN users u ON u.id = c.author_id
 			 WHERE c.id = ?`, commentID,
 		).Scan(&c.ID, &c.Body, &c.AuthorName, &c.AuthorID, &c.CreatedAt, &c.UpdatedAt, &c.ParentID)

@@ -86,7 +86,7 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 	rows, err := db.Query(`
 		SELECT p.id, p.title, p.status, COALESCE(p.state,''), p.seats_contested,
 		       COALESCE(p.applied_at, p.updated_at) AS decided_at,
-		       COALESCE(u.display_name, u.username, '') AS author_name,
+		       `+displayNameExpr("u")+` AS author_name,
 		       (SELECT COUNT(*) FROM votes v WHERE v.proposal_id = p.id) AS any_votes
 		FROM proposals p
 		LEFT JOIN users u ON u.id = p.author_id
@@ -144,7 +144,7 @@ func recordedDecisions(db *database.DB, nodeID string) []recordEntry {
 	// the correction sits beside what it corrects; here they would read as two
 	// councils seated on one day.
 	rows, err := db.Query(`
-		SELECT a.id, a.decided_at, a.summary, COALESCE(u.display_name, u.username, '')
+		SELECT a.id, a.decided_at, a.summary, `+displayNameExpr("u")+`
 		FROM attestations a
 		LEFT JOIN users u ON u.id = a.recorded_by
 		WHERE a.node_id = ? AND a.kind = 'leadership'
@@ -177,7 +177,7 @@ func recordedDecisions(db *database.DB, nodeID string) []recordEntry {
 
 	// Texts a meeting adopted.
 	arows, aerr := db.Query(`
-		SELECT a.doc_title, a.decided_at, a.summary, COALESCE(u.display_name, u.username, '')
+		SELECT a.doc_title, a.decided_at, a.summary, `+displayNameExpr("u")+`
 		FROM amendment_attestations a
 		LEFT JOIN users u ON u.id = a.recorded_by
 		WHERE a.node_id = ?`, nodeID)

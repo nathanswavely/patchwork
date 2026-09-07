@@ -224,9 +224,14 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		ip := clientIP(r)
 
-		// Rate limit.
+		// Rate limit. The client still gets the blanket 200 — whether an
+		// address has an account must stay unanswerable — but the log must
+		// say what happened, because without SMTP the log *is* the delivery
+		// channel. Silent here, a throttled request is indistinguishable
+		// from a sent one: no new link appears, the person reuses the last
+		// one, and "magic link already used" is the only symptom (#222).
 		if err := middleware.CheckMagicLinkRate(email, ip); err != nil {
-			// Still return 200 to not leak info.
+			log.Printf("magic link: request for %s throttled (%v); nothing was issued", email, err)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 			return

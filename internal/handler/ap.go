@@ -44,6 +44,16 @@ func APUser(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// A deleted account answers 410 rather than 404 (docs/adr/086). The
+		// fediverse reads Gone as "this actor existed and is finished", which
+		// is what stops remote servers retrying and is the same statement the
+		// Delete activity made on the way out. 404 would read as a transient
+		// miss and leave the cached copy in place.
+		if accountDeleted(db, userID) {
+			http.Error(w, `{"error":"account deleted"}`, http.StatusGone)
+			return
+		}
+
 		if !acceptsActivityPub(r) {
 			domain := ap.GetDomain()
 			// Redirect to web UI.
@@ -451,7 +461,7 @@ func APUserOutbox(db *database.DB) http.HandlerFunc {
 
 		// Verify user exists.
 		var exists int
-		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL", userID).Scan(&exists); err != nil {
+		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL AND deleted_at IS NULL", userID).Scan(&exists); err != nil {
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
 		}
@@ -483,7 +493,7 @@ func APUserFollowers(db *database.DB) http.HandlerFunc {
 
 		// Verify user exists.
 		var exists int
-		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL", userID).Scan(&exists); err != nil {
+		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL AND deleted_at IS NULL", userID).Scan(&exists); err != nil {
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
 		}

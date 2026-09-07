@@ -81,7 +81,7 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 
 		query := `SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
 			COALESCE(p.target_doc,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
-			COALESCE(u.display_name, u.username) as author_name,
+			` + displayNameExpr("u") + ` as author_name,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
 				WHERE v.proposal_id = p.id AND v.value = 'approve' AND ` + countedBallot + `) as approve_count,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
@@ -793,8 +793,8 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			`SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, COALESCE(p.state,''), COALESCE(p.applied_at,''), p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
 			 COALESCE(p.target_doc,''), COALESCE(p.target_user_id,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
 			 p.seats_contested, COALESCE(p.nominations_close_at,''),
-			 COALESCE(u.display_name, u.username) as author_name,
-			 COALESCE(tu.display_name, tu.username, '') as target_user_name
+			 `+displayNameExpr("u")+` as author_name,
+			 `+displayNameExpr("tu")+` as target_user_name
 			 FROM proposals p LEFT JOIN users u ON u.id = p.author_id
 			 LEFT JOIN users tu ON tu.id = p.target_user_id
 			 WHERE p.id = ?`, proposalID,
@@ -858,7 +858,7 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		}
 		var voters []voterInfo
 		rows, err := db.Query(
-			`SELECT v.user_id, COALESCE(u.display_name,'') as display_name, u.username, v.value,
+			`SELECT v.user_id, `+displayNameExpr("u")+` as display_name, `+usernameExpr("u")+` as username, v.value,
 			        CASE WHEN `+countedBallot+` THEN 1 ELSE 0 END as counted
 			 FROM votes v
 			 JOIN users u ON u.id = v.user_id

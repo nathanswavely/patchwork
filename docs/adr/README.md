@@ -63,6 +63,11 @@ several branches are in flight.
 | [066](066-a-seam-belongs-to-the-boundary-not-to-either-tile.md) | A seam belongs to the boundary, not to either tile — the quilt's shared lattice, warped blocks and cloth *(inside 004 and 029)* |
 | [069](069-bespoke-calendars-are-adapters.md) | Bespoke calendars are adapters, not source types — a vendor type only where the vendor fixes the schema; the ICS URL is the extension point *(amends 031's type list)* |
 | [082](082-a-gazetteer-suggests-a-person-places.md) | A gazetteer suggests; a person places — an offline-built local place index proposes a marker from a patch's address, and only a confirmed proposal becomes a map location *(applies 077, amends CONTEXT.md)* |
+| [084](084-a-restore-rebuilds-the-mirror-and-says-so.md) | A restore rebuilds the mirror, and the mirror says so — governance repos rebuilt from the canonical rows, create-missing on boot and a full `-repair-governance` pass, with the synthetic commits labelled in the history view *(applies 011, narrows 002's known gap)* |
+| [085](085-only-a-person-can-call-a-release-breaking.md) | Only a person can call a release breaking — hand-written `release-notes/vX.Y.Z.md`, a `release.json` asset on every release, and no tag publishes an image without one |
+| [086](086-erase-the-person-keep-the-acts.md) | Erase the person, keep the acts — self-serve account deletion leaves a tombstone so every vote still has a voter and every proposal a proposer; the username is retired, not freed; refused for a sole patch admin or the last instance admin *(extends 017, 012, 002)* |
+| [087](087-an-admin-proves-the-role-not-the-person.md) | An admin proves the role, not the person — the instance actor signs a verifier's nonce for fifteen minutes; the statement names the domain and nobody *(preserves 023's unpublished roster, takes 017's step-up gate)* |
+| [088](088-withdrawing-a-request-is-not-leaving.md) | Withdrawing a request is not leaving — a requester is outside the ladder, so `me/nodes` stops sending a role for a row with no standing and withdraw gets its own route *(supersedes PR #219's LeaveNode relaxation, amends CONTEXT.md)* |
 
 ## Partly implemented
 

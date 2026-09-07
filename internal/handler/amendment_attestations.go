@@ -97,7 +97,7 @@ func ListAmendmentAttestations(db *database.DB) http.HandlerFunc {
 
 		query := `SELECT a.id, a.node_id, COALESCE(a.doc_id,''), a.target_doc, a.doc_title,
 		                 a.decided_at, a.summary, a.adopted_body, a.git_sha, a.recorded_by,
-		                 COALESCE(u.display_name, u.username, ''), a.created_at
+		                 `+displayNameExpr("u")+`, a.created_at
 		          FROM amendment_attestations a
 		          LEFT JOIN users u ON u.id = a.recorded_by
 		          WHERE a.node_id = ?`

@@ -1234,3 +1234,101 @@ func TestNotificationCategoryFilter(t *testing.T) {
 		}
 	}
 }
+
+// A patch bigger than one page must still report its true size: the header
+// states the count as a fact, so it is counted server-side under exactly the
+// filter the listing ran, not derived from the page that happened to load.
+func TestListMembersCountsWholePatchNotJustThePage(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin60", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Big Node", "big-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	// 24 more members and 3 followers — past the default limit of 20.
+	for i := 0; i < 24; i++ {
+		u, _ := createTestUser(t, db, fmt.Sprintf("big%02d", i), "member")
+		createTestMembership(t, db, u.ID, nodeID, "member", "active")
+	}
+	for i := 0; i < 3; i++ {
+		u, _ := createTestUser(t, db, fmt.Sprintf("bigf%02d", i), "member")
+		createTestMembership(t, db, u.ID, nodeID, "follower", "active")
+	}
+
+	r := authedRequest("GET", "/api/v1/nodes/big-node/members", nil, adminToken)
+	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	result := decodeJSON(t, w)
+
+	items, _ := result["items"].([]interface{})
+	if len(items) != 20 {
+		t.Errorf("expected one page of 20 rows, got %d", len(items))
+	}
+	if result["next_cursor"] == "" {
+		t.Error("expected a next_cursor: the patch is bigger than one page")
+	}
+	if got := result["member_count"].(float64); got != 25 {
+		t.Errorf("expected member_count=25 (1 admin + 24 members), got %v", got)
+	}
+	if got := result["follower_count"].(float64); got != 3 {
+		t.Errorf("expected follower_count=3, got %v", got)
+	}
+
+	// Paging to the end must reach every row.
+	seen := len(items)
+	cursor, _ := result["next_cursor"].(string)
+	for cursor != "" && seen < 100 {
+		r = authedRequest("GET", "/api/v1/nodes/big-node/members?after="+cursor, nil, adminToken)
+		w = serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+		page := decodeJSON(t, w)
+		items, _ = page["items"].([]interface{})
+		seen += len(items)
+		cursor, _ = page["next_cursor"].(string)
+	}
+	if seen != 28 {
+		t.Errorf("expected to page through all 28 rows, saw %d", seen)
+	}
+}
+
+// The totals must match what this viewer's listing can actually show, or the
+// header promises rows the list will never hand over: an outsider sees only
+// visible member/admin rows (docs/adr/006), so hidden rows and followers are
+// outside their count.
+func TestListMembersCountsHonourTheViewersVisibility(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin61", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Quiet Node", "quiet-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	hidden, _ := createTestUser(t, db, "hidden61", "member")
+	hiddenID := createTestMembership(t, db, hidden.ID, nodeID, "member", "active")
+	if _, err := db.Exec("UPDATE memberships SET visible = 0 WHERE id = ?", hiddenID); err != nil {
+		t.Fatalf("hide membership: %v", err)
+	}
+	follower, _ := createTestUser(t, db, "follow61", "member")
+	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
+
+	// The room's own admin counts everybody the listing carries.
+	r := authedRequest("GET", "/api/v1/nodes/quiet-node/members", nil, adminToken)
+	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+	inside := decodeJSON(t, w)
+	if got := inside["member_count"].(float64); got != 2 {
+		t.Errorf("insider: expected member_count=2, got %v", got)
+	}
+	if got := inside["follower_count"].(float64); got != 1 {
+		t.Errorf("insider: expected follower_count=1, got %v", got)
+	}
+
+	// An anonymous visitor counts only the rows they can be shown.
+	r = authedRequest("GET", "/api/v1/nodes/quiet-node/members", nil, "")
+	w = servePublicMux(t, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+	outside := decodeJSON(t, w)
+	items, _ := outside["items"].([]interface{})
+	if got := outside["member_count"].(float64); got != float64(len(items)) || got != 1 {
+		t.Errorf("outsider: expected member_count=1 matching %d listed rows, got %v", len(items), got)
+	}
+	if got := outside["follower_count"].(float64); got != 0 {
+		t.Errorf("outsider: expected follower_count=0 (followers are not public), got %v", got)
+	}
+}

@@ -67,7 +67,7 @@ func Tables() []Table {
 			Name: "users",
 			Query: `SELECT id, email, username, display_name, bio, avatar_url, links, role,
 				contact_phone, contact_email, contact_note,
-				suspended_at, created_at, updated_at FROM users WHERE username != '_system'`,
+				suspended_at, deleted_at, created_at, updated_at FROM users WHERE username != '_system'`,
 			// `links` is the same shape as a patch's, and a patch's travelled
 			// while a person's did not (docs/adr/006). A profile arrived on
 			// the fork with its bio and no way to reach anybody.
@@ -76,10 +76,15 @@ func Tables() []Table {
 			// admin-gated for it. The card is only ever shown through
 			// memberships.share_contact, which travels beside it, so the
 			// fork shows each card to exactly the rooms the person chose.
+			// `deleted_at` travels, and it has to. A tombstone that arrived on
+			// the fork without it would be a live account again: blank, with
+			// the old handle free to sign in under and a profile page back on
+			// the web. The fork inherits the record and therefore inherits
+			// the erasure that made the record safe to keep (docs/adr/086).
 			Columns: cols(id("id"), c("email"), c("username"), c("display_name"),
 				c("bio"), c("avatar_url"), def("links", "[]"), c("role"),
 				def("contact_phone", ""), def("contact_email", ""), def("contact_note", ""),
-				c("suspended_at"), c("created_at"), c("updated_at")),
+				c("suspended_at"), c("deleted_at"), c("created_at"), c("updated_at")),
 		},
 		{
 			File:    "tags.json",

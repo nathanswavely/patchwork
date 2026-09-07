@@ -523,6 +523,25 @@ them without having to read the word "Leave".
 _Avoid_: follow button (it is not a toggle), membership badge (a badge is
 not clickable), leave button
 
+**Requester**:
+A person who has asked to join an approval-required patch and has not been
+answered. Outside the ladder, not a fourth rung on it: a requester holds an
+outstanding request, not a relationship, and so has no standing, no role
+mark, and no thread, and is absent from the member list and the member
+count until an admin admits them.
+_Avoid_: pending member (a request is not a diminished membership),
+applicant (there is no application), prospective member
+
+**Request control**:
+The resting form of an outstanding request — "Membership requested" — in
+the place a standing control sits and under the same discipline: Withdraw
+is inside it, so retracting costs the deliberate step departure costs. It
+is a sibling of the standing control, never one of them: it states no
+standing and wears no role mark, because a requester has none, and it is
+muted where a standing is not.
+_Avoid_: standing control (a request is not standing), pending badge (a
+badge is not clickable), cancel button
+
 **Trusted contributor**:
 An instance-level grant — given and revoked by the instance admin, never
 earned automatically — that lets a person record events on unclaimed patches
@@ -574,14 +593,14 @@ _Avoid_: welcome modal, splash screen, announcement banner, popup (as a
 UI word)
 
 **Join sheet**:
-The statement shown between clicking Join and standing as a member or
-requester: the patch's membership policy, its lining state (including an
-amended lining, with the changes one link away), and its published
-charters. A lens over the patch's public face, never a bypass of document
-visibility — a members-only charter stays unseen. Informative, not
-contractual: no checkbox; joining informed is the agreement. On
-approval-required patches it carries the one optional intro message to
-the admins — a field, never a questionnaire. Follows never see it:
+The statement shown between clicking Join and either standing as a member
+or holding an open request: the patch's membership policy, its lining
+state (including an amended lining, with the changes one link away), and
+its published charters. A lens over the patch's public face, never a
+bypass of document visibility — a members-only charter stays unseen.
+Informative, not contractual: no checkbox; joining informed is the
+agreement. On approval-required patches it carries the one optional intro
+message to the admins — a field, never a questionnaire. Follows never see it:
 following has no ceremony.
 _Avoid_: join agreement, application form, consent modal, membership form
 

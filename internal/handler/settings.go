@@ -287,7 +287,7 @@ func AdminWipe(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		if err := db.Wipe(r.Context()); err != nil {
 			log.Printf("wipe failed: %v", err)
-			http.Error(w, `{"error":"wipe failed — no data was deleted"}`, http.StatusInternalServerError)
+			http.Error(w, `{"error":"wipe failed, no data was deleted"}`, http.StatusInternalServerError)
 			return
 		}
 
