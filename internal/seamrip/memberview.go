@@ -201,6 +201,29 @@ func memberViews() map[string]MemberView {
 			Rule:  "on a patch that travelled: the viewer's own rows, every row on a patch they are inside, and otherwise only visible member/admin rows.",
 			Where: `node_id IN (` + sqlVisibleNodes + `) AND (user_id = ? OR node_id IN (` + sqlInsiderNodes + `) OR (visible = 1 AND role IN ('member','admin')))`,
 		},
+		"contact_items": {
+			// The users rule above already decided this, for the reason it
+			// gives about bio and links: nobody asked this person whether
+			// their profile should be copied to a new server. A contact item
+			// is the sharper case. Sharing a number into a patch says the
+			// people in that room may reach you; it does not say any one of
+			// them may carry it to an instance you have never heard of, whose
+			// admins you did not choose and whose members you will never meet
+			// (docs/adr/083).
+			//
+			// A person's own card is not lost by this: the personal export
+			// (docs/adr/012) carries their items with the patches each is
+			// shared into, which is the mechanism for leaving with what is
+			// yours. The member seamrip is for standing up a fork of a
+			// community, and a fork can re-invite people out of band the same
+			// way it must for their email.
+			Rule:  "never: shared into a room is not licensed to a new server, and the admin seamrip is the only export that moves other people's reachability (docs/adr/083, matching the contact card's absence from the users stub).",
+			Never: true,
+		},
+		"contact_item_shares": {
+			Rule:  "never, with the items they disclose.",
+			Never: true,
+		},
 		"seats": {
 			// A council is public: the governance overview names the
 			// admins and the next term end to anybody (docs/adr/051).

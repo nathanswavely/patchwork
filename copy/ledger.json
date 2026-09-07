@@ -3821,14 +3821,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 671,
+          "line": 668,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 860,
+          "line": 829,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3885,6 +3885,20 @@
         {
           "file": "internal/handler/comments.go",
           "line": 374,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 106,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 170,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3982,7 +3996,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 731,
+          "line": 755,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4574,14 +4588,14 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 401,
+          "line": 406,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 705,
+          "line": 729,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4835,7 +4849,7 @@
         },
         {
           "file": "internal/handler/users.go",
-          "line": 46,
+          "line": 59,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -5509,7 +5523,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 711,
+          "line": 735,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -7118,96 +7132,6 @@
       ]
     },
     {
-      "id": "7e73a072b643",
-      "text": "phone must be 60 characters or fewer",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "internal/handler/auth.go",
-          "line": 683,
-          "kind": "go-error-body",
-          "raw": "phone must be 60 characters or fewer",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "fc64434edc90",
-      "text": "email must be 254 characters or fewer",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "internal/handler/auth.go",
-          "line": 686,
-          "kind": "go-error-body",
-          "raw": "email must be 254 characters or fewer",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "bb75052389a1",
-      "text": "that doesn't look like an email address",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "internal/handler/auth.go",
-          "line": 689,
-          "kind": "go-error-body",
-          "raw": "that doesn't look like an email address",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d17d2e208ef7",
-      "text": "note must be 200 characters or fewer",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "internal/handler/auth.go",
-          "line": 692,
-          "kind": "go-error-body",
-          "raw": "note must be 200 characters or fewer",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2e2fd53f6b10",
-      "text": "failed to update contact card",
-      "words": 5,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "internal/handler/auth.go",
-          "line": 698,
-          "kind": "go-error-body",
-          "raw": "failed to update contact card",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "1dab2235213e",
       "text": "failed to update where you moved to",
       "words": 7,
@@ -7218,7 +7142,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 719,
+          "line": 688,
           "kind": "go-error-body",
           "raw": "failed to update where you moved to",
           "quote": null
@@ -7236,7 +7160,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 728,
+          "line": 697,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -7254,7 +7178,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 738,
+          "line": 707,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -7272,7 +7196,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 749,
+          "line": 718,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -7290,7 +7214,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 757,
+          "line": 726,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -7308,7 +7232,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 771,
+          "line": 740,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -7326,7 +7250,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 816,
+          "line": 785,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -7344,14 +7268,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 852,
+          "line": 821,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 893,
+          "line": 862,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -7369,7 +7293,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 872,
+          "line": 841,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -7387,14 +7311,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 876,
+          "line": 845,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 907,
+          "line": 876,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -7412,7 +7336,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 902,
+          "line": 871,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -8295,6 +8219,353 @@
       ]
     },
     {
+      "id": "30720f294025",
+      "text": "failed to load contact items",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 86,
+          "kind": "go-error-body",
+          "raw": "failed to load contact items",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "371962cfee5c",
+      "text": "kind must be phone, email, handle or note",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 112,
+          "kind": "go-error-body",
+          "raw": "kind must be phone, email, handle or note",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 175,
+          "kind": "go-error-body",
+          "raw": "kind must be phone, email, handle or note",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "01dbdd19f31f",
+      "text": "label must be 40 characters or fewer",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 120,
+          "kind": "go-error-body",
+          "raw": "label must be 40 characters or fewer",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 186,
+          "kind": "go-error-body",
+          "raw": "label must be 40 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2a694810533b",
+      "text": "a contact card holds 12 items at most",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 128,
+          "kind": "go-error-body",
+          "raw": "a contact card holds 12 items at most",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "087070d702a1",
+      "text": "failed to add contact item",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 137,
+          "kind": "go-error-body",
+          "raw": "failed to add contact item",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c764cf7f3253",
+      "text": "contact item not found",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 159,
+          "kind": "go-error-body",
+          "raw": "contact item not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 225,
+          "kind": "go-error-body",
+          "raw": "contact item not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 248,
+          "kind": "go-error-body",
+          "raw": "contact item not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "34a78ec441ff",
+      "text": "failed to update contact item",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 205,
+          "kind": "go-error-body",
+          "raw": "failed to update contact item",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ec6d6c851844",
+      "text": "failed to delete contact item",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 221,
+          "kind": "go-error-body",
+          "raw": "failed to delete contact item",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cfc6d2377160",
+      "text": "failed to stop sharing",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 253,
+          "kind": "go-error-body",
+          "raw": "failed to stop sharing",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d17465ed5d8e",
+      "text": "patch not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 284,
+          "kind": "go-error-body",
+          "raw": "patch not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 332,
+          "kind": "go-error-body",
+          "raw": "patch not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/event_links.go",
+          "line": 187,
+          "kind": "go-error-body",
+          "raw": "patch not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notifications.go",
+          "line": 368,
+          "kind": "go-error-body",
+          "raw": "patch not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/notifications.go",
+          "line": 405,
+          "kind": "go-error-body",
+          "raw": "patch not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "40dd3d0b5634",
+      "text": "failed to load contact shares",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 294,
+          "kind": "go-error-body",
+          "raw": "failed to load contact shares",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5cb3a7292628",
+      "text": "only this patch's members and admins can share contact details with it",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 336,
+          "kind": "go-error-body",
+          "raw": "only this patch's members and admins can share contact details with it",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "94ba46ebb990",
+      "text": "body must include item_ids",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 345,
+          "kind": "go-error-body",
+          "raw": "body must include item_ids",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "831f3824b775",
+      "text": "that contact item is not yours",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 356,
+          "kind": "go-error-body",
+          "raw": "that contact item is not yours",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a4583865db71",
+      "text": "failed to update contact shares",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 363,
+          "kind": "go-error-body",
+          "raw": "failed to update contact shares",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 373,
+          "kind": "go-error-body",
+          "raw": "failed to update contact shares",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 380,
+          "kind": "go-error-body",
+          "raw": "failed to update contact shares",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/contact_items.go",
+          "line": 385,
+          "kind": "go-error-body",
+          "raw": "failed to update contact shares",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "aba4632eb49d",
       "text": "election not found",
       "words": 3,
@@ -8495,38 +8766,6 @@
           "line": 176,
           "kind": "go-error-body",
           "raw": "already mentioned",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d17465ed5d8e",
-      "text": "patch not found",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/handler/event_links.go",
-          "line": 187,
-          "kind": "go-error-body",
-          "raw": "patch not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/notifications.go",
-          "line": 368,
-          "kind": "go-error-body",
-          "raw": "patch not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/notifications.go",
-          "line": 405,
-          "kind": "go-error-body",
-          "raw": "patch not found",
           "quote": null
         }
       ]
@@ -11932,14 +12171,14 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 513,
+          "line": 515,
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 588,
+          "line": 599,
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
@@ -11957,7 +12196,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 629,
+          "line": 649,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -11975,14 +12214,14 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 722,
+          "line": 746,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
         },
         {
           "file": "internal/handler/users.go",
-          "line": 122,
+          "line": 143,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -12000,7 +12239,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 741,
+          "line": 765,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -12018,7 +12257,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 746,
+          "line": 770,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -12036,7 +12275,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 769,
+          "line": 793,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -12054,7 +12293,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 774,
+          "line": 798,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -12072,7 +12311,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 782,
+          "line": 806,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -12090,7 +12329,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 788,
+          "line": 812,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -12108,7 +12347,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 813,
+          "line": 841,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -12126,7 +12365,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 821,
+          "line": 849,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -12144,7 +12383,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 841,
+          "line": 869,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -12162,7 +12401,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 846,
+          "line": 874,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -12180,7 +12419,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 855,
+          "line": 883,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -12198,7 +12437,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 864,
+          "line": 892,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -12216,7 +12455,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 874,
+          "line": 902,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -12234,7 +12473,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 886,
+          "line": 914,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -12252,7 +12491,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 901,
+          "line": 936,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -15496,7 +15735,7 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 63,
+          "line": 76,
           "kind": "go-error-body",
           "raw": "failed to load profile",
           "quote": null
@@ -15504,19 +15743,19 @@
       ]
     },
     {
-      "id": "54ee10529f02",
-      "text": "body must include visible: true|false or share_contact: true|false",
-      "words": 8,
-      "tier": "helper",
-      "status": "ai-fine",
+      "id": "bb6a0a928ee9",
+      "text": "body must include visible: true|false",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
       "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "note": null,
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 109,
+          "line": 131,
           "kind": "go-error-body",
-          "raw": "body must include visible: true|false or share_contact: true|false",
+          "raw": "body must include visible: true|false",
           "quote": null
         }
       ]
@@ -15532,45 +15771,9 @@
       "occurrences": [
         {
           "file": "internal/handler/users.go",
-          "line": 129,
+          "line": 150,
           "kind": "go-error-body",
           "raw": "failed to update visibility",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "6249462c7fc8",
-      "text": "become a member to share your contact card with this patch",
-      "words": 11,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "internal/handler/users.go",
-          "line": 140,
-          "kind": "go-error-body",
-          "raw": "become a member to share your contact card with this patch",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "fed7e9c62d99",
-      "text": "failed to update contact sharing",
-      "words": 5,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "internal/handler/users.go",
-          "line": 145,
-          "kind": "go-error-body",
-          "raw": "failed to update contact sharing",
           "quote": null
         }
       ]
@@ -19559,7 +19762,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 387,
+          "line": 453,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -20105,7 +20308,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 188,
+          "line": 269,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -20201,14 +20404,14 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 150,
+          "line": 189,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 316,
+          "line": 382,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -21804,7 +22007,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 117,
+          "line": 177,
           "kind": "js-string",
           "raw": "Membership request sent",
           "quote": "'"
@@ -21829,7 +22032,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 117,
+          "line": 177,
           "kind": "js-string",
           "raw": "You are now a member",
           "quote": "'"
@@ -21854,7 +22057,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 119,
+          "line": 179,
           "kind": "js-string",
           "raw": "Could not join",
           "quote": "'"
@@ -21915,7 +22118,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 91,
+          "line": 151,
           "kind": "js-string",
           "raw": "Request withdrawn",
           "quote": "'"
@@ -21958,7 +22161,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 92,
+          "line": 152,
           "kind": "js-string",
           "raw": "Unfollowed patch",
           "quote": "'"
@@ -21983,7 +22186,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 92,
+          "line": 152,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
@@ -22105,7 +22308,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 56,
+          "line": 116,
           "kind": "js-string",
           "raw": "Become a member",
           "quote": "'"
@@ -22240,6 +22443,24 @@
           "line": 216,
           "kind": "markup",
           "raw": "Retry",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d4788f256f73",
+      "text": "View profile",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PersonCard.svelte",
+          "line": 154,
+          "kind": "markup",
+          "raw": "View profile",
           "quote": null
         }
       ]
@@ -24518,7 +24739,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 234,
+          "line": 300,
           "kind": "js-string",
           "raw": "Copy failed. Select the address instead.",
           "quote": "'"
@@ -25794,7 +26015,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 616,
+          "line": 746,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -27181,6 +27402,13 @@
           "quote": "'"
         },
         {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 202,
+          "kind": "js-string",
+          "raw": "Failed to remove",
+          "quote": "'"
+        },
+        {
           "file": "web/src/pages/AdminAggregators.svelte",
           "line": 220,
           "kind": "js-string",
@@ -27197,19 +27425,109 @@
       ]
     },
     {
-      "id": "6ab6ea32c3e1",
-      "text": "Contact card saved",
+      "id": "2f48400739bf",
+      "text": "Text before calling",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 148,
+          "line": 118,
           "kind": "js-string",
-          "raw": "Contact card saved",
+          "raw": "Text before calling",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8680b8d4fca4",
+      "text": "Contact item added",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 169,
+          "kind": "js-string",
+          "raw": "Contact item added",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "a34a2714da91",
+      "text": "Failed to add",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 171,
+          "kind": "js-string",
+          "raw": "Failed to add",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4ae7588fabd6",
+      "text": "Saved. The patches you share it with see the new value",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 187,
+          "kind": "js-string",
+          "raw": "Saved. The patches you share it with see the new value",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c83f9f427395",
+      "text": "Contact item removed",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 200,
+          "kind": "js-string",
+          "raw": "Contact item removed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8aeea061c8b8",
+      "text": "Failed to stop sharing",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 216,
+          "kind": "js-string",
+          "raw": "Failed to stop sharing",
           "quote": "'"
         }
       ]
@@ -27225,7 +27543,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 177,
+          "line": 243,
           "kind": "js-string",
           "raw": "Could not save that link",
           "quote": "'"
@@ -27250,7 +27568,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 211,
+          "line": 277,
           "kind": "js-string",
           "raw": "Failed to create feed",
           "quote": "'"
@@ -27268,7 +27586,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 222,
+          "line": 288,
           "kind": "js-string",
           "raw": "Personal feed disabled",
           "quote": "'"
@@ -27286,7 +27604,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 224,
+          "line": 290,
           "kind": "js-string",
           "raw": "Failed to disable feed",
           "quote": "'"
@@ -27304,14 +27622,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 262,
+          "line": 328,
           "kind": "js-string",
           "raw": "Download failed",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 292,
+          "line": 358,
           "kind": "js-string",
           "raw": "Download failed",
           "quote": "'"
@@ -27329,7 +27647,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 314,
+          "line": 380,
           "kind": "js-string",
           "raw": "Profile saved",
           "quote": "'"
@@ -27347,7 +27665,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 317,
+          "line": 383,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -27393,7 +27711,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 352,
+          "line": 418,
           "kind": "js-string",
           "raw": "Failed to delete account",
           "quote": "'"
@@ -27411,7 +27729,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 362,
+          "line": 428,
           "kind": "markup",
           "raw": "Profile",
           "quote": null
@@ -27429,7 +27747,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 364,
+          "line": 430,
           "kind": "markup",
           "raw": "Your",
           "quote": null
@@ -27447,7 +27765,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 365,
+          "line": 431,
           "kind": "markup",
           "raw": "shows your name, bio, links, and the memberships you keep visible.",
           "quote": null
@@ -27465,7 +27783,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 369,
+          "line": 435,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -27504,7 +27822,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 371,
+          "line": 437,
           "kind": "markup",
           "raw": "Username cannot be changed.",
           "quote": null
@@ -27522,7 +27840,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 374,
+          "line": 440,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -27561,7 +27879,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 378,
+          "line": 444,
           "kind": "markup",
           "raw": "Bio",
           "quote": null
@@ -27579,7 +27897,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 382,
+          "line": 448,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -27600,7 +27918,7 @@
         },
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 90,
+          "line": 131,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -27618,8 +27936,22 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 385,
+          "line": 451,
           "kind": "attr:placeholder",
+          "raw": "Label",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 537,
+          "kind": "attr:aria-label",
+          "raw": "Label",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 582,
+          "kind": "attr:aria-label",
           "raw": "Label",
           "quote": "\""
         }
@@ -27636,7 +27968,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 386,
+          "line": 452,
           "kind": "attr:placeholder",
           "raw": "https://…",
           "quote": "\""
@@ -27654,7 +27986,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 391,
+          "line": 457,
           "kind": "markup",
           "raw": "Add link",
           "quote": null
@@ -27672,7 +28004,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 408,
+          "line": 474,
           "kind": "markup",
           "raw": "I have moved",
           "quote": null
@@ -27690,7 +28022,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 410,
+          "line": 476,
           "kind": "markup",
           "raw": "Point your profile at wherever you are now. Your page here keeps\n        working and says where you went. This is only about you, not about\n        the patches you belong to. Clear the field to undo it.",
           "quote": null
@@ -27708,7 +28040,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 416,
+          "line": 482,
           "kind": "markup",
           "raw": "New address",
           "quote": null
@@ -27726,7 +28058,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 422,
+          "line": 488,
           "kind": "attr:placeholder",
           "raw": "https://their-quilt.example.com/users/you",
           "quote": "\""
@@ -27744,7 +28076,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 435,
+          "line": 501,
           "kind": "markup",
           "raw": "Contact card",
           "quote": null
@@ -27752,109 +28084,198 @@
       ]
     },
     {
-      "id": "48d125c0590b",
-      "text": "How the people you organize with can reach you. Nothing here is public: a patch's admins and members see your card only once you share it with that patch, in",
-      "words": 30,
+      "id": "8ccf535a5015",
+      "text": "The ways you are willing to be reached. Nothing here is public and nothing is shared by adding it — you give each item to one patch at a time, in",
+      "words": 31,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 437,
+          "line": 503,
           "kind": "markup",
-          "raw": "How the people you organize with can reach you. Nothing here is public:\n        a patch's admins and members see your card only once you share it\n        with that patch, in",
+          "raw": "The ways you are willing to be reached. Nothing here is public and\n        nothing is shared by adding it — you give each item to one patch at a\n        time, in",
           "quote": null
         }
       ]
     },
     {
-      "id": "840c17afd411",
-      "text": "Shared with 1 patch.",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AccountSettings.svelte",
-          "line": 442,
-          "kind": "markup",
-          "raw": "Shared with 1 patch.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ec8ec8a44a70",
-      "text": "Shared with {sharedWithCount} patches.",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AccountSettings.svelte",
-          "line": 444,
-          "kind": "markup",
-          "raw": "Shared with {sharedWithCount} patches.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e40cf9245a5b",
-      "text": "Not shared with any patch yet.",
-      "words": 6,
+      "id": "8ad2313a8e85",
+      "text": ". A patch's admins and members can then see it; its followers cannot.",
+      "words": 13,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 446,
+          "line": 506,
           "kind": "markup",
-          "raw": "Not shared with any patch yet.",
+          "raw": ".\n        A patch's admins and members can then see it; its followers cannot.",
           "quote": null
         }
       ]
     },
     {
-      "id": "63dceb8800b2",
-      "text": "Phone",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AccountSettings.svelte",
-          "line": 451,
-          "kind": "markup",
-          "raw": "Phone",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "a9b8d0da649f",
-      "text": "Email to reach you at",
+      "id": "e07a0551fcef",
+      "text": "Nothing on your card yet.",
       "words": 5,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 455,
+          "line": 511,
           "kind": "markup",
-          "raw": "Email to reach you at",
+          "raw": "Nothing on your card yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f5387f9bb6ed",
+      "text": "Kind",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 518,
+          "kind": "attr:aria-label",
+          "raw": "Kind",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 569,
+          "kind": "attr:aria-label",
+          "raw": "Kind",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "8e37953d23da",
+      "text": "Value",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 529,
+          "kind": "attr:aria-label",
+          "raw": "Value",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 580,
+          "kind": "attr:aria-label",
+          "raw": "Value",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "7df60cafd57f",
+      "text": "Label (optional)",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 536,
+          "kind": "attr:placeholder",
+          "raw": "Label (optional)",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 582,
+          "kind": "attr:placeholder",
+          "raw": "Label (optional)",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 506,
+          "kind": "attr:placeholder",
+          "raw": "Label (optional)",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 90,
+          "kind": "attr:placeholder",
+          "raw": "Label (optional)",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "cb2d9294b1bc",
+      "text": "Shared with 1 patch",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 543,
+          "kind": "markup",
+          "raw": "Shared with 1 patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "72074253b7e1",
+      "text": "Shared with {item.shared_with} patches",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 545,
+          "kind": "markup",
+          "raw": "Shared with {item.shared_with} patches",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3cd04a6aecff",
+      "text": "Not shared with any patch",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 547,
+          "kind": "markup",
+          "raw": "Not shared with any patch",
           "quote": null
         }
       ]
@@ -27870,7 +28291,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 457,
+          "line": 585,
           "kind": "markup",
           "raw": "Separate from the address you sign in with. That one is never shared.",
           "quote": null
@@ -27878,45 +28299,56 @@
       ]
     },
     {
-      "id": "d8da2c49df39",
-      "text": "Note",
-      "words": 1,
+      "id": "d1a0b329a72b",
+      "text": "Add item",
+      "words": 2,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 460,
+          "line": 588,
           "kind": "markup",
-          "raw": "Note",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
-          "line": 168,
-          "kind": "markup",
-          "raw": "Note",
+          "raw": "Add item",
           "quote": null
         }
       ]
     },
     {
-      "id": "e4053b293c6f",
-      "text": "How you prefer to be reached",
-      "words": 6,
-      "tier": "helper",
+      "id": "d6276115d1ee",
+      "text": "Add contact item",
+      "words": 3,
+      "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 461,
-          "kind": "attr:placeholder",
-          "raw": "How you prefer to be reached",
-          "quote": "\""
+          "line": 594,
+          "kind": "markup",
+          "raw": "Add contact item",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "14e4915c365f",
+      "text": "A contact card holds {MAX_CONTACT_ITEMS} items at most.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 597,
+          "kind": "markup",
+          "raw": "A contact card holds {MAX_CONTACT_ITEMS} items at most.",
+          "quote": null
         }
       ]
     },
@@ -27931,7 +28363,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 472,
+          "line": 602,
           "kind": "markup",
           "raw": "When you open Patchwork",
           "quote": null
@@ -27949,7 +28381,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 474,
+          "line": 604,
           "kind": "markup",
           "raw": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
           "quote": null
@@ -27968,7 +28400,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 483,
+          "line": 613,
           "kind": "markup",
           "raw": "Start on My Quilt",
           "quote": null
@@ -27986,7 +28418,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 488,
+          "line": 618,
           "kind": "markup",
           "raw": "Discovery",
           "quote": null
@@ -28004,7 +28436,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 496,
+          "line": 626,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -28029,7 +28461,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 499,
+          "line": 629,
           "kind": "markup",
           "raw": "Keeps patches that changed the shared community standards out of your\n        quilt, search, map, and event feed. Direct links still work.",
           "quote": null
@@ -28047,7 +28479,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 505,
+          "line": 635,
           "kind": "markup",
           "raw": "Personal feed",
           "quote": null
@@ -28065,7 +28497,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 507,
+          "line": 637,
           "kind": "markup",
           "raw": "A calendar feed of every event on your My Quilt, for your calendar\n        app. The address is a secret. Anyone who has it can read your feed.",
           "quote": null
@@ -28083,7 +28515,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 513,
+          "line": 643,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -28115,7 +28547,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 516,
+          "line": 646,
           "kind": "markup",
           "raw": "Copy it now. This address won't be shown again, and regenerating\n          replaces it.",
           "quote": null
@@ -28133,7 +28565,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 523,
+          "line": 653,
           "kind": "markup",
           "raw": "Regenerate address",
           "quote": null
@@ -28151,7 +28583,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 526,
+          "line": 656,
           "kind": "markup",
           "raw": "Disable",
           "quote": null
@@ -28169,7 +28601,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 530,
+          "line": 660,
           "kind": "markup",
           "raw": "Create feed",
           "quote": null
@@ -28187,7 +28619,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 537,
+          "line": 667,
           "kind": "markup",
           "raw": "Download my data",
           "quote": null
@@ -28205,7 +28637,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 539,
+          "line": 669,
           "kind": "markup",
           "raw": "One file with everything this quilt holds about you: your profile and\n        contact card, every membership including the ones you keep hidden, the\n        proposals, votes, comments, notices and events you wrote, and your\n        settings. Nothing anyone else wrote, and no sign-in secrets — so it is\n        safe to keep, and it will not let anyone into your account.",
           "quote": null
@@ -28223,7 +28655,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 553,
+          "line": 683,
           "kind": "markup",
           "raw": "Member seamrip",
           "quote": null
@@ -28241,7 +28673,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 555,
+          "line": 685,
           "kind": "markup",
           "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds the patches, events, charters,\n        proposals and member lists that are already open to you. It does not\n        hold email addresses, contact cards, noticeboards, or anything from a\n        patch you are not in. Other people travel as a name and a picture,\n        so the new quilt invites everyone back and each person sets their own\n        visibility there.",
           "quote": null
@@ -28259,7 +28691,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 573,
+          "line": 703,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -28277,7 +28709,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 576,
+          "line": 706,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -28295,7 +28727,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 577,
+          "line": 707,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
@@ -28313,7 +28745,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 582,
+          "line": 712,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -28331,7 +28763,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 584,
+          "line": 714,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
@@ -28349,7 +28781,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 589,
+          "line": 719,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -28367,7 +28799,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 591,
+          "line": 721,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -28385,7 +28817,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 607,
+          "line": 737,
           "kind": "markup",
           "raw": "Decline",
           "quote": null
@@ -28403,7 +28835,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 618,
+          "line": 748,
           "kind": "markup",
           "raw": "Delete your account",
           "quote": null
@@ -28421,7 +28853,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 621,
+          "line": 751,
           "kind": "markup",
           "raw": "This happens immediately and cannot be undone.",
           "quote": null
@@ -28439,7 +28871,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 624,
+          "line": 754,
           "kind": "markup",
           "raw": "Erased:",
           "quote": null
@@ -28457,7 +28889,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 624,
+          "line": 754,
           "kind": "markup",
           "raw": "your email address, display name, bio, links,\n          avatar and contact card. Your passkeys, recovery codes and sessions.\n          Your personal calendar link and notification settings. Every patch\n          membership you hold, the quilts you have connected or followed, and\n          any claim still awaiting review.",
           "quote": null
@@ -28475,7 +28907,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 631,
+          "line": 761,
           "kind": "markup",
           "raw": "Kept:",
           "quote": null
@@ -28493,7 +28925,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 631,
+          "line": 761,
           "kind": "markup",
           "raw": "what you took part in. Proposals, votes,\n          comments, notices, events and recorded decisions stay so the\n          community's record stays whole. They will read as",
           "quote": null
@@ -28511,7 +28943,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 634,
+          "line": 764,
           "kind": "markup",
           "raw": "&ldquo;Deleted account&rdquo;",
           "quote": null
@@ -28529,7 +28961,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 634,
+          "line": 764,
           "kind": "markup",
           "raw": "with no name and no\n          link. Your profile page stops existing, and your username stays\n          retired so nobody else can take it.",
           "quote": null
@@ -28547,7 +28979,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 639,
+          "line": 769,
           "kind": "markup",
           "raw": "Copies that already federated to other servers, or that went out in an\n          export taken before today, are outside this site's reach.",
           "quote": null
@@ -28565,7 +28997,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 646,
+          "line": 776,
           "kind": "markup",
           "raw": "You are the only admin of\n              {blockingPatches.length === 1 ? 'this patch' : 'these patches'}.\n              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first,\n              then come back. You can name a successor, promote another admin, or hold an election.",
           "quote": null
@@ -28583,7 +29015,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 662,
+          "line": 792,
           "kind": "markup",
           "raw": "Type your username to confirm:",
           "quote": null
@@ -28601,7 +29033,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 681,
+          "line": 811,
           "kind": "markup",
           "raw": "Really delete your account? You will be signed out.",
           "quote": null
@@ -33582,14 +34014,14 @@
         },
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 123,
+          "line": 164,
           "kind": "markup",
           "raw": "member",
           "quote": null
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 231,
+          "line": 317,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -33614,14 +34046,14 @@
         },
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 109,
+          "line": 150,
           "kind": "markup",
           "raw": "admin",
           "quote": null
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 210,
+          "line": 293,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -35309,7 +35741,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 203,
+          "line": 285,
           "kind": "markup",
           "raw": "Managing",
           "quote": null
@@ -35352,14 +35784,14 @@
         },
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 118,
+          "line": 159,
           "kind": "markup",
           "raw": "Member of",
           "quote": null
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 224,
+          "line": 309,
           "kind": "markup",
           "raw": "Member of",
           "quote": null
@@ -35409,7 +35841,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 266,
+          "line": 356,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -35434,7 +35866,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 192,
+          "line": 273,
           "kind": "markup",
           "raw": "You haven't joined any patches yet.",
           "quote": null
@@ -38092,7 +38524,7 @@
         },
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 74,
+          "line": 79,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -41782,7 +42214,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 75,
+          "line": 80,
           "kind": "markup",
           "raw": "Become a member to access the member list.",
           "quote": null
@@ -41800,7 +42232,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 80,
+          "line": 85,
           "kind": "markup",
           "raw": "Loading members...",
           "quote": null
@@ -41818,7 +42250,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 83,
+          "line": 88,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -41850,7 +42282,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 84,
+          "line": 89,
           "kind": "markup",
           "raw": "Share your patch's invite link to grow your community.",
           "quote": null
@@ -41858,19 +42290,19 @@
       ]
     },
     {
-      "id": "ab094160c1d1",
-      "text": "Contact cards here are shared only with this patch's admins and members.",
+      "id": "436f566bc92b",
+      "text": "Contact details here are shared only with this patch's admins and members.",
       "words": 12,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 93,
+          "line": 98,
           "kind": "markup",
-          "raw": "Contact cards here are shared only with this patch's admins and members.",
+          "raw": "Contact details here are shared only with this patch's admins and members.",
           "quote": null
         }
       ]
@@ -41886,10 +42318,46 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 95,
+          "line": 100,
           "kind": "markup",
           "raw": "Share yours with this patch in",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6ef788f215cf",
+      "text": "reachable",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 116,
+          "kind": "markup",
+          "raw": "reachable",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "db3371aed18d",
+      "text": "Shares contact details with this patch",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 116,
+          "kind": "attr:title",
+          "raw": "Shares contact details with this patch",
+          "quote": "\""
         }
       ]
     },
@@ -43258,31 +43726,6 @@
       ]
     },
     {
-      "id": "7df60cafd57f",
-      "text": "Label (optional)",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 506,
-          "kind": "attr:placeholder",
-          "raw": "Label (optional)",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 90,
-          "kind": "attr:placeholder",
-          "raw": "Label (optional)",
-          "quote": "\""
-        }
-      ]
-    },
-    {
       "id": "39390c4e13ed",
       "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
       "words": 24,
@@ -44182,6 +44625,24 @@
           "line": 163,
           "kind": "markup",
           "raw": "Switch replies off on the notice",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d8da2c49df39",
+      "text": "Note",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsNoticeboard.svelte",
+          "line": 168,
+          "kind": "markup",
+          "raw": "Note",
           "quote": null
         }
       ]
@@ -47408,7 +47869,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 246,
+          "line": 334,
           "kind": "markup",
           "raw": "Requested",
           "quote": null
@@ -47805,7 +48266,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 29,
+          "line": 43,
           "kind": "js-string",
           "raw": "Failed to load profile",
           "quote": "'"
@@ -47823,7 +48284,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 52,
+          "line": 66,
           "kind": "markup",
           "raw": "Person not found",
           "quote": null
@@ -47841,9 +48302,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 67,
+          "line": 81,
           "kind": "markup",
           "raw": "@{profile.username} &middot; here since {formatDate(profile.created_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0afca263f7b5",
+      "text": "Reach {profile.display_name || profile.username}",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserProfile.svelte",
+          "line": 106,
+          "kind": "markup",
+          "raw": "Reach {profile.display_name || profile.username}",
           "quote": null
         }
       ]
@@ -47859,7 +48338,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 104,
+          "line": 145,
           "kind": "markup",
           "raw": "Runs",
           "quote": null
@@ -47877,7 +48356,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 132,
+          "line": 173,
           "kind": "markup",
           "raw": "Nothing here yet.",
           "quote": null
@@ -47895,7 +48374,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserProfile.svelte",
-          "line": 134,
+          "line": 175,
           "kind": "markup",
           "raw": "Memberships you've hidden don't appear on your profile. Manage them in",
           "quote": null
@@ -47921,6 +48400,42 @@
       ]
     },
     {
+      "id": "8ebf15cacc3c",
+      "text": "Failed to load contact sharing",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 62,
+          "kind": "js-string",
+          "raw": "Failed to load contact sharing",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b5ea56fd9c97",
+      "text": "Failed to update contact sharing",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 91,
+          "kind": "js-string",
+          "raw": "Failed to update contact sharing",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "3a69f897298e",
       "text": "Send request",
       "words": 2,
@@ -47931,7 +48446,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 56,
+          "line": 116,
           "kind": "js-string",
           "raw": "Send request",
           "quote": "'"
@@ -47949,7 +48464,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 62,
+          "line": 122,
           "kind": "js-string",
           "raw": "No one runs this patch yet. User can follow, but not join.",
           "quote": "'"
@@ -47968,7 +48483,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 66,
+          "line": 126,
           "kind": "js-string",
           "raw": "This patch adds members by invitation. An admin has to invite you.",
           "quote": "'"
@@ -47986,7 +48501,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 95,
+          "line": 155,
           "kind": "js-string",
           "raw": "Failed to withdraw request",
           "quote": "'"
@@ -48004,7 +48519,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 95,
+          "line": 155,
           "kind": "js-string",
           "raw": "Failed to leave",
           "quote": "'"
@@ -48022,7 +48537,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 136,
+          "line": 196,
           "kind": "js-string",
           "raw": "Membership visible to the public",
           "quote": "'"
@@ -48040,7 +48555,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 136,
+          "line": 196,
           "kind": "js-string",
           "raw": "Membership hidden from the public",
           "quote": "'"
@@ -48058,7 +48573,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 138,
+          "line": 198,
           "kind": "js-string",
           "raw": "Failed to update visibility",
           "quote": "'"
@@ -48066,55 +48581,91 @@
       ]
     },
     {
-      "id": "b5ea56fd9c97",
-      "text": "Failed to update contact sharing",
-      "words": 5,
+      "id": "5f5de0827deb",
+      "text": "Reachable by {m.contact_items_shared}",
+      "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 155,
-          "kind": "js-string",
-          "raw": "Failed to update contact sharing",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "6e56f899e486",
-      "text": "Your contact card is empty. Fill it in under",
-      "words": 9,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 196,
+          "line": 215,
           "kind": "markup",
-          "raw": "Your contact card is empty. Fill it in under",
+          "raw": "Reachable by {m.contact_items_shared}",
           "quote": null
         }
       ]
     },
     {
-      "id": "3f2d60c9153e",
-      "text": "and share it patch by patch here.",
-      "words": 7,
-      "tier": "helper",
+      "id": "5ad99230df69",
+      "text": "Not reachable",
+      "words": 2,
+      "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 198,
+          "line": 217,
           "kind": "markup",
-          "raw": "and share it patch by patch here.",
+          "raw": "Not reachable",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "424833062471",
+      "text": "What {m.node_name || m.node_slug} can reach you by. Its admins and members see whatever you tick here, including anyone who joins later.",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 226,
+          "kind": "markup",
+          "raw": "What {m.node_name || m.node_slug} can reach you by. Its admins and\n        members see whatever you tick here, including anyone who joins later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "866ac647dccd",
+      "text": "Your contact card is empty. Add the ways you are willing to be reached under",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 277,
+          "kind": "markup",
+          "raw": "Your contact card is empty. Add the ways you are willing to be reached\n        under",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5a8a213bbb82",
+      "text": ", then give them to patches one at a time here.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted with docs/adr/083; left as-is, not yet read by a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 279,
+          "kind": "markup",
+          "raw": ",\n        then give them to patches one at a time here.",
           "quote": null
         }
       ]
@@ -48130,7 +48681,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 253,
+          "line": 341,
           "kind": "markup",
           "raw": "awaiting approval",
           "quote": null
@@ -48148,7 +48699,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 254,
+          "line": 342,
           "kind": "markup",
           "raw": "asked {formatDate(m.joined_at)}",
           "quote": null
@@ -48166,7 +48717,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 275,
+          "line": 365,
           "kind": "markup",
           "raw": "following",
           "quote": null
@@ -49157,6 +49708,348 @@
           "line": 199,
           "kind": "markup",
           "raw": "Voting Duration",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7e73a072b643",
+      "text": "phone must be 60 characters or fewer",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 683,
+          "kind": "go-error-body",
+          "raw": "phone must be 60 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fc64434edc90",
+      "text": "email must be 254 characters or fewer",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 686,
+          "kind": "go-error-body",
+          "raw": "email must be 254 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bb75052389a1",
+      "text": "that doesn't look like an email address",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 689,
+          "kind": "go-error-body",
+          "raw": "that doesn't look like an email address",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d17d2e208ef7",
+      "text": "note must be 200 characters or fewer",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 692,
+          "kind": "go-error-body",
+          "raw": "note must be 200 characters or fewer",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2e2fd53f6b10",
+      "text": "failed to update contact card",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 698,
+          "kind": "go-error-body",
+          "raw": "failed to update contact card",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "54ee10529f02",
+      "text": "body must include visible: true|false or share_contact: true|false",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/users.go",
+          "line": 109,
+          "kind": "go-error-body",
+          "raw": "body must include visible: true|false or share_contact: true|false",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6249462c7fc8",
+      "text": "become a member to share your contact card with this patch",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/users.go",
+          "line": 140,
+          "kind": "go-error-body",
+          "raw": "become a member to share your contact card with this patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fed7e9c62d99",
+      "text": "failed to update contact sharing",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/users.go",
+          "line": 145,
+          "kind": "go-error-body",
+          "raw": "failed to update contact sharing",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6ab6ea32c3e1",
+      "text": "Contact card saved",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 148,
+          "kind": "js-string",
+          "raw": "Contact card saved",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "48d125c0590b",
+      "text": "How the people you organize with can reach you. Nothing here is public: a patch's admins and members see your card only once you share it with that patch, in",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 437,
+          "kind": "markup",
+          "raw": "How the people you organize with can reach you. Nothing here is public:\n        a patch's admins and members see your card only once you share it\n        with that patch, in",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "840c17afd411",
+      "text": "Shared with 1 patch.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 442,
+          "kind": "markup",
+          "raw": "Shared with 1 patch.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ec8ec8a44a70",
+      "text": "Shared with {sharedWithCount} patches.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 444,
+          "kind": "markup",
+          "raw": "Shared with {sharedWithCount} patches.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e40cf9245a5b",
+      "text": "Not shared with any patch yet.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 446,
+          "kind": "markup",
+          "raw": "Not shared with any patch yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "63dceb8800b2",
+      "text": "Phone",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 451,
+          "kind": "markup",
+          "raw": "Phone",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a9b8d0da649f",
+      "text": "Email to reach you at",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 455,
+          "kind": "markup",
+          "raw": "Email to reach you at",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e4053b293c6f",
+      "text": "How you prefer to be reached",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 461,
+          "kind": "attr:placeholder",
+          "raw": "How you prefer to be reached",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "ab094160c1d1",
+      "text": "Contact cards here are shared only with this patch's admins and members.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 93,
+          "kind": "markup",
+          "raw": "Contact cards here are shared only with this patch's admins and members.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6e56f899e486",
+      "text": "Your contact card is empty. Fill it in under",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 196,
+          "kind": "markup",
+          "raw": "Your contact card is empty. Fill it in under",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3f2d60c9153e",
+      "text": "and share it patch by patch here.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 198,
+          "kind": "markup",
+          "raw": "and share it patch by patch here.",
           "quote": null
         }
       ]

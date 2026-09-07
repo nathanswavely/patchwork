@@ -318,20 +318,16 @@ func eraseAccount(db *database.DB, userID string) error {
 	// A pending claim goes for the same reason: it asks an admin to hand a
 	// patch to somebody who will not be there to receive it. Settled claims
 	// stay as the record of a review, minus the address they carried.
-	purges := []string{
-		`DELETE FROM sessions WHERE user_id = ?`,
-		`DELETE FROM credentials WHERE user_id = ?`,
-		`DELETE FROM recovery_codes WHERE user_id = ?`,
-		`DELETE FROM notifications WHERE user_id = ?`,
-		`DELETE FROM notification_preferences WHERE user_id = ?`,
-		`DELETE FROM memberships WHERE user_id = ?`,
-		`DELETE FROM user_quilts WHERE user_id = ?`,
-		`DELETE FROM remote_follows WHERE user_id = ?`,
-		`DELETE FROM label_stewards WHERE user_id = ?`,
-		`DELETE FROM election_candidates WHERE user_id = ?`,
-		`DELETE FROM ap_followers WHERE local_actor_type = 'user' AND local_actor_id = ?`,
-		`DELETE FROM claim_requests WHERE user_id = ? AND status = 'pending'`,
-	}
+	//
+	// The contact card goes too, and it has to be said out loud here: a card
+	// is the person, never an act, so nothing about keeping the record whole
+	// argues for keeping a phone number. `contact_items.user_id` is declared
+	// ON DELETE CASCADE, which never fires because this deletion keeps the
+	// users row as a tombstone (docs/adr/086) — the same trap seats.holder_id
+	// falls into below. Deleting the memberships above already ends every
+	// disclosure, since both surfaces require an active member/admin row
+	// (docs/adr/083), but ending the disclosure is not erasing the value.
+	purges := deletionPurges()
 	for _, q := range purges {
 		if _, err := tx.Exec(q, userID); err != nil {
 			return fmt.Errorf("%s: %w", q, err)

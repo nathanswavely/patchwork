@@ -391,11 +391,33 @@ func personalExportProfile(db *database.DB, userID string) (map[string]any, erro
 		return nil, fmt.Errorf("user %s not found", userID)
 	}
 	profile := rows[0]
-	profile["contact_card"] = map[string]any{
-		"phone": profile["contact_phone"],
-		"email": profile["contact_email"],
-		"note":  profile["contact_note"],
+	// The card is a set of typed items now (docs/adr/083), each with the
+	// patches it is shared into. A personal export is the one place a person
+	// can read back what they disclosed and to whom, so the shares travel
+	// with the items rather than being flattened away.
+	items, err := queryRowMaps(db,
+		`SELECT id, kind, value, label, position FROM contact_items
+		 WHERE user_id = ? ORDER BY position ASC, id ASC`, userID)
+	if err != nil {
+		return nil, err
 	}
+	for _, item := range items {
+		shares, err := queryRowMaps(db,
+			`SELECT n.slug, n.name FROM contact_item_shares s
+			 JOIN nodes n ON n.id = s.node_id
+			 WHERE s.item_id = ? ORDER BY n.name`, item["id"])
+		if err != nil {
+			return nil, err
+		}
+		if shares == nil {
+			shares = []map[string]any{}
+		}
+		item["shared_with"] = shares
+	}
+	if items == nil {
+		items = []map[string]any{}
+	}
+	profile["contact_items"] = items
 	delete(profile, "contact_phone")
 	delete(profile, "contact_email")
 	delete(profile, "contact_note")

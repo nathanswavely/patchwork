@@ -36,10 +36,17 @@ type User struct {
 	// MovedTo is where this person says they have gone (docs/adr/090): a
 	// plain http(s) URL they set themselves, shown on their public profile
 	// and carried on their AP actor as `movedTo`. Empty means no move.
-	MovedTo     string  `json:"moved_to,omitempty"`
-	SuspendedAt *string `json:"suspended_at,omitempty"`
-	CreatedAt   string  `json:"created_at"`
-	UpdatedAt   string  `json:"updated_at"`
+	MovedTo string `json:"moved_to,omitempty"`
+	// ContactItems is the contact card in the shape docs/adr/083 gives it —
+	// an ordered set of typed items, each shared into patches one at a time.
+	// Populated by the Me handlers only: it never rides along on a login
+	// response, a public profile, or an AP actor. Items a *viewer* may read
+	// about someone else arrive on that person's row in a Members listing,
+	// never on a User.
+	ContactItems []ContactItem `json:"contact_items,omitempty"`
+	SuspendedAt  *string       `json:"suspended_at,omitempty"`
+	CreatedAt    string        `json:"created_at"`
+	UpdatedAt    string        `json:"updated_at"`
 }
 
 type Notification struct {
@@ -119,6 +126,43 @@ type ContactCard struct {
 // Empty reports whether the card carries nothing to show.
 func (c ContactCard) Empty() bool {
 	return c.Phone == "" && c.Email == "" && c.Note == ""
+}
+
+// Contact item kinds (docs/adr/083). A closed set: the kind is what lets a
+// surface render tel:/mailto: without guessing at the value, so a new channel
+// is a decision here rather than something a person types into a note.
+const (
+	ContactKindPhone  = "phone"
+	ContactKindEmail  = "email"
+	ContactKindHandle = "handle"
+	ContactKindNote   = "note"
+)
+
+// ContactItem is one way a person is willing to be reached — the unit the
+// contact card is made of, and the unit that is shared (docs/adr/083).
+// Sharing is not a property of the item: an item is shared into a patch by a
+// row in contact_item_shares, one explicit act at a time, so nothing here
+// says who can see it.
+type ContactItem struct {
+	ID    string `json:"id"`
+	Kind  string `json:"kind"`
+	Value string `json:"value"`
+	// Label is the person's own word for it — "work", "Signal only".
+	Label    string `json:"label,omitempty"`
+	Position int    `json:"position"`
+	// SharedWith counts the patches this item is shared into. Sent only to
+	// the item's owner, on their own card; a viewer reading someone else's
+	// items in a room learns nothing about the other rooms.
+	SharedWith int `json:"shared_with,omitempty"`
+}
+
+// ValidContactKind reports whether kind is one this build knows how to render.
+func ValidContactKind(kind string) bool {
+	switch kind {
+	case ContactKindPhone, ContactKindEmail, ContactKindHandle, ContactKindNote:
+		return true
+	}
+	return false
 }
 
 type FollowerPermissions struct {
