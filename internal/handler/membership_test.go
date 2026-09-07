@@ -983,3 +983,126 @@ func TestUnrecognizedReportActionIs400(t *testing.T) {
 		t.Errorf("status without an action: expected 200, got %d: %s", w.Code, w.Body.String())
 	}
 }
+
+// "Warn" warned nobody. It set the report to resolved, and the only
+// notification the handler sent went to the reporter — so the person whose
+// content was reported was never told, and a warning that reaches no one is
+// not a remedy. Now it reaches the account behind the reported content.
+func TestWarnNotifiesTheReportedUser(t *testing.T) {
+	db := setupTestDB(t)
+	reporter, _ := createTestUser(t, db, "warn-reporter", "member")
+	owner, _ := createTestUser(t, db, "warn-owner", "member")
+	_, adminTok := createTestUser(t, db, "warn-admin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Sheep Barn", "sheep-barn", "open")
+	var eventID string
+	db.QueryRow(`INSERT INTO events (id, node_id, created_by, title, description, location, starts_at, visibility)
+	             VALUES (?, ?, ?, 'Barn Dance', '', 'Barn', '2026-10-01T00:00:00Z', 'public') RETURNING id`,
+		auth.NewUUIDv7(), nodeID, owner.ID).Scan(&eventID)
+
+	warn := func(reportID, entityType, entityID string) {
+		t.Helper()
+		if _, err := db.Exec(
+			`INSERT INTO content_reports (id, reporter_id, entity_type, entity_id, reason, details)
+			 VALUES (?, ?, ?, ?, 'harassment by warn-reporter', 'details naming the reporter')`,
+			reportID, reporter.ID, entityType, entityID); err != nil {
+			t.Fatalf("seed %s: %v", reportID, err)
+		}
+		body := map[string]interface{}{
+			"status": "resolved", "action": "warn",
+			"resolution_note": "internal note: warn-reporter flagged this again",
+		}
+		r := authedRequest("PATCH", "/api/v1/admin/reports/"+reportID, body, adminTok)
+		w := serveMux(t, db, "PATCH", "/api/v1/admin/reports/{id}", handler.UpdateReport(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("warn %s: expected 200, got %d: %s", reportID, w.Code, w.Body.String())
+		}
+	}
+
+	// A report about a patch warns its owner and names the patch.
+	warn("w-node", "node", nodeID)
+	var title, body, link string
+	if err := db.QueryRow(
+		`SELECT title, body, link FROM notifications WHERE user_id = ? AND type = 'account.warned'`,
+		owner.ID).Scan(&title, &body, &link); err != nil {
+		t.Fatalf("the reported user was not warned: %v", err)
+	}
+	if !strings.Contains(title, "Sheep Barn") {
+		t.Errorf("the warning does not say what was reported: %q", title)
+	}
+	if link != "/patches/sheep-barn" {
+		t.Errorf("expected a link to the reported patch, got %q", link)
+	}
+
+	// It must not carry the reporter's identity, their words, or the admin's
+	// note — all of which are written for moderators and can name the person
+	// who reported. This is the property that makes reporting safe.
+	for _, leak := range []string{"warn-reporter", "harassment", "details naming", "internal note"} {
+		if strings.Contains(title+" "+body, leak) {
+			t.Errorf("the warning leaks %q to the person reported: %q / %q", leak, title, body)
+		}
+	}
+
+	// The reporter still hears that their report was reviewed, and hears
+	// nothing about the outcome.
+	var reporterCount int
+	db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = 'report.resolved'`,
+		reporter.ID).Scan(&reporterCount)
+	if reporterCount != 1 {
+		t.Errorf("expected the reporter to be told their report was reviewed, got %d", reporterCount)
+	}
+	var reporterWarned int
+	db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = 'account.warned'`,
+		reporter.ID).Scan(&reporterWarned)
+	if reporterWarned != 0 {
+		t.Errorf("the reporter was warned about their own report")
+	}
+
+	// A report about an event warns its creator; one about an account warns
+	// that account. Same resolution suspend_user uses — the two must agree, or
+	// a warning reaches somebody a suspension would not.
+	warn("w-event", "event", eventID)
+	warn("w-user", "user", owner.ID)
+	var warned int
+	db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = 'account.warned'`,
+		owner.ID).Scan(&warned)
+	if warned != 3 {
+		t.Errorf("expected a warning for each of the patch, event and account reports, got %d", warned)
+	}
+
+	// A warning changes nothing about the content it is about.
+	var removed sql.NullString
+	db.QueryRow("SELECT removed_at FROM nodes WHERE id = ?", nodeID).Scan(&removed)
+	if removed.Valid && removed.String != "" {
+		t.Errorf("warning removed the patch: %q", removed.String)
+	}
+	var suspended sql.NullString
+	db.QueryRow("SELECT suspended_at FROM users WHERE id = ?", owner.ID).Scan(&suspended)
+	if suspended.Valid && suspended.String != "" {
+		t.Errorf("warning suspended the account: %q", suspended.String)
+	}
+
+	// And it is on the record as a moderation act.
+	var audits int
+	db.QueryRow(`SELECT COUNT(*) FROM audit_log WHERE action = 'admin.user_warn'`).Scan(&audits)
+	if audits != 3 {
+		t.Errorf("expected 3 audited warnings, got %d", audits)
+	}
+
+	// Dismissing still warns nobody.
+	if _, err := db.Exec(
+		`INSERT INTO content_reports (id, reporter_id, entity_type, entity_id, reason, details)
+		 VALUES ('w-dismiss', ?, 'node', ?, 'spam', '')`, reporter.ID, nodeID); err != nil {
+		t.Fatal(err)
+	}
+	r := authedRequest("PATCH", "/api/v1/admin/reports/w-dismiss",
+		map[string]interface{}{"status": "dismissed", "action": "dismiss"}, adminTok)
+	if w := serveMux(t, db, "PATCH", "/api/v1/admin/reports/{id}", handler.UpdateReport(db), r); w.Code != http.StatusOK {
+		t.Fatalf("dismiss: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	db.QueryRow(`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND type = 'account.warned'`,
+		owner.ID).Scan(&warned)
+	if warned != 3 {
+		t.Errorf("dismissing a report warned somebody: now %d warnings", warned)
+	}
+}

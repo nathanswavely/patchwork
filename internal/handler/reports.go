@@ -195,6 +195,44 @@ func ListReports(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// reportedParty resolves the person a report is about, and names the thing of
+// theirs that was reported. A report names content; moderation lands on the
+// account behind it — the patch's owner, the event's creator, or, for a report
+// about an account, that account.
+//
+// suspend_user resolved this inline first. The warning uses it too, and the
+// two must agree: a warning that reaches somebody a suspension would not is a
+// warning delivered to the wrong person.
+//
+// `what` and `link` describe only the reported party's own content, so they
+// are safe to put in front of them. Nothing the reporter wrote — the reason,
+// the details, the admin's resolution note — belongs in a message to the
+// person reported: those are written for moderators, and can name the
+// reporter.
+func reportedParty(db *database.DB, rpt model.ContentReport) (userID, what, link string) {
+	switch rpt.EntityType {
+	case "user":
+		return rpt.EntityID, "your account", "/settings"
+	case "node":
+		var owner, name, slug string
+		db.QueryRow("SELECT owner_id, name, slug FROM nodes WHERE id = ?", rpt.EntityID).
+			Scan(&owner, &name, &slug)
+		if owner == "" {
+			return "", "", ""
+		}
+		return owner, fmt.Sprintf("your patch %q", name), weblink.Patch(slug)
+	case "event":
+		var creator, title string
+		db.QueryRow("SELECT created_by, title FROM events WHERE id = ?", rpt.EntityID).
+			Scan(&creator, &title)
+		if creator == "" {
+			return "", "", ""
+		}
+		return creator, fmt.Sprintf("your event %q", title), weblink.Event(rpt.EntityID)
+	}
+	return "", "", ""
+}
+
 // The content_reports.status CHECK from migrations/001. A value added there
 // must be added here.
 var reportStatuses = []string{"pending", "reviewed", "resolved", "dismissed"}
@@ -285,23 +323,35 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 		// Execute action if provided.
 		if req.Action != nil {
 			switch *req.Action {
-			case "dismiss", "warn":
-				// Nothing to carry out. Both are decisions about the report
-				// rather than actions on what was reported, and the status
-				// the caller sent alongside records them.
+			case "dismiss":
+				// Nothing to carry out: dismissing is a decision about the
+				// report rather than an action on what was reported, and the
+				// status the caller sent alongside records it.
+
+			case "warn":
+				// A warning is the one moderation outcome the reported person
+				// is supposed to hear about — it is the whole of the remedy.
+				// Until now it did nothing at all: it set the status to
+				// resolved, and the only notification went to the reporter, so
+				// "Warn" warned nobody.
+				//
+				// It says what was reported and leaves the content alone. It
+				// does not say who reported it, or repeat anything they or the
+				// reviewing admin wrote.
+				warnedID, what, link := reportedParty(db, rpt)
+				if warnedID != "" {
+					CreateNotification(db, warnedID, "account.warned",
+						"A moderator reviewed a report about "+what,
+						"An instance admin reviewed a report about "+what+" and issued a warning. "+
+							"Nothing was changed or removed.", link)
+					auth.LogAuditEvent(db, user.ID, "admin.user_warn", "user", warnedID,
+						fmt.Sprintf(`{"report_id":%q,"entity_type":%q}`, reportID, rpt.EntityType), clientIP(r))
+				}
 
 			case "suspend_user":
-				// For user reports, suspend the target user.
-				// For node/event reports, find the owner/creator and suspend them.
-				var targetUserID string
-				switch rpt.EntityType {
-				case "user":
-					targetUserID = rpt.EntityID
-				case "node":
-					db.QueryRow("SELECT owner_id FROM nodes WHERE id = ?", rpt.EntityID).Scan(&targetUserID)
-				case "event":
-					db.QueryRow("SELECT created_by FROM events WHERE id = ?", rpt.EntityID).Scan(&targetUserID)
-				}
+				// The account behind the reported content: for a user report
+				// the user, otherwise the patch's owner or the event's creator.
+				targetUserID, _, _ := reportedParty(db, rpt)
 				if targetUserID != "" {
 					db.Exec(
 						`UPDATE users SET suspended_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
