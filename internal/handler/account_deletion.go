@@ -367,6 +367,10 @@ func eraseAccount(db *database.DB, userID string) error {
 	// `role` goes back to member: an account nobody holds is not an instance
 	// admin, and leaving it would let a tombstone satisfy the last-admin
 	// check for the next person who tries to leave.
+	//
+	// `moved_to` goes with the rest of the identity columns (docs/adr/090).
+	// It is a sentence about where to find this person, and somebody who
+	// deleted their account asked for the opposite of that.
 	if _, err := tx.Exec(`
 		UPDATE users SET
 			email = NULL,
@@ -380,6 +384,7 @@ func eraseAccount(db *database.DB, userID string) error {
 			hide_amended_linings = 0,
 			start_on_my_quilt = 0,
 			feed_secret_hash = NULL,
+			moved_to = NULL,
 			public_key = NULL,
 			private_key = NULL,
 			deleted_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),

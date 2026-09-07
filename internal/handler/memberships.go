@@ -27,6 +27,16 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// A patch that has moved takes no new relationships (docs/adr/090).
+		// The old home stays readable and everybody already in it keeps
+		// everything they had — this refuses only the two acts that would
+		// start a relationship with a room the community has left, and it
+		// answers with the address instead of a dead end.
+		if moved := nodeMovedTo(db, nodeID); moved != "" {
+			writeMovedAway(w, moved)
+			return
+		}
+
 		// Check if this is a follow request.
 		var reqBody struct {
 			Role    string `json:"role"`

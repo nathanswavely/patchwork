@@ -102,6 +102,13 @@ func seedSource(t *testing.T, db *database.DB) {
 	mustExec(t, db, `UPDATE nodes SET accept_event_suggestions = 0 WHERE id = ?`, n2)
 	mustExec(t, db, `UPDATE users SET links = '[{"url":"https://example.com","label":"Site"}]' WHERE id = ?`, u1)
 
+	// A patch and a person who have already said where they went
+	// (docs/adr/090). Both pointers travel: the fork is what somebody
+	// followed the pointer to, and a chain of moves that forgets its last
+	// hop strands anyone reading it from the far end.
+	mustExec(t, db, `UPDATE nodes SET moved_to = 'https://newer.example/patches/patch-2' WHERE id = ?`, n2)
+	mustExec(t, db, `UPDATE users SET moved_to = 'https://newer.example/users/user3' WHERE id = ?`, u3)
+
 	tag := nextID()
 	mustExec(t, db, `INSERT INTO tags (id, name) VALUES (?, 'music')`, tag)
 	mustExec(t, db, `INSERT INTO node_tags (node_id, tag_id) VALUES (?, ?)`, n1, tag)
@@ -324,6 +331,19 @@ func TestRoundTrip(t *testing.T) {
 	}
 	if n := count(t, dst, `SELECT COUNT(*) FROM event_mentions WHERE host = 'other.example' AND slug = 'the-band'`); n != 1 {
 		t.Errorf("cross-quilt mention lost: got %d, want 1", n)
+	}
+
+	// Both moved-to pointers survive the fork (docs/adr/090).
+	if n := count(t, dst, `SELECT COUNT(*) FROM nodes WHERE moved_to = 'https://newer.example/patches/patch-2'`); n != 1 {
+		t.Errorf("a patch's moved-to pointer was lost: got %d, want 1", n)
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM users WHERE moved_to = 'https://newer.example/users/user3'`); n != 1 {
+		t.Errorf("a person's moved-to pointer was lost: got %d, want 1", n)
+	}
+	// And nothing invents one. The instance being left is the last one that
+	// should get to write where a community went.
+	if n := count(t, dst, `SELECT COUNT(*) FROM nodes WHERE moved_to IS NOT NULL`); n != 1 {
+		t.Errorf("import set a pointer nobody asked for: %d patches carry one, want 1", n)
 	}
 
 	// The image reference travels with its description. Both, or the fork

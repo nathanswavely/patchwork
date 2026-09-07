@@ -65,7 +65,16 @@
   // patches take followers only, and invite_only rejects the request
   // outright (memberships.go) — an absent door beats a 403 at the end of a
   // ceremony.
+  //
+  // A patch that has moved is the same rule again (docs/adr/090): the server
+  // declines both rungs and answers with the new address, and the banner
+  // directly above this row has already said so. Standing itself stays —
+  // somebody who is already in this patch keeps the control that lets them
+  // leave it.
+  let hasMoved = $derived(!!node?.moved_to);
+
   let canBecomeMember = $derived(
+    !hasMoved &&
     !isUnclaimed &&
     !awaiting &&
     node?.membership_policy !== 'invite_only' &&
@@ -205,7 +214,7 @@
           </div>
         {/if}
       </div>
-    {:else}
+    {:else if !hasMoved}
       <button class="btn btn-primary {btnSize}" onclick={handleFollow} disabled={joining}>Follow</button>
     {/if}
 

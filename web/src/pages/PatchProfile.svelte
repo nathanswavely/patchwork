@@ -26,6 +26,7 @@
   import PatchRelationship from '../components/PatchRelationship.svelte';
   import { getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import PatchOverflow from '../components/PatchOverflow.svelte';
+  import MovedNotice from '../components/MovedNotice.svelte';
   import { GearSix } from 'phosphor-svelte';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
@@ -83,6 +84,7 @@
     isBanned,
     submissionsEnabled: getSubmissionsEnabled(),
     acceptSuggestions: node?.accept_event_suggestions === true,
+    hasMoved: !!node?.moved_to,
   }));
 
   /**
@@ -228,6 +230,15 @@
           <PatchOverflow {slug} {node} {isAdmin} {isUnclaimed} {hasStanding} />
         </div>
       </div>
+
+      <!-- Where this patch went, said at the top (docs/adr/090). Above the
+           description because a reader who has landed on a patch the
+           community has left needs the forwarding address before they need
+           the blurb, and above the relationship row because joining is the
+           thing this banner is answering. -->
+      {#if node.moved_to}
+        <MovedNotice url={node.moved_to} subject="patch" />
+      {/if}
 
       {#if node.description}
         <p class="profile-desc">{node.description}</p>
