@@ -18,6 +18,7 @@
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
   import PatchRelationship from './PatchRelationship.svelte';
+  import { getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard } from 'phosphor-svelte';
 
   let { slug = '', activeTab = 'governance', children } = $props();
@@ -93,6 +94,18 @@
   // Join/follow/leave — including the join sheet (docs/adr/040) — belong to
   // PatchRelationship, mounted in the cluster below.
   let liningStatus = $state('');
+
+  // A join request nobody has answered. The node payload deliberately does
+  // not carry it — membership_role is set only for an active row — so it
+  // comes from the viewer's own memberships, which me/nodes does serve.
+  let requestPending = $derived(getPendingMembershipSlugs().has(slug));
+
+  // Joining or following changes two things: the node payload's
+  // membership_role and the store a pending request lives in. Refresh both,
+  // or asking to join leaves the row offering to join again.
+  async function reloadStanding() {
+    await Promise.all([loadNode(), loadMemberships()]);
+  }
 
   // --- Tabs (one URL scheme per screen — ADR 003) ---
   // The workspace is for everyone; role and claim state decide what shows.
@@ -207,8 +220,9 @@
           {isUnclaimed}
           {isBanned}
           {membershipRole}
+          {requestPending}
           {liningStatus}
-          onChanged={loadNode}
+          onChanged={reloadStanding}
           size="sm"
         />
       </div>

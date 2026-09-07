@@ -265,6 +265,68 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// WithdrawMembershipRequest handles POST /api/v1/nodes/{slug}/withdraw.
+//
+// A requester rescinds their own unanswered membership request. Distinct
+// from leaving, the way WithdrawClaim is distinct from rejection: nobody
+// admitted this person, so there is no community to exit and no admin
+// decision to undo. Keeping the two verbs apart is what lets the audit log
+// tell "changed their mind before anyone answered" from "was here and
+// left" — and stops a patch's record showing a departure by somebody who
+// was never a member.
+//
+// Its own route rather than a relaxed LeaveNode for the same reason: that
+// handler's only-admin floor and its 'active' precondition are about a
+// standing this row does not have, and widening the status it accepts
+// would have made both of those read as if they applied.
+//
+// join_message goes with the request, as it does on rejection: the intro
+// was written for a request that no longer exists.
+func WithdrawMembershipRequest(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		slug := r.PathValue("slug")
+
+		nodeID := NodeIDFromSlug(db, slug)
+		if nodeID == "" {
+			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// Scoped to this caller's own row: there is no admin path in here.
+		// An admin turning a request down is UpdateMember's reject, which
+		// is a decision and is logged as one.
+		var memID, status string
+		err := db.QueryRow(
+			"SELECT id, status FROM memberships WHERE user_id = ? AND node_id = ?",
+			user.ID, nodeID,
+		).Scan(&memID, &status)
+		if err != nil {
+			http.Error(w, `{"error":"no membership request to withdraw"}`, http.StatusBadRequest)
+			return
+		}
+		if status != "pending" {
+			http.Error(w, `{"error":"no membership request to withdraw"}`, http.StatusBadRequest)
+			return
+		}
+
+		_, err = db.Exec("UPDATE memberships SET status = 'left', join_message = NULL WHERE id = ?", memID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to withdraw request"}`, http.StatusInternalServerError)
+			return
+		}
+
+		auth.LogAuditEvent(db, user.ID, "membership.withdraw", "membership", memID, "{}", clientIP(r))
+
+		// Nobody is notified, matching WithdrawClaim and matching rejection:
+		// the request simply leaves the pending queue. An admin who never
+		// got round to it has nothing to act on and nothing to be told.
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "withdrawn"})
+	}
+}
+
 // LeaveNode handles POST /api/v1/nodes/{slug}/leave.
 func LeaveNode(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -277,11 +339,15 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Standing to leave includes a request you have not been answered on:
-		// a pending row is the one relationship a person could enter and not
-		// get out of, so withdrawing it is the same door as leaving.
-		var memberRole, memberStatus string
-		err := db.QueryRow("SELECT role, status FROM memberships WHERE user_id = ? AND node_id = ? AND status IN ('active','pending')", user.ID, nodeID).Scan(&memberRole, &memberStatus)
+		// Active rows only. Leaving exits a relationship, and a requester
+		// holds none — retracting an unanswered request is
+		// WithdrawMembershipRequest, a different verb on a different object
+		// (docs/adr/088). The split is not tidiness: it is what makes a
+		// stale page safe. If a request is approved between page load and
+		// click, a Withdraw that reached this handler would resign a
+		// membership the person did not yet know they had.
+		var memberRole string
+		err := db.QueryRow("SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'", user.ID, nodeID).Scan(&memberRole)
 		if err != nil {
 			http.Error(w, `{"error":"not a member"}`, http.StatusBadRequest)
 			return
@@ -294,7 +360,7 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 		// person nobody can replace; designation is how they earn the exit.
 		// With no successor named the floor holds, because the alternative is
 		// a patch nobody can administer.
-		if memberRole == "admin" && memberStatus == "active" {
+		if memberRole == "admin" {
 			var adminCount int
 			db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'", nodeID).Scan(&adminCount)
 			if adminCount <= 1 && !succeedOnDeparture(db, r, nodeID, slug, user.ID) {
@@ -309,11 +375,7 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		leaveAction := "membership.leave"
-		if memberStatus == "pending" {
-			leaveAction = "membership.withdraw"
-		}
-		auth.LogAuditEvent(db, user.ID, leaveAction, "membership", nodeID, "{}", clientIP(r))
+		auth.LogAuditEvent(db, user.ID, "membership.leave", "membership", nodeID, "{}", clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -504,10 +566,20 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		type membershipResponse struct {
-			ID               string `json:"id"`
-			UserID           string `json:"user_id"`
-			NodeID           string `json:"node_id"`
-			Role             string `json:"role"`
+			ID     string `json:"id"`
+			UserID string `json:"user_id"`
+			NodeID string `json:"node_id"`
+			// Omitted for a row that holds no standing (docs/adr/088). A
+			// pending request is stored on the membership row and carries
+			// role='member' — always, since you cannot request admin and
+			// following never goes through pending — so the column says
+			// what the row would become, not what it is. Sending it made
+			// this endpoint assert a membership that GetNode, the member
+			// list, the member count and userHasNodeRole all deny, and
+			// every client then had to defend itself against its own
+			// server. Absent is the honest answer, and a loud one: a
+			// caller reading it gets undefined rather than a wrong role.
+			Role             string `json:"role,omitempty"`
 			Status           string `json:"status"`
 			Visible          bool   `json:"visible"`
 			ShareContact     bool   `json:"share_contact"`
@@ -529,6 +601,11 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.ShareContact, &m.JoinedAt,
 				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy, &m.NodeStatus); err != nil {
 				continue
+			}
+			// Standing is stated once, here, the way GetNode states it:
+			// only an active row has a role.
+			if m.Status != "active" {
+				m.Role = ""
 			}
 			memberships = append(memberships, m)
 		}

@@ -93,38 +93,16 @@ func TestJoinUnclaimedTellsTheFollowerSomethingNew(t *testing.T) {
 	}
 }
 
-// A request nobody has answered was the one relationship a person could
-// enter and not get out of: leave refused it as "not a member".
-func TestWithdrawPendingRequest(t *testing.T) {
-	db := setupTestDB(t)
-	admin, _ := createTestUser(t, db, "admin-withdraw", "member")
-	requester, requesterToken := createTestUser(t, db, "requester-withdraw", "member")
-	nodeID := createTestNode(t, db, admin.ID, "Approval House", "approval-house", "approval_required")
-	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
-	createTestMembership(t, db, requester.ID, nodeID, "member", "pending")
-
-	r := authedRequest("POST", "/api/v1/nodes/approval-house/leave", nil, requesterToken)
-	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/leave", handler.LeaveNode(db), r)
-	if w.Code != http.StatusOK {
-		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
-	}
-
-	var status string
-	db.QueryRow("SELECT status FROM memberships WHERE user_id = ? AND node_id = ?", requester.ID, nodeID).Scan(&status)
-	if status != "left" {
-		t.Errorf("expected withdrawn request to be left, got %q", status)
-	}
-
-	var action string
-	db.QueryRow("SELECT action FROM audit_log WHERE user_id = ? ORDER BY created_at DESC LIMIT 1", requester.ID).Scan(&action)
-	if action != "membership.withdraw" {
-		t.Errorf("expected membership.withdraw in the audit log, got %q", action)
-	}
-}
+// Withdrawing a request lived here as a relaxed LeaveNode, on the reading
+// that a request was a relationship a person could enter and not get out
+// of. docs/adr/088 rejected that reading — a requester holds a request,
+// not a relationship — and moved the act to its own route. The tests
+// moved with it, to membership_withdraw_test.go, which also guards the
+// boundary this file's version could not: that leave keeps refusing a
+// pending row.
 
 // The only-admin floor (docs/adr/012, docs/adr/051) is about the person
-// running the patch. A pending request is not that person, and letting a
-// pending row through must not have opened a hole in the floor.
+// running the patch.
 func TestOnlyAdminStillCannotLeave(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "admin-floor", "member")

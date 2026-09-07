@@ -161,7 +161,14 @@ describe('the docked card', () => {
     expect(home).toMatch(/\{#snippet relationship\(patch, inRow = false\)\}/);
     expect(home).toMatch(/<span>Manage<\/span>/);
     expect(home).toMatch(/<span>Member<\/span>/);
-    // And in the row it must not look pressable, since it cannot be pressed.
-    expect(home).toMatch(/\.card-member-chip\.in-row \{[^}]*border: none/);
+    // A join request nobody has answered is its own standing, and not
+    // membership: me/nodes serves pending rows with role='member', so the
+    // card asks the store for them by name rather than reading a role.
+    expect(home).toMatch(/<span>Requested<\/span>/);
+    expect(home).toContain('getPendingMembershipSlugs');
+    // And in the row neither must look pressable, since neither can be
+    // pressed. The selector is grouped, so allow what follows the first.
+    expect(home).toMatch(/\.card-member-chip\.in-row[^{]*\{[^}]*border: none/);
+    expect(home).toMatch(/\.card-requested-chip\.in-row[^{]*\{[^}]*border: none/);
   });
 });

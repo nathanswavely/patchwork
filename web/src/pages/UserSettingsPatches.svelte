@@ -73,19 +73,26 @@
     return null;
   }
 
+  // Two verbs, two routes (docs/adr/088). Leaving exits a relationship;
+  // withdrawing retracts a request that was never answered, and a
+  // requester holds no relationship to exit. Routing on the row's status
+  // is also what makes a stale page safe: if the request was approved
+  // between load and click, /withdraw refuses rather than quietly
+  // resigning a membership this person did not know they had.
   async function handleLeave(m) {
+    const withdrawing = m.status === 'pending';
     try {
-      await api(`nodes/${m.node_slug}/leave`, { method: 'POST' });
+      await api(`nodes/${m.node_slug}/${withdrawing ? 'withdraw' : 'leave'}`, { method: 'POST' });
       await loadMemberships();
       await loadPatches();
       // One wording per event, matching the relationship row: unfollowing
       // is not leaving, and withdrawing a request is neither.
-      const said = m.status === 'pending'
+      const said = withdrawing
         ? 'Request withdrawn'
         : m.role === 'follower' ? 'Unfollowed patch' : 'Left patch';
       showToast(said, 'info');
     } catch (e) {
-      showToast(e.message || 'Failed to leave', 'error');
+      showToast(e.message || (withdrawing ? 'Failed to withdraw request' : 'Failed to leave'), 'error');
     }
   }
 
@@ -244,7 +251,7 @@
                 {m.node_name || m.node_slug}
               </a>
               <span class="badge" title="This patch's admins have not answered your request yet.">awaiting approval</span>
-              <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+              <span class="muted joined-date">asked {formatDate(m.joined_at)}</span>
             </div>
             <div class="patch-actions">
               <ConfirmAction label="Withdraw" variant="default" onConfirm={() => handleLeave(m)} />

@@ -159,7 +159,34 @@ describe('PatchRelationship', () => {
   });
 
   it('drops the membership rung where the server would refuse it', () => {
-    expect(src).toMatch(/!isUnclaimed &&\s*node\?\.membership_policy !== 'invite_only'/);
+    // Three refusals, all from memberships.go: an unclaimed patch takes
+    // followers only, invite_only rejects the request outright, and a
+    // request already pending comes back 409. The last one is why the row
+    // needs `requestPending` at all — membership_role is set only for an
+    // active row, so a pending request looks like a stranger from here.
+    expect(src).toMatch(/!isUnclaimed &&/);
+    expect(src).toMatch(/!awaiting &&/);
+    expect(src).toMatch(/node\?\.membership_policy !== 'invite_only'/);
+  });
+
+  it('states a request already made rather than offering to make it again', () => {
+    expect(src).toMatch(/awaiting = \$derived\(requestPending && !standing && !isBanned\)/);
+    expect(src).toMatch(/\{:else if awaiting\}/);
+    expect(src).toMatch(/>Membership requested</);
+  });
+
+  it('is told about the request by both surfaces that mount it', () => {
+    // The node payload does not carry a pending request, so each mount
+    // reads the viewer's own memberships and passes it in. Refreshing only
+    // the node after a join would leave the row offering to join again.
+    for (const host of ['pages/PatchProfile.svelte', 'components/PatchShell.svelte']) {
+      const h = source(host);
+      expect(h).toContain('getPendingMembershipSlugs');
+      expect(h).toMatch(/requestPending = \$derived\(getPendingMembershipSlugs\(\)\.has\(slug\)\)/);
+      expect(h).toMatch(/\{requestPending\}/);
+      expect(h).toMatch(/onChanged=\{reloadStanding\}/);
+      expect(h).toMatch(/Promise\.all\(\[loadNode\(\), loadMemberships\(\)\]\)/);
+    }
   });
 
   it('never says "Join" for a patch — that word belongs to joining the quilt', () => {
