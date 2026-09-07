@@ -69,6 +69,7 @@ several branches are in flight.
 | [087](087-an-admin-proves-the-role-not-the-person.md) | An admin proves the role, not the person — the instance actor signs a verifier's nonce for fifteen minutes; the statement names the domain and nobody *(preserves 023's unpublished roster, takes 017's step-up gate)* |
 | [088](088-withdrawing-a-request-is-not-leaving.md) | Withdrawing a request is not leaving — a requester is outside the ladder, so `me/nodes` stops sending a role for a row with no standing and withdraw gets its own route *(supersedes PR #219's LeaveNode relaxation, amends CONTEXT.md)* |
 | [089](089-a-member-takes-what-they-can-see.md) | A member takes what they can see, and people travel as stubs — the member seamrip: a second axis on the one portability boundary, a viewer-scoped filter over the same export writer, and a users set derived from the schema's own foreign keys *(implements 012 affordance 2, extends 002)* |
+| [091](091-a-warning-reaches-the-person-warned.md) | A warning reaches the person warned, and never carries the reporter — `warn` was a no-op that notified only the reporter; it now names the recipient's own patch or event and withholds the reason, the details and the admin's resolution note *(shares `suspend_user`'s target resolution; unmutable, like 'account.suspended')* |
 
 ## Partly implemented
 
