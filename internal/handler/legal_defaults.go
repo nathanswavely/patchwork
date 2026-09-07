@@ -7,9 +7,14 @@ package handler
 // These templates describe what the SOFTWARE actually does — every claim
 // here is checked against the codebase. If a feature changes in a way
 // that falsifies a sentence below (e.g. adding analytics, changing what
-// federates, adding self-serve account deletion), update the sentence in
-// the same PR. A privacy policy that drifts from the code is worse than
-// none.
+// federates, changing what account deletion erases), update the sentence
+// in the same PR. A privacy policy that drifts from the code is worse
+// than none.
+//
+// The deletion section is the sharpest case of that rule and the reason it
+// is written down: it enumerates what account_deletion.go erases, what it
+// keeps, and both refusals. Change that handler's lists and this text is
+// wrong the same day (docs/adr/086).
 //
 // {quilt_name} and {domain} are substituted at serve time with the
 // effective instance name (DB override or patchwork.yaml) and configured
@@ -62,11 +67,23 @@ Sign-in links and any notifications you turn on go out through the email server 
 
 ## The seamrip: data portability
 
-Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.
+Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export. A deleted account travels as the emptied record it became, not as an account: the successor site inherits the erasure along with everything else.
 
 ## How long things are kept, and deletion
 
-Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.
+Your content and account stay until you delete the account yourself, from Settings. Deleting is immediate and cannot be undone. It asks you to confirm with a passkey and to type your username, and it does two different things to two different kinds of data.
+
+**Erased.** Your email address, display name, bio, links, avatar, and contact card. Your passkeys, recovery codes, and sessions, so nobody can sign in as you again. Your personal calendar link, your notification settings and any unread notifications, the quilts you had connected, the patches you followed on other quilts, and every membership you held here. Any claim on a patch that was still waiting for review, and any standing candidacy in an election that had not closed.
+
+**Kept, with your name removed.** The things you took part in: proposals you wrote, votes and ballots you cast, comments, notices and replies, events you posted, calendar feeds you attached, and decisions you recorded on a patch's behalf. This site exists to hold a community's record of what it decided, and a tally that quietly loses a voter is not a record anyone can check. Those entries stay, and they now read as "Deleted account" with no name and no link. Your account row survives with nothing in it, and your username stays retired rather than freed for someone else, so no stranger inherits links that pointed at you. Your profile page stops existing.
+
+One consequence worth stating plainly: a vote of yours on a proposal that is still open stops counting toward its result, because the tally counts current members and you are no longer one. This is exactly what happens when anybody leaves a patch. Anything already decided stays decided.
+
+**Two refusals.** You cannot delete your account while you are the only admin of a patch — the site names those patches and asks you to hand them over first, since the alternative is a community nobody can administer. And the last remaining administrator of this whole site cannot delete their account either.
+
+Deletion cannot reach outside this server. Anything federation already copied elsewhere is held by those servers under their policies. This site sends a deletion notice for your account to every server known to follow it, and stops answering for it afterwards, but it cannot make anyone honor that notice. Data that went out in an export made before you deleted is likewise a copy nobody here can reach into.
+
+If you would rather have a steward do this, or want specific content removed without closing your account, the people on the [Label](/label) can help. Their tools can hide content and suspend an account; the erasure described above is the one you perform yourself.
 
 ## Age
 
@@ -128,4 +145,4 @@ Volunteers run this site on real hardware, with no promise of uptime, availabili
 
 ## Changes and ending
 
-This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.`
+This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and you can delete your account yourself from Settings — the privacy policy sets out exactly what that erases and what stays in the community's record. Two things it won't let you do: walk out as the only admin of a patch, or as the last administrator of the site. Hand those over first. The stewards can end the agreement on their side by closing your account as described under Moderation.`

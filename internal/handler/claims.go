@@ -812,7 +812,7 @@ func ListClaims(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 
 		query := `SELECT cr.id, cr.node_id, cr.user_id, cr.method, cr.evidence, cr.status, cr.created_at, COALESCE(cr.email,''),
-			n.name, n.slug, COALESCE(n.verification_domain,''), COALESCE(u.username,''), COALESCE(u.display_name,'')
+			n.name, n.slug, COALESCE(n.verification_domain,''), ` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
 			FROM claim_requests cr
 			JOIN nodes n ON cr.node_id = n.id
 			JOIN users u ON cr.user_id = u.id

@@ -93,7 +93,7 @@ func ListAttestations(db *database.DB) http.HandlerFunc {
 
 		rows, err := db.Query(
 			`SELECT a.id, a.node_id, a.kind, a.decided_at, COALESCE(a.term_ends_at,''), a.summary, a.recorded_by,
-			        COALESCE(u.display_name, u.username, ''), a.created_at,
+			        `+displayNameExpr("u")+`, a.created_at,
 			        COALESCE(a.supersedes_id,''),
 			        COALESCE((SELECT s.id FROM attestations s WHERE s.supersedes_id = a.id), '')
 			 FROM attestations a
@@ -125,7 +125,7 @@ func ListAttestations(db *database.DB) http.HandlerFunc {
 func attestationNames(db *database.DB, attestationID string) []attestationName {
 	names := []attestationName{}
 	rows, err := db.Query(
-		`SELECT n.id, COALESCE(n.user_id,''), COALESCE(u.username,''), n.display_name
+		`SELECT n.id, COALESCE(n.user_id,''), `+usernameExpr("u")+`, n.display_name
 		 FROM attestation_names n
 		 LEFT JOIN users u ON u.id = n.user_id
 		 WHERE n.attestation_id = ?
