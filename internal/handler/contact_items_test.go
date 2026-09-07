@@ -355,7 +355,7 @@ func TestContactItemValidation(t *testing.T) {
 
 // TestBackfillConvertsTheLegacyCard covers the conversion both startup and
 // `make import` run. The import path is why it must stay: an archive taken
-// before migration 066 carries the card as three columns, and without the
+// before migration 068 carries the card as three columns, and without the
 // conversion those cards arrive on a fork invisible — a silent loss in the
 // one mechanism a community has for leaving with what is theirs.
 func TestBackfillConvertsTheLegacyCard(t *testing.T) {
@@ -372,7 +372,7 @@ func TestBackfillConvertsTheLegacyCard(t *testing.T) {
 	sharedMem := createTestMembership(t, db, sharer.ID, shared, "member", "active")
 	createTestMembership(t, db, sharer.ID, quiet, "member", "active")
 
-	// The pre-066 shape: three columns, and the switch on one patch of two.
+	// The pre-068 shape: three columns, and the switch on one patch of two.
 	if _, err := db.Exec(
 		`UPDATE users SET contact_phone = ?, contact_email = ?, contact_note = ? WHERE id = ?`,
 		"+1 717 555 0123", "reach@example.com", "Signal only", sharer.ID,

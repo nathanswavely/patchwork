@@ -1,4 +1,4 @@
--- Migration 066: contact items, shared one patch at a time (docs/adr/083).
+-- Migration 068: contact items, shared one patch at a time (docs/adr/083).
 --
 -- Supersedes the shape migration 062 gave the contact card. That card was
 -- three columns on `users` and one boolean per membership, so every patch a
@@ -27,7 +27,7 @@
 -- status = 'left').
 --
 -- The old columns are NOT dropped here. Nothing will read them once the
--- handlers move, and they carry the only copy of pre-066 data until the Go
+-- handlers move, and they carry the only copy of pre-068 data until the Go
 -- backfill has run everywhere; retiring them is a later migration, once no
 -- deployment can still be mid-upgrade.
 
