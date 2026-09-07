@@ -50,8 +50,8 @@ func TestPersonalExport_CarriesHiddenMembershipsAndOwnContent(t *testing.T) {
 	db := setupTestDB(t)
 	weaver, token := createTestUser(t, db, "weaver", "member")
 	_, err := db.Exec(
-		`UPDATE users SET email = ?, bio = ?, contact_phone = ? WHERE id = ?`,
-		"weaver@example.com", "Sews at night", "+1 717 555 0100", weaver.ID)
+		`UPDATE users SET email = ?, bio = ? WHERE id = ?`,
+		"weaver@example.com", "Sews at night", weaver.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,6 +62,22 @@ func TestPersonalExport_CarriesHiddenMembershipsAndOwnContent(t *testing.T) {
 	hiddenMembership := createTestMembership(t, db, weaver.ID, hidden, "member", "active")
 	if _, err := db.Exec(`UPDATE memberships SET visible = 0 WHERE id = ?`, hiddenMembership); err != nil {
 		t.Fatal(err)
+	}
+
+	// A contact item, shared into one patch (docs/adr/083). The export is the
+	// one place a person reads back what they disclosed and to whom.
+	contactItemID := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO contact_items (id, user_id, kind, value, position) VALUES (?, ?, 'phone', ?, 0)`,
+		contactItemID, weaver.ID, "+1 717 555 0100",
+	); err != nil {
+		t.Fatalf("insert contact item: %v", err)
+	}
+	if _, err := db.Exec(
+		`INSERT INTO contact_item_shares (item_id, node_id) VALUES (?, ?)`,
+		contactItemID, shown,
+	); err != nil {
+		t.Fatalf("share contact item: %v", err)
 	}
 
 	proposalID := auth.NewUUIDv7()
@@ -115,9 +131,22 @@ func TestPersonalExport_CarriesHiddenMembershipsAndOwnContent(t *testing.T) {
 	if profile["email"] != "weaver@example.com" || profile["bio"] != "Sews at night" {
 		t.Errorf("profile = %v", profile)
 	}
-	card, _ := profile["contact_card"].(map[string]interface{})
-	if card == nil || card["phone"] != "+1 717 555 0100" {
-		t.Errorf("contact card = %v", profile["contact_card"])
+	items, _ := profile["contact_items"].([]interface{})
+	if len(items) != 1 {
+		t.Fatalf("contact items = %v", profile["contact_items"])
+	}
+	item, _ := items[0].(map[string]interface{})
+	if item["value"] != "+1 717 555 0100" || item["kind"] != "phone" {
+		t.Errorf("contact item = %v", item)
+	}
+	// Who could read it travels with it: an export that listed the number
+	// without the rooms would not tell the person what they had disclosed.
+	sharedWith, _ := item["shared_with"].([]interface{})
+	if len(sharedWith) != 1 {
+		t.Fatalf("shared_with = %v", item["shared_with"])
+	}
+	if got, _ := sharedWith[0].(map[string]interface{}); got["slug"] != "gallery-row" {
+		t.Errorf("shared_with = %v", sharedWith[0])
 	}
 
 	// The hidden membership is the person's own, so it travels — ADR 012

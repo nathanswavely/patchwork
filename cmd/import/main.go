@@ -18,6 +18,7 @@ import (
 	patchwork "github.com/patchwork-toolkit/patchwork"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/seamrip"
 )
 
@@ -76,6 +77,36 @@ func main() {
 	idMap, results, err := seamrip.Import(db, read, auth.NewUUIDv7)
 	if err != nil {
 		log.Fatalf("import: %v", err)
+	}
+
+	// Two heals that startup also runs, and that an import needs for the same
+	// reason it needs the contact conversion: the rows arrive after the boot
+	// that would have run them.
+	//
+	// An older archive can carry a node whose governance_config is still the
+	// migration-013 default, which would leave the fork voting by rules its
+	// charter does not describe — the "rules on screen are not the rules in
+	// force" failure docs/adr/041 names. And an unclaimed node imported
+	// without a verification_domain gives the claim flow nothing to anchor
+	// on. Both are idempotent: on an archive that needs neither they do
+	// nothing.
+	if n, err := handler.BackfillGovernanceConfig(db); err != nil {
+		log.Printf("warning: governance config backfill: %v", err)
+	} else if n > 0 {
+		fmt.Printf("  %-28s %d synced from the charter\n", "governance_config", n)
+	}
+	handler.BackfillVerificationDomains(db)
+
+	// An archive taken before migration 066 carries the contact card as three
+	// columns on users plus a boolean per membership (docs/adr/080). Nothing
+	// reads those any more, so without this the cards would arrive on the
+	// fork and be invisible — a silent loss in the one mechanism that exists
+	// for a community to leave with what is theirs (docs/adr/002). The same
+	// conversion startup runs, run once more now that the rows are here.
+	if n, err := handler.BackfillContactItems(db); err != nil {
+		log.Fatalf("import: converting contact cards: %v", err)
+	} else if n > 0 {
+		fmt.Printf("  %-28s %d converted from the pre-066 card\n", "contact_items", n)
 	}
 
 	for _, r := range results {

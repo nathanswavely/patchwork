@@ -1,7 +1,8 @@
 /**
- * The contact card (docs/adr/080): how to reach you, kept once on the
- * account and shared patch by patch. Three surfaces, and none of them is
- * public — every assertion here is about the card staying inside the room.
+ * The contact card (docs/adr/083, superseding 080): the ways a person is
+ * willing to be reached, kept once on the account as typed items and shared
+ * one item into one patch at a time. Every assertion here is about an item
+ * reaching exactly the room it was given to, and no further.
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -11,16 +12,33 @@ function source(relPath) {
   return readFileSync(resolve(process.cwd(), 'src', relPath), 'utf8');
 }
 
-describe('Account settings: the card is edited whole, and says it is not public', () => {
+describe('Account settings: the card is items, and this page cannot grant', () => {
   const src = source('pages/AccountSettings.svelte');
 
-  it('saves the card as one object, never a field at a time', () => {
-    expect(src).toMatch(/contact_card:\s*\{\s*phone:.*\n.*email:.*\n.*note:/);
+  it('edits items through the item endpoints, not a whole-card object', () => {
+    expect(src).toContain("api('users/me/contact-items'");
+    expect(src).toMatch(/users\/me\/contact-items\/\$\{it\.id\}/);
+    expect(src).not.toContain('contact_card:');
   });
 
-  it('tells the person nothing on the card is public until shared', () => {
+  it('cannot grant from here — the only sharing action takes one back', () => {
+    // docs/adr/083 decision 5: item-first writes may only reduce exposure.
+    // Granting is patch-first, so this page must carry no picker of patches
+    // and call nothing that adds a share.
+    expect(src).toContain("contact-items/${it.id}/shares`, { method: 'DELETE' }");
+    expect(src).not.toContain('contact-shares');
+  });
+
+  it('says the surface stopped, not that access was revoked', () => {
+    // Unsharing stops the showing, not the knowing: anyone who already read
+    // the value still has it, so no copy may promise otherwise.
+    expect(src).toContain('No longer shown to');
+  });
+
+  it('tells the person nothing on the card is public, and sharing is per patch', () => {
     expect(src).toContain('Nothing here is public');
-    expect(src).toContain('Not shared with any patch yet.');
+    expect(src).toContain('one patch at a\n        time');
+    expect(src).toContain('Not shared with any patch');
   });
 
   it('keeps the contact email apart from the sign-in address', () => {
@@ -28,12 +46,16 @@ describe('Account settings: the card is edited whole, and says it is not public'
   });
 });
 
-describe('My Patches: contact sharing is a second switch beside visibility', () => {
+describe('My Patches: sharing is patch-first, per item', () => {
   const src = source('pages/UserSettingsPatches.svelte');
 
-  it('flips share_contact through the membership switch endpoint', () => {
-    expect(src).toMatch(/users\/me\/memberships\/\$\{m\.node_id\}/);
-    expect(src).toContain('body: { share_contact: !m.share_contact }');
+  it('shares per item, into one patch, by replacing the whole set', () => {
+    // docs/adr/083: PUT of the set, not a boolean per membership — and a
+    // partial update of a disclosure set is a request to half-apply it.
+    expect(src).toMatch(/nodes\/\$\{m\.node_slug\}\/contact-shares/);
+    expect(src).toContain("method: 'PUT'");
+    expect(src).toContain('body: { item_ids: sharingIds }');
+    expect(src).not.toContain('share_contact');
   });
 
   it('offers the switch on admin and member rows only — followers are not in the room', () => {
@@ -48,13 +70,15 @@ describe('My Patches: contact sharing is a second switch beside visibility', () 
   });
 });
 
-describe('Members room: the card shows only where the API sent it', () => {
+describe('Members room: the person card shows what the API sent', () => {
   const src = source('pages/PatchMembers.svelte');
 
-  it('renders contact only from the per-member contact object', () => {
-    expect(src).toContain('{#if member.contact}');
-    expect(src).toMatch(/href="tel:\{member\.contact\.phone/);
-    expect(src).toMatch(/href="mailto:\{member\.contact\.email\}"/);
+  it('renders a person through the one person card, never inline', () => {
+    // docs/adr/083 decision 7: one rendering of a person wherever they are
+    // named. The list must not grow a second, list-only way to show items.
+    expect(src).toContain('<PersonCard person={member} role={member.role} />');
+    expect(src).not.toMatch(/href="tel:/);
+    expect(src).not.toMatch(/href="mailto:/);
   });
 
   it('offers sharing to a member in the room who shares no card', () => {
@@ -70,6 +94,13 @@ describe('Members room: the card shows only where the API sent it', () => {
     expect(src).toContain('anyContact = !!data.any_contact_shared');
     expect(src).not.toContain('members.find(');
     expect(src).not.toContain('members.some(');
+  });
+
+  it('cannot grant from the members list — sharing is patch-first', () => {
+    // Reading a list of people is not the moment anyone decides to be
+    // reachable, so no write path lives here.
+    expect(src).not.toContain('contact-shares');
+    expect(src).not.toContain("method: 'PUT'");
   });
 });
 
@@ -92,8 +123,63 @@ describe('Members room: the count is admins plus members, never followers', () =
   });
 });
 
-describe('The public profile never learns the card', () => {
-  it('UserProfile.svelte does not reach for contact', () => {
-    expect(source('pages/UserProfile.svelte')).not.toMatch(/contact/i);
+describe('The profile is a window onto the room, never a wider one', () => {
+  const src = source('pages/UserProfile.svelte');
+
+  it('renders only what the server sent, and asks for nothing extra', () => {
+    // The predicate lives in the API. If the page ever fetched contact data
+    // on its own it would be deciding disclosure in the client.
+    expect(src).toContain("$derived(profile?.contact || [])");
+    expect(src).not.toMatch(/api\(['`][^'`]*contact/);
+  });
+
+  it('never names the patch an item came through', () => {
+    // The granting membership may be private or hidden, and docs/adr/006
+    // keeps those off this page — so the copy is audience-shaped, not
+    // provenance-shaped.
+    const start = src.indexOf('<ul class="profile-contact">');
+    const section = src.slice(start, src.indexOf('</ul>', start));
+    expect(start).toBeGreaterThan(-1);
+    expect(section).not.toMatch(/node_slug|node_name|patch/i);
+    expect(src).toContain('Shared with people they organize with');
+  });
+
+  it('shows no heading at all to a visitor who shares no room', () => {
+    // An empty "Reach them" section would tell the internet a card exists.
+    expect(src).toContain('{#if contact.length > 0}');
+  });
+});
+
+describe('The person card is one rendering, and follows the patch card', () => {
+  const src = source('components/PersonCard.svelte');
+
+  it('previews on point where there is a pointer, opens on tap where there is not', () => {
+    // CONTEXT.md pairs this with the patch card deliberately: a second
+    // gesture rule for the same job is how two surfaces stop agreeing.
+    expect(src).toContain("window.matchMedia('(hover: hover) and (pointer: fine)')");
+    expect(src).toMatch(/onmouseenter=\{\(\) => hasPointer && show\(\)\}/);
+    expect(src).toContain('onclick={activate}');
+    // Clicking with a pointer opens the person, not the card — the card is
+    // already showing, and toggling would close what hovering just opened.
+    expect(src).toMatch(/if \(hasPointer\) \{\s*openProfile\(e\);/);
+  });
+
+  it('opens on keyboard focus too — hover alone is mouse-only', () => {
+    expect(src).toContain('onfocus={() => hasPointer && show()}');
+    expect(src).toContain('aria-expanded={open}');
+  });
+
+  it('is worth opening for someone who shares nothing', () => {
+    // The contact section is absent far more often than present, so the
+    // card carries identity and standing regardless.
+    expect(src).toContain('person-avatar');
+    expect(src).toContain('person-handle');
+    expect(src).toContain('View profile');
+    expect(src).toContain('{#if items.length > 0}');
+  });
+
+  it('never names the patch an item came through', () => {
+    const section = src.slice(src.indexOf('<ul class="person-contact">'), src.indexOf('</ul>'));
+    expect(section).not.toMatch(/node_slug|node_name|patch/i);
   });
 });

@@ -1350,12 +1350,20 @@ func TestListMembersSharingFactsSurviveTheFirstPage(t *testing.T) {
 
 	// A sharer and a non-sharer, both far down the list.
 	sharer, sharerToken := createTestUser(t, db, "sharer62", "member")
-	sharerMID := createTestMembership(t, db, sharer.ID, nodeID, "member", "active")
-	if _, err := db.Exec("UPDATE users SET contact_email = 'sharer@example.com' WHERE id = ?", sharer.ID); err != nil {
-		t.Fatalf("set card: %v", err)
+	createTestMembership(t, db, sharer.ID, nodeID, "member", "active")
+	// One item, shared into this patch (docs/adr/083). The fixture moved to
+	// items; every assertion below is unchanged.
+	itemID := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO contact_items (id, user_id, kind, value, position) VALUES (?, ?, 'email', ?, 0)`,
+		itemID, sharer.ID, "sharer@example.com",
+	); err != nil {
+		t.Fatalf("insert item: %v", err)
 	}
-	if _, err := db.Exec("UPDATE memberships SET share_contact = 1 WHERE id = ?", sharerMID); err != nil {
-		t.Fatalf("share card: %v", err)
+	if _, err := db.Exec(
+		`INSERT INTO contact_item_shares (item_id, node_id) VALUES (?, ?)`, itemID, nodeID,
+	); err != nil {
+		t.Fatalf("share item: %v", err)
 	}
 	quiet, quietToken := createTestUser(t, db, "quiet62", "member")
 	createTestMembership(t, db, quiet.ID, nodeID, "member", "active")
@@ -1402,27 +1410,3 @@ func TestListMembersSharingFactsSurviveTheFirstPage(t *testing.T) {
 	}
 }
 
-// An empty card is not a shared card: switching sharing on while the account
-// carries nothing to share leaves the row without a card, so the offer stands.
-func TestListMembersEmptyCardIsNotSharing(t *testing.T) {
-	db := setupTestDB(t)
-	admin, _ := createTestUser(t, db, "admin63", "member")
-	nodeID := createTestNode(t, db, admin.ID, "Empty Node", "empty-node", "open")
-	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
-
-	user, token := createTestUser(t, db, "blank63", "member")
-	mid := createTestMembership(t, db, user.ID, nodeID, "member", "active")
-	if _, err := db.Exec("UPDATE memberships SET share_contact = 1 WHERE id = ?", mid); err != nil {
-		t.Fatalf("share card: %v", err)
-	}
-
-	r := authedRequest("GET", "/api/v1/nodes/empty-node/members", nil, token)
-	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
-	result := decodeJSON(t, w)
-	if got := result["viewer_shares_contact"]; got != false {
-		t.Errorf("sharing an empty card shares nothing, got %v", got)
-	}
-	if got := result["any_contact_shared"]; got != false {
-		t.Errorf("an empty card must not count as a card in the room, got %v", got)
-	}
-}
