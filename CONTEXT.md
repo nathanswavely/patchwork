@@ -673,7 +673,10 @@ Something a patch votes on. It opens for voting the moment it is raised
 rejected, then in effect. Discussion happens alongside the vote in the
 proposal's Discussion tab, not in a stage before it — the `draft` and
 `discussion` states in the migration-016 column are retired and nothing
-writes them.
+writes them. On an admin-decides patch the maintainer decides it instead
+(docs/adr/092): born **waiting on the maintainer** when a member raises
+it, born applied as a **direct change** when an admin does, and any vote
+held on it is an **advisory vote**.
 Deliberately the same word in the UI and the backend; the textile coinage
 "baste request" is retired. It explained a metaphor before it explained
 the feature — every UI surface had already grown Proposals headings and
@@ -734,7 +737,10 @@ timeline, notifications, and history with voted proposals; the UI never
 says "propose", "submit", or "vote" for one. Which framing a patch gets
 follows the rules in force, not its size: the words are "change these
 rules" / "rule change · applied by …" on admin-decides patches, and
-"proposal" everywhere a vote actually happens.
+"proposal" everywhere a vote actually happens. An admin who would rather
+hear from the members first opens an **advisory vote** instead
+(docs/adr/092); the maintainer's decline is worded the same way — "Declined
+by …" — never as a vote that failed.
 _Avoid_: proposal (nothing is proposed to anyone), fast-track (an
 implementation word, not a concept), edit (undersells that it's tracked
 and visible)
@@ -758,6 +764,31 @@ meeting result instead. The decision comes back as an attestation on the
 charter. Not a draft and not a discussion stage: nothing promotes out of
 it, and no vote is coming (docs/adr/048, docs/adr/053).
 _Avoid_: draft, pending, awaiting vote (none is), informal, unofficial
+
+**Advisory vote**:
+A vote held on an admin-decides patch (docs/adr/092). It runs on the
+ordinary ballot with the ordinary electorate and decides nothing: the
+maintainer approves or declines at any moment, mid-vote included, and
+when the window closes the proposal goes back to **waiting on the
+maintainer** with the tally attached. Said in the first breath wherever
+it appears — "Advisory vote. The maintainer decides." — because a bar
+filling toward a majority that has no force is the lie the word exists to
+end. The members can be asked once per proposal. Opened by an admin, on
+their own proposal ("Ask the members first") or on a member's.
+_Avoid_: poll (undersells that it is the patch's real ballot), vote
+without the adjective, referendum, binding (it never is)
+
+**Waiting on the maintainer**:
+The state a proposal is in on an admin-decides patch while nobody has
+decided it (`state = 'awaiting_admin'`, docs/adr/092): a member's
+proposal from the moment it is raised, and an admin's or a member's after
+an **advisory vote** closes. Open, discussable, withdrawable, and carrying
+no ballot and no clock — the only things that end it are the maintainer's
+approve or decline, or the author taking it back. Shaped like
+**elsewhere** (an open proposal the tally does not decide) rather than the
+retired `discussion` stage, which sat ahead of a vote that would come.
+_Avoid_: pending (which review queues already use), awaiting approval (an
+admin may also decline), draft
 
 **Attestation**:
 A record of a decision the community made at a venue that isn't
