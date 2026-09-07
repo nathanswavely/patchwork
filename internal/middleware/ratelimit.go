@@ -168,3 +168,22 @@ func GazetteerRateLimit(r *http.Request) bool {
 	}
 	return gazetteerLimiter.Allow(key)
 }
+
+// personalExportLimiter throttles the personal export (docs/adr/012). It is
+// one query per author-attributed table, so a person holding the button down
+// is the only realistic way to make it expensive. Five up front and one back
+// every ten minutes: nobody downloading their own record twice to check it
+// ever meets the limit, and a script cannot walk it into a load problem.
+var personalExportLimiter = NewRateLimiterStore(rate.Every(10*time.Minute), 5)
+
+// PersonalExportRateLimit reports whether this caller may take another
+// personal export. Keyed on the authenticated user — the route is behind
+// AuthRequired, so there is always one, and keying on the account rather than
+// the address means a shared network never rations one member against
+// another.
+func PersonalExportRateLimit(r *http.Request) bool {
+	if user := UserFromContext(r.Context()); user != nil {
+		return personalExportLimiter.Allow("user:" + user.ID)
+	}
+	return personalExportLimiter.Allow("ip:" + ClientIP(r))
+}
