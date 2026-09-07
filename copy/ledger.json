@@ -3814,21 +3814,21 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 372,
+          "line": 377,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 655,
+          "line": 660,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 822,
+          "line": 827,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3982,21 +3982,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 665,
+          "line": 690,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 679,
+          "line": 701,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 840,
+          "line": 872,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4038,14 +4038,14 @@
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 294,
+          "line": 349,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 358,
+          "line": 413,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4108,7 +4108,7 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 210,
+          "line": 261,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4574,28 +4574,28 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 639,
+          "line": 664,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 559,
+          "line": 581,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 828,
+          "line": 860,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1015,
+          "line": 1059,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4993,7 +4993,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 972,
+          "line": 1016,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5502,21 +5502,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 645,
+          "line": 670,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 834,
+          "line": 866,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1021,
+          "line": 1065,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6068,7 +6068,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 548,
+          "line": 570,
           "kind": "go-error-body",
           "raw": "slug required",
           "quote": null
@@ -6860,14 +6860,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 268,
+          "line": 273,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 334,
+          "line": 339,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
@@ -6892,7 +6892,7 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 376,
+          "line": 381,
           "kind": "go-error-body",
           "raw": "token and username are required",
           "quote": null
@@ -6935,14 +6935,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 390,
+          "line": 395,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 585,
+          "line": 590,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
@@ -6967,7 +6967,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 416,
+          "line": 421,
           "kind": "go-error-body",
           "raw": "failed to begin registration",
           "quote": null
@@ -6985,14 +6985,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 435,
+          "line": 440,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 446,
+          "line": 451,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
@@ -7010,7 +7010,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 503,
+          "line": 508,
           "kind": "go-error-body",
           "raw": "failed to begin step-up",
           "quote": null
@@ -7028,14 +7028,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 520,
+          "line": 525,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 571,
+          "line": 576,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
@@ -7053,7 +7053,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 533,
+          "line": 538,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
@@ -7078,7 +7078,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 538,
+          "line": 543,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
           "quote": null
@@ -7096,7 +7096,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 557,
+          "line": 562,
           "kind": "go-error-body",
           "raw": "failed to begin login",
           "quote": null
@@ -7114,7 +7114,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 667,
+          "line": 672,
           "kind": "go-error-body",
           "raw": "phone must be 60 characters or fewer",
           "quote": null
@@ -7132,7 +7132,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 670,
+          "line": 675,
           "kind": "go-error-body",
           "raw": "email must be 254 characters or fewer",
           "quote": null
@@ -7150,7 +7150,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 673,
+          "line": 678,
           "kind": "go-error-body",
           "raw": "that doesn't look like an email address",
           "quote": null
@@ -7168,7 +7168,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 676,
+          "line": 681,
           "kind": "go-error-body",
           "raw": "note must be 200 characters or fewer",
           "quote": null
@@ -7186,7 +7186,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 682,
+          "line": 687,
           "kind": "go-error-body",
           "raw": "failed to update contact card",
           "quote": null
@@ -7204,7 +7204,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 691,
+          "line": 696,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -7222,7 +7222,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 701,
+          "line": 706,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -7240,7 +7240,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 712,
+          "line": 717,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -7258,7 +7258,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 720,
+          "line": 725,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -7276,7 +7276,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 734,
+          "line": 739,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -7294,7 +7294,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 778,
+          "line": 783,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -7312,14 +7312,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 814,
+          "line": 819,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 855,
+          "line": 860,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -7337,7 +7337,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 834,
+          "line": 839,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -7355,14 +7355,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 838,
+          "line": 843,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 869,
+          "line": 874,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -7380,7 +7380,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 864,
+          "line": 869,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -8485,14 +8485,14 @@
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 313,
+          "line": 368,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 350,
+          "line": 405,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -9249,7 +9249,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 864,
+          "line": 896,
           "kind": "go-error-body",
           "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
@@ -11868,6 +11868,13 @@
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 553,
+          "kind": "go-error-body",
+          "raw": "failed to list members",
+          "quote": null
         }
       ]
     },
@@ -11882,7 +11889,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 563,
+          "line": 588,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -11900,7 +11907,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 656,
+          "line": 681,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -11925,7 +11932,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 675,
+          "line": 700,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -11943,7 +11950,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 680,
+          "line": 705,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -11961,7 +11968,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 703,
+          "line": 728,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -11979,7 +11986,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 708,
+          "line": 733,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -11997,7 +12004,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 716,
+          "line": 741,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -12015,7 +12022,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 722,
+          "line": 747,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -12033,7 +12040,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 747,
+          "line": 772,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -12051,7 +12058,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 755,
+          "line": 780,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -12069,7 +12076,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 775,
+          "line": 800,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -12087,7 +12094,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 780,
+          "line": 805,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -12105,7 +12112,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 789,
+          "line": 814,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -12123,7 +12130,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 798,
+          "line": 823,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -12141,7 +12148,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 808,
+          "line": 833,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -12159,7 +12166,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 820,
+          "line": 845,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -12177,7 +12184,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 835,
+          "line": 860,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -12195,7 +12202,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 505,
+          "line": 527,
           "kind": "go-error-body",
           "raw": "failed to list nodes",
           "quote": null
@@ -12213,7 +12220,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 683,
+          "line": 705,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -12242,6 +12249,49 @@
       ]
     },
     {
+      "id": "697456d93ca1",
+      "text": "visibility must be one of %s",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 715,
+          "kind": "go-error-body",
+          "raw": "visibility must be one of %s",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 909,
+          "kind": "go-error-body",
+          "raw": "visibility must be one of %s",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a561a0324b47",
+      "text": "membership_policy must be one of %s",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 720,
+          "kind": "go-error-body",
+          "raw": "membership_policy must be one of %s",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "9e67710d4075",
       "text": "failed to create node",
       "words": 4,
@@ -12252,7 +12302,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 745,
+          "line": 777,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -12270,7 +12320,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 876,
+          "line": 920,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -12288,7 +12338,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 882,
+          "line": 926,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -12306,14 +12356,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 904,
+          "line": 948,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 911,
+          "line": 955,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -12331,7 +12381,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 922,
+          "line": 966,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -12349,7 +12399,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 984,
+          "line": 1028,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -12367,7 +12417,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1029,
+          "line": 1073,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -12449,7 +12499,7 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 220,
+          "line": 271,
           "kind": "go-error-body",
           "raw": "report not found",
           "quote": null
@@ -12510,7 +12560,7 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 245,
+          "line": 319,
           "kind": "go-error-body",
           "raw": "failed to update report",
           "quote": null
@@ -12802,6 +12852,24 @@
       ]
     },
     {
+      "id": "670e75a0646f",
+      "text": "category must be one of %s",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/notifications.go",
+          "line": 93,
+          "kind": "go-error-body",
+          "raw": "category must be one of %s",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "a55883880df5",
       "text": "failed to list notifications",
       "words": 4,
@@ -12812,7 +12880,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 61,
+          "line": 116,
           "kind": "go-error-body",
           "raw": "failed to list notifications",
           "quote": null
@@ -12830,14 +12898,14 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 111,
+          "line": 166,
           "kind": "go-error-body",
           "raw": "notification id required",
           "quote": null
         },
         {
           "file": "internal/handler/notifications.go",
-          "line": 163,
+          "line": 218,
           "kind": "go-error-body",
           "raw": "notification id required",
           "quote": null
@@ -12855,7 +12923,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 120,
+          "line": 175,
           "kind": "go-error-body",
           "raw": "failed to mark notification read",
           "quote": null
@@ -12873,7 +12941,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 125,
+          "line": 180,
           "kind": "go-error-body",
           "raw": "notification not found or already read",
           "quote": null
@@ -12891,7 +12959,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 144,
+          "line": 199,
           "kind": "go-error-body",
           "raw": "failed to mark all notifications read",
           "quote": null
@@ -12909,7 +12977,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 172,
+          "line": 227,
           "kind": "go-error-body",
           "raw": "failed to delete notification",
           "quote": null
@@ -12927,7 +12995,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 177,
+          "line": 232,
           "kind": "go-error-body",
           "raw": "notification not found",
           "quote": null
@@ -12945,7 +13013,7 @@
       "occurrences": [
         {
           "file": "internal/handler/notifications.go",
-          "line": 194,
+          "line": 249,
           "kind": "go-error-body",
           "raw": "failed to clear notifications",
           "quote": null
@@ -14225,6 +14293,42 @@
           "line": 82,
           "kind": "go-error-body",
           "raw": "failed to create report",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7ff4c767799b",
+      "text": "status must be one of %s",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/reports.go",
+          "line": 281,
+          "kind": "go-error-body",
+          "raw": "status must be one of %s",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e7533c78defc",
+      "text": "action must be one of %s",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/reports.go",
+          "line": 293,
+          "kind": "go-error-body",
+          "raw": "action must be one of %s",
           "quote": null
         }
       ]
@@ -19590,7 +19694,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 115,
+          "line": 119,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -19615,7 +19719,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 118,
+          "line": 122,
           "kind": "markup",
           "raw": "Mark all read",
           "quote": null
@@ -19668,7 +19772,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 147,
+          "line": 151,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -19735,7 +19839,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 150,
+          "line": 154,
           "kind": "markup",
           "raw": "You're all caught up",
           "quote": null
@@ -20731,7 +20835,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 167,
+          "line": 171,
           "kind": "attr:title",
           "raw": "Dismiss",
           "quote": "\""
@@ -37248,7 +37352,7 @@
         },
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 51,
+          "line": 67,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -39744,7 +39848,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 69,
+          "line": 73,
           "kind": "js-string",
           "raw": "Could not dismiss that notification",
           "quote": "'"
@@ -39762,7 +39866,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 82,
+          "line": 86,
           "kind": "js-string",
           "raw": "Could not clear notifications",
           "quote": "'"
@@ -39780,7 +39884,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 143,
+          "line": 147,
           "kind": "markup",
           "raw": "Unread only",
           "quote": null
@@ -39798,7 +39902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 151,
+          "line": 155,
           "kind": "markup",
           "raw": "No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.",
           "quote": null
@@ -39816,7 +39920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 167,
+          "line": 171,
           "kind": "attr:aria-label",
           "raw": "Dismiss notification",
           "quote": "\""
@@ -40920,7 +41024,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 52,
+          "line": 68,
           "kind": "markup",
           "raw": "Become a member to access the member list.",
           "quote": null
@@ -40938,7 +41042,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 57,
+          "line": 73,
           "kind": "markup",
           "raw": "Loading members...",
           "quote": null
@@ -40956,7 +41060,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 60,
+          "line": 76,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -40988,7 +41092,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 61,
+          "line": 77,
           "kind": "markup",
           "raw": "Share your patch's invite link to grow your community.",
           "quote": null
@@ -41006,7 +41110,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 70,
+          "line": 86,
           "kind": "markup",
           "raw": "Contact cards here are shared only with this patch's admins and members.",
           "quote": null
@@ -41024,7 +41128,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 72,
+          "line": 88,
           "kind": "markup",
           "raw": "Share yours with this patch in",
           "quote": null
