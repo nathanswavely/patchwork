@@ -358,6 +358,17 @@ The seamrip mechanism is a governance safety valve: if a community's leadership 
 
 **Governance repos don't travel, so they get rebuilt** (docs/adr/084). Rows without repos — a seamrip import, or a restore from the SQLite file alone — read fine and can never be *written*, because every governance write starts at `openBare`. `governance.Repair` reconciles the derived repos with the canonical `governance_docs` rows: create-missing on every boot (strictly create-missing, never a write into a repo that exists), and `patchwork -repair-governance` for the whole reconciliation with a per-patch summary, server stopped. It is a flag on the server binary rather than a `cmd/repair` because the distroless image ships only `/patchwork`. Synthetic commits are authored `Patchwork repair` and labelled in the charter history view — a rebuilt history must never pass for a real one.
 
+## Cutting a release
+
+A `v*` tag publishes an image only if `release-notes/vX.Y.Z.md` is already on
+main (docs/adr/085). Front matter carries `breaking`, `irreversible_migrations`
+and a one-line `summary`; the body becomes the GitHub release notes and CI
+attaches a `release.json` an unattended updater gates on. Write the file, run
+`make release-notes-check TAG=vX.Y.Z`, *then* push the tag — the CI gate is on
+the `image` job, so forgetting means no image at all, and the repair is a
+commit plus moving the tag. Only a person can say a release is breaking; when
+it is arguable, say `true`.
+
 ## Key Principles
 
 - Single-process. No Redis, no queues, no workers.

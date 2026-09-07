@@ -177,9 +177,7 @@
       <div class="state-block">
         <h1>Choose your username</h1>
         <p class="muted" style="margin-bottom: 1.5rem;">
-          You're signing up as <strong>{email}</strong>. Pick the name
-          you'll go by here. It becomes your profile address, so it
-          can't change later.
+          You're signing up as <strong>{email}</strong>. Pick the name for this quilt. Choose wisely, it can't be changed.
         </p>
 
         <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>

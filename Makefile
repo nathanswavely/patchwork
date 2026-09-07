@@ -1,4 +1,5 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate gazetteer \
+        release-notes-check \
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
         copy-test copy-report
 
@@ -53,6 +54,15 @@ test-e2e:
 # (i.e. an image update). Needs docker + curl. See docs/DEPLOYMENT.md.
 smoke-recreate:
 	bash scripts/smoke-recreate.sh
+
+# Validate release-notes/ before cutting a tag (docs/adr/085). Bare, it checks
+# every file parses; with TAG= it also insists that release exists, which is
+# exactly the check CI runs on a `v*` tag — run it before you push the tag,
+# because a tag with no notes publishes no image.
+#   make release-notes-check
+#   make release-notes-check TAG=v0.9.0
+release-notes-check:
+	go run ./cmd/releasenotes $(if $(TAG),-tag $(TAG),)
 
 # --- Copy ledger -----------------------------------------------------------
 # Who wrote the words a visitor reads. See tools/copy-ledger/README.md.

@@ -5,6 +5,7 @@
   import { loadMemberships } from '../stores/memberships.svelte.js';
   import { getUser } from '../stores/auth.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import JoinSheet from '../components/JoinSheet.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
 
   let patches = $state([]);
@@ -33,30 +34,85 @@
   let user = $derived(getUser());
   let cardEmpty = $derived(!(user?.contact_card?.phone || user?.contact_card?.email || user?.contact_card?.note));
 
-  let adminPatches = $derived(patches.filter(m => m.role === 'admin'));
-  let memberPatches = $derived(patches.filter(m => m.role === 'member'));
-  let followerPatches = $derived(patches.filter(m => m.role === 'follower'));
+  // me/nodes serves 'active' and 'pending', and a pending request is not a
+  // membership: sorting by role alone filed a request you had not been
+  // answered on under "Member of" and badged it 'member'.
+  let adminPatches = $derived(patches.filter(m => m.role === 'admin' && m.status === 'active'));
+  let memberPatches = $derived(patches.filter(m => m.role === 'member' && m.status === 'active'));
+  let pendingPatches = $derived(patches.filter(m => m.status === 'pending'));
+  let followerPatches = $derived(patches.filter(m => m.role === 'follower' && m.status === 'active'));
 
+  /**
+   * The member rung renders only where it can succeed (docs/adr/042), the
+   * same rule the relationship row runs: an unclaimed patch takes followers
+   * only and invite_only refuses the request outright (memberships.go), so
+   * this list wore a blue button that answered every click with a 403. The
+   * reason is worn as state on the row instead — a door that cannot open is
+   * worse than no door, and its error message is addressed to a reader who
+   * should never have been offered the click.
+   */
+  function rungFor(m) {
+    if (m.node_status === 'unclaimed' || m.membership_policy === 'invite_only') return null;
+    return m.membership_policy === 'approval_required' ? 'Send request' : 'Become a member';
+  }
 
-  async function handleLeave(slug) {
+  const STATE_NOTE = {
+    unclaimed: {
+      label: 'unclaimed',
+      title: 'No one runs this patch yet. User can follow, but not join.',
+    },
+    invite_only: {
+      label: 'invite only',
+      title: 'This patch adds members by invitation. An admin has to invite you.',
+    },
+  };
+
+  function stateNote(m) {
+    if (m.node_status === 'unclaimed') return STATE_NOTE.unclaimed;
+    if (m.membership_policy === 'invite_only') return STATE_NOTE.invite_only;
+    return null;
+  }
+
+  async function handleLeave(m) {
     try {
-      await api(`nodes/${slug}/leave`, { method: 'POST' });
+      await api(`nodes/${m.node_slug}/leave`, { method: 'POST' });
       await loadMemberships();
       await loadPatches();
-      showToast('Left patch', 'info');
+      // One wording per event, matching the relationship row: unfollowing
+      // is not leaving, and withdrawing a request is neither.
+      const said = m.status === 'pending'
+        ? 'Request withdrawn'
+        : m.role === 'follower' ? 'Unfollowed patch' : 'Left patch';
+      showToast(said, 'info');
     } catch (e) {
       showToast(e.message || 'Failed to leave', 'error');
     }
   }
 
-  async function handleBecomeMember(slug) {
+  // The join ceremony is the join sheet (docs/adr/040), here as on the patch
+  // page — an approval-required patch gets its intro message either way,
+  // rather than a silent request from whichever surface you happened to
+  // start from.
+  let joinTarget = $state(null);
+  let joining = $state(false);
+
+  async function handleJoin(message) {
+    const target = joinTarget;
+    if (!target) return;
+    joining = true;
     try {
-      await api(`nodes/${slug}/join`, { method: 'POST' });
+      const result = await api(`nodes/${target.node_slug}/join`, {
+        method: 'POST',
+        body: message ? { message } : undefined,
+      });
       await loadMemberships();
       await loadPatches();
-      showToast('Joined as member', 'success');
+      showToast(result.status === 'pending' ? 'Membership request sent' : 'You are now a member', 'success');
     } catch (e) {
-      showToast(e.message || 'Failed to join', 'error');
+      showToast(e.message || 'Could not join', 'error');
+    } finally {
+      joining = false;
+      joinTarget = null;
     }
   }
 
@@ -171,7 +227,27 @@
             <div class="patch-actions">
               {@render visibilityToggle(m)}
               {@render contactToggle(m)}
-              <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m.node_slug)} />
+              <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m)} />
+            </div>
+          </div>
+        {/each}
+      </section>
+    {/if}
+
+    {#if pendingPatches.length > 0}
+      <section class="patch-section">
+        <h3 class="section-heading">Requested</h3>
+        {#each pendingPatches as m (m.node_slug)}
+          <div class="patch-row">
+            <div class="patch-info">
+              <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
+                {m.node_name || m.node_slug}
+              </a>
+              <span class="badge" title="This patch's admins have not answered your request yet.">awaiting approval</span>
+              <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+            </div>
+            <div class="patch-actions">
+              <ConfirmAction label="Withdraw" variant="default" onConfirm={() => handleLeave(m)} />
             </div>
           </div>
         {/each}
@@ -182,17 +258,24 @@
       <section class="patch-section">
         <h3 class="section-heading">Following</h3>
         {#each followerPatches as m (m.node_slug)}
+          {@const rung = rungFor(m)}
+          {@const note = stateNote(m)}
           <div class="patch-row">
             <div class="patch-info">
               <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                 {m.node_name || m.node_slug}
               </a>
               <span class="badge">following</span>
+              {#if note}
+                <span class="badge state-badge" title={note.title}>{note.label}</span>
+              {/if}
               <span class="muted joined-date">{formatDate(m.joined_at)}</span>
             </div>
             <div class="patch-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => handleBecomeMember(m.node_slug)}>Become a member</button>
-              <ConfirmAction label="Unfollow" variant="default" onConfirm={() => handleLeave(m.node_slug)} />
+              {#if rung}
+                <button class="btn btn-primary btn-sm" onclick={() => { joinTarget = m; }} disabled={joining}>{rung}</button>
+              {/if}
+              <ConfirmAction label="Unfollow" variant="default" onConfirm={() => handleLeave(m)} />
             </div>
           </div>
         {/each}
@@ -200,6 +283,16 @@
     {/if}
   {/if}
 </div>
+
+<JoinSheet
+  open={!!joinTarget}
+  onClose={() => { joinTarget = null; }}
+  onConfirm={handleJoin}
+  slug={joinTarget?.node_slug || ''}
+  patchName={joinTarget?.node_name || joinTarget?.node_slug || ''}
+  membershipPolicy={joinTarget?.membership_policy || 'open'}
+  submitting={joining}
+/>
 
 <style>
   .settings-patches {
@@ -281,6 +374,15 @@
   .vis-toggle.contact-shared {
     color: var(--color-primary);
     border-color: currentColor;
+  }
+
+  /* State is not a role: the reason a rung is absent is worn quietly next
+     to the badge that says where you stand, never dressed as one. */
+  .state-badge {
+    background: transparent;
+    border: 1px dashed var(--color-border);
+    color: var(--color-text-muted);
+    font-weight: 500;
   }
 
   .contact-hint {

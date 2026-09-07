@@ -521,8 +521,7 @@
       <span class="links-label">Visibility</span>
     </div>
     <p class="muted tags-hint">
-      This is about the patch itself — where it shows up. Events, members, and
-      documents each carry their own visibility.
+      Patch specific configuration. Events, members, and documents carry their own visibility.
     </p>
     <div class="choice-list">
       {#each visibilityOptions as opt}

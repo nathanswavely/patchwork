@@ -1,9 +1,8 @@
 {$DOMAIN:localhost} {
-	reverse_proxy patchwork:8080 {
-		# Overwrite rather than append. Caddy's default is to append the peer
-		# address to any client-supplied X-Forwarded-For, which would let a
-		# client inject arbitrary text into the header the app reads for
-		# rate-limit keys, session rows, and the audit log.
-		header_up X-Forwarded-For {remote_host}
-	}
+	# Caddy's reverse_proxy ignores client-supplied X-Forwarded-For by
+	# default and sets it from the connecting address itself; only
+	# `trusted_proxies` opts into believing an incoming value. If another
+	# proxy sits in front of Caddy, `server.trusted_proxies` in
+	# patchwork.yaml is the setting that matters.
+	reverse_proxy patchwork:8080
 }

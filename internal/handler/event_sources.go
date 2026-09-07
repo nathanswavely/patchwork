@@ -258,7 +258,7 @@ func SyncEventSource(db *database.DB) http.HandlerFunc {
 		}
 		if lastFetch != nil {
 			if t, err := time.Parse("2006-01-02T15:04:05.000Z", *lastFetch); err == nil && time.Since(t) < time.Minute {
-				http.Error(w, `{"error":"this source just synced — try again in a minute"}`, http.StatusTooManyRequests)
+				http.Error(w, `{"error":"this source just synced, try again in a minute"}`, http.StatusTooManyRequests)
 				return
 			}
 		}
