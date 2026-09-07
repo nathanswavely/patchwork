@@ -151,6 +151,19 @@ func main() {
 		log.Fatalf("governance init: %v", err)
 	}
 
+	// Move migration 062's contact cards into the item shape docs/adr/083
+	// gives them. Safe to clear the legacy columns as it reads them only
+	// because no handler reads them any more: the Me endpoints, the Members
+	// room and the profile all serve contact_items. Fatal rather than
+	// warn-and-continue — a half-converted card is a phone number in two
+	// places with two different audiences, and the conversion is one
+	// transaction, so failing here leaves the old shape intact.
+	if n, err := handler.BackfillContactItems(db); err != nil {
+		log.Fatalf("contact items backfill: %v", err)
+	} else if n > 0 {
+		log.Printf("contact: converted %d card fields into items", n)
+	}
+
 	// Create the repos that are absent, from the canonical DB rows — a patch
 	// whose repo creation failed at runtime, and every patch on an instance
 	// restored from a database backup alone, which carries no repos at all

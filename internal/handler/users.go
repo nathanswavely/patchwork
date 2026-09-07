@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -117,30 +116,30 @@ func GetUserProfile(db *database.DB) http.HandlerFunc {
 // UpdateMyMembership handles PATCH /api/v1/users/me/memberships/{nodeId}
 // — the two switches a member owns on their own membership, never patch
 // admins: `visible`, the one membership-visibility switch (docs/adr/006),
-// and `share_contact`, contact sharing (docs/adr/080). Either or both.
+// (docs/adr/006). Contact sharing moved off this endpoint with
+// docs/adr/083: it is per item and per patch now, at
+// PUT /api/v1/nodes/{slug}/contact-shares.
 func UpdateMyMembership(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
 		nodeID := r.PathValue("nodeId")
 
 		var req struct {
-			Visible      *bool `json:"visible"`
-			ShareContact *bool `json:"share_contact"`
+			Visible *bool `json:"visible"`
 		}
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || (req.Visible == nil && req.ShareContact == nil) {
-			http.Error(w, `{"error":"body must include visible: true|false or share_contact: true|false"}`, http.StatusBadRequest)
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Visible == nil {
+			http.Error(w, `{"error":"body must include visible: true|false"}`, http.StatusBadRequest)
 			return
 		}
 
 		var (
-			memID, role  string
-			visible      bool
-			shareContact bool
+			memID, role string
+			visible     bool
 		)
 		if err := db.QueryRow(
-			"SELECT id, role, visible, share_contact FROM memberships WHERE user_id = ? AND node_id = ?",
+			"SELECT id, role, visible FROM memberships WHERE user_id = ? AND node_id = ?",
 			user.ID, nodeID,
-		).Scan(&memID, &role, &visible, &shareContact); err != nil {
+		).Scan(&memID, &role, &visible); err != nil {
 			http.Error(w, `{"error":"membership not found"}`, http.StatusNotFound)
 			return
 		}
@@ -154,28 +153,10 @@ func UpdateMyMembership(db *database.DB) http.HandlerFunc {
 			auth.LogAuditEvent(db, user.ID, "membership.visibility", "membership", memID, "{}", clientIP(r))
 		}
 
-		if req.ShareContact != nil {
-			// A follower is not in the room: the Members room shows contact
-			// cards to admins and members, and a follower's card would be
-			// shown to people the follower never chose (docs/adr/080).
-			if *req.ShareContact && role == "follower" {
-				http.Error(w, `{"error":"become a member to share your contact card with this patch"}`, http.StatusBadRequest)
-				return
-			}
-			shareContact = *req.ShareContact
-			if _, err := db.Exec("UPDATE memberships SET share_contact = ? WHERE id = ?", shareContact, memID); err != nil {
-				http.Error(w, `{"error":"failed to update contact sharing"}`, http.StatusInternalServerError)
-				return
-			}
-			auth.LogAuditEvent(db, user.ID, "membership.share_contact", "membership", memID,
-				fmt.Sprintf(`{"share_contact":%t}`, shareContact), clientIP(r))
-		}
-
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"node_id":       nodeID,
-			"visible":       visible,
-			"share_contact": shareContact,
+			"node_id": nodeID,
+			"visible": visible,
 		})
 	}
 }

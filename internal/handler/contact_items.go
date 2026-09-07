@@ -452,3 +452,48 @@ func sharedContactItemsFor(db *database.DB, ownerID, viewerID string) []model.Co
 	}
 	return items
 }
+
+// sharedContactItemsForNode returns, for each of the given people, the items
+// they share into this one patch — the Members room's half of the predicate
+// docs/adr/083 decision 3 states once.
+//
+// Batched over the loaded page rather than asked per row: a Members room is a
+// list, and a query per member would make the room's cost grow with the
+// people in it.
+//
+// The owner's own membership is re-checked here for the same reason
+// sharedContactItemsFor checks it — a share row that somehow outlived its
+// membership must grant nothing. The *viewer's* standing is not checked here:
+// the caller has already established it (`inRoom`), and duplicating that gate
+// in two places is how the two drift apart.
+func sharedContactItemsForNode(db *database.DB, nodeID string, userIDs []string) map[string][]model.ContactItem {
+	out := map[string][]model.ContactItem{}
+	if nodeID == "" || len(userIDs) == 0 {
+		return out
+	}
+	placeholders := strings.TrimSuffix(strings.Repeat("?,", len(userIDs)), ",")
+	args := []interface{}{nodeID, nodeID}
+	for _, id := range userIDs {
+		args = append(args, id)
+	}
+	rows, err := db.Query(`SELECT ci.user_id, ci.id, ci.kind, ci.value, ci.label, ci.position
+		FROM contact_items ci
+		JOIN contact_item_shares s ON s.item_id = ci.id AND s.node_id = ?
+		JOIN memberships om ON om.user_id = ci.user_id AND om.node_id = ?
+			AND om.status = 'active' AND om.role IN ('member','admin')
+		WHERE ci.user_id IN (`+placeholders+`)
+		ORDER BY ci.position ASC, ci.id ASC`, args...)
+	if err != nil {
+		return out
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var owner string
+		var it model.ContactItem
+		if err := rows.Scan(&owner, &it.ID, &it.Kind, &it.Value, &it.Label, &it.Position); err != nil {
+			continue
+		}
+		out[owner] = append(out[owner], it)
+	}
+	return out
+}

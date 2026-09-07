@@ -21,11 +21,10 @@ import (
 // and SQLite cannot mint one, matching ap.BackfillAPIDs and
 // BackfillNodeGovernanceRepos.
 //
-// NOT YET CALLED FROM main.go, deliberately. Because it clears the legacy
-// columns as it reads them, calling it while the handlers still serve cards
-// from users.contact_* would empty every card on the next boot. It is wired
-// into startup in the same change that moves the read path onto items — that
-// ordering is the whole reason it is safe to clear as we go.
+// Called from main.go at startup, and only safe there because no handler
+// reads users.contact_* any more. While they did, clearing as we read would
+// have emptied every card on the next boot; that ordering is the whole
+// reason clearing as we go is safe.
 //
 // The legacy columns are cleared in the same transaction that reads them, so
 // the data lives in exactly one place at every instant. That is what makes

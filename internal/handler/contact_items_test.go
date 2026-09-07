@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
@@ -216,5 +217,138 @@ func TestDeleteAccountErasesTheContactCard(t *testing.T) {
 	}
 	if !deletedAt.Valid {
 		t.Error("deleted_at not set")
+	}
+}
+
+// TestContactItemsInTheMembersRoom is the Members-room half of the predicate,
+// and carries forward the viewer matrix docs/adr/080's test established —
+// including the case that is the whole point of the gate being narrower than
+// `insider`: an instance admin holding no role in the patch.
+func TestContactItemsInTheMembersRoom(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "mrowner", "member")
+	sharer, sharerToken := createTestUser(t, db, "mrsharer", "member")
+	fellow, fellowToken := createTestUser(t, db, "mrfellow", "member")
+	follower, followerToken := createTestUser(t, db, "mrfollower", "member")
+	elsewhere, elsewhereToken := createTestUser(t, db, "mrelsewhere", "member")
+	_, siteAdminToken := createTestUser(t, db, "mrsiteadmin", "admin")
+
+	shared := createTestNode(t, db, owner.ID, "Shared Room", "mr-shared", "open")
+	other := createTestNode(t, db, owner.ID, "Other Room", "mr-other", "open")
+	createTestMembership(t, db, owner.ID, shared, "admin", "active")
+	createTestMembership(t, db, owner.ID, other, "admin", "active")
+	createTestMembership(t, db, sharer.ID, shared, "member", "active")
+	createTestMembership(t, db, sharer.ID, other, "member", "active")
+	createTestMembership(t, db, fellow.ID, shared, "member", "active")
+	createTestMembership(t, db, follower.ID, shared, "follower", "active")
+	createTestMembership(t, db, elsewhere.ID, other, "member", "active")
+
+	r := authedRequest("POST", "/api/v1/users/me/contact-items",
+		map[string]string{"kind": "phone", "value": "+1 717 555 0100", "label": "Signal preferred"}, sharerToken)
+	w := serveMux(t, db, "POST", "/api/v1/users/me/contact-items", handler.CreateMyContactItem(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("create item: %d %s", w.Code, w.Body.String())
+	}
+	itemID, _ := decodeJSON(t, w)["id"].(string)
+
+	// Shared with one patch of the two the sharer belongs to.
+	sr := authedRequest("PUT", "/api/v1/nodes/mr-shared/contact-shares",
+		map[string][]string{"item_ids": {itemID}}, sharerToken)
+	if sw := serveMux(t, db, "PUT", "/api/v1/nodes/{slug}/contact-shares",
+		handler.PutMyContactSharesForNode(db), sr); sw.Code != http.StatusOK {
+		t.Fatalf("share: %d %s", sw.Code, sw.Body.String())
+	}
+
+	contactOf := func(t *testing.T, slug, token string) []interface{} {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/nodes/"+slug+"/members", nil, token)
+		w := serveOptionalMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("list members %s: %d %s", slug, w.Code, w.Body.String())
+		}
+		items, _ := decodeJSON(t, w)["items"].([]interface{})
+		for _, it := range items {
+			m := it.(map[string]interface{})
+			if m["username"] == "mrsharer" {
+				got, _ := m["contact"].([]interface{})
+				return got
+			}
+		}
+		t.Fatalf("sharer missing from %s listing", slug)
+		return nil
+	}
+
+	for _, c := range []struct {
+		name  string
+		slug  string
+		token string
+		want  bool
+	}{
+		{"anonymous never", "mr-shared", "", false},
+		{"follower is not in the room", "mr-shared", followerToken, false},
+		{"instance admin with no role here", "mr-shared", siteAdminToken, false},
+		{"fellow member of the shared patch", "mr-shared", fellowToken, true},
+		{"the sharer sees their own item", "mr-shared", sharerToken, true},
+		{"fellow member of the other patch", "mr-other", elsewhereToken, false},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			got := contactOf(t, c.slug, c.token)
+			if (len(got) > 0) != c.want {
+				t.Fatalf("want contact present=%v, got %v", c.want, got)
+			}
+			if c.want {
+				item := got[0].(map[string]interface{})
+				if item["value"] != "+1 717 555 0100" || item["kind"] != "phone" || item["label"] != "Signal preferred" {
+					t.Errorf("wrong item: %v", item)
+				}
+			}
+		})
+	}
+}
+
+// TestContactItemValidation replaces docs/adr/080's whole-card validation.
+// The rule that matters is the last one: a value is checked against the kind
+// in force *after* the patch, so retyping a note as an email has to meet the
+// email rule rather than the one it arrived under.
+func TestContactItemValidation(t *testing.T) {
+	db := setupTestDB(t)
+	_, token := createTestUser(t, db, "civalid", "member")
+
+	for _, c := range []struct {
+		name string
+		body map[string]string
+	}{
+		{"unknown kind", map[string]string{"kind": "carrier-pigeon", "value": "x"}},
+		{"empty value", map[string]string{"kind": "phone", "value": "   "}},
+		{"phone too long", map[string]string{"kind": "phone", "value": strings.Repeat("1", 61)}},
+		{"email without @", map[string]string{"kind": "email", "value": "not-an-address"}},
+		{"email with a space", map[string]string{"kind": "email", "value": "two words@example.com"}},
+		{"note too long", map[string]string{"kind": "note", "value": strings.Repeat("n", 201)}},
+		{"handle too long", map[string]string{"kind": "handle", "value": strings.Repeat("h", 101)}},
+		{"label too long", map[string]string{"kind": "phone", "value": "+1 717 555 0100", "label": strings.Repeat("l", 41)}},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			r := authedRequest("POST", "/api/v1/users/me/contact-items", c.body, token)
+			w := serveMux(t, db, "POST", "/api/v1/users/me/contact-items", handler.CreateMyContactItem(db), r)
+			if w.Code != http.StatusBadRequest {
+				t.Errorf("expected 400, got %d: %s", w.Code, w.Body.String())
+			}
+		})
+	}
+
+	// A valid note, then retyped as an email: the new kind's rule applies.
+	r := authedRequest("POST", "/api/v1/users/me/contact-items",
+		map[string]string{"kind": "note", "value": "ask at the bar"}, token)
+	w := serveMux(t, db, "POST", "/api/v1/users/me/contact-items", handler.CreateMyContactItem(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("create note: %d %s", w.Code, w.Body.String())
+	}
+	id, _ := decodeJSON(t, w)["id"].(string)
+
+	pr := authedRequest("PATCH", "/api/v1/users/me/contact-items/"+id,
+		map[string]string{"kind": "email"}, token)
+	pw := serveMux(t, db, "PATCH", "/api/v1/users/me/contact-items/{id}", handler.UpdateMyContactItem(db), pr)
+	if pw.Code != http.StatusBadRequest {
+		t.Errorf("retyping a note as an email must meet the email rule: got %d %s", pw.Code, pw.Body.String())
 	}
 }

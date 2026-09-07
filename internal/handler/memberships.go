@@ -448,12 +448,12 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		// the active/public listing (docs/adr/040).
 		includeMessage := statusFilter == "pending"
 
-		// Contact cards are shown to the people in the room: the patch's own
-		// active admins and members, and nobody else (docs/adr/080). That is
+		// Contact items are shown to the people in the room: the patch's own
+		// active admins and members, and nobody else (docs/adr/083). That is
 		// narrower than `insider` — an instance admin with no role here
 		// curates the quilt but was not who the person chose to be reachable
-		// by. Only member/admin rows that switched sharing on carry a card,
-		// and only on the active listing.
+		// by. Only items shared into *this* patch appear, and only on the
+		// active listing.
 		inRoom := false
 		// Two facts about the room that no page of it can answer, both about
 		// the offer to share a card. Whether the viewer already shares one is
@@ -493,11 +493,6 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		if includeMessage {
 			cols += ", m.join_message"
 		}
-		if inRoom {
-			cols += `, CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_phone ELSE '' END,
-				CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_email ELSE '' END,
-				CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_note ELSE '' END`
-		}
 		query := `SELECT ` + cols + `
 			FROM memberships m JOIN users u ON m.user_id = u.id
 			WHERE m.node_id = ? AND m.status = ?`
@@ -533,10 +528,10 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			// JoinMessage is the join sheet's intro note. Present only on the
 			// admin-only pending listing (docs/adr/040).
 			JoinMessage string `json:"join_message,omitempty"`
-			// Contact is the member's contact card. Present only for a viewer
-			// who is an active admin or member of this patch, and only for
-			// members who switched sharing on for it (docs/adr/080).
-			Contact *model.ContactCard `json:"contact,omitempty"`
+			// Contact is the items this member shares into this patch, for a
+			// viewer who is an active admin or member of it (docs/adr/083).
+			// Attached after the page loads, in one batched query.
+			Contact []model.ContactItem `json:"contact,omitempty"`
 		}
 		var members []memberResponse
 		for rows.Next() {
@@ -546,18 +541,11 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			if includeMessage {
 				dest = append(dest, &jm)
 			}
-			var card model.ContactCard
-			if inRoom {
-				dest = append(dest, &card.Phone, &card.Email, &card.Note)
-			}
 			if err := rows.Scan(dest...); err != nil {
 				continue
 			}
 			if jm.Valid {
 				m.JoinMessage = jm.String
-			}
-			if inRoom && !card.Empty() {
-				m.Contact = &card
 			}
 			members = append(members, m)
 		}
@@ -569,6 +557,22 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		}
 		if members == nil {
 			members = []memberResponse{}
+		}
+
+		// Contact items ride along for a viewer in the room (docs/adr/083),
+		// attached after the page is trimmed so the lookahead row nobody sees
+		// is never asked about.
+		if inRoom && len(members) > 0 {
+			ids := make([]string, 0, len(members))
+			for _, m := range members {
+				ids = append(ids, m.UserID)
+			}
+			byUser := sharedContactItemsForNode(db, nodeID, ids)
+			for i := range members {
+				if items := byUser[members[i].UserID]; len(items) > 0 {
+					members[i].Contact = items
+				}
+			}
 		}
 
 		// Totals for the header, counted under exactly the filter the listing
