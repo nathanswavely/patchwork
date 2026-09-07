@@ -74,6 +74,7 @@
   import Lining from './pages/Lining.svelte';
   import Governance from './pages/Governance.svelte';
   import AdminLegal from './pages/AdminLegal.svelte';
+  import AdminAttestation from './pages/AdminAttestation.svelte';
   import LegalDoc from './pages/LegalDoc.svelte';
   import SubmitPatch from './pages/SubmitPatch.svelte';
   import ClaimPatch from './pages/ClaimPatch.svelte';
@@ -224,6 +225,7 @@
   addRoute('/admin/aggregators', 'adminAggregators');
   addRoute('/admin/label', 'adminLabel');
   addRoute('/admin/legal', 'adminLegal');
+  addRoute('/admin/attestation', 'adminAttestation');
 
   // --- Derived state ---
   let path = $derived(getPath());
@@ -252,7 +254,7 @@
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 
   const settingsRoutes = new Set(['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'quilts']);
-  const adminRoutes = new Set(['adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal']);
+  const adminRoutes = new Set(['adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminAttestation']);
   let isSettingsRoute = $derived(settingsRoutes.has(routeName));
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
@@ -286,7 +288,7 @@
     ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchSetup', 'patchNew', 'eventNew', 'eventEdit',
      'governanceProposalNew', 'governanceDocNew',
      'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
-     'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal'].includes(routeName)
+     'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminAttestation'].includes(routeName)
   );
 
   // The gate is a detour, not a destination, so it carries where the person
@@ -516,6 +518,8 @@
           <AdminNeighborQuilts />
         {:else if routeName === 'adminAggregators'}
           <AdminAggregators />
+        {:else if routeName === 'adminAttestation'}
+          <AdminAttestation />
         {/if}
       {/snippet}
     </AdminShell>

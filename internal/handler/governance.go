@@ -627,18 +627,12 @@ func GetGovernanceRules(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// governanceFilename converts a governance doc title to a kebab-case .md filename.
+// governanceFilename converts a governance doc title to a kebab-case .md
+// filename. The mapping itself lives in internal/governance, which needs it
+// to rebuild a repo from the canonical rows (docs/adr/084); a second copy of
+// it here would be a second answer to "which git file is this row's history".
 func governanceFilename(title string) string {
-	name := strings.ToLower(title)
-	name = strings.ReplaceAll(name, " ", "-")
-	// Remove non-alphanumeric except hyphens
-	var clean []byte
-	for _, c := range []byte(name) {
-		if (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' {
-			clean = append(clean, c)
-		}
-	}
-	return string(clean) + ".md"
+	return governance.Filename(title)
 }
 
 // syncLiningToDB mirrors a merged amendment's file back into the

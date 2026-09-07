@@ -115,6 +115,12 @@ export function adminFinderProvider() {
       sublabel: 'the tag vocabulary and per-tag motifs',
       href: '/admin/tags',
     });
+    items.push({
+      type: 'Settings',
+      label: 'Prove admin',
+      sublabel: 'sign an outside party’s nonce as this quilt',
+      href: '/admin/attestation',
+    });
     return items;
   };
 }
