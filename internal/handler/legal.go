@@ -121,7 +121,7 @@ func AdminUpdateLegal(db *database.DB) http.HandlerFunc {
 		if md == "" {
 			// An empty legal document is a hole, not a choice — resetting
 			// to the shipped default is the explicit DELETE route.
-			http.Error(w, `{"error":"document cannot be empty — use reset to restore the default"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"document cannot be empty, use reset to restore the default"}`, http.StatusBadRequest)
 			return
 		}
 		if len(md) > legalMaxBytes {

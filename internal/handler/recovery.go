@@ -69,7 +69,7 @@ func RedeemRecoveryCode(db *database.DB) http.HandlerFunc {
 
 		if err := middleware.CheckRecoveryRedeemRate(req.Username, ip); err != nil {
 			w.Header().Set("Retry-After", "120")
-			http.Error(w, `{"error":"too many attempts — wait a couple of minutes"}`, http.StatusTooManyRequests)
+			http.Error(w, `{"error":"too many attempts. Wait a couple of minutes"}`, http.StatusTooManyRequests)
 			return
 		}
 

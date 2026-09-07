@@ -465,10 +465,7 @@
         <div class="field">
           <label>The lining</label>
           <p class="field-hint muted">
-            Every patch starts with the lining — this quilt's shared community
-            standards. It is always public, and if your patch amends it, the
-            changes are public and the patch is marked as having amended the
-            lining.
+            Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.
           </p>
           <button type="button" class="lining-toggle" onclick={toggleLining}>
             {liningOpen ? 'Hide the lining' : 'Read the lining'}
