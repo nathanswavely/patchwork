@@ -385,6 +385,11 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Leaving drops what this patch could reach you by (docs/adr/083).
+		// Only here, not in WithdrawFromNode: sharing needs an active
+		// member/admin row, so a pending request never had any to drop.
+		DropContactSharesFor(db, user.ID, nodeID)
+
 		auth.LogAuditEvent(db, user.ID, "membership.leave", "membership", nodeID, "{}", clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
@@ -788,6 +793,10 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					http.Error(w, `{"error":"failed to ban member"}`, http.StatusInternalServerError)
 					return
 				}
+				// A banned person is out of the room, so the room stops
+				// being able to reach them (docs/adr/083).
+				DropContactSharesFor(db, targetUserID, nodeID)
+
 				auth.LogAuditEvent(db, user.ID, "membership.ban", "membership", memID,
 					fmt.Sprintf(`{"target_user_id":"%s"}`, targetUserID), clientIP(r))
 
@@ -895,6 +904,13 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			// preserves the field without offering a control. Migration 041
 			// had backfilled "max_admins": 3 into nearly every patch, so
 			// enforcing it capped live patches with no way out.
+
+			// A follower has no room to share into, so a demotion drops
+			// this patch's shares (docs/adr/083). Promotion never adds any:
+			// there is no standing rule for it to satisfy.
+			if newRole == "follower" && currentRole != "follower" {
+				DropContactSharesFor(db, targetUserID, nodeID)
+			}
 
 			_, err = db.Exec("UPDATE memberships SET role = ? WHERE id = ?", newRole, memID)
 			if err != nil {

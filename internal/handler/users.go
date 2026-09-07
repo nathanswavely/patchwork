@@ -21,17 +21,31 @@ type profileMembership struct {
 }
 
 // GetUserProfile handles GET /api/v1/users/{username} — the public profile.
-// Everyone (including anonymous visitors) gets the same view: identity
-// fields plus visible member/admin memberships in public patches. Follower
-// relationships and hidden memberships never appear here, for any viewer
-// (docs/adr/006).
+// Identity fields plus visible member/admin memberships in public patches.
+// Follower relationships and hidden memberships never appear here, for any
+// viewer (docs/adr/006).
 //
 // A deleted account is a 404 here even though its row is still present
 // (docs/adr/086). The tombstone exists to keep the community's record whole,
 // not to keep serving a page about somebody who left.
+//
+// One part does depend on who is looking: the shared contact items
+// (docs/adr/083). A visitor sees exactly the items this person shares into a
+// patch the visitor is also an active member or admin of — which is what they
+// could already have read by walking into that room, so the profile is a
+// window onto that audience and never a wider one. The page never says which
+// patch an item came through: the granting membership may be private or
+// hidden, and citing it would disclose what docs/adr/006 keeps off this page.
+//
+// Because the response now varies by caller it carries Vary: Cookie. Under
+// multi-quilt CORS the public GET answers Access-Control-Allow-Origin: *, so
+// a browser sends no credentials cross-origin and a remote quilt receives the
+// anonymous view — a shared item never appears in a merged view even for
+// someone in the room, which docs/adr/083 records as intended.
 func GetUserProfile(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		username := r.PathValue("username")
+		viewer := middleware.UserFromContext(r.Context())
 
 		var (
 			u         model.User
@@ -74,6 +88,13 @@ func GetUserProfile(db *database.DB) http.HandlerFunc {
 			memberships = append(memberships, m)
 		}
 
+		contact := []model.ContactItem{}
+		if viewer != nil {
+			contact = sharedContactItemsFor(db, u.ID, viewer.ID)
+		}
+
+		// The body differs by caller, so no shared cache may reuse it.
+		w.Header().Set("Vary", "Cookie")
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"id":           u.ID,
@@ -88,6 +109,7 @@ func GetUserProfile(db *database.DB) http.HandlerFunc {
 			"moved_to":    u.MovedTo,
 			"created_at":  u.CreatedAt,
 			"memberships": memberships,
+			"contact":     contact,
 		})
 	}
 }

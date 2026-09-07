@@ -289,11 +289,17 @@ func TestContactCardIsSharedPatchByPatch(t *testing.T) {
 		})
 	}
 
-	// The public profile never carries it, whoever asks.
+	// An anonymous visitor's profile carries nothing reachable. The `contact`
+	// key exists on every profile from docs/adr/083 onwards, so the assertion
+	// is on its contents: empty for a caller who shares no room, and never a
+	// value under any circumstances.
 	pr := authedRequest("GET", "/api/v1/users/ccsharer", nil, "")
 	pw := servePublicMux(t, "GET", "/api/v1/users/{username}", handler.GetUserProfile(db), pr)
-	if body := pw.Body.String(); strings.Contains(body, "555 0100") || strings.Contains(body, "contact") {
+	if body := pw.Body.String(); strings.Contains(body, "555 0100") || strings.Contains(body, "reach@example.com") {
 		t.Errorf("profile leaks the contact card: %s", body)
+	}
+	if got, _ := decodeJSON(t, pw)["contact"].([]interface{}); len(got) != 0 {
+		t.Errorf("anonymous profile carries contact items: %v", got)
 	}
 
 	// A follower cannot share: there is no room for a follower to be in.
