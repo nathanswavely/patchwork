@@ -2,10 +2,8 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { getUser } from '../stores/auth.svelte.js';
 
   const patch = getContext('patch');
-  let me = $derived(getUser());
   let slug = $derived(patch.value.slug);
   let isMember = $derived(patch.value.isMember);
   let isAdmin = $derived(patch.value.isAdmin);
@@ -25,11 +23,15 @@
   let followerCount = $state(0);
 
   // Contact cards (docs/adr/080) ride along only for a viewer who is in
-  // the room. A member whose own row carries none is offered the switch.
+  // the room. A member whose own row carries none is offered the switch —
+  // and that is a fact about the room, not about the loaded page. Both of
+  // these used to be read off `members`, which meant a member sitting on
+  // page 4 was never offered the switch, because their own row had not
+  // arrived to say they were missing a card.
   let inRoom = $derived(membershipRole === 'member' || membershipRole === 'admin');
-  let myRow = $derived(me ? members.find((m) => m.user_id === me.id) : null);
-  let offerSharing = $derived(inRoom && myRow && !myRow.contact);
-  let anyContact = $derived(members.some((m) => m.contact));
+  let viewerSharesContact = $state(false);
+  let anyContact = $state(false);
+  let offerSharing = $derived(inRoom && !viewerSharesContact);
 
   $effect(() => {
     if (slug) loadMembers();
@@ -48,12 +50,17 @@
       // counted apart by the server and never summed.
       memberCount = data.member_count || 0;
       followerCount = data.follower_count || 0;
+      // Sent only to a viewer in the room; absent means nothing to offer.
+      viewerSharesContact = !!data.viewer_shares_contact;
+      anyContact = !!data.any_contact_shared;
     } catch {
       if (!after) {
         members = [];
         nextCursor = '';
         memberCount = 0;
         followerCount = 0;
+        viewerSharesContact = false;
+        anyContact = false;
       }
     } finally {
       loading = false;
