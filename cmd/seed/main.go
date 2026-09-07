@@ -400,11 +400,11 @@ type nodeDef struct {
 	block            string
 	// draftBlock is raw JSON for a drafted block (docs/adr/029); when set
 	// it replaces palette/block entirely and bundle supplies the fabrics.
-	draftBlock string
-	bundle     []string
-	website    string
-	links            []nodeLink
-	followerPerms    *followerPerms
+	draftBlock    string
+	bundle        []string
+	website       string
+	links         []nodeLink
+	followerPerms *followerPerms
 }
 
 type followerPerms struct {
@@ -1504,28 +1504,40 @@ func (s *seeder) firstGovernanceDoc() (slug, id, title string, ok bool) {
 // Audit Log
 // ---------------------------------------------------------------------------
 
-func (s *seeder) seedAuditLog() {
-	type auditDef struct {
-		action     string
-		entityType string
-		desc       string
-	}
+type auditDef struct {
+	action     string
+	entityType string
+	desc       string
+}
 
-	actions := []auditDef{
-		{"create", "user", "user_registered"},
-		{"create", "node", "node_created"},
-		{"create", "node", "node_created"},
-		{"create", "event", "event_created"},
-		{"create", "event", "event_created"},
-		{"create", "membership", "membership_joined"},
-		{"create", "membership", "membership_joined"},
-		{"update", "membership", "membership_approved"},
-		{"create", "proposal", "proposal_created"},
-		{"update", "proposal", "proposal_approved"},
-		{"create", "governance_doc", "governance_doc_created"},
-		{"create", "report", "report_submitted"},
-		{"update", "report", "report_reviewed"},
-	}
+// The action column holds what LogAuditEvent writes — "node.create", not
+// "create". These seeded rows carried the bare verb, so the admin audit log's
+// Action filter, whose options are the real dotted actions, matched none of
+// them and every filter read empty on a demo instance. The entity types were
+// right all along; only the actions were not.
+//
+// Audit actions are string literals at their call sites rather than constants,
+// so nothing here can be compile-checked the way the notification fixtures now
+// are. TestSeededAuditActionsExist keeps them honest instead — which is why
+// this is a package-level var rather than a slice inside the function.
+var seededAuditActions = []auditDef{
+	{"user.create", "user", "user_registered"},
+	{"node.create", "node", "node_created"},
+	{"node.create", "node", "node_created"},
+	{"event.create", "event", "event_created"},
+	{"event.create", "event", "event_created"},
+	{"membership.join", "membership", "membership_joined"},
+	{"membership.join", "membership", "membership_joined"},
+	{"membership.approve", "membership", "membership_approved"},
+	{"proposal.create", "proposal", "proposal_created"},
+	{"proposal.resolved", "proposal", "proposal_approved"},
+	{"governance.create", "governance_doc", "governance_doc_created"},
+	{"report.create", "report", "report_submitted"},
+	{"report.resolve", "report", "report_reviewed"},
+}
+
+func (s *seeder) seedAuditLog() {
+	actions := seededAuditActions
 
 	for _, a := range actions {
 		id := auth.NewUUIDv7()
