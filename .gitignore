@@ -74,3 +74,9 @@ gazetteer.db
 # Throwaway by design: keep yours locally, don't ship it to anyone else.
 web/_*-preview.html
 web/_*-preview.js
+
+# Emitted by `cmd/releasenotes` when it is run with -json/-body — CI attaches
+# these to the GitHub release (docs/adr/085). The notes file they are derived
+# from is committed; these are not.
+/release.json
+/release-body.md
