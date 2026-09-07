@@ -79,6 +79,24 @@ func main() {
 		log.Fatalf("import: %v", err)
 	}
 
+	// Two heals that startup also runs, and that an import needs for the same
+	// reason it needs the contact conversion: the rows arrive after the boot
+	// that would have run them.
+	//
+	// An older archive can carry a node whose governance_config is still the
+	// migration-013 default, which would leave the fork voting by rules its
+	// charter does not describe — the "rules on screen are not the rules in
+	// force" failure docs/adr/041 names. And an unclaimed node imported
+	// without a verification_domain gives the claim flow nothing to anchor
+	// on. Both are idempotent: on an archive that needs neither they do
+	// nothing.
+	if n, err := handler.BackfillGovernanceConfig(db); err != nil {
+		log.Printf("warning: governance config backfill: %v", err)
+	} else if n > 0 {
+		fmt.Printf("  %-28s %d synced from the charter\n", "governance_config", n)
+	}
+	handler.BackfillVerificationDomains(db)
+
 	// An archive taken before migration 066 carries the contact card as three
 	// columns on users plus a boolean per membership (docs/adr/080). Nothing
 	// reads those any more, so without this the cards would arrive on the
