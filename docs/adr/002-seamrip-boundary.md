@@ -93,6 +93,27 @@ that had silently not been travelling:
 All three now travel, with `def()` fallbacks so archives written before
 this import unchanged.
 
+## Amendment, 2026-09-07: the boundary has a second axis
+
+Everything above answers one question — does this table travel. docs/adr/089
+adds a second, asked of every table that does: which of its rows may a given
+*member* carry out. The two live together in `internal/seamrip`, and the
+member seamrip (`GET /api/v1/users/me/seamrip`) runs the export queries
+above through the second axis rather than through queries of its own. The
+reason is this ADR's own history: the original problem was three copies of
+the export logic drifting apart, and a viewer-scoped export written
+separately would have been a fourth, differing from the others about
+privacy rather than about counts.
+
+`TestEveryTableHasAMemberViewRule` is the second axis's version of the test
+this document is mostly about. A table that travels and has no member-view
+rule fails the build, the same way a table with no travel decision does.
+
+The one asymmetry worth naming here: emails travel in this export and never
+in a member's. That is the line docs/adr/012 draws, and it is why this
+export stays admin-gated as a custody transfer while the member one needs
+nobody's permission.
+
 ## Known gap
 
 Git-backed governance repos (linings in `internal/governance`) do not
