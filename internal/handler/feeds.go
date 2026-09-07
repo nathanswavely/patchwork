@@ -215,6 +215,64 @@ func NodeICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	}
 }
 
+// EventICS handles GET /api/v1/events/{id}/event.ics — one event as a
+// file you can open (docs/adr/090 decision 5).
+//
+// The subscribable feeds above answer "keep me current with this patch".
+// This answers the other half: somebody saw one show on the quilt and
+// wants that one night in their own calendar, without taking the venue's
+// whole year with it. Patchwork tells nobody about an event, so this
+// affordance and the patch subscription are the whole of how an event
+// reaches a person who asked for it.
+//
+// It carries the same UID the patch feed would give it, deliberately. A
+// person who downloads tonight's show and later subscribes to the venue
+// gets one entry reconciled, not two side by side.
+//
+// The honest limit, stated in the ADR: a downloaded file is a copy, not a
+// live link. If the show moves, this copy is wrong and nothing corrects
+// it. That is the accepted cost of not notifying, not an oversight.
+func EventICS(db *database.DB, cfg *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		eventID := r.PathValue("id")
+
+		var fe feedEvent
+		var nodeID, visibility string
+		err := db.QueryRow(
+			`SELECT e.id, e.title, e.description, e.location, e.latitude, e.longitude,
+			 e.starts_at, e.ends_at, COALESCE(e.event_url,''), n.slug, n.name,
+			 e.created_at, e.updated_at, e.node_id, e.visibility
+			 FROM events e JOIN nodes n ON e.node_id = n.id
+			 WHERE e.id = ? AND e.removed_at IS NULL AND e.status = 'active'
+			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`, eventID,
+		).Scan(&fe.ID, &fe.Title, &fe.Description, &fe.Location, &fe.Latitude, &fe.Longitude,
+			&fe.StartsAt, &fe.EndsAt, &fe.EventURL, &fe.NodeSlug, &fe.NodeName,
+			&fe.CreatedAt, &fe.UpdatedAt, &nodeID, &visibility)
+		if err != nil {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+
+		// Members-only events are for a member or admin of the event's OWN
+		// patch, which is the rule ListEvents already applies — a confirmed
+		// link never widens visibility. A private patch is unlisted rather
+		// than locked, so its public events stay downloadable by anyone
+		// holding the link, exactly as its page stays readable.
+		if visibility != "public" {
+			user := middleware.UserFromContext(r.Context())
+			if user == nil || !userHasNodeRole(db, user.ID, nodeID, "member", "admin") {
+				http.Error(w, "not found", http.StatusNotFound)
+				return
+			}
+		}
+
+		// Named for the event, so a downloads folder holding six of these
+		// says which is which.
+		w.Header().Set("Content-Disposition", `attachment; filename="`+generateSlug(fe.Title)+`.ics"`)
+		writeICS(w, r, cfg, fe.Title, []feedEvent{fe})
+	}
+}
+
 // RSS 2.0 skeleton, stdlib xml only.
 type rssDoc struct {
 	XMLName xml.Name   `xml:"rss"`

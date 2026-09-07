@@ -9397,14 +9397,14 @@
       "occurrences": [
         {
           "file": "internal/handler/feeds.go",
-          "line": 361,
+          "line": 419,
           "kind": "go-error-body",
           "raw": "failed to generate feed secret",
           "quote": null
         },
         {
           "file": "internal/handler/feeds.go",
-          "line": 366,
+          "line": 424,
           "kind": "go-error-body",
           "raw": "failed to generate feed secret",
           "quote": null
@@ -9422,7 +9422,7 @@
       "occurrences": [
         {
           "file": "internal/handler/feeds.go",
-          "line": 383,
+          "line": 441,
           "kind": "go-error-body",
           "raw": "failed to disable feed",
           "quote": null
@@ -35167,6 +35167,24 @@
           "line": 232,
           "kind": "markup",
           "raw": "Tickets &amp; details on {eventLinkHost}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d0efffa65ea7",
+      "text": "Add to calendar",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The standard label for this control across calendar software; docs/adr/090 decision 5.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventDetail.svelte",
+          "line": 259,
+          "kind": "markup",
+          "raw": "Add to calendar",
           "quote": null
         }
       ]

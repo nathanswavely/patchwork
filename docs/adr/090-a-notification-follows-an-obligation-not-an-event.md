@@ -1,9 +1,8 @@
 # ADR 090: A notification follows an obligation, not an event
 
-Date: 2026-09-07. Status: **accepted and implemented**; decision 3's
-deletion ships with this record, and decision 5's per-event `.ics` does
-not. Reached by grilling the question "what should RSVP be?" until it
-turned out to be a question about what Patchwork is.
+Date: 2026-09-07. Status: **accepted and implemented**; decisions 3 and 5
+both ship with this record. Reached by grilling the question "what should
+RSVP be?" until it turned out to be a question about what Patchwork is.
 
 ## Context
 
@@ -103,6 +102,15 @@ live link, so a show that moves or is cancelled goes stale in that
 person's calendar. A subscribed feed corrects itself on refresh; a
 download never does. That is the accepted cost of decision 4, not an
 oversight to be repaired later with a ping.
+
+Shipped as `GET /api/v1/events/{id}/event.ics`. It carries the same UID
+the patch feed gives that event, so downloading tonight's show and later
+subscribing to the venue reconciles to one entry rather than two. It
+follows `ListEvents` on visibility rather than `GetEvent`, which gates
+neither: a non-public event is a file only a member or admin of its own
+patch can take away, and a pending submission has none at all. The
+wildcard needs its own path segment because a Go mux pattern cannot mix a
+wildcard and a literal in one.
 
 **6. There is no RSVP.** Attendance is a fact about the world, so decision
 2 already excludes it, and it would put the first row in this schema

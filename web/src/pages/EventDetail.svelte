@@ -1,5 +1,5 @@
 <script>
-  import { CalendarBlank, MapPin, ArrowsClockwise, PencilSimple, ArrowSquareOut } from 'phosphor-svelte';
+  import { CalendarBlank, CalendarPlus, MapPin, ArrowsClockwise, PencilSimple, ArrowSquareOut } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isAdmin, getUser } from '../stores/auth.svelte.js';
@@ -245,6 +245,21 @@
     {#if event.description}
       <p class="description">{event.description}</p>
     {/if}
+
+    <!-- One night, in your own calendar (docs/adr/090). Patchwork tells
+         nobody an event is coming, so this and subscribing to the patch
+         are the whole of how one reaches a person who asked for it. A
+         plain href: the server sends the file as an attachment, and a
+         download needs no script. Withheld while an event is still in the
+         review queue, where the endpoint 404s and nothing exists to add. -->
+    {#if event.status !== 'pending_review'}
+      <div class="calendar-actions">
+        <a class="btn btn-sm btn-secondary" href="/api/v1/events/{event.id}/event.ics">
+          <CalendarPlus size={14} weight="duotone" />
+          Add to calendar
+        </a>
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -298,6 +313,16 @@
     align-items: center;
     gap: 0.4rem;
     flex-shrink: 0;
+  }
+
+  .calendar-actions {
+    margin-top: 1rem;
+  }
+
+  .calendar-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .edit-btn {
