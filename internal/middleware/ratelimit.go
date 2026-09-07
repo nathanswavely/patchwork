@@ -93,7 +93,26 @@ var (
 	// code off paper gets 5 tries then one every 2 minutes per account,
 	// while a guesser gets nowhere near the keyspace.
 	recoveryRedeemLimiter = NewRateLimiterStore(rate.Every(2*time.Minute), 5)
+
+	// Attestation issuance (docs/adr/087): 10 up front, refilling one a
+	// minute. An admin proving the role to a host signs one nonce, maybe
+	// two after a typo; nobody has an honest reason for a hundred. Modest
+	// rather than tight — the route is already behind admin plus a fresh
+	// passkey assertion, so this is a ceiling on RSA signing work, not a
+	// second gate.
+	attestationLimiter = NewRateLimiterStore(rate.Every(time.Minute), 10)
 )
+
+// CheckAttestationRate limits how often one admin can have the instance key
+// sign a nonce. Keyed on the account rather than the address: the gate above
+// it already established who this is, and an admin moving between networks
+// should not get a fresh budget for doing so.
+func CheckAttestationRate(adminID string) error {
+	if !attestationLimiter.Allow("admin:" + adminID) {
+		return fmt.Errorf("rate limit exceeded")
+	}
+	return nil
+}
 
 // CheckMagicLinkRate checks rate limits for magic link. Returns error message if limited.
 func CheckMagicLinkRate(email, ip string) error {

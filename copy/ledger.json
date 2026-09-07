@@ -3792,6 +3792,13 @@
           "quote": null
         },
         {
+          "file": "internal/handler/attestation.go",
+          "line": 88,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
           "file": "internal/handler/attestations.go",
           "line": 178,
           "kind": "go-error-body",
@@ -6436,6 +6443,103 @@
           "line": 382,
           "kind": "go-error-body",
           "raw": "database error",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d2c6104210e8",
+      "text": "this quilt has no instance key yet",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 43,
+          "kind": "go-error-body",
+          "raw": "this quilt has no instance key yet",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cbac8bee7536",
+      "text": "authentication required",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 72,
+          "kind": "go-error-body",
+          "raw": "authentication required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "19b5dc2d046d",
+      "text": "too many attestations — wait a minute and try again",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 80,
+          "kind": "go-error-body",
+          "raw": "too many attestations — wait a minute and try again",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7bb146b0b1b4",
+      "text": "failed to load the instance key",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 101,
+          "kind": "go-error-body",
+          "raw": "failed to load the instance key",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 106,
+          "kind": "go-error-body",
+          "raw": "failed to load the instance key",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "104c9b3532a4",
+      "text": "failed to sign the attestation",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 113,
+          "kind": "go-error-body",
+          "raw": "failed to sign the attestation",
           "quote": null
         }
       ]
@@ -16924,21 +17028,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 483,
+          "line": 485,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 529,
+          "line": 533,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 582,
+          "line": 586,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -16956,21 +17060,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 484,
+          "line": 486,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 530,
+          "line": 534,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 583,
+          "line": 587,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -16988,7 +17092,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 677,
+          "line": 681,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -17006,7 +17110,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 678,
+          "line": 682,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -17064,6 +17168,31 @@
       ]
     },
     {
+      "id": "596439f03867",
+      "text": "Prove admin",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/components/AdminShell.svelte",
+          "line": 32,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 120,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "e5e74372937f",
       "text": "Search administration…",
       "words": 2,
@@ -17074,7 +17203,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 54,
+          "line": 55,
           "kind": "attr:placeholder",
           "raw": "Search administration…",
           "quote": "\""
@@ -27026,6 +27155,13 @@
           "quote": null
         },
         {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 118,
+          "kind": "markup",
+          "raw": "Copy",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/AdminUsers.svelte",
           "line": 232,
           "kind": "markup",
@@ -28204,6 +28340,294 @@
           "line": 66,
           "kind": "markup",
           "raw": "· restores as unclaimed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d0f9b0e1542b",
+      "text": "Signing failed.",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Toast/error fallback on the Prove Admin page (docs/adr/087) — mechanical, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 50,
+          "kind": "js-string",
+          "raw": "Signing failed.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3f1975b88a72",
+      "text": "Copy failed. Select the text instead.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Toast/error fallback on the Prove Admin page (docs/adr/087) — mechanical, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 61,
+          "kind": "js-string",
+          "raw": "Copy failed. Select the text instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "bcb50f022b80",
+      "text": "Prove you administer this quilt",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 67,
+          "kind": "markup",
+          "raw": "Prove you administer this quilt",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e8fdbfa4aa93",
+      "text": "Sometimes someone outside this quilt needs to know that the person writing to them really is an admin here. A hosting provider changing a billing contact, for example, or a directory checking a submission. Ask them for a nonce, which is any string they choose. Sign it here and send them the result. They can check it against this quilt's public key with no account and no request to us. Because they chose the string, they know the answer was made for them and not copied from somewhere else.",
+      "words": 89,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 69,
+          "kind": "markup",
+          "raw": "Sometimes someone outside this quilt needs to know that the person\n    writing to them really is an admin here. A hosting provider changing a\n    billing contact, for example, or a directory checking a submission. Ask\n    them for a nonce, which is any string they choose. Sign it here and send\n    them the result. They can check it against this quilt's public key with\n    no account and no request to us. Because they chose the string, they\n    know the answer was made for them and not copied from somewhere else.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "014c5006b48a",
+      "text": "What it proves:",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "What it proves:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8053e06e08ef",
+      "text": "an admin of this quilt signed that exact string at that time. The signature is good for fifteen minutes.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "an admin of this quilt signed that exact\n    string at that time. The signature is good for fifteen minutes.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e96aac13a815",
+      "text": "What it does not prove:",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "What it does not prove:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6625bd021689",
+      "text": "who you are. The signed statement names this domain and nothing else. No username, no email, no account. Any admin here could have produced it, and that is deliberate. This quilt does not publish who its admins are.",
+      "words": 38,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "who you are. The signed statement\n    names this domain and nothing else. No username, no email, no account.\n    Any admin here could have produced it, and that is deliberate. This quilt\n    does not publish who its admins are.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7de4a6fbef0e",
+      "text": "Their nonce",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 89,
+          "kind": "markup",
+          "raw": "Their nonce",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ae374e772750",
+      "text": "the string they gave you",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 95,
+          "kind": "attr:placeholder",
+          "raw": "the string they gave you",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "d843290061e4",
+      "text": "8 to 64 printable characters on one line. Paste it exactly as they sent it. A changed character is a different nonce, and their check will fail.",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 105,
+          "kind": "markup",
+          "raw": "8 to 64 printable characters on one line. Paste it exactly as they sent\n      it. A changed character is a different nonce, and their check will fail.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cd794a19c930",
+      "text": "Send them this",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 117,
+          "kind": "markup",
+          "raw": "Send them this",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9c8e82e0e047",
+      "text": "Good until",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 122,
+          "kind": "markup",
+          "raw": "Good until",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f1a73e2204a1",
+      "text": "Signature",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 123,
+          "kind": "markup",
+          "raw": "Signature",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5370d1dd17db",
+      "text": "They check it against",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 124,
+          "kind": "markup",
+          "raw": "They check it against",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "790d3a5ed6a2",
+      "text": "Tell them to fetch the key from this quilt's own address, not from a link in the message. A signature only means something when the key came from the domain they care about.",
+      "words": 33,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 127,
+          "kind": "markup",
+          "raw": "Tell them to fetch the key from this quilt's own address, not from a\n        link in the message. A signature only means something when the key\n        came from the domain they care about.",
           "quote": null
         }
       ]
@@ -32331,7 +32755,7 @@
         },
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 53,
+          "line": 60,
           "kind": "js-string",
           "raw": "Failed to load document",
           "quote": "'"
@@ -37101,9 +37525,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 115,
+          "line": 122,
           "kind": "markup",
           "raw": "Version history &middot; {versions.length} version{versions.length !== 1 ? 's' : ''}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0920372a7a9d",
+      "text": "History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is intact; versions from before the rebuild are not available.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceVersionHistory.svelte",
+          "line": 127,
+          "kind": "markup",
+          "raw": "History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is\n            intact; versions from before the rebuild are not available.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "15b93152b23e",
+      "text": "This is the oldest version available. It was written from the database when the document's history was rebuilt, so there is nothing to compare it against.",
+      "words": 26,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceVersionHistory.svelte",
+          "line": 162,
+          "kind": "markup",
+          "raw": "This is the oldest version available. It was written from the\n                            database when the document's history was rebuilt, so there is\n                            nothing to compare it against.",
           "quote": null
         }
       ]
@@ -37119,7 +37579,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 141,
+          "line": 167,
           "kind": "markup",
           "raw": "This is the initial version.",
           "quote": null
@@ -37137,7 +37597,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 154,
+          "line": 181,
           "kind": "markup",
           "raw": "Diff not available.",
           "quote": null
@@ -37155,7 +37615,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 166,
+          "line": 193,
           "kind": "markup",
           "raw": "Compare versions",
           "quote": null
@@ -37173,7 +37633,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 169,
+          "line": 196,
           "kind": "markup",
           "raw": "From...",
           "quote": null
@@ -37191,7 +37651,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 176,
+          "line": 203,
           "kind": "markup",
           "raw": "To...",
           "quote": null
@@ -37209,7 +37669,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 198,
+          "line": 225,
           "kind": "markup",
           "raw": "No differences found.",
           "quote": null
@@ -37227,7 +37687,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 205,
+          "line": 232,
           "kind": "markup",
           "raw": "No version history available.",
           "quote": null

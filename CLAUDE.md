@@ -41,7 +41,8 @@ patchwork/
 │   ├── eventsource/        # event sources: ICS fetch/parse/expand, sync reconciler, worker (docs/adr/031)
 │   ├── gazetteer/          # optional local place index — reader + builder (docs/adr/082)
 │   ├── safehttp/           # SSRF-guarded HTTP client shared by ap and eventsource
-│   ├── governance/         # git-backed charter repos, templates, rules, defaults
+│   ├── governance/         # git-backed charter repos, templates, rules, defaults,
+│   │                       #   repo repair from the canonical rows (docs/adr/084)
 │   ├── notifications/      # notification channels, email, reminder worker
 │   ├── weblink/            # the SPA paths Go emits (notification/email/feed links)
 │   └── seamrip/            # export/import portability boundary (docs/adr/002)
@@ -272,6 +273,7 @@ Key endpoints:
 - `GET /api/v1/gazetteer/suggest?q=` — one **suggested placement** for an address (docs/adr/082). Authed and rate-limited. A miss and an instance with no gazetteer both answer `200 {"found": false}` — not 404, because a miss is the ordinary answer for a valid prose address and an error code would put a red console line under a form that is working. The confirm step is the point: the create form sends `latitude`/`longitude` only once somebody has confirmed a marker, so submitting the form never accepts a guess by silence
 - `GET /api/v1/instance/icon` — the public quilt icon, rendered to SVG from the drafted design (docs/adr/043); an instance that has drafted none wears a starter block assigned from its name
 - `GET|PATCH /api/v1/admin/settings`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, the icon design (`icon_design`: a drafted block plus its fabrics; `null` clears it), danger-zone wipe (docs/adr/014, docs/adr/043)
+- `POST /api/v1/admin/attestation`, `GET /api/v1/instance/attestation-key` — proving the admin role to an outside party (docs/adr/087). The admin signs a verifier-supplied nonce; the blob is `base64url(payload).base64url(signature)`, RS256 over the *first segment's bytes*, signed with the instance service actor's key and good for 15 minutes. Instance-admin only and step-up gated (docs/adr/017), rate-limited, audited as `admin.attestation_issued` with the nonce. The statement names the domain, the claim and the times and **never a person** — no username, email or user id, because docs/adr/023's roster stays unpublished and a proof of the role must not become the roster by another route. The key endpoint is public, cacheable, and mounted **outside the federation gate** (unlike `/ap/instance`), so `EnsureInstanceActor` runs at startup regardless of `federation.enabled`. Verify with `patchwork -verify-attestation <blob>`, `internal/attest.Verify`, or the `openssl` recipe in docs/DEPLOYMENT.md — always against the key served at the domain you care about, never the one the blob names
 - `GET /api/v1/legal/{privacy|terms}` — public legal documents: shipped defaults or admin overrides, rendered at /privacy and /terms; admin editing via `GET /api/v1/admin/legal` + `PUT|DELETE /api/v1/admin/legal/{doc}` (docs/adr/028)
 - `PUT|DELETE /api/v1/nodes/{slug}/successor` — maintainer succession (docs/adr/051); step-up gated
 - `POST /api/v1/proposals/{id}/candidates`, `PUT /api/v1/proposals/{id}/ballot` — elections: standing is a member act, the ballot is a PUT of the whole approved set (approval voting replaces wholesale)
@@ -358,6 +360,8 @@ was verified 2026-07-13.
 The seamrip mechanism is a governance safety valve: if a community's leadership goes sideways, members can fork the data to a new instance. The portability boundary (what travels, what stays) is defined once in `internal/seamrip` and documented in docs/adr/002 — memberships travel, so the fork keeps its inferred threads; keys, sessions, and AP identity do not.
 
 **Adding a table means deciding whether it travels.** `TestEveryTableHasABoundaryDecision` requires every table in the schema to be either in `Tables()` or in an explicit stays-behind list with a reason — a new table fails the build until someone chooses. This exists because migration 050's `seats` silently didn't travel, and since election dueness is derived from `seats.term_ends_at`, a forked elected patch stopped holding elections forever.
+
+**Governance repos don't travel, so they get rebuilt** (docs/adr/084). Rows without repos — a seamrip import, or a restore from the SQLite file alone — read fine and can never be *written*, because every governance write starts at `openBare`. `governance.Repair` reconciles the derived repos with the canonical `governance_docs` rows: create-missing on every boot (strictly create-missing, never a write into a repo that exists), and `patchwork -repair-governance` for the whole reconciliation with a per-patch summary, server stopped. It is a flag on the server binary rather than a `cmd/repair` because the distroless image ships only `/patchwork`. Synthetic commits are authored `Patchwork repair` and labelled in the charter history view — a rebuilt history must never pass for a real one.
 
 ## Cutting a release
 

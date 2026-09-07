@@ -22,6 +22,13 @@
   let diffData = $state(null);
   let diffLoading = $state(false);
 
+  // A repair pass writes commits the community did not (docs/adr/084). The
+  // oldest "rebuilt" entry stands in for a history that no longer exists, so
+  // the page says so rather than presenting v1 as where the document began.
+  let rebuiltOn = $derived(
+    versions.filter((v) => v.repair === 'rebuilt').at(-1)?.date || ''
+  );
+
   // Comparison tool state.
   let compareFrom = $state('');
   let compareTo = $state('');
@@ -115,6 +122,13 @@
           <p class="muted">Version history &middot; {versions.length} version{versions.length !== 1 ? 's' : ''}</p>
         </div>
 
+        {#if rebuiltOn}
+          <p class="rebuilt-note">
+            History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is
+            intact; versions from before the rebuild are not available.
+          </p>
+        {/if}
+
         {#if versions.length > 0}
           <div class="version-timeline">
             {#each versions as ver, i}
@@ -125,6 +139,11 @@
                     <div class="version-main">
                       <span class="version-number">v{ver.version_number}</span>
                       <span class="version-message">{ver.message || 'No description'}</span>
+                      {#if ver.repair}
+                        <span class="repair-chip"
+                          >{ver.repair === 'rebuilt' ? 'Rebuilt' : 'Restored'}</span
+                        >
+                      {/if}
                     </div>
                     <div class="version-meta">
                       <span>{ver.author_name || 'System'}</span>
@@ -138,7 +157,15 @@
                   {#if expandedVersion === i}
                     <div class="version-diff">
                       {#if i >= versions.length - 1}
-                        <p class="muted">This is the initial version.</p>
+                        {#if ver.repair === 'rebuilt'}
+                          <p class="muted">
+                            This is the oldest version available. It was written from the
+                            database when the document's history was rebuilt, so there is
+                            nothing to compare it against.
+                          </p>
+                        {:else}
+                          <p class="muted">This is the initial version.</p>
+                        {/if}
                       {:else if diffLoading}
                         <Skeleton lines={3} height="0.8rem" />
                       {:else if diffData?.old_content != null && diffData?.new_content != null}
@@ -227,6 +254,29 @@
   .history-header h1 {
     font-size: 1.2rem;
     margin-bottom: 0.15rem;
+  }
+
+  .rebuilt-note {
+    margin-bottom: 1.25rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-overlay);
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .repair-chip {
+    flex-shrink: 0;
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   /* Timeline */
