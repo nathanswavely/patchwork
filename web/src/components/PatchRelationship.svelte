@@ -24,6 +24,7 @@
     isUnclaimed = false,
     isBanned = false,
     membershipRole = '',
+    requestPending = false,
     liningStatus = '',
     onChanged = () => {},
     size = 'md',
@@ -46,12 +47,27 @@
   };
   let standing = $derived(STANDING[membershipRole] || null);
 
+  /**
+   * A membership request nobody has answered yet. It is not standing —
+   * membershipRole is empty, because the server sets it only for an active
+   * row — so it gets its own resting state rather than a fourth entry in
+   * STANDING: there is nothing to exit, and the label reports a wait
+   * instead of a relationship.
+   *
+   * Without it this row would offer Follow and Become a member to someone
+   * who has already asked, and the server refuses both with a 409
+   * ("membership request already pending"). The person who asked five
+   * minutes ago would see the same page they saw before asking.
+   */
+  let awaiting = $derived(requestPending && !standing && !isBanned);
+
   // The rung renders only where it can succeed (docs/adr/042). Unclaimed
   // patches take followers only, and invite_only rejects the request
   // outright (memberships.go) — an absent door beats a 403 at the end of a
   // ceremony.
   let canBecomeMember = $derived(
     !isUnclaimed &&
+    !awaiting &&
     node?.membership_policy !== 'invite_only' &&
     membershipRole !== 'member' &&
     membershipRole !== 'admin'
@@ -93,6 +109,25 @@
       showToast('Following patch', 'success');
     } catch (e) {
       showToast(e.message || 'Could not follow', 'error');
+    } finally {
+      joining = false;
+    }
+  }
+
+  // Retracting a request nobody answered. Its own endpoint, not leave with
+  // a different label: leave takes active rows only, because nobody
+  // admitted this person and there is no community to exit
+  // (memberships.go, WithdrawMembershipRequest). It sits in the same menu
+  // as the exits for the same reason they do — one deliberate step.
+  async function handleWithdraw() {
+    menuOpen = false;
+    joining = true;
+    try {
+      await api(`nodes/${slug}/withdraw`, { method: 'POST' });
+      await onChanged();
+      showToast('Request withdrawn', 'info');
+    } catch (e) {
+      showToast(e.message || 'Could not withdraw request', 'error');
     } finally {
       joining = false;
     }
@@ -147,6 +182,29 @@
           </div>
         {/if}
       </div>
+    {:else if awaiting}
+      <!-- Same shape as a standing control, and for the same reason: what
+           undoes this is one deliberate step behind a menu, not a button
+           sitting next to the thing it undoes. It is not standing, so it
+           wears no role mark and its own muted type. -->
+      <div class="standing-container">
+        <button
+          class="standing awaiting"
+          class:sm={size === 'sm'}
+          onclick={() => { menuOpen = !menuOpen; }}
+          disabled={joining}
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+        >
+          <span>Membership requested</span>
+          <span class="standing-mark" aria-hidden="true"><CaretDown size={11} weight="bold" /></span>
+        </button>
+        {#if menuOpen}
+          <div class="standing-menu" role="menu">
+            <button role="menuitem" onclick={handleWithdraw} disabled={joining}>Withdraw request</button>
+          </div>
+        {/if}
+      </div>
     {:else}
       <button class="btn btn-primary {btnSize}" onclick={handleFollow} disabled={joining}>Follow</button>
     {/if}
@@ -183,6 +241,14 @@
     font-size: 0.85rem;
     color: var(--color-error);
     font-weight: 500;
+  }
+
+  /* Waiting on an answer: the standing control's shape, in the register of
+     a state rather than a standing — muted and italic, no role mark. */
+  .standing.awaiting {
+    font-weight: 500;
+    font-style: italic;
+    color: var(--color-text-muted);
   }
 
   /* --- Standing control: the resting form of where you stand --- */
