@@ -700,3 +700,48 @@ func TestEveryColumnHasABoundaryDecision(t *testing.T) {
 		}
 	}
 }
+
+// A removal travels. Migration 065 is what first let a membership hold
+// status='banned' at all, so this round trip had no rows to carry before it;
+// now that it does, losing the status on a fork would quietly readmit
+// everyone a community had removed — at exactly the moment a fork happens,
+// which is when a community's leadership has gone sideways and its removals
+// are the least safe thing to undo.
+func TestBannedMembershipTravels(t *testing.T) {
+	src := testDB(t)
+	seedSource(t, src)
+
+	// Remove user3 (the follower on patch-1) the way UpdateMember does.
+	mustExec(t, src, `UPDATE memberships SET status = 'banned'
+	                  WHERE user_id = (SELECT id FROM users WHERE username = 'user3')`)
+
+	files := map[string][]map[string]any{}
+	if err := Export(src, func(tab Table, items []map[string]any) error {
+		files[tab.File] = items
+		return nil
+	}); err != nil {
+		t.Fatalf("export: %v", err)
+	}
+
+	var exported int
+	for _, m := range files["memberships.json"] {
+		if m["status"] == "banned" {
+			exported++
+		}
+	}
+	if exported != 1 {
+		t.Fatalf("expected 1 banned membership exported, got %d", exported)
+	}
+
+	dst := testDB(t)
+	if _, _, err := Import(dst,
+		func(file string) ([]map[string]any, error) { return files[file], nil },
+		nextID); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+
+	if n := count(t, dst, `SELECT COUNT(*) FROM memberships m JOIN users u ON u.id = m.user_id
+	                       WHERE u.username = 'user3' AND m.status = 'banned'`); n != 1 {
+		t.Errorf("the fork readmitted a removed person: got %d banned, want 1", n)
+	}
+}

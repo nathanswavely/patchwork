@@ -674,3 +674,161 @@ func TestJoinMessageNulledAfterApproval(t *testing.T) {
 		t.Errorf("expected join_message to be nulled after approval, got %q", after.String)
 	}
 }
+
+// A ban has to reach the database. Between migrations 004 and 065 the
+// memberships CHECK constraint listed only active/pending/left, so the write
+// UpdateMember makes failed and the admin got a 500 while the person stayed an
+// active member. Assert the row, not just the response code — the handler's
+// own JSON reported the status it intended to write.
+func TestAdminBansMember(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin20", "member")
+	user, _ := createTestUser(t, db, "banned20", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Ban Node", "ban-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, user.ID, nodeID, "member", "active")
+
+	body := map[string]string{"status": "banned"}
+	r := authedRequest("PATCH", "/api/v1/nodes/ban-node/members/"+user.ID, body, adminToken)
+	w := serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), r)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	result := decodeJSON(t, w)
+	if result["status"] != "banned" {
+		t.Errorf("expected status=banned in response, got %v", result["status"])
+	}
+
+	var status string
+	if err := db.QueryRow(
+		"SELECT status FROM memberships WHERE user_id = ? AND node_id = ?", user.ID, nodeID,
+	).Scan(&status); err != nil {
+		t.Fatalf("read membership: %v", err)
+	}
+	if status != "banned" {
+		t.Errorf("expected the row to reach status=banned, got %q", status)
+	}
+}
+
+// A follower can be removed too — the ban branch takes any active row.
+func TestAdminBansFollower(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin21", "member")
+	user, _ := createTestUser(t, db, "banned21", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Ban Follower Node", "ban-follower-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, user.ID, nodeID, "follower", "active")
+
+	body := map[string]string{"status": "banned"}
+	r := authedRequest("PATCH", "/api/v1/nodes/ban-follower-node/members/"+user.ID, body, adminToken)
+	w := serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), r)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var status string
+	db.QueryRow("SELECT status FROM memberships WHERE user_id = ? AND node_id = ?", user.ID, nodeID).Scan(&status)
+	if status != "banned" {
+		t.Errorf("expected the row to reach status=banned, got %q", status)
+	}
+}
+
+// The point of the ban: the person cannot walk back in through the open door.
+func TestBannedUserCannotRejoin(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin22", "member")
+	user, userToken := createTestUser(t, db, "banned22", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Rejoin Node", "rejoin-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, user.ID, nodeID, "member", "active")
+
+	body := map[string]string{"status": "banned"}
+	r := authedRequest("PATCH", "/api/v1/nodes/rejoin-node/members/"+user.ID, body, adminToken)
+	w := serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("ban: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	r = authedRequest("POST", "/api/v1/nodes/rejoin-node/join", nil, userToken)
+	w = serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("rejoin: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+	if !strings.Contains(w.Body.String(), "removed from this community") {
+		t.Errorf("expected the removal message, got %s", w.Body.String())
+	}
+
+	// Following is refused on the same ground — the ban check precedes the
+	// follow branch, so a removed person cannot re-enter as an observer.
+	r = authedRequest("POST", "/api/v1/nodes/rejoin-node/join", map[string]string{"role": "follower"}, userToken)
+	w = serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("refollow: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// Reinstating drops the row to 'left', which is what lets the person choose to
+// come back rather than being put back.
+func TestAdminReinstatesBannedMember(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin23", "member")
+	user, userToken := createTestUser(t, db, "banned23", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Reinstate Node", "reinstate-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, user.ID, nodeID, "member", "active")
+
+	body := map[string]string{"status": "banned"}
+	r := authedRequest("PATCH", "/api/v1/nodes/reinstate-node/members/"+user.ID, body, adminToken)
+	w := serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("ban: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	body = map[string]string{"status": "left"}
+	r = authedRequest("PATCH", "/api/v1/nodes/reinstate-node/members/"+user.ID, body, adminToken)
+	w = serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("reinstate: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var status string
+	db.QueryRow("SELECT status FROM memberships WHERE user_id = ? AND node_id = ?", user.ID, nodeID).Scan(&status)
+	if status != "left" {
+		t.Errorf("expected status=left after reinstate, got %q", status)
+	}
+
+	// The audit trail distinguishes reinstating from rejecting.
+	var action string
+	db.QueryRow("SELECT action FROM audit_log WHERE action = 'membership.reinstate'").Scan(&action)
+	if action != "membership.reinstate" {
+		t.Errorf("expected a membership.reinstate audit event, got %q", action)
+	}
+
+	// And the door is open again.
+	r = authedRequest("POST", "/api/v1/nodes/reinstate-node/join", nil, userToken)
+	w = serveMux(t, db, "POST", "/api/v1/nodes/{slug}/join", handler.JoinNode(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("rejoin after reinstate: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
+// The admin-only ?status=banned filter had nothing to list before 065.
+func TestListMembersBannedFilter(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "admin24", "member")
+	user, _ := createTestUser(t, db, "banned24", "member")
+	nodeID := createTestNode(t, db, admin.ID, "List Ban Node", "list-ban-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, user.ID, nodeID, "member", "banned")
+
+	r := authedRequest("GET", "/api/v1/nodes/list-ban-node/members?status=banned", nil, adminToken)
+	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	if !strings.Contains(w.Body.String(), "banned24") {
+		t.Errorf("expected the removed member in the list, got %s", w.Body.String())
+	}
+}
