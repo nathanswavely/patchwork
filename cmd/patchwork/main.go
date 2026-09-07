@@ -462,6 +462,9 @@ func main() {
 	mux.HandleFunc("POST /api/v1/users/me/quilts", middleware.AuthRequired(db, handler.AddUserQuilt(db)))
 	mux.HandleFunc("DELETE /api/v1/users/me/quilts/{id}", middleware.AuthRequired(db, handler.DeleteUserQuilt(db)))
 	mux.HandleFunc("GET /api/v1/me/nodes", middleware.AuthRequired(db, handler.ListMyMemberships(db)))
+	// Personal export (docs/adr/012, affordance 1): everything about the
+	// person asking, with no admin involved. Rate-limited inside the handler.
+	mux.HandleFunc("GET /api/v1/users/me/export", middleware.AuthRequired(db, handler.PersonalExport(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
 
 	// Proposal routes — public, but amendment text follows the target

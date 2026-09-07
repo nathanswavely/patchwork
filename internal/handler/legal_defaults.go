@@ -64,6 +64,8 @@ Sign-in links and any notifications you turn on go out through the email server 
 
 Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.
 
+You do not need an administrator to get your own copy. **Download my data** in your account settings hands you one file with everything this site holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, your settings and notifications, and the log of your own sign-ins. It contains nothing anyone else wrote and no sign-in secrets, so the file cannot be used to get into your account.
+
 ## How long things are kept, and deletion
 
 Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.
