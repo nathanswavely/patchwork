@@ -199,6 +199,15 @@ func ListReports(db *database.DB) http.HandlerFunc {
 // must be added here.
 var reportStatuses = []string{"pending", "reviewed", "resolved", "dismissed"}
 
+// Every action this queue accepts. Two of them — dismiss and warn — carry no
+// side effect beyond the status the caller sends with them, so they have no
+// case in the switch below and are easy to mistake for typos. They are not:
+// the admin panel's action menu offers both, and dismiss is its default. A
+// value dropped from this list is an admin button that stops working.
+var reportActions = []string{
+	"dismiss", "warn", "remove_content", "reset_appearance", "suspend_user", "remove_image",
+}
+
 // UpdateReport handles PATCH /api/v1/admin/reports/{id}.
 func UpdateReport(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -236,6 +245,18 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// An unrecognized action used to fall through the switch below in
+		// silence: the report was marked resolved, the moderation the admin
+		// asked for never happened, and the response said it had. Refused
+		// here rather than in the switch because the status is written first,
+		// and a refusal after that write would leave the half of the request
+		// that did land in place.
+		if req.Action != nil && !oneOf(*req.Action, reportActions) {
+			http.Error(w, fmt.Sprintf(`{"error":"action must be one of %s"}`,
+				strings.Join(reportActions, ", ")), http.StatusBadRequest)
+			return
+		}
+
 		var setClauses []string
 		var args []interface{}
 
@@ -264,6 +285,11 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 		// Execute action if provided.
 		if req.Action != nil {
 			switch *req.Action {
+			case "dismiss", "warn":
+				// Nothing to carry out. Both are decisions about the report
+				// rather than actions on what was reported, and the status
+				// the caller sent alongside records them.
+
 			case "suspend_user":
 				// For user reports, suspend the target user.
 				// For node/event reports, find the owner/creator and suspend them.

@@ -923,3 +923,63 @@ func TestUnrecognizedEnumValuesAre400(t *testing.T) {
 		t.Errorf("action without a status: expected 200, got %d: %s", w.Code, w.Body.String())
 	}
 }
+
+// An unrecognized action used to be ignored in silence: the report was marked
+// resolved, the moderation the admin asked for never happened, and the response
+// said it had. The patch-side queue in notice_reports.go always refused one;
+// this is the instance panel catching up.
+func TestUnrecognizedReportActionIs400(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "act1", "member")
+	_, adminTok := createTestUser(t, db, "act2", "admin")
+	nodeID := createTestNode(t, db, owner.ID, "Act", "act-node", "open")
+
+	report := func(id string, body map[string]interface{}) *httptest.ResponseRecorder {
+		if _, err := db.Exec(
+			`INSERT OR REPLACE INTO content_reports (id, reporter_id, entity_type, entity_id, reason, details)
+			 VALUES (?, ?, 'node', ?, 'spam', '')`, id, owner.ID, nodeID); err != nil {
+			t.Fatalf("seed report %s: %v", id, err)
+		}
+		r := authedRequest("PATCH", "/api/v1/admin/reports/"+id, body, adminTok)
+		return serveMux(t, db, "PATCH", "/api/v1/admin/reports/{id}", handler.UpdateReport(db), r)
+	}
+
+	w := report("act-bad", map[string]interface{}{"status": "resolved", "action": "banish"})
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d: %s", w.Code, w.Body.String())
+	}
+	if !strings.Contains(w.Body.String(), "action must be one of") {
+		t.Errorf("expected the 400 to name the accepted actions, got %s", w.Body.String())
+	}
+
+	// The status is written before the switch runs, so refusing a bad action
+	// anywhere after that write would leave the report resolved by a request
+	// that was rejected. It must not move at all.
+	var status string
+	db.QueryRow("SELECT status FROM content_reports WHERE id = 'act-bad'").Scan(&status)
+	if status != "pending" {
+		t.Errorf("a refused action still resolved the report: %q", status)
+	}
+
+	// Every action the admin panel's menu offers, plus remove_image, which the
+	// API serves and that menu does not currently show. dismiss and warn have
+	// no case in the switch on purpose; refusing them would break the panel's
+	// two most-used buttons, dismiss being its default.
+	for i, action := range []string{
+		"dismiss", "warn", "remove_content", "reset_appearance", "suspend_user", "remove_image",
+	} {
+		id := fmt.Sprintf("act-ok-%d", i)
+		status := "resolved"
+		if action == "dismiss" {
+			status = "dismissed"
+		}
+		if w := report(id, map[string]interface{}{"status": status, "action": action}); w.Code != http.StatusOK {
+			t.Errorf("action %q: expected 200, got %d: %s", action, w.Code, w.Body.String())
+		}
+	}
+
+	// A request with no action at all still just sets the status.
+	if w := report("act-none", map[string]interface{}{"status": "reviewed"}); w.Code != http.StatusOK {
+		t.Errorf("status without an action: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+}
