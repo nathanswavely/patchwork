@@ -36534,9 +36534,9 @@
       "text": "History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is intact; versions from before the rebuild are not available.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
@@ -36552,9 +36552,9 @@
       "text": "This is the oldest version available. It was written from the database when the document's history was rebuilt, so there is nothing to compare it against.",
       "words": 26,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
