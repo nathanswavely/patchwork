@@ -352,3 +352,93 @@ func TestContactItemValidation(t *testing.T) {
 		t.Errorf("retyping a note as an email must meet the email rule: got %d %s", pw.Code, pw.Body.String())
 	}
 }
+
+// TestBackfillConvertsTheLegacyCard covers the conversion both startup and
+// `make import` run. The import path is why it must stay: an archive taken
+// before migration 066 carries the card as three columns, and without the
+// conversion those cards arrive on a fork invisible — a silent loss in the
+// one mechanism a community has for leaving with what is theirs.
+func TestBackfillConvertsTheLegacyCard(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "bfowner", "member")
+	sharer, _ := createTestUser(t, db, "bfsharer", "member")
+	fellow, fellowToken := createTestUser(t, db, "bffellow", "member")
+
+	shared := createTestNode(t, db, owner.ID, "Shared", "bf-shared", "open")
+	quiet := createTestNode(t, db, owner.ID, "Quiet", "bf-quiet", "open")
+	createTestMembership(t, db, owner.ID, shared, "admin", "active")
+	createTestMembership(t, db, owner.ID, quiet, "admin", "active")
+	createTestMembership(t, db, fellow.ID, shared, "member", "active")
+	sharedMem := createTestMembership(t, db, sharer.ID, shared, "member", "active")
+	createTestMembership(t, db, sharer.ID, quiet, "member", "active")
+
+	// The pre-066 shape: three columns, and the switch on one patch of two.
+	if _, err := db.Exec(
+		`UPDATE users SET contact_phone = ?, contact_email = ?, contact_note = ? WHERE id = ?`,
+		"+1 717 555 0123", "reach@example.com", "Signal only", sharer.ID,
+	); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`UPDATE memberships SET share_contact = 1 WHERE id = ?`, sharedMem); err != nil {
+		t.Fatal(err)
+	}
+
+	n, err := handler.BackfillContactItems(db)
+	if err != nil {
+		t.Fatalf("backfill: %v", err)
+	}
+	if n != 3 {
+		t.Errorf("converted %d fields, want 3", n)
+	}
+
+	// Exactly the disclosure the old shape described: all three items, to the
+	// one patch the switch was on, and to no other.
+	var inShared, inQuiet int
+	db.QueryRow(`SELECT COUNT(*) FROM contact_item_shares s JOIN contact_items ci ON ci.id = s.item_id
+		WHERE ci.user_id = ? AND s.node_id = ?`, sharer.ID, shared).Scan(&inShared)
+	db.QueryRow(`SELECT COUNT(*) FROM contact_item_shares s JOIN contact_items ci ON ci.id = s.item_id
+		WHERE ci.user_id = ? AND s.node_id = ?`, sharer.ID, quiet).Scan(&inQuiet)
+	if inShared != 3 || inQuiet != 0 {
+		t.Errorf("shares: shared=%d quiet=%d, want 3 and 0", inShared, inQuiet)
+	}
+
+	// The legacy copy is gone, so the data lives in one place.
+	var phone, email, note string
+	db.QueryRow(`SELECT contact_phone, contact_email, contact_note FROM users WHERE id = ?`,
+		sharer.ID).Scan(&phone, &email, &note)
+	if phone != "" || email != "" || note != "" {
+		t.Errorf("legacy columns survived: %q %q %q", phone, email, note)
+	}
+
+	// Idempotent: a second run must not duplicate, and — the failure mode
+	// that matters — must not resurrect an item deleted after upgrading.
+	var firstID string
+	db.QueryRow(`SELECT id FROM contact_items WHERE user_id = ? ORDER BY position LIMIT 1`, sharer.ID).Scan(&firstID)
+	if _, err := db.Exec(`DELETE FROM contact_items WHERE id = ?`, firstID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := handler.BackfillContactItems(db); err != nil {
+		t.Fatalf("second backfill: %v", err)
+	}
+	var remaining int
+	db.QueryRow(`SELECT COUNT(*) FROM contact_items WHERE user_id = ?`, sharer.ID).Scan(&remaining)
+	if remaining != 2 {
+		t.Errorf("after deleting one item and re-running, %d items — a rerun resurrected it", remaining)
+	}
+
+	// And the converted card reads in the room, through the new path.
+	r := authedRequest("GET", "/api/v1/nodes/bf-shared/members", nil, fellowToken)
+	w := serveOptionalMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+	items, _ := decodeJSON(t, w)["items"].([]interface{})
+	found := false
+	for _, it := range items {
+		m := it.(map[string]interface{})
+		if m["username"] == "bfsharer" {
+			got, _ := m["contact"].([]interface{})
+			found = len(got) == 2
+		}
+	}
+	if !found {
+		t.Error("the converted card is not readable in the room it was shared with")
+	}
+}
