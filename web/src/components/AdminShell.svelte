@@ -10,7 +10,7 @@
   import GlobalBar from './GlobalBar.svelte';
   import ContextCrumb from './ContextCrumb.svelte';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
-  import { Gauge, Users, Flag, Tray, HandPalm, ListMagnifyingGlass, SquaresFour, Tag, Graph, IdentificationCard, Scales, CalendarBlank, CalendarPlus, Archive } from 'phosphor-svelte';
+  import { Gauge, Users, Flag, Tray, HandPalm, ListMagnifyingGlass, SquaresFour, Tag, Graph, IdentificationCard, Scales, CalendarBlank, CalendarPlus, Archive, SealCheck } from 'phosphor-svelte';
 
   let { children } = $props();
 
@@ -29,6 +29,7 @@
     { label: 'Claims', href: '/admin/claims', icon: HandPalm },
     { label: 'Archived', href: '/admin/archived', icon: Archive },
     { label: 'Audit Log', href: '/admin/audit', icon: ListMagnifyingGlass },
+    { label: 'Prove Admin', href: '/admin/attestation', icon: SealCheck },
   ];
 
   let path = $derived(getPath());

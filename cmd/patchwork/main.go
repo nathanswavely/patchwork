@@ -30,11 +30,21 @@ import (
 func main() {
 	configPath := flag.String("config", "patchwork.yaml", "path to config file")
 	healthcheck := flag.Bool("healthcheck", false, "probe the running instance's health endpoint and exit 0 (healthy) or 1")
+	verifyAttestation := flag.String("verify-attestation", "", "check an admin attestation blob (docs/adr/087) and exit 0 if it stands")
+	attestationKey := flag.String("attestation-key", "", "PEM public key file to check -verify-attestation against, instead of fetching it from the claimed domain")
 	flag.Parse()
 
 	// Probe mode: no database, no server. Used by the image's HEALTHCHECK.
 	if *healthcheck {
 		runHealthcheck(*configPath)
+		return
+	}
+
+	// Verifier mode: no config, no database, no server. This is the side of
+	// the exchange that does *not* run a quilt — a host or a directory that
+	// happens to have the binary.
+	if *verifyAttestation != "" {
+		runVerifyAttestation(*verifyAttestation, *attestationKey)
 		return
 	}
 
@@ -107,13 +117,20 @@ func main() {
 		} else if nu > 0 || nn > 0 {
 			log.Printf("federation: backfilled keypairs for %d users and %d nodes", nu, nn)
 		}
+	}
 
-		// The instance service actor relays remote-patch Follows for all
-		// local users (docs/adr/024) — ensure it exists and its ap_id
-		// matches the configured domain.
-		if err := ap.EnsureInstanceActor(db, ap.GetDomain()); err != nil {
-			log.Printf("warning: failed to ensure instance actor: %v", err)
-		}
+	// The instance service actor relays remote-patch Follows for all local
+	// users (docs/adr/024) — ensure it exists and its ap_id matches the
+	// configured domain.
+	//
+	// Outside the federation gate, unlike the AP-ID backfills above. Its
+	// keypair is also what signs an admin's proof of the role (docs/adr/087),
+	// and that has to work on a quilt that never federates: a key minted only
+	// when federation is on is a proof that disappears the day an instance
+	// turns federation off. Minting it costs one RSA keypair, once, on a
+	// database that has never had one.
+	if err := ap.EnsureInstanceActor(db, ap.GetDomain()); err != nil {
+		log.Printf("warning: failed to ensure instance actor: %v", err)
 	}
 
 	// Initialize instance governance repo. Repo creation is pure go-git, so
@@ -301,6 +318,12 @@ func main() {
 	mux.HandleFunc("GET /api/v1/instance", handler.Instance(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance/icon", handler.InstanceIcon(db, cfg))
 	mux.HandleFunc("GET /api/v1/instance/lining", handler.GetInstanceLining(db))
+
+	// The public half of admin attestation (docs/adr/087). Deliberately here
+	// rather than under the federation gate with /ap/instance: a verifier
+	// checking an admin's proof has no account and does not care whether this
+	// quilt federates.
+	mux.HandleFunc("GET /api/v1/instance/attestation-key", handler.AttestationKey(db, cfg))
 
 	// Suggesting a placement from an address. Authenticated and throttled;
 	// answers "no suggestion" rather than an error when there is no index or
@@ -565,6 +588,10 @@ func main() {
 	// field on the PATCH above (docs/adr/072).
 	mux.HandleFunc("PUT /api/v1/admin/users/{id}/email", middleware.AdminRequired(db, middleware.SudoRequired(db, handler.SetUserEmail(db, cfg))))
 	mux.HandleFunc("GET /api/v1/admin/audit-log", middleware.AdminRequired(db, handler.AuditLog(db)))
+	// Signing an outsider's nonce as this quilt (docs/adr/087). Step-up
+	// gated like the other actions that hand something outward: the blob
+	// leaves the building and stands on its own for fifteen minutes.
+	mux.HandleFunc("POST /api/v1/admin/attestation", middleware.AdminRequired(db, middleware.SudoRequired(db, handler.IssueAttestation(db, cfg))))
 	// Archived patches: list + the only way back from archived (docs/adr/034).
 	mux.HandleFunc("GET /api/v1/admin/nodes", middleware.AdminRequired(db, handler.AdminListNodes(db)))
 	mux.HandleFunc("POST /api/v1/admin/nodes/{id}/restore", middleware.AdminRequired(db, handler.AdminRestoreNode(db)))
