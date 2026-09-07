@@ -3,6 +3,8 @@
   import { getUser, checkAuth } from '../stores/auth.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { withStepUp, stepUpStatus, PasskeyRequiredError } from '../lib/stepUp.js';
+  import PasskeyNotice from '../components/PasskeyNotice.svelte';
 
   let user = $derived(getUser());
   let displayName = $state('');
@@ -260,6 +262,41 @@
       saving = false;
     }
   }
+  // Danger zone: deleting your own account (docs/adr/086).
+  //
+  // Step-up gated like the other irreversible actions, so the status is read
+  // on load — discovering you need a passkey at the moment you are trying to
+  // leave is the failure mode PasskeyNotice exists to avoid.
+  let hasPasskey = $state(true);
+  let confirmUsername = $state('');
+  let deleteArmed = $state(false);
+  let deleting = $state(false);
+  // Patches the server refused over: the person is their only admin.
+  let blockingPatches = $state([]);
+
+  $effect(() => {
+    stepUpStatus().then((s) => { hasPasskey = !!s.has_passkey; });
+  });
+
+  async function deleteAccount() {
+    deleting = true;
+    try {
+      await withStepUp(() => api('users/me', {
+        method: 'DELETE',
+        body: { confirm_username: confirmUsername },
+      }));
+      // The session went with the account. Hard reload rather than a
+      // client-side navigate: every store still holds the deleted person.
+      localStorage.clear();
+      window.location.href = '/';
+    } catch (e) {
+      if (e instanceof PasskeyRequiredError) hasPasskey = false;
+      blockingPatches = e?.data?.patches || [];
+      showToast(e.message || 'Failed to delete account', 'error');
+      deleting = false;
+      deleteArmed = false;
+    }
+  }
 </script>
 
 <div class="page-fade">
@@ -470,10 +507,138 @@
         </div>
       </section>
     {/if}
+
+    <!-- ===== Danger zone (docs/adr/086) ===== -->
+    <section class="pw-section">
+      <h2 class="danger-heading">Danger Zone</h2>
+      <div class="danger-card">
+        <h3>Delete your account</h3>
+        <PasskeyNotice show={!hasPasskey} action="delete your account" />
+        <p class="danger-warning">
+          This happens immediately and cannot be undone.
+        </p>
+        <p class="danger-warning">
+          <strong>Erased:</strong> your email address, display name, bio, links,
+          avatar and contact card. Your passkeys, recovery codes and sessions.
+          Your personal calendar link and notification settings. Every patch
+          membership you hold, the quilts you have connected or followed, and
+          any claim still awaiting review.
+        </p>
+        <p class="danger-warning">
+          <strong>Kept:</strong> what you took part in. Proposals, votes,
+          comments, notices, events and recorded decisions stay so the
+          community's record stays whole. They will read as
+          <strong>&ldquo;Deleted account&rdquo;</strong> with no name and no
+          link. Your profile page stops existing, and your username stays
+          retired so nobody else can take it.
+        </p>
+        <p class="danger-warning">
+          Copies that already federated to other servers, or that went out in an
+          export taken before today, are outside this site's reach.
+        </p>
+
+        {#if blockingPatches.length > 0}
+          <div class="blockers" role="status">
+            <p>
+              You are the only admin of
+              {blockingPatches.length === 1 ? 'this patch' : 'these patches'}.
+              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first,
+              then come back. You can name a successor, promote another admin, or hold an election.
+            </p>
+            <ul>
+              {#each blockingPatches as p}
+                <li>
+                  <a href="/patches/{p.slug}/settings" onclick={(e) => { e.preventDefault(); navigate(`/patches/${p.slug}/settings`); }}>{p.name}</a>
+                </li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+
+        <label class="field">
+          <span class="field-label">Type your username to confirm: <strong>{user.username}</strong></span>
+          <input
+            type="text"
+            bind:value={confirmUsername}
+            placeholder={user.username}
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+        {#if !deleteArmed}
+          <button
+            class="btn btn-danger"
+            disabled={confirmUsername !== user.username}
+            onclick={() => { deleteArmed = true; }}
+          >
+            Delete My Account…
+          </button>
+        {:else}
+          <div class="delete-confirm">
+            <span class="danger-warning">Really delete your account? You will be signed out.</span>
+            <button class="btn btn-danger" onclick={deleteAccount} disabled={deleting}>
+              {deleting ? 'Deleting…' : 'Yes, delete my account'}
+            </button>
+            <button class="btn btn-secondary" onclick={() => { deleteArmed = false; }} disabled={deleting}>
+              Cancel
+            </button>
+          </div>
+        {/if}
+      </div>
+    </section>
   {/if}
 </div>
 
 <style>
+  .danger-heading {
+    color: var(--color-error);
+  }
+
+  .danger-card {
+    border: 1px solid var(--color-error);
+    border-radius: 6px;
+    padding: 1.25rem;
+    max-width: var(--pw-measure-narrow);
+  }
+
+  .danger-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .danger-warning {
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .blockers {
+    border: 1px solid var(--color-warning, #b8860b);
+    background: var(--color-warning-bg, rgba(184, 134, 11, 0.08));
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .blockers ul {
+    margin: 0.5rem 0 0 1.1rem;
+  }
+
+  .blockers a {
+    text-decoration: underline;
+  }
+
+  .delete-confirm {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
   h2 {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;

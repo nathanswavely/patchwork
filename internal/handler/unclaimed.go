@@ -298,7 +298,7 @@ func ListSubmissions(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 
 		query := `SELECT n.id, n.name, n.slug, n.description, n.website, COALESCE(n.links,'[]'), n.address, n.submitted_by, n.created_at,
-			COALESCE(u.username,''), COALESCE(u.display_name,'')
+			` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
 			FROM nodes n LEFT JOIN users u ON n.submitted_by = u.id
 			WHERE n.status = 'pending_review' AND n.removed_at IS NULL`
 		args := []interface{}{}

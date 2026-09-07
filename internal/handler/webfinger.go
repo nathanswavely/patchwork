@@ -51,7 +51,7 @@ func WebFinger(db *database.DB) http.HandlerFunc {
 		var actorURL string
 		var userID string
 		err := db.QueryRow(
-			"SELECT id FROM users WHERE username = ? AND suspended_at IS NULL", username,
+			"SELECT id FROM users WHERE username = ? AND suspended_at IS NULL AND deleted_at IS NULL", username,
 		).Scan(&userID)
 		if err == nil {
 			actorURL = fmt.Sprintf("https://%s/ap/users/%s", domain, userID)

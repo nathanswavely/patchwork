@@ -30,7 +30,7 @@ func UserActivityFeed(db *database.DB) http.HandlerFunc {
 					COALESCE(p.proposal_type, '') AS body,
 					'/patches/' || n.slug || '/governance/' || p.id AS link,
 					n.slug AS patch_slug, n.name AS patch_name,
-					COALESCE(u.display_name, u.username, '') AS actor_name,
+					`+displayNameExpr("u")+` AS actor_name,
 					p.created_at
 				FROM proposals p
 				JOIN nodes n ON n.id = p.node_id

@@ -61,14 +61,24 @@ func SetUserEmail(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		var username, displayName string
 		var oldEmail sql.NullString
+		var deletedAt sql.NullString
 		switch err = db.QueryRow(
-			`SELECT username, display_name, email FROM users WHERE id = ?`, targetID,
-		).Scan(&username, &displayName, &oldEmail); {
+			`SELECT username, display_name, email, deleted_at FROM users WHERE id = ?`, targetID,
+		).Scan(&username, &displayName, &oldEmail, &deletedAt); {
 		case err == sql.ErrNoRows:
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
 		case err != nil:
 			http.Error(w, `{"error":"failed to load user"}`, http.StatusInternalServerError)
+			return
+		}
+
+		// A tombstone is not an account to repair (docs/adr/086). Pointing one
+		// at a mailbox would let whoever holds that mailbox magic-link into a
+		// deleted person's row, which is the one thing deletion promised
+		// nobody could do.
+		if deletedAt.Valid && deletedAt.String != "" {
+			http.Error(w, `{"error":"that account was deleted; there is nothing to sign in to"}`, http.StatusConflict)
 			return
 		}
 

@@ -23,10 +23,10 @@ type eventSubmission struct {
 	SubmitterDisplay  string `json:"submitter_display_name"`
 }
 
-const eventSubmissionSelect = `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location,
+var eventSubmissionSelect = `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location,
 	e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.status,
 	e.created_at, e.updated_at, n.name, n.slug, n.status,
-	COALESCE(u.username,''), COALESCE(u.display_name,'')
+	` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
 	FROM events e
 	JOIN nodes n ON n.id = e.node_id
 	LEFT JOIN users u ON u.id = e.created_by
