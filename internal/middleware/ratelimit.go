@@ -206,3 +206,24 @@ func PersonalExportRateLimit(r *http.Request) bool {
 	}
 	return personalExportLimiter.Allow("ip:" + ClientIP(r))
 }
+
+// memberSeamripLimiter throttles the member seamrip (docs/adr/089). Tighter
+// than the personal export above, because the bundle is the whole quilt as
+// this person can see it rather than one person's rows: every travelling
+// table, queried through a view whose predicates are subqueries. Two a day,
+// refilling one every twelve hours. Somebody seeding a fork takes one, and
+// maybe a second when the first download failed; nobody has an honest reason
+// to take a hundred, and a script that tried would be the cheapest way to
+// make a Raspberry Pi unhappy.
+var memberSeamripLimiter = NewRateLimiterStore(rate.Every(12*time.Hour), 2)
+
+// MemberSeamripRateLimit reports whether this caller may take another member
+// seamrip. Keyed on the account, like the personal export: the route is
+// behind AuthRequired, and rationing by address would ration a shared
+// network's members against each other.
+func MemberSeamripRateLimit(r *http.Request) bool {
+	if user := UserFromContext(r.Context()); user != nil {
+		return memberSeamripLimiter.Allow("user:" + user.ID)
+	}
+	return memberSeamripLimiter.Allow("ip:" + ClientIP(r))
+}

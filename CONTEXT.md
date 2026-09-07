@@ -1274,10 +1274,15 @@ an egress right)
 **Member seamrip**:
 An export any member can take of what they can already see — enough to
 seed a fork, never containing other people's secrets (emails, hidden
-memberships). People join the fork by choice and re-set their own
-visibility there.
+memberships). Other people travel as a **stub**: id, username, display
+name, avatar, and nothing else, which is enough for the memberships to
+keep their shape so the threads survive the move. People join the fork by
+choice and re-set their own visibility there. Offered at Account settings
+beside the personal export; a zip, in the same format the full seamrip
+writes, with a manifest naming who took it (docs/adr/089).
 _Avoid_: public export (it includes member-visible data, not just
-public), scrape
+public), scrape, "the member's seamrip" (it is the community's quilt, not
+theirs — the member is who may take it, not what it contains)
 
 **Personal export**:
 Everything about *you* — profile, your memberships including hidden

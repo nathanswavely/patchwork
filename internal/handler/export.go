@@ -28,6 +28,10 @@ func AdminExport(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			"description": settings.EffectiveDescription(db, cfg),
 			"domain":      cfg.Instance.Domain,
 			"version":     Version,
+			// Which bundle this is. The member seamrip writes the same file
+			// with KindMember, and cmd/import says which one it read rather
+			// than assuming this one (docs/adr/089).
+			"kind": seamrip.KindFull,
 		})
 
 		if err := seamrip.Export(db, func(t seamrip.Table, items []map[string]any) error {
