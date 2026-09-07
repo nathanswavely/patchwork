@@ -70,13 +70,15 @@ describe('My Patches: sharing is patch-first, per item', () => {
   });
 });
 
-describe('Members room: the card shows only where the API sent it', () => {
+describe('Members room: the person card shows what the API sent', () => {
   const src = source('pages/PatchMembers.svelte');
 
-  it('renders contact only from the per-member contact object', () => {
-    expect(src).toContain('{#if member.contact}');
-    expect(src).toMatch(/href="tel:\{member\.contact\.phone/);
-    expect(src).toMatch(/href="mailto:\{member\.contact\.email\}"/);
+  it('renders a person through the one person card, never inline', () => {
+    // docs/adr/083 decision 7: one rendering of a person wherever they are
+    // named. The list must not grow a second, list-only way to show items.
+    expect(src).toContain('<PersonCard person={member} role={member.role} />');
+    expect(src).not.toMatch(/href="tel:/);
+    expect(src).not.toMatch(/href="mailto:/);
   });
 
   it('offers sharing to a member in the room who shares no card', () => {
@@ -92,6 +94,13 @@ describe('Members room: the card shows only where the API sent it', () => {
     expect(src).toContain('anyContact = !!data.any_contact_shared');
     expect(src).not.toContain('members.find(');
     expect(src).not.toContain('members.some(');
+  });
+
+  it('cannot grant from the members list — sharing is patch-first', () => {
+    // Reading a list of people is not the moment anyone decides to be
+    // reachable, so no write path lives here.
+    expect(src).not.toContain('contact-shares');
+    expect(src).not.toContain("method: 'PUT'");
   });
 });
 
@@ -138,5 +147,39 @@ describe('The profile is a window onto the room, never a wider one', () => {
   it('shows no heading at all to a visitor who shares no room', () => {
     // An empty "Reach them" section would tell the internet a card exists.
     expect(src).toContain('{#if contact.length > 0}');
+  });
+});
+
+describe('The person card is one rendering, and follows the patch card', () => {
+  const src = source('components/PersonCard.svelte');
+
+  it('previews on point where there is a pointer, opens on tap where there is not', () => {
+    // CONTEXT.md pairs this with the patch card deliberately: a second
+    // gesture rule for the same job is how two surfaces stop agreeing.
+    expect(src).toContain("window.matchMedia('(hover: hover) and (pointer: fine)')");
+    expect(src).toMatch(/onmouseenter=\{\(\) => hasPointer && show\(\)\}/);
+    expect(src).toContain('onclick={activate}');
+    // Clicking with a pointer opens the person, not the card — the card is
+    // already showing, and toggling would close what hovering just opened.
+    expect(src).toMatch(/if \(hasPointer\) \{\s*openProfile\(e\);/);
+  });
+
+  it('opens on keyboard focus too — hover alone is mouse-only', () => {
+    expect(src).toContain('onfocus={() => hasPointer && show()}');
+    expect(src).toContain('aria-expanded={open}');
+  });
+
+  it('is worth opening for someone who shares nothing', () => {
+    // The contact section is absent far more often than present, so the
+    // card carries identity and standing regardless.
+    expect(src).toContain('person-avatar');
+    expect(src).toContain('person-handle');
+    expect(src).toContain('View profile');
+    expect(src).toContain('{#if items.length > 0}');
+  });
+
+  it('never names the patch an item came through', () => {
+    const section = src.slice(src.indexOf('<ul class="person-contact">'), src.indexOf('</ul>'));
+    expect(section).not.toMatch(/node_slug|node_name|patch/i);
   });
 });
