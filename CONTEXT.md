@@ -1209,7 +1209,7 @@ _Avoid_: bookmark, watch, subscription
 **Doorway**:
 The labeled link that hands you to another quilt's own site: every
 switcher entry for another quilt, and the deeper-than-looking actions on
-a remote patch card (join, RSVP, workspace). Whole quilts are always
+a remote patch card (join, propose, workspace). Whole quilts are always
 entered through doorways — places are visited at their own address,
 never rendered inside this one. A doorway is always marked as leaving.
 Declining cross-quilt reads (the multi-quilt flag off) is respected,

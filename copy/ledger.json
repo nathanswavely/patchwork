@@ -10416,19 +10416,19 @@
       ]
     },
     {
-      "id": "34e5d76c4438",
-      "text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.",
-      "words": 77,
+      "id": "d316d436381b",
+      "text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.",
+      "words": 76,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
-      "note": null,
+      "note": "Your prose, previously marked human. Only the false clause changed: \"which patches you join and which events you RSVP to\" became \"which patches you join and what you post there\". There is no RSVP feature (docs/adr/090). Left unreviewed so you can check the replacement wording.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
           "line": 31,
           "kind": "go-doc-block",
-          "raw": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.",
+          "raw": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.",
           "quote": null
         }
       ]
@@ -10471,19 +10471,19 @@
       "previous_ai_text": "**Account information.** Your email address, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system."
     },
     {
-      "id": "504ce87098e5",
-      "text": "**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.",
-      "words": 27,
+      "id": "d551d5dd6062",
+      "text": "**Activity.** The patches you join, follow, or administer, the proposals and votes you take part in, and anything you post or edit, events included. There is no RSVP on this site and no record of whether you went to anything.",
+      "words": 40,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
-      "note": null,
+      "note": "Your prose, previously marked human. Dropped \"the events you RSVP to\" and added a sentence saying attendance is not recorded, since docs/adr/090 makes that permanent. Left unreviewed so you can check the added sentence.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
           "line": 37,
           "kind": "go-doc-block",
-          "raw": "**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.",
+          "raw": "**Activity.** The patches you join, follow, or administer, the proposals and votes you take part in, and anything you post or edit, events included. There is no RSVP on this site and no record of whether you went to anything.",
           "quote": null
         }
       ]
@@ -11284,19 +11284,19 @@
       "previous_ai_text": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. That commitment is written into the software itself, and this site keeps it.\n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say."
     },
     {
-      "id": "8185e141e8f0",
-      "text": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
+      "id": "2f8687838b3e",
+      "text": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and reading to commenting and voting, member of a patch or not.",
       "words": 31,
       "tier": "prose",
-      "status": "human",
+      "status": "unreviewed",
       "replacement": null,
-      "note": null,
+      "note": "Your prose, previously marked human. One word: \"RSVPing\" became \"reading\". Left unreviewed so you can check it.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
           "line": 134,
           "kind": "go-doc-block",
-          "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
+          "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and reading to commenting and voting, member of a patch or not.",
           "quote": null
         }
       ]
@@ -45069,19 +45069,19 @@
       ]
     },
     {
-      "id": "03fe76c6334e",
-      "text": "You're viewing this patch's public face from your own quilt. Joining, RSVPs, and everything deeper live on",
-      "words": 17,
+      "id": "0a471d1b0757",
+      "text": "You're viewing this patch's public face from your own quilt. Joining and everything deeper live on",
+      "words": 16,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Was ai-fine before the edit. Dropped \"RSVPs\" from the list of things that live on the remote quilt, since no Patchwork quilt has them (docs/adr/090).",
       "occurrences": [
         {
           "file": "web/src/pages/RemotePatch.svelte",
           "line": 152,
           "kind": "markup",
-          "raw": "You're viewing this patch's public face from your own quilt. Joining,\n        RSVPs, and everything deeper live on",
+          "raw": "You're viewing this patch's public face from your own quilt. Joining\n        and everything deeper live on",
           "quote": null
         }
       ]
@@ -48030,6 +48030,78 @@
           "kind": "go-string",
           "raw": "Event cancelled",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "34e5d76c4438",
+      "text": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.",
+      "words": 77,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 31,
+          "kind": "go-doc-block",
+          "raw": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "504ce87098e5",
+      "text": "**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.",
+      "words": 27,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 37,
+          "kind": "go-doc-block",
+          "raw": "**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8185e141e8f0",
+      "text": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
+      "words": 31,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 134,
+          "kind": "go-doc-block",
+          "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "03fe76c6334e",
+      "text": "You're viewing this patch's public face from your own quilt. Joining, RSVPs, and everything deeper live on",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/RemotePatch.svelte",
+          "line": 152,
+          "kind": "markup",
+          "raw": "You're viewing this patch's public face from your own quilt. Joining,\n        RSVPs, and everything deeper live on",
+          "quote": null
         }
       ]
     }

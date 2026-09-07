@@ -28,13 +28,13 @@ const defaultPrivacyPolicy = `*This is the default privacy policy that ships wit
 
 ## The short version
 
-Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.
+Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.
 
 ## What this site collects
 
 **Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.
 
-**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.
+**Activity.** The patches you join, follow, or administer, the proposals and votes you take part in, and anything you post or edit, events included. There is no RSVP on this site and no record of whether you went to anything.
 
 **Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.
 
@@ -131,7 +131,7 @@ These rules apply everywhere on this site:
 - No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.
 - Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.
 
-These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.
+These expectations don't wait for you to join anything. They cover every way you use the site, from following and reading to commenting and voting, member of a patch or not.
 
 ## Moderation
 
