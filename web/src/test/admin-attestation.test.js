@@ -38,8 +38,8 @@ describe('Admin attestation page', () => {
 
   it('says just as plainly that it is not identity', () => {
     expect(src).toContain('What it does not prove:');
-    expect(src).toContain('no username, no email, no account');
-    expect(src).toContain('this quilt does not publish who its admins are');
+    expect(src).toContain('No username, no email, no account');
+    expect(src).toContain('does not publish who its admins are');
   });
 
   it('shows the expiry beside the blob, because the blob does not keep', () => {
@@ -71,7 +71,7 @@ describe('Admin panel wiring', () => {
   it('gives the page a tab in the admin shell', () => {
     const shell = source('components/AdminShell.svelte');
     expect(shell).toContain("href: '/admin/attestation'");
-    expect(shell).toContain("label: 'Prove Admin'");
+    expect(shell).toContain("label: 'Prove admin'");
   });
 
   it('routes /admin/attestation to the page', () => {

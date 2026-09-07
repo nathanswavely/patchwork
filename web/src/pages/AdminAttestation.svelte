@@ -8,7 +8,7 @@
    * against the key served at this domain.
    *
    * The page has one job beyond the mechanics: be plain about what the
-   * result does and does not say. It proves the role, not the person —
+   * result does and does not say. It proves the role, not the person,
    * naming who the admins are is what ADR 023 refused, and a page that let
    * anyone read this as identity would smuggle that back in.
    */
@@ -64,23 +64,23 @@
 </script>
 
 <div class="admin-page">
-  <h1>Prove You Administer This Quilt</h1>
+  <h1>Prove you administer this quilt</h1>
   <p class="page-desc">
-    Sometimes an outside party — a hosting provider re-pointing a billing
-    contact, a directory checking a submission — needs to know that whoever
-    is writing to them really administers this quilt. Ask them for a nonce:
-    any string they choose, which is how they know the answer was made for
-    them and not copied from somewhere else. Sign it here, send them the
-    result, and they can check it against this quilt's public key without an
-    account and without asking us anything.
+    Sometimes someone outside this quilt needs to know that the person
+    writing to them really is an admin here. A hosting provider changing a
+    billing contact, for example, or a directory checking a submission. Ask
+    them for a nonce, which is any string they choose. Sign it here and send
+    them the result. They can check it against this quilt's public key with
+    no account and no request to us. Because they chose the string, they
+    know the answer was made for them and not copied from somewhere else.
   </p>
   <p class="page-desc">
     <strong>What it proves:</strong> an admin of this quilt signed that exact
-    string at that exact time, and the signature stands for fifteen minutes.
+    string at that time. The signature is good for fifteen minutes.
     <strong>What it does not prove:</strong> who you are. The signed statement
-    names this domain and nothing else — no username, no email, no account.
-    Anyone with admin here could have produced it, and that is deliberate:
-    this quilt does not publish who its admins are.
+    names this domain and nothing else. No username, no email, no account.
+    Any admin here could have produced it, and that is deliberate. This quilt
+    does not publish who its admins are.
   </p>
 
   <PasskeyNotice show={!hasPasskey} action="sign an attestation" />
@@ -102,8 +102,8 @@
       </button>
     </div>
     <p class="hint">
-      8 to 64 printable characters, on one line. Paste it exactly as they sent
-      it — a changed character is a different nonce, and their check will fail.
+      8 to 64 printable characters on one line. Paste it exactly as they sent
+      it. A changed character is a different nonce, and their check will fail.
     </p>
   </form>
 
@@ -125,7 +125,7 @@
       </dl>
       <p class="hint">
         Tell them to fetch the key from this quilt's own address, not from a
-        link in the message — a signature only means something when the key
+        link in the message. A signature only means something when the key
         came from the domain they care about.
       </p>
     </section>

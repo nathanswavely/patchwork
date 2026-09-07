@@ -29,7 +29,7 @@
     { label: 'Claims', href: '/admin/claims', icon: HandPalm },
     { label: 'Archived', href: '/admin/archived', icon: Archive },
     { label: 'Audit Log', href: '/admin/audit', icon: ListMagnifyingGlass },
-    { label: 'Prove Admin', href: '/admin/attestation', icon: SealCheck },
+    { label: 'Prove admin', href: '/admin/attestation', icon: SealCheck },
   ];
 
   let path = $derived(getPath());

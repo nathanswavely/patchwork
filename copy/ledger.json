@@ -16884,26 +16884,19 @@
       ]
     },
     {
-      "id": "0afb8f70dea9",
-      "text": "Prove Admin",
+      "id": "596439f03867",
+      "text": "Prove admin",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
           "line": 32,
           "kind": "js-string",
-          "raw": "Prove Admin",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/finderProviders.js",
-          "line": 120,
-          "kind": "js-string",
-          "raw": "Prove Admin",
+          "raw": "Prove admin",
           "quote": "'"
         }
       ]
@@ -24455,6 +24448,24 @@
       ]
     },
     {
+      "id": "0afb8f70dea9",
+      "text": "Prove Admin",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 120,
+          "kind": "js-string",
+          "raw": "Prove Admin",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "e2d53620914a",
       "text": "Quilt mark",
       "words": 2,
@@ -27802,37 +27813,37 @@
       ]
     },
     {
-      "id": "4c1b0b2afe21",
-      "text": "Prove You Administer This Quilt",
+      "id": "bcb50f022b80",
+      "text": "Prove you administer this quilt",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
           "line": 67,
           "kind": "markup",
-          "raw": "Prove You Administer This Quilt",
+          "raw": "Prove you administer this quilt",
           "quote": null
         }
       ]
     },
     {
-      "id": "4801d33c8777",
-      "text": "Sometimes an outside party — a hosting provider re-pointing a billing contact, a directory checking a submission — needs to know that whoever is writing to them really administers this quilt. Ask them for a nonce: any string they choose, which is how they know the answer was made for them and not copied from somewhere else. Sign it here, send them the result, and they can check it against this quilt's public key without an account and without asking us anything.",
-      "words": 82,
+      "id": "e8fdbfa4aa93",
+      "text": "Sometimes someone outside this quilt needs to know that the person writing to them really is an admin here. A hosting provider changing a billing contact, for example, or a directory checking a submission. Ask them for a nonce, which is any string they choose. Sign it here and send them the result. They can check it against this quilt's public key with no account and no request to us. Because they chose the string, they know the answer was made for them and not copied from somewhere else.",
+      "words": 89,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
           "line": 69,
           "kind": "markup",
-          "raw": "Sometimes an outside party — a hosting provider re-pointing a billing\n    contact, a directory checking a submission — needs to know that whoever\n    is writing to them really administers this quilt. Ask them for a nonce:\n    any string they choose, which is how they know the answer was made for\n    them and not copied from somewhere else. Sign it here, send them the\n    result, and they can check it against this quilt's public key without an\n    account and without asking us anything.",
+          "raw": "Sometimes someone outside this quilt needs to know that the person\n    writing to them really is an admin here. A hosting provider changing a\n    billing contact, for example, or a directory checking a submission. Ask\n    them for a nonce, which is any string they choose. Sign it here and send\n    them the result. They can check it against this quilt's public key with\n    no account and no request to us. Because they chose the string, they\n    know the answer was made for them and not copied from somewhere else.",
           "quote": null
         }
       ]
@@ -27842,9 +27853,9 @@
       "text": "What it proves:",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -27856,19 +27867,19 @@
       ]
     },
     {
-      "id": "6048afbd7566",
-      "text": "an admin of this quilt signed that exact string at that exact time, and the signature stands for fifteen minutes.",
-      "words": 20,
+      "id": "8053e06e08ef",
+      "text": "an admin of this quilt signed that exact string at that time. The signature is good for fifteen minutes.",
+      "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
           "line": 78,
           "kind": "markup",
-          "raw": "an admin of this quilt signed that exact\n    string at that exact time, and the signature stands for fifteen minutes.",
+          "raw": "an admin of this quilt signed that exact\n    string at that time. The signature is good for fifteen minutes.",
           "quote": null
         }
       ]
@@ -27878,9 +27889,9 @@
       "text": "What it does not prove:",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -27892,19 +27903,19 @@
       ]
     },
     {
-      "id": "89d01ea5445b",
-      "text": "who you are. The signed statement names this domain and nothing else — no username, no email, no account. Anyone with admin here could have produced it, and that is deliberate: this quilt does not publish who its admins are.",
-      "words": 40,
+      "id": "6625bd021689",
+      "text": "who you are. The signed statement names this domain and nothing else. No username, no email, no account. Any admin here could have produced it, and that is deliberate. This quilt does not publish who its admins are.",
+      "words": 38,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
           "line": 80,
           "kind": "markup",
-          "raw": "who you are. The signed statement\n    names this domain and nothing else — no username, no email, no account.\n    Anyone with admin here could have produced it, and that is deliberate:\n    this quilt does not publish who its admins are.",
+          "raw": "who you are. The signed statement\n    names this domain and nothing else. No username, no email, no account.\n    Any admin here could have produced it, and that is deliberate. This quilt\n    does not publish who its admins are.",
           "quote": null
         }
       ]
@@ -27914,9 +27925,9 @@
       "text": "Their nonce",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -27932,9 +27943,9 @@
       "text": "the string they gave you",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -27946,19 +27957,19 @@
       ]
     },
     {
-      "id": "191161656e54",
-      "text": "8 to 64 printable characters, on one line. Paste it exactly as they sent it — a changed character is a different nonce, and their check will fail.",
-      "words": 28,
+      "id": "d843290061e4",
+      "text": "8 to 64 printable characters on one line. Paste it exactly as they sent it. A changed character is a different nonce, and their check will fail.",
+      "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
           "line": 105,
           "kind": "markup",
-          "raw": "8 to 64 printable characters, on one line. Paste it exactly as they sent\n      it — a changed character is a different nonce, and their check will fail.",
+          "raw": "8 to 64 printable characters on one line. Paste it exactly as they sent\n      it. A changed character is a different nonce, and their check will fail.",
           "quote": null
         }
       ]
@@ -27968,9 +27979,9 @@
       "text": "Send them this",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -27986,9 +27997,9 @@
       "text": "Good until",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -28004,9 +28015,9 @@
       "text": "Signature",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -28022,9 +28033,9 @@
       "text": "They check it against",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
@@ -28036,19 +28047,19 @@
       ]
     },
     {
-      "id": "70faf33dc5d8",
-      "text": "Tell them to fetch the key from this quilt's own address, not from a link in the message — a signature only means something when the key came from the domain they care about.",
-      "words": 34,
+      "id": "790d3a5ed6a2",
+      "text": "Tell them to fetch the key from this quilt's own address, not from a link in the message. A signature only means something when the key came from the domain they care about.",
+      "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminAttestation.svelte",
           "line": 127,
           "kind": "markup",
-          "raw": "Tell them to fetch the key from this quilt's own address, not from a\n        link in the message — a signature only means something when the key\n        came from the domain they care about.",
+          "raw": "Tell them to fetch the key from this quilt's own address, not from a\n        link in the message. A signature only means something when the key\n        came from the domain they care about.",
           "quote": null
         }
       ]
