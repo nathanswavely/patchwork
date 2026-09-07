@@ -270,3 +270,110 @@ func TestPersonalFeed_Lifecycle(t *testing.T) {
 		t.Error("feed still enabled after delete")
 	}
 }
+
+// TestEventICS_OneEventForOneNight covers docs/adr/093 decision 5: the
+// single-event download that replaces the notification Patchwork no longer
+// sends. It must carry the same UID the patch feed gives the event, so a
+// person who downloads tonight's show and later subscribes to the venue
+// ends up with one entry rather than two.
+func TestEventICS_OneEventForOneNight(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := feedTestConfig()
+	admin, _ := createTestUser(t, db, "icsoneadmin", "member")
+	nodeID := createTestNode(t, db, admin.ID, "One Night Venue", "one-night-venue", "open")
+
+	future := time.Now().Add(48 * time.Hour).UTC().Format(time.RFC3339)
+	eventID := seedEvent(t, db, nodeID, admin.ID, "Basement Show", future)
+
+	r := authedRequest("GET", "/api/v1/events/"+eventID+"/event.ics", nil, "")
+	w := serveOptionalAuthMux(t, db, "GET", "/api/v1/events/{id}/event.ics", handler.EventICS(db, cfg), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("public event: code=%d body=%s", w.Code, w.Body.String())
+	}
+	body := w.Body.String()
+	if ct := w.Header().Get("Content-Type"); !strings.HasPrefix(ct, "text/calendar") {
+		t.Errorf("content type: got %q", ct)
+	}
+	if cd := w.Header().Get("Content-Disposition"); !strings.Contains(cd, `filename="basement-show.ics"`) {
+		t.Errorf("content disposition: got %q", cd)
+	}
+	if !strings.Contains(body, "SUMMARY:Basement Show") {
+		t.Errorf("missing summary:\n%s", body)
+	}
+	// One event, not a calendar's worth.
+	if n := strings.Count(body, "BEGIN:VEVENT"); n != 1 {
+		t.Errorf("VEVENT count: got %d, want 1", n)
+	}
+
+	// The UID must match what the patch's own feed emits for the same
+	// event, or a later subscription duplicates the entry.
+	fr := authedRequest("GET", "/api/v1/nodes/one-night-venue/events.ics", nil, "")
+	fw := servePublicMux(t, "GET", "/api/v1/nodes/{slug}/events.ics", handler.NodeICSFeed(db, cfg), fr)
+	uid := "UID:" + eventID + "@quilt.test"
+	if !strings.Contains(body, uid) || !strings.Contains(fw.Body.String(), uid) {
+		t.Errorf("UID %q must appear in both the single event and the patch feed", uid)
+	}
+}
+
+// A non-public event is a file only its patch's members can take away.
+// The events table spells that 'private' or 'unlisted'; ListEvents admits
+// either only for a member or admin of the event's own patch, and this
+// endpoint follows it rather than GetEvent, which gates neither.
+func TestEventICS_NonPublicEventNeedsTheRoom(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := feedTestConfig()
+	admin, adminToken := createTestUser(t, db, "icsroomadmin", "member")
+	member, memberToken := createTestUser(t, db, "icsroommember", "member")
+	follower, followerToken := createTestUser(t, db, "icsroomfollower", "member")
+	_, outsiderToken := createTestUser(t, db, "icsroomoutsider", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Closed Room", "closed-room", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
+
+	future := time.Now().Add(48 * time.Hour).UTC().Format(time.RFC3339)
+	eventID := seedEvent(t, db, nodeID, admin.ID, "House Meeting", future)
+
+	for _, vis := range []string{"private", "unlisted"} {
+		if _, err := db.Exec(`UPDATE events SET visibility = ? WHERE id = ?`, vis, eventID); err != nil {
+			t.Fatal(err)
+		}
+		for _, tc := range []struct {
+			who, token string
+			want       int
+		}{
+			{"a member", memberToken, http.StatusOK},
+			{"an admin", adminToken, http.StatusOK},
+			{"a follower", followerToken, http.StatusNotFound},
+			{"an outsider", outsiderToken, http.StatusNotFound},
+			{"nobody", "", http.StatusNotFound},
+		} {
+			r := authedRequest("GET", "/api/v1/events/"+eventID+"/event.ics", nil, tc.token)
+			w := serveOptionalAuthMux(t, db, "GET", "/api/v1/events/{id}/event.ics", handler.EventICS(db, cfg), r)
+			if w.Code != tc.want {
+				t.Errorf("%s on a %s event: code=%d, want %d", tc.who, vis, w.Code, tc.want)
+			}
+		}
+	}
+}
+
+// A pending submission has no calendar file, matching every other surface
+// that treats it as not yet existing (docs/adr/026).
+func TestEventICS_PendingSubmissionHasNoFile(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := feedTestConfig()
+	admin, adminToken := createTestUser(t, db, "icspendadmin", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Queue Venue", "queue-venue", "open")
+
+	future := time.Now().Add(48 * time.Hour).UTC().Format(time.RFC3339)
+	eventID := seedEvent(t, db, nodeID, admin.ID, "Unreviewed Show", future)
+	if _, err := db.Exec(`UPDATE events SET status = 'pending_review' WHERE id = ?`, eventID); err != nil {
+		t.Fatal(err)
+	}
+
+	r := authedRequest("GET", "/api/v1/events/"+eventID+"/event.ics", nil, adminToken)
+	w := serveOptionalAuthMux(t, db, "GET", "/api/v1/events/{id}/event.ics", handler.EventICS(db, cfg), r)
+	if w.Code != http.StatusNotFound {
+		t.Errorf("pending event: code=%d, want 404", w.Code)
+	}
+}

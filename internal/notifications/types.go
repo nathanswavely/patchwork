@@ -30,7 +30,10 @@ func AllCategories() []CategoryInfo {
 		{CategoryProposals, "Proposals", "New proposals, voting updates, deadlines", true},
 		{CategoryGovernance, "Governance", "Document and rules changes", true},
 		{CategoryMembership, "Membership", "Join/leave notifications for admins", true},
-		{CategoryEvents, "Events", "Event creation, updates, reminders", true},
+		// Named for the surface, not for its old contents: nothing here
+		// announces an event any more (docs/adr/093). What is left is an
+		// admin queue's duties and answers to something a person did.
+		{CategoryEvents, "Events", "Submissions, links, and program offers", true},
 		{CategoryAdmin, "Admin", "Claim requests, submissions", true},
 		{CategoryNoticeboard, "Noticeboard", "A notice whose author chose to tell members, replies on notices you're in, and reports for admins", true},
 		{CategoryQuilt, "The quilt", "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.", false},
@@ -103,10 +106,13 @@ const (
 	MembershipBanned      NotificationType = "membership.banned"
 	MembershipReinstated  NotificationType = "membership.reinstated"
 
-	EventCreated   NotificationType = "event.created"
-	EventReminder  NotificationType = "event.reminder"
-	EventUpdated   NotificationType = "event.updated"
-	EventCancelled NotificationType = "event.cancelled"
+	// There is deliberately no type for an event being created, updated,
+	// cancelled or about to start (docs/adr/093). An event is a fact
+	// about the world; a notification follows an obligation the person
+	// took on. Events reach people through the patch's calendar feed,
+	// the quilt and the map. The four types that used to live here were
+	// deleted rather than defaulted off, because a setting invites the
+	// argument back every release.
 
 	// Event submissions (docs/adr/026): suggestions to an active patch go
 	// to its admins; submissions to unclaimed patches go to site admins.
@@ -211,11 +217,6 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	MembershipBanned:      {CategoryMembership, "You have been removed", AudienceSpecificUser, PriorityHigh},
 	MembershipReinstated:  {CategoryMembership, "You have been reinstated", AudienceSpecificUser, PriorityHigh},
 
-	EventCreated:   {CategoryEvents, "New event", AudienceAllMembers, PriorityNormal},
-	EventReminder:  {CategoryEvents, "Event starts in 24 hours", AudienceAllMembers, PriorityHigh},
-	EventUpdated:   {CategoryEvents, "Event details changed", AudienceAllMembers, PriorityLow},
-	EventCancelled: {CategoryEvents, "Event cancelled", AudienceAllMembers, PriorityHigh},
-
 	EventSuggested:          {CategoryEvents, "Event suggested to your patch", AudienceAdminsOnly, PriorityHigh},
 	EventSubmissionApproved: {CategoryEvents, "Your event was approved", AudienceSpecificUser, PriorityHigh},
 	EventSubmissionRejected: {CategoryEvents, "Your event was declined", AudienceSpecificUser, PriorityNormal},
@@ -301,7 +302,6 @@ func TypesForCategory(cat Category) []NotificationType {
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
 		GovernanceInactivityWarning,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
-		EventCreated, EventReminder, EventUpdated, EventCancelled,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed, ProgramOffer,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,

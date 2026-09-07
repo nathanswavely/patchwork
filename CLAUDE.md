@@ -145,7 +145,7 @@ Three relationships a person can have with a patch:
 |------|--------------|--------|
 | **Admin** | Runs the patch | Edit profile, manage members, create events, proposals |
 | **Member** | Active participant | Vote on proposals, participate, listed publicly |
-| **Follower** | Interested observer | Sees events in feed, gets notified, no voting rights |
+| **Follower** | Interested observer | Sees events in feed, calendar and map, no voting rights |
 
 Following is frictionless: anyone can follow any public patch regardless of membership policy.
 

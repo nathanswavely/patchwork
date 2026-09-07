@@ -514,17 +514,11 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				})
 			}
 		} else {
-			// Notify members about the new event.
-			notify(notifications.Event{
-				Type:     notifications.EventCreated,
-				NodeID:   req.NodeID,
-				NodeSlug: nodeSlugN,
-				NodeName: nodeNameN,
-				ActorID:  user.ID,
-				EntityID: id,
-				Title:    "New event: " + req.Title,
-				Link:     weblink.Event(id),
-			})
+			// No notification: an event is a fact about the world, and
+			// Patchwork publishes rather than broadcasts (docs/adr/093).
+			// It reaches people through the patch's calendar feed, the
+			// quilt, and the map. Federation is publication, so the AP
+			// delivery below stays.
 			broadcastEventCreate(db, e, req.NodeID)
 		}
 
@@ -689,19 +683,10 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 				Title:    "Event edit awaiting review: " + e.Title,
 				Link:     "/admin/event-submissions",
 			})
-		} else if e.Status == "active" {
-			// Notify members about the event update.
-			notify(notifications.Event{
-				Type:     notifications.EventUpdated,
-				NodeID:   nodeID,
-				NodeSlug: nodeSlugN,
-				NodeName: nodeNameN,
-				ActorID:  user.ID,
-				EntityID: eventID,
-				Title:    "Event updated: " + e.Title,
-				Link:     weblink.Event(eventID),
-			})
 		}
+		// An active event's edit notifies nobody (docs/adr/093): a
+		// subscribed calendar takes the change on its next refresh, and a
+		// changed detail is not an obligation anyone took on.
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
@@ -718,12 +703,14 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Get event to check permissions and capture info for notification.
-		var nodeID, eventTitle, createdBy, eventStatus string
+		// Get the event to check permissions and to find its feed item.
+		// Title and status used to be read here for the cancellation
+		// notice; nothing announces a deletion now (docs/adr/093).
+		var nodeID, createdBy string
 		var sourceID, sourceUID *string
 		var sourceOccurrence string
-		err := db.QueryRow("SELECT node_id, title, created_by, status, source_id, source_uid, source_occurrence FROM events WHERE id = ?", eventID).
-			Scan(&nodeID, &eventTitle, &createdBy, &eventStatus, &sourceID, &sourceUID, &sourceOccurrence)
+		err := db.QueryRow("SELECT node_id, created_by, source_id, source_uid, source_occurrence FROM events WHERE id = ?", eventID).
+			Scan(&nodeID, &createdBy, &sourceID, &sourceUID, &sourceOccurrence)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -762,25 +749,11 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 
 		auth.LogAuditEvent(db, user.ID, "event.delete", "event", eventID, "{}", clientIP(r))
 
-		// Notify members about the cancellation — but a withdrawn pending
-		// submission was never announced, so its removal isn't either.
-		if eventStatus != "active" {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-			return
-		}
-		var nodeSlugN, nodeNameN string
-		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&nodeSlugN, &nodeNameN)
-		notify(notifications.Event{
-			Type:     notifications.EventCancelled,
-			NodeID:   nodeID,
-			NodeSlug: nodeSlugN,
-			NodeName: nodeNameN,
-			ActorID:  user.ID,
-			EntityID: eventID,
-			Title:    "Event cancelled: " + eventTitle,
-			Link:     weblink.Patch(nodeSlugN),
-		})
+		// A cancellation notifies nobody, and refusing this is the point
+		// (docs/adr/093). It is the strongest case for an exception, so
+		// granting it would mean granting every later one. Telling people
+		// the show is off is the venue's job; Patchwork's is that the
+		// record is right when somebody looks, and the row is gone.
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})

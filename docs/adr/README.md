@@ -73,6 +73,7 @@ several branches are in flight.
 | [090](090-the-old-home-says-where-the-new-one-is.md) | The old home says where the new one is — a moved-to pointer on a patch and on a person, validated as an outbound href, declining new joins and outside event suggestions, carried on the actor as `movedTo` with no `Move` emitted *(completes 012's third affordance)* |
 | [091](091-a-warning-reaches-the-person-warned.md) | A warning reaches the person warned, and never carries the reporter — `warn` was a no-op that notified only the reporter; it now names the recipient's own patch or event and withholds the reason, the details and the admin's resolution note *(shares `suspend_user`'s target resolution; unmutable, like 'account.suspended')* |
 | [092](092-the-maintainer-decides-and-may-consult.md) | The maintainer decides, and may consult — on an admin-decides patch a member's proposal waits on the maintainer, any vote is advisory, and the maintainer approves or declines at any time; apply closes on voting patches *(extends 041 and 047, closes 041's apply bypass)* |
+| [093](093-a-notification-follows-an-obligation-not-an-event.md) | A notification follows an obligation, not an event — Patchwork publishes and does not broadcast; the four event notifications are deleted, cancellation is refused as the test case that proves the rule, and the calendar keeps the reminder with a per-event `.ics` *(completes 076, applies 018, corrects CLAUDE.md's follower row)* |
 
 ## Partly implemented
 

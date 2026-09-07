@@ -1443,7 +1443,13 @@ func (s *seeder) seedNotifications() {
 		nType, title, body, link string
 		read                     bool
 	}{
-		{string(notifications.EventCreated), "New event: First Friday Gallery Walk", "A new event has been posted in the First Friday Collective.", "/events", false},
+		// Linked at the global events list rather than at its patch's own
+		// events page, which is where a real event.suggested points. The
+		// badge test below needs a target that stays inside the social
+		// shell: a workspace route remounts the bell, and the remount's
+		// refresh would supply the right count whether or not reading
+		// updated it.
+		{string(notifications.EventSuggested), "Event suggested: First Friday Gallery Walk", "Someone suggested an event for the First Friday Collective.", "/events", false},
 		{string(notifications.ProposalNew), "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
 		{string(notifications.MembershipJoined), "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
 	}
@@ -1456,7 +1462,7 @@ func (s *seeder) seedNotifications() {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{string(notifications.EventReminder), "Tomorrow: " + eventTitle, "This event starts in less than 24 hours.", weblink.Event(eventID), false})
+		}{string(notifications.EventSubmissionApproved), "Your event was approved: " + eventTitle, "It is on the calendar now.", weblink.Event(eventID), false})
 	}
 	if slug, docID, docTitle, ok := s.firstGovernanceDoc(); ok {
 		adminNotifs = append(adminNotifs, struct {
