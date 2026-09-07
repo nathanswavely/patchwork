@@ -773,3 +773,97 @@ func TestListMembersCountsHonourTheViewersVisibility(t *testing.T) {
 		t.Errorf("outsider: expected follower_count=0 (followers are not public), got %v", got)
 	}
 }
+
+// The offer to share a contact card is a fact about the room, not about the
+// page that loaded. A member whose own row sits past the first page must
+// still be told they are sharing nothing, and must not be told otherwise.
+func TestListMembersSharingFactsSurviveTheFirstPage(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "admin62", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Deep Node", "deep-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	// 30 members ahead of our two, so neither lands on the first page.
+	for i := 0; i < 30; i++ {
+		u, _ := createTestUser(t, db, fmt.Sprintf("deep%02d", i), "member")
+		createTestMembership(t, db, u.ID, nodeID, "member", "active")
+	}
+
+	// A sharer and a non-sharer, both far down the list.
+	sharer, sharerToken := createTestUser(t, db, "sharer62", "member")
+	sharerMID := createTestMembership(t, db, sharer.ID, nodeID, "member", "active")
+	if _, err := db.Exec("UPDATE users SET contact_email = 'sharer@example.com' WHERE id = ?", sharer.ID); err != nil {
+		t.Fatalf("set card: %v", err)
+	}
+	if _, err := db.Exec("UPDATE memberships SET share_contact = 1 WHERE id = ?", sharerMID); err != nil {
+		t.Fatalf("share card: %v", err)
+	}
+	quiet, quietToken := createTestUser(t, db, "quiet62", "member")
+	createTestMembership(t, db, quiet.ID, nodeID, "member", "active")
+
+	get := func(token string) map[string]interface{} {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/nodes/deep-node/members", nil, token)
+		w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+		}
+		return decodeJSON(t, w)
+	}
+
+	// Neither of them is on the first page — that is the whole point.
+	first := get(quietToken)
+	items, _ := first["items"].([]interface{})
+	for _, it := range items {
+		if u, _ := it.(map[string]interface{})["username"].(string); u == "quiet62" || u == "sharer62" {
+			t.Fatalf("test is not exercising paging: %s landed on the first page", u)
+		}
+	}
+
+	if first["viewer_shares_contact"] != false {
+		t.Errorf("a member who shares nothing must be offered the switch, got %v", first["viewer_shares_contact"])
+	}
+	if first["any_contact_shared"] != true {
+		t.Errorf("someone in this room does share a card, got %v", first["any_contact_shared"])
+	}
+
+	if got := get(sharerToken)["viewer_shares_contact"]; got != true {
+		t.Errorf("a member who already shares must not be offered the switch, got %v", got)
+	}
+
+	// An outsider is told neither: there is no room to be offered anything in.
+	anon := authedRequest("GET", "/api/v1/nodes/deep-node/members", nil, "")
+	w := servePublicMux(t, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), anon)
+	out := decodeJSON(t, w)
+	if _, present := out["viewer_shares_contact"]; present {
+		t.Error("the sharing facts must not be sent to a viewer outside the room")
+	}
+	if _, present := out["any_contact_shared"]; present {
+		t.Error("the sharing facts must not be sent to a viewer outside the room")
+	}
+}
+
+// An empty card is not a shared card: switching sharing on while the account
+// carries nothing to share leaves the row without a card, so the offer stands.
+func TestListMembersEmptyCardIsNotSharing(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "admin63", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Empty Node", "empty-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	user, token := createTestUser(t, db, "blank63", "member")
+	mid := createTestMembership(t, db, user.ID, nodeID, "member", "active")
+	if _, err := db.Exec("UPDATE memberships SET share_contact = 1 WHERE id = ?", mid); err != nil {
+		t.Fatalf("share card: %v", err)
+	}
+
+	r := authedRequest("GET", "/api/v1/nodes/empty-node/members", nil, token)
+	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+	result := decodeJSON(t, w)
+	if got := result["viewer_shares_contact"]; got != false {
+		t.Errorf("sharing an empty card shares nothing, got %v", got)
+	}
+	if got := result["any_contact_shared"]; got != false {
+		t.Errorf("an empty card must not count as a card in the room, got %v", got)
+	}
+}

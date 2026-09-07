@@ -57,9 +57,19 @@ describe('Members room: the card shows only where the API sent it', () => {
     expect(src).toMatch(/href="mailto:\{member\.contact\.email\}"/);
   });
 
-  it('offers sharing to a member in the room whose own row carries no card', () => {
+  it('offers sharing to a member in the room who shares no card', () => {
     expect(src).toContain("let inRoom = $derived(membershipRole === 'member' || membershipRole === 'admin');");
-    expect(src).toContain('let offerSharing = $derived(inRoom && myRow && !myRow.contact);');
+    expect(src).toContain('let offerSharing = $derived(inRoom && !viewerSharesContact);');
+  });
+
+  it('asks the room, not the loaded page, who is sharing', () => {
+    // Both facts used to be read off `members`, so a member on page 4 was
+    // never offered the switch: their own row had not arrived to say they
+    // were missing a card.
+    expect(src).toContain('viewerSharesContact = !!data.viewer_shares_contact');
+    expect(src).toContain('anyContact = !!data.any_contact_shared');
+    expect(src).not.toContain('members.find(');
+    expect(src).not.toContain('members.some(');
   });
 });
 
