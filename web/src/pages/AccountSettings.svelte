@@ -264,6 +264,36 @@
     downloadingData = false;
   }
 
+  // Member seamrip (docs/adr/012, affordance 2; docs/adr/089): the quilt as
+  // this person can already see it, in the import format, so a fork needs
+  // nobody's permission. Same shape as the download above — behind the
+  // session, so the browser gets a blob rather than a link — and a zip
+  // rather than one JSON file, because it is the whole archive.
+  let takingSeamrip = $state(false);
+
+  async function takeMemberSeamrip() {
+    takingSeamrip = true;
+    try {
+      const res = await fetch('/api/v1/users/me/seamrip', { credentials: 'same-origin' });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error || `Download failed (${res.status})`);
+      }
+      const disposition = res.headers.get('Content-Disposition') || '';
+      const named = disposition.match(/filename="?([^";]+)"?/);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = named ? named[1] : 'patchwork-member-seamrip.zip';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      showToast(e.message || 'Download failed', 'error');
+    }
+    takingSeamrip = false;
+  }
+
   async function saveProfile() {
     saving = true;
     saveMessage = '';
@@ -515,6 +545,25 @@
       <div class="field-actions">
         <button class="btn btn-secondary" onclick={downloadMyData} disabled={downloadingData}>
           {downloadingData ? 'Preparing...' : 'Download my data'}
+        </button>
+      </div>
+    </section>
+
+    <section class="pw-section">
+      <h2>Member seamrip</h2>
+      <p class="muted profile-hint">
+        A copy of this quilt as you can see it, in the format a new Patchwork
+        reads. It is here so a community can start again elsewhere without
+        waiting for an admin. It holds the patches, events, charters,
+        proposals and member lists that are already open to you. It does not
+        hold email addresses, contact cards, noticeboards, or anything from a
+        patch you are not in. Other people travel as a name and a picture,
+        so the new quilt invites everyone back and each person sets their own
+        visibility there.
+      </p>
+      <div class="field-actions">
+        <button class="btn btn-secondary" onclick={takeMemberSeamrip} disabled={takingSeamrip}>
+          {takingSeamrip ? 'Preparing...' : 'Take a copy'}
         </button>
       </div>
     </section>

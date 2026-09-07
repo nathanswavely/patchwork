@@ -103,10 +103,17 @@ and clear in ten seconds is a very different commitment from an activity
 that redistributes their audience permanently. `Move` deserves its own
 decision, made once the field exists and somebody has used it.
 
-**7. Both columns travel** (docs/adr/002). A fork of a fork still has to
-know where things went: a chain of moves that forgets its own last hop
-strands anyone reading it from the far end. Nothing on the import side sets
-a pointer — see the rejected alternatives.
+**7. Both columns travel in the admin seamrip** (docs/adr/002). A fork of a
+fork still has to know where things went: a chain of moves that forgets its
+own last hop strands anyone reading it from the far end. Nothing on the
+import side sets a pointer — see the rejected alternatives.
+
+In a **member seamrip** (docs/adr/089) the patch's pointer travels and the
+person's does not. A patch's is a public fact about a patch that travelled
+whole; a person travels as a stub, and that rule is about consent rather
+than publicity — `bio` and `links` are public too and are emptied, because
+nobody asked this person whether their profile should be copied to a new
+server.
 
 **8. A tombstoned account's pointer is cleared** with the other identity
 columns (docs/adr/086). It is a sentence about where to find this person,

@@ -601,6 +601,81 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 	}
 }
 
+// Every travelling table also states which rows a member may carry out.
+//
+// This is the boundary's second axis (docs/adr/089). The first one decides
+// what leaves the instance; a table that passes it still has to say what
+// leaves in ONE MEMBER'S copy, and the two answers are different for good
+// reasons — the noticeboard travels in a custody transfer and never in a
+// member's bundle, a feed URL travels for an admin and for nobody else.
+//
+// Without this test a new table added to Tables() would join the member
+// seamrip with no rule, which fails in the direction that does not announce
+// itself: the rows are simply there. A table that must not travel in a
+// member's view says so with Never, which is a decision and passes.
+func TestEveryTableHasAMemberViewRule(t *testing.T) {
+	views := memberViews()
+	for _, tab := range Tables() {
+		v, ok := views[tab.Name]
+		if !ok {
+			t.Errorf("table %q travels but has no member-view rule: add one to "+
+				"memberViews() saying which rows a member may carry, or Never", tab.Name)
+			continue
+		}
+		if strings.TrimSpace(v.Rule) == "" {
+			t.Errorf("table %q has a member-view rule with no prose: the sentence "+
+				"is what a reader comes here for", tab.Name)
+		}
+		if v.Never && (v.Where != "" || len(v.Cols) > 0) {
+			t.Errorf("table %q is marked Never and also carries a filter", tab.Name)
+		}
+		exported := map[string]bool{}
+		for _, col := range tab.Columns {
+			exported[col.Name] = true
+		}
+		for col := range v.Cols {
+			if !exported[col] {
+				t.Errorf("%s: member view replaces %q, which the table does not export", tab.Name, col)
+			}
+		}
+	}
+	for name := range views {
+		found := false
+		for _, tab := range Tables() {
+			if tab.Name == name {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("member-view rule for %q names a table that does not travel", name)
+		}
+	}
+}
+
+// Every member-view query runs. A predicate that references a column the
+// table's own query does not select is a runtime error nobody meets until a
+// member asks for a bundle, so ask here instead.
+func TestMemberViewQueriesRun(t *testing.T) {
+	db := testDB(t)
+	seedSource(t, db)
+
+	var viewer string
+	db.QueryRow(`SELECT id FROM users WHERE username = 'user2'`).Scan(&viewer)
+	if viewer == "" {
+		t.Fatal("seed did not create user2")
+	}
+
+	for _, tab := range Tables() {
+		v, _ := tab.View()
+		if v.Never {
+			continue
+		}
+		if _, err := queryMemberTable(db, tab, v, viewer); err != nil {
+			t.Errorf("%s: member-view query failed: %v\n%s", tab.Name, err, memberQuery(tab, v))
+		}
+	}
+}
+
 // Every column of an exported table is either exported or deliberately left
 // behind.
 //

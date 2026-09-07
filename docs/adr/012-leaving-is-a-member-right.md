@@ -1,7 +1,7 @@
 # ADR 012: Leaving is a member right — the egress boundary and its three affordances
 
-Date: 2026-07-14. Status: accepted as design boundary; affordances 1 and 3
-shipped 2026-09-07, affordance 2 remains backlog.
+Date: 2026-07-14. Status: accepted as design boundary; all three
+affordances shipped 2026-09-07 (docs/adr/089, docs/adr/090).
 
 ## Context
 
@@ -124,6 +124,33 @@ wrote (the copy ledger marks it `human`), and this affordance is not the
 one it promises. It stays an outstanding claim until the member seamrip
 lands.
 
+## Status, 2026-09-07: affordance 2 shipped
+
+`GET /api/v1/users/me/seamrip` is live. docs/adr/089 records how, and the
+decisions this ADR left open.
+
+In short: the portability boundary in `internal/seamrip` grew a second axis
+rather than a second implementation. Every travelling table now states both
+what travels and which rows a given member may carry out, and the member
+export runs the admin export's own queries through that filter, so a column
+added to the boundary reaches both bundles or neither. `people travel as
+stubs` — id, username, display name, avatar — and the set of them is the
+closure of everybody the other travelling rows name, read from the schema's
+own foreign keys rather than from a list somebody has to remember to
+update. No emails, no hidden memberships from a patch the caller is not in,
+no members-only charters or events from one either, no noticeboards, no
+contact cards, no claims, no calendar feed URLs outside a patch the caller
+administers. A tombstone travels as the tombstone it is (docs/adr/086).
+
+Two downloads per account per day, audited as `user.seamrip`, offered at
+Account settings as **Member seamrip**. The bundle carries a manifest
+naming the kind, the person who took it, the time, and the instance, and
+`cmd/import` says which of the two kinds it is reading rather than assuming
+the admin one.
+
+The user agreement's "any member can export what they can already see" is
+no longer an outstanding claim.
+
 ## Status, 2026-09-07: affordance 3 shipped
 
 The moved-to pointer is live as `nodes.moved_to` and `users.moved_to`
@@ -147,4 +174,7 @@ than a proposal, on the reasoning that a patch admin already controls every
 other field while the adversary this affordance routes around is the
 instance admin.
 
-Affordance 2 (member seamrip) is unbuilt.
+All three affordances are now built. The boundary rule stands as written:
+a member can take what they can see, other people's secrets move only with
+their owner's consent or the custodian's cooperation, and none of the three
+needs the authority's permission.

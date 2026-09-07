@@ -43,6 +43,7 @@ func main() {
 	writeFile(*outDir, "instance.json", map[string]interface{}{
 		"name":    "Patchwork Export",
 		"version": "dev",
+		"kind":    seamrip.KindFull,
 	}, &totalSize, &fileCount)
 
 	err = seamrip.Export(db, func(t seamrip.Table, items []map[string]any) error {

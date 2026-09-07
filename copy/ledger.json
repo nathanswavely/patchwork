@@ -10426,7 +10426,7 @@
         },
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 104,
+          "line": 106,
           "kind": "go-doc-block",
           "raw": "## The short version",
           "quote": null
@@ -10813,6 +10813,24 @@
       ]
     },
     {
+      "id": "b521a43de7e9",
+      "text": "The same goes for the quilt itself. **Member seamrip** in your account settings hands you this site as you can already see it, in the format a new Patchwork reads. It holds the patches, events, charters, proposals and member lists that are open to you. It holds no email addresses, no contact cards, no noticeboards, and nothing from a patch you are not in. Other people appear in it as a username, a display name and an avatar, which is enough for a new site to invite them back. Nobody can be signed in from that file either. Taking a copy is recorded in the audit log, and there is a limit of two a day.",
+      "words": 116,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 74,
+          "kind": "go-doc-block",
+          "raw": "The same goes for the quilt itself. **Member seamrip** in your account settings hands you this site as you can already see it, in the format a new Patchwork reads. It holds the patches, events, charters, proposals and member lists that are open to you. It holds no email addresses, no contact cards, no noticeboards, and nothing from a patch you are not in. Other people appear in it as a username, a display name and an avatar, which is enough for a new site to invite them back. Nobody can be signed in from that file either. Taking a copy is recorded in the audit log, and there is a limit of two a day.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "6fbb89769125",
       "text": "## How long things are kept, and deletion",
       "words": 8,
@@ -10823,7 +10841,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 74,
+          "line": 76,
           "kind": "go-doc-block",
           "raw": "## How long things are kept, and deletion",
           "quote": null
@@ -10841,7 +10859,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 76,
+          "line": 78,
           "kind": "go-doc-block",
           "raw": "Your content and account stay until you delete the account yourself, from Settings. Deleting is immediate and cannot be undone. It asks you to confirm with a passkey and to type your username. It treats two kinds of data differently.",
           "quote": null
@@ -10859,7 +10877,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 78,
+          "line": 80,
           "kind": "go-doc-block",
           "raw": "**Erased.** Your email address, display name, bio, links, avatar, and contact card. Your passkeys, recovery codes, and sessions, so nobody can sign in as you again. Your personal calendar link, your notification settings, and any unread notifications. The quilts you had connected, the patches you followed on other quilts, and every membership you held here. Any claim on a patch still waiting for review, and any candidacy in an election that had not closed.",
           "quote": null
@@ -10877,7 +10895,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 80,
+          "line": 82,
           "kind": "go-doc-block",
           "raw": "**Kept, with your name removed.** The things you took part in: proposals you wrote, votes and ballots you cast, comments, notices and replies, events you posted, calendar feeds you attached, and decisions you recorded on a patch's behalf. This site exists to hold a community's record of what it decided. A tally that quietly loses a voter is not a record anyone can check. Those entries stay, and they now read as \"Deleted account\" with no name and no link. Your account row survives with nothing in it. Your username stays retired rather than freed, so no stranger inherits links that pointed at you. Your profile page stops existing.",
           "quote": null
@@ -10895,7 +10913,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 82,
+          "line": 84,
           "kind": "go-doc-block",
           "raw": "One consequence is worth stating plainly. A vote of yours on a proposal that is still open stops counting toward its result, because the tally counts current members and you are no longer one. This is exactly what happens when anybody leaves a patch. Anything already decided stays decided.",
           "quote": null
@@ -10913,7 +10931,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 84,
+          "line": 86,
           "kind": "go-doc-block",
           "raw": "**Two refusals.** You cannot delete your account while you are the only admin of a patch. The site names those patches and asks you to hand them over first, because the alternative is a community nobody can administer. The last remaining administrator of the whole site cannot delete their account either.",
           "quote": null
@@ -10931,7 +10949,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 86,
+          "line": 88,
           "kind": "go-doc-block",
           "raw": "Deletion cannot reach outside this server. Anything federation already copied elsewhere is held by those servers under their policies. This site sends a deletion notice for your account to every server known to follow it and stops answering for it afterwards, but it cannot make anyone honor that notice. Data that went out in an export made before you deleted is likewise a copy nobody here can reach.",
           "quote": null
@@ -10949,7 +10967,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 88,
+          "line": 90,
           "kind": "go-doc-block",
           "raw": "If you would rather have a steward do this, or want specific content removed without closing your account, the people on the [Label](/label) can help. Their tools can hide content and suspend an account. The erasure described above is the one you perform yourself.",
           "quote": null
@@ -10967,7 +10985,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 90,
+          "line": 92,
           "kind": "go-doc-block",
           "raw": "## Age",
           "quote": null
@@ -10985,7 +11003,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 92,
+          "line": 94,
           "kind": "go-doc-block",
           "raw": "This site is not directed at children under 13, and nobody under 13 may create an account.",
           "quote": null
@@ -11003,7 +11021,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 94,
+          "line": 96,
           "kind": "go-doc-block",
           "raw": "## Changes",
           "quote": null
@@ -11021,7 +11039,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 96,
+          "line": 98,
           "kind": "go-doc-block",
           "raw": "If this policy changes, the change shows up on this page. The software keeps no hidden version of it. What you read here is what the site operates under.",
           "quote": null
@@ -11039,7 +11057,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 98,
+          "line": 100,
           "kind": "go-doc-block",
           "raw": "## Who to talk to",
           "quote": null
@@ -11057,7 +11075,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 100,
+          "line": 102,
           "kind": "go-doc-block",
           "raw": "The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.",
           "quote": null
@@ -11075,7 +11093,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 102,
+          "line": 104,
           "kind": "go-doc-block",
           "raw": "*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
           "quote": null
@@ -11093,7 +11111,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 106,
+          "line": 108,
           "kind": "go-doc-block",
           "raw": "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
           "quote": null
@@ -11112,7 +11130,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 108,
+          "line": 110,
           "kind": "go-doc-block",
           "raw": "## What this is",
           "quote": null
@@ -11130,7 +11148,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 112,
+          "line": 114,
           "kind": "go-doc-block",
           "raw": "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
           "quote": null
@@ -11149,7 +11167,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 114,
+          "line": 116,
           "kind": "go-doc-block",
           "raw": "## Who can join",
           "quote": null
@@ -11167,7 +11185,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 116,
+          "line": 118,
           "kind": "go-doc-block",
           "raw": "You must be at least 13 years old to have an account. Accounts are for people. Bots and automated posters don't get one.",
           "quote": null
@@ -11185,7 +11203,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 118,
+          "line": 120,
           "kind": "go-doc-block",
           "raw": "## Your account",
           "quote": null
@@ -11203,7 +11221,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 120,
+          "line": 122,
           "kind": "go-doc-block",
           "raw": "Sign-in is by email links and passkeys, so there is no password to guard. The email account and devices you use to sign in are still your responsibility, and what happens through your account is yours to answer for. Don't share access to your account or use someone else's.",
           "quote": null
@@ -11221,7 +11239,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 122,
+          "line": 124,
           "kind": "go-doc-block",
           "raw": "## Your content",
           "quote": null
@@ -11239,7 +11257,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 124,
+          "line": 126,
           "kind": "go-doc-block",
           "raw": "What you post is yours, and you keep every right you already had. So the site can function, you give {quilt_name} permission to store your content, show it to the people it's addressed to, and, where federation applies to public content, pass it along to other servers that follow this one. The same permission covers the seamrip: if this community exports its data to continue elsewhere, public content and membership records go with it, as described in the privacy policy. Anything you post publicly can be seen, copied, and shared the way public things on the internet are, and you agree to that too.",
           "quote": null
@@ -11257,7 +11275,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 126,
+          "line": 128,
           "kind": "go-doc-block",
           "raw": "## Conduct",
           "quote": null
@@ -11275,7 +11293,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 128,
+          "line": 130,
           "kind": "go-doc-block",
           "raw": "These rules apply everywhere on this site:",
           "quote": null
@@ -11293,7 +11311,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 130,
+          "line": 132,
           "kind": "go-doc-block",
           "raw": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
           "quote": null
@@ -11312,7 +11330,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 134,
+          "line": 136,
           "kind": "go-doc-block",
           "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
           "quote": null
@@ -11330,7 +11348,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 136,
+          "line": 138,
           "kind": "go-doc-block",
           "raw": "## Moderation",
           "quote": null
@@ -11348,7 +11366,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 138,
+          "line": 140,
           "kind": "go-doc-block",
           "raw": "The stewards can remove content, restrict accounts, or close accounts that violate this agreement, without prior notice where they judge that necessary to protect people or the site. Posting content that infringes someone else's copyright will, if repeated, cost you your account. To report copyright infringement or any other abuse, contact the stewards through the [Label](/label).",
           "quote": null
@@ -11366,7 +11384,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 140,
+          "line": 142,
           "kind": "go-doc-block",
           "raw": "## If you don't like how this place is run",
           "quote": null
@@ -11384,7 +11402,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 142,
+          "line": 144,
           "kind": "go-doc-block",
           "raw": "Disagreement is not a violation. Patchwork keeps governance visible and makes leaving real: any member can export what they can already see, and a community can seamrip itself to new stewards. The [Label](/label) explains how this site is run, what it costs, and where the exit is.",
           "quote": null
@@ -11402,7 +11420,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 144,
+          "line": 146,
           "kind": "go-doc-block",
           "raw": "## No warranty",
           "quote": null
@@ -11420,7 +11438,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 146,
+          "line": 148,
           "kind": "go-doc-block",
           "raw": "Volunteers run this site on real hardware, with no promise of uptime, availability, or permanence. It is provided **as is**, without warranty of any kind. To the fullest extent permitted by law, the stewards are not liable for damages arising from your use of the site or from content other people post, so back up anything you can't afford to lose.",
           "quote": null
@@ -11438,7 +11456,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 148,
+          "line": 150,
           "kind": "go-doc-block",
           "raw": "## Changes and ending",
           "quote": null
@@ -11456,7 +11474,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 150,
+          "line": 152,
           "kind": "go-doc-block",
           "raw": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and you can delete your account yourself from Settings. The privacy policy sets out exactly what that erases and what stays in the community's record. Two things it will not let you do: walk out as the only admin of a patch, or as the last administrator of the site. Hand those over first. The stewards can end the agreement on their side by closing your account, as described under Moderation.",
           "quote": null
@@ -11564,6 +11582,24 @@
           "line": 156,
           "kind": "go-error-body",
           "raw": "failed to reset document",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "df29738430a4",
+      "text": "you have taken two copies of this quilt today, so the next one is tomorrow",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: an API error, a toast, or a count — not voice-bearing. Decided by the drafting session under the README’s \"Failed to load comments\" rule; the voice-bearing copy from the same change was left for a person.",
+      "occurrences": [
+        {
+          "file": "internal/handler/member_seamrip.go",
+          "line": 47,
+          "kind": "go-error-body",
+          "raw": "you have taken two copies of this quilt today, so the next one is tomorrow",
           "quote": null
         }
       ]
@@ -17450,7 +17486,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 444,
+          "line": 445,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -19207,7 +19243,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 357,
+          "line": 387,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -19856,7 +19892,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 286,
+          "line": 316,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -20520,7 +20556,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 413,
+          "line": 414,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -21445,7 +21481,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 94,
+          "line": 103,
           "kind": "js-string",
           "raw": "Membership request sent",
           "quote": "'"
@@ -21470,7 +21506,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 94,
+          "line": 103,
           "kind": "js-string",
           "raw": "You are now a member",
           "quote": "'"
@@ -21495,7 +21531,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 96,
+          "line": 105,
           "kind": "js-string",
           "raw": "Could not join",
           "quote": "'"
@@ -21520,7 +21556,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 109,
+          "line": 118,
           "kind": "js-string",
           "raw": "Following patch",
           "quote": "'"
@@ -21538,7 +21574,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 111,
+          "line": 120,
           "kind": "js-string",
           "raw": "Could not follow",
           "quote": "'"
@@ -21556,7 +21592,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 128,
+          "line": 137,
           "kind": "js-string",
           "raw": "Request withdrawn",
           "quote": "'"
@@ -21581,7 +21617,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 130,
+          "line": 139,
           "kind": "js-string",
           "raw": "Could not withdraw request",
           "quote": "'"
@@ -21599,7 +21635,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 146,
+          "line": 155,
           "kind": "js-string",
           "raw": "Unfollowed patch",
           "quote": "'"
@@ -21624,7 +21660,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 146,
+          "line": 155,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
@@ -21649,7 +21685,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 148,
+          "line": 157,
           "kind": "js-string",
           "raw": "Could not leave",
           "quote": "'"
@@ -21667,7 +21703,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 159,
+          "line": 168,
           "kind": "markup",
           "raw": "Removed from this community",
           "quote": null
@@ -21685,7 +21721,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 199,
+          "line": 208,
           "kind": "markup",
           "raw": "Membership requested",
           "quote": null
@@ -21703,7 +21739,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 204,
+          "line": 213,
           "kind": "markup",
           "raw": "Withdraw request",
           "quote": null
@@ -21721,7 +21757,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 209,
+          "line": 218,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
@@ -21746,7 +21782,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 217,
+          "line": 226,
           "kind": "markup",
           "raw": "Become a member",
           "quote": null
@@ -21785,7 +21821,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 146,
+          "line": 147,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -21853,7 +21889,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 192,
+          "line": 193,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -23825,7 +23861,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 334,
+          "line": 335,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -23900,7 +23936,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 384,
+          "line": 385,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -24583,7 +24619,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 226,
+          "line": 227,
           "kind": "markup",
           "raw": "Settings",
           "quote": null
@@ -25112,14 +25148,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 112,
+          "line": 120,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 121,
+          "line": 129,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
@@ -25137,14 +25173,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 114,
+          "line": 122,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 124,
+          "line": 132,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
@@ -25169,21 +25205,21 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 116,
+          "line": 124,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 127,
+          "line": 135,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 567,
+          "line": 616,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -26697,6 +26733,13 @@
           "kind": "js-string",
           "raw": "Download failed",
           "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 292,
+          "kind": "js-string",
+          "raw": "Download failed",
+          "quote": "'"
         }
       ]
     },
@@ -26711,7 +26754,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 284,
+          "line": 314,
           "kind": "js-string",
           "raw": "Profile saved",
           "quote": "'"
@@ -26729,7 +26772,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 287,
+          "line": 317,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -26775,7 +26818,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 322,
+          "line": 352,
           "kind": "js-string",
           "raw": "Failed to delete account",
           "quote": "'"
@@ -26793,7 +26836,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 332,
+          "line": 362,
           "kind": "markup",
           "raw": "Profile",
           "quote": null
@@ -26811,7 +26854,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 334,
+          "line": 364,
           "kind": "markup",
           "raw": "Your",
           "quote": null
@@ -26829,7 +26872,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 335,
+          "line": 365,
           "kind": "markup",
           "raw": "shows your name, bio, links, and the memberships you keep visible.",
           "quote": null
@@ -26847,7 +26890,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 339,
+          "line": 369,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -26886,7 +26929,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 341,
+          "line": 371,
           "kind": "markup",
           "raw": "Username cannot be changed.",
           "quote": null
@@ -26904,7 +26947,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 344,
+          "line": 374,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -26943,7 +26986,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 348,
+          "line": 378,
           "kind": "markup",
           "raw": "Bio",
           "quote": null
@@ -26961,7 +27004,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 352,
+          "line": 382,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -27000,7 +27043,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 355,
+          "line": 385,
           "kind": "attr:placeholder",
           "raw": "Label",
           "quote": "\""
@@ -27018,7 +27061,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 356,
+          "line": 386,
           "kind": "attr:placeholder",
           "raw": "https://…",
           "quote": "\""
@@ -27036,7 +27079,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 361,
+          "line": 391,
           "kind": "markup",
           "raw": "Add link",
           "quote": null
@@ -27054,7 +27097,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 378,
+          "line": 408,
           "kind": "markup",
           "raw": "I have moved",
           "quote": null
@@ -27072,7 +27115,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 380,
+          "line": 410,
           "kind": "markup",
           "raw": "Point your profile at wherever you are now. Your page here keeps\n        working and says where you went. This is only about you, not about\n        the patches you belong to. Clear the field to undo it.",
           "quote": null
@@ -27090,7 +27133,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 386,
+          "line": 416,
           "kind": "markup",
           "raw": "New address",
           "quote": null
@@ -27108,7 +27151,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 392,
+          "line": 422,
           "kind": "attr:placeholder",
           "raw": "https://their-quilt.example.com/users/you",
           "quote": "\""
@@ -27126,7 +27169,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 405,
+          "line": 435,
           "kind": "markup",
           "raw": "Contact card",
           "quote": null
@@ -27144,7 +27187,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 407,
+          "line": 437,
           "kind": "markup",
           "raw": "How the people you organize with can reach you. Nothing here is public:\n        a patch's admins and members see your card only once you share it\n        with that patch, in",
           "quote": null
@@ -27162,7 +27205,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 412,
+          "line": 442,
           "kind": "markup",
           "raw": "Shared with 1 patch.",
           "quote": null
@@ -27180,7 +27223,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 414,
+          "line": 444,
           "kind": "markup",
           "raw": "Shared with {sharedWithCount} patches.",
           "quote": null
@@ -27198,7 +27241,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 416,
+          "line": 446,
           "kind": "markup",
           "raw": "Not shared with any patch yet.",
           "quote": null
@@ -27216,7 +27259,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 421,
+          "line": 451,
           "kind": "markup",
           "raw": "Phone",
           "quote": null
@@ -27234,7 +27277,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 425,
+          "line": 455,
           "kind": "markup",
           "raw": "Email to reach you at",
           "quote": null
@@ -27252,7 +27295,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 427,
+          "line": 457,
           "kind": "markup",
           "raw": "Separate from the address you sign in with. That one is never shared.",
           "quote": null
@@ -27270,7 +27313,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 430,
+          "line": 460,
           "kind": "markup",
           "raw": "Note",
           "quote": null
@@ -27295,7 +27338,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 431,
+          "line": 461,
           "kind": "attr:placeholder",
           "raw": "How you prefer to be reached",
           "quote": "\""
@@ -27313,7 +27356,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 442,
+          "line": 472,
           "kind": "markup",
           "raw": "When you open Patchwork",
           "quote": null
@@ -27331,7 +27374,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 444,
+          "line": 474,
           "kind": "markup",
           "raw": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
           "quote": null
@@ -27350,7 +27393,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 453,
+          "line": 483,
           "kind": "markup",
           "raw": "Start on My Quilt",
           "quote": null
@@ -27368,7 +27411,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 458,
+          "line": 488,
           "kind": "markup",
           "raw": "Discovery",
           "quote": null
@@ -27386,7 +27429,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 466,
+          "line": 496,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -27411,7 +27454,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 469,
+          "line": 499,
           "kind": "markup",
           "raw": "Keeps patches that changed the shared community standards out of your\n        quilt, search, map, and event feed. Direct links still work.",
           "quote": null
@@ -27429,7 +27472,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 475,
+          "line": 505,
           "kind": "markup",
           "raw": "Personal feed",
           "quote": null
@@ -27447,7 +27490,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 477,
+          "line": 507,
           "kind": "markup",
           "raw": "A calendar feed of every event on your My Quilt, for your calendar\n        app. The address is a secret. Anyone who has it can read your feed.",
           "quote": null
@@ -27465,7 +27508,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 483,
+          "line": 513,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -27497,7 +27540,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 486,
+          "line": 516,
           "kind": "markup",
           "raw": "Copy it now. This address won't be shown again, and regenerating\n          replaces it.",
           "quote": null
@@ -27515,7 +27558,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 493,
+          "line": 523,
           "kind": "markup",
           "raw": "Regenerate address",
           "quote": null
@@ -27533,7 +27576,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 496,
+          "line": 526,
           "kind": "markup",
           "raw": "Disable",
           "quote": null
@@ -27551,7 +27594,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 500,
+          "line": 530,
           "kind": "markup",
           "raw": "Create feed",
           "quote": null
@@ -27569,7 +27612,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 507,
+          "line": 537,
           "kind": "markup",
           "raw": "Download my data",
           "quote": null
@@ -27587,9 +27630,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 509,
+          "line": 539,
           "kind": "markup",
           "raw": "One file with everything this quilt holds about you: your profile and\n        contact card, every membership including the ones you keep hidden, the\n        proposals, votes, comments, notices and events you wrote, and your\n        settings. Nothing anyone else wrote, and no sign-in secrets — so it is\n        safe to keep, and it will not let anyone into your account.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "96cda3453025",
+      "text": "Member seamrip",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 553,
+          "kind": "markup",
+          "raw": "Member seamrip",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1fa81d44d91c",
+      "text": "A copy of this quilt as you can see it, in the format a new Patchwork reads. It is here so a community can start again elsewhere without waiting for an admin. It holds the patches, events, charters, proposals and member lists that are already open to you. It does not hold email addresses, contact cards, noticeboards, or anything from a patch you are not in. Other people travel as a name and a picture, so the new quilt invites everyone back and each person sets their own visibility there.",
+      "words": 90,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 555,
+          "kind": "markup",
+          "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds the patches, events, charters,\n        proposals and member lists that are already open to you. It does not\n        hold email addresses, contact cards, noticeboards, or anything from a\n        patch you are not in. Other people travel as a name and a picture,\n        so the new quilt invites everyone back and each person sets their own\n        visibility there.",
           "quote": null
         }
       ]
@@ -27605,7 +27684,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 524,
+          "line": 573,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -27623,7 +27702,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 527,
+          "line": 576,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -27641,7 +27720,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 528,
+          "line": 577,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
@@ -27659,7 +27738,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 533,
+          "line": 582,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -27677,7 +27756,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 535,
+          "line": 584,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
@@ -27695,7 +27774,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 540,
+          "line": 589,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -27713,7 +27792,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 542,
+          "line": 591,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -27731,7 +27810,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 558,
+          "line": 607,
           "kind": "markup",
           "raw": "Decline",
           "quote": null
@@ -27749,7 +27828,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 569,
+          "line": 618,
           "kind": "markup",
           "raw": "Delete your account",
           "quote": null
@@ -27767,7 +27846,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 572,
+          "line": 621,
           "kind": "markup",
           "raw": "This happens immediately and cannot be undone.",
           "quote": null
@@ -27785,7 +27864,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 575,
+          "line": 624,
           "kind": "markup",
           "raw": "Erased:",
           "quote": null
@@ -27803,7 +27882,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 575,
+          "line": 624,
           "kind": "markup",
           "raw": "your email address, display name, bio, links,\n          avatar and contact card. Your passkeys, recovery codes and sessions.\n          Your personal calendar link and notification settings. Every patch\n          membership you hold, the quilts you have connected or followed, and\n          any claim still awaiting review.",
           "quote": null
@@ -27821,7 +27900,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 582,
+          "line": 631,
           "kind": "markup",
           "raw": "Kept:",
           "quote": null
@@ -27839,7 +27918,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 582,
+          "line": 631,
           "kind": "markup",
           "raw": "what you took part in. Proposals, votes,\n          comments, notices, events and recorded decisions stay so the\n          community's record stays whole. They will read as",
           "quote": null
@@ -27857,7 +27936,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 585,
+          "line": 634,
           "kind": "markup",
           "raw": "&ldquo;Deleted account&rdquo;",
           "quote": null
@@ -27875,7 +27954,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 585,
+          "line": 634,
           "kind": "markup",
           "raw": "with no name and no\n          link. Your profile page stops existing, and your username stays\n          retired so nobody else can take it.",
           "quote": null
@@ -27893,7 +27972,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 590,
+          "line": 639,
           "kind": "markup",
           "raw": "Copies that already federated to other servers, or that went out in an\n          export taken before today, are outside this site's reach.",
           "quote": null
@@ -27911,7 +27990,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 597,
+          "line": 646,
           "kind": "markup",
           "raw": "You are the only admin of\n              {blockingPatches.length === 1 ? 'this patch' : 'these patches'}.\n              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first,\n              then come back. You can name a successor, promote another admin, or hold an election.",
           "quote": null
@@ -27929,7 +28008,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 613,
+          "line": 662,
           "kind": "markup",
           "raw": "Type your username to confirm:",
           "quote": null
@@ -27947,7 +28026,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 632,
+          "line": 681,
           "kind": "markup",
           "raw": "Really delete your account? You will be signed out.",
           "quote": null
@@ -29850,7 +29929,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 88,
+          "line": 89,
           "kind": "js-string",
           "raw": "Event approved",
           "quote": "'"
@@ -29954,7 +30033,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 302,
+          "line": 303,
           "kind": "markup",
           "raw": "{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}",
           "quote": null
@@ -30004,7 +30083,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 316,
+          "line": 317,
           "kind": "attr:placeholder",
           "raw": "Note to the submitter (optional)",
           "quote": "\""
@@ -35459,14 +35538,14 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 200,
+          "line": 201,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 346,
+          "line": 347,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -35753,7 +35832,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 247,
+          "line": 248,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -35828,7 +35907,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 247,
+          "line": 248,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -36500,7 +36579,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 337,
+          "line": 338,
           "kind": "markup",
           "raw": "Loading events...",
           "quote": null
@@ -37460,7 +37539,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 191,
+          "line": 192,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -40053,7 +40132,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 88,
+          "line": 89,
           "kind": "js-string",
           "raw": "Suggestion declined",
           "quote": "'"
@@ -40071,7 +40150,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 93,
+          "line": 94,
           "kind": "js-string",
           "raw": "Failed to review",
           "quote": "'"
@@ -40089,7 +40168,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 143,
+          "line": 144,
           "kind": "js-string",
           "raw": "Upload failed",
           "quote": "'"
@@ -40107,7 +40186,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 192,
+          "line": 193,
           "kind": "markup",
           "raw": "Become a member to access events.",
           "quote": null
@@ -40125,7 +40204,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 198,
+          "line": 199,
           "kind": "markup",
           "raw": "{events.length} events",
           "quote": null
@@ -40143,7 +40222,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 220,
+          "line": 221,
           "kind": "markup",
           "raw": "Become a member to create events.",
           "quote": null
@@ -40161,7 +40240,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 222,
+          "line": 223,
           "kind": "markup",
           "raw": "Join this patch to create events.",
           "quote": null
@@ -40179,7 +40258,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 231,
+          "line": 232,
           "kind": "markup",
           "raw": "Download template",
           "quote": null
@@ -40197,7 +40276,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 247,
+          "line": 248,
           "kind": "markup",
           "raw": "When",
           "quote": null
@@ -40215,7 +40294,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 248,
+          "line": 249,
           "kind": "markup",
           "raw": "Link",
           "quote": null
@@ -40233,7 +40312,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 263,
+          "line": 264,
           "kind": "markup",
           "raw": "…and {uploadEvents.length - 8} more",
           "quote": null
@@ -40251,7 +40330,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 274,
+          "line": 275,
           "kind": "markup",
           "raw": "Fix the rows above and re-pick the file.",
           "quote": null
@@ -40269,7 +40348,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 278,
+          "line": 279,
           "kind": "markup",
           "raw": "No events found in {uploadFileName}.",
           "quote": null
@@ -40287,7 +40366,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 282,
+          "line": 283,
           "kind": "markup",
           "raw": "Times are read in your timezone. Rows matching an event already on the\n        calendar are skipped, so re-uploading a corrected file is safe.",
           "quote": null
@@ -40305,7 +40384,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 296,
+          "line": 297,
           "kind": "markup",
           "raw": "Suggested events",
           "quote": null
@@ -40323,7 +40402,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 303,
+          "line": 304,
           "kind": "markup",
           "raw": "&middot; {sub.location}",
           "quote": null
@@ -40341,7 +40420,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 309,
+          "line": 310,
           "kind": "markup",
           "raw": "Suggested by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
@@ -40359,7 +40438,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 340,
+          "line": 341,
           "kind": "markup",
           "raw": "No events scheduled.",
           "quote": null
@@ -40377,7 +40456,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 341,
+          "line": 342,
           "kind": "markup",
           "raw": "Members can create events for meetups, shows, or gatherings.",
           "quote": null
@@ -40395,7 +40474,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 357,
+          "line": 358,
           "kind": "markup",
           "raw": "&middot; {event.location}",
           "quote": null
@@ -41182,7 +41261,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 405,
+          "line": 406,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -41653,7 +41732,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 194,
+          "line": 195,
           "kind": "markup",
           "raw": "Back to Quilt",
           "quote": null
@@ -41671,7 +41750,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 209,
+          "line": 210,
           "kind": "markup",
           "raw": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
           "quote": null
@@ -41689,7 +41768,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 257,
+          "line": 258,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
           "quote": null
@@ -41707,7 +41786,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 258,
+          "line": 259,
           "kind": "markup",
           "raw": "The community added it",
           "quote": null
@@ -41725,7 +41804,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 260,
+          "line": 261,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -41743,7 +41822,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 262,
+          "line": 263,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -41761,7 +41840,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 264,
+          "line": 265,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -41779,7 +41858,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 264,
+          "line": 265,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -41797,7 +41876,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 276,
+          "line": 277,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -41815,7 +41894,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 278,
+          "line": 279,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -41833,7 +41912,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 306,
+          "line": 307,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -41851,7 +41930,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 374,
+          "line": 375,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null

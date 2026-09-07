@@ -22,6 +22,12 @@
 //     log, content reports, in-app notification rows, and reminder-dedup
 //     state. A fresh instance regenerates its federation identity on first
 //     boot (PopulateAPIds / BackfillKeypairs).
+//
+// That is the first axis: what travels. The boundary has a second one, in
+// memberview.go — for each travelling table, which rows a given member may
+// carry out (docs/adr/089). The member seamrip
+// (GET /api/v1/users/me/seamrip) runs the queries below through it, so a
+// column added here reaches both bundles or neither.
 package seamrip
 
 import (
@@ -567,34 +573,7 @@ func Export(db *database.DB, sink func(t Table, items []map[string]any) error) e
 }
 
 func queryTable(db *database.DB, t Table) ([]map[string]any, error) {
-	rows, err := db.Query(t.Query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	items := []map[string]any{}
-	for rows.Next() {
-		values := make([]any, len(t.Columns))
-		ptrs := make([]any, len(t.Columns))
-		for i := range values {
-			ptrs[i] = &values[i]
-		}
-		if err := rows.Scan(ptrs...); err != nil {
-			return nil, err
-		}
-		item := make(map[string]any, len(t.Columns))
-		for i, col := range t.Columns {
-			// SQLite TEXT scans as []byte through the generic path.
-			if b, ok := values[i].([]byte); ok {
-				item[col.Name] = string(b)
-			} else {
-				item[col.Name] = values[i]
-			}
-		}
-		items = append(items, item)
-	}
-	return items, rows.Err()
+	return scanRows(db, t.Query, t.Columns, nil)
 }
 
 // ReadmeText documents the archive layout for humans opening the export.
