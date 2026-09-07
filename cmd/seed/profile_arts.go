@@ -1,5 +1,7 @@
 package main
 
+import "github.com/patchwork-toolkit/patchwork/internal/notifications"
+
 // ---------------------------------------------------------------------------
 // The seed dataset — a fictional Lancaster, PA arts scene (ADR 009: real
 // places, fictional actors). 30 users, ~29 claimed patches (including 4
@@ -561,23 +563,32 @@ var artsGovDocs = []govDocDef{
 	{"screen-door-mutual-aid", "Solidarity Principles", "We are neighbors, not service providers. We give and receive — everyone has something to offer. No means-testing. No judgement. Confidentiality is sacred. We coordinate, not control. If you need help, ask. If you can help, offer. Mutual aid is not charity — it is solidarity."},
 }
 
+// Notification types come from the registry rather than being written out,
+// because they drifted once already: these fixtures carried new_event,
+// proposal_created and the rest long after the product had moved to
+// event.created and proposal.new. Nothing failed — the rows inserted fine and
+// the list rendered them — but the notifications page filters by type prefix,
+// so every seeded notification fell into no category and the tabs read empty
+// on any demo instance.
+//
+// Referring to the constants makes the next rename a compile error here.
 var artsNotifications = []notifDef{
-	{1, "membership_approved", "Welcome to Gallery Row", "Your membership request for Gallery Row has been approved.", "/patches/gallery-row", true},
-	{2, "new_event", "New event: Jazz Quartet", "A new event has been posted in The Selvage.", "/events", true},
-	{3, "proposal_result", "Proposal approved: Shared equipment lending", "The proposal to adopt a shared equipment lending policy has passed.", "/patches/warehouse-arts-collective/governance/proposals", true},
-	{5, "membership_approved", "Welcome to Common Ground Ceramics", "Your membership request has been approved.", "/patches/common-ground-ceramics", false},
-	{6, "proposal_created", "New proposal: Weekend open studio hours", "A new proposal has been created in Common Ground Ceramics.", "/patches/common-ground-ceramics/governance/proposals", false},
-	{4, "new_member", "New member joined Wallflower Murals", "Rachel Green has joined the Wallflower Mural Project.", "/patches/wallflower-mural-project/members", true},
-	{8, "proposal_result", "Proposal rejected: Increase monthly dues", "The proposal to increase monthly dues has been rejected.", "/patches/common-ground-ceramics/governance/proposals", true},
-	{9, "new_event", "New event: Dance Showcase", "A new spring showcase has been announced.", "/events", false},
-	{10, "membership_request", "New membership request", "A new member has requested to join Gallery Row.", "/patches/gallery-row/members", false},
-	{14, "proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
-	{1, "new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
-	{12, "new_event", "New event: Auditions", "Open auditions for the Summer One-Act Festival.", "/events", false},
-	{18, "new_event", "New event: Spring Plot Assignments", "Annual plot lottery at SoWe Community Garden.", "/events", false},
-	{20, "new_event", "New event: Fix-It Clinic", "Bring your broken stuff to the Tinker's Damn.", "/events", false},
-	{24, "new_event", "New event: Beat Battle", "16 producers, one night at the Low End Lab.", "/events", false},
-	{22, "membership_approved", "Welcome to the Tinker's Damn", "Your membership at the Tinker's Damn is confirmed.", "/patches/tinkers-damn", true},
+	{1, string(notifications.MembershipApproved), "Welcome to Gallery Row", "Your membership request for Gallery Row has been approved.", "/patches/gallery-row", true},
+	{2, string(notifications.EventCreated), "New event: Jazz Quartet", "A new event has been posted in The Selvage.", "/events", true},
+	{3, string(notifications.ProposalApproved), "Proposal approved: Shared equipment lending", "The proposal to adopt a shared equipment lending policy has passed.", "/patches/warehouse-arts-collective/governance/proposals", true},
+	{5, string(notifications.MembershipApproved), "Welcome to Common Ground Ceramics", "Your membership request has been approved.", "/patches/common-ground-ceramics", false},
+	{6, string(notifications.ProposalNew), "New proposal: Weekend open studio hours", "A new proposal has been created in Common Ground Ceramics.", "/patches/common-ground-ceramics/governance/proposals", false},
+	{4, string(notifications.MembershipJoined), "New member joined Wallflower Murals", "Rachel Green has joined the Wallflower Mural Project.", "/patches/wallflower-mural-project/members", true},
+	{8, string(notifications.ProposalRejected), "Proposal rejected: Increase monthly dues", "The proposal to increase monthly dues has been rejected.", "/patches/common-ground-ceramics/governance/proposals", true},
+	{9, string(notifications.EventCreated), "New event: Dance Showcase", "A new spring showcase has been announced.", "/events", false},
+	{10, string(notifications.MembershipRequest), "New membership request", "A new member has requested to join Gallery Row.", "/patches/gallery-row/members", false},
+	{14, string(notifications.ProposalNew), "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
+	{1, string(notifications.MembershipJoined), "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
+	{12, string(notifications.EventCreated), "New event: Auditions", "Open auditions for the Summer One-Act Festival.", "/events", false},
+	{18, string(notifications.EventCreated), "New event: Spring Plot Assignments", "Annual plot lottery at SoWe Community Garden.", "/events", false},
+	{20, string(notifications.EventCreated), "New event: Fix-It Clinic", "Bring your broken stuff to the Tinker's Damn.", "/events", false},
+	{24, string(notifications.EventCreated), "New event: Beat Battle", "16 producers, one night at the Low End Lab.", "/events", false},
+	{22, string(notifications.MembershipApproved), "Welcome to the Tinker's Damn", "Your membership at the Tinker's Damn is confirmed.", "/patches/tinkers-damn", true},
 }
 
 var artsUnclaimed = []unclaimedDef{

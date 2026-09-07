@@ -18,6 +18,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
@@ -1442,9 +1443,9 @@ func (s *seeder) seedNotifications() {
 		nType, title, body, link string
 		read                     bool
 	}{
-		{"new_event", "New event: First Friday Gallery Walk", "A new event has been posted in the First Friday Collective.", "/events", false},
-		{"proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
-		{"new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
+		{string(notifications.EventCreated), "New event: First Friday Gallery Walk", "A new event has been posted in the First Friday Collective.", "/events", false},
+		{string(notifications.ProposalNew), "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
+		{string(notifications.MembershipJoined), "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
 	}
 	// Two deep links to single entities, the shapes issue #56 got wrong: an
 	// event (addressed globally) and a charter (needs its 'docs/' segment).
@@ -1455,13 +1456,13 @@ func (s *seeder) seedNotifications() {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{"event_reminder", "Tomorrow: " + eventTitle, "This event starts in less than 24 hours.", weblink.Event(eventID), false})
+		}{string(notifications.EventReminder), "Tomorrow: " + eventTitle, "This event starts in less than 24 hours.", weblink.Event(eventID), false})
 	}
 	if slug, docID, docTitle, ok := s.firstGovernanceDoc(); ok {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{"governance_doc_updated", "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
+		}{string(notifications.GovernanceDocUpdated), "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
 	}
 	for i, n := range adminNotifs {
 		createdAt := s.now.AddDate(0, 0, -(i + 1)).Format("2006-01-02T15:04:05.000Z")
