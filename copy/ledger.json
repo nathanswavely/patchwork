@@ -10550,9 +10550,9 @@
       "text": "You do not need an administrator to get your own copy. **Download my data** in your account settings hands you one file with everything this site holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, your settings and notifications, and the log of your own sign-ins. It contains nothing anyone else wrote and no sign-in secrets, so the file cannot be used to get into your account.",
       "words": 83,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
@@ -26818,9 +26818,9 @@
       "text": "Download my data",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -26836,9 +26836,9 @@
       "text": "One file with everything this quilt holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, and your settings. Nothing anyone else wrote, and no sign-in secrets — so it is safe to keep, and it will not let anyone into your account.",
       "words": 58,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
