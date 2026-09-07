@@ -59,9 +59,13 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 		var membershipPolicy, nodeStatus string
 		db.QueryRow("SELECT membership_policy, status FROM nodes WHERE id = ?", nodeID).Scan(&membershipPolicy, &nodeStatus)
 
-		// Unclaimed patches only accept followers, not members.
+		// Unclaimed patches only accept followers, not members. Callers are
+		// expected to render no member rung here at all (docs/adr/042), so
+		// anyone reaching this message is looking at a stale page: it says
+		// what the patch is and what would change it, not what the reader
+		// could already have done.
 		if nodeStatus == "unclaimed" && !isFollow {
-			http.Error(w, `{"error":"this patch hasn't been claimed yet — you can follow it"}`, http.StatusForbidden)
+			http.Error(w, `{"error":"Patch must be claimed to accept members"}`, http.StatusForbidden)
 			return
 		}
 
@@ -335,7 +339,13 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Check if user is an active member.
+		// Active rows only. Leaving exits a relationship, and a requester
+		// holds none — retracting an unanswered request is
+		// WithdrawMembershipRequest, a different verb on a different object
+		// (docs/adr/088). The split is not tidiness: it is what makes a
+		// stale page safe. If a request is approved between page load and
+		// click, a Withdraw that reached this handler would resign a
+		// membership the person did not yet know they had.
 		var memberRole string
 		err := db.QueryRow("SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'", user.ID, nodeID).Scan(&memberRole)
 		if err != nil {
@@ -536,7 +546,7 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 
 		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.visible, m.share_contact, m.joined_at,
-			n.name, n.slug, n.description, n.visibility, n.membership_policy
+			n.name, n.slug, n.description, n.visibility, n.membership_policy, n.status
 			FROM memberships m JOIN nodes n ON m.node_id = n.id
 			WHERE m.user_id = ? AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')`
 		args := []interface{}{user.ID}
@@ -556,10 +566,20 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		type membershipResponse struct {
-			ID               string `json:"id"`
-			UserID           string `json:"user_id"`
-			NodeID           string `json:"node_id"`
-			Role             string `json:"role"`
+			ID     string `json:"id"`
+			UserID string `json:"user_id"`
+			NodeID string `json:"node_id"`
+			// Omitted for a row that holds no standing (docs/adr/088). A
+			// pending request is stored on the membership row and carries
+			// role='member' — always, since you cannot request admin and
+			// following never goes through pending — so the column says
+			// what the row would become, not what it is. Sending it made
+			// this endpoint assert a membership that GetNode, the member
+			// list, the member count and userHasNodeRole all deny, and
+			// every client then had to defend itself against its own
+			// server. Absent is the honest answer, and a loud one: a
+			// caller reading it gets undefined rather than a wrong role.
+			Role             string `json:"role,omitempty"`
 			Status           string `json:"status"`
 			Visible          bool   `json:"visible"`
 			ShareContact     bool   `json:"share_contact"`
@@ -569,13 +589,23 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			NodeDescription  string `json:"node_description"`
 			NodeVisibility   string `json:"node_visibility"`
 			MembershipPolicy string `json:"membership_policy"`
+			// The patch's own status, because whether a member rung exists
+			// at all depends on it: an unclaimed patch takes followers only
+			// (JoinNode), and a caller who can't see that draws a door that
+			// 403s (docs/adr/042).
+			NodeStatus string `json:"node_status"`
 		}
 		var memberships []membershipResponse
 		for rows.Next() {
 			var m membershipResponse
 			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.ShareContact, &m.JoinedAt,
-				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy); err != nil {
+				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy, &m.NodeStatus); err != nil {
 				continue
+			}
+			// Standing is stated once, here, the way GetNode states it:
+			// only an active row has a role.
+			if m.Status != "active" {
+				m.Role = ""
 			}
 			memberships = append(memberships, m)
 		}

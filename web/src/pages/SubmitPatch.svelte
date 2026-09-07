@@ -64,7 +64,7 @@
 
 <div class="submit-page page-fade">
   <h1>Add a patch to the quilt</h1>
-  <p class="muted">Know a place or group that should be on the map? The real owner can claim it later.</p>
+  <p class="muted">Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.</p>
 
   <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
     <div class="field">

@@ -46,13 +46,17 @@ export function isMembershipsLoaded() {
  * Get a Map of slug → role for the user's memberships.
  *
  * Active rows only. `me/nodes` also serves pending join requests, and a
- * pending row carries role='member' — so an unanswered request used to
- * read as membership on every surface that consulted this map. "Role"
- * means standing here, exactly as the server means it: the node payload's
- * `membership_role` is set only for status='active' (internal/handler/nodes.go),
- * and userHasNodeRole has always checked status independently. A pending
- * request is not standing, so it is not a role — ask for it by name with
- * getPendingMembershipSlugs().
+ * requester is outside the ladder: they hold an open request, not a
+ * relationship, so they have no role (docs/adr/088).
+ *
+ * The server no longer sends one either — `role` is omitted for a row
+ * that is not active, matching what `GET /nodes/{slug}` always did. This
+ * filter is the second line rather than the only one: without it an
+ * absent role would land in the map as undefined, and a store that states
+ * standing should decide what it holds rather than inherit it.
+ *
+ * A pending request is not standing, so it is not a role — ask for it by
+ * name with getPendingMembershipSlugs().
  */
 export function getMembershipRoles() {
   const map = new Map();
@@ -69,7 +73,7 @@ export function getMembershipRoles() {
  * The information getMembershipRoles() deliberately drops, kept where a
  * caller can ask for it: a surface offering "Follow" or "Become a member"
  * to someone already waiting on an answer is offering a control the server
- * refuses with a 409.
+ * refuses with a 409 (docs/adr/042 — an absent door beats a 403).
  */
 export function getPendingMembershipSlugs() {
   const set = new Set();

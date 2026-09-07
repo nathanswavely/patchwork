@@ -94,8 +94,13 @@ describe('surfaces that state where you stand', () => {
     // active rows only, because nobody admitted this person and there is
     // no community to exit. A Requested row calling leave would 400.
     const settings = read('pages/UserSettingsPatches.svelte');
-    expect(settings).toMatch(/api\(`nodes\/\$\{slug\}\/withdraw`, \{ method: 'POST' \}\)/);
-    expect(settings).toMatch(/label="Withdraw"[\s\S]{0,120}handleWithdraw\(m\.node_slug\)/);
+    // One exit function, routed on the row's own status — which is also
+    // what makes a stale page safe: if the request was approved between
+    // load and click, /withdraw refuses rather than resigning a
+    // membership this person did not know they had (docs/adr/088).
+    expect(settings).toMatch(/const withdrawing = m\.status === 'pending'/);
+    expect(settings).toMatch(/nodes\/\$\{m\.node_slug\}\/\$\{withdrawing \? 'withdraw' : 'leave'\}/);
+    expect(settings).toMatch(/label="Withdraw"/);
 
     const rel = read('components/PatchRelationship.svelte');
     expect(rel).toMatch(/api\(`nodes\/\$\{slug\}\/withdraw`, \{ method: 'POST' \}\)/);
@@ -111,10 +116,11 @@ describe('surfaces that state where you stand', () => {
     // came with the switches an actual member owns (visibility, contact
     // sharing) over a standing this person does not have.
     const src = read('pages/UserSettingsPatches.svelte');
-    expect(src).toMatch(/let active = \$derived\(patches\.filter\(m => m\.status === 'active'\)\)/);
-    expect(src).toMatch(/adminPatches = \$derived\(active\./);
-    expect(src).toMatch(/memberPatches = \$derived\(active\./);
-    expect(src).toMatch(/followerPatches = \$derived\(active\./);
+    // Every ladder section is status-gated, so a request cannot fall into
+    // one of them, and pending gets its own.
+    expect(src).toMatch(/adminPatches = \$derived\(patches\.filter\(m => m\.role === 'admin' && m\.status === 'active'\)\)/);
+    expect(src).toMatch(/memberPatches = \$derived\(patches\.filter\(m => m\.role === 'member' && m\.status === 'active'\)\)/);
+    expect(src).toMatch(/followerPatches = \$derived\(patches\.filter\(m => m\.role === 'follower' && m\.status === 'active'\)\)/);
     expect(src).toMatch(/pendingPatches = \$derived\(patches\.filter\(m => m\.status === 'pending'\)\)/);
     expect(src).toMatch(/>Requested</);
   });

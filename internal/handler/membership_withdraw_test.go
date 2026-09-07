@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -183,6 +184,82 @@ func TestLeaveStillRefusesAPendingRequest(t *testing.T) {
 	}
 	if status, _ := membershipRow(t, db, requester.ID, nodeID); status != "pending" {
 		t.Errorf("leave changed a pending row to %q", status)
+	}
+}
+
+// The wire stops asserting a role for a row that holds no standing
+// (docs/adr/088, decision 2). This is the fix that matters most: the
+// client bug was every surface defending itself against its own server,
+// and neither branch that found the bug fixed it here.
+func TestMyNodesSendsNoRoleForARequest(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "wire-admin", "member")
+	person, token := createTestUser(t, db, "wire-person", "member")
+
+	pendingNode := createTestNode(t, db, admin.ID, "Approval", "wire-approval", "approval_required")
+	activeNode := createTestNode(t, db, admin.ID, "Open", "wire-open", "open")
+	createTestMembership(t, db, admin.ID, pendingNode, "admin", "active")
+	createTestMembership(t, db, admin.ID, activeNode, "admin", "active")
+	createTestMembership(t, db, person.ID, pendingNode, "member", "pending")
+	createTestMembership(t, db, person.ID, activeNode, "member", "active")
+
+	rows := myNodes(t, db, token)
+	if len(rows) != 2 {
+		t.Fatalf("expected 2 rows, got %d", len(rows))
+	}
+	for _, m := range rows {
+		role, hasRole := m["role"]
+		switch m["status"] {
+		case "pending":
+			// Absent, not empty-string: a caller reading it gets undefined
+			// rather than a plausible wrong answer.
+			if hasRole {
+				t.Errorf("me/nodes sent role=%v for a pending row; GetNode omits it, and so must this", role)
+			}
+		case "active":
+			if !hasRole || role != "member" {
+				t.Errorf("an active row must still carry its role, got %v (present=%v)", role, hasRole)
+			}
+		default:
+			t.Errorf("unexpected status %v", m["status"])
+		}
+	}
+}
+
+// The two endpoints must agree about what a requester is. This is the
+// disagreement the whole bug grew out of.
+func TestMyNodesAndGetNodeAgreeAboutARequest(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "agree-admin", "member")
+	person, token := createTestUser(t, db, "agree-person", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Approval", "agree-approval", "approval_required")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, person.ID, nodeID, "member", "pending")
+
+	rows := myNodes(t, db, token)
+	if len(rows) != 1 {
+		t.Fatalf("expected 1 row, got %d", len(rows))
+	}
+	_, listHasRole := rows[0]["role"]
+
+	r := authedRequest("GET", "/api/v1/nodes/agree-approval", nil, token)
+	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}", handler.GetNode(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("GetNode: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	var node map[string]interface{}
+	if err := json.NewDecoder(w.Body).Decode(&node); err != nil {
+		t.Fatalf("decode node: %v", err)
+	}
+	_, nodeHasRole := node["membership_role"]
+
+	if listHasRole != nodeHasRole {
+		t.Errorf("me/nodes role present=%v but nodes/{slug} membership_role present=%v — "+
+			"the two endpoints disagree about whether a requester has standing",
+			listHasRole, nodeHasRole)
+	}
+	if listHasRole {
+		t.Error("neither endpoint should claim a role for a pending row")
 	}
 }
 

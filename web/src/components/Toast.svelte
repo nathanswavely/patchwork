@@ -29,29 +29,51 @@
     max-width: 360px;
   }
 
+  /* One drawing, three colorways. The status is the whole slip — a tinted
+     ground and a border of the same hue — rather than a colored bar down
+     the left edge: in this codebase a left border means quoted or nested
+     (MarkdownRenderer's blockquote, CommentThread's indent), so a toast
+     wearing one was borrowing a mark that already meant something else.
+
+     Text stays --color-text in every colorway. Coloring a whole sentence
+     with --color-error reads as alarm even when the sentence is only
+     telling you a patch is unclaimed; --color-error is for the short
+     label (.error-text), not for prose. */
   .toast {
-    padding: 0.75rem 1.25rem;
+    --toast-hue: var(--color-text-muted);
+    /* How much of the hue the ground and the edge take. Named rather than
+       inlined because dark needs more of both: the same 9% that tints a
+       cream surface visibly is invisible over #1c2028, and the dark
+       surface is only a few steps off the dark background to begin with. */
+    --toast-tint: 9%;
+    --toast-edge: 40%;
+    padding: 0.7rem 0.9rem;
     border-radius: var(--radius);
-    font-size: 0.9rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    box-shadow: 0 4px 12px var(--color-shadow);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--toast-hue) var(--toast-tint), var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--toast-hue) var(--toast-edge), var(--color-border));
+    /* The same lift the other floating chrome uses (GlobalBar, SocialShell). */
+    box-shadow: 0 4px 16px var(--color-shadow);
     animation: slideUp 200ms ease;
   }
 
+  :global([data-theme='dark']) .toast {
+    --toast-tint: 14%;
+    --toast-edge: 55%;
+  }
+
   .toast-success {
-    border-left: 3px solid var(--color-success);
-    color: var(--color-success);
+    --toast-hue: var(--color-success);
   }
 
   .toast-error {
-    border-left: 3px solid var(--color-error);
-    color: var(--color-error);
+    --toast-hue: var(--color-error);
   }
 
   .toast-info {
-    border-left: 3px solid var(--color-primary);
-    color: var(--color-text);
+    --toast-hue: var(--color-primary);
   }
 
   @keyframes slideUp {
@@ -62,6 +84,12 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toast {
+      animation: none;
     }
   }
 
