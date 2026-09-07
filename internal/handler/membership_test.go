@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -830,5 +831,95 @@ func TestListMembersBannedFilter(t *testing.T) {
 	}
 	if !strings.Contains(w.Body.String(), "banned24") {
 		t.Errorf("expected the removed member in the list, got %s", w.Body.String())
+	}
+}
+
+// A CHECK-constrained field takes its value from the request on three paths.
+// Before this, each handed the constraint an unrecognized value and turned its
+// rejection into a 500 "failed to create node" / "failed to update report" —
+// an error that reads like the server broke rather than like the caller sent
+// something it does not accept. The constraint is the backstop; it is not the
+// error message.
+func TestUnrecognizedEnumValuesAre400(t *testing.T) {
+	db := setupTestDB(t)
+	owner, ownerTok := createTestUser(t, db, "enum1", "member")
+	_, adminTok := createTestUser(t, db, "enum2", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Enum", "enum-node", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+	if _, err := db.Exec(
+		`INSERT INTO content_reports (id, reporter_id, entity_type, entity_id, reason, details)
+		 VALUES ('enum-report', ?, 'node', ?, 'spam', '')`, owner.ID, nodeID); err != nil {
+		t.Fatalf("seed report: %v", err)
+	}
+
+	create := func(body map[string]interface{}) *httptest.ResponseRecorder {
+		r := authedRequest("POST", "/api/v1/nodes", body, ownerTok)
+		return serveMux(t, db, "POST", "/api/v1/nodes", handler.CreateNode(db), r)
+	}
+	update := func(body map[string]interface{}) *httptest.ResponseRecorder {
+		r := authedRequest("PATCH", "/api/v1/nodes/enum-node", body, ownerTok)
+		return serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}", handler.UpdateNode(db), r)
+	}
+	report := func(body map[string]interface{}) *httptest.ResponseRecorder {
+		r := authedRequest("PATCH", "/api/v1/admin/reports/enum-report", body, adminTok)
+		return serveMux(t, db, "PATCH", "/api/v1/admin/reports/{id}", handler.UpdateReport(db), r)
+	}
+
+	refused := []struct {
+		name string
+		got  *httptest.ResponseRecorder
+	}{
+		{"create with an unknown visibility", create(map[string]interface{}{"name": "A", "visibility": "secret"})},
+		{"create with an unknown membership policy", create(map[string]interface{}{"name": "B", "membership_policy": "members_only"})},
+		{"update to an unknown visibility", update(map[string]interface{}{"visibility": "secret"})},
+		{"report set to an unknown status", report(map[string]interface{}{"status": "closed"})},
+	}
+	for _, tt := range refused {
+		if tt.got.Code != http.StatusBadRequest {
+			t.Errorf("%s: expected 400, got %d: %s", tt.name, tt.got.Code, tt.got.Body.String())
+		}
+	}
+
+	// The refusal explains itself rather than saying the server failed.
+	if body := refused[0].got.Body.String(); !strings.Contains(body, "visibility must be one of") {
+		t.Errorf("expected the 400 to name the accepted values, got %s", body)
+	}
+
+	// Nothing was written on the way to any of those refusals.
+	var reportStatus string
+	db.QueryRow("SELECT status FROM content_reports WHERE id = 'enum-report'").Scan(&reportStatus)
+	if reportStatus != "pending" {
+		t.Errorf("a refused update still changed the report: %q", reportStatus)
+	}
+	var vis string
+	db.QueryRow("SELECT visibility FROM nodes WHERE slug = 'enum-node'").Scan(&vis)
+	if vis != "public" {
+		t.Errorf("a refused update still changed the patch: %q", vis)
+	}
+
+	// Every value the constraints do accept still works.
+	for _, v := range []string{"public", "private", "unlisted"} {
+		if w := update(map[string]interface{}{"visibility": v}); w.Code != http.StatusOK {
+			t.Errorf("visibility %q: expected 200, got %d: %s", v, w.Code, w.Body.String())
+		}
+	}
+	for i, p := range []string{"open", "approval_required", "invite_only"} {
+		body := map[string]interface{}{"name": fmt.Sprintf("Policy %d", i), "membership_policy": p}
+		if w := create(body); w.Code != http.StatusCreated {
+			t.Errorf("membership_policy %q: expected 201, got %d: %s", p, w.Code, w.Body.String())
+		}
+	}
+	for _, st := range []string{"pending", "reviewed", "resolved", "dismissed"} {
+		if w := report(map[string]interface{}{"status": st}); w.Code != http.StatusOK {
+			t.Errorf("report status %q: expected 200, got %d: %s", st, w.Code, w.Body.String())
+		}
+	}
+
+	// A request that carries an action and no status at all: the admin SPA
+	// sends exactly this for remove_image, whose action has no entry in its
+	// status map, so the key is dropped from the JSON. Absent is not invalid.
+	if w := report(map[string]interface{}{"action": "remove_image"}); w.Code != http.StatusOK {
+		t.Errorf("action without a status: expected 200, got %d: %s", w.Code, w.Body.String())
 	}
 }

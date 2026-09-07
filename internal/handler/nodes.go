@@ -298,6 +298,28 @@ func scanGovernanceConfig(gcJSON string, n *model.Node) {
 	n.GovernanceConfig = gc
 }
 
+// A patch's visibility and membership policy are CHECK-constrained columns, so
+// an unrecognized value is refused here rather than by the database. The
+// constraint would reject it too, but as a 500 the caller cannot act on —
+// migration 065 is the lesson in what a CHECK is bad at explaining.
+//
+// These lists are the constraints in migrations/001 and 004. A value added to
+// one must be added to the other, and TestEveryWrittenEnumValueIsAllowed does
+// not cover this: it reads SQL literals, and these arrive as bound parameters.
+var (
+	nodeVisibilities   = []string{"public", "private", "unlisted"}
+	membershipPolicies = []string{"open", "approval_required", "invite_only"}
+)
+
+func oneOf(v string, allowed []string) bool {
+	for _, a := range allowed {
+		if v == a {
+			return true
+		}
+	}
+	return false
+}
+
 // validateCoordinate checks a latitude or longitude value taken from a JSON
 // request. A nil value is an explicit null — clearing the position — and is
 // always allowed; a present value must be a number within its geographic
@@ -689,6 +711,16 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		if req.MembershipPolicy == "" {
 			req.MembershipPolicy = "open"
 		}
+		if !oneOf(req.Visibility, nodeVisibilities) {
+			http.Error(w, fmt.Sprintf(`{"error":"visibility must be one of %s"}`,
+				strings.Join(nodeVisibilities, ", ")), http.StatusBadRequest)
+			return
+		}
+		if !oneOf(req.MembershipPolicy, membershipPolicies) {
+			http.Error(w, fmt.Sprintf(`{"error":"membership_policy must be one of %s"}`,
+				strings.Join(membershipPolicies, ", ")), http.StatusBadRequest)
+			return
+		}
 
 		if req.Latitude != nil {
 			if _, err := validateCoordinate("latitude", *req.Latitude); err != nil {
@@ -865,6 +897,18 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 				return
 			} else {
 				req["timezone"] = tz
+			}
+		}
+
+		// Same for visibility, which is editable here and CHECK-constrained
+		// like the rest. membership_policy is not in allowedFields, so it has
+		// no equivalent on this path.
+		if raw, present := req["visibility"]; present {
+			v, _ := raw.(string)
+			if !oneOf(v, nodeVisibilities) {
+				http.Error(w, fmt.Sprintf(`{"error":"visibility must be one of %s"}`,
+					strings.Join(nodeVisibilities, ", ")), http.StatusBadRequest)
+				return
 			}
 		}
 

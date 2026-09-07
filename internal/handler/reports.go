@@ -195,6 +195,10 @@ func ListReports(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// The content_reports.status CHECK from migrations/001. A value added there
+// must be added here.
+var reportStatuses = []string{"pending", "reviewed", "resolved", "dismissed"}
+
 // UpdateReport handles PATCH /api/v1/admin/reports/{id}.
 func UpdateReport(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -218,6 +222,17 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 		).Scan(&rpt.ID, &rpt.ReporterID, &rpt.EntityType, &rpt.EntityID, &rpt.Status)
 		if err != nil {
 			http.Error(w, `{"error":"report not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// status is CHECK-constrained, so an unrecognized value is refused
+		// here rather than by the database — the constraint would reject it
+		// too, but as a 500 the caller cannot act on. The patch-side queue
+		// (notice_reports.go) never had this hole: it maps an action to a
+		// status itself and never takes one from the request.
+		if req.Status != nil && !oneOf(*req.Status, reportStatuses) {
+			http.Error(w, fmt.Sprintf(`{"error":"status must be one of %s"}`,
+				strings.Join(reportStatuses, ", ")), http.StatusBadRequest)
 			return
 		}
 
