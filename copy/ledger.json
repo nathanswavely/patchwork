@@ -4289,6 +4289,13 @@
           "quote": null
         },
         {
+          "file": "internal/handler/attestation.go",
+          "line": 88,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
           "file": "internal/handler/attestations.go",
           "line": 178,
           "kind": "go-error-body",
@@ -6326,6 +6333,103 @@
       ]
     },
     {
+      "id": "d2c6104210e8",
+      "text": "this quilt has no instance key yet",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 43,
+          "kind": "go-error-body",
+          "raw": "this quilt has no instance key yet",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cbac8bee7536",
+      "text": "authentication required",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 72,
+          "kind": "go-error-body",
+          "raw": "authentication required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "19b5dc2d046d",
+      "text": "too many attestations — wait a minute and try again",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 80,
+          "kind": "go-error-body",
+          "raw": "too many attestations — wait a minute and try again",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7bb146b0b1b4",
+      "text": "failed to load the instance key",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 101,
+          "kind": "go-error-body",
+          "raw": "failed to load the instance key",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 106,
+          "kind": "go-error-body",
+          "raw": "failed to load the instance key",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "104c9b3532a4",
+      "text": "failed to sign the attestation",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 113,
+          "kind": "go-error-body",
+          "raw": "failed to sign the attestation",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "4bdee9cb1da1",
       "text": "failed to list attestations",
       "words": 4,
@@ -7253,7 +7357,7 @@
           "file": "internal/handler/claims.go",
           "line": 338,
           "kind": "go-error-body",
-          "raw": "this patch has no verified domain — choose admin review",
+          "raw": "this patch has no verified domain. Choose admin review",
           "quote": null
         }
       ],
@@ -7472,7 +7576,7 @@
           "file": "internal/handler/claims.go",
           "line": 565,
           "kind": "go-error-body",
-          "raw": "resend limit reached — try again tomorrow",
+          "raw": "resend limit reached",
           "quote": null
         }
       ],
@@ -7516,7 +7620,7 @@
           "file": "internal/handler/claims.go",
           "line": 638,
           "kind": "go-error-body",
-          "raw": "this verification link has expired — request a new email from the claim page",
+          "raw": "this verification link has expired. Request a new email from the claim page",
           "quote": null
         }
       ],
@@ -7725,7 +7829,7 @@
           "file": "internal/handler/claims.go",
           "line": 1221,
           "kind": "go-error-body",
-          "raw": "this claim's setup window has expired — the patch is claimable again",
+          "raw": "this claim's setup window has expired. The patch is claimable again",
           "quote": null
         }
       ],
@@ -8684,7 +8788,7 @@
           "file": "internal/handler/event_sources.go",
           "line": 261,
           "kind": "go-error-body",
-          "raw": "this source just synced — try again in a minute",
+          "raw": "this source just synced, try again in a minute",
           "quote": null
         }
       ],
@@ -11156,7 +11260,7 @@
           "file": "internal/handler/legal.go",
           "line": 124,
           "kind": "go-error-body",
-          "raw": "document cannot be empty — use reset to restore the default",
+          "raw": "document cannot be empty, use reset to restore the default",
           "quote": null
         }
       ],
@@ -11265,7 +11369,7 @@
           "file": "internal/handler/memberships.go",
           "line": 68,
           "kind": "go-error-body",
-          "raw": "no one runs this patch yet — it takes followers until someone claims it",
+          "raw": "Patch must be claimed to accept members",
           "quote": null
         }
       ],
@@ -13307,7 +13411,7 @@
           "file": "internal/handler/recovery.go",
           "line": 72,
           "kind": "go-error-body",
-          "raw": "too many attempts — wait a couple of minutes",
+          "raw": "too many attempts. Wait a couple of minutes",
           "quote": null
         }
       ],
@@ -14333,7 +14437,7 @@
           "file": "internal/handler/settings.go",
           "line": 290,
           "kind": "go-error-body",
-          "raw": "wipe failed — no data was deleted",
+          "raw": "wipe failed, no data was deleted",
           "quote": null
         }
       ],
@@ -16701,21 +16805,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 483,
+          "line": 485,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 529,
+          "line": 533,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 582,
+          "line": 586,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -16733,21 +16837,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 484,
+          "line": 486,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 530,
+          "line": 534,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 583,
+          "line": 587,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -16765,7 +16869,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 677,
+          "line": 681,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -16783,7 +16887,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 678,
+          "line": 682,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -16841,6 +16945,31 @@
       ]
     },
     {
+      "id": "596439f03867",
+      "text": "Prove admin",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/components/AdminShell.svelte",
+          "line": 32,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 120,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "e5e74372937f",
       "text": "Search administration…",
       "words": 2,
@@ -16851,7 +16980,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 54,
+          "line": 55,
           "kind": "attr:placeholder",
           "raw": "Search administration…",
           "quote": "\""
@@ -19273,7 +19402,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 481,
+          "line": 478,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -19882,9 +20011,9 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 369,
+          "line": 368,
           "kind": "markup",
-          "raw": "— if the current admin steps away, the patch passes to them.",
+          "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
         }
       ],
@@ -19901,7 +20030,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 372,
+          "line": 371,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -19919,7 +20048,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 378,
+          "line": 377,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -19937,7 +20066,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 392,
+          "line": 391,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -19955,14 +20084,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 404,
+          "line": 403,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 408,
+          "line": 407,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -20050,7 +20179,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 409,
+          "line": 408,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -26247,7 +26376,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 186,
+          "line": 184,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -26304,7 +26433,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 207,
+          "line": 205,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -26773,6 +26902,13 @@
         {
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 392,
+          "kind": "markup",
+          "raw": "Copy",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 118,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -27740,6 +27876,294 @@
           "line": 66,
           "kind": "markup",
           "raw": "· restores as unclaimed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d0f9b0e1542b",
+      "text": "Signing failed.",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Toast/error fallback on the Prove Admin page (docs/adr/087) — mechanical, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 50,
+          "kind": "js-string",
+          "raw": "Signing failed.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3f1975b88a72",
+      "text": "Copy failed. Select the text instead.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Toast/error fallback on the Prove Admin page (docs/adr/087) — mechanical, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 61,
+          "kind": "js-string",
+          "raw": "Copy failed. Select the text instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "bcb50f022b80",
+      "text": "Prove you administer this quilt",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 67,
+          "kind": "markup",
+          "raw": "Prove you administer this quilt",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e8fdbfa4aa93",
+      "text": "Sometimes someone outside this quilt needs to know that the person writing to them really is an admin here. A hosting provider changing a billing contact, for example, or a directory checking a submission. Ask them for a nonce, which is any string they choose. Sign it here and send them the result. They can check it against this quilt's public key with no account and no request to us. Because they chose the string, they know the answer was made for them and not copied from somewhere else.",
+      "words": 89,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 69,
+          "kind": "markup",
+          "raw": "Sometimes someone outside this quilt needs to know that the person\n    writing to them really is an admin here. A hosting provider changing a\n    billing contact, for example, or a directory checking a submission. Ask\n    them for a nonce, which is any string they choose. Sign it here and send\n    them the result. They can check it against this quilt's public key with\n    no account and no request to us. Because they chose the string, they\n    know the answer was made for them and not copied from somewhere else.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "014c5006b48a",
+      "text": "What it proves:",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "What it proves:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8053e06e08ef",
+      "text": "an admin of this quilt signed that exact string at that time. The signature is good for fifteen minutes.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "an admin of this quilt signed that exact\n    string at that time. The signature is good for fifteen minutes.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e96aac13a815",
+      "text": "What it does not prove:",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "What it does not prove:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6625bd021689",
+      "text": "who you are. The signed statement names this domain and nothing else. No username, no email, no account. Any admin here could have produced it, and that is deliberate. This quilt does not publish who its admins are.",
+      "words": 38,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "who you are. The signed statement\n    names this domain and nothing else. No username, no email, no account.\n    Any admin here could have produced it, and that is deliberate. This quilt\n    does not publish who its admins are.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7de4a6fbef0e",
+      "text": "Their nonce",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 89,
+          "kind": "markup",
+          "raw": "Their nonce",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ae374e772750",
+      "text": "the string they gave you",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 95,
+          "kind": "attr:placeholder",
+          "raw": "the string they gave you",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "d843290061e4",
+      "text": "8 to 64 printable characters on one line. Paste it exactly as they sent it. A changed character is a different nonce, and their check will fail.",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 105,
+          "kind": "markup",
+          "raw": "8 to 64 printable characters on one line. Paste it exactly as they sent\n      it. A changed character is a different nonce, and their check will fail.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cd794a19c930",
+      "text": "Send them this",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 117,
+          "kind": "markup",
+          "raw": "Send them this",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9c8e82e0e047",
+      "text": "Good until",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 122,
+          "kind": "markup",
+          "raw": "Good until",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f1a73e2204a1",
+      "text": "Signature",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 123,
+          "kind": "markup",
+          "raw": "Signature",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5370d1dd17db",
+      "text": "They check it against",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 124,
+          "kind": "markup",
+          "raw": "They check it against",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "790d3a5ed6a2",
+      "text": "Tell them to fetch the key from this quilt's own address, not from a link in the message. A signature only means something when the key came from the domain they care about.",
+      "words": 33,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 127,
+          "kind": "markup",
+          "raw": "Tell them to fetch the key from this quilt's own address, not from a\n        link in the message. A signature only means something when the key\n        came from the domain they care about.",
           "quote": null
         }
       ]
@@ -37414,7 +37838,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 246,
+          "line": 244,
           "kind": "markup",
           "raw": "By creating an account you agree to the",
           "quote": null
@@ -37446,7 +37870,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 247,
+          "line": 245,
           "kind": "markup",
           "raw": "User Agreement",
           "quote": null
@@ -37471,7 +37895,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 248,
+          "line": 246,
           "kind": "markup",
           "raw": "and",
           "quote": null
@@ -37503,7 +37927,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 248,
+          "line": 246,
           "kind": "markup",
           "raw": "Privacy Policy",
           "quote": null
@@ -39864,7 +40288,7 @@
           "file": "web/src/pages/PatchForm.svelte",
           "line": 468,
           "kind": "markup",
-          "raw": "Every patch starts with the lining — this quilt's shared community\n            standards. It is always public, and if your patch amends it, the\n            changes are public and the patch is marked as having amended the\n            lining.",
+          "raw": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
           "quote": null
         }
       ],
@@ -39881,7 +40305,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 488,
+          "line": 485,
           "kind": "markup",
           "raw": "Governance Template",
           "quote": null
@@ -39899,7 +40323,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 489,
+          "line": 486,
           "kind": "markup",
           "raw": "How should this patch be organized? You can change this later.",
           "quote": null
@@ -41466,7 +41890,7 @@
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 524,
           "kind": "markup",
-          "raw": "This is about the patch itself — where it shows up. Events, members, and\n      documents each carry their own visibility.",
+          "raw": "Patch specific configuration. Events, members, and documents carry their own visibility.",
           "quote": null
         }
       ],
@@ -41483,7 +41907,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 546,
+          "line": 545,
           "kind": "markup",
           "raw": "Either way, anyone holding a direct link can open this patch's page. Private\n      keeps it from being found, not from being visited.",
           "quote": null
@@ -41501,7 +41925,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 554,
+          "line": 553,
           "kind": "markup",
           "raw": "Event suggestions",
           "quote": null
@@ -41519,7 +41943,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 563,
+          "line": 562,
           "kind": "markup",
           "raw": "Let non-members suggest events to this patch",
           "quote": null
@@ -41537,7 +41961,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 566,
+          "line": 565,
           "kind": "markup",
           "raw": "Suggestions wait in your events queue until an admin approves them.",
           "quote": null
@@ -43403,7 +43827,7 @@
           "file": "web/src/pages/ProposalDetail.svelte",
           "line": 248,
           "kind": "markup",
-          "raw": "You're the only eligible voter — your vote decides this immediately.",
+          "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null
         }
       ],
@@ -45264,7 +45688,7 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 180,
           "kind": "markup",
-          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
+          "raw": ". Pick the name for this quilt. Choose wisely, it can't be changed.",
           "quote": null
         }
       ],
@@ -45281,7 +45705,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 191,
+          "line": 189,
           "kind": "attr:placeholder",
           "raw": "e.g. gallery-row-gal",
           "quote": "\""
@@ -45299,7 +45723,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 204,
+          "line": 202,
           "kind": "markup",
           "raw": "3-30 characters: lowercase letters, numbers, hyphens.",
           "quote": null
@@ -45317,7 +45741,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 220,
+          "line": 218,
           "kind": "markup",
           "raw": "Bootstrap token",
           "quote": null
@@ -45335,7 +45759,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 232,
+          "line": 230,
           "kind": "markup",
           "raw": "This account will run the quilt. The token is in the server's\n              first-run log, unless it was set in configuration.",
           "quote": null
@@ -45679,7 +46103,7 @@
           "file": "web/src/pages/SubmitPatch.svelte",
           "line": 67,
           "kind": "markup",
-          "raw": "Know a place or group that should be on the map? The real owner can claim it later.",
+          "raw": "Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.",
           "quote": null
         }
       ],
@@ -45914,7 +46338,7 @@
           "file": "web/src/pages/UserSettingsPatches.svelte",
           "line": 62,
           "kind": "js-string",
-          "raw": "No one runs this patch yet. Until someone claims it, following is the only rung.",
+          "raw": "No one runs this patch yet. User can follow, but not join.",
           "quote": "'"
         }
       ],

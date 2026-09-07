@@ -685,6 +685,86 @@ Off by default. Before enabling `federation.enabled: true`:
 Mastodon interop has been exercised in tests but not yet verified against a
 live instance. Treat cross-instance federation as beta.
 
+## Proving you administer the instance
+
+Sometimes an outside party — a hosting provider re-pointing a billing
+contact, a directory checking a submission — needs to know that whoever is
+writing to them really administers this quilt. Administration → **Prove
+Admin** signs a string they choose (docs/adr/087).
+
+**How the exchange goes.** They send you a nonce: any printable string, 8 to
+64 characters. You paste it into that page and confirm with your passkey.
+You get back a blob shaped `payload.signature`, good for fifteen minutes.
+Send it to them.
+
+**What it proves is narrow, and worth saying to them plainly:** an admin of
+this quilt signed that exact string at that time. It names the domain and
+nothing else — no username, no email, no account. Patchwork does not publish
+who its admins are (docs/adr/023), and this does not either.
+
+### Verifying, as the outside party
+
+The public key is at `https://<domain>/api/v1/instance/attestation-key`.
+Public, unauthenticated, cacheable, and served whether or not the instance
+federates.
+
+**Fetch the key from the domain you care about — never from a URL inside the
+blob.** Anyone can mint an RSA key and sign this JSON; what makes it a proof
+is that it checks against the key that domain serves.
+
+With the Patchwork binary, which needs no config and no database:
+
+```sh
+patchwork -verify-attestation 'eyJjbGFpbSI6...ABC.Xy9z...'
+```
+
+It fetches the key from the claimed domain, checks the signature and the
+expiry, and exits 0 or 1. Pass `-attestation-key key.pem` to check against a
+key file instead of fetching.
+
+With nothing but a shell:
+
+```sh
+BLOB='eyJjbGFpbSI6...ABC.Xy9z...'
+DOMAIN=arts.lancaster.example        # the domain YOU care about
+
+# base64url → base64, restoring the padding the format omits
+unb64() { s=$(printf %s "$1" | tr '_-' '/+'); case $((${#s} % 4)) in
+  2) s="$s==";; 3) s="$s=";; esac; printf %s "$s" | base64 -d; }
+
+# The key, from the domain — not from the blob.
+curl -fsS "https://$DOMAIN/api/v1/instance/attestation-key" \
+  | python3 -c 'import json,sys; sys.stdout.write(json.load(sys.stdin)["public_key"])' > pub.pem
+
+# The signature covers the first segment's bytes, exactly as they appear.
+printf %s "${BLOB%.*}" > signed.txt
+unb64 "${BLOB##*.}" > sig.bin
+
+openssl dgst -sha256 -verify pub.pem -signature sig.bin signed.txt
+# → Verified OK
+
+# Read what was signed, and check it yourself:
+unb64 "${BLOB%.*}"
+# {"claim":"instance-admin","domain":"arts.lancaster.example","nonce":"…",
+#  "issued_at":"…","expires_at":"…","key_url":"…"}
+```
+
+`openssl` answering `Verified OK` is necessary and not sufficient. Also
+check, in the decoded payload:
+
+- `nonce` is the string **you** sent, character for character;
+- `domain` is the domain you fetched the key from;
+- `claim` is `instance-admin`;
+- `expires_at` has not passed, and `issued_at` is not in the future;
+- `key_url` is `https://<domain>/api/v1/instance/attestation-key` for that
+  same domain — a statement pointing somewhere else is a statement trying to
+  borrow a domain it does not run.
+
+The signature is RSASSA-PKCS1-v1_5 over SHA-256 ("RS256"), computed over the
+ASCII bytes of the first segment rather than the decoded JSON, so you never
+have to reproduce our JSON formatting to check it. Both segments are
+unpadded base64url.
+
 ## Updating
 
 Take a backup first. Database migrations run automatically at startup.

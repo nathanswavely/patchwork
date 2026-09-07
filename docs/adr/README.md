@@ -65,6 +65,7 @@ several branches are in flight.
 | [082](082-a-gazetteer-suggests-a-person-places.md) | A gazetteer suggests; a person places — an offline-built local place index proposes a marker from a patch's address, and only a confirmed proposal becomes a map location *(applies 077, amends CONTEXT.md)* |
 | [084](084-a-restore-rebuilds-the-mirror-and-says-so.md) | A restore rebuilds the mirror, and the mirror says so — governance repos rebuilt from the canonical rows, create-missing on boot and a full `-repair-governance` pass, with the synthetic commits labelled in the history view *(applies 011, narrows 002's known gap)* |
 | [085](085-only-a-person-can-call-a-release-breaking.md) | Only a person can call a release breaking — hand-written `release-notes/vX.Y.Z.md`, a `release.json` asset on every release, and no tag publishes an image without one |
+| [087](087-an-admin-proves-the-role-not-the-person.md) | An admin proves the role, not the person — the instance actor signs a verifier's nonce for fifteen minutes; the statement names the domain and nobody *(preserves 023's unpublished roster, takes 017's step-up gate)* |
 
 ## Partly implemented
 
