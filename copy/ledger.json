@@ -10799,9 +10799,9 @@
       "text": "The same goes for the quilt itself. **Member seamrip** in your account settings hands you this site as you can already see it, in the format a new Patchwork reads. It holds the patches, events, charters, proposals and member lists that are open to you. It holds no email addresses, no contact cards, no noticeboards, and nothing from a patch you are not in. Other people appear in it as a username, a display name and an avatar, which is enough for a new site to invite them back. Nobody can be signed in from that file either. Taking a copy is recorded in the audit log, and there is a limit of two a day.",
       "words": 116,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
@@ -27455,9 +27455,9 @@
       "text": "Member seamrip",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
@@ -27473,9 +27473,9 @@
       "text": "A copy of this quilt as you can see it, in the format a new Patchwork reads. It is here so a community can start again elsewhere without waiting for an admin. It holds the patches, events, charters, proposals and member lists that are already open to you. It does not hold email addresses, contact cards, noticeboards, or anything from a patch you are not in. Other people travel as a name and a picture, so the new quilt invites everyone back and each person sets their own visibility there.",
       "words": 90,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
