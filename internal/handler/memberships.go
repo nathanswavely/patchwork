@@ -455,19 +455,6 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		// by. Only items shared into *this* patch appear, and only on the
 		// active listing.
 		inRoom := false
-		// Two facts about the room that no page of it can answer, both about
-		// the offer to share a card. Whether the viewer already shares one is
-		// a fact about their own row, which may sit on page 4; whether anyone
-		// here shares one is a fact about the whole room. Derived from the
-		// loaded array, each was really "…among the twenty people who
-		// happened to load", so a member far down the list was never offered
-		// the switch. Both mirror the listing's own card condition exactly —
-		// sharing on, member or admin, and a card with something in it (see
-		// model.ContactCard.Empty) — so the offer appears exactly when the
-		// viewer's row would carry no card. No visibility clause: inRoom is
-		// strictly narrower than insider, so this viewer sees every row.
-		viewerShares := false
-		anyContact := false
 		if user != nil && statusFilter == "active" {
 			var role string
 			db.QueryRow(
@@ -476,17 +463,32 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			).Scan(&role)
 			inRoom = role != ""
 		}
+
+		// Two facts about the room that no page of it can answer, both about
+		// the offer to share (the insight is #231's, against the pre-083
+		// card). Whether the viewer already shares something here is a fact
+		// about their own row, which may sit on page 4; whether anyone here
+		// shares is a fact about the whole room. Derived from the loaded
+		// array, each really meant "…among the twenty who happened to load",
+		// so a member far down the list was never offered anything.
+		//
+		// Simpler under docs/adr/083 than it was under the card: there is no
+		// emptiness test, because an item cannot be empty — a blank value is
+		// refused at write, and deleting is how an item goes away. The second
+		// query re-checks the owner's membership for the same reason
+		// sharedContactItemsForNode does, so the sentence cannot promise a
+		// card the listing will not show.
+		viewerShares := false
+		anyContact := false
 		if inRoom {
-			const cardPresent = `m.share_contact = 1 AND m.role IN ('member','admin')
-				AND (u.contact_phone <> '' OR u.contact_email <> '' OR u.contact_note <> '')`
-			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM memberships m JOIN users u ON m.user_id = u.id
-				WHERE m.user_id = ? AND m.node_id = ? AND m.status = 'active' AND `+cardPresent+`)`,
-				user.ID, nodeID,
-			).Scan(&viewerShares)
-			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM memberships m JOIN users u ON m.user_id = u.id
-				WHERE m.node_id = ? AND m.status = 'active' AND `+cardPresent+`)`,
-				nodeID,
-			).Scan(&anyContact)
+			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM contact_item_shares s
+				JOIN contact_items ci ON ci.id = s.item_id
+				WHERE s.node_id = ? AND ci.user_id = ?)`, nodeID, user.ID).Scan(&viewerShares)
+			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM contact_item_shares s
+				JOIN contact_items ci ON ci.id = s.item_id
+				JOIN memberships om ON om.user_id = ci.user_id AND om.node_id = s.node_id
+					AND om.status = 'active' AND om.role IN ('member','admin')
+				WHERE s.node_id = ?)`, nodeID).Scan(&anyContact)
 		}
 
 		cols := "m.id, m.user_id, m.node_id, m.role, m.status, m.joined_at, u.username, u.display_name, u.avatar_url"
@@ -604,11 +606,13 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			"member_count":   memberTotal,
 			"follower_count": followerTotal,
 		}
+		// Only for a viewer in the room: outside it there is no offer to
+		// make, and whether anyone here is reachable is not an outsider's
+		// fact to learn.
 		if inRoom {
 			payload["viewer_shares_contact"] = viewerShares
 			payload["any_contact_shared"] = anyContact
 		}
-
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(payload)
 	}
