@@ -4064,21 +4064,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 272,
+          "line": 276,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 319,
+          "line": 329,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 547,
+          "line": 562,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4472,7 +4472,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 573,
+          "line": 588,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -5391,7 +5391,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 553,
+          "line": 568,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -11229,9 +11229,9 @@
       ]
     },
     {
-      "id": "1217619f8dec",
-      "text": "this patch hasn't been claimed yet — you can follow it",
-      "words": 11,
+      "id": "01f47c985bf6",
+      "text": "no one runs this patch yet — it takes followers until someone claims it",
+      "words": 14,
       "tier": "helper",
       "status": "unreviewed",
       "replacement": null,
@@ -11239,9 +11239,9 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 64,
+          "line": 68,
           "kind": "go-error-body",
-          "raw": "this patch hasn't been claimed yet — you can follow it",
+          "raw": "no one runs this patch yet — it takes followers until someone claims it",
           "quote": null
         }
       ]
@@ -11257,7 +11257,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 69,
+          "line": 73,
           "kind": "go-error-body",
           "raw": "this node is invite only",
           "quote": null
@@ -11275,7 +11275,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 79,
+          "line": 83,
           "kind": "go-error-body",
           "raw": "You have been removed from this community",
           "quote": null
@@ -11293,7 +11293,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 84,
+          "line": 88,
           "kind": "go-error-body",
           "raw": "already following",
           "quote": null
@@ -11311,14 +11311,14 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 89,
+          "line": 93,
           "kind": "go-error-body",
           "raw": "already a member",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 134,
+          "line": 138,
           "kind": "go-error-body",
           "raw": "already a member",
           "quote": null
@@ -11336,7 +11336,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 111,
+          "line": 115,
           "kind": "go-error-body",
           "raw": "failed to upgrade membership",
           "quote": null
@@ -11354,7 +11354,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 138,
+          "line": 142,
           "kind": "go-error-body",
           "raw": "membership request already pending",
           "quote": null
@@ -11372,7 +11372,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 162,
+          "line": 166,
           "kind": "go-error-body",
           "raw": "failed to rejoin node",
           "quote": null
@@ -11390,7 +11390,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 225,
+          "line": 229,
           "kind": "go-error-body",
           "raw": "failed to join node",
           "quote": null
@@ -11408,7 +11408,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 280,
+          "line": 286,
           "kind": "go-error-body",
           "raw": "not a member",
           "quote": null
@@ -11426,7 +11426,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 295,
+          "line": 301,
           "kind": "go-error-body",
           "raw": "cannot leave as the only admin",
           "quote": null
@@ -11444,7 +11444,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 302,
+          "line": 308,
           "kind": "go-error-body",
           "raw": "failed to leave node",
           "quote": null
@@ -11462,7 +11462,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 406,
+          "line": 416,
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
@@ -11480,7 +11480,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 491,
+          "line": 501,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -11498,7 +11498,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 564,
+          "line": 579,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -11523,7 +11523,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 583,
+          "line": 598,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -11541,7 +11541,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 588,
+          "line": 603,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -11559,7 +11559,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 611,
+          "line": 626,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -11577,7 +11577,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 616,
+          "line": 631,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -11595,7 +11595,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 624,
+          "line": 639,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -11613,7 +11613,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 630,
+          "line": 645,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -11631,7 +11631,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 655,
+          "line": 670,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -11649,7 +11649,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 663,
+          "line": 678,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -11667,7 +11667,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 683,
+          "line": 698,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -11685,7 +11685,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 688,
+          "line": 703,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -11703,7 +11703,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 697,
+          "line": 712,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -11721,7 +11721,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 706,
+          "line": 721,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -11739,7 +11739,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 716,
+          "line": 731,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -11757,7 +11757,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 728,
+          "line": 743,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -11775,7 +11775,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 743,
+          "line": 758,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -19238,7 +19238,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 125,
+          "line": 181,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -20879,6 +20879,13 @@
           "kind": "js-string",
           "raw": "Membership request sent",
           "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 110,
+          "kind": "js-string",
+          "raw": "Membership request sent",
+          "quote": "'"
         }
       ]
     },
@@ -20897,6 +20904,13 @@
           "kind": "js-string",
           "raw": "You are now a member",
           "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 110,
+          "kind": "js-string",
+          "raw": "You are now a member",
+          "quote": "'"
         }
       ]
     },
@@ -20912,6 +20926,13 @@
         {
           "file": "web/src/components/PatchRelationship.svelte",
           "line": 80,
+          "kind": "js-string",
+          "raw": "Could not join",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 112,
           "kind": "js-string",
           "raw": "Could not join",
           "quote": "'"
@@ -20969,6 +20990,13 @@
           "kind": "js-string",
           "raw": "Unfollowed patch",
           "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 85,
+          "kind": "js-string",
+          "raw": "Unfollowed patch",
+          "quote": "'"
         }
       ]
     },
@@ -20990,7 +21018,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 46,
+          "line": 85,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
@@ -21080,6 +21108,13 @@
           "kind": "markup",
           "raw": "Become a member",
           "quote": null
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 56,
+          "kind": "js-string",
+          "raw": "Become a member",
+          "quote": "'"
         }
       ]
     },
@@ -31571,7 +31606,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 168,
+          "line": 224,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -31603,7 +31638,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 147,
+          "line": 203,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -33320,7 +33355,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 140,
+          "line": 196,
           "kind": "markup",
           "raw": "Managing",
           "quote": null
@@ -33370,7 +33405,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 161,
+          "line": 217,
           "kind": "markup",
           "raw": "Member of",
           "quote": null
@@ -33427,7 +33462,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 183,
+          "line": 259,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -33452,7 +33487,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 129,
+          "line": 185,
           "kind": "markup",
           "raw": "You haven't joined any patches yet.",
           "quote": null
@@ -45675,9 +45710,81 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 25,
+          "line": 26,
           "kind": "js-string",
           "raw": "Failed to load patches",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3a69f897298e",
+      "text": "Send request",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 56,
+          "kind": "js-string",
+          "raw": "Send request",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "11c863d86718",
+      "text": "No one runs this patch yet. Until someone claims it, following is the only rung.",
+      "words": 15,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 62,
+          "kind": "js-string",
+          "raw": "No one runs this patch yet. Until someone claims it, following is the only rung.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "328e0a9f779e",
+      "text": "This patch adds members by invitation. An admin has to invite you.",
+      "words": 12,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 66,
+          "kind": "js-string",
+          "raw": "This patch adds members by invitation. An admin has to invite you.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "15727f696968",
+      "text": "Request withdrawn",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 84,
+          "kind": "js-string",
+          "raw": "Request withdrawn",
           "quote": "'"
         }
       ]
@@ -45693,45 +45800,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 48,
+          "line": 88,
           "kind": "js-string",
           "raw": "Failed to leave",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "c466a59865e5",
-      "text": "Joined as member",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 57,
-          "kind": "js-string",
-          "raw": "Joined as member",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "6d163522af89",
-      "text": "Failed to join",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 59,
-          "kind": "js-string",
-          "raw": "Failed to join",
           "quote": "'"
         }
       ]
@@ -45747,7 +45818,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 73,
+          "line": 129,
           "kind": "js-string",
           "raw": "Membership visible to the public",
           "quote": "'"
@@ -45765,7 +45836,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 73,
+          "line": 129,
           "kind": "js-string",
           "raw": "Membership hidden from the public",
           "quote": "'"
@@ -45783,7 +45854,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 75,
+          "line": 131,
           "kind": "js-string",
           "raw": "Failed to update visibility",
           "quote": "'"
@@ -45801,7 +45872,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 92,
+          "line": 148,
           "kind": "js-string",
           "raw": "Failed to update contact sharing",
           "quote": "'"
@@ -45819,7 +45890,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 133,
+          "line": 189,
           "kind": "markup",
           "raw": "Your contact card is empty. Fill it in under",
           "quote": null
@@ -45837,9 +45908,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 135,
+          "line": 191,
           "kind": "markup",
           "raw": "and share it patch by patch here.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2d9e28289fac",
+      "text": "Requested",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 239,
+          "kind": "markup",
+          "raw": "Requested",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "84e3eb92c7a8",
+      "text": "awaiting approval",
+      "words": 2,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 246,
+          "kind": "markup",
+          "raw": "awaiting approval",
           "quote": null
         }
       ]
@@ -45855,7 +45962,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 190,
+          "line": 268,
           "kind": "markup",
           "raw": "following",
           "quote": null
@@ -46648,6 +46755,42 @@
           "line": 95,
           "kind": "js-string",
           "raw": "Passkey login failed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c466a59865e5",
+      "text": "Joined as member",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 57,
+          "kind": "js-string",
+          "raw": "Joined as member",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "6d163522af89",
+      "text": "Failed to join",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 59,
+          "kind": "js-string",
+          "raw": "Failed to join",
           "quote": "'"
         }
       ]

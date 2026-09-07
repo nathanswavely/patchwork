@@ -59,9 +59,13 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 		var membershipPolicy, nodeStatus string
 		db.QueryRow("SELECT membership_policy, status FROM nodes WHERE id = ?", nodeID).Scan(&membershipPolicy, &nodeStatus)
 
-		// Unclaimed patches only accept followers, not members.
+		// Unclaimed patches only accept followers, not members. Callers are
+		// expected to render no member rung here at all (docs/adr/042), so
+		// anyone reaching this message is looking at a stale page: it says
+		// what the patch is and what would change it, not what the reader
+		// could already have done.
 		if nodeStatus == "unclaimed" && !isFollow {
-			http.Error(w, `{"error":"this patch hasn't been claimed yet — you can follow it"}`, http.StatusForbidden)
+			http.Error(w, `{"error":"no one runs this patch yet — it takes followers until someone claims it"}`, http.StatusForbidden)
 			return
 		}
 
@@ -273,9 +277,11 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Check if user is an active member.
-		var memberRole string
-		err := db.QueryRow("SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'", user.ID, nodeID).Scan(&memberRole)
+		// Standing to leave includes a request you have not been answered on:
+		// a pending row is the one relationship a person could enter and not
+		// get out of, so withdrawing it is the same door as leaving.
+		var memberRole, memberStatus string
+		err := db.QueryRow("SELECT role, status FROM memberships WHERE user_id = ? AND node_id = ? AND status IN ('active','pending')", user.ID, nodeID).Scan(&memberRole, &memberStatus)
 		if err != nil {
 			http.Error(w, `{"error":"not a member"}`, http.StatusBadRequest)
 			return
@@ -288,7 +294,7 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 		// person nobody can replace; designation is how they earn the exit.
 		// With no successor named the floor holds, because the alternative is
 		// a patch nobody can administer.
-		if memberRole == "admin" {
+		if memberRole == "admin" && memberStatus == "active" {
 			var adminCount int
 			db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'", nodeID).Scan(&adminCount)
 			if adminCount <= 1 && !succeedOnDeparture(db, r, nodeID, slug, user.ID) {
@@ -303,7 +309,11 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "membership.leave", "membership", nodeID, "{}", clientIP(r))
+		leaveAction := "membership.leave"
+		if memberStatus == "pending" {
+			leaveAction = "membership.withdraw"
+		}
+		auth.LogAuditEvent(db, user.ID, leaveAction, "membership", nodeID, "{}", clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
@@ -474,7 +484,7 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 
 		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.visible, m.share_contact, m.joined_at,
-			n.name, n.slug, n.description, n.visibility, n.membership_policy
+			n.name, n.slug, n.description, n.visibility, n.membership_policy, n.status
 			FROM memberships m JOIN nodes n ON m.node_id = n.id
 			WHERE m.user_id = ? AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')`
 		args := []interface{}{user.ID}
@@ -507,12 +517,17 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			NodeDescription  string `json:"node_description"`
 			NodeVisibility   string `json:"node_visibility"`
 			MembershipPolicy string `json:"membership_policy"`
+			// The patch's own status, because whether a member rung exists
+			// at all depends on it: an unclaimed patch takes followers only
+			// (JoinNode), and a caller who can't see that draws a door that
+			// 403s (docs/adr/042).
+			NodeStatus string `json:"node_status"`
 		}
 		var memberships []membershipResponse
 		for rows.Next() {
 			var m membershipResponse
 			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.ShareContact, &m.JoinedAt,
-				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy); err != nil {
+				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy, &m.NodeStatus); err != nil {
 				continue
 			}
 			memberships = append(memberships, m)
