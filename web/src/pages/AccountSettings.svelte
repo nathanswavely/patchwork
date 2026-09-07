@@ -519,15 +519,15 @@
         </p>
         <p class="danger-warning">
           <strong>Erased:</strong> your email address, display name, bio, links,
-          avatar and contact card; your passkeys, recovery codes and sessions;
-          your personal calendar link; your notification settings; every patch
-          membership you hold; the quilts you have connected or followed; any
-          claim still awaiting review.
+          avatar and contact card. Your passkeys, recovery codes and sessions.
+          Your personal calendar link and notification settings. Every patch
+          membership you hold, the quilts you have connected or followed, and
+          any claim still awaiting review.
         </p>
         <p class="danger-warning">
-          <strong>Kept:</strong> what you took part in — proposals, votes,
-          comments, notices, events and recorded decisions — so the community's
-          record stays whole. They will read as
+          <strong>Kept:</strong> what you took part in. Proposals, votes,
+          comments, notices, events and recorded decisions stay so the
+          community's record stays whole. They will read as
           <strong>&ldquo;Deleted account&rdquo;</strong> with no name and no
           link. Your profile page stops existing, and your username stays
           retired so nobody else can take it.
@@ -542,9 +542,8 @@
             <p>
               You are the only admin of
               {blockingPatches.length === 1 ? 'this patch' : 'these patches'}.
-              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first —
-              name a successor, promote another admin, or hold an election —
-              and then come back.
+              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first,
+              then come back. You can name a successor, promote another admin, or hold an election.
             </p>
             <ul>
               {#each blockingPatches as p}
