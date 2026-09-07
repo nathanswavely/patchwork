@@ -13,7 +13,7 @@ import (
 // `make import` builds a fork's database *after* the process has started, so
 // a backfill wired into main.go has already run against an empty schema and
 // will not run again. docs/adr/083 shipped that way: an archive taken before
-// migration 066 carried the contact card as three columns, the conversion
+// migration 068 carried the contact card as three columns, the conversion
 // never ran on it, and every card in the archive arrived on the fork in
 // columns nothing reads — silently, with the fork coming up looking complete.
 //

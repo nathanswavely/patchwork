@@ -174,7 +174,7 @@ not erasing a value, and a card is the person rather than an act.
 
 **A fork arrived unreachable.** `make import` builds a database after the
 process has started, so the startup conversion has already run against an
-empty schema and does not run again. Every card in a pre-066 archive would
+empty schema and does not run again. Every card in a pre-068 archive would
 have landed in columns nothing reads — a silent loss in the one mechanism a
 community has for leaving with what is theirs (docs/adr/002), with the fork
 coming up looking complete.

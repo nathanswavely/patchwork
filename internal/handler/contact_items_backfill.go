@@ -17,7 +17,7 @@ import (
 // the same values on the other side, which is the only acceptable outcome for
 // a migration that moves somebody's phone number.
 //
-// It runs in Go rather than in migration 066 because new rows need UUIDv7 ids
+// It runs in Go rather than in migration 068 because new rows need UUIDv7 ids
 // and SQLite cannot mint one, matching ap.BackfillAPIDs and
 // BackfillNodeGovernanceRepos.
 //
