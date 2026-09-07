@@ -99,14 +99,29 @@
     stewardSaving = false;
   }
 
-  // Contact card (docs/adr/080): how to reach you, kept once here and
-  // shared patch by patch at My Patches. Nothing on it is public, and it
-  // is saved whole — one Save, not a field at a time.
-  let contactPhone = $state('');
-  let contactEmail = $state('');
-  let contactNote = $state('');
-  let contactSaving = $state(false);
-  let sharedWithCount = $state(0);
+  // Contact card (docs/adr/083): the ways you are willing to be reached,
+  // kept once here as typed items. Nothing here is public. This page owns
+  // the items; which patch sees which item is decided per patch, in My
+  // Patches — granting is patch-first because that is where the intent
+  // forms. The only sharing action on this page is taking one back.
+  const CONTACT_KINDS = [
+    { value: 'phone', label: 'Phone' },
+    { value: 'email', label: 'Email' },
+    { value: 'handle', label: 'Handle' },
+    { value: 'note', label: 'Note' },
+  ];
+  const KIND_MAX = { phone: 60, email: 254, handle: 100, note: 200 };
+  const KIND_PLACEHOLDER = {
+    phone: '+1 717 555 0100',
+    email: 'reach@example.com',
+    handle: '@you on Signal',
+    note: 'Text before calling',
+  };
+  const MAX_CONTACT_ITEMS = 12;
+
+  let contactItems = $state([]);
+  let contactBusy = $state(false);
+  let draft = $state(null);
 
   $effect(() => {
     if (user && !hydrated) {
@@ -114,42 +129,93 @@
       bio = user.bio || '';
       links = (user.links || []).map((l) => ({ ...l }));
       startOnMyQuilt = !!user.start_on_my_quilt;
-      contactPhone = user.contact_card?.phone || '';
-      contactEmail = user.contact_card?.email || '';
-      contactNote = user.contact_card?.note || '';
       hydrated = true;
     }
   });
 
   $effect(() => {
-    api('me/nodes')
-      .then((data) => {
-        const items = data.items || data || [];
-        sharedWithCount = items.filter((m) => m.share_contact).length;
-      })
-      .catch(() => { sharedWithCount = 0; });
+    loadContactItems();
   });
 
-  async function saveContactCard() {
-    contactSaving = true;
+  async function loadContactItems() {
     try {
-      await api('auth/me', {
-        method: 'PATCH',
-        body: {
-          contact_card: {
-            phone: contactPhone.trim(),
-            email: contactEmail.trim(),
-            note: contactNote.trim(),
-          },
-        },
+      const data = await api('users/me/contact-items');
+      // `saved` is the copy the server holds, so a row knows when it is dirty
+      // without asking again.
+      contactItems = (data.items || []).map((it) => ({ ...it, saved: { ...it } }));
+    } catch {
+      contactItems = [];
+    }
+  }
+
+  function isDirty(it) {
+    return it.value !== it.saved.value || it.kind !== it.saved.kind || (it.label || '') !== (it.saved.label || '');
+  }
+
+  function startDraft() {
+    draft = { kind: 'phone', value: '', label: '' };
+  }
+
+  async function addContactItem() {
+    if (!draft || !draft.value.trim()) return;
+    contactBusy = true;
+    try {
+      await api('users/me/contact-items', {
+        method: 'POST',
+        body: { kind: draft.kind, value: draft.value.trim(), label: draft.label.trim() },
       });
-      await checkAuth();
-      hydrated = false;
-      showToast('Contact card saved', 'success');
+      draft = null;
+      await loadContactItems();
+      showToast('Contact item added', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to add', 'error');
+    } finally {
+      contactBusy = false;
+    }
+  }
+
+  async function saveContactItem(it) {
+    contactBusy = true;
+    try {
+      await api(`users/me/contact-items/${it.id}`, {
+        method: 'PATCH',
+        body: { kind: it.kind, value: it.value.trim(), label: (it.label || '').trim() },
+      });
+      await loadContactItems();
+      // Editing a value in place keeps every share it already has: sharing is
+      // a pairing, not a copy, so a new number reaches the same rooms.
+      showToast('Saved — the patches you share it with see the new value', 'success');
     } catch (e) {
       showToast(e.message || 'Failed to save', 'error');
     } finally {
-      contactSaving = false;
+      contactBusy = false;
+    }
+  }
+
+  async function removeContactItem(it) {
+    contactBusy = true;
+    try {
+      await api(`users/me/contact-items/${it.id}`, { method: 'DELETE' });
+      await loadContactItems();
+      showToast('Contact item removed', 'info');
+    } catch (e) {
+      showToast(e.message || 'Failed to remove', 'error');
+    } finally {
+      contactBusy = false;
+    }
+  }
+
+  async function stopSharingEverywhere(it) {
+    contactBusy = true;
+    try {
+      const res = await api(`users/me/contact-items/${it.id}/shares`, { method: 'DELETE' });
+      await loadContactItems();
+      // Deliberately not "revoked": this stops the surface, not the knowing.
+      showToast(`No longer shown to ${res.unshared_from === 1 ? '1 patch' : `${res.unshared_from} patches`}`, 'info');
+    } catch (e) {
+      showToast(e.message || 'Failed to stop sharing', 'error');
+    } finally {
+      contactBusy = false;
     }
   }
 
@@ -434,38 +500,102 @@
     <section class="pw-section">
       <h2>Contact card</h2>
       <p class="muted profile-hint">
-        How the people you organize with can reach you. Nothing here is public:
-        a patch's admins and members see your card only once you share it
-        with that patch, in
+        The ways you are willing to be reached. Nothing here is public and
+        nothing is shared by adding it — you give each item to one patch at a
+        time, in
         <a href="/settings/patches" onclick={(e) => { e.preventDefault(); navigate('/settings/patches'); }}>My Patches</a>.
-        {#if sharedWithCount === 1}
-          Shared with 1 patch.
-        {:else if sharedWithCount > 1}
-          Shared with {sharedWithCount} patches.
-        {:else}
-          Not shared with any patch yet.
-        {/if}
+        A patch's admins and members can then see it; its followers cannot.
       </p>
-      <form onsubmit={(e) => { e.preventDefault(); saveContactCard(); }}>
-        <div class="field">
-          <label for="contact-phone">Phone</label>
-          <input id="contact-phone" type="text" bind:value={contactPhone} disabled={contactSaving} maxlength="60" autocomplete="tel" />
-        </div>
-        <div class="field">
-          <label for="contact-email">Email to reach you at</label>
-          <input id="contact-email" type="email" bind:value={contactEmail} disabled={contactSaving} maxlength="254" />
-          <small class="muted">Separate from the address you sign in with. That one is never shared.</small>
-        </div>
-        <div class="field">
-          <label for="contact-note">Note</label>
-          <input id="contact-note" type="text" bind:value={contactNote} disabled={contactSaving} maxlength="200" placeholder="How you prefer to be reached" />
-        </div>
+
+      {#if contactItems.length === 0 && !draft}
+        <p class="muted">Nothing on your card yet.</p>
+      {/if}
+
+      <ul class="contact-items">
+        {#each contactItems as item (item.id)}
+          <li class="contact-item-row">
+            <div class="contact-item-fields">
+              <select bind:value={item.kind} disabled={contactBusy} aria-label="Kind">
+                {#each CONTACT_KINDS as k}
+                  <option value={k.value}>{k.label}</option>
+                {/each}
+              </select>
+              <input
+                type="text"
+                bind:value={item.value}
+                disabled={contactBusy}
+                maxlength={KIND_MAX[item.kind]}
+                placeholder={KIND_PLACEHOLDER[item.kind]}
+                aria-label="Value"
+              />
+              <input
+                type="text"
+                bind:value={item.label}
+                disabled={contactBusy}
+                maxlength="40"
+                placeholder="Label (optional)"
+                aria-label="Label"
+              />
+            </div>
+            <div class="contact-item-meta">
+              <span class="muted">
+                {#if item.shared_with === 1}
+                  Shared with 1 patch
+                {:else if item.shared_with > 1}
+                  Shared with {item.shared_with} patches
+                {:else}
+                  Not shared with any patch
+                {/if}
+              </span>
+              <div class="contact-item-actions">
+                {#if isDirty(item)}
+                  <button type="button" class="btn btn-primary btn-sm" disabled={contactBusy} onclick={() => saveContactItem(item)}>Save</button>
+                {/if}
+                {#if item.shared_with > 0}
+                  <button type="button" class="btn btn-sm" disabled={contactBusy} onclick={() => stopSharingEverywhere(item)}>
+                    Stop sharing everywhere
+                  </button>
+                {/if}
+                <button type="button" class="btn btn-sm btn-danger" disabled={contactBusy} onclick={() => removeContactItem(item)}>Remove</button>
+              </div>
+            </div>
+          </li>
+        {/each}
+      </ul>
+
+      {#if draft}
+        <form class="contact-draft" onsubmit={(e) => { e.preventDefault(); addContactItem(); }}>
+          <div class="contact-item-fields">
+            <select bind:value={draft.kind} disabled={contactBusy} aria-label="Kind">
+              {#each CONTACT_KINDS as k}
+                <option value={k.value}>{k.label}</option>
+              {/each}
+            </select>
+            <input
+              type="text"
+              bind:value={draft.value}
+              disabled={contactBusy}
+              maxlength={KIND_MAX[draft.kind]}
+              placeholder={KIND_PLACEHOLDER[draft.kind]}
+              aria-label="Value"
+            />
+            <input type="text" bind:value={draft.label} disabled={contactBusy} maxlength="40" placeholder="Label (optional)" aria-label="Label" />
+          </div>
+          {#if draft.kind === 'email'}
+            <small class="muted">Separate from the address you sign in with. That one is never shared.</small>
+          {/if}
+          <div class="field-actions">
+            <button type="submit" class="btn btn-primary" disabled={contactBusy || !draft.value.trim()}>Add item</button>
+            <button type="button" class="btn" disabled={contactBusy} onclick={() => (draft = null)}>Cancel</button>
+          </div>
+        </form>
+      {:else if contactItems.length < MAX_CONTACT_ITEMS}
         <div class="field-actions">
-          <button type="submit" class="btn btn-primary" disabled={contactSaving}>
-            {contactSaving ? 'Saving...' : 'Save contact card'}
-          </button>
+          <button type="button" class="btn" disabled={contactBusy} onclick={startDraft}>Add contact item</button>
         </div>
-      </form>
+      {:else}
+        <p class="muted">A contact card holds {MAX_CONTACT_ITEMS} items at most.</p>
+      {/if}
     </section>
 
     <section class="pw-section">
@@ -844,4 +974,58 @@
     accent-color: var(--color-primary);
     cursor: pointer;
   }
+
+  /* Contact card items (docs/adr/083). A row is one item: what it is, its
+     value, and who can already reach you by it. The sharing count sits on
+     the row rather than in a header, because sharing is per item. */
+  .contact-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .contact-item-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-item-row:last-child {
+    border-bottom: none;
+  }
+  .contact-item-fields {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .contact-item-fields select {
+    flex: 0 0 auto;
+  }
+  .contact-item-fields input {
+    flex: 1 1 12rem;
+    min-width: 0;
+  }
+  .contact-item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+  .contact-item-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .contact-draft {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+  }
+
 </style>

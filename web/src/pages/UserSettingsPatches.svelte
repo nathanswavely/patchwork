@@ -30,9 +30,69 @@
     }
   }
 
-  // Whether there is anything on the contact card to share (docs/adr/080).
+  // The contact card (docs/adr/083). This page is where sharing happens,
+  // because granting is patch-first: you decide to be reachable standing in
+  // a room with people, not while editing a form. The items themselves are
+  // owned by Profile settings; here you only choose which of them a patch
+  // may read.
   let user = $derived(getUser());
-  let cardEmpty = $derived(!(user?.contact_card?.phone || user?.contact_card?.email || user?.contact_card?.note));
+  let myItems = $state([]);
+  let cardEmpty = $derived(myItems.length === 0);
+  // The patch whose picker is open, and the tentative set inside it. Held
+  // apart from the row so cancelling changes nothing.
+  let sharingFor = $state(null);
+  let sharingIds = $state([]);
+  let sharingBusy = $state(false);
+
+  const KIND_WORD = { phone: 'Phone', email: 'Email', handle: 'Handle', note: 'Note' };
+
+  $effect(() => {
+    api('users/me/contact-items')
+      .then((data) => { myItems = data.items || []; })
+      .catch(() => { myItems = []; });
+  });
+
+  async function openSharing(m) {
+    sharingFor = m.node_slug;
+    sharingIds = [];
+    try {
+      const data = await api(`nodes/${m.node_slug}/contact-shares`);
+      sharingIds = (data.items || []).filter((it) => it.shared).map((it) => it.id);
+    } catch (e) {
+      showToast(e.message || 'Failed to load contact sharing', 'error');
+      sharingFor = null;
+    }
+  }
+
+  function toggleSharingId(id) {
+    sharingIds = sharingIds.includes(id)
+      ? sharingIds.filter((x) => x !== id)
+      : [...sharingIds, id];
+  }
+
+  // The whole set, replaced: a partial update of a disclosure set is a
+  // request to get it half-applied.
+  async function saveSharing(m) {
+    sharingBusy = true;
+    try {
+      await api(`nodes/${m.node_slug}/contact-shares`, {
+        method: 'PUT',
+        body: { item_ids: sharingIds },
+      });
+      m.contact_items_shared = sharingIds.length;
+      sharingFor = null;
+      showToast(
+        sharingIds.length === 0
+          ? `${m.node_name || m.node_slug} can no longer reach you`
+          : `${m.node_name || m.node_slug} can reach you by ${sharingIds.length === 1 ? '1 item' : `${sharingIds.length} items`}`,
+        'info',
+      );
+    } catch (e) {
+      showToast(e.message || 'Failed to update contact sharing', 'error');
+    } finally {
+      sharingBusy = false;
+    }
+  }
 
   // me/nodes serves 'active' and 'pending', and a pending request is not a
   // membership: sorting by role alone filed a request you had not been
@@ -139,35 +199,56 @@
     }
   }
 
-  // Contact sharing (docs/adr/080): the other switch a member owns. On,
-  // this patch's admins and members see your contact card in its Members
-  // room — including people who join later. Off for every patch until you
-  // turn it on.
-  async function toggleShareContact(m) {
-    try {
-      await api(`users/me/memberships/${m.node_id}`, {
-        method: 'PATCH',
-        body: { share_contact: !m.share_contact },
-      });
-      m.share_contact = !m.share_contact;
-      showToast(m.share_contact ? `Contact card shared with ${m.node_name || m.node_slug}` : `Contact card no longer shared with ${m.node_name || m.node_slug}`, 'info');
-    } catch (e) {
-      showToast(e.message || 'Failed to update contact sharing', 'error');
-    }
-  }
 </script>
 
 {#snippet contactToggle(m)}
   <button
     class="btn btn-sm vis-toggle"
-    class:contact-shared={m.share_contact}
-    title={m.share_contact
-      ? 'Your contact card is shown to this patch\'s admins and members in its Members room, including anyone who joins later. Click to stop sharing.'
-      : 'Your contact card is not shown to this patch. Click to share it with its admins and members.'}
-    onclick={() => toggleShareContact(m)}
+    class:contact-shared={m.contact_items_shared > 0}
+    disabled={cardEmpty}
+    title={cardEmpty
+      ? 'Add something to your contact card first, under Profile.'
+      : 'Choose which of your contact items this patch\'s admins and members can read. Its followers never can.'}
+    onclick={() => (sharingFor === m.node_slug ? (sharingFor = null) : openSharing(m))}
   >
-    {m.share_contact ? 'Contact shared' : 'Contact private'}
+    {#if m.contact_items_shared > 0}
+      Reachable by {m.contact_items_shared}
+    {:else}
+      Not reachable
+    {/if}
   </button>
+{/snippet}
+
+{#snippet contactPicker(m)}
+  {#if sharingFor === m.node_slug}
+    <div class="contact-picker">
+      <p class="muted contact-picker-hint">
+        What {m.node_name || m.node_slug} can reach you by. Its admins and
+        members see whatever you tick here, including anyone who joins later.
+      </p>
+      <ul class="contact-picker-list">
+        {#each myItems as it (it.id)}
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                checked={sharingIds.includes(it.id)}
+                disabled={sharingBusy}
+                onchange={() => toggleSharingId(it.id)}
+              />
+              <span class="contact-picker-kind">{KIND_WORD[it.kind] || it.kind}</span>
+              <span class="contact-picker-value">{it.value}</span>
+              {#if it.label}<span class="muted">{' · '}{it.label}</span>{/if}
+            </label>
+          </li>
+        {/each}
+      </ul>
+      <div class="contact-picker-actions">
+        <button class="btn btn-primary btn-sm" disabled={sharingBusy} onclick={() => saveSharing(m)}>Save</button>
+        <button class="btn btn-sm" disabled={sharingBusy} onclick={() => (sharingFor = null)}>Cancel</button>
+      </div>
+    </div>
+  {/if}
 {/snippet}
 
 {#snippet visibilityToggle(m)}
@@ -193,27 +274,31 @@
   {:else}
     {#if cardEmpty && (adminPatches.length > 0 || memberPatches.length > 0)}
       <p class="muted contact-hint">
-        Your contact card is empty. Fill it in under
-        <a href="/settings" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>Profile</a>
-        and share it patch by patch here.
+        Your contact card is empty. Add the ways you are willing to be reached
+        under
+        <a href="/settings" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>Profile</a>,
+        then give them to patches one at a time here.
       </p>
     {/if}
     {#if adminPatches.length > 0}
       <section class="patch-section">
         <h3 class="section-heading">Managing</h3>
         {#each adminPatches as m (m.node_slug)}
-          <div class="patch-row">
-            <div class="patch-info">
-              <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
-                {m.node_name || m.node_slug}
-              </a>
-              <span class="badge">admin</span>
-              <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+          <div class="patch-entry">
+            <div class="patch-row">
+              <div class="patch-info">
+                <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
+                  {m.node_name || m.node_slug}
+                </a>
+                <span class="badge">admin</span>
+                <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+              </div>
+              <div class="patch-actions">
+                {@render visibilityToggle(m)}
+                {@render contactToggle(m)}
+              </div>
             </div>
-            <div class="patch-actions">
-              {@render visibilityToggle(m)}
-              {@render contactToggle(m)}
-            </div>
+            {@render contactPicker(m)}
           </div>
         {/each}
       </section>
@@ -223,19 +308,22 @@
       <section class="patch-section">
         <h3 class="section-heading">Member of</h3>
         {#each memberPatches as m (m.node_slug)}
-          <div class="patch-row">
-            <div class="patch-info">
-              <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
-                {m.node_name || m.node_slug}
-              </a>
-              <span class="badge">member</span>
-              <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+          <div class="patch-entry">
+            <div class="patch-row">
+              <div class="patch-info">
+                <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
+                  {m.node_name || m.node_slug}
+                </a>
+                <span class="badge">member</span>
+                <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+              </div>
+              <div class="patch-actions">
+                {@render visibilityToggle(m)}
+                {@render contactToggle(m)}
+                <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m)} />
+              </div>
             </div>
-            <div class="patch-actions">
-              {@render visibilityToggle(m)}
-              {@render contactToggle(m)}
-              <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m)} />
-            </div>
+            {@render contactPicker(m)}
           </div>
         {/each}
       </section>
@@ -253,6 +341,8 @@
               <span class="badge" title="This patch's admins have not answered your request yet.">awaiting approval</span>
               <span class="muted joined-date">asked {formatDate(m.joined_at)}</span>
             </div>
+            <!-- No contact control: a pending request is not standing in the
+                 room yet, so there is nothing to share into (docs/adr/083). -->
             <div class="patch-actions">
               <ConfirmAction label="Withdraw" variant="default" onConfirm={() => handleLeave(m)} />
             </div>
@@ -396,4 +486,48 @@
     font-size: 0.85rem;
     margin-bottom: 1rem;
   }
+
+  /* One patch and, when open, the picker for what it can reach you by
+     (docs/adr/083). The picker sits under its row rather than in a dialog:
+     the decision is about this patch, so it stays attached to it. */
+  .patch-entry {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .patch-entry .patch-row {
+    border-bottom: none;
+  }
+  .contact-picker {
+    padding: 0 0 0.75rem 0;
+  }
+  .contact-picker-hint {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+  }
+  .contact-picker-list {
+    list-style: none;
+    margin: 0 0 0.6rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .contact-picker-list label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .contact-picker-kind {
+    font-weight: 600;
+    min-width: 4.5rem;
+  }
+  .contact-picker-value {
+    word-break: break-word;
+  }
+  .contact-picker-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
 </style>

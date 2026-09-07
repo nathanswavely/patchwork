@@ -616,8 +616,15 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 		after, limit := parsePaginationParams(r)
 
+		// contact_items_shared is how many of the caller's own items this
+		// patch can read (docs/adr/083). It answers the question this page
+		// exists for — what does each patch know about me — without a request
+		// per row.
 		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.visible, m.share_contact, m.joined_at,
-			n.name, n.slug, n.description, n.visibility, n.membership_policy, n.status
+			n.name, n.slug, n.description, n.visibility, n.membership_policy, n.status,
+			(SELECT COUNT(*) FROM contact_item_shares s
+				JOIN contact_items ci ON ci.id = s.item_id
+				WHERE s.node_id = m.node_id AND ci.user_id = m.user_id)
 			FROM memberships m JOIN nodes n ON m.node_id = n.id
 			WHERE m.user_id = ? AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')`
 		args := []interface{}{user.ID}
@@ -665,12 +672,16 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			// (JoinNode), and a caller who can't see that draws a door that
 			// 403s (docs/adr/042).
 			NodeStatus string `json:"node_status"`
+			// ContactItemsShared counts this caller's items the patch can
+			// read. Only ever about the caller's own card.
+			ContactItemsShared int `json:"contact_items_shared"`
 		}
 		var memberships []membershipResponse
 		for rows.Next() {
 			var m membershipResponse
 			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.ShareContact, &m.JoinedAt,
-				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy, &m.NodeStatus); err != nil {
+				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy,
+				&m.NodeStatus, &m.ContactItemsShared); err != nil {
 				continue
 			}
 			// Standing is stated once, here, the way GetNode states it:
