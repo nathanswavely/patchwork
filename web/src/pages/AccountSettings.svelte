@@ -184,7 +184,7 @@
       await loadContactItems();
       // Editing a value in place keeps every share it already has: sharing is
       // a pairing, not a copy, so a new number reaches the same rooms.
-      showToast('Saved — the patches you share it with see the new value', 'success');
+      showToast('Saved. The patches you share it with see the new value', 'success');
     } catch (e) {
       showToast(e.message || 'Failed to save', 'error');
     } finally {
