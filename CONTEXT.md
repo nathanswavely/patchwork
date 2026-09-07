@@ -1302,10 +1302,17 @@ _Avoid_: parent quilt (there is no hierarchy between instances), upstream
 (git register), origin
 
 **Moved-to pointer**:
-A profile's or patch's own signpost to its new home on another quilt.
-Local first; federated Move emission is future work.
+A profile's or patch's own signpost to its new home on another quilt
+(docs/adr/090). Set by that patch's admins at Patch Settings, or by the
+person themselves at account settings. The UI word is plain: a patch that
+has one says it has **moved**, and the discovery card's chip reads
+**Moved**. The old page keeps working and stays readable — what stops is
+new joins, new follows, and event suggestions from outside, each answered
+with the new address. Carried on the ActivityPub actor as `movedTo`; the
+federated `Move` activity is still future work, on purpose.
 _Avoid_: redirect (nothing is forwarded automatically), migration (the
-pointer points; people choose)
+pointer points; people choose), moved patch as a status (it is a field on
+a patch, not a fourth value beside active / unclaimed / archived)
 
 ## Place
 

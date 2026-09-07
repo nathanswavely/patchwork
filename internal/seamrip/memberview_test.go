@@ -42,6 +42,10 @@ func seedTwoRooms(t *testing.T, db *database.DB) fixture {
 			 VALUES (?, ?, ?, ?, 'Sews at night', 'https://cdn.example/a.png', '[{"url":"https://example.com","label":"Site"}]', 'member', '+1 717 555 0100', ?, ?)`,
 			p.id, p.name+"@example.com", p.name, strings.ToUpper(p.name[:1])+p.name[1:], now, now)
 	}
+	// Somebody who has already said where they went (docs/adr/090), so the
+	// stub assertion below is testing a column that had something in it.
+	mustExec(t, db, `UPDATE users SET moved_to = 'https://elsewhere.example/users/weaver' WHERE id = ?`, f.viewer)
+
 	// The ghost deleted their account (docs/adr/086): the row survives as a
 	// tombstone, and the handle stays retired on it.
 	mustExec(t, db,
@@ -316,6 +320,12 @@ func TestMemberExport_PeopleAreStubs(t *testing.T) {
 		}
 		if links, _ := u["links"].(string); links != "[]" {
 			t.Errorf("user %s carried profile links: %q", id, links)
+		}
+		// Where somebody says they went is a profile field like the rest
+		// (docs/adr/090), and the stub rule is about consent rather than
+		// publicity.
+		if u["moved_to"] != nil {
+			t.Errorf("user %s carried a moved-to pointer: %v", id, u["moved_to"])
 		}
 		for _, forbidden := range []string{"private_key", "public_key", "ap_id", "feed_secret_hash"} {
 			if _, present := u[forbidden]; present {

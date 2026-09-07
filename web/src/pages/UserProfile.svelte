@@ -3,6 +3,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { getUser } from '../stores/auth.svelte.js';
   import ReportButton from '../components/ReportButton.svelte';
+  import MovedNotice from '../components/MovedNotice.svelte';
   import { formatMonth as formatDate } from '../lib/datetime.js';
 
   let { username = '' } = $props();
@@ -66,6 +67,11 @@
       <p class="profile-username muted">@{profile.username} &middot; here since {formatDate(profile.created_at)}</p>
       {#if profile.bio}
         <p class="profile-bio">{profile.bio}</p>
+      {/if}
+      <!-- Where this person went (docs/adr/090). Their own pointer, set at
+           account settings, independent of any patch they belong to. -->
+      {#if profile.moved_to}
+        <MovedNotice url={profile.moved_to} subject="person" />
       {/if}
       {#if isSelf}
         <a href="/settings" class="btn btn-secondary btn-edit" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>

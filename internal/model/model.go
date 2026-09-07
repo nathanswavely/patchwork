@@ -33,9 +33,13 @@ type User struct {
 	// patch (docs/adr/080). Populated by the Me handlers only — it never
 	// rides along on a login response, a public profile, or an AP actor.
 	ContactCard *ContactCard `json:"contact_card,omitempty"`
-	SuspendedAt *string      `json:"suspended_at,omitempty"`
-	CreatedAt   string       `json:"created_at"`
-	UpdatedAt   string       `json:"updated_at"`
+	// MovedTo is where this person says they have gone (docs/adr/090): a
+	// plain http(s) URL they set themselves, shown on their public profile
+	// and carried on their AP actor as `movedTo`. Empty means no move.
+	MovedTo     string  `json:"moved_to,omitempty"`
+	SuspendedAt *string `json:"suspended_at,omitempty"`
+	CreatedAt   string  `json:"created_at"`
+	UpdatedAt   string  `json:"updated_at"`
 }
 
 type Notification struct {
@@ -234,8 +238,14 @@ type Node struct {
 	// (docs/adr/076). Distinct from CreatedAt, which is when the row was
 	// written, and from UpdatedAt, which every later edit moves.
 	ActivatedAt *string `json:"activated_at,omitempty"`
-	CreatedAt   string  `json:"created_at"`
-	UpdatedAt   string  `json:"updated_at"`
+	// MovedTo is where this patch says it has gone (docs/adr/090). Set by
+	// the patch's own admins, rendered as a banner on its page and a line
+	// on its card, and carried on the AP actor as `movedTo`. The patch
+	// stays where it is and keeps working: the old home is still a record,
+	// so this is a signpost rather than a redirect. Empty means no move.
+	MovedTo   string `json:"moved_to,omitempty"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type ClaimRequest struct {

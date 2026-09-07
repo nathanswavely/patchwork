@@ -153,6 +153,33 @@
     }
   }
 
+  // The moved-to pointer (docs/adr/090): where this person went, on their
+  // own profile and on their AP actor. Independent of any patch — a person
+  // can move without their patches, and the other way round.
+  let movedTo = $state('');
+  let movedSaving = $state(false);
+  let movedError = $state('');
+
+  $effect(() => {
+    api('auth/me')
+      .then((me) => { movedTo = me.moved_to || ''; })
+      .catch(() => {});
+  });
+
+  async function saveMovedTo() {
+    movedSaving = true;
+    movedError = '';
+    try {
+      await api('auth/me', { method: 'PATCH', body: { moved_to: movedTo.trim() } });
+      await checkAuth();
+      showToast('Saved', 'success');
+    } catch (e) {
+      movedError = e.message || 'Could not save that link';
+    } finally {
+      movedSaving = false;
+    }
+  }
+
   function addLink() {
     links = [...links, { url: '', label: '' }];
   }
@@ -373,6 +400,33 @@
               {saveMessage}
             </span>
           {/if}
+        </div>
+      </form>
+    </section>
+
+    <section class="pw-section">
+      <h2>I have moved</h2>
+      <p class="muted profile-hint">
+        Point your profile at wherever you are now. Your page here keeps
+        working and says where you went. This is only about you, not about
+        the patches you belong to. Clear the field to undo it.
+      </p>
+      <form onsubmit={(e) => { e.preventDefault(); saveMovedTo(); }}>
+        <div class="field">
+          <label for="moved-to">New address</label>
+          <input
+            id="moved-to"
+            type="url"
+            bind:value={movedTo}
+            disabled={movedSaving}
+            placeholder="https://their-quilt.example.com/users/you"
+          />
+          {#if movedError}<small class="error-text">{movedError}</small>{/if}
+        </div>
+        <div class="field-actions">
+          <button type="submit" class="btn btn-primary" disabled={movedSaving}>
+            {movedSaving ? 'Saving...' : 'Save'}
+          </button>
         </div>
       </form>
     </section>

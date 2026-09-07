@@ -7,6 +7,7 @@
    */
   import { navigate } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
+  import { patchLinkPath } from '../lib/patchLink.js';
   import { isLoggedIn, isAuthChecked } from '../stores/auth.svelte.js';
   import {
     getInstanceName,
@@ -85,14 +86,9 @@
   // search opens that patch's remote card, where Follow lives. Wired as the
   // search's intercept — returning true consumes the input.
   function recognizePatchLink(value) {
-    const m = value.trim().match(/^https?:\/\/([^/]+)\/patches\/([a-z0-9-]+)\/?$/);
-    if (!m) return false;
-    const [, host, slug] = m;
-    if (host === window.location.host) {
-      navigate(`/patches/${slug}`);
-    } else {
-      navigate(`/quilts/${host}/patches/${slug}`);
-    }
+    const path = patchLinkPath(value, window.location.host);
+    if (!path) return false;
+    navigate(path);
     mobileSearchOpen = false;
     return true;
   }

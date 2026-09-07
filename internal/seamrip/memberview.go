@@ -166,6 +166,13 @@ func memberViews() map[string]MemberView {
 				// fork inherits. A suspension is a decision its stewards
 				// made, and they are not the fork's stewards.
 				"suspended_at": "NULL",
+				// Where this person says they went (docs/adr/090). Public on
+				// their profile, and emptied here for the same reason `bio`
+				// and `links` are: the stub rule is about consent rather than
+				// publicity, and nobody asked this person whether their
+				// profile should be copied to a new server. It travels whole
+				// in the admin seamrip, which is a custody transfer.
+				"moved_to": "NULL",
 			},
 		},
 		"tags": {
