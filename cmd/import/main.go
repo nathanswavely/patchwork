@@ -53,6 +53,26 @@ func main() {
 		return items, nil
 	}
 
+	// Which bundle this is, before anything is written. Both kinds import
+	// with the same code, and they arrive at very different places: a full
+	// seamrip carries email addresses, so people sign in on the new quilt
+	// by magic link, while a member seamrip carries none and every person
+	// in it has to be invited back (docs/adr/089). Saying so here is the
+	// difference between a fork that knows it must invite its community and
+	// one that finds out when nobody can sign in.
+	kind, requestedBy := readKind(*inDir)
+	if kind == seamrip.KindMember {
+		fmt.Printf("Reading a MEMBER SEAMRIP")
+		if requestedBy != "" {
+			fmt.Printf(", taken by %s", requestedBy)
+		}
+		fmt.Print(".\n")
+		fmt.Println("  It holds one member's view: no email addresses, no hidden")
+		fmt.Println("  memberships, no noticeboards. People arrive as stubs and join")
+		fmt.Println("  this quilt by invitation.")
+		fmt.Println()
+	}
+
 	idMap, results, err := seamrip.Import(db, read, auth.NewUUIDv7)
 	if err != nil {
 		log.Fatalf("import: %v", err)
@@ -109,4 +129,29 @@ func main() {
 
 	fmt.Printf("\nImport complete. ID mapping saved to %s\n", idMapPath)
 	fmt.Println("ActivityPub identifiers and keypairs are minted on first server start.")
+	if kind == seamrip.KindMember {
+		fmt.Println("Nobody in this archive has an email address. Invite people back with")
+		fmt.Println("invite links, and each person sets their own visibility here again.")
+	}
+}
+
+// readKind reports which kind of archive this directory holds, and who took
+// it when that is recorded. manifest.json is the member seamrip's own file;
+// instance.json carries the same key, and an archive written before either
+// existed has neither and is a full seamrip.
+func readKind(dir string) (string, string) {
+	var meta struct {
+		Kind        string `json:"kind"`
+		RequestedBy string `json:"requested_by"`
+	}
+	for _, name := range []string{"manifest.json", "instance.json"} {
+		data, err := os.ReadFile(filepath.Join(dir, name))
+		if err != nil {
+			continue
+		}
+		if json.Unmarshal(data, &meta) == nil && meta.Kind != "" {
+			return seamrip.KindFor(meta.Kind), meta.RequestedBy
+		}
+	}
+	return seamrip.KindFull, ""
 }

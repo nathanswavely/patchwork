@@ -1,7 +1,7 @@
 # ADR 012: Leaving is a member right — the egress boundary and its three affordances
 
-Date: 2026-07-14. Status: accepted as design boundary; affordance 1 shipped
-2026-09-07, affordances 2 and 3 remain backlog.
+Date: 2026-07-14. Status: accepted as design boundary; affordances 1 and 2
+shipped 2026-09-07 (docs/adr/089), affordance 3 remains backlog.
 
 ## Context
 
@@ -124,4 +124,31 @@ wrote (the copy ledger marks it `human`), and this affordance is not the
 one it promises. It stays an outstanding claim until the member seamrip
 lands.
 
-Affordances 2 (member seamrip) and 3 (moved-to pointer) are unbuilt.
+## Status, 2026-09-07: affordance 2 shipped
+
+`GET /api/v1/users/me/seamrip` is live. docs/adr/089 records how, and the
+decisions this ADR left open.
+
+In short: the portability boundary in `internal/seamrip` grew a second axis
+rather than a second implementation. Every travelling table now states both
+what travels and which rows a given member may carry out, and the member
+export runs the admin export's own queries through that filter, so a column
+added to the boundary reaches both bundles or neither. `people travel as
+stubs` — id, username, display name, avatar — and the set of them is the
+closure of everybody the other travelling rows name, read from the schema's
+own foreign keys rather than from a list somebody has to remember to
+update. No emails, no hidden memberships from a patch the caller is not in,
+no members-only charters or events from one either, no noticeboards, no
+contact cards, no claims, no calendar feed URLs outside a patch the caller
+administers. A tombstone travels as the tombstone it is (docs/adr/086).
+
+Two downloads per account per day, audited as `user.seamrip`, offered at
+Account settings as **Member seamrip**. The bundle carries a manifest
+naming the kind, the person who took it, the time, and the instance, and
+`cmd/import` says which of the two kinds it is reading rather than assuming
+the admin one.
+
+The user agreement's "any member can export what they can already see" is
+no longer an outstanding claim.
+
+Affordance 3 (moved-to pointer) is unbuilt.

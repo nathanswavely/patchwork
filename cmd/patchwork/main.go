@@ -505,6 +505,11 @@ func main() {
 	// Personal export (docs/adr/012, affordance 1): everything about the
 	// person asking, with no admin involved. Rate-limited inside the handler.
 	mux.HandleFunc("GET /api/v1/users/me/export", middleware.AuthRequired(db, handler.PersonalExport(db, cfg)))
+	// Member seamrip (docs/adr/012, affordance 2; docs/adr/089): the quilt
+	// as this member can already see it, in the import format, so a fork
+	// needs nobody's permission. Rate-limited inside the handler, tighter
+	// than the personal export.
+	mux.HandleFunc("GET /api/v1/users/me/seamrip", middleware.AuthRequired(db, handler.MemberSeamrip(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
 
 	// Proposal routes — public, but amendment text follows the target
