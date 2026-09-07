@@ -194,6 +194,34 @@ func Tables() []Table {
 				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at")),
 		},
 		{
+			// The contact card in the shape docs/adr/083 gives it: an ordered
+			// set of typed items. It travels for the reason the three columns
+			// it replaces travelled (docs/adr/080) — this export already moves
+			// other people's secrets and is admin-gated for it, and an item
+			// left behind is a person arriving on the fork unreachable by the
+			// community that forked with them. Beside memberships, because
+			// what an item means is decided by the shares below.
+			File: "contact_items.json",
+			Name: "contact_items",
+			Query: `SELECT id, user_id, kind, value, label, position, created_at, updated_at
+				FROM contact_items`,
+			Columns: cols(id("id"), id("user_id"), c("kind"), c("value"),
+				c("label"), c("position"), c("created_at"), c("updated_at")),
+		},
+		{
+			// Which patch may read which item — the whole disclosure model,
+			// one row per act (docs/adr/083). It has to travel with the items
+			// and it has to travel *exactly*: carrying items without shares
+			// would silence every choice a person had made, and inventing a
+			// share would hand a phone number to a room that was never given
+			// it. After contact_items and after nodes, since both FKs are
+			// enforced at insert.
+			File:    "contact_item_shares.json",
+			Name:    "contact_item_shares",
+			Query:   `SELECT item_id, node_id, created_at FROM contact_item_shares`,
+			Columns: cols(id("item_id"), id("node_id"), c("created_at")),
+		},
+		{
 			// The council's chairs (docs/adr/051). A seat outlives its holder,
 			// and `term_ends_at` is the patch's election calendar: dueness is
 			// derived from it rather than stored, so a fork arriving with no
