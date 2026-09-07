@@ -386,6 +386,13 @@
                   href={`/patches/${patch.slug}`}
                   onclick={(e) => { e.preventDefault(); navigate(`/patches/${patch.slug}`); }}
                 >{patch.name}</a>
+                <!-- A patch that has moved wears it here (docs/adr/090), so
+                     the pointer is visible before somebody follows a patch
+                     the community has left. The address itself is on the
+                     patch's own page, one tap in. -->
+                {#if patch.moved_to}
+                  <span class="moved-chip">Moved</span>
+                {/if}
                 {#if patch.description}
                   <span class="patch-desc">
                     {patch.description.length > 90 ? patch.description.slice(0, 90) + '…' : patch.description}
@@ -429,6 +436,9 @@
                       href={`/patches/${patch.slug}`}
                       onclick={(e) => { e.preventDefault(); navigate(`/patches/${patch.slug}`); }}
                     >{patch.name}</a>
+                    {#if patch.moved_to}
+                      <span class="moved-chip">Moved</span>
+                    {/if}
                     <span class="patch-meta">
                       {#each (patch.tags || []).slice(0, 3) as tag}
                         <span class="meta-tag" style="color: {colorForTag(tag)}">{tag}</span>
@@ -643,6 +653,17 @@
     font-weight: 600;
     color: var(--color-text);
     text-decoration: none;
+  }
+
+  .moved-chip {
+    align-self: flex-start;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.1rem 0.35rem;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    color: var(--color-text-muted);
   }
 
   .patch-name:hover {

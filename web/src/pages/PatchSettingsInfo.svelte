@@ -258,6 +258,38 @@
     }
   }
 
+  // The moved-to pointer (docs/adr/090). Its own block rather than an
+  // InlineEdit, because it needs a sentence saying what setting it does to
+  // the patch, and because clearing it is a real act somebody will want.
+  let movedTo = $state('');
+  let movedSeeded = $state('');
+  let savingMoved = $state(false);
+  let movedError = $state('');
+
+  $effect(() => {
+    if (node?.id && movedSeeded !== node.id) {
+      movedTo = node.moved_to || '';
+      movedSeeded = node.id;
+    }
+  });
+
+  let movedDirty = $derived(movedTo.trim() !== (node?.moved_to || ''));
+
+  async function saveMovedTo(value) {
+    savingMoved = true;
+    movedError = '';
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { moved_to: value } });
+      showToast('Saved', 'success');
+      movedSeeded = '';
+      patch.value.reload();
+    } catch (e) {
+      movedError = e.message || 'Could not save that link';
+    } finally {
+      savingMoved = false;
+    }
+  }
+
   async function removeLink(index) {
     const updatedLinks = links.filter((_, i) => i !== index);
     savingLinks = true;
@@ -566,6 +598,42 @@
     </p>
   </div>
 
+  <!-- We've moved (docs/adr/090). Last, because it is the one setting that
+       is about leaving rather than about running the patch. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">We have moved</span>
+    </div>
+    <p class="muted tags-hint">
+      Point this patch at its new home. The page here keeps working and stays
+      readable, with a banner saying where the patch went. New joins, new
+      follows and event suggestions from outside are turned away and sent to
+      the new address. Members and admins keep everything they had. Clear the
+      field to undo it.
+    </p>
+    <input
+      class="moved-input"
+      type="url"
+      bind:value={movedTo}
+      disabled={savingMoved}
+      placeholder="https://their-quilt.example.com/patches/gallery-row"
+    />
+    {#if movedError}<p class="image-error">{movedError}</p>{/if}
+    {#if movedDirty}
+      <div class="tags-actions">
+        <button
+          class="btn btn-primary btn-sm"
+          onclick={() => saveMovedTo(movedTo.trim())}
+          disabled={savingMoved}
+        >{savingMoved ? 'Saving...' : 'Save'}</button>
+        <button
+          class="btn btn-secondary btn-sm"
+          onclick={() => { movedTo = node?.moved_to || ''; movedError = ''; }}
+          disabled={savingMoved}
+        >Cancel</button>
+      </div>
+    {/if}
+  </div>
 
 </div>
 
@@ -617,6 +685,17 @@
 
   .image-section .btn {
     align-self: flex-start;
+  }
+
+  .moved-input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-family: inherit;
   }
 
   .links-section {

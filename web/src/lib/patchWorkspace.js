@@ -80,9 +80,17 @@ export function eventPostingRight({
   isBanned = false,
   submissionsEnabled = true,
   acceptSuggestions = false,
+  hasMoved = false,
 } = {}) {
   if (!signedIn || isBanned) return 'none';
   if (isInstanceAdmin) return 'direct';
+
+  // A patch that has moved takes no suggestions from outside (docs/adr/090),
+  // and the server says so. Its own members and admins still post, because
+  // the old home stays a record and a record can be corrected. This sits
+  // after the instance-admin line for the same reason the rest of the
+  // function does: it names the outcome, and that one is still 'direct'.
+  if (hasMoved && !isMemberOrAdmin) return 'none';
 
   if (isUnclaimed) {
     if (trustedContributor) return 'direct';

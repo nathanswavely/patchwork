@@ -71,6 +71,8 @@ Patchwork is built so a community can pack up and leave. Site administrators can
 
 You do not need an administrator to get your own copy. **Download my data** in your account settings hands you one file with everything this site holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, your settings and notifications, and the log of your own sign-ins. It contains nothing anyone else wrote and no sign-in secrets, so the file cannot be used to get into your account.
 
+The same goes for the quilt itself. **Member seamrip** in your account settings hands you this site as you can already see it, in the format a new Patchwork reads. It holds the patches, events, charters, proposals and member lists that are open to you. It holds no email addresses, no contact cards, no noticeboards, and nothing from a patch you are not in. Other people appear in it as a username, a display name and an avatar, which is enough for a new site to invite them back. Nobody can be signed in from that file either. Taking a copy is recorded in the audit log, and there is a limit of two a day.
+
 ## How long things are kept, and deletion
 
 Your content and account stay until you delete the account yourself, from Settings. Deleting is immediate and cannot be undone. It asks you to confirm with a passkey and to type your username. It treats two kinds of data differently.

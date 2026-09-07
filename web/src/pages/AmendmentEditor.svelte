@@ -19,6 +19,15 @@
   // too, and following carries no governance rights.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
+  // On an admin-decides patch an admin's amendment is a direct change, born
+  // applied (docs/adr/041, docs/adr/092) — the same derivation the rules
+  // editor makes, so the two editors never disagree about what submitting
+  // does. `membershipRole`, not `isAdmin`: an instance admin with no role
+  // here can neither propose nor apply.
+  let directChange = $derived(
+    membershipRole === 'admin' && patch.value.node?.governance_config?.decision_method === 'admin'
+  );
+
   let doc = $state(null);
   let loading = $state(true);
   let error = $state('');
@@ -48,7 +57,7 @@
     if (doc) {
       patch.value.setBreadcrumbExtra?.([
         { label: doc.title, href: `/patches/${slug}/governance/docs/${docId}` },
-        { label: 'Propose change' },
+        { label: directChange ? 'Change' : 'Propose change' },
       ]);
     }
     return () => patch.value.setBreadcrumbExtra?.([]);
@@ -142,7 +151,7 @@
       };
       const result = await api(`nodes/${slug}/proposals`, { method: 'POST', body: payload });
       if (draftKey) localStorage.removeItem(draftKey);
-      showToast('Proposal created', 'success');
+      showToast(directChange ? 'Change applied' : 'Proposal created', 'success');
       navigate(`/patches/${slug}/governance/${result.id}`);
     } catch (e) {
       showToast(e.message || 'Failed to create proposal', 'error');
@@ -204,7 +213,7 @@
         <div class="editor-footer">
           <div class="editor-actions">
             <button class="btn btn-primary" onclick={goToReview} disabled={!hasChanges}>
-              Review & submit
+              {directChange ? 'Review & apply' : 'Review & submit'}
             </button>
             <button class="btn btn-secondary" onclick={() => navigate(`/patches/${slug}/governance/docs/${docId}`)}>
               Cancel
@@ -244,7 +253,7 @@
         </div>
 
         <div class="review-card">
-          <div class="review-card-header">Describe your proposal</div>
+          <div class="review-card-header">{directChange ? 'Describe this change' : 'Describe your proposal'}</div>
           <div class="review-card-body">
             <div class="field">
               <label for="amendment-title">Summary of changes</label>
@@ -252,13 +261,17 @@
             </div>
 
             <div class="field">
-              <label for="amendment-desc">Why are you proposing this? <span class="muted">(optional)</span></label>
+              <label for="amendment-desc">{directChange ? 'Why this change?' : 'Why are you proposing this?'} <span class="muted">(optional)</span></label>
               <textarea id="amendment-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
 
             <div class="review-actions">
               <button class="btn btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
-                {submitting ? 'Submitting...' : 'Submit proposal'}
+                {#if directChange}
+                  {submitting ? 'Applying...' : 'Apply change'}
+                {:else}
+                  {submitting ? 'Submitting...' : 'Submit proposal'}
+                {/if}
               </button>
               <button class="btn btn-secondary" onclick={backToEditing} disabled={submitting}>
                 Back to editing

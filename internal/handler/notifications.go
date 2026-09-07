@@ -2,7 +2,9 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"sort"
 	"strings"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -20,6 +22,51 @@ func CreateNotification(db *database.DB, userID, notifType, title, body, link st
 		`INSERT INTO notifications (id, user_id, type, title, body, link) VALUES (?, ?, ?, ?, ?, ?)`,
 		id, userID, notifType, title, body, link,
 	)
+}
+
+// The categories the notifications list can be filtered by, and the LIKE
+// patterns each covers. A pattern is either a whole type or a prefix.
+//
+// This was derived from the category name — "proposals" → "proposal.%" — which
+// worked only while every category was one prefix with an s on the end.
+// Moderation is not: it spans account. and report., and it deliberately leaves
+// one account. type out (see below). Deriving it also meant a mistyped
+// category matched nothing and returned an empty list, which reads as "you
+// have no notifications" rather than "that is not a category". The
+// noticeboard shows the trap: its types are notice.*, so the old rule would
+// have turned a Noticeboard tab into "noticeboard.%" and shown an empty list
+// forever. A tab with no entry here now fails loudly instead.
+//
+// Moderation covers what a moderator did about you or about something you
+// reported. account.email_changed is not here: an admin setting an address
+// (docs/adr/072) is account security, not a moderation outcome, and filing it
+// under Moderation would tell somebody they had been moderated when they had
+// not.
+//
+// These are browsing filters, not preferences. The account. and report. types
+// are absent from the preference registry on purpose — a warning or a
+// suspension is not something its recipient may switch off — so this list
+// stays separate from notifications.AllCategories() rather than extending it.
+var notificationListCategories = map[string][]string{
+	"proposals":  {"proposal.%"},
+	"governance": {"governance.%"},
+	"membership": {"membership.%"},
+	"events":     {"event.%"},
+	"moderation": {
+		"account.warned",
+		"account.suspended",
+		"account.unsuspended",
+		"report.%",
+	},
+}
+
+func sortedKeys(m map[string][]string) []string {
+	out := make([]string, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
 }
 
 // ListNotifications handles GET /api/v1/notifications.
@@ -41,10 +88,18 @@ func ListNotifications(db *database.DB) http.HandlerFunc {
 		}
 
 		if category := r.URL.Query().Get("category"); category != "" {
-			// Map category name to type prefix: "proposals" → "proposal.%"
-			prefix := strings.TrimSuffix(category, "s") + ".%"
-			conditions = append(conditions, "type LIKE ?")
-			args = append(args, prefix)
+			patterns, known := notificationListCategories[category]
+			if !known {
+				http.Error(w, fmt.Sprintf(`{"error":"category must be one of %s"}`,
+					strings.Join(sortedKeys(notificationListCategories), ", ")), http.StatusBadRequest)
+				return
+			}
+			var likes []string
+			for _, pat := range patterns {
+				likes = append(likes, "type LIKE ?")
+				args = append(args, pat)
+			}
+			conditions = append(conditions, "("+strings.Join(likes, " OR ")+")")
 		}
 
 		if after != "" {

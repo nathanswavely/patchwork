@@ -505,6 +505,11 @@ func main() {
 	// Personal export (docs/adr/012, affordance 1): everything about the
 	// person asking, with no admin involved. Rate-limited inside the handler.
 	mux.HandleFunc("GET /api/v1/users/me/export", middleware.AuthRequired(db, handler.PersonalExport(db, cfg)))
+	// Member seamrip (docs/adr/012, affordance 2; docs/adr/089): the quilt
+	// as this member can already see it, in the import format, so a fork
+	// needs nobody's permission. Rate-limited inside the handler, tighter
+	// than the personal export.
+	mux.HandleFunc("GET /api/v1/users/me/seamrip", middleware.AuthRequired(db, handler.MemberSeamrip(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
 
 	// Proposal routes — public, but amendment text follows the target
@@ -517,6 +522,9 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/proposals/{id}", middleware.AuthRequired(db, handler.WithdrawProposal(db)))
 	mux.HandleFunc("POST /api/v1/proposals/{id}/vote", middleware.AuthRequired(db, handler.VoteOnProposal(db)))
 	mux.HandleFunc("POST /api/v1/proposals/{id}/apply", middleware.AuthRequired(db, handler.ApplyProposal(db)))
+	// The maintainer's verbs on an admin-decides patch (docs/adr/092).
+	mux.HandleFunc("POST /api/v1/proposals/{id}/decide", middleware.AuthRequired(db, handler.DecideProposal(db)))
+	mux.HandleFunc("POST /api/v1/proposals/{id}/open-vote", middleware.AuthRequired(db, handler.OpenAdvisoryVote(db)))
 
 	// Governance reads — public docs for everyone, members-only docs for
 	// viewers the patch has admitted, so each needs the optional session

@@ -22,6 +22,12 @@
 //     log, content reports, in-app notification rows, and reminder-dedup
 //     state. A fresh instance regenerates its federation identity on first
 //     boot (PopulateAPIds / BackfillKeypairs).
+//
+// That is the first axis: what travels. The boundary has a second one, in
+// memberview.go — for each travelling table, which rows a given member may
+// carry out (docs/adr/089). The member seamrip
+// (GET /api/v1/users/me/seamrip) runs the queries below through it, so a
+// column added here reaches both bundles or neither.
 package seamrip
 
 import (
@@ -66,7 +72,7 @@ func Tables() []Table {
 			File: "users.json",
 			Name: "users",
 			Query: `SELECT id, email, username, display_name, bio, avatar_url, links, role,
-				contact_phone, contact_email, contact_note,
+				contact_phone, contact_email, contact_note, moved_to,
 				suspended_at, deleted_at, created_at, updated_at FROM users WHERE username != '_system'`,
 			// `links` is the same shape as a patch's, and a patch's travelled
 			// while a person's did not (docs/adr/006). A profile arrived on
@@ -81,9 +87,14 @@ func Tables() []Table {
 			// the old handle free to sign in under and a profile page back on
 			// the web. The fork inherits the record and therefore inherits
 			// the erasure that made the record safe to keep (docs/adr/086).
+			// `moved_to` travels because a fork of a fork still has to know
+			// where people went (docs/adr/090). Nothing sets it on import:
+			// the pointer is a statement its owner made, and the instance
+			// being left is the last one that should get to write it.
 			Columns: cols(id("id"), c("email"), c("username"), c("display_name"),
 				c("bio"), c("avatar_url"), def("links", "[]"), c("role"),
 				def("contact_phone", ""), def("contact_email", ""), def("contact_note", ""),
+				def("moved_to", nil),
 				c("suspended_at"), c("deleted_at"), c("created_at"), c("updated_at")),
 		},
 		{
@@ -100,7 +111,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, created_at, updated_at
+				notice_posting, notice_replies_default, moved_to, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -149,6 +160,13 @@ func Tables() []Table {
 				// Who may put up a notice, and whether notices take replies
 				// by default: rules the community set (docs/adr/081).
 				def("notice_posting", "members"), def("notice_replies_default", 1),
+				// Where this patch says it went (docs/adr/090). It travels
+				// for the same reason a person's does: the fork is the thing
+				// somebody followed the pointer to, and a chain of moves that
+				// forgets its own last hop strands anyone reading it from the
+				// far end. def() so archives written before the column import
+				// as NULL, which is "hasn't moved".
+				def("moved_to", nil),
 				c("created_at"), c("updated_at")),
 		},
 		{
@@ -354,7 +372,7 @@ func Tables() []Table {
 			Query: `SELECT id, node_id, author_id, title, body, status, state,
 				proposal_type, duration_hours, voting_ends_at, voting_terms,
 				target_doc, target_user_id, seats_contested, nominations_close_at,
-				proposed_title, proposed_body, applied_at, applied_by,
+				proposed_title, proposed_body, applied_at, applied_by, declined_by,
 				created_at, updated_at FROM proposals`,
 			Columns: cols(id("id"), id("node_id"), id("author_id"), c("title"),
 				c("body"), c("status"), c("state"), c("proposal_type"),
@@ -377,7 +395,11 @@ func Tables() []Table {
 				// migration 050 have neither key.
 				def("seats_contested", 0), c("nominations_close_at"),
 				c("proposed_title"), c("proposed_body"), c("applied_at"),
-				id("applied_by"), c("created_at"), c("updated_at")),
+				id("applied_by"),
+				// Who declined a proposal on an admin-decides patch
+				// (docs/adr/092, migration 067). Remapped like applied_by;
+				// NULL wherever the electorate decided.
+				id("declined_by"), c("created_at"), c("updated_at")),
 		},
 		{
 			// A community's record of what it decided elsewhere travels with
@@ -555,34 +577,7 @@ func Export(db *database.DB, sink func(t Table, items []map[string]any) error) e
 }
 
 func queryTable(db *database.DB, t Table) ([]map[string]any, error) {
-	rows, err := db.Query(t.Query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	items := []map[string]any{}
-	for rows.Next() {
-		values := make([]any, len(t.Columns))
-		ptrs := make([]any, len(t.Columns))
-		for i := range values {
-			ptrs[i] = &values[i]
-		}
-		if err := rows.Scan(ptrs...); err != nil {
-			return nil, err
-		}
-		item := make(map[string]any, len(t.Columns))
-		for i, col := range t.Columns {
-			// SQLite TEXT scans as []byte through the generic path.
-			if b, ok := values[i].([]byte); ok {
-				item[col.Name] = string(b)
-			} else {
-				item[col.Name] = values[i]
-			}
-		}
-		items = append(items, item)
-	}
-	return items, rows.Err()
+	return scanRows(db, t.Query, t.Columns, nil)
 }
 
 // ReadmeText documents the archive layout for humans opening the export.

@@ -23,13 +23,25 @@
     state: propState = 'voting',
     voters = [],
     canVote = false,
+    // Whether this tally is advice to a maintainer rather than the decision
+    // (docs/adr/092), and what kind of proposal it is, which decides which
+    // of the terms' two thresholds applies.
+    advisory = false,
+    proposalType = '',
     onVote = () => {},
   } = $props();
 
   let quorumPercent = $derived(terms?.quorum_percent || 0);
   let tenureDays = $derived(terms?.min_voting_tenure_days || 0);
+  // The amendment threshold applies to amendments and to nothing else —
+  // resolveProposal reads it only for proposal_type 'amendment'. This used
+  // to prefer it for every proposal, so an action proposal on a
+  // Collaborative patch said "Supermajority" while the server carried it
+  // by majority.
   let threshold = $derived(
-    terms?.amendment_threshold || terms?.decision_method || 'majority'
+    proposalType === 'amendment' && terms?.amendment_threshold
+      ? terms.amendment_threshold
+      : terms?.decision_method || 'majority'
   );
 
   let voting = $state(false);
@@ -68,7 +80,9 @@
       majority: 'Majority \u2014 more than half of votes must approve',
       supermajority: 'Supermajority \u2014 at least 2 out of 3 votes must approve',
       consensus: 'Consensus \u2014 no reject votes allowed',
+      admin: 'Advisory \u2014 the maintainer decides, with this tally in front of them',
     };
+    if (advisory) return explanations.admin;
     return explanations[threshold] || threshold;
   });
 
@@ -118,7 +132,9 @@
 
   <!-- Quorum status -->
   <div class="quorum-status">
-    {#if quorumPercent > 0}
+    {#if advisory}
+      <span class="quorum-none muted">No quorum. This vote advises; it does not decide.</span>
+    {:else if quorumPercent > 0}
       {#if quorumMet}
         <span class="quorum-met">Quorum met ({totalVotes} of {electorateSize} voted, {quorumPercent}% needed)</span>
       {:else}

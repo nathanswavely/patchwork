@@ -23,23 +23,27 @@ type TreeNode struct {
 	// separately. A follower is an interested observer, not a member
 	// (CLAUDE.md roles); public counts must not conflate the two,
 	// especially on unclaimed patches where membership is impossible.
-	MemberCount   int `json:"member_count"`
-	FollowerCount int `json:"follower_count"`
-	EventCount    int `json:"event_count"`
+	MemberCount   int  `json:"member_count"`
+	FollowerCount int  `json:"follower_count"`
+	EventCount    int  `json:"event_count"`
 	IsUnclaimed   bool `json:"is_unclaimed,omitempty"`
 	// AmendedLining marks a patch whose lining diverged from every shipped
 	// version (docs/adr/037) — the badge state, deliberately public.
 	// When this patch joined the quilt (docs/adr/076) - the sort key behind
 	// the cards list's "Recently added" order (docs/adr/074). Absent on a
 	// patch that has not joined: an unclaimed listing is not an arrival.
-	ActivatedAt   *string    `json:"activated_at,omitempty"`
+	ActivatedAt *string `json:"activated_at,omitempty"`
 	// When the row was written — for an unclaimed listing, the day someone
 	// added it to the directory. Not an arrival (docs/adr/076), and never
 	// treated as one; the cards list falls back to it so "Recently added"
 	// can order the listings too, which have no arrival to order by.
-	CreatedAt     string     `json:"created_at,omitempty"`
-	AmendedLining bool       `json:"amended_lining,omitempty"`
-	Children      []TreeNode `json:"children"`
+	CreatedAt     string `json:"created_at,omitempty"`
+	AmendedLining bool   `json:"amended_lining,omitempty"`
+	// MovedTo is where this patch says it has gone (docs/adr/090). The
+	// discovery surfaces read the quilt (docs/adr/074), so a card can only
+	// wear the pointer if the tree carries it.
+	MovedTo  string     `json:"moved_to,omitempty"`
+	Children []TreeNode `json:"children"`
 }
 
 // AffinityLink represents a weighted connection between two patches.
@@ -65,7 +69,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// Scoped to user's patches only (any active membership).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
@@ -79,7 +83,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// All public patches (default).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
@@ -107,6 +111,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			Longitude     *float64
 			ActivatedAt   *string
 			CreatedAt     string
+			MovedTo       string
 			MemberCount   int
 			FollowerCount int
 			EventCount    int
@@ -115,7 +120,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		var flat []flatNode
 		for rows.Next() {
 			var fn flatNode
-			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
+			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MovedTo, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
 				continue
 			}
 			flat = append(flat, fn)
@@ -349,6 +354,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				IsUnclaimed:   fn.Status == "unclaimed",
 				ActivatedAt:   fn.ActivatedAt,
 				CreatedAt:     fn.CreatedAt,
+				MovedTo:       fn.MovedTo,
 				AmendedLining: liningStates[fn.ID] == governance.LiningDiverged,
 				Children:      []TreeNode{},
 			})

@@ -10,6 +10,7 @@
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { patchPickerProvider } from '../lib/finderProviders.js';
+  import { parsePatchLink } from '../lib/patchLink.js';
   import WorkspaceSearch from './WorkspaceSearch.svelte';
 
   let { event, onChanged } = $props();
@@ -110,9 +111,10 @@
   // the listing won't enumerate — holding the URL is how a private patch
   // was legitimately found (docs/adr/033).
   function recognizePatchLink(value) {
-    const m = value.trim().match(/^https?:\/\/([^/]+)\/patches\/([a-z0-9-]+)\/?$/);
-    if (!m) return false;
-    const [target, host, slug] = m;
+    const parsed = parsePatchLink(value);
+    if (!parsed) return false;
+    const { host, slug } = parsed;
+    const target = value.trim();
     if (host === location.host) {
       if (slug === event?.node_slug) {
         showToast('That is this event\u2019s own patch', 'error');

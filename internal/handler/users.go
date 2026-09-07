@@ -38,10 +38,10 @@ func GetUserProfile(db *database.DB) http.HandlerFunc {
 			linksJSON string
 		)
 		err := db.QueryRow(
-			`SELECT id, username, display_name, bio, avatar_url, COALESCE(links,'[]'), created_at
+			`SELECT id, username, display_name, bio, avatar_url, COALESCE(links,'[]'), COALESCE(moved_to,''), created_at
 			 FROM users WHERE username = ? AND suspended_at IS NULL AND deleted_at IS NULL AND id != ?`,
 			username, model.SystemUserID,
-		).Scan(&u.ID, &u.Username, &u.DisplayName, &u.Bio, &u.AvatarURL, &linksJSON, &u.CreatedAt)
+		).Scan(&u.ID, &u.Username, &u.DisplayName, &u.Bio, &u.AvatarURL, &linksJSON, &u.MovedTo, &u.CreatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
@@ -82,8 +82,12 @@ func GetUserProfile(db *database.DB) http.HandlerFunc {
 			"bio":          u.Bio,
 			"avatar_url":   u.AvatarURL,
 			"links":        links,
-			"created_at":   u.CreatedAt,
-			"memberships":  memberships,
+			// Where this person says they have gone (docs/adr/090). Public,
+			// like the rest of the profile: a pointer nobody can read is not
+			// a pointer.
+			"moved_to":    u.MovedTo,
+			"created_at":  u.CreatedAt,
+			"memberships": memberships,
 		})
 	}
 }

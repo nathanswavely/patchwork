@@ -102,6 +102,13 @@ func seedSource(t *testing.T, db *database.DB) {
 	mustExec(t, db, `UPDATE nodes SET accept_event_suggestions = 0 WHERE id = ?`, n2)
 	mustExec(t, db, `UPDATE users SET links = '[{"url":"https://example.com","label":"Site"}]' WHERE id = ?`, u1)
 
+	// A patch and a person who have already said where they went
+	// (docs/adr/090). Both pointers travel: the fork is what somebody
+	// followed the pointer to, and a chain of moves that forgets its last
+	// hop strands anyone reading it from the far end.
+	mustExec(t, db, `UPDATE nodes SET moved_to = 'https://newer.example/patches/patch-2' WHERE id = ?`, n2)
+	mustExec(t, db, `UPDATE users SET moved_to = 'https://newer.example/users/user3' WHERE id = ?`, u3)
+
 	tag := nextID()
 	mustExec(t, db, `INSERT INTO tags (id, name) VALUES (?, 'music')`, tag)
 	mustExec(t, db, `INSERT INTO node_tags (node_id, tag_id) VALUES (?, ?)`, n1, tag)
@@ -324,6 +331,19 @@ func TestRoundTrip(t *testing.T) {
 	}
 	if n := count(t, dst, `SELECT COUNT(*) FROM event_mentions WHERE host = 'other.example' AND slug = 'the-band'`); n != 1 {
 		t.Errorf("cross-quilt mention lost: got %d, want 1", n)
+	}
+
+	// Both moved-to pointers survive the fork (docs/adr/090).
+	if n := count(t, dst, `SELECT COUNT(*) FROM nodes WHERE moved_to = 'https://newer.example/patches/patch-2'`); n != 1 {
+		t.Errorf("a patch's moved-to pointer was lost: got %d, want 1", n)
+	}
+	if n := count(t, dst, `SELECT COUNT(*) FROM users WHERE moved_to = 'https://newer.example/users/user3'`); n != 1 {
+		t.Errorf("a person's moved-to pointer was lost: got %d, want 1", n)
+	}
+	// And nothing invents one. The instance being left is the last one that
+	// should get to write where a community went.
+	if n := count(t, dst, `SELECT COUNT(*) FROM nodes WHERE moved_to IS NOT NULL`); n != 1 {
+		t.Errorf("import set a pointer nobody asked for: %d patches carry one, want 1", n)
 	}
 
 	// The image reference travels with its description. Both, or the fork
@@ -581,6 +601,81 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 	}
 }
 
+// Every travelling table also states which rows a member may carry out.
+//
+// This is the boundary's second axis (docs/adr/089). The first one decides
+// what leaves the instance; a table that passes it still has to say what
+// leaves in ONE MEMBER'S copy, and the two answers are different for good
+// reasons — the noticeboard travels in a custody transfer and never in a
+// member's bundle, a feed URL travels for an admin and for nobody else.
+//
+// Without this test a new table added to Tables() would join the member
+// seamrip with no rule, which fails in the direction that does not announce
+// itself: the rows are simply there. A table that must not travel in a
+// member's view says so with Never, which is a decision and passes.
+func TestEveryTableHasAMemberViewRule(t *testing.T) {
+	views := memberViews()
+	for _, tab := range Tables() {
+		v, ok := views[tab.Name]
+		if !ok {
+			t.Errorf("table %q travels but has no member-view rule: add one to "+
+				"memberViews() saying which rows a member may carry, or Never", tab.Name)
+			continue
+		}
+		if strings.TrimSpace(v.Rule) == "" {
+			t.Errorf("table %q has a member-view rule with no prose: the sentence "+
+				"is what a reader comes here for", tab.Name)
+		}
+		if v.Never && (v.Where != "" || len(v.Cols) > 0) {
+			t.Errorf("table %q is marked Never and also carries a filter", tab.Name)
+		}
+		exported := map[string]bool{}
+		for _, col := range tab.Columns {
+			exported[col.Name] = true
+		}
+		for col := range v.Cols {
+			if !exported[col] {
+				t.Errorf("%s: member view replaces %q, which the table does not export", tab.Name, col)
+			}
+		}
+	}
+	for name := range views {
+		found := false
+		for _, tab := range Tables() {
+			if tab.Name == name {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("member-view rule for %q names a table that does not travel", name)
+		}
+	}
+}
+
+// Every member-view query runs. A predicate that references a column the
+// table's own query does not select is a runtime error nobody meets until a
+// member asks for a bundle, so ask here instead.
+func TestMemberViewQueriesRun(t *testing.T) {
+	db := testDB(t)
+	seedSource(t, db)
+
+	var viewer string
+	db.QueryRow(`SELECT id FROM users WHERE username = 'user2'`).Scan(&viewer)
+	if viewer == "" {
+		t.Fatal("seed did not create user2")
+	}
+
+	for _, tab := range Tables() {
+		v, _ := tab.View()
+		if v.Never {
+			continue
+		}
+		if _, err := queryMemberTable(db, tab, v, viewer); err != nil {
+			t.Errorf("%s: member-view query failed: %v\n%s", tab.Name, err, memberQuery(tab, v))
+		}
+	}
+}
+
 // Every column of an exported table is either exported or deliberately left
 // behind.
 //
@@ -698,5 +793,50 @@ func TestEveryColumnHasABoundaryDecision(t *testing.T) {
 			t.Errorf("%s.%s has no portability decision: add it to that table's Columns "+
 				"so it travels, or to staysBehind here with the reason", tab.Name, col)
 		}
+	}
+}
+
+// A removal travels. Migration 065 is what first let a membership hold
+// status='banned' at all, so this round trip had no rows to carry before it;
+// now that it does, losing the status on a fork would quietly readmit
+// everyone a community had removed — at exactly the moment a fork happens,
+// which is when a community's leadership has gone sideways and its removals
+// are the least safe thing to undo.
+func TestBannedMembershipTravels(t *testing.T) {
+	src := testDB(t)
+	seedSource(t, src)
+
+	// Remove user3 (the follower on patch-1) the way UpdateMember does.
+	mustExec(t, src, `UPDATE memberships SET status = 'banned'
+	                  WHERE user_id = (SELECT id FROM users WHERE username = 'user3')`)
+
+	files := map[string][]map[string]any{}
+	if err := Export(src, func(tab Table, items []map[string]any) error {
+		files[tab.File] = items
+		return nil
+	}); err != nil {
+		t.Fatalf("export: %v", err)
+	}
+
+	var exported int
+	for _, m := range files["memberships.json"] {
+		if m["status"] == "banned" {
+			exported++
+		}
+	}
+	if exported != 1 {
+		t.Fatalf("expected 1 banned membership exported, got %d", exported)
+	}
+
+	dst := testDB(t)
+	if _, _, err := Import(dst,
+		func(file string) ([]map[string]any, error) { return files[file], nil },
+		nextID); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+
+	if n := count(t, dst, `SELECT COUNT(*) FROM memberships m JOIN users u ON u.id = m.user_id
+	                       WHERE u.username = 'user3' AND m.status = 'banned'`); n != 1 {
+		t.Errorf("the fork readmitted a removed person: got %d banned, want 1", n)
 	}
 }

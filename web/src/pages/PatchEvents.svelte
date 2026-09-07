@@ -39,6 +39,7 @@
     isMemberOrAdmin: membershipRole === 'member' || membershipRole === 'admin',
     submissionsEnabled: getSubmissionsEnabled(),
     acceptSuggestions: node?.accept_event_suggestions === true,
+    hasMoved: !!node?.moved_to,
   }));
 
   let events = $state([]);

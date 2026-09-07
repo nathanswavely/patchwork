@@ -417,12 +417,12 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 
 		// Verify node exists and load what the authz decision needs.
-		var nodeStatus string
+		var nodeStatus, nodeMoved string
 		var acceptSuggestions bool
 		err := db.QueryRow(
-			"SELECT status, accept_event_suggestions FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL",
+			"SELECT status, accept_event_suggestions, COALESCE(moved_to,'') FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL",
 			req.NodeID,
-		).Scan(&nodeStatus, &acceptSuggestions)
+		).Scan(&nodeStatus, &acceptSuggestions, &nodeMoved)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -445,6 +445,15 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		status := "active"
 		if !direct {
+			// A patch that has moved takes no suggestions from outside
+			// (docs/adr/090). Its own members and admins still post, because
+			// the old home stays a record and a record can be corrected;
+			// what stops is asking strangers to feed a calendar the
+			// community has left.
+			if nodeMoved != "" {
+				writeMovedAway(w, nodeMoved)
+				return
+			}
 			if !cfg.Submissions.Enabled {
 				http.Error(w, `{"error":"community submissions are disabled on this instance"}`, http.StatusForbidden)
 				return

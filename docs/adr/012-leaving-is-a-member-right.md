@@ -1,7 +1,7 @@
 # ADR 012: Leaving is a member right — the egress boundary and its three affordances
 
-Date: 2026-07-14. Status: accepted as design boundary; affordance 1 shipped
-2026-09-07, affordances 2 and 3 remain backlog.
+Date: 2026-07-14. Status: accepted as design boundary; all three
+affordances shipped 2026-09-07 (docs/adr/089, docs/adr/090).
 
 ## Context
 
@@ -124,4 +124,57 @@ wrote (the copy ledger marks it `human`), and this affordance is not the
 one it promises. It stays an outstanding claim until the member seamrip
 lands.
 
-Affordances 2 (member seamrip) and 3 (moved-to pointer) are unbuilt.
+## Status, 2026-09-07: affordance 2 shipped
+
+`GET /api/v1/users/me/seamrip` is live. docs/adr/089 records how, and the
+decisions this ADR left open.
+
+In short: the portability boundary in `internal/seamrip` grew a second axis
+rather than a second implementation. Every travelling table now states both
+what travels and which rows a given member may carry out, and the member
+export runs the admin export's own queries through that filter, so a column
+added to the boundary reaches both bundles or neither. `people travel as
+stubs` — id, username, display name, avatar — and the set of them is the
+closure of everybody the other travelling rows name, read from the schema's
+own foreign keys rather than from a list somebody has to remember to
+update. No emails, no hidden memberships from a patch the caller is not in,
+no members-only charters or events from one either, no noticeboards, no
+contact cards, no claims, no calendar feed URLs outside a patch the caller
+administers. A tombstone travels as the tombstone it is (docs/adr/086).
+
+Two downloads per account per day, audited as `user.seamrip`, offered at
+Account settings as **Member seamrip**. The bundle carries a manifest
+naming the kind, the person who took it, the time, and the instance, and
+`cmd/import` says which of the two kinds it is reading rather than assuming
+the admin one.
+
+The user agreement's "any member can export what they can already see" is
+no longer an outstanding claim.
+
+## Status, 2026-09-07: affordance 3 shipped
+
+The moved-to pointer is live as `nodes.moved_to` and `users.moved_to`
+(docs/adr/090). A patch's own admins set it at Patch Settings and a person
+sets their own at account settings; it renders as a banner on the patch
+page, a chip on the discovery card, and a line on the profile, and it is
+carried on the ActivityPub actor as `movedTo` so a Mastodon-style client
+renders the redirect. A moved patch declines new joins, new follows and
+event suggestions from outside, answering each with the new address, while
+everyone already inside keeps everything they had.
+
+Both columns travel in a seamrip: a fork of a fork still has to know where
+things went. Nothing on the import side sets one, because the instance
+being left is the last one that should get to write where a community went.
+
+Two things ADR 090 deliberately did not do, and both are recorded there:
+the federated `Move` activity is still not emitted, because it redistributes
+somebody else's followers irreversibly and deserves its own decision now
+that the field exists; and the patch-level pointer is an admin act rather
+than a proposal, on the reasoning that a patch admin already controls every
+other field while the adversary this affordance routes around is the
+instance admin.
+
+All three affordances are now built. The boundary rule stands as written:
+a member can take what they can see, other people's secrets move only with
+their owner's consent or the custodian's cooperation, and none of the three
+needs the authority's permission.

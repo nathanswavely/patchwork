@@ -18,6 +18,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
@@ -399,11 +400,11 @@ type nodeDef struct {
 	block            string
 	// draftBlock is raw JSON for a drafted block (docs/adr/029); when set
 	// it replaces palette/block entirely and bundle supplies the fabrics.
-	draftBlock string
-	bundle     []string
-	website    string
-	links            []nodeLink
-	followerPerms    *followerPerms
+	draftBlock    string
+	bundle        []string
+	website       string
+	links         []nodeLink
+	followerPerms *followerPerms
 }
 
 type followerPerms struct {
@@ -1442,9 +1443,15 @@ func (s *seeder) seedNotifications() {
 		nType, title, body, link string
 		read                     bool
 	}{
-		{"new_event", "New event: First Friday Gallery Walk", "A new event has been posted in the First Friday Collective.", "/events", false},
-		{"proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
-		{"new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
+		// Linked at the global events list rather than at its patch's own
+		// events page, which is where a real event.suggested points. The
+		// badge test below needs a target that stays inside the social
+		// shell: a workspace route remounts the bell, and the remount's
+		// refresh would supply the right count whether or not reading
+		// updated it.
+		{string(notifications.EventSuggested), "Event suggested: First Friday Gallery Walk", "Someone suggested an event for the First Friday Collective.", "/events", false},
+		{string(notifications.ProposalNew), "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
+		{string(notifications.MembershipJoined), "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
 	}
 	// Two deep links to single entities, the shapes issue #56 got wrong: an
 	// event (addressed globally) and a charter (needs its 'docs/' segment).
@@ -1455,13 +1462,13 @@ func (s *seeder) seedNotifications() {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{"event_reminder", "Tomorrow: " + eventTitle, "This event starts in less than 24 hours.", weblink.Event(eventID), false})
+		}{string(notifications.EventSubmissionApproved), "Your event was approved: " + eventTitle, "It is on the calendar now.", weblink.Event(eventID), false})
 	}
 	if slug, docID, docTitle, ok := s.firstGovernanceDoc(); ok {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{"governance_doc_updated", "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
+		}{string(notifications.GovernanceDocUpdated), "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
 	}
 	for i, n := range adminNotifs {
 		createdAt := s.now.AddDate(0, 0, -(i + 1)).Format("2006-01-02T15:04:05.000Z")
@@ -1503,28 +1510,40 @@ func (s *seeder) firstGovernanceDoc() (slug, id, title string, ok bool) {
 // Audit Log
 // ---------------------------------------------------------------------------
 
-func (s *seeder) seedAuditLog() {
-	type auditDef struct {
-		action     string
-		entityType string
-		desc       string
-	}
+type auditDef struct {
+	action     string
+	entityType string
+	desc       string
+}
 
-	actions := []auditDef{
-		{"create", "user", "user_registered"},
-		{"create", "node", "node_created"},
-		{"create", "node", "node_created"},
-		{"create", "event", "event_created"},
-		{"create", "event", "event_created"},
-		{"create", "membership", "membership_joined"},
-		{"create", "membership", "membership_joined"},
-		{"update", "membership", "membership_approved"},
-		{"create", "proposal", "proposal_created"},
-		{"update", "proposal", "proposal_approved"},
-		{"create", "governance_doc", "governance_doc_created"},
-		{"create", "report", "report_submitted"},
-		{"update", "report", "report_reviewed"},
-	}
+// The action column holds what LogAuditEvent writes — "node.create", not
+// "create". These seeded rows carried the bare verb, so the admin audit log's
+// Action filter, whose options are the real dotted actions, matched none of
+// them and every filter read empty on a demo instance. The entity types were
+// right all along; only the actions were not.
+//
+// Audit actions are string literals at their call sites rather than constants,
+// so nothing here can be compile-checked the way the notification fixtures now
+// are. TestSeededAuditActionsExist keeps them honest instead — which is why
+// this is a package-level var rather than a slice inside the function.
+var seededAuditActions = []auditDef{
+	{"user.create", "user", "user_registered"},
+	{"node.create", "node", "node_created"},
+	{"node.create", "node", "node_created"},
+	{"event.create", "event", "event_created"},
+	{"event.create", "event", "event_created"},
+	{"membership.join", "membership", "membership_joined"},
+	{"membership.join", "membership", "membership_joined"},
+	{"membership.approve", "membership", "membership_approved"},
+	{"proposal.create", "proposal", "proposal_created"},
+	{"proposal.resolved", "proposal", "proposal_approved"},
+	{"governance.create", "governance_doc", "governance_doc_created"},
+	{"report.create", "report", "report_submitted"},
+	{"report.resolve", "report", "report_reviewed"},
+}
+
+func (s *seeder) seedAuditLog() {
+	actions := seededAuditActions
 
 	for _, a := range actions {
 		id := auth.NewUUIDv7()

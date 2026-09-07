@@ -146,7 +146,7 @@
     // stay editable and are simply not narrated.
     if (rules.proposal_venue === 'elsewhere') return '';
     const methods = {
-      admin: 'The maintainer makes all decisions for this patch.',
+      admin: 'The maintainer makes all decisions for this patch, and may ask the members before deciding.',
       majority: 'Your patch decides things by majority vote. More than half must agree.',
       supermajority: 'Decisions require a supermajority: at least 2 out of 3 voters must agree.',
       consensus: 'Decisions require consensus. Everyone, or nearly everyone, must agree.',
