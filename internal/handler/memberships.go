@@ -459,10 +459,35 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			members = []memberResponse{}
 		}
 
+		// Totals for the header, counted under exactly the filter the listing
+		// ran — same status, same visibility gate, same join. A header derived
+		// from the loaded page states the page size as the patch's size; a
+		// header counted without the gate promises rows this viewer's listing
+		// will never hand over. Followers are counted apart from admins and
+		// members and never summed with them (CONTEXT.md), and an outsider's
+		// follower total is zero because follower rows are not public
+		// (docs/adr/006).
+		countQuery := `SELECT
+				COALESCE(SUM(CASE WHEN m.role IN ('member','admin') THEN 1 ELSE 0 END), 0),
+				COALESCE(SUM(CASE WHEN m.role = 'follower' THEN 1 ELSE 0 END), 0)
+			FROM memberships m JOIN users u ON m.user_id = u.id
+			WHERE m.node_id = ? AND m.status = ?`
+		countArgs := []interface{}{nodeID, statusFilter}
+		if !insider {
+			countQuery += " AND m.visible = 1 AND m.role IN ('member','admin')"
+		}
+		var memberTotal, followerTotal int
+		if err := db.QueryRow(countQuery, countArgs...).Scan(&memberTotal, &followerTotal); err != nil {
+			http.Error(w, `{"error":"failed to list members"}`, http.StatusInternalServerError)
+			return
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"items":       members,
-			"next_cursor": nextCursor,
+			"items":          members,
+			"next_cursor":    nextCursor,
+			"member_count":   memberTotal,
+			"follower_count": followerTotal,
 		})
 	}
 }

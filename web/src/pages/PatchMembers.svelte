@@ -14,7 +14,15 @@
   let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.members === false);
 
   let members = $state([]);
+  let nextCursor = $state('');
+  let loadingMore = $state(false);
   let loading = $state(true);
+
+  // The header's counts come from the server, never from the loaded array:
+  // the listing is paged, so counting what happened to arrive would report
+  // the page size as the patch's size.
+  let memberCount = $state(0);
+  let followerCount = $state(0);
 
   // Contact cards (docs/adr/080) ride along only for a viewer who is in
   // the room. A member whose own row carries none is offered the switch.
@@ -23,25 +31,33 @@
   let offerSharing = $derived(inRoom && myRow && !myRow.contact);
   let anyContact = $derived(members.some((m) => m.contact));
 
-  // Member count is admins plus members, never followers (CONTEXT.md).
-  // The insider listing carries follower rows too, so the two are counted
-  // apart and never summed.
-  let memberCount = $derived(members.filter((m) => m.role === 'member' || m.role === 'admin').length);
-  let followerCount = $derived(members.filter((m) => m.role === 'follower').length);
-
   $effect(() => {
     if (slug) loadMembers();
   });
 
-  async function loadMembers() {
-    loading = true;
+  async function loadMembers(after = '') {
+    if (after) loadingMore = true;
+    else loading = true;
     try {
-      const data = await api(`nodes/${slug}/members`);
-      members = data.items || data || [];
+      const q = after ? `?after=${encodeURIComponent(after)}` : '';
+      const data = await api(`nodes/${slug}/members${q}`);
+      const items = data.items || [];
+      members = after ? [...members, ...items] : items;
+      nextCursor = data.next_cursor || '';
+      // Admins plus members, never followers (CONTEXT.md) — the two are
+      // counted apart by the server and never summed.
+      memberCount = data.member_count || 0;
+      followerCount = data.follower_count || 0;
     } catch {
-      members = [];
+      if (!after) {
+        members = [];
+        nextCursor = '';
+        memberCount = 0;
+        followerCount = 0;
+      }
     } finally {
       loading = false;
+      loadingMore = false;
     }
   }
 </script>
@@ -103,6 +119,13 @@
         </li>
       {/each}
     </ul>
+    {#if nextCursor}
+      <button
+        class="btn btn-secondary btn-sm load-more"
+        disabled={loadingMore}
+        onclick={() => loadMembers(nextCursor)}
+      >{loadingMore ? 'Loading...' : 'Load more'}</button>
+    {/if}
   {/if}
 </div>
 {/if}
@@ -177,6 +200,10 @@
 
   .member-row:last-child {
     border-bottom: none;
+  }
+
+  .load-more {
+    margin-top: 0.75rem;
   }
 
   .member-name {
