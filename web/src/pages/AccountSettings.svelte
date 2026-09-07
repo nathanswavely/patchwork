@@ -208,6 +208,35 @@
     }
   }
 
+  // Download my data (docs/adr/012, affordance 1): the person's own record,
+  // no admin involved. Gated behind the session, so it can't be a plain link
+  // — fetch it and hand the browser the blob, the way the admin export does.
+  let downloadingData = $state(false);
+
+  async function downloadMyData() {
+    downloadingData = true;
+    try {
+      const res = await fetch('/api/v1/users/me/export', { credentials: 'same-origin' });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error || `Download failed (${res.status})`);
+      }
+      // The server names the file; fall back only if the header is missing.
+      const disposition = res.headers.get('Content-Disposition') || '';
+      const named = disposition.match(/filename="?([^";]+)"?/);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = named ? named[1] : 'patchwork-my-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      showToast(e.message || 'Download failed', 'error');
+    }
+    downloadingData = false;
+  }
+
   async function saveProfile() {
     saving = true;
     saveMessage = '';
@@ -417,6 +446,22 @@
             Create feed
           </button>
         {/if}
+      </div>
+    </section>
+
+    <section class="pw-section">
+      <h2>Download my data</h2>
+      <p class="muted profile-hint">
+        One file with everything this quilt holds about you: your profile and
+        contact card, every membership including the ones you keep hidden, the
+        proposals, votes, comments, notices and events you wrote, and your
+        settings. Nothing anyone else wrote, and no sign-in secrets — so it is
+        safe to keep, and it will not let anyone into your account.
+      </p>
+      <div class="field-actions">
+        <button class="btn btn-secondary" onclick={downloadMyData} disabled={downloadingData}>
+          {downloadingData ? 'Preparing...' : 'Download my data'}
+        </button>
       </div>
     </section>
 
