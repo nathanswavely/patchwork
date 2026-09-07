@@ -153,7 +153,7 @@
       "text": "CI runs the same suites plus `go vet`, `govulncheck`, and npm audit.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -484,7 +484,7 @@
       "text": "## What running a quilt asks of you",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -502,7 +502,7 @@
       "text": "Be honest with yourself about this part first.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -633,7 +633,7 @@
       "text": "## Ways to get one running",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -708,7 +708,7 @@
       "text": "## The promises that keep it honest",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -914,7 +914,7 @@
       "text": "Venues, co-ops, makerspaces, community radio (20–100 people)",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -932,7 +932,7 @@
       "text": "Coalition-scale governance. Elected council, term limits, full accountability.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -989,7 +989,7 @@
       "text": "Arts districts, mutual aid networks, coalitions (100+ people)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1724,7 +1724,7 @@
       "text": "These thresholds can be adjusted by amending this document.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1785,7 +1785,7 @@
       "text": "Changes to financial policies require a supermajority vote.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -1962,7 +1962,7 @@
       "text": "Admins will respond within 7 days with a proposed resolution.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2319,7 +2319,7 @@
       "text": "Followers stay informed about events and activities. They can participate in discussions but cannot vote.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2715,7 +2715,7 @@
       "text": "## Article 5: Dissolution and Seamrip",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -2967,7 +2967,7 @@
       "text": "Changes to financial policies require a supermajority vote with 50% quorum.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -3147,7 +3147,7 @@
       "text": "The council responds within 14 days with a proposed resolution.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -4064,21 +4064,28 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 272,
+          "line": 292,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 319,
+          "line": 338,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 547,
+          "line": 391,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 639,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4289,6 +4296,13 @@
           "quote": null
         },
         {
+          "file": "internal/handler/attestation.go",
+          "line": 88,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
           "file": "internal/handler/attestations.go",
           "line": 178,
           "kind": "go-error-body",
@@ -4472,7 +4486,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 573,
+          "line": 665,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4837,7 +4851,7 @@
       "text": "role must be member or admin",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5391,7 +5405,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 553,
+          "line": 645,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5811,7 +5825,7 @@
       "text": "only an admin of this patch can record what was adopted",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5829,7 +5843,7 @@
       "text": "this patch decides its proposals in Patchwork; amend the charter with a proposal",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5847,7 +5861,7 @@
       "text": "decided_at is required: a record of what happened has to say when",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -5926,7 +5940,7 @@
       "text": "failed to record what was adopted",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6326,6 +6340,103 @@
       ]
     },
     {
+      "id": "d2c6104210e8",
+      "text": "this quilt has no instance key yet",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 43,
+          "kind": "go-error-body",
+          "raw": "this quilt has no instance key yet",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cbac8bee7536",
+      "text": "authentication required",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 72,
+          "kind": "go-error-body",
+          "raw": "authentication required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "19b5dc2d046d",
+      "text": "too many attestations — wait a minute and try again",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 80,
+          "kind": "go-error-body",
+          "raw": "too many attestations — wait a minute and try again",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7bb146b0b1b4",
+      "text": "failed to load the instance key",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 101,
+          "kind": "go-error-body",
+          "raw": "failed to load the instance key",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 106,
+          "kind": "go-error-body",
+          "raw": "failed to load the instance key",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "104c9b3532a4",
+      "text": "failed to sign the attestation",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "API error bodies for the admin attestation endpoints (docs/adr/087) — mechanical refusals, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "internal/handler/attestation.go",
+          "line": 113,
+          "kind": "go-error-body",
+          "raw": "failed to sign the attestation",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "4bdee9cb1da1",
       "text": "failed to list attestations",
       "words": 4,
@@ -6348,7 +6459,7 @@
       "text": "only an admin of this patch can record a decision",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6366,7 +6477,7 @@
       "text": "this patch chooses its admins in Patchwork; there is nothing to record",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6384,7 +6495,7 @@
       "text": "only a patch with elected leadership has terms; this one fills admin seats another way",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6402,7 +6513,7 @@
       "text": "the record being corrected does not belong to this patch",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6420,7 +6531,7 @@
       "text": "that record has already been corrected; correct the correction instead",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6456,7 +6567,7 @@
       "text": "only an admin of this patch can link a name",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6474,7 +6585,7 @@
       "text": "name not found on this patch",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6492,7 +6603,7 @@
       "text": "that name is already linked to a person",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -6542,7 +6653,7 @@
       "text": "a recorded name can only be linked to an active member of this patch",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7166,7 +7277,7 @@
       "text": "this patch is not available for claiming",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7184,7 +7295,7 @@
       "text": "this patch has an approved claim awaiting setup",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7202,7 +7313,7 @@
       "text": "you already have an open claim for this patch",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7241,11 +7352,11 @@
       ]
     },
     {
-      "id": "6552507b1897",
-      "text": "this patch has no verified domain — choose admin review",
-      "words": 10,
+      "id": "7017dc620ac7",
+      "text": "this patch has no verified domain. Choose admin review",
+      "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7253,17 +7364,18 @@
           "file": "internal/handler/claims.go",
           "line": 338,
           "kind": "go-error-body",
-          "raw": "this patch has no verified domain — choose admin review",
+          "raw": "this patch has no verified domain. Choose admin review",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this patch has no verified domain — choose admin review"
     },
     {
       "id": "68a7c7a414f2",
       "text": "a valid email address is required for email verification",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7281,7 +7393,7 @@
       "text": "the email must be at @%s",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7445,7 +7557,7 @@
       "text": "this claim has no email verification to resend",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7459,11 +7571,11 @@
       ]
     },
     {
-      "id": "8855c9883aa2",
-      "text": "resend limit reached — try again tomorrow",
-      "words": 7,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "3755f434f202",
+      "text": "resend limit reached",
+      "words": 3,
+      "tier": "label",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7471,10 +7583,11 @@
           "file": "internal/handler/claims.go",
           "line": 565,
           "kind": "go-error-body",
-          "raw": "resend limit reached — try again tomorrow",
+          "raw": "resend limit reached",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "resend limit reached — try again tomorrow"
     },
     {
       "id": "92abfc915c9e",
@@ -7502,11 +7615,11 @@
       ]
     },
     {
-      "id": "eeb6b3d56593",
-      "text": "this verification link has expired — request a new email from the claim page",
-      "words": 14,
+      "id": "3f4e4f93607a",
+      "text": "this verification link has expired. Request a new email from the claim page",
+      "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7514,10 +7627,11 @@
           "file": "internal/handler/claims.go",
           "line": 638,
           "kind": "go-error-body",
-          "raw": "this verification link has expired — request a new email from the claim page",
+          "raw": "this verification link has expired. Request a new email from the claim page",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this verification link has expired — request a new email from the claim page"
     },
     {
       "id": "89699d04b138",
@@ -7592,7 +7706,7 @@
       "text": "action must be 'approve' or 'reject'",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7624,7 +7738,7 @@
       "text": "verification domains only apply to unclaimed patches",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7710,11 +7824,11 @@
       ]
     },
     {
-      "id": "ef2433075e6d",
-      "text": "this claim's setup window has expired — the patch is claimable again",
-      "words": 12,
+      "id": "8cd22cf5e185",
+      "text": "this claim's setup window has expired. The patch is claimable again",
+      "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7722,17 +7836,18 @@
           "file": "internal/handler/claims.go",
           "line": 1221,
           "kind": "go-error-body",
-          "raw": "this claim's setup window has expired — the patch is claimable again",
+          "raw": "this claim's setup window has expired. The patch is claimable again",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this claim's setup window has expired — the patch is claimable again"
     },
     {
       "id": "b4d6e8c59790",
       "text": "this patch is no longer unclaimed",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7818,7 +7933,7 @@
       "text": "this patch does not include followers in its proposals",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7861,7 +7976,7 @@
       "text": "parent comment not found or belongs to different proposal",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -7929,7 +8044,7 @@
       "text": "only the author can edit this comment",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8080,7 +8195,7 @@
       "text": "must be a member of this patch to nominate",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8098,7 +8213,7 @@
       "text": "a candidate must be an active member of this patch",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8152,7 +8267,7 @@
       "text": "nominations are still open; voting has not started",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8188,7 +8303,7 @@
       "text": "only active events can be linked",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8206,7 +8321,7 @@
       "text": "only this patch's admins can add a mention",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8274,7 +8389,7 @@
       "text": "an event is already on its own patch",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8292,7 +8407,7 @@
       "text": "only admins of either patch can link",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8310,7 +8425,7 @@
       "text": "only the linked patch's admins choose an event to absorb",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8335,7 +8450,7 @@
       "text": "absorb_event_id must be an event on the linked patch",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8421,7 +8536,7 @@
       "text": "only the other patch's admins can confirm",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8457,7 +8572,7 @@
       "text": "only admins of either patch can remove a link",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8511,7 +8626,7 @@
       "text": "only this patch's admins can remove a mention",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8572,7 +8687,7 @@
       "text": "this patch already has the maximum number of event sources",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8668,11 +8783,11 @@
       ]
     },
     {
-      "id": "66290a809a1b",
-      "text": "this source just synced — try again in a minute",
-      "words": 10,
+      "id": "af764bbde65c",
+      "text": "this source just synced, try again in a minute",
+      "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8680,10 +8795,11 @@
           "file": "internal/handler/event_sources.go",
           "line": 261,
           "kind": "go-error-body",
-          "raw": "this source just synced — try again in a minute",
+          "raw": "this source just synced, try again in a minute",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "this source just synced — try again in a minute"
     },
     {
       "id": "e32c8be0ce9a",
@@ -8708,7 +8824,7 @@
       "text": "this event is not attached to an event source",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8873,7 +8989,7 @@
       "text": "bulk upload is for patch admins",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -8909,7 +9025,7 @@
       "text": "an upload is at most %d events",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9037,7 +9153,7 @@
       "text": "node_id, title, and starts_at are required",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9055,7 +9171,7 @@
       "text": "community submissions are disabled on this instance",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9080,7 +9196,7 @@
       "text": "this patch does not accept event suggestions",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9253,7 +9369,7 @@
       "text": "visibility must be public or members",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9278,7 +9394,7 @@
       "text": "that title is reserved for the lining",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9339,7 +9455,7 @@
       "text": "title, body, or visibility is required",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9375,7 +9491,7 @@
       "text": "the lining's title cannot be changed",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9411,7 +9527,7 @@
       "text": "the lining can only be changed by amendment proposal",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9447,7 +9563,7 @@
       "text": "from and to query params are required",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9565,7 +9681,7 @@
       "text": "activity actor does not match signature",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9722,7 +9838,7 @@
       "text": "prose must be 20000 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9740,7 +9856,7 @@
       "text": "support link must be an http(s) URL",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9758,7 +9874,7 @@
       "text": "feedback link must be an http(s) URL",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9776,7 +9892,7 @@
       "text": "currency must be a 3-letter code",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9794,7 +9910,7 @@
       "text": "seamripped-from link must be an http(s) URL",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9812,7 +9928,7 @@
       "text": "the Label needs at least one listed steward before it can publish",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9884,7 +10000,7 @@
       "text": "every cost item needs a service name",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9920,7 +10036,7 @@
       "text": "period must be monthly or yearly",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -9938,7 +10054,7 @@
       "text": "stated_on must be a YYYY-MM-DD date",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10013,7 +10129,7 @@
       "text": "that person is already on the stewards list",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10067,7 +10183,7 @@
       "text": "you are not on the stewards list",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10085,7 +10201,7 @@
       "text": "blurb must be 200 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10177,7 +10293,7 @@
         },
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 85,
+          "line": 87,
           "kind": "go-doc-block",
           "raw": "## The short version",
           "quote": null
@@ -10280,7 +10396,7 @@
       "text": "## What other people can see",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10316,7 +10432,7 @@
       "text": "Your email address is never shown publicly. Only this site's administrators can see it.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10370,7 +10486,7 @@
       "text": "## Federation: where your public content travels",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -10546,17 +10662,35 @@
       ]
     },
     {
+      "id": "1ac51bd6daaf",
+      "text": "You do not need an administrator to get your own copy. **Download my data** in your account settings hands you one file with everything this site holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, your settings and notifications, and the log of your own sign-ins. It contains nothing anyone else wrote and no sign-in secrets, so the file cannot be used to get into your account.",
+      "words": 83,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 67,
+          "kind": "go-doc-block",
+          "raw": "You do not need an administrator to get your own copy. **Download my data** in your account settings hands you one file with everything this site holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, your settings and notifications, and the log of your own sign-ins. It contains nothing anyone else wrote and no sign-in secrets, so the file cannot be used to get into your account.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "6fbb89769125",
       "text": "## How long things are kept, and deletion",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 67,
+          "line": 69,
           "kind": "go-doc-block",
           "raw": "## How long things are kept, and deletion",
           "quote": null
@@ -10574,7 +10708,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 69,
+          "line": 71,
           "kind": "go-doc-block",
           "raw": "Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.",
           "quote": null
@@ -10592,7 +10726,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 71,
+          "line": 73,
           "kind": "go-doc-block",
           "raw": "## Age",
           "quote": null
@@ -10610,7 +10744,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 73,
+          "line": 75,
           "kind": "go-doc-block",
           "raw": "This site is not directed at children under 13, and nobody under 13 may create an account.",
           "quote": null
@@ -10628,7 +10762,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 75,
+          "line": 77,
           "kind": "go-doc-block",
           "raw": "## Changes",
           "quote": null
@@ -10646,7 +10780,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 77,
+          "line": 79,
           "kind": "go-doc-block",
           "raw": "If this policy changes, the change shows up on this page. The software keeps no hidden version of it. What you read here is what the site operates under.",
           "quote": null
@@ -10664,7 +10798,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 79,
+          "line": 81,
           "kind": "go-doc-block",
           "raw": "## Who to talk to",
           "quote": null
@@ -10682,7 +10816,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 81,
+          "line": 83,
           "kind": "go-doc-block",
           "raw": "The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.",
           "quote": null
@@ -10700,7 +10834,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 83,
+          "line": 85,
           "kind": "go-doc-block",
           "raw": "*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
           "quote": null
@@ -10718,7 +10852,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 87,
+          "line": 89,
           "kind": "go-doc-block",
           "raw": "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
           "quote": null
@@ -10737,7 +10871,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 89,
+          "line": 91,
           "kind": "go-doc-block",
           "raw": "## What this is",
           "quote": null
@@ -10755,7 +10889,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 93,
+          "line": 95,
           "kind": "go-doc-block",
           "raw": "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
           "quote": null
@@ -10774,7 +10908,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 95,
+          "line": 97,
           "kind": "go-doc-block",
           "raw": "## Who can join",
           "quote": null
@@ -10792,7 +10926,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 97,
+          "line": 99,
           "kind": "go-doc-block",
           "raw": "You must be at least 13 years old to have an account. Accounts are for people. Bots and automated posters don't get one.",
           "quote": null
@@ -10810,7 +10944,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 99,
+          "line": 101,
           "kind": "go-doc-block",
           "raw": "## Your account",
           "quote": null
@@ -10828,7 +10962,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 101,
+          "line": 103,
           "kind": "go-doc-block",
           "raw": "Sign-in is by email links and passkeys, so there is no password to guard. The email account and devices you use to sign in are still your responsibility, and what happens through your account is yours to answer for. Don't share access to your account or use someone else's.",
           "quote": null
@@ -10846,7 +10980,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 103,
+          "line": 105,
           "kind": "go-doc-block",
           "raw": "## Your content",
           "quote": null
@@ -10864,7 +10998,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 105,
+          "line": 107,
           "kind": "go-doc-block",
           "raw": "What you post is yours, and you keep every right you already had. So the site can function, you give {quilt_name} permission to store your content, show it to the people it's addressed to, and, where federation applies to public content, pass it along to other servers that follow this one. The same permission covers the seamrip: if this community exports its data to continue elsewhere, public content and membership records go with it, as described in the privacy policy. Anything you post publicly can be seen, copied, and shared the way public things on the internet are, and you agree to that too.",
           "quote": null
@@ -10882,7 +11016,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 107,
+          "line": 109,
           "kind": "go-doc-block",
           "raw": "## Conduct",
           "quote": null
@@ -10894,13 +11028,13 @@
       "text": "These rules apply everywhere on this site:",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 109,
+          "line": 111,
           "kind": "go-doc-block",
           "raw": "These rules apply everywhere on this site:",
           "quote": null
@@ -10918,7 +11052,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 111,
+          "line": 113,
           "kind": "go-doc-block",
           "raw": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
           "quote": null
@@ -10937,7 +11071,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 115,
+          "line": 117,
           "kind": "go-doc-block",
           "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.",
           "quote": null
@@ -10955,7 +11089,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 117,
+          "line": 119,
           "kind": "go-doc-block",
           "raw": "## Moderation",
           "quote": null
@@ -10973,7 +11107,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 119,
+          "line": 121,
           "kind": "go-doc-block",
           "raw": "The stewards can remove content, restrict accounts, or close accounts that violate this agreement, without prior notice where they judge that necessary to protect people or the site. Posting content that infringes someone else's copyright will, if repeated, cost you your account. To report copyright infringement or any other abuse, contact the stewards through the [Label](/label).",
           "quote": null
@@ -10985,13 +11119,13 @@
       "text": "## If you don't like how this place is run",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 121,
+          "line": 123,
           "kind": "go-doc-block",
           "raw": "## If you don't like how this place is run",
           "quote": null
@@ -11009,7 +11143,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 123,
+          "line": 125,
           "kind": "go-doc-block",
           "raw": "Disagreement is not a violation. Patchwork keeps governance visible and makes leaving real: any member can export what they can already see, and a community can seamrip itself to new stewards. The [Label](/label) explains how this site is run, what it costs, and where the exit is.",
           "quote": null
@@ -11027,7 +11161,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 125,
+          "line": 127,
           "kind": "go-doc-block",
           "raw": "## No warranty",
           "quote": null
@@ -11045,7 +11179,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 127,
+          "line": 129,
           "kind": "go-doc-block",
           "raw": "Volunteers run this site on real hardware, with no promise of uptime, availability, or permanence. It is provided **as is**, without warranty of any kind. To the fullest extent permitted by law, the stewards are not liable for damages arising from your use of the site or from content other people post, so back up anything you can't afford to lose.",
           "quote": null
@@ -11063,7 +11197,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 129,
+          "line": 131,
           "kind": "go-doc-block",
           "raw": "## Changes and ending",
           "quote": null
@@ -11081,7 +11215,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 131,
+          "line": 133,
           "kind": "go-doc-block",
           "raw": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.",
           "quote": null
@@ -11121,11 +11255,11 @@
       ]
     },
     {
-      "id": "9a3e79467b38",
-      "text": "document cannot be empty — use reset to restore the default",
-      "words": 11,
+      "id": "bd0c7f3db4c0",
+      "text": "document cannot be empty, use reset to restore the default",
+      "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11133,10 +11267,11 @@
           "file": "internal/handler/legal.go",
           "line": 124,
           "kind": "go-error-body",
-          "raw": "document cannot be empty — use reset to restore the default",
+          "raw": "document cannot be empty, use reset to restore the default",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "document cannot be empty — use reset to restore the default"
     },
     {
       "id": "db62d44cbd29",
@@ -11197,7 +11332,7 @@
       "text": "message must be 500 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -11229,22 +11364,23 @@
       ]
     },
     {
-      "id": "1217619f8dec",
-      "text": "this patch hasn't been claimed yet — you can follow it",
-      "words": 11,
+      "id": "dc01113daba3",
+      "text": "Patch must be claimed to accept members",
+      "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 64,
+          "line": 68,
           "kind": "go-error-body",
-          "raw": "this patch hasn't been claimed yet — you can follow it",
+          "raw": "Patch must be claimed to accept members",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "no one runs this patch yet — it takes followers until someone claims it"
     },
     {
       "id": "506d061a2faa",
@@ -11257,7 +11393,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 69,
+          "line": 73,
           "kind": "go-error-body",
           "raw": "this node is invite only",
           "quote": null
@@ -11269,13 +11405,13 @@
       "text": "You have been removed from this community",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 79,
+          "line": 83,
           "kind": "go-error-body",
           "raw": "You have been removed from this community",
           "quote": null
@@ -11293,7 +11429,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 84,
+          "line": 88,
           "kind": "go-error-body",
           "raw": "already following",
           "quote": null
@@ -11311,14 +11447,14 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 89,
+          "line": 93,
           "kind": "go-error-body",
           "raw": "already a member",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 134,
+          "line": 138,
           "kind": "go-error-body",
           "raw": "already a member",
           "quote": null
@@ -11336,7 +11472,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 111,
+          "line": 115,
           "kind": "go-error-body",
           "raw": "failed to upgrade membership",
           "quote": null
@@ -11354,7 +11490,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 138,
+          "line": 142,
           "kind": "go-error-body",
           "raw": "membership request already pending",
           "quote": null
@@ -11372,7 +11508,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 162,
+          "line": 166,
           "kind": "go-error-body",
           "raw": "failed to rejoin node",
           "quote": null
@@ -11390,9 +11526,52 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 225,
+          "line": 229,
           "kind": "go-error-body",
           "raw": "failed to join node",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9ecc2aa17ec6",
+      "text": "no membership request to withdraw",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 305,
+          "kind": "go-error-body",
+          "raw": "no membership request to withdraw",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 309,
+          "kind": "go-error-body",
+          "raw": "no membership request to withdraw",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2b62b8fd3985",
+      "text": "failed to withdraw request",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 315,
+          "kind": "go-error-body",
+          "raw": "failed to withdraw request",
           "quote": null
         }
       ]
@@ -11408,7 +11587,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 280,
+          "line": 352,
           "kind": "go-error-body",
           "raw": "not a member",
           "quote": null
@@ -11420,13 +11599,13 @@
       "text": "cannot leave as the only admin",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 295,
+          "line": 367,
           "kind": "go-error-body",
           "raw": "cannot leave as the only admin",
           "quote": null
@@ -11444,7 +11623,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 302,
+          "line": 374,
           "kind": "go-error-body",
           "raw": "failed to leave node",
           "quote": null
@@ -11462,7 +11641,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 406,
+          "line": 478,
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
@@ -11480,7 +11659,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 491,
+          "line": 563,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -11498,7 +11677,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 564,
+          "line": 656,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -11523,7 +11702,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 583,
+          "line": 675,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -11541,7 +11720,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 588,
+          "line": 680,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -11559,7 +11738,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 611,
+          "line": 703,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -11577,7 +11756,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 616,
+          "line": 708,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -11595,7 +11774,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 624,
+          "line": 716,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -11613,7 +11792,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 630,
+          "line": 722,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -11631,7 +11810,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 655,
+          "line": 747,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -11649,7 +11828,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 663,
+          "line": 755,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -11661,13 +11840,13 @@
       "text": "can only reject pending or reinstate banned members",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 683,
+          "line": 775,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -11685,7 +11864,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 688,
+          "line": 780,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -11703,7 +11882,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 697,
+          "line": 789,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -11721,7 +11900,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 706,
+          "line": 798,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -11733,13 +11912,13 @@
       "text": "this patch chooses its admins elsewhere: record that decision instead",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 716,
+          "line": 808,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -11751,13 +11930,13 @@
       "text": "this patch ratifies admins by proposal: nominate them instead",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 728,
+          "line": 820,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -11775,7 +11954,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 743,
+          "line": 835,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -11898,7 +12077,7 @@
       "text": "tags must be an array of tag names",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12465,7 +12644,7 @@
       "text": "notification not found or already read",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12483,7 +12662,7 @@
       "text": "failed to mark all notifications read",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12546,6 +12725,49 @@
           "line": 194,
           "kind": "go-error-body",
           "raw": "failed to clear notifications",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d392578e74cf",
+      "text": "you have downloaded your data several times just now — try again in a few minutes",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: a rate-limit message, a 500 body, and a toast fallback. Decided ai-fine by the drafting session under the README rule for \"Failed to load comments\".",
+      "occurrences": [
+        {
+          "file": "internal/handler/personal_export.go",
+          "line": 336,
+          "kind": "go-error-body",
+          "raw": "you have downloaded your data several times just now — try again in a few minutes",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "385a2339257e",
+      "text": "failed to build your export",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: a rate-limit message, a 500 body, and a toast fallback. Decided ai-fine by the drafting session under the README rule for \"Failed to load comments\".",
+      "occurrences": [
+        {
+          "file": "internal/handler/personal_export.go",
+          "line": 350,
+          "kind": "go-error-body",
+          "raw": "failed to build your export",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/personal_export.go",
+          "line": 362,
+          "kind": "go-error-body",
+          "raw": "failed to build your export",
           "quote": null
         }
       ]
@@ -12846,7 +13068,7 @@
       "text": "a proposal about a person must be of type membership",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12882,7 +13104,7 @@
       "text": "failed to create amendment branch: %s",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12918,7 +13140,7 @@
       "text": "proposal is not open for voting",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12936,7 +13158,7 @@
       "text": "this patch decides elsewhere; the decision is recorded here after it is made",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12972,7 +13194,7 @@
       "text": "value must be approve, reject, or abstain",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13026,7 +13248,7 @@
       "text": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13062,7 +13284,7 @@
       "text": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13123,7 +13345,7 @@
       "text": "only admins can make proposals official",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13141,7 +13363,7 @@
       "text": "proposal cannot be applied in its current state",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13195,7 +13417,7 @@
       "text": "failed to load recovery code status",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13227,11 +13449,11 @@
       ]
     },
     {
-      "id": "0a768851d94b",
-      "text": "too many attempts — wait a couple of minutes",
-      "words": 9,
+      "id": "5ad04702ddd5",
+      "text": "too many attempts. Wait a couple of minutes",
+      "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13239,10 +13461,11 @@
           "file": "internal/handler/recovery.go",
           "line": 72,
           "kind": "go-error-body",
-          "raw": "too many attempts — wait a couple of minutes",
+          "raw": "too many attempts. Wait a couple of minutes",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "too many attempts — wait a couple of minutes"
     },
     {
       "id": "56eb9ed0d58a",
@@ -13285,7 +13508,7 @@
       "text": "quilt_url must be an http(s) URL",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13303,7 +13526,7 @@
       "text": "node_ap_id must be an http(s) URL",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13382,7 +13605,7 @@
       "text": "snapshot must be a JSON object",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13529,7 +13752,7 @@
       "text": "url must be an http(s) URL",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13716,7 +13939,7 @@
       "text": "entity_type, entity_id, and reason are required",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13806,7 +14029,7 @@
       "text": "only the author can create revisions",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13950,7 +14173,7 @@
       "text": "failed to sign out other sessions",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14022,7 +14245,7 @@
       "text": "name must be 100 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14076,7 +14299,7 @@
       "text": "description must be 500 characters or fewer",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14238,7 +14461,7 @@
       "text": "confirmation name does not match the quilt name",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14252,11 +14475,11 @@
       ]
     },
     {
-      "id": "c323ba82884a",
-      "text": "wipe failed — no data was deleted",
-      "words": 7,
+      "id": "d1c50d4d8a24",
+      "text": "wipe failed, no data was deleted",
+      "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14264,17 +14487,18 @@
           "file": "internal/handler/settings.go",
           "line": 290,
           "kind": "go-error-body",
-          "raw": "wipe failed — no data was deleted",
+          "raw": "wipe failed, no data was deleted",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "wipe failed — no data was deleted"
     },
     {
       "id": "11004bae4b33",
       "text": "only an admin of this patch can name a successor",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14292,7 +14516,7 @@
       "text": "naming a successor is the maintainer model's mechanic; this patch fills admin seats another way",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14310,7 +14534,7 @@
       "text": "you cannot name yourself as your own successor",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14328,7 +14552,7 @@
       "text": "a successor must be an active member of this patch",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14364,7 +14588,7 @@
       "text": "only an admin of this patch can clear a successor",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14418,7 +14642,7 @@
       "text": "tag already exists or failed to create",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14461,7 +14685,7 @@
       "text": "motif is required (empty string clears it)",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14756,7 +14980,7 @@
       "text": "resource must be an acct: URI",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14828,7 +15052,7 @@
       "text": "<!DOCTYPE html><html><body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 20px;\">",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14846,7 +15070,7 @@
       "text": "<p style=\"color: #666; font-size: 13px; margin: 0 0 4px;\">%s</p>",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14864,7 +15088,7 @@
       "text": "<h2 style=\"margin: 0 0 12px; font-size: 18px; color: #1a1a1a;\">%s</h2>",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14882,7 +15106,7 @@
       "text": "<p style=\"color: #444; font-size: 14px; line-height: 1.5; margin: 0 0 16px;\">%s</p>",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14918,7 +15142,7 @@
       "text": "<hr style=\"border: none; border-top: 1px solid #eee; margin: 24px 0;\">",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -14979,7 +15203,7 @@
       "text": "You have not taken part in governance here for",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15033,7 +15257,7 @@
       "text": "You are now an interim admin of",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15087,7 +15311,7 @@
       "text": "Less than 24 hours to vote on this proposal.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15123,7 +15347,7 @@
       "text": "This event starts in less than 24 hours.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15429,7 +15653,7 @@
       "text": "Comment on a proposal you're in",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15501,7 +15725,7 @@
       "text": "Rules changed while votes are open",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15555,7 +15779,7 @@
       "text": "A patch has no admins left",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -15807,7 +16031,7 @@
       "text": "Event link request for your patch",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16023,7 +16247,7 @@
       "text": "Your claim's setup window is closing",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16227,7 +16451,7 @@
       "text": "Requirements: Go 1.25+, Node 20+ (to build the frontend), or just Docker.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16245,7 +16469,7 @@
       "text": "### Demo data: try it as different people",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16300,7 +16524,7 @@
       "text": "Or with Docker Compose (includes Caddy for automatic HTTPS):",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16631,21 +16855,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 483,
+          "line": 485,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 529,
+          "line": 533,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 582,
+          "line": 586,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -16657,27 +16881,27 @@
       "text": "You need to be logged in to view this page.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 484,
+          "line": 486,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 530,
+          "line": 534,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 583,
+          "line": 587,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -16695,7 +16919,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 677,
+          "line": 681,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -16707,13 +16931,13 @@
       "text": "The page you're looking for doesn't exist.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 678,
+          "line": 682,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -16771,6 +16995,31 @@
       ]
     },
     {
+      "id": "596439f03867",
+      "text": "Prove admin",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/components/AdminShell.svelte",
+          "line": 32,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 120,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "e5e74372937f",
       "text": "Search administration…",
       "words": 2,
@@ -16781,7 +17030,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 54,
+          "line": 55,
           "kind": "attr:placeholder",
           "raw": "Search administration…",
           "quote": "\""
@@ -16811,7 +17060,7 @@
       "text": "Paste the text the meeting adopted",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16829,7 +17078,7 @@
       "text": "Name the document that was adopted",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16847,7 +17096,7 @@
       "text": "Recording an adopted text needs a passkey. Enroll one in Security settings first.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -16935,7 +17184,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 419,
+          "line": 434,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -16983,7 +17232,7 @@
       "text": "The adopted text is visible to members.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17080,7 +17329,7 @@
       "text": "If this patch has no document by that name, one is created.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17177,7 +17426,7 @@
       "text": "Paste the whole document as it now reads",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17213,7 +17462,7 @@
       "text": "Say when the decision was made",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17231,7 +17480,7 @@
       "text": "Name at least one person the decision put in place",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17249,7 +17498,7 @@
       "text": "Recording a decision needs a passkey. Enroll one in Security settings first.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17267,7 +17516,7 @@
       "text": "Linking a name needs a passkey. Enroll one in Security settings first.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17424,7 +17673,7 @@
       "text": "Term ended {formatDay(current.term_ends_at)}. The council serves until a successor is elected.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17496,7 +17745,7 @@
       "text": "{earlier.length} earlier record{earlier.length > 1 ? 's' : ''}",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17676,7 +17925,7 @@
       "text": "Changing the grid clears your seams (colors of surviving cells stay). Continue?",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17767,7 +18016,7 @@
       "text": "Click a piece to color it with fabric {selectedSlot + 1}.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17785,7 +18034,7 @@
       "text": "Click a seam to unpick it. Pieces keep their fabric where they survive.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18309,7 +18558,7 @@
       "text": "{seats} seat{seats === 1 ? '' : 's'}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18327,7 +18576,7 @@
       "text": "Anyone who is a member can stand.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18345,7 +18594,7 @@
       "text": "Nominations close {formatDay(proposal.nominations_close_at)}, and voting opens then.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18363,7 +18612,7 @@
       "text": "Approve as many candidates as you like. The {seats} most approved take the seats.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18381,7 +18630,7 @@
       "text": "{c.approvals} approval{c.approvals === 1 ? '' : 's'}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18417,7 +18666,7 @@
       "text": "You are standing in this election.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18435,7 +18684,7 @@
       "text": "You can change this until voting closes. Approving nobody is the same as not voting.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18692,7 +18941,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 264,
+          "line": 293,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -18758,7 +19007,7 @@
       "text": "asked to link to this event",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19203,7 +19452,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 481,
+          "line": 478,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -19238,7 +19487,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 125,
+          "line": 188,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -19275,7 +19524,7 @@
       "text": "Naming a successor needs a passkey. Enroll one in Security settings first.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19341,7 +19590,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 228,
+          "line": 257,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -19409,7 +19658,7 @@
       "text": "The maintainer makes all decisions for this patch.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19427,7 +19676,7 @@
       "text": "Your patch decides things by majority vote. More than half must agree.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19445,7 +19694,7 @@
       "text": "Decisions require a supermajority: at least 2 out of 3 voters must agree.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19463,7 +19712,7 @@
       "text": "Decisions require consensus. Everyone, or nearly everyone, must agree.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19481,7 +19730,7 @@
       "text": "Any number of votes counts. No minimum participation required.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19499,7 +19748,7 @@
       "text": "One person maintains this patch. They handle day-to-day decisions and can designate a successor.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19535,7 +19784,7 @@
       "text": "The community elects admins for fixed terms. Regular elections ensure power rotates.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19589,7 +19838,7 @@
       "text": "Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19662,7 +19911,7 @@
       "text": "An admin changes these rules directly.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19716,7 +19965,7 @@
       "text": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19752,7 +20001,7 @@
       "text": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19770,7 +20019,7 @@
       "text": "Admins are chosen outside Patchwork. What the community decided is recorded below.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -19802,22 +20051,23 @@
       ]
     },
     {
-      "id": "5f02e2975dff",
-      "text": "— if the current admin steps away, the patch passes to them.",
+      "id": "e3f5fe15e5e7",
+      "text": ". If the current admin steps away, the patch passes to them.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 369,
+          "line": 368,
           "kind": "markup",
-          "raw": "— if the current admin steps away, the patch passes to them.",
+          "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "— if the current admin steps away, the patch passes to them."
     },
     {
       "id": "c485c7ce16f0",
@@ -19830,7 +20080,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 372,
+          "line": 371,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -19848,7 +20098,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 378,
+          "line": 377,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -19860,13 +20110,13 @@
       "text": "Naming a successor is also what lets you leave a patch you run alone.",
       "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 392,
+          "line": 391,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -19884,14 +20134,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 404,
+          "line": 403,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 408,
+          "line": 407,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -19973,13 +20223,13 @@
       "text": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 409,
+          "line": 408,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -20004,7 +20254,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 388,
+          "line": 403,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -20066,7 +20316,7 @@
       "text": "{instanceName} is a quilt of the communities around you.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20237,7 +20487,7 @@
         },
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 77,
+          "line": 83,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -20265,14 +20515,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 711,
+          "line": 722,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 718,
+          "line": 729,
           "kind": "attr:aria-label",
           "raw": "Dismiss",
           "quote": "\""
@@ -20302,7 +20552,7 @@
       "text": "Membership is admin-approved. This sends a request.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20320,7 +20570,7 @@
       "text": "Membership is open. Joining makes you a member.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20338,7 +20588,7 @@
       "text": "This patch has amended the lining.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20428,7 +20678,7 @@
       "text": "Introduce yourself to the admins (optional)",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20564,7 +20814,7 @@
       "text": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20808,7 +21058,7 @@
       "text": "first. It takes a moment and uses the sign-in you already have.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -20875,7 +21125,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 78,
+          "line": 94,
+          "kind": "js-string",
+          "raw": "Membership request sent",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 117,
           "kind": "js-string",
           "raw": "Membership request sent",
           "quote": "'"
@@ -20887,13 +21144,20 @@
       "text": "You are now a member",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 78,
+          "line": 94,
+          "kind": "js-string",
+          "raw": "You are now a member",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 117,
           "kind": "js-string",
           "raw": "You are now a member",
           "quote": "'"
@@ -20911,7 +21175,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 80,
+          "line": 96,
+          "kind": "js-string",
+          "raw": "Could not join",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 119,
           "kind": "js-string",
           "raw": "Could not join",
           "quote": "'"
@@ -20929,7 +21200,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 93,
+          "line": 109,
           "kind": "js-string",
           "raw": "Following patch",
           "quote": "'"
@@ -20947,9 +21218,52 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 95,
+          "line": 111,
           "kind": "js-string",
           "raw": "Could not follow",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "15727f696968",
+      "text": "Request withdrawn",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchRelationship.svelte",
+          "line": 128,
+          "kind": "js-string",
+          "raw": "Request withdrawn",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 91,
+          "kind": "js-string",
+          "raw": "Request withdrawn",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "33cfe751d2f7",
+      "text": "Could not withdraw request",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchRelationship.svelte",
+          "line": 130,
+          "kind": "js-string",
+          "raw": "Could not withdraw request",
           "quote": "'"
         }
       ]
@@ -20965,7 +21279,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 111,
+          "line": 146,
+          "kind": "js-string",
+          "raw": "Unfollowed patch",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 92,
           "kind": "js-string",
           "raw": "Unfollowed patch",
           "quote": "'"
@@ -20983,14 +21304,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 111,
+          "line": 146,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 46,
+          "line": 92,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
@@ -21008,7 +21329,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 113,
+          "line": 148,
           "kind": "js-string",
           "raw": "Could not leave",
           "quote": "'"
@@ -21020,15 +21341,51 @@
       "text": "Removed from this community",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 124,
+          "line": 159,
           "kind": "markup",
           "raw": "Removed from this community",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0248f6155443",
+      "text": "Membership requested",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchRelationship.svelte",
+          "line": 199,
+          "kind": "markup",
+          "raw": "Membership requested",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8bd07d76858d",
+      "text": "Withdraw request",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchRelationship.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "Withdraw request",
           "quote": null
         }
       ]
@@ -21044,21 +21401,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 151,
+          "line": 209,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 370,
-          "kind": "markup",
-          "raw": "Follow",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Discover.svelte",
-          "line": 416,
+          "line": 288,
           "kind": "markup",
           "raw": "Follow",
           "quote": null
@@ -21076,10 +21426,17 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchRelationship.svelte",
-          "line": 159,
+          "line": 217,
           "kind": "markup",
           "raw": "Become a member",
           "quote": null
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 56,
+          "kind": "js-string",
+          "raw": "Become a member",
+          "quote": "'"
         }
       ]
     },
@@ -21094,7 +21451,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 86,
+          "line": 87,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -21108,7 +21465,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 131,
+          "line": 145,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -21126,14 +21483,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 150,
+          "line": 163,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 151,
+          "line": 164,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -21151,7 +21508,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 158,
+          "line": 171,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -21169,14 +21526,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 173,
+          "line": 186,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 177,
+          "line": 191,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -21194,7 +21551,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 176,
+          "line": 189,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -21353,7 +21710,7 @@
       "text": "Nominations are open. Voting starts when they close.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21389,7 +21746,7 @@
       "text": "The community approved this change. An admin needs to make it official.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21407,7 +21764,7 @@
       "text": "This proposal did not pass. {approveCount} approved, {rejectCount} rejected.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21549,7 +21906,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 662,
+          "line": 673,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -21604,7 +21961,7 @@
       "text": "Create the first patch to get started.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21730,7 +22087,7 @@
       "text": "Report submitted. An admin will review it.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -21909,7 +22266,7 @@
       "text": "Anything that helps an admin understand what happened.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22107,7 +22464,7 @@
       "text": "Copy failed. Select the address instead",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22290,7 +22647,7 @@
       "text": "Stewarded by {(label.stewards || []).map((s) => `@${s.username}`).join(', ')}",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -22977,7 +23334,7 @@
       "text": "({unchangedCount} field{unchangedCount > 1 ? 's' : ''} unchanged)",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23031,7 +23388,7 @@
       "text": "People don't vote on proposals about themselves",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23148,7 +23505,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 309,
+          "line": 324,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -23173,7 +23530,7 @@
         },
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 87,
+          "line": 93,
           "kind": "markup",
           "raw": "Proposals",
           "quote": null
@@ -23223,7 +23580,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 359,
+          "line": 374,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -23235,7 +23592,7 @@
       "text": "Copy failed. Select the address instead.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23314,7 +23671,7 @@
       "text": "Paste the calendar address into your calendar app to follow this patch's events.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23425,7 +23782,7 @@
       "text": "No tags yet. The instance admin curates the list.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23461,7 +23818,7 @@
       "text": "Decisions pass when more than half of voters agree.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23479,7 +23836,7 @@
       "text": "Decisions require at least 2 out of 3 voters to agree.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23497,7 +23854,7 @@
       "text": "Decisions require everyone (or nearly everyone) to agree.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23551,7 +23908,7 @@
       "text": "One person (the founder) maintains this patch and makes day-to-day decisions.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23569,7 +23926,7 @@
       "text": "Admins earn their role through sustained contribution. Existing admins nominate new ones.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23587,7 +23944,7 @@
       "text": "The community elects admins for fixed terms. Power rotates through regular elections.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -23755,7 +24112,7 @@
       "occurrences": [
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 80,
+          "line": 86,
           "kind": "markup",
           "raw": "You're a member of {node.name}.",
           "quote": null
@@ -23773,7 +24130,7 @@
       "occurrences": [
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 83,
+          "line": 89,
           "kind": "markup",
           "raw": "Members-only charters",
           "quote": null
@@ -23791,7 +24148,7 @@
       "occurrences": [
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 84,
+          "line": 90,
           "kind": "markup",
           "raw": "are now readable.",
           "quote": null
@@ -23803,13 +24160,13 @@
       "text": "are open to you, including your vote.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 88,
+          "line": 94,
           "kind": "markup",
           "raw": "are open to you, including your vote.",
           "quote": null
@@ -23827,7 +24184,7 @@
       "occurrences": [
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 91,
+          "line": 97,
           "kind": "markup",
           "raw": "You're on the",
           "quote": null
@@ -23845,7 +24202,7 @@
       "occurrences": [
         {
           "file": "web/src/components/UnlockPanel.svelte",
-          "line": 91,
+          "line": 97,
           "kind": "markup",
           "raw": "member list",
           "quote": null
@@ -23906,7 +24263,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 211,
+          "line": 225,
           "kind": "markup",
           "raw": "Settings",
           "quote": null
@@ -24008,7 +24365,7 @@
       "text": "Quorum met ({totalVotes} of {electorateSize} voted, {quorumPercent}% needed)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24026,7 +24383,7 @@
       "text": "Quorum not yet met ({totalVotes} of {quorumNeeded} needed)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24921,7 +25278,7 @@
       "text": "Invalid registry format: missing quilts array",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24939,7 +25296,7 @@
       "text": "This action needs a passkey. Enroll one in Security settings first.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -24993,7 +25350,7 @@
       "text": "An inferred link from shared members between patches",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25029,7 +25386,7 @@
       "text": "A proposal for the community to vote on",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25083,7 +25440,7 @@
       "text": "A community that branched off from another",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25766,7 +26123,7 @@
       "text": "Patchwork is open source. Start your own quilt &rarr;",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25784,7 +26141,7 @@
       "text": "Patchwork will open on My Quilt",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25802,7 +26159,7 @@
       "text": "Patchwork will open on the whole quilt",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25820,7 +26177,7 @@
       "text": "You are listed on the Label",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25838,7 +26195,7 @@
       "text": "You are no longer listed on the Label",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -25974,6 +26331,24 @@
       ]
     },
     {
+      "id": "eae34ccbc443",
+      "text": "Download failed",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Mechanical: a rate-limit message, a 500 body, and a toast fallback. Decided ai-fine by the drafting session under the README rule for \"Failed to load comments\".",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 233,
+          "kind": "js-string",
+          "raw": "Download failed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "ea278dbc0644",
       "text": "Profile saved",
       "words": 2,
@@ -25984,7 +26359,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 226,
+          "line": 255,
           "kind": "js-string",
           "raw": "Profile saved",
           "quote": "'"
@@ -26002,7 +26377,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 229,
+          "line": 258,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -26048,7 +26423,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 239,
+          "line": 268,
           "kind": "markup",
           "raw": "Profile",
           "quote": null
@@ -26066,7 +26441,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 241,
+          "line": 270,
           "kind": "markup",
           "raw": "Your",
           "quote": null
@@ -26078,13 +26453,13 @@
       "text": "shows your name, bio, links, and the memberships you keep visible.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 242,
+          "line": 271,
           "kind": "markup",
           "raw": "shows your name, bio, links, and the memberships you keep visible.",
           "quote": null
@@ -26102,7 +26477,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 246,
+          "line": 275,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -26123,7 +26498,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 186,
+          "line": 184,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -26141,7 +26516,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 248,
+          "line": 277,
           "kind": "markup",
           "raw": "Username cannot be changed.",
           "quote": null
@@ -26159,7 +26534,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 251,
+          "line": 280,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -26180,7 +26555,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 207,
+          "line": 205,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -26198,7 +26573,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 255,
+          "line": 284,
           "kind": "markup",
           "raw": "Bio",
           "quote": null
@@ -26216,7 +26591,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 259,
+          "line": 288,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -26255,7 +26630,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 262,
+          "line": 291,
           "kind": "attr:placeholder",
           "raw": "Label",
           "quote": "\""
@@ -26273,7 +26648,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 263,
+          "line": 292,
           "kind": "attr:placeholder",
           "raw": "https://…",
           "quote": "\""
@@ -26291,7 +26666,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 268,
+          "line": 297,
           "kind": "markup",
           "raw": "Add link",
           "quote": null
@@ -26309,7 +26684,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 285,
+          "line": 314,
           "kind": "markup",
           "raw": "Contact card",
           "quote": null
@@ -26327,7 +26702,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 287,
+          "line": 316,
           "kind": "markup",
           "raw": "How the people you organize with can reach you. Nothing here is public:\n        a patch's admins and members see your card only once you share it\n        with that patch, in",
           "quote": null
@@ -26345,7 +26720,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 292,
+          "line": 321,
           "kind": "markup",
           "raw": "Shared with 1 patch.",
           "quote": null
@@ -26363,7 +26738,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 294,
+          "line": 323,
           "kind": "markup",
           "raw": "Shared with {sharedWithCount} patches.",
           "quote": null
@@ -26381,7 +26756,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 296,
+          "line": 325,
           "kind": "markup",
           "raw": "Not shared with any patch yet.",
           "quote": null
@@ -26399,7 +26774,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 301,
+          "line": 330,
           "kind": "markup",
           "raw": "Phone",
           "quote": null
@@ -26417,7 +26792,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 305,
+          "line": 334,
           "kind": "markup",
           "raw": "Email to reach you at",
           "quote": null
@@ -26435,7 +26810,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 307,
+          "line": 336,
           "kind": "markup",
           "raw": "Separate from the address you sign in with. That one is never shared.",
           "quote": null
@@ -26453,7 +26828,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 310,
+          "line": 339,
           "kind": "markup",
           "raw": "Note",
           "quote": null
@@ -26478,7 +26853,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 311,
+          "line": 340,
           "kind": "attr:placeholder",
           "raw": "How you prefer to be reached",
           "quote": "\""
@@ -26496,7 +26871,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 322,
+          "line": 351,
           "kind": "markup",
           "raw": "When you open Patchwork",
           "quote": null
@@ -26514,7 +26889,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 324,
+          "line": 353,
           "kind": "markup",
           "raw": "Patchwork opens on the whole quilt. Switch this on to start on My Quilt instead.",
           "quote": null
@@ -26533,7 +26908,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 333,
+          "line": 362,
           "kind": "markup",
           "raw": "Start on My Quilt",
           "quote": null
@@ -26551,7 +26926,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 338,
+          "line": 367,
           "kind": "markup",
           "raw": "Discovery",
           "quote": null
@@ -26563,13 +26938,13 @@
       "text": "Hide patches that amended the lining",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 346,
+          "line": 375,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -26594,7 +26969,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 349,
+          "line": 378,
           "kind": "markup",
           "raw": "Keeps patches that changed the shared community standards out of your\n        quilt, search, map, and event feed. Direct links still work.",
           "quote": null
@@ -26612,7 +26987,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 355,
+          "line": 384,
           "kind": "markup",
           "raw": "Personal feed",
           "quote": null
@@ -26630,7 +27005,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 357,
+          "line": 386,
           "kind": "markup",
           "raw": "A calendar feed of every event on your My Quilt, for your calendar\n        app. The address is a secret. Anyone who has it can read your feed.",
           "quote": null
@@ -26648,7 +27023,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 363,
+          "line": 392,
+          "kind": "markup",
+          "raw": "Copy",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 118,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -26667,13 +27049,13 @@
       "text": "Copy it now. This address won't be shown again, and regenerating replaces it.",
       "words": 13,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 366,
+          "line": 395,
           "kind": "markup",
           "raw": "Copy it now. This address won't be shown again, and regenerating\n          replaces it.",
           "quote": null
@@ -26691,7 +27073,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 373,
+          "line": 402,
           "kind": "markup",
           "raw": "Regenerate address",
           "quote": null
@@ -26709,7 +27091,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 376,
+          "line": 405,
           "kind": "markup",
           "raw": "Disable",
           "quote": null
@@ -26727,9 +27109,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 380,
+          "line": 409,
           "kind": "markup",
           "raw": "Create feed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "edbfbe26317e",
+      "text": "Download my data",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 416,
+          "kind": "markup",
+          "raw": "Download my data",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d63740ea6b0f",
+      "text": "One file with everything this quilt holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, and your settings. Nothing anyone else wrote, and no sign-in secrets — so it is safe to keep, and it will not let anyone into your account.",
+      "words": 58,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 418,
+          "kind": "markup",
+          "raw": "One file with everything this quilt holds about you: your profile and\n        contact card, every membership including the ones you keep hidden, the\n        proposals, votes, comments, notices and events you wrote, and your\n        settings. Nothing anyone else wrote, and no sign-in secrets — so it is\n        safe to keep, and it will not let anyone into your account.",
           "quote": null
         }
       ]
@@ -26745,7 +27163,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 388,
+          "line": 433,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -26763,7 +27181,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 391,
+          "line": 436,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -26781,7 +27199,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 392,
+          "line": 437,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
@@ -26793,13 +27211,13 @@
       "text": "An instance admin wants to name you on this quilt's",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 397,
+          "line": 442,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -26811,13 +27229,13 @@
       "text": "as a steward. Nothing appears until you accept, and you can take it back later.",
       "words": 15,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 399,
+          "line": 444,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
@@ -26829,13 +27247,13 @@
       "text": "What you look after (in your own words)",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 404,
+          "line": 449,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -26847,13 +27265,13 @@
       "text": "keeps the lights on and pays the bill",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 406,
+          "line": 451,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -26871,7 +27289,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 422,
+          "line": 467,
           "kind": "markup",
           "raw": "Decline",
           "quote": null
@@ -26919,7 +27337,7 @@
       "text": "Activity from your patches will show up here.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -27585,11 +28003,299 @@
       ]
     },
     {
+      "id": "d0f9b0e1542b",
+      "text": "Signing failed.",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Toast/error fallback on the Prove Admin page (docs/adr/087) — mechanical, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 50,
+          "kind": "js-string",
+          "raw": "Signing failed.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3f1975b88a72",
+      "text": "Copy failed. Select the text instead.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Toast/error fallback on the Prove Admin page (docs/adr/087) — mechanical, decided ai-fine by the drafting session under the README's 'Failed to load comments' rule",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 61,
+          "kind": "js-string",
+          "raw": "Copy failed. Select the text instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "bcb50f022b80",
+      "text": "Prove you administer this quilt",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 67,
+          "kind": "markup",
+          "raw": "Prove you administer this quilt",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e8fdbfa4aa93",
+      "text": "Sometimes someone outside this quilt needs to know that the person writing to them really is an admin here. A hosting provider changing a billing contact, for example, or a directory checking a submission. Ask them for a nonce, which is any string they choose. Sign it here and send them the result. They can check it against this quilt's public key with no account and no request to us. Because they chose the string, they know the answer was made for them and not copied from somewhere else.",
+      "words": 89,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 69,
+          "kind": "markup",
+          "raw": "Sometimes someone outside this quilt needs to know that the person\n    writing to them really is an admin here. A hosting provider changing a\n    billing contact, for example, or a directory checking a submission. Ask\n    them for a nonce, which is any string they choose. Sign it here and send\n    them the result. They can check it against this quilt's public key with\n    no account and no request to us. Because they chose the string, they\n    know the answer was made for them and not copied from somewhere else.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "014c5006b48a",
+      "text": "What it proves:",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "What it proves:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8053e06e08ef",
+      "text": "an admin of this quilt signed that exact string at that time. The signature is good for fifteen minutes.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "an admin of this quilt signed that exact\n    string at that time. The signature is good for fifteen minutes.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e96aac13a815",
+      "text": "What it does not prove:",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "What it does not prove:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6625bd021689",
+      "text": "who you are. The signed statement names this domain and nothing else. No username, no email, no account. Any admin here could have produced it, and that is deliberate. This quilt does not publish who its admins are.",
+      "words": 38,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "who you are. The signed statement\n    names this domain and nothing else. No username, no email, no account.\n    Any admin here could have produced it, and that is deliberate. This quilt\n    does not publish who its admins are.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7de4a6fbef0e",
+      "text": "Their nonce",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 89,
+          "kind": "markup",
+          "raw": "Their nonce",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ae374e772750",
+      "text": "the string they gave you",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 95,
+          "kind": "attr:placeholder",
+          "raw": "the string they gave you",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "d843290061e4",
+      "text": "8 to 64 printable characters on one line. Paste it exactly as they sent it. A changed character is a different nonce, and their check will fail.",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 105,
+          "kind": "markup",
+          "raw": "8 to 64 printable characters on one line. Paste it exactly as they sent\n      it. A changed character is a different nonce, and their check will fail.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cd794a19c930",
+      "text": "Send them this",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 117,
+          "kind": "markup",
+          "raw": "Send them this",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9c8e82e0e047",
+      "text": "Good until",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 122,
+          "kind": "markup",
+          "raw": "Good until",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f1a73e2204a1",
+      "text": "Signature",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 123,
+          "kind": "markup",
+          "raw": "Signature",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5370d1dd17db",
+      "text": "They check it against",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 124,
+          "kind": "markup",
+          "raw": "They check it against",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "790d3a5ed6a2",
+      "text": "Tell them to fetch the key from this quilt's own address, not from a link in the message. A signature only means something when the key came from the domain they care about.",
+      "words": 33,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAttestation.svelte",
+          "line": 127,
+          "kind": "markup",
+          "raw": "Tell them to fetch the key from this quilt's own address, not from a\n        link in the message. A signature only means something when the key\n        came from the domain they care about.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "6ea3406b663b",
       "text": "The \"From\" date must be before the \"To\" date.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28002,7 +28708,7 @@
       "text": "Claim approved. The claimant can now complete setup.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28056,7 +28762,7 @@
       "text": "Users requesting ownership of unclaimed patches.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28092,7 +28798,7 @@
       "text": "Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28213,7 +28919,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 601,
+          "line": 612,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -28455,7 +29161,7 @@
       "text": "Download all community data as a zip: patches, members, events, governance",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28534,7 +29240,7 @@
       "text": "Community-submitted events on unclaimed patches awaiting review.",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28602,7 +29308,7 @@
       "text": "Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28670,7 +29376,7 @@
       "text": "Every cost item needs a service name",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28724,7 +29430,7 @@
       "text": "You are listed as a steward",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28778,7 +29484,7 @@
       "text": "The Label is public at /label",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28833,7 +29539,7 @@
       "text": "Anyone can read the Label, signed in or not.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -28870,7 +29576,7 @@
       "text": "Ready to publish whenever you are.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29102,7 +29808,7 @@
       "text": "Worth keeping if the history is friendly. Remove it if it isn't.",
       "words": 12,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29272,7 +29978,7 @@
       "text": "When this figure was stated or last reviewed",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29290,7 +29996,7 @@
       "text": "Why this one? (cheap, EU-based, no contract)",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29399,7 +30105,7 @@
       "text": "Custom text, last saved {current.updated_at?.slice(0, 10) || 'recently'}.",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29453,7 +30159,7 @@
       "text": "Markdown. Links like [the Label](/label) work.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -29561,7 +30267,7 @@
       "text": "Neighbor quilts appear in the quilt switcher for",
       "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -31571,7 +32277,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 168,
+          "line": 231,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -31603,7 +32309,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 147,
+          "line": 210,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -31707,7 +32413,7 @@
         },
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 53,
+          "line": 60,
           "kind": "js-string",
           "raw": "Failed to load document",
           "quote": "'"
@@ -32573,7 +33279,7 @@
       "text": "You're cleared to set up this patch. Setup is where it becomes active. Until then, it still reads as unclaimed to everyone else.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33138,7 +33844,7 @@
       "text": "This proves the account that opened the claim controls this email address. You'll complete setup next to activate the patch.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33320,7 +34026,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 140,
+          "line": 203,
           "kind": "markup",
           "raw": "Managing",
           "quote": null
@@ -33370,7 +34076,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 161,
+          "line": 224,
           "kind": "markup",
           "raw": "Member of",
           "quote": null
@@ -33413,21 +34119,14 @@
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 368,
-          "kind": "markup",
-          "raw": "Following",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Discover.svelte",
-          "line": 414,
+          "line": 286,
           "kind": "markup",
           "raw": "Following",
           "quote": null
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 183,
+          "line": 266,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -33439,7 +34138,7 @@
       "text": "You haven't joined any patches yet.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -33452,7 +34151,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 129,
+          "line": 192,
           "kind": "markup",
           "raw": "You haven't joined any patches yet.",
           "quote": null
@@ -33488,14 +34187,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 165,
+          "line": 191,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 234,
+          "line": 260,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -33509,14 +34208,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 283,
+          "line": 289,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 396,
+          "line": 402,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -33534,7 +34233,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 230,
+          "line": 256,
           "kind": "js-string",
           "raw": "You'll get a note once a month.",
           "quote": "\""
@@ -33552,7 +34251,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 230,
+          "line": 256,
           "kind": "js-string",
           "raw": "No bulletin then.",
           "quote": "'"
@@ -33570,7 +34269,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 244,
+          "line": 297,
           "kind": "markup",
           "raw": "What are you drawn to?",
           "quote": null
@@ -33588,7 +34287,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 246,
+          "line": 299,
           "kind": "markup",
           "raw": "Pick a few and we'll pull up the patches that match. These are the\n        tags this quilt actually wears, most-worn first.",
           "quote": null
@@ -33606,7 +34305,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 275,
+          "line": 328,
           "kind": "markup",
           "raw": "{selectedInterests.size} selected",
           "quote": null
@@ -33624,7 +34323,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 303,
+          "line": 356,
           "kind": "markup",
           "raw": "Looking…",
           "quote": null
@@ -33642,7 +34341,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 307,
+          "line": 360,
           "kind": "markup",
           "raw": "Nothing here yet",
           "quote": null
@@ -33660,7 +34359,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 309,
+          "line": 362,
           "kind": "markup",
           "raw": "No patches on this quilt so far. Make one for your group, and the\n          next person who comes looking will have something to find.",
           "quote": null
@@ -33678,7 +34377,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 320,
+          "line": 373,
           "kind": "markup",
           "raw": "{matching.length}\n          {matching.length === 1 ? 'patch' : 'patches'}{selectedInterests.size > 0 ? ' match what you picked' : ''}{' '}\n          — the ones with something coming up are first.",
           "quote": null
@@ -33696,7 +34395,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 428,
+          "line": 453,
           "kind": "markup",
           "raw": "Following {followedHere} {followedHere === 1 ? 'patch' : 'patches'}",
           "quote": null
@@ -33714,7 +34413,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 434,
+          "line": 459,
           "kind": "markup",
           "raw": "Follow a few and they become your quilt.",
           "quote": null
@@ -33732,7 +34431,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 436,
+          "line": 461,
           "kind": "markup",
           "raw": "Following needs an account — reading never does.",
           "quote": null
@@ -33750,7 +34449,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
-          "line": 442,
+          "line": 467,
           "kind": "markup",
           "raw": "Once a month, we can tell you which patches joined. The whole\n                list, in the order they arrived — nothing picked out for you.",
           "quote": null
@@ -33985,7 +34684,7 @@
       "text": "The {event.node_status === 'unclaimed' ? 'quilt admins' : 'patch admins'} will look at this event before it appears on the calendar. Only you and the reviewers can see it for now.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34039,7 +34738,7 @@
       "text": "and updates with it. To change it, edit the source calendar, or detach it to make it an ordinary event.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34084,7 +34783,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 321,
+          "line": 336,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -34272,7 +34971,7 @@
       "text": "The {pendingReviewers} will look at it. Your event will appear on the calendar once it's approved.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34632,7 +35331,7 @@
       "text": "Link a flyer or photo you already have online. Patchwork points at it and never keeps a copy.",
       "words": 18,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -36477,9 +37176,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 115,
+          "line": 122,
           "kind": "markup",
           "raw": "Version history &middot; {versions.length} version{versions.length !== 1 ? 's' : ''}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0920372a7a9d",
+      "text": "History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is intact; versions from before the rebuild are not available.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceVersionHistory.svelte",
+          "line": 127,
+          "kind": "markup",
+          "raw": "History rebuilt from the database on {formatDate(rebuiltOn)}. The current text is\n            intact; versions from before the rebuild are not available.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "15b93152b23e",
+      "text": "This is the oldest version available. It was written from the database when the document's history was rebuilt, so there is nothing to compare it against.",
+      "words": 26,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceVersionHistory.svelte",
+          "line": 162,
+          "kind": "markup",
+          "raw": "This is the oldest version available. It was written from the\n                            database when the document's history was rebuilt, so there is\n                            nothing to compare it against.",
           "quote": null
         }
       ]
@@ -36495,7 +37230,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 141,
+          "line": 167,
           "kind": "markup",
           "raw": "This is the initial version.",
           "quote": null
@@ -36513,7 +37248,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 154,
+          "line": 181,
           "kind": "markup",
           "raw": "Diff not available.",
           "quote": null
@@ -36531,7 +37266,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 166,
+          "line": 193,
           "kind": "markup",
           "raw": "Compare versions",
           "quote": null
@@ -36549,7 +37284,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 169,
+          "line": 196,
           "kind": "markup",
           "raw": "From...",
           "quote": null
@@ -36567,7 +37302,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 176,
+          "line": 203,
           "kind": "markup",
           "raw": "To...",
           "quote": null
@@ -36585,7 +37320,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 198,
+          "line": 225,
           "kind": "markup",
           "raw": "No differences found.",
           "quote": null
@@ -36603,7 +37338,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceVersionHistory.svelte",
-          "line": 205,
+          "line": 232,
           "kind": "markup",
           "raw": "No version history available.",
           "quote": null
@@ -37218,7 +37953,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 246,
+          "line": 244,
           "kind": "markup",
           "raw": "By creating an account you agree to the",
           "quote": null
@@ -37250,7 +37985,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 247,
+          "line": 245,
           "kind": "markup",
           "raw": "User Agreement",
           "quote": null
@@ -37275,7 +38010,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 248,
+          "line": 246,
           "kind": "markup",
           "raw": "and",
           "quote": null
@@ -37307,7 +38042,7 @@
         },
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 248,
+          "line": 246,
           "kind": "markup",
           "raw": "Privacy Policy",
           "quote": null
@@ -37392,7 +38127,7 @@
       "text": "Quilts carry a label on the back that says who made them and when. This is ours.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39463,7 +40198,7 @@
       "text": "What kind of patch is this? Tags help people find you, and new patches are placed near others with the same tags on the quilt. The first tag decides your default motif.",
       "words": 32,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39499,7 +40234,7 @@
       "text": "How this patch looks on the quilt. You can change it anytime in Patch Settings → Appearance, and draft your own block there too.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39642,7 +40377,7 @@
       "text": "Optional. The mark that appears beside the name on the quilt. Unset, it follows your first tag. You can change it later in Patch Settings.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39656,11 +40391,11 @@
       ]
     },
     {
-      "id": "a8bce03d1204",
-      "text": "Every patch starts with the lining — this quilt's shared community standards. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
-      "words": 36,
+      "id": "72683dfe71f1",
+      "text": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
+      "words": 35,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -39668,10 +40403,11 @@
           "file": "web/src/pages/PatchForm.svelte",
           "line": 468,
           "kind": "markup",
-          "raw": "Every patch starts with the lining — this quilt's shared community\n            standards. It is always public, and if your patch amends it, the\n            changes are public and the patch is marked as having amended the\n            lining.",
+          "raw": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Every patch starts with the lining — this quilt's shared community standards. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining."
     },
     {
       "id": "22c8f55478fa",
@@ -39684,7 +40420,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 488,
+          "line": 485,
           "kind": "markup",
           "raw": "Governance Template",
           "quote": null
@@ -39702,7 +40438,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 489,
+          "line": 486,
           "kind": "markup",
           "raw": "How should this patch be organized? You can change this later.",
           "quote": null
@@ -39763,7 +40499,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 380,
+          "line": 395,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -40234,7 +40970,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 179,
+          "line": 193,
           "kind": "markup",
           "raw": "Back to Quilt",
           "quote": null
@@ -40246,13 +40982,13 @@
       "text": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 194,
+          "line": 208,
           "kind": "markup",
           "raw": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
           "quote": null
@@ -40270,7 +41006,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 233,
+          "line": 247,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
           "quote": null
@@ -40288,7 +41024,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 234,
+          "line": 248,
           "kind": "markup",
           "raw": "The community added it",
           "quote": null
@@ -40306,7 +41042,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 236,
+          "line": 250,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -40324,7 +41060,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 238,
+          "line": 252,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -40342,7 +41078,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 240,
+          "line": 254,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -40360,7 +41096,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 240,
+          "line": 254,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -40372,13 +41108,13 @@
       "text": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 252,
+          "line": 266,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -40396,7 +41132,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 254,
+          "line": 268,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -40414,7 +41150,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 281,
+          "line": 296,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -40432,7 +41168,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 349,
+          "line": 364,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -40552,7 +41288,7 @@
       "text": "Choose how this patch appears on the quilt. The first fabric of the bundle also becomes the patch's color on cards and labels.",
       "words": 23,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40642,7 +41378,7 @@
       "text": "After a reset, the tile gets an automatically assigned look, which may change as the quilt grows.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40750,7 +41486,7 @@
       "text": "Archiving hides this patch from the quilt and closes its workspace. Nothing is deleted, but only an instance admin can restore it.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40894,7 +41630,7 @@
       "text": "On the quilt. Anyone can find this patch through the quilt, search, the map, and public event feeds, and other quilts can follow it.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -40912,7 +41648,7 @@
       "text": "Off the quilt. Kept out of the quilt, search, the map, and public feeds, and it does not federate.",
       "words": 19,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41128,7 +41864,7 @@
       "text": "Placing a marker adds this patch to the map. The marker can be approximate, and is separate from the address above.",
       "words": 21,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41164,7 +41900,7 @@
       "text": "Link a picture you already have online. Patchwork points at it and never keeps a copy, so it stays yours.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41225,7 +41961,7 @@
       "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
       "words": 24,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41257,11 +41993,11 @@
       ]
     },
     {
-      "id": "1974b0f46aa7",
-      "text": "This is about the patch itself — where it shows up. Events, members, and documents each carry their own visibility.",
-      "words": 20,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "b5aa46d9bda8",
+      "text": "Patch specific configuration. Events, members, and documents carry their own visibility.",
+      "words": 11,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -41269,23 +42005,24 @@
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 524,
           "kind": "markup",
-          "raw": "This is about the patch itself — where it shows up. Events, members, and\n      documents each carry their own visibility.",
+          "raw": "Patch specific configuration. Events, members, and documents carry their own visibility.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "This is about the patch itself — where it shows up. Events, members, and documents each carry their own visibility."
     },
     {
       "id": "bdbcb49c174d",
       "text": "Either way, anyone holding a direct link can open this patch's page. Private keeps it from being found, not from being visited.",
       "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 546,
+          "line": 545,
           "kind": "markup",
           "raw": "Either way, anyone holding a direct link can open this patch's page. Private\n      keeps it from being found, not from being visited.",
           "quote": null
@@ -41303,7 +42040,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 554,
+          "line": 553,
           "kind": "markup",
           "raw": "Event suggestions",
           "quote": null
@@ -41321,7 +42058,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 563,
+          "line": 562,
           "kind": "markup",
           "raw": "Let non-members suggest events to this patch",
           "quote": null
@@ -41339,7 +42076,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 566,
+          "line": 565,
           "kind": "markup",
           "raw": "Suggestions wait in your events queue until an admin approves them.",
           "quote": null
@@ -41652,7 +42389,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 449,
+          "line": 455,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -42913,7 +43650,7 @@
       "text": "The one domain the platform has vetted as belonging to this organization. Self-service claims prove control of it (DNS record or a meta tag). Leave it empty to require admin review for every claim. This is separate from the website field, which carries no trust.",
       "words": 45,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -42985,7 +43722,7 @@
       "text": "This patch is unclaimed. When someone proves they run it, claiming turns it into their patch.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43125,7 +43862,7 @@
       "text": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''}, after this was drafted. The changes below compare against the older text.",
       "words": 25,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43193,11 +43930,11 @@
       ]
     },
     {
-      "id": "ff8be53e7a20",
-      "text": "You're the only eligible voter — your vote decides this immediately.",
+      "id": "a561c9ff9e11",
+      "text": "You're the only eligible voter, so your vote decides this immediately.",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43205,10 +43942,11 @@
           "file": "web/src/pages/ProposalDetail.svelte",
           "line": 248,
           "kind": "markup",
-          "raw": "You're the only eligible voter — your vote decides this immediately.",
+          "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "You're the only eligible voter — your vote decides this immediately."
     },
     {
       "id": "1b12f8ed703b",
@@ -43648,7 +44386,7 @@
       "text": "Connect other Patchworks to keep them a click away in the quilt switcher. Each opens on its own site. Your connections are part of your account, so they follow you to any device.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43684,7 +44422,7 @@
       "text": "Found a patch while visiting another quilt? Paste its link (or drop it in the search bar) and it opens here, with a Follow button. Followed patches join your My Quilt.",
       "words": 31,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43846,7 +44584,7 @@
       "text": "Couldn't reach this patch. Its quilt may be unreachable or may not allow browsing from other quilts.",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -43972,7 +44710,7 @@
       "text": "You're viewing this patch's public face from your own quilt. Joining, RSVPs, and everything deeper live on",
       "words": 17,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45003,7 +45741,7 @@
       "text": "No account was created yet. Request a new sign-in link and you'll be right back here.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45053,11 +45791,11 @@
       ]
     },
     {
-      "id": "a6cb716b85b5",
-      "text": ". Pick the name you'll go by here. It becomes your profile address, so it can't change later.",
-      "words": 18,
-      "tier": "prose",
-      "status": "unreviewed",
+      "id": "796f1a85c8b8",
+      "text": ". Pick the name for this quilt. Choose wisely, it can't be changed.",
+      "words": 13,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45065,10 +45803,11 @@
           "file": "web/src/pages/SignupComplete.svelte",
           "line": 180,
           "kind": "markup",
-          "raw": ". Pick the name\n          you'll go by here. It becomes your profile address, so it\n          can't change later.",
+          "raw": ". Pick the name for this quilt. Choose wisely, it can't be changed.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": ". Pick the name you'll go by here. It becomes your profile address, so it can't change later."
     },
     {
       "id": "cdb27dfdb066",
@@ -45081,7 +45820,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 191,
+          "line": 189,
           "kind": "attr:placeholder",
           "raw": "e.g. gallery-row-gal",
           "quote": "\""
@@ -45099,7 +45838,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 204,
+          "line": 202,
           "kind": "markup",
           "raw": "3-30 characters: lowercase letters, numbers, hyphens.",
           "quote": null
@@ -45117,7 +45856,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 220,
+          "line": 218,
           "kind": "markup",
           "raw": "Bootstrap token",
           "quote": null
@@ -45135,7 +45874,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SignupComplete.svelte",
-          "line": 232,
+          "line": 230,
           "kind": "markup",
           "raw": "This account will run the quilt. The token is in the server's\n              first-run log, unless it was set in configuration.",
           "quote": null
@@ -45153,7 +45892,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 442,
+          "line": 448,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -45171,9 +45910,34 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 444,
+          "line": 450,
           "kind": "markup",
           "raw": "Manage",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2d9e28289fac",
+      "text": "Requested",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 460,
+          "kind": "markup",
+          "raw": "Requested",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 246,
+          "kind": "markup",
+          "raw": "Requested",
           "quote": null
         }
       ]
@@ -45189,7 +45953,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 486,
+          "line": 497,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -45201,13 +45965,13 @@
       "text": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 511,
+          "line": 522,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
           "quote": null
@@ -45225,7 +45989,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 525,
+          "line": 536,
           "kind": "markup",
           "raw": "View patch",
           "quote": null
@@ -45243,7 +46007,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 603,
+          "line": 614,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -45261,7 +46025,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 603,
+          "line": 614,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -45279,7 +46043,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 617,
+          "line": 628,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -45297,7 +46061,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 622,
+          "line": 633,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -45315,7 +46079,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 626,
+          "line": 637,
           "kind": "markup",
           "raw": "Quilt order",
           "quote": null
@@ -45333,7 +46097,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 627,
+          "line": 638,
           "kind": "markup",
           "raw": "Recently added",
           "quote": null
@@ -45351,7 +46115,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 650,
+          "line": 661,
           "kind": "markup",
           "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -45369,7 +46133,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 659,
+          "line": 670,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -45387,7 +46151,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 671,
+          "line": 682,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null
@@ -45467,11 +46231,11 @@
       ]
     },
     {
-      "id": "3c01717c8f08",
-      "text": "Know a place or group that should be on the map? The real owner can claim it later.",
-      "words": 18,
+      "id": "89a83df44f76",
+      "text": "Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.",
+      "words": 22,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -45479,10 +46243,11 @@
           "file": "web/src/pages/SubmitPatch.svelte",
           "line": 67,
           "kind": "markup",
-          "raw": "Know a place or group that should be on the map? The real owner can claim it later.",
+          "raw": "Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Know a place or group that should be on the map? The real owner can claim it later."
     },
     {
       "id": "8a08dbb8e597",
@@ -45669,15 +46434,88 @@
       "text": "Failed to load patches",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 25,
+          "line": 26,
           "kind": "js-string",
           "raw": "Failed to load patches",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3a69f897298e",
+      "text": "Send request",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 56,
+          "kind": "js-string",
+          "raw": "Send request",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ec4930c8b228",
+      "text": "No one runs this patch yet. User can follow, but not join.",
+      "words": 12,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 62,
+          "kind": "js-string",
+          "raw": "No one runs this patch yet. User can follow, but not join.",
+          "quote": "'"
+        }
+      ],
+      "previous_ai_text": "No one runs this patch yet. Until someone claims it, following is the only rung."
+    },
+    {
+      "id": "328e0a9f779e",
+      "text": "This patch adds members by invitation. An admin has to invite you.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 66,
+          "kind": "js-string",
+          "raw": "This patch adds members by invitation. An admin has to invite you.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "d8dc13b12fb4",
+      "text": "Failed to withdraw request",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 95,
+          "kind": "js-string",
+          "raw": "Failed to withdraw request",
           "quote": "'"
         }
       ]
@@ -45693,45 +46531,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 48,
+          "line": 95,
           "kind": "js-string",
           "raw": "Failed to leave",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "c466a59865e5",
-      "text": "Joined as member",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 57,
-          "kind": "js-string",
-          "raw": "Joined as member",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "6d163522af89",
-      "text": "Failed to join",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 59,
-          "kind": "js-string",
-          "raw": "Failed to join",
           "quote": "'"
         }
       ]
@@ -45741,13 +46543,13 @@
       "text": "Membership visible to the public",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 73,
+          "line": 136,
           "kind": "js-string",
           "raw": "Membership visible to the public",
           "quote": "'"
@@ -45759,13 +46561,13 @@
       "text": "Membership hidden from the public",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 73,
+          "line": 136,
           "kind": "js-string",
           "raw": "Membership hidden from the public",
           "quote": "'"
@@ -45777,13 +46579,13 @@
       "text": "Failed to update visibility",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 75,
+          "line": 138,
           "kind": "js-string",
           "raw": "Failed to update visibility",
           "quote": "'"
@@ -45801,7 +46603,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 92,
+          "line": 155,
           "kind": "js-string",
           "raw": "Failed to update contact sharing",
           "quote": "'"
@@ -45819,7 +46621,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 133,
+          "line": 196,
           "kind": "markup",
           "raw": "Your contact card is empty. Fill it in under",
           "quote": null
@@ -45837,9 +46639,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 135,
+          "line": 198,
           "kind": "markup",
           "raw": "and share it patch by patch here.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "84e3eb92c7a8",
+      "text": "awaiting approval",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 253,
+          "kind": "markup",
+          "raw": "awaiting approval",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2b0d586672f9",
+      "text": "asked {formatDate(m.joined_at)}",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 254,
+          "kind": "markup",
+          "raw": "asked {formatDate(m.joined_at)}",
           "quote": null
         }
       ]
@@ -45855,7 +46693,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 190,
+          "line": 275,
           "kind": "markup",
           "raw": "following",
           "quote": null
@@ -45885,7 +46723,7 @@
       "text": "Each patch here is a group. Follow the ones you care about and your corner of the quilt takes shape.",
       "words": 20,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46648,6 +47486,42 @@
           "line": 95,
           "kind": "js-string",
           "raw": "Passkey login failed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c466a59865e5",
+      "text": "Joined as member",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 57,
+          "kind": "js-string",
+          "raw": "Joined as member",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "6d163522af89",
+      "text": "Failed to join",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 59,
+          "kind": "js-string",
+          "raw": "Failed to join",
           "quote": "'"
         }
       ]

@@ -542,6 +542,67 @@ checkout (`make export`). The matching `make import IN=./export/` brings the
 data up on a fresh instance with new IDs. This is the data-portability path,
 disaster recovery included.
 
+### Restoring a database without its governance repos
+
+The restore above brings back the whole volume, repos included. Two common
+situations bring back only the database: a `VACUUM INTO` snapshot (it is
+one file — the repos were tarred separately, and separately is where they
+get forgotten), and a seamrip import, which never carries repos by design
+(docs/adr/002).
+
+Patchwork will start, and every charter will read correctly — the
+`governance_docs` rows are the canonical copy (docs/adr/011). What breaks is
+writing: direct edits, amendment proposals and rules changes all open the
+patch's repo first, so on an instance with no repos they fail. The startup
+pass rebuilds any repo that is entirely **absent**, so a plain
+database-only restore usually heals itself on the first boot; the log line
+is `governance: rebuilt repos for N patches from the database`.
+
+Run the full pass when the repos are present but wrong — a partial restore,
+a half-extracted archive, an older `data/governance/` beside a newer
+database. **Stop the server first.** It writes to the same repos:
+
+```bash
+docker compose stop patchwork
+
+docker compose run --rm --entrypoint /patchwork patchwork \
+  -config /patchwork.yaml -repair-governance
+
+docker compose start patchwork
+```
+
+From a source checkout, against the same `patchwork.yaml` the server uses:
+
+```bash
+make build
+./patchwork -config patchwork.yaml -repair-governance
+```
+
+It prints a line per patch and a summary:
+
+```
+Repairing governance repos under data/governance
+
+  (instance baseline)                      unchanged
+  gallery-row                              unchanged
+  the-selvage                              created  (2 file(s))
+                                             community-standards.md
+                                             governance-rules.json
+
+3 repo(s) checked: 1 created, 0 updated, 2 unchanged
+```
+
+The pass is idempotent and safe to re-run: a repo that already matches the
+database is not written to at all. It never deletes a file or a commit.
+
+**What it cannot bring back is history.** The text is restored from the
+canonical rows; the commits that led to it were only ever in the repos. A
+rebuilt document's history holds one commit, authored `Patchwork repair`,
+and the charter's history view says so — "History rebuilt from the database
+on ⟨date⟩" — rather than presenting it as where the document began
+(docs/adr/084). This is the reason to back up `data/governance/` alongside
+the database rather than treating the `.db` file as the whole instance.
+
 ## Monitoring
 
 Nothing inside the box can tell you the box is down. A Patchwork instance is
@@ -624,6 +685,86 @@ Off by default. Before enabling `federation.enabled: true`:
 Mastodon interop has been exercised in tests but not yet verified against a
 live instance. Treat cross-instance federation as beta.
 
+## Proving you administer the instance
+
+Sometimes an outside party — a hosting provider re-pointing a billing
+contact, a directory checking a submission — needs to know that whoever is
+writing to them really administers this quilt. Administration → **Prove
+Admin** signs a string they choose (docs/adr/087).
+
+**How the exchange goes.** They send you a nonce: any printable string, 8 to
+64 characters. You paste it into that page and confirm with your passkey.
+You get back a blob shaped `payload.signature`, good for fifteen minutes.
+Send it to them.
+
+**What it proves is narrow, and worth saying to them plainly:** an admin of
+this quilt signed that exact string at that time. It names the domain and
+nothing else — no username, no email, no account. Patchwork does not publish
+who its admins are (docs/adr/023), and this does not either.
+
+### Verifying, as the outside party
+
+The public key is at `https://<domain>/api/v1/instance/attestation-key`.
+Public, unauthenticated, cacheable, and served whether or not the instance
+federates.
+
+**Fetch the key from the domain you care about — never from a URL inside the
+blob.** Anyone can mint an RSA key and sign this JSON; what makes it a proof
+is that it checks against the key that domain serves.
+
+With the Patchwork binary, which needs no config and no database:
+
+```sh
+patchwork -verify-attestation 'eyJjbGFpbSI6...ABC.Xy9z...'
+```
+
+It fetches the key from the claimed domain, checks the signature and the
+expiry, and exits 0 or 1. Pass `-attestation-key key.pem` to check against a
+key file instead of fetching.
+
+With nothing but a shell:
+
+```sh
+BLOB='eyJjbGFpbSI6...ABC.Xy9z...'
+DOMAIN=arts.lancaster.example        # the domain YOU care about
+
+# base64url → base64, restoring the padding the format omits
+unb64() { s=$(printf %s "$1" | tr '_-' '/+'); case $((${#s} % 4)) in
+  2) s="$s==";; 3) s="$s=";; esac; printf %s "$s" | base64 -d; }
+
+# The key, from the domain — not from the blob.
+curl -fsS "https://$DOMAIN/api/v1/instance/attestation-key" \
+  | python3 -c 'import json,sys; sys.stdout.write(json.load(sys.stdin)["public_key"])' > pub.pem
+
+# The signature covers the first segment's bytes, exactly as they appear.
+printf %s "${BLOB%.*}" > signed.txt
+unb64 "${BLOB##*.}" > sig.bin
+
+openssl dgst -sha256 -verify pub.pem -signature sig.bin signed.txt
+# → Verified OK
+
+# Read what was signed, and check it yourself:
+unb64 "${BLOB%.*}"
+# {"claim":"instance-admin","domain":"arts.lancaster.example","nonce":"…",
+#  "issued_at":"…","expires_at":"…","key_url":"…"}
+```
+
+`openssl` answering `Verified OK` is necessary and not sufficient. Also
+check, in the decoded payload:
+
+- `nonce` is the string **you** sent, character for character;
+- `domain` is the domain you fetched the key from;
+- `claim` is `instance-admin`;
+- `expires_at` has not passed, and `issued_at` is not in the future;
+- `key_url` is `https://<domain>/api/v1/instance/attestation-key` for that
+  same domain — a statement pointing somewhere else is a statement trying to
+  borrow a domain it does not run.
+
+The signature is RSASSA-PKCS1-v1_5 over SHA-256 ("RS256"), computed over the
+ASCII bytes of the first segment rather than the decoded JSON, so you never
+have to reproduce our JSON formatting to check it. Both segments are
+unpadded base64url.
+
 ## Updating
 
 Take a backup first. Database migrations run automatically at startup.
@@ -651,7 +792,69 @@ actually use after merging.
 To roll back a prebuilt-image deployment, pin the previous tag in the
 override file (instead of `:latest`) and re-run `docker compose up -d`.
 
-**Updating a deployment from before 2026-07-19?** Older images had their
+### Deciding whether an update is safe to apply
+
+If you update on a schedule rather than by hand, you need an answer to "can
+this one go out unattended?" that isn't a person reading a diff. Each GitHub
+release carries a `release.json` asset for exactly that (docs/adr/085):
+
+```json
+{
+  "version": "v0.26.0",
+  "image": "ghcr.io/patchwork-toolkit/patchwork:0.26.0",
+  "breaking": false,
+  "irreversible_migrations": false,
+  "summary": "the noticeboard, and events keep their own link"
+}
+```
+
+- **`breaking`** — true when updating without reading can leave you worse off
+  than you were: a config key renamed, removed or newly required; a changed
+  volume path, port or working directory; an API change an existing client
+  notices. Hold these for a human and read the release page.
+- **`irreversible_migrations`** — true when this release's migrations cannot be
+  undone by putting the previous image back against the same database. A
+  release can be perfectly compatible and still be one you cannot walk back, so
+  this is a separate flag from `breaking`. Take a backup you have actually
+  restored from before applying one.
+- **`summary`** — the one line that is also the release title.
+
+Both flags are asserted by the person cutting the tag, in
+`release-notes/vX.Y.Z.md` in the repo. They are a judgement, not a heuristic
+over the diff — which is the whole reason they are trustworthy.
+
+Fetch it with the GitHub CLI:
+
+```bash
+gh release download v0.26.0 --repo patchwork-toolkit/patchwork \
+  --pattern release.json --clobber
+jq -r '.breaking, .irreversible_migrations' release.json
+```
+
+Or with no `gh` on the box, straight off the API — this picks the newest
+release and prints its flags:
+
+```bash
+curl -sL https://api.github.com/repos/patchwork-toolkit/patchwork/releases/latest \
+  | jq -r '.assets[] | select(.name == "release.json") | .browser_download_url' \
+  | xargs curl -sL | jq .
+```
+
+A gate in an unattended updater is then two lines:
+
+```bash
+# Refuse to proceed unless the release says both flags are false.
+[ "$(jq -r .breaking release.json)" = "false" ] || exit 1
+[ "$(jq -r .irreversible_migrations release.json)" = "false" ] || exit 1
+```
+
+**Treat a missing `release.json` as "ask a human."** Releases cut before this
+existed have no asset, and neither does anything you built yourself from a
+branch. Absence is not `false`.
+
+**Updating a deployment from before 2026-07-19?** (This warning is the prose
+ancestor of the flag above: today that release would ship
+`breaking: true`.) Older images had their
 working directory on the ephemeral container layer, so a relative
 `database.path` silently wrote *outside* the `data` volume — and recreating
 the container destroyed the database. Before updating: check where your data

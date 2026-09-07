@@ -59,9 +59,13 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 		var membershipPolicy, nodeStatus string
 		db.QueryRow("SELECT membership_policy, status FROM nodes WHERE id = ?", nodeID).Scan(&membershipPolicy, &nodeStatus)
 
-		// Unclaimed patches only accept followers, not members.
+		// Unclaimed patches only accept followers, not members. Callers are
+		// expected to render no member rung here at all (docs/adr/042), so
+		// anyone reaching this message is looking at a stale page: it says
+		// what the patch is and what would change it, not what the reader
+		// could already have done.
 		if nodeStatus == "unclaimed" && !isFollow {
-			http.Error(w, `{"error":"this patch hasn't been claimed yet — you can follow it"}`, http.StatusForbidden)
+			http.Error(w, `{"error":"Patch must be claimed to accept members"}`, http.StatusForbidden)
 			return
 		}
 
@@ -261,6 +265,68 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// WithdrawMembershipRequest handles POST /api/v1/nodes/{slug}/withdraw.
+//
+// A requester rescinds their own unanswered membership request. Distinct
+// from leaving, the way WithdrawClaim is distinct from rejection: nobody
+// admitted this person, so there is no community to exit and no admin
+// decision to undo. Keeping the two verbs apart is what lets the audit log
+// tell "changed their mind before anyone answered" from "was here and
+// left" — and stops a patch's record showing a departure by somebody who
+// was never a member.
+//
+// Its own route rather than a relaxed LeaveNode for the same reason: that
+// handler's only-admin floor and its 'active' precondition are about a
+// standing this row does not have, and widening the status it accepts
+// would have made both of those read as if they applied.
+//
+// join_message goes with the request, as it does on rejection: the intro
+// was written for a request that no longer exists.
+func WithdrawMembershipRequest(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		slug := r.PathValue("slug")
+
+		nodeID := NodeIDFromSlug(db, slug)
+		if nodeID == "" {
+			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// Scoped to this caller's own row: there is no admin path in here.
+		// An admin turning a request down is UpdateMember's reject, which
+		// is a decision and is logged as one.
+		var memID, status string
+		err := db.QueryRow(
+			"SELECT id, status FROM memberships WHERE user_id = ? AND node_id = ?",
+			user.ID, nodeID,
+		).Scan(&memID, &status)
+		if err != nil {
+			http.Error(w, `{"error":"no membership request to withdraw"}`, http.StatusBadRequest)
+			return
+		}
+		if status != "pending" {
+			http.Error(w, `{"error":"no membership request to withdraw"}`, http.StatusBadRequest)
+			return
+		}
+
+		_, err = db.Exec("UPDATE memberships SET status = 'left', join_message = NULL WHERE id = ?", memID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to withdraw request"}`, http.StatusInternalServerError)
+			return
+		}
+
+		auth.LogAuditEvent(db, user.ID, "membership.withdraw", "membership", memID, "{}", clientIP(r))
+
+		// Nobody is notified, matching WithdrawClaim and matching rejection:
+		// the request simply leaves the pending queue. An admin who never
+		// got round to it has nothing to act on and nothing to be told.
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "withdrawn"})
+	}
+}
+
 // LeaveNode handles POST /api/v1/nodes/{slug}/leave.
 func LeaveNode(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -273,7 +339,13 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Check if user is an active member.
+		// Active rows only. Leaving exits a relationship, and a requester
+		// holds none — retracting an unanswered request is
+		// WithdrawMembershipRequest, a different verb on a different object
+		// (docs/adr/088). The split is not tidiness: it is what makes a
+		// stale page safe. If a request is approved between page load and
+		// click, a Withdraw that reached this handler would resign a
+		// membership the person did not yet know they had.
 		var memberRole string
 		err := db.QueryRow("SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'", user.ID, nodeID).Scan(&memberRole)
 		if err != nil {
@@ -499,7 +571,7 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 
 		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.visible, m.share_contact, m.joined_at,
-			n.name, n.slug, n.description, n.visibility, n.membership_policy
+			n.name, n.slug, n.description, n.visibility, n.membership_policy, n.status
 			FROM memberships m JOIN nodes n ON m.node_id = n.id
 			WHERE m.user_id = ? AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')`
 		args := []interface{}{user.ID}
@@ -519,10 +591,20 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		type membershipResponse struct {
-			ID               string `json:"id"`
-			UserID           string `json:"user_id"`
-			NodeID           string `json:"node_id"`
-			Role             string `json:"role"`
+			ID     string `json:"id"`
+			UserID string `json:"user_id"`
+			NodeID string `json:"node_id"`
+			// Omitted for a row that holds no standing (docs/adr/088). A
+			// pending request is stored on the membership row and carries
+			// role='member' — always, since you cannot request admin and
+			// following never goes through pending — so the column says
+			// what the row would become, not what it is. Sending it made
+			// this endpoint assert a membership that GetNode, the member
+			// list, the member count and userHasNodeRole all deny, and
+			// every client then had to defend itself against its own
+			// server. Absent is the honest answer, and a loud one: a
+			// caller reading it gets undefined rather than a wrong role.
+			Role             string `json:"role,omitempty"`
 			Status           string `json:"status"`
 			Visible          bool   `json:"visible"`
 			ShareContact     bool   `json:"share_contact"`
@@ -532,13 +614,23 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			NodeDescription  string `json:"node_description"`
 			NodeVisibility   string `json:"node_visibility"`
 			MembershipPolicy string `json:"membership_policy"`
+			// The patch's own status, because whether a member rung exists
+			// at all depends on it: an unclaimed patch takes followers only
+			// (JoinNode), and a caller who can't see that draws a door that
+			// 403s (docs/adr/042).
+			NodeStatus string `json:"node_status"`
 		}
 		var memberships []membershipResponse
 		for rows.Next() {
 			var m membershipResponse
 			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.ShareContact, &m.JoinedAt,
-				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy); err != nil {
+				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy, &m.NodeStatus); err != nil {
 				continue
+			}
+			// Standing is stated once, here, the way GetNode states it:
+			// only an active row has a role.
+			if m.Status != "active" {
+				m.Role = ""
 			}
 			memberships = append(memberships, m)
 		}

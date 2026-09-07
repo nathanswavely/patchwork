@@ -1,7 +1,7 @@
 # ADR 012: Leaving is a member right — the egress boundary and its three affordances
 
-Date: 2026-07-14. Status: accepted as design boundary; implementation is
-post-launch backlog.
+Date: 2026-07-14. Status: accepted as design boundary; affordance 1 shipped
+2026-09-07, affordances 2 and 3 remain backlog.
 
 ## Context
 
@@ -85,3 +85,43 @@ one admin, same rule as the registrar account.
   carries both.
 - Nothing here blocks the Lancaster launch; the affordances land in the
   post-launch backlog.
+
+## Status, 2026-09-07: affordance 1 shipped
+
+`GET /api/v1/users/me/export` is live, behind the session and rate-limited
+to five downloads per account per fifty minutes, audited as `user.export`,
+and offered at Account settings as **Download my data**. It carries one
+JSON document: the person's `users` row (contact card folded into the shape
+the API uses elsewhere), every membership *including the hidden ones*, and
+their rows from every author- or actor-attributed table in the schema —
+proposals, votes, election candidacies and ballots, comments, reactions,
+revisions, notices and replies, events, event links they requested,
+attestations they recorded and ones that name them, claims, event sources
+and aggregator curation, notification preferences, notifications received,
+connected quilts, remote follows, reports they filed, their steward
+listing, and their own audit-log rows.
+
+Three things are deliberately absent, and the reasons are in
+`internal/handler/personal_export.go` rather than only here:
+
+- **Authentication material** — credentials, sessions, recovery codes,
+  magic/invite/signup links, `feed_secret_hash`, the AP keypair. An export
+  is a file that gets copied to a laptop and emailed to oneself; nothing in
+  it should help anybody get in. This is ADR 002's line drawn tighter,
+  since a person carrying their own record needs no keys at all.
+- **Moderation they performed** — `content_reports.reviewed_by` and
+  `claim_requests.reviewed_by`. A decision about somebody else's content is
+  the instance's record of how it handled a third party. Reports they
+  *filed* are in the export; those they wrote.
+- **Other people's writing**, even where it names them. A reply under their
+  notice belongs to the replier.
+
+The privacy policy gained a paragraph saying the download exists and what
+is in it, since it previously named only the admin export. The user
+agreement's "any member can export what they can already see" was left
+alone on purpose: it describes affordance 2, it is a sentence a person
+wrote (the copy ledger marks it `human`), and this affordance is not the
+one it promises. It stays an outstanding claim until the member seamrip
+lands.
+
+Affordances 2 (member seamrip) and 3 (moved-to pointer) are unbuilt.
