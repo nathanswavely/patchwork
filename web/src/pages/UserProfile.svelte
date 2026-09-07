@@ -13,6 +13,20 @@
   let error = $state('');
 
   let isSelf = $derived(getUser()?.username === username);
+  // What this person shares with a patch the viewer is also in (docs/adr/083).
+  // The server decides — the page renders whatever came back and nothing more.
+  // It deliberately never says which patch an item came through: that
+  // membership may be private or hidden, and naming it would put on the
+  // profile what docs/adr/006 keeps off it.
+  let contact = $derived(profile?.contact || []);
+  const CONTACT_KIND_WORD = { phone: 'Phone', email: 'Email', handle: 'Handle', note: 'Note' };
+
+  function contactHref(item) {
+    if (item.kind === 'phone') return `tel:${item.value.replace(/[^+\d]/g, '')}`;
+    if (item.kind === 'email') return `mailto:${item.value}`;
+    return null;
+  }
+
   let adminOf = $derived((profile?.memberships || []).filter((m) => m.role === 'admin'));
   let memberOf = $derived((profile?.memberships || []).filter((m) => m.role === 'member'));
 
@@ -83,6 +97,33 @@
         </div>
       {/if}
     </div>
+
+    <!-- What this person shares with the rooms you are both in (docs/adr/083).
+         Absent entirely for a visitor who shares none: an empty heading would
+         tell the internet a card exists. -->
+    {#if contact.length > 0}
+      <section class="profile-section">
+        <h3 class="section-title">Reach {profile.display_name || profile.username}</h3>
+        <p class="muted contact-why">
+          {isSelf
+            ? 'What the people you organize with can see. Each item is here because you gave it to a patch you share with them.'
+            : 'Shared with people they organize with. You can see this because you are in a patch they gave it to.'}
+        </p>
+        <ul class="profile-contact">
+          {#each contact as item (item.id)}
+            <li class="profile-contact-item">
+              <span class="profile-contact-kind muted">{CONTACT_KIND_WORD[item.kind] || item.kind}</span>
+              {#if contactHref(item)}
+                <a href={contactHref(item)} class="profile-contact-value">{item.value}</a>
+              {:else}
+                <span class="profile-contact-value">{item.value}</span>
+              {/if}
+              {#if item.label}<span class="muted">{' · '}{item.label}</span>{/if}
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
 
     <!-- Links -->
     {#if profile.links && profile.links.length > 0}
@@ -303,4 +344,33 @@
     padding: 2rem 0;
     border-top: 1px solid var(--color-border);
   }
+
+  /* Shared contact items (docs/adr/083). Kind first, because what a value is
+     matters before what it says — a bare string of digits reads as nothing. */
+  .contact-why {
+    margin: -0.25rem 0 0.6rem;
+    font-size: 0.85rem;
+  }
+  .profile-contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .profile-contact-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .profile-contact-kind {
+    min-width: 4.5rem;
+    font-size: 0.85rem;
+  }
+  .profile-contact-value {
+    word-break: break-word;
+  }
+
 </style>

@@ -411,6 +411,25 @@ patch card (that is another quilt's patch, read-only).
 _Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement
 passed through, not a preview glanced at), preview, tile, popup
 
+**Person card**:
+A person as rendered anywhere they are named — avatar, display name, their
+standing in the patch at hand, and the way through to their Profile. The one
+rendering of a person outside their own page, and deliberately the same one
+in the Members room, on a notice's replies, and beside an event's organizer.
+It follows the patch card's gesture rule rather than inventing a second one:
+where there is a pointer, pointing at a person previews them; where there is
+not, the first tap opens the card and the card is how the profile is reached.
+A person's Profile is this card at full page size.
+
+Its last section is the **contact card** — the items that person shares with
+a patch this viewer is also in — and that section is the one part that
+differs by who is looking. It is absent far more often than it is present,
+so the card has to be worth opening without it. Never a directory: a person
+card is reached from somewhere a person already stands, never from a search
+over people.
+_Avoid_: member card (an admin is not a member), user card, profile card,
+contact card (that is the data the last section shows), hover card, popup
+
 **Interruption**:
 The one other thing that earns a border: a surface that is loud on purpose
 because it breaks the reading flow — a danger zone, a warning callout, an
@@ -461,20 +480,35 @@ _Avoid_: private membership (collides with private patches), profile
 visibility (it is per-membership, not per-profile)
 
 **Contact card**:
-How a person can be reached — a phone number, an email address to reach
-them at (not the sign-in address), and a short note — kept once on the
-account and shared patch by patch. **Contact sharing** is the per-membership
-switch that shows it, owned by the member and off for every patch until
-they turn it on; on, that patch's admins and members see the card in its
-Members room, including people who join later. It is never on the profile,
-never in a public member list, and never federates; a follower has no room
-to share into and cannot switch it on. A second axis beside membership
-visibility, not a second visibility switch: visibility says whether a
-membership is *known*, sharing says whether the people already in the room
-can *reach* you (docs/adr/080).
-_Avoid_: contact info (unbounded — the card is three fields), phone number
-(one field of it), private contact (everything about it is private; say
-"shared with" a patch), directory (there is no people search)
+Every way a person is willing to be reached, kept once on the account. The
+card is a set of **contact items** — one phone number, one email address to
+reach them at (never the sign-in address), one handle, one line of plain
+text — each carrying its own kind, so a channel is a fact about the item
+rather than something typed into the value. The card has no fixed length
+and no required item; an empty card is the normal starting state.
+_Avoid_: contact info (say the card, or an item), contact details, phone
+number (one item of it), private contact (all of it is private; say "shared
+with" a patch), directory (there is no people search)
+
+**Contact sharing**:
+The disclosure a single item carries into a single patch, chosen by its
+owner and by nobody else. Every pairing is decided on its own and nothing
+is ever shared by a rule, a default, or an act of the app: there is no
+share-with-everything, so a patch joined later starts shared with nothing
+and a person is never surprised by a room they did not hand something to.
+A shared item is seen by that patch's admins and members, and by them
+wherever they look: in the patch's Members room, and on the person's
+profile, which shows a visitor exactly the items they could already have
+read by walking into a room they share. The profile is a window onto that
+audience, never a wider one, and it never names the patch an item came
+through — an item shared through a private or hidden membership shows the
+same as any other. Nothing is public, nothing federates, and a follower has
+no room to share into. A second axis beside membership visibility, not a
+second visibility switch: visibility says whether a membership is *known*,
+sharing says whether the people already in the room can *reach* you
+(docs/adr/083).
+_Avoid_: visible/hidden (that pair belongs to membership visibility), public
+(no item ever is), all/everyone (there is no such choice), default
 
 **Role mark**:
 The icon that carries a person's relationship to a patch, used the same

@@ -385,6 +385,11 @@ func LeaveNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Leaving drops what this patch could reach you by (docs/adr/083).
+		// Only here, not in WithdrawFromNode: sharing needs an active
+		// member/admin row, so a pending request never had any to drop.
+		DropContactSharesFor(db, user.ID, nodeID)
+
 		auth.LogAuditEvent(db, user.ID, "membership.leave", "membership", nodeID, "{}", clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
@@ -443,26 +448,13 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		// the active/public listing (docs/adr/040).
 		includeMessage := statusFilter == "pending"
 
-		// Contact cards are shown to the people in the room: the patch's own
-		// active admins and members, and nobody else (docs/adr/080). That is
+		// Contact items are shown to the people in the room: the patch's own
+		// active admins and members, and nobody else (docs/adr/083). That is
 		// narrower than `insider` — an instance admin with no role here
 		// curates the quilt but was not who the person chose to be reachable
-		// by. Only member/admin rows that switched sharing on carry a card,
-		// and only on the active listing.
+		// by. Only items shared into *this* patch appear, and only on the
+		// active listing.
 		inRoom := false
-		// Two facts about the room that no page of it can answer, both about
-		// the offer to share a card. Whether the viewer already shares one is
-		// a fact about their own row, which may sit on page 4; whether anyone
-		// here shares one is a fact about the whole room. Derived from the
-		// loaded array, each was really "…among the twenty people who
-		// happened to load", so a member far down the list was never offered
-		// the switch. Both mirror the listing's own card condition exactly —
-		// sharing on, member or admin, and a card with something in it (see
-		// model.ContactCard.Empty) — so the offer appears exactly when the
-		// viewer's row would carry no card. No visibility clause: inRoom is
-		// strictly narrower than insider, so this viewer sees every row.
-		viewerShares := false
-		anyContact := false
 		if user != nil && statusFilter == "active" {
 			var role string
 			db.QueryRow(
@@ -471,27 +463,37 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			).Scan(&role)
 			inRoom = role != ""
 		}
+
+		// Two facts about the room that no page of it can answer, both about
+		// the offer to share (the insight is #231's, against the pre-083
+		// card). Whether the viewer already shares something here is a fact
+		// about their own row, which may sit on page 4; whether anyone here
+		// shares is a fact about the whole room. Derived from the loaded
+		// array, each really meant "…among the twenty who happened to load",
+		// so a member far down the list was never offered anything.
+		//
+		// Simpler under docs/adr/083 than it was under the card: there is no
+		// emptiness test, because an item cannot be empty — a blank value is
+		// refused at write, and deleting is how an item goes away. The second
+		// query re-checks the owner's membership for the same reason
+		// sharedContactItemsForNode does, so the sentence cannot promise a
+		// card the listing will not show.
+		viewerShares := false
+		anyContact := false
 		if inRoom {
-			const cardPresent = `m.share_contact = 1 AND m.role IN ('member','admin')
-				AND (u.contact_phone <> '' OR u.contact_email <> '' OR u.contact_note <> '')`
-			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM memberships m JOIN users u ON m.user_id = u.id
-				WHERE m.user_id = ? AND m.node_id = ? AND m.status = 'active' AND `+cardPresent+`)`,
-				user.ID, nodeID,
-			).Scan(&viewerShares)
-			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM memberships m JOIN users u ON m.user_id = u.id
-				WHERE m.node_id = ? AND m.status = 'active' AND `+cardPresent+`)`,
-				nodeID,
-			).Scan(&anyContact)
+			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM contact_item_shares s
+				JOIN contact_items ci ON ci.id = s.item_id
+				WHERE s.node_id = ? AND ci.user_id = ?)`, nodeID, user.ID).Scan(&viewerShares)
+			db.QueryRow(`SELECT EXISTS(SELECT 1 FROM contact_item_shares s
+				JOIN contact_items ci ON ci.id = s.item_id
+				JOIN memberships om ON om.user_id = ci.user_id AND om.node_id = s.node_id
+					AND om.status = 'active' AND om.role IN ('member','admin')
+				WHERE s.node_id = ?)`, nodeID).Scan(&anyContact)
 		}
 
 		cols := "m.id, m.user_id, m.node_id, m.role, m.status, m.joined_at, u.username, u.display_name, u.avatar_url"
 		if includeMessage {
 			cols += ", m.join_message"
-		}
-		if inRoom {
-			cols += `, CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_phone ELSE '' END,
-				CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_email ELSE '' END,
-				CASE WHEN m.share_contact = 1 AND m.role IN ('member','admin') THEN u.contact_note ELSE '' END`
 		}
 		query := `SELECT ` + cols + `
 			FROM memberships m JOIN users u ON m.user_id = u.id
@@ -528,10 +530,10 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			// JoinMessage is the join sheet's intro note. Present only on the
 			// admin-only pending listing (docs/adr/040).
 			JoinMessage string `json:"join_message,omitempty"`
-			// Contact is the member's contact card. Present only for a viewer
-			// who is an active admin or member of this patch, and only for
-			// members who switched sharing on for it (docs/adr/080).
-			Contact *model.ContactCard `json:"contact,omitempty"`
+			// Contact is the items this member shares into this patch, for a
+			// viewer who is an active admin or member of it (docs/adr/083).
+			// Attached after the page loads, in one batched query.
+			Contact []model.ContactItem `json:"contact,omitempty"`
 		}
 		var members []memberResponse
 		for rows.Next() {
@@ -541,18 +543,11 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			if includeMessage {
 				dest = append(dest, &jm)
 			}
-			var card model.ContactCard
-			if inRoom {
-				dest = append(dest, &card.Phone, &card.Email, &card.Note)
-			}
 			if err := rows.Scan(dest...); err != nil {
 				continue
 			}
 			if jm.Valid {
 				m.JoinMessage = jm.String
-			}
-			if inRoom && !card.Empty() {
-				m.Contact = &card
 			}
 			members = append(members, m)
 		}
@@ -564,6 +559,22 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		}
 		if members == nil {
 			members = []memberResponse{}
+		}
+
+		// Contact items ride along for a viewer in the room (docs/adr/083),
+		// attached after the page is trimmed so the lookahead row nobody sees
+		// is never asked about.
+		if inRoom && len(members) > 0 {
+			ids := make([]string, 0, len(members))
+			for _, m := range members {
+				ids = append(ids, m.UserID)
+			}
+			byUser := sharedContactItemsForNode(db, nodeID, ids)
+			for i := range members {
+				if items := byUser[members[i].UserID]; len(items) > 0 {
+					members[i].Contact = items
+				}
+			}
 		}
 
 		// Totals for the header, counted under exactly the filter the listing
@@ -595,11 +606,13 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			"member_count":   memberTotal,
 			"follower_count": followerTotal,
 		}
+		// Only for a viewer in the room: outside it there is no offer to
+		// make, and whether anyone here is reachable is not an outsider's
+		// fact to learn.
 		if inRoom {
 			payload["viewer_shares_contact"] = viewerShares
 			payload["any_contact_shared"] = anyContact
 		}
-
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(payload)
 	}
@@ -611,8 +624,15 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 		after, limit := parsePaginationParams(r)
 
+		// contact_items_shared is how many of the caller's own items this
+		// patch can read (docs/adr/083). It answers the question this page
+		// exists for — what does each patch know about me — without a request
+		// per row.
 		query := `SELECT m.id, m.user_id, m.node_id, m.role, m.status, m.visible, m.share_contact, m.joined_at,
-			n.name, n.slug, n.description, n.visibility, n.membership_policy, n.status
+			n.name, n.slug, n.description, n.visibility, n.membership_policy, n.status,
+			(SELECT COUNT(*) FROM contact_item_shares s
+				JOIN contact_items ci ON ci.id = s.item_id
+				WHERE s.node_id = m.node_id AND ci.user_id = m.user_id)
 			FROM memberships m JOIN nodes n ON m.node_id = n.id
 			WHERE m.user_id = ? AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')`
 		args := []interface{}{user.ID}
@@ -660,12 +680,16 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 			// (JoinNode), and a caller who can't see that draws a door that
 			// 403s (docs/adr/042).
 			NodeStatus string `json:"node_status"`
+			// ContactItemsShared counts this caller's items the patch can
+			// read. Only ever about the caller's own card.
+			ContactItemsShared int `json:"contact_items_shared"`
 		}
 		var memberships []membershipResponse
 		for rows.Next() {
 			var m membershipResponse
 			if err := rows.Scan(&m.ID, &m.UserID, &m.NodeID, &m.Role, &m.Status, &m.Visible, &m.ShareContact, &m.JoinedAt,
-				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy, &m.NodeStatus); err != nil {
+				&m.NodeName, &m.NodeSlug, &m.NodeDescription, &m.NodeVisibility, &m.MembershipPolicy,
+				&m.NodeStatus, &m.ContactItemsShared); err != nil {
 				continue
 			}
 			// Standing is stated once, here, the way GetNode states it:
@@ -788,6 +812,10 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					http.Error(w, `{"error":"failed to ban member"}`, http.StatusInternalServerError)
 					return
 				}
+				// A banned person is out of the room, so the room stops
+				// being able to reach them (docs/adr/083).
+				DropContactSharesFor(db, targetUserID, nodeID)
+
 				auth.LogAuditEvent(db, user.ID, "membership.ban", "membership", memID,
 					fmt.Sprintf(`{"target_user_id":"%s"}`, targetUserID), clientIP(r))
 
@@ -895,6 +923,13 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			// preserves the field without offering a control. Migration 041
 			// had backfilled "max_admins": 3 into nearly every patch, so
 			// enforcing it capped live patches with no way out.
+
+			// A follower has no room to share into, so a demotion drops
+			// this patch's shares (docs/adr/083). Promotion never adds any:
+			// there is no standing rule for it to satisfy.
+			if newRole == "follower" && currentRole != "follower" {
+				DropContactSharesFor(db, targetUserID, nodeID)
+			}
 
 			_, err = db.Exec("UPDATE memberships SET role = ? WHERE id = ?", newRole, memID)
 			if err != nil {

@@ -151,6 +151,19 @@ func main() {
 		log.Fatalf("governance init: %v", err)
 	}
 
+	// Move migration 062's contact cards into the item shape docs/adr/083
+	// gives them. Safe to clear the legacy columns as it reads them only
+	// because no handler reads them any more: the Me endpoints, the Members
+	// room and the profile all serve contact_items. Fatal rather than
+	// warn-and-continue — a half-converted card is a phone number in two
+	// places with two different audiences, and the conversion is one
+	// transaction, so failing here leaves the old shape intact.
+	if n, err := handler.BackfillContactItems(db); err != nil {
+		log.Fatalf("contact items backfill: %v", err)
+	} else if n > 0 {
+		log.Printf("contact: converted %d card fields into items", n)
+	}
+
 	// Create the repos that are absent, from the canonical DB rows — a patch
 	// whose repo creation failed at runtime, and every patch on an instance
 	// restored from a database backup alone, which carries no repos at all
@@ -405,8 +418,10 @@ func main() {
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/members", middleware.AuthOptional(db, handler.ListMembers(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/proposals", middleware.AuthOptional(db, handler.ListProposals(db)))
 
-	// User profiles — public (docs/adr/006).
-	mux.HandleFunc("GET /api/v1/users/{username}", handler.GetUserProfile(db))
+	// User profiles — public (docs/adr/006). AuthOptional because the shared
+	// contact items on a profile depend on the caller (docs/adr/083); every
+	// other field on the page is the same for everybody, anonymous included.
+	mux.HandleFunc("GET /api/v1/users/{username}", middleware.AuthOptional(db, handler.GetUserProfile(db)))
 
 	// Node routes — auth required.
 	mux.HandleFunc("POST /api/v1/nodes", middleware.AuthRequired(db, handler.CreateNode(db)))
@@ -477,6 +492,18 @@ func main() {
 	// reason the wipe is: a valid cookie is proof of identity, and this is
 	// irreversible enough to need proof of presence too (docs/adr/017).
 	mux.HandleFunc("DELETE /api/v1/users/me", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.DeleteMyAccount(db, cfg))))
+
+	// The contact card (docs/adr/083). The items live on the account and are
+	// only ever edited by their owner; sharing them is patch-first, below,
+	// because that is where the intent forms. The one item-first write is
+	// unshare-everywhere, which can only reduce exposure.
+	mux.HandleFunc("GET /api/v1/users/me/contact-items", middleware.AuthRequired(db, handler.ListMyContactItems(db)))
+	mux.HandleFunc("POST /api/v1/users/me/contact-items", middleware.AuthRequired(db, handler.CreateMyContactItem(db)))
+	mux.HandleFunc("PATCH /api/v1/users/me/contact-items/{id}", middleware.AuthRequired(db, handler.UpdateMyContactItem(db)))
+	mux.HandleFunc("DELETE /api/v1/users/me/contact-items/{id}", middleware.AuthRequired(db, handler.DeleteMyContactItem(db)))
+	mux.HandleFunc("DELETE /api/v1/users/me/contact-items/{id}/shares", middleware.AuthRequired(db, handler.UnshareMyContactItemEverywhere(db)))
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/contact-shares", middleware.AuthRequired(db, handler.GetMyContactSharesForNode(db)))
+	mux.HandleFunc("PUT /api/v1/nodes/{slug}/contact-shares", middleware.AuthRequired(db, handler.PutMyContactSharesForNode(db)))
 
 	// The noticeboard — members-only, the check in every handler (docs/adr/081).
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.ListNotices(db)))
