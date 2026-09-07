@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -160,5 +161,60 @@ func TestContactItemsSharedOnePatchAtATime(t *testing.T) {
 	db.QueryRow(`SELECT COUNT(*) FROM contact_item_shares WHERE item_id = ?`, phoneID).Scan(&remaining)
 	if remaining != 0 {
 		t.Errorf("leaving left %d share rows behind", remaining)
+	}
+}
+
+// TestDeleteAccountErasesTheContactCard guards the intersection of two
+// decisions that never met: docs/adr/086 keeps the users row as a tombstone,
+// so `contact_items.user_id ON DELETE CASCADE` never fires, and the card
+// would outlive the person it belongs to.
+//
+// Deleting the memberships already ends every disclosure — both surfaces
+// require an active member/admin row — but a phone number left in the table
+// is not erased, and a card is the person rather than an act.
+func TestDeleteAccountErasesTheContactCard(t *testing.T) {
+	db := setupTestDB(t)
+	createTestUser(t, db, "ci-boss", "admin")
+	user, token := createTestUser(t, db, "ci-leaver", "member")
+	nodeID := nodeWithSpareAdmin(t, db, user.ID, "ci-room")
+	createTestMembership(t, db, user.ID, nodeID, "member", "active")
+
+	r := authedRequest("POST", "/api/v1/users/me/contact-items",
+		map[string]string{"kind": "phone", "value": "+1 717 555 0166"}, token)
+	w := serveMux(t, db, "POST", "/api/v1/users/me/contact-items", handler.CreateMyContactItem(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("create item: %d %s", w.Code, w.Body.String())
+	}
+	itemID, _ := decodeJSON(t, w)["id"].(string)
+
+	sr := authedRequest("PUT", "/api/v1/nodes/ci-room/contact-shares",
+		map[string][]string{"item_ids": {itemID}}, token)
+	if sw := serveMux(t, db, "PUT", "/api/v1/nodes/{slug}/contact-shares",
+		handler.PutMyContactSharesForNode(db), sr); sw.Code != http.StatusOK {
+		t.Fatalf("share item: %d %s", sw.Code, sw.Body.String())
+	}
+
+	if dw := deleteMe(t, db, token, "ci-leaver"); dw.Code != http.StatusOK {
+		t.Fatalf("delete returned %d, want 200: %s", dw.Code, dw.Body.String())
+	}
+
+	for _, q := range []string{
+		`SELECT COUNT(*) FROM contact_items WHERE user_id = ?`,
+		`SELECT COUNT(*) FROM contact_item_shares WHERE item_id IN (SELECT id FROM contact_items WHERE user_id = ?)`,
+	} {
+		var n int
+		db.QueryRow(q, user.ID).Scan(&n)
+		if n != 0 {
+			t.Errorf("%s returned %d, want 0 — the card outlived the person", q, n)
+		}
+	}
+	// The tombstone itself must still be there; this test must not pass by
+	// having deleted the row the whole design keeps.
+	var deletedAt sql.NullString
+	if err := db.QueryRow(`SELECT deleted_at FROM users WHERE id = ?`, user.ID).Scan(&deletedAt); err != nil {
+		t.Fatalf("tombstone missing: %v", err)
+	}
+	if !deletedAt.Valid {
+		t.Error("deleted_at not set")
 	}
 }
