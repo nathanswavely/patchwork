@@ -63,6 +63,12 @@
       return e.outcome === 'carried' ? 'Carried by a vote.' : 'Put to a vote and did not carry.';
     }
     if (e.kind === 'direct') {
+      // A maintainer's decision either way (docs/adr/092). A decline is
+      // never "did not carry": the members' tally, if there was one, was
+      // advice, and one person said no.
+      if (e.outcome === 'declined') {
+        return e.actor ? `Declined by ${e.actor}.` : 'Declined by the maintainer.';
+      }
       return e.actor ? `Applied by ${e.actor}.` : 'Applied without a vote.';
     }
     if (e.kind === 'election') {

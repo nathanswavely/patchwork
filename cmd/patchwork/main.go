@@ -522,6 +522,9 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/proposals/{id}", middleware.AuthRequired(db, handler.WithdrawProposal(db)))
 	mux.HandleFunc("POST /api/v1/proposals/{id}/vote", middleware.AuthRequired(db, handler.VoteOnProposal(db)))
 	mux.HandleFunc("POST /api/v1/proposals/{id}/apply", middleware.AuthRequired(db, handler.ApplyProposal(db)))
+	// The maintainer's verbs on an admin-decides patch (docs/adr/092).
+	mux.HandleFunc("POST /api/v1/proposals/{id}/decide", middleware.AuthRequired(db, handler.DecideProposal(db)))
+	mux.HandleFunc("POST /api/v1/proposals/{id}/open-vote", middleware.AuthRequired(db, handler.OpenAdvisoryVote(db)))
 
 	// Governance reads — public docs for everyone, members-only docs for
 	// viewers the patch has admitted, so each needs the optional session

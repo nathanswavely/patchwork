@@ -53,7 +53,26 @@
   let isDirectChange = $derived(
     effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
   );
-  let soleVoter = $derived(isVoting && canVote && proposal?.eligible_voters === 1);
+  // The maintainer's patch (docs/adr/092): the server says whether this
+  // proposal's tally is advice, and whether this viewer is the one who
+  // decides. Neither is the client's to work out from a role.
+  let advisory = $derived(proposal?.advisory === true);
+  let canDecide = $derived(proposal?.can_decide === true);
+  let hasBallots = $derived(
+    (proposal?.approve_count || 0) + (proposal?.reject_count || 0) + (proposal?.abstain_count || 0) > 0
+  );
+  // A sole voter on an advisory vote decides nothing early — the vote is
+  // not what decides — so the notice that says otherwise stays off.
+  let soleVoter = $derived(isVoting && canVote && !advisory && proposal?.eligible_voters === 1);
+  // Where a tally is worth showing: any vote in progress, and any settled
+  // proposal that was actually voted on. A request the maintainer decided
+  // without asking anybody has no tally, and an empty one would read as a
+  // vote nobody turned up to.
+  let showsTally = $derived(
+    isVoting ||
+      (effectiveState === 'awaiting_admin' && hasBallots) ||
+      (['approved', 'in_effect', 'rejected', 'passed'].includes(effectiveState) && (!advisory || hasBallots))
+  );
 
   // An election is a proposal that carries candidates (docs/adr/051). Its
   // ballot is approval over a slate, not approve/reject on a question, so the
@@ -143,8 +162,12 @@
       votingEndsAt={proposal.voting_ends_at}
       approveCount={proposal.approve_count || 0}
       rejectCount={proposal.reject_count || 0}
+      abstainCount={proposal.abstain_count || 0}
       directChange={isDirectChange}
       {canVote}
+      {advisory}
+      {canDecide}
+      declinedBy={proposal.declined_by || ''}
       electionPhase={proposal.election_phase || ''}
       onStateChange={handleStateChange}
     />
@@ -241,9 +264,9 @@
 
         <!-- Vote section — a direct change was never voted on, and an election
              counts approvals over a slate rather than yes/no on a question -->
-        {#if !isElection && !isDirectChange && (isVoting || effectiveState === 'approved' || effectiveState === 'in_effect' || effectiveState === 'rejected' || effectiveState === 'passed')}
+        {#if !isElection && !isDirectChange && showsTally}
           <section class="proposal-section">
-            <h2>Vote</h2>
+            <h2>{advisory ? 'Advisory vote' : 'Vote'}</h2>
             {#if soleVoter}
               <p class="sole-voter-note">You're the only eligible voter, so your vote decides this immediately.</p>
             {/if}
@@ -260,6 +283,8 @@
               state={effectiveState}
               voters={proposal.voters || []}
               {canVote}
+              {advisory}
+              proposalType={proposal.proposal_type || ''}
               onVote={handleVote}
             />
           </section>
