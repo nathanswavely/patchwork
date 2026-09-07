@@ -1,9 +1,9 @@
 # ADR 090: A notification follows an obligation, not an event
 
-Date: 2026-09-07. Status: **accepted**; the deletion in decision 3 is
-recorded here and not yet implemented. Reached by grilling the question
-"what should RSVP be?" until it turned out to be a question about what
-Patchwork is.
+Date: 2026-09-07. Status: **accepted and implemented**; decision 3's
+deletion ships with this record, and decision 5's per-event `.ics` does
+not. Reached by grilling the question "what should RSVP be?" until it
+turned out to be a question about what Patchwork is.
 
 ## Context
 
@@ -135,13 +135,15 @@ because it is the obvious first answer and will be reached for again.
 
 ## Consequences
 
-- **CLAUDE.md's role table is corrected.** A follower sees events in their
-  feed, calendar and map; it no longer says "gets notified."
+- **CLAUDE.md's role table is corrected** in this change. A follower sees
+  events in their feed, calendar and map; it no longer says "gets
+  notified."
 - **The Events notification category survives and changes meaning.** What
   remains — `EventSuggested`, submission approved and rejected, event link
   requested and confirmed, `ProgramOffer` — is without exception an admin
   queue duty or an answer to something the person did. Its user-facing
-  label should stop implying it carries events; that is a copy-ledger
+  label no longer implies it carries events: its description becomes
+  "Submissions, links, and program offers", which is a copy-ledger
   string.
 - **Stored preferences for the deleted types go inert.** Rows in
   `notification_preferences` keyed to the four types are simply never read

@@ -377,14 +377,10 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		desired[k] = it
 	}
 
-	var nodeSlug, nodeName string
-	if err := db.QueryRow(`SELECT slug, name FROM nodes WHERE id = ?`, src.NodeID).Scan(&nodeSlug, &nodeName); err != nil {
-		return fmt.Errorf("load node: %w", err)
-	}
-
-	// The first successful sync adopts the whole calendar quietly;
-	// announcing forty backfilled events would bury every follower's
-	// bell. From then on, new events are news.
+	// The first successful sync adopts the whole calendar quietly rather
+	// than treating forty backfilled events as arrivals. Nothing rings a
+	// bell either way since docs/adr/090, but these still federate and
+	// still match programs, and a backfill is not news to those either.
 	announce := src.LastSuccessAt.Valid
 	now := time.Now().UTC().Format(time.RFC3339)
 
@@ -535,19 +531,10 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		return fmt.Errorf("commit reconcile: %w", err)
 	}
 
+	// An imported event announces to nobody (docs/adr/090). It is
+	// published: it appears on the patch's calendar feed, the quilt and
+	// the map, and federates to the patch's AP followers below.
 	for _, e := range announcements {
-		if notifier != nil {
-			go notifier.Notify(notifications.Event{
-				Type:     notifications.EventCreated,
-				NodeID:   src.NodeID,
-				NodeSlug: nodeSlug,
-				NodeName: nodeName,
-				ActorID:  src.AddedBy,
-				EntityID: e.ID,
-				Title:    "New event: " + e.Title,
-				Link:     weblink.Event(e.ID),
-			})
-		}
 		broadcastCreate(db, e, src.NodeID)
 	}
 	offerAnnouncements(db, notifier, src, announcements)

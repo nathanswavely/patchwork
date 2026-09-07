@@ -460,15 +460,27 @@ func TestAdminQueueNotificationsReachTheirActor(t *testing.T) {
 		t.Errorf("site admin event queue: got %d, want 1", n)
 	}
 
-	// A patch-level suggestion still skips its own author, and members hear
-	// nothing about events they posted themselves.
+	// An event posted straight to a patch notifies nobody at all
+	// (docs/adr/090) — not its author, and not the other admin who did
+	// not post it. An event is published, never announced.
 	activeID := createTestNode(t, db, stranger.ID, "Gallery Row", "gallery-row-q", "open")
 	createTestMembership(t, db, stranger.ID, activeID, "admin", "active")
+	createTestMembership(t, db, otherAdmin.ID, activeID, "member", "active")
 	if _, code := createEventVia(t, db, cfg, strangerToken, eventBody(activeID, "Members Night")); code != 201 {
 		t.Fatalf("member's own event: code=%d", code)
 	}
-	if n := countNotifications(t, db, stranger.ID, notifications.EventCreated, 0); n != 0 {
-		t.Errorf("member notified about their own event: got %d, want 0", n)
+	time.Sleep(250 * time.Millisecond)
+	for _, u := range []struct {
+		id, who string
+	}{{stranger.ID, "the author"}, {otherAdmin.ID, "a fellow member"}} {
+		var n int
+		db.QueryRow(
+			`SELECT COUNT(*) FROM notifications WHERE user_id = ? AND link LIKE '%/events/%'`,
+			u.id,
+		).Scan(&n)
+		if n != 0 {
+			t.Errorf("%s got %d event notifications, want 0", u.who, n)
+		}
 	}
 }
 
