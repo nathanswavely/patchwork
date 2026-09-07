@@ -96,5 +96,15 @@ this import unchanged.
 ## Known gap
 
 Git-backed governance repos (linings in `internal/governance`) do not
-travel yet; the `governance_docs` table does. Repo transfer belongs to the
+travel; the `governance_docs` table does. Repo transfer belongs to the
 Phase C governance-federation work.
+
+The half of that gap that *broke* things is closed. An instance that arrived
+with rows and no repos — a fork, or the commoner case of a restore from the
+SQLite file alone — could read every charter and never amend one again,
+because every governance write starts at `openBare`. docs/adr/084 rebuilds
+the mirror from the canonical rows: create-missing on every boot, a full
+`patchwork -repair-governance` pass for an operator, and the synthetic
+commits labelled as such wherever the history is shown. What still does not
+travel is the *history* — no decision recovers commits that were never
+exported, and the rebuilt repo says so rather than pretending otherwise.
