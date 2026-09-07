@@ -32,6 +32,7 @@ func main() {
 	healthcheck := flag.Bool("healthcheck", false, "probe the running instance's health endpoint and exit 0 (healthy) or 1")
 	verifyAttestation := flag.String("verify-attestation", "", "check an admin attestation blob (docs/adr/087) and exit 0 if it stands")
 	attestationKey := flag.String("attestation-key", "", "PEM public key file to check -verify-attestation against, instead of fetching it from the claimed domain")
+	repairGovernance := flag.Bool("repair-governance", false, "rebuild governance repos from the database, print a summary, and exit (run with the server stopped)")
 	flag.Parse()
 
 	// Probe mode: no database, no server. Used by the image's HEALTHCHECK.
@@ -45,6 +46,12 @@ func main() {
 	// happens to have the binary.
 	if *verifyAttestation != "" {
 		runVerifyAttestation(*verifyAttestation, *attestationKey)
+		return
+	}
+
+	// Repair mode: database and repos, no server (docs/adr/084).
+	if *repairGovernance {
+		runGovernanceRepair(*configPath)
 		return
 	}
 
@@ -144,12 +151,16 @@ func main() {
 		log.Fatalf("governance init: %v", err)
 	}
 
-	// Heal nodes whose repo creation failed at runtime (e.g. instances that
-	// ran a pre-pure-go-git build in a container without a git binary).
+	// Create the repos that are absent, from the canonical DB rows — a patch
+	// whose repo creation failed at runtime, and every patch on an instance
+	// restored from a database backup alone, which carries no repos at all
+	// (docs/adr/084). Strictly create-missing: a repo that is already there is
+	// never written into on a boot. Repairing one that exists but has drifted
+	// is `patchwork -repair-governance`, an operator's decision.
 	if n, err := handler.BackfillNodeGovernanceRepos(db); err != nil {
 		log.Fatalf("governance backfill: %v", err)
 	} else if n > 0 {
-		log.Printf("governance: backfilled repos for %d nodes", n)
+		log.Printf("governance: rebuilt repos for %d patches from the database", n)
 	}
 
 	// Fill the governance_config cache for nodes created while CreateNode
@@ -485,6 +496,9 @@ func main() {
 	mux.HandleFunc("POST /api/v1/users/me/quilts", middleware.AuthRequired(db, handler.AddUserQuilt(db)))
 	mux.HandleFunc("DELETE /api/v1/users/me/quilts/{id}", middleware.AuthRequired(db, handler.DeleteUserQuilt(db)))
 	mux.HandleFunc("GET /api/v1/me/nodes", middleware.AuthRequired(db, handler.ListMyMemberships(db)))
+	// Personal export (docs/adr/012, affordance 1): everything about the
+	// person asking, with no admin involved. Rate-limited inside the handler.
+	mux.HandleFunc("GET /api/v1/users/me/export", middleware.AuthRequired(db, handler.PersonalExport(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
 
 	// Proposal routes — public, but amendment text follows the target
