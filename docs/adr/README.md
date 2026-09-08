@@ -102,10 +102,11 @@ several branches are in flight.
 | [075](075-discovery-asks-a-question.md) | Discovery asks a question; the quilt shows everything — Welcome splits, the flow goes standing and public, and co-follow recommendation is refused *(beside 040)* |
 | [076](076-the-bulletin-is-the-one-broadcast.md) | The bulletin is the one broadcast, and it ships off — monthly, complete, unranked, opt-in |
 | [077](077-a-dependency-every-fork-inherits-cannot-require-a-key.md) | A dependency every fork inherits cannot require a key — keyless vector basemap, raster fallback |
-| [078](078-the-map-says-where-the-card-says-who.md) | The map says where; the card says who — motif markers, names by separation, clusters, and a preview costs a gesture the device can spare |
+| [078](078-the-map-says-where-the-card-says-who.md) | The map says where; the card says who — motif markers, names by separation, clusters, and a preview costs a gesture the device can spare *(decision 7's object superseded by 094: the gesture now hands back the profile, docked)* |
 | [079](079-an-event-keeps-the-door-it-came-through.md) | An event keeps the door it came through — every feed carries the event's own page and Patchwork dropped it; one `event_url`, filled by ingest and by the form *(fills a gap in 031, completes 056)* |
 | [080](080-a-contact-card-is-shared-patch-by-patch.md) | A contact card is shared patch by patch — one card on the account, one switch per membership, shown only in the room; a second axis beside 006's one switch, not a second visibility toggle *(superseded by 083)* |
 | [081](081-a-noticeboard-with-replies-not-a-feed.md) | A noticeboard with replies, not a feed — members-only, replies per notice, a closed moderation kit, quiet by default; travels in a seamrip; markdown with an image reference |
+| [094](094-a-tap-hands-back-the-patch-not-a-card-about-it.md) | A tap hands back the patch, not a card about it — a discovery surface docks the patch's own profile at its own address, over a surface that is never unmounted; two heights on a phone, a non-modal panel in the pane's slot, and the docked card retires *(supersedes 078's decision 7 in its object, applies 022 and 074, takes 090's tree-field precedent)* |
 
 ## Proposed — designs on record, not built
 
