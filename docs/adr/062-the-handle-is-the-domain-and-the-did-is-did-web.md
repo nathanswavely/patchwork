@@ -1,7 +1,9 @@
 # ADR 062: The handle is the domain, and the DID must be did:web
 
 Date: 2026-08-21. Status: **accepted**. Builds ADR 058's step B. Corrects
-an overstatement in ADR 060 that surfaced while designing it.
+an overstatement in ADR 060 that surfaced while designing it. **Amended
+2026-09-08:** decision 4 no longer holds — the verified handle is shown on
+the patch profile.
 
 ## The correction, first
 
@@ -90,6 +92,35 @@ weakest.
 any actor document, no effect on federation. ADR 049 cuts both ways: a
 stored fact that makes no claim to anybody needs no page, and inventing
 one before steps A or D exist would be the void ADR 054 warned about.
+
+*Amended 2026-09-08 — the handle is shown, and nothing else changed.*
+Step A shipped (ADR 064) and step D was retired, which settles what "yet"
+was waiting for: there will be no repository, no atproto-native follows,
+and therefore no later moment when the DID starts doing something on its
+own. Left as written, `nodes.did` would be a column that is verified,
+travels a seamrip, and is read by nobody — the thing ADR 049 objects to
+from the other side.
+
+So the handle appears on the patch profile, in About, beside the website
+and the address. Three limits are the whole of the design:
+
+- **It is a fact, not a control.** Rendered as text and not linked.
+  Linking would have to pick a client to send a visitor to, and picking
+  one is exactly the "a registry the community does not run" move
+  decision 2 refused; there is no viewer this project can bless.
+- **No checkmark, and no date.** The binding was proved once, when the
+  claim was verified, and nothing re-checks it afterwards — not on a
+  schedule, not on page load. A checkmark reads as a present-tense claim
+  about a check that is not running, so the copy says when the proof
+  happened instead of asserting it still would.
+- **Derived from the DID, not from `verification_domain`.** They name the
+  same domain today, but only one of them survives a fork (see the
+  consequence below), and a surface that goes blank on the fork would
+  contradict the reason the column travels at all.
+
+What did *not* change: no actor document, no federation behaviour, no new
+endpoint, and the DID is still writable only by a verified claim. This
+amendment adds a reader, not a second way to set one.
 
 ## Considered and rejected
 

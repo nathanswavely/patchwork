@@ -17897,7 +17897,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 445,
+          "line": 461,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -20967,7 +20967,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 414,
+          "line": 430,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -22232,7 +22232,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 147,
+          "line": 153,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -22300,7 +22300,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 193,
+          "line": 199,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -24531,7 +24531,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 335,
+          "line": 351,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -24606,7 +24606,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 385,
+          "line": 401,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -25289,7 +25289,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 227,
+          "line": 233,
           "kind": "markup",
           "raw": "Settings",
           "quote": null
@@ -36415,7 +36415,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 347,
+          "line": 363,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -42167,7 +42167,7 @@
         },
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 406,
+          "line": 422,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -42674,7 +42674,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 195,
+          "line": 201,
           "kind": "markup",
           "raw": "Back to Quilt",
           "quote": null
@@ -42692,7 +42692,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 210,
+          "line": 216,
           "kind": "markup",
           "raw": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
           "quote": null
@@ -42710,7 +42710,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 258,
+          "line": 264,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
           "quote": null
@@ -42728,7 +42728,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 259,
+          "line": 265,
           "kind": "markup",
           "raw": "The community added it",
           "quote": null
@@ -42746,7 +42746,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 261,
+          "line": 267,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -42764,7 +42764,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 263,
+          "line": 269,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -42782,7 +42782,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 265,
+          "line": 271,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -42800,7 +42800,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 265,
+          "line": 271,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -42818,7 +42818,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 277,
+          "line": 283,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -42836,7 +42836,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 279,
+          "line": 285,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -42854,9 +42854,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 307,
+          "line": 313,
           "kind": "markup",
           "raw": "About",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a1493990b16f",
+      "text": "atproto handle, proved when this patch was claimed",
+      "words": 8,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchProfile.svelte",
+          "line": 342,
+          "kind": "markup",
+          "raw": "atproto handle, proved when this patch was claimed",
           "quote": null
         }
       ]
@@ -42872,7 +42890,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchProfile.svelte",
-          "line": 375,
+          "line": 391,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
