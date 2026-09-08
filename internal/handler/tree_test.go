@@ -188,3 +188,47 @@ func TestNodeTreeEmpty(t *testing.T) {
 		t.Errorf("expected empty children, got %d", len(resp.Tree.Children))
 	}
 }
+
+// The tree carries membership_policy because a docked profile's head is
+// rendered from this row (docs/adr/094), and the relationship row offers
+// the next rung only when the policy is not invite_only. Seeded from a row
+// missing the field, the head would offer "Become a member" on an
+// invite-only patch while the same profile's page offers nothing — one
+// sheet's two heights disagreeing about one patch. Same reason
+// docs/adr/090 put moved_to here.
+func TestNodeTreeCarriesMembershipPolicy(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "policy-admin", "member")
+
+	open := createTestNode(t, db, admin.ID, "Open Patch", "open-patch", "open")
+	closed := createTestNode(t, db, admin.ID, "Band", "band", "invite_only")
+
+	r := httptest.NewRequest("GET", "/api/v1/nodes/tree", nil)
+	w := servePublicMux(t, "GET", "/api/v1/nodes/tree", handler.NodeTree(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var resp struct {
+		Tree struct {
+			Children []struct {
+				ID               string `json:"id"`
+				MembershipPolicy string `json:"membership_policy"`
+			} `json:"children"`
+		} `json:"tree"`
+	}
+	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+
+	got := map[string]string{}
+	for _, child := range resp.Tree.Children {
+		got[child.ID] = child.MembershipPolicy
+	}
+	if got[open] != "open" {
+		t.Errorf("expected membership_policy=open, got %q", got[open])
+	}
+	if got[closed] != "invite_only" {
+		t.Errorf("expected membership_policy=invite_only, got %q", got[closed])
+	}
+}
