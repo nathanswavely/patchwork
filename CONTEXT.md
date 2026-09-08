@@ -420,13 +420,18 @@ a patch is named — an events list, search results, a notification, inside
 the workspace — its link opens the page, because there is no set being
 worked through that a reader would lose.
 
-It has two heights and no third. At rest it shows the profile's **head** —
-cover, name, counts, and the relationship row — drawn from the row the
-surface already fetched, so a tap costs nothing. Pulled up it is **full
-screen**: the whole profile with its glimpses, and the pull is what fetches
-them. The surface underneath stays alive but idle, never torn down, so
-dismissing returns the reader to what they tapped from — the canvas at the
-zoom and pan they left it, the list at the row they had reached.
+On a phone it has two heights and no third. At rest it shows the profile's
+**head** — cover, name, counts, and the relationship row — drawn from the
+row the surface already fetched, so a tap costs nothing. Pulled up it is
+**full screen**: the whole profile with its glimpses, and the pull is what
+fetches them. In the pane's slot there are no heights: the room already
+shows a surface and a profile at once, which is the reason that form is a
+panel beside the surface rather than a sheet over it, and a reader wanting
+the profile alone has the page.
+
+The surface underneath stays alive but idle, never torn down, so dismissing
+returns the reader to what they tapped from — the canvas at the zoom and
+pan they left it, the list at the row they had reached.
 
 Opening one is a navigation — it takes the profile's address — and its
 height is not: there is no address for a half-open sheet. Full screen
