@@ -383,33 +383,50 @@ section may or may not be a card)
 A patch as rendered in a list — its cover, name, counts, a line of
 description, and the viewer's standing with it. The one rendering of a
 patch outside the quilt, and deliberately the same one wherever it
-appears. It has two homes: the **cards pane** beside a discovery surface,
-and — where the screen has no room for a pane — **docked** at the foot of
-the surface, carrying the patch a person just touched. Which home a card
-lands in follows the room on screen, never which surface the person came
-from.
+appears. It has one home: the **cards pane** beside a discovery surface,
+which on a phone is the list view filling the screen. It sits in a grid
+where tapping a card is already the convention, so the standing stays a
+labelled chip in the cover's corner rather than an invitation repeated
+eighteen times — labelled, because follower, member and admin are the
+ladder a reader is here to learn and an unlabelled glyph teaches nobody a
+word.
 
 Previewing costs a gesture the device can spare: where there is a pointer,
 pointing at a patch previews it — its card highlights in the pane — and
 clicking opens the patch. Where there is no pointer there is only one
-gesture, so the first tap previews into the docked card, and the card
-itself is how the patch is opened. The quilt and the map behave the same
-way as each other on the same hardware.
+gesture, so the first tap opens the **docked profile**. The quilt and the
+map behave the same way as each other on the same hardware.
 
-The two homes are the same card, and differ only in what the room affords.
-Docked, it stands alone above every other thing on screen, spends the width
-on a longer description, and ends in an **action row** naming what it can
-do — "View patch", and the viewer's standing beside it. In the pane it sits
-in a grid where tapping a card is already the convention, so the standing
-stays a chip in the cover's corner and no card repeats the invitation
-eighteen times. The standing is spelled out in both: follower, member and
-admin are the ladder a reader is here to learn, and an unlabelled glyph
-teaches nobody a word.
+A card is never the thing a canvas hands back to a tap: what a patch is
+gets answered by the patch's own profile, docked. The card's job is to
+make a list of patches readable, and a list is the one place it lives.
 
 Not a tile (that is a patch drawn as fabric on the quilt) and not a remote
 patch card (that is another quilt's patch, read-only).
 _Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement
-passed through, not a preview glanced at), preview, tile, popup
+passed through, not a preview glanced at), preview, tile, popup, docked
+card (retired — a canvas hands back the docked profile)
+
+**Docked profile**:
+A **patch profile** shown over a discovery canvas, attached to an edge of
+it: docked at the **foot** on a phone, docked in the **cards pane's slot**
+on a desktop. One thing in two forms, and which form a reader gets follows
+the room on screen, never how they arrived. It is the profile itself and
+not a summary of one — the same rendering the page shows, so a patch has
+one face and it cannot drift.
+
+It has two heights. **Collapsed** shows the profile's head — cover, name,
+counts, and the relationship row — drawn from what the canvas already
+fetched, so a tap on a tile costs nothing. **Expanded**, pulled up by the
+handle, is the whole profile with its glimpses, and pulling it up is what
+fetches them. Dismissing it returns the reader to exactly the view they
+tapped from: a docked profile never moves the canvas behind it.
+
+Holds the patch a reader chose until they choose another — a pointer
+sweeping the canvas previews, and a preview never replaces what is open.
+_Avoid_: peek sheet, sheet (the Join sheet is an interstitial passed
+through; this is the profile, docked), bottom sheet, drawer, modal (it is
+never modal — the canvas behind it stays live on a desktop), preview
 
 **Person card**:
 A person as rendered anywhere they are named — avatar, display name, their
@@ -521,7 +538,11 @@ than standing alone.
 _Avoid_: star for follows, favorite, bookmark, owner (as a role name)
 
 **Patch profile**:
-A patch's public page at /patches/:slug — the face it shows the street.
+A patch's public face at /patches/:slug, shown in one of two homes: as a
+**page**, and — where a discovery canvas is on screen to keep — as a
+**docked profile** over it. One address either way, and which home it
+lands in follows the room, never how the reader arrived: a link opened
+cold has no canvas to sit over.
 Read at a glance: cover, description, and a glimpse of each of the
 patch's surfaces. Deliberately not the workspace and deliberately without
 the workspace's tab row; a person with standing enters through the
