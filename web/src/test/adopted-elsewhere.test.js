@@ -337,7 +337,9 @@ describe('Where an image renders', () => {
     const src = source('pages/PatchProfile.svelte');
     expect(src).toMatch(/<img class="patch-image" src=\{node\.image_url\} alt=\{node\.image_alt\}/);
     // Without this a patch whose only About content is a picture renders no
-    // About section at all, and the picture is invisible.
-    expect(src).toMatch(/showAbout = \$derived\(.*!!node\?\.image_url\)/);
+    // About section at all, and the picture is invisible. Anchored on the
+    // clause rather than on the end of the condition: what matters is that
+    // a picture opens About, not that it is the last thing that can.
+    expect(src).toMatch(/showAbout = \$derived\([^\n]*!!node\?\.image_url/);
   });
 });
