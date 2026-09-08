@@ -30,6 +30,14 @@
 -- handlers move, and they carry the only copy of pre-068 data until the Go
 -- backfill has run everywhere; retiring them is a later migration, once no
 -- deployment can still be mid-upgrade.
+--
+-- Numbering: this shipped as 066 and collided with 066_moved_to.sql, which
+-- reached main under the same number while this was in review. Both applied
+-- and neither failed — the runner records the whole filename — so only the
+-- citations broke. Renumbered to 068 afterwards, by which point instances had
+-- already recorded it as 066: internal/database's renamedMigrations rewrites
+-- that row, and without it this file re-runs and CREATE TABLE fails. Never
+-- renumber a merged migration without that entry.
 
 CREATE TABLE contact_items (
   id         TEXT PRIMARY KEY,
