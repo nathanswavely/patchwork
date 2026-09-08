@@ -428,6 +428,11 @@ height is not: there is no address for a half-open sheet. Full screen has
 no surface behind it, so the tap-behind that dismisses it at rest is
 unavailable there; it closes by the handle, the dismiss, or back.
 
+The container is chosen by the room and its occupant by the address, so a
+remote patch docks its **remote patch card** — one gesture on a My Quilt
+canvas where local and remote tiles sit side by side, rather than a tap
+that means two things depending on a chip in a tile's corner.
+
 Holds the patch a reader chose until they choose another — a pointer
 sweeping the canvas previews, and a preview never replaces what is open.
 _Avoid_: peek sheet, sheet (the Join sheet is an interstitial passed
@@ -1316,7 +1321,10 @@ sashing color, always naming where it lives. A card about the patch,
 never that quilt's site embedded. Follow lives here (and posts home);
 everything deeper is a doorway. Reached from My Quilt tiles,
 notifications, and pasted patch links — pasting a patch's URL into the
-search opens its card.
+search opens its card. Has the two homes a patch profile has: a page, and
+docked over a canvas, where a remote tile's tap lands it. Its head draws
+from the follow's display snapshot, so it appears whether or not the other
+quilt is reachable.
 _Avoid_: remote profile, embedded view, preview (it is the full public
 face)
 
