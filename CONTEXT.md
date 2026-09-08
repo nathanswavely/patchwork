@@ -411,6 +411,25 @@ patch card (that is another quilt's patch, read-only).
 _Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement
 passed through, not a preview glanced at), preview, tile, popup
 
+**Person card**:
+A person as rendered anywhere they are named — avatar, display name, their
+standing in the patch at hand, and the way through to their Profile. The one
+rendering of a person outside their own page, and deliberately the same one
+in the Members room, on a notice's replies, and beside an event's organizer.
+It follows the patch card's gesture rule rather than inventing a second one:
+where there is a pointer, pointing at a person previews them; where there is
+not, the first tap opens the card and the card is how the profile is reached.
+A person's Profile is this card at full page size.
+
+Its last section is the **contact card** — the items that person shares with
+a patch this viewer is also in — and that section is the one part that
+differs by who is looking. It is absent far more often than it is present,
+so the card has to be worth opening without it. Never a directory: a person
+card is reached from somewhere a person already stands, never from a search
+over people.
+_Avoid_: member card (an admin is not a member), user card, profile card,
+contact card (that is the data the last section shows), hover card, popup
+
 **Interruption**:
 The one other thing that earns a border: a surface that is loud on purpose
 because it breaks the reading flow — a danger zone, a warning callout, an
@@ -461,20 +480,35 @@ _Avoid_: private membership (collides with private patches), profile
 visibility (it is per-membership, not per-profile)
 
 **Contact card**:
-How a person can be reached — a phone number, an email address to reach
-them at (not the sign-in address), and a short note — kept once on the
-account and shared patch by patch. **Contact sharing** is the per-membership
-switch that shows it, owned by the member and off for every patch until
-they turn it on; on, that patch's admins and members see the card in its
-Members room, including people who join later. It is never on the profile,
-never in a public member list, and never federates; a follower has no room
-to share into and cannot switch it on. A second axis beside membership
-visibility, not a second visibility switch: visibility says whether a
-membership is *known*, sharing says whether the people already in the room
-can *reach* you (docs/adr/080).
-_Avoid_: contact info (unbounded — the card is three fields), phone number
-(one field of it), private contact (everything about it is private; say
-"shared with" a patch), directory (there is no people search)
+Every way a person is willing to be reached, kept once on the account. The
+card is a set of **contact items** — one phone number, one email address to
+reach them at (never the sign-in address), one handle, one line of plain
+text — each carrying its own kind, so a channel is a fact about the item
+rather than something typed into the value. The card has no fixed length
+and no required item; an empty card is the normal starting state.
+_Avoid_: contact info (say the card, or an item), contact details, phone
+number (one item of it), private contact (all of it is private; say "shared
+with" a patch), directory (there is no people search)
+
+**Contact sharing**:
+The disclosure a single item carries into a single patch, chosen by its
+owner and by nobody else. Every pairing is decided on its own and nothing
+is ever shared by a rule, a default, or an act of the app: there is no
+share-with-everything, so a patch joined later starts shared with nothing
+and a person is never surprised by a room they did not hand something to.
+A shared item is seen by that patch's admins and members, and by them
+wherever they look: in the patch's Members room, and on the person's
+profile, which shows a visitor exactly the items they could already have
+read by walking into a room they share. The profile is a window onto that
+audience, never a wider one, and it never names the patch an item came
+through — an item shared through a private or hidden membership shows the
+same as any other. Nothing is public, nothing federates, and a follower has
+no room to share into. A second axis beside membership visibility, not a
+second visibility switch: visibility says whether a membership is *known*,
+sharing says whether the people already in the room can *reach* you
+(docs/adr/083).
+_Avoid_: visible/hidden (that pair belongs to membership visibility), public
+(no item ever is), all/everyone (there is no such choice), default
 
 **Role mark**:
 The icon that carries a person's relationship to a patch, used the same
@@ -673,7 +707,10 @@ Something a patch votes on. It opens for voting the moment it is raised
 rejected, then in effect. Discussion happens alongside the vote in the
 proposal's Discussion tab, not in a stage before it — the `draft` and
 `discussion` states in the migration-016 column are retired and nothing
-writes them.
+writes them. On an admin-decides patch the maintainer decides it instead
+(docs/adr/092): born **waiting on the maintainer** when a member raises
+it, born applied as a **direct change** when an admin does, and any vote
+held on it is an **advisory vote**.
 Deliberately the same word in the UI and the backend; the textile coinage
 "baste request" is retired. It explained a metaphor before it explained
 the feature — every UI surface had already grown Proposals headings and
@@ -734,7 +771,10 @@ timeline, notifications, and history with voted proposals; the UI never
 says "propose", "submit", or "vote" for one. Which framing a patch gets
 follows the rules in force, not its size: the words are "change these
 rules" / "rule change · applied by …" on admin-decides patches, and
-"proposal" everywhere a vote actually happens.
+"proposal" everywhere a vote actually happens. An admin who would rather
+hear from the members first opens an **advisory vote** instead
+(docs/adr/092); the maintainer's decline is worded the same way — "Declined
+by …" — never as a vote that failed.
 _Avoid_: proposal (nothing is proposed to anyone), fast-track (an
 implementation word, not a concept), edit (undersells that it's tracked
 and visible)
@@ -758,6 +798,31 @@ meeting result instead. The decision comes back as an attestation on the
 charter. Not a draft and not a discussion stage: nothing promotes out of
 it, and no vote is coming (docs/adr/048, docs/adr/053).
 _Avoid_: draft, pending, awaiting vote (none is), informal, unofficial
+
+**Advisory vote**:
+A vote held on an admin-decides patch (docs/adr/092). It runs on the
+ordinary ballot with the ordinary electorate and decides nothing: the
+maintainer approves or declines at any moment, mid-vote included, and
+when the window closes the proposal goes back to **waiting on the
+maintainer** with the tally attached. Said in the first breath wherever
+it appears — "Advisory vote. The maintainer decides." — because a bar
+filling toward a majority that has no force is the lie the word exists to
+end. The members can be asked once per proposal. Opened by an admin, on
+their own proposal ("Ask the members first") or on a member's.
+_Avoid_: poll (undersells that it is the patch's real ballot), vote
+without the adjective, referendum, binding (it never is)
+
+**Waiting on the maintainer**:
+The state a proposal is in on an admin-decides patch while nobody has
+decided it (`state = 'awaiting_admin'`, docs/adr/092): a member's
+proposal from the moment it is raised, and an admin's or a member's after
+an **advisory vote** closes. Open, discussable, withdrawable, and carrying
+no ballot and no clock — the only things that end it are the maintainer's
+approve or decline, or the author taking it back. Shaped like
+**elsewhere** (an open proposal the tally does not decide) rather than the
+retired `discussion` stage, which sat ahead of a vote that would come.
+_Avoid_: pending (which review queues already use), awaiting approval (an
+admin may also decline), draft
 
 **Attestation**:
 A record of a decision the community made at a venue that isn't
@@ -1209,7 +1274,7 @@ _Avoid_: bookmark, watch, subscription
 **Doorway**:
 The labeled link that hands you to another quilt's own site: every
 switcher entry for another quilt, and the deeper-than-looking actions on
-a remote patch card (join, RSVP, workspace). Whole quilts are always
+a remote patch card (join, propose, workspace). Whole quilts are always
 entered through doorways — places are visited at their own address,
 never rendered inside this one. A doorway is always marked as leaving.
 Declining cross-quilt reads (the multi-quilt flag off) is respected,

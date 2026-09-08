@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
+  import PersonCard from '../components/PersonCard.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -22,12 +23,16 @@
   let memberCount = $state(0);
   let followerCount = $state(0);
 
-  // Contact cards (docs/adr/080) ride along only for a viewer who is in
-  // the room. A member whose own row carries none is offered the switch —
-  // and that is a fact about the room, not about the loaded page. Both of
-  // these used to be read off `members`, which meant a member sitting on
-  // page 4 was never offered the switch, because their own row had not
-  // arrived to say they were missing a card.
+  // Contact items (docs/adr/083) ride along only for a viewer who is in the
+  // room, and only the items shared into this patch. A member sharing
+  // nothing here is offered the way to, which is patch-first and lives in My
+  // Patches — never on this page, because granting from a list of people is
+  // not the decision anyone is making while reading one.
+  //
+  // Both facts come from the server, never the loaded array (#231): the
+  // listing is paged, so asking `members` whether the viewer shares here
+  // really asks "…among these twenty", and a member on page 4 was offered
+  // nothing.
   let inRoom = $derived(membershipRole === 'member' || membershipRole === 'admin');
   let viewerSharesContact = $state(false);
   let anyContact = $state(false);
@@ -90,7 +95,7 @@
     {#if offerSharing}
       <p class="muted contact-offer">
         {#if anyContact}
-          Contact cards here are shared only with this patch's admins and members.
+          Contact details here are shared only with this patch's admins and members.
         {/if}
         Share yours with this patch in
         <a href="/settings/patches" onclick={(e) => { e.preventDefault(); navigate('/settings/patches'); }}>My Patches</a>.
@@ -100,29 +105,18 @@
       {#each members as member (member.user_id)}
         <li class="member-row">
           <div class="member-main">
-            <a
-              href="/users/{member.username}"
-              class="member-name"
-              onclick={(e) => { e.preventDefault(); navigate(`/users/${member.username}`); }}
-            >
-              {member.display_name || member.username}
-            </a>
-            <span class="badge">{member.role}</span>
+            <!-- One rendering of a person, wherever they are named: the card
+                 carries the shared items, so the list stays a list. -->
+            <span class="member-name">
+              <PersonCard person={member} role={member.role} />
+            </span>
+            <span class="member-marks">
+              <span class="badge">{member.role}</span>
+              {#if (member.contact || []).length > 0}
+                <span class="reachable" title="Shares contact details with this patch">reachable</span>
+              {/if}
+            </span>
           </div>
-          {#if member.contact}
-            <!-- Shown to this patch's admins and members only (docs/adr/080). -->
-            <div class="member-contact">
-              {#if member.contact.phone}
-                <a href="tel:{member.contact.phone.replace(/[^+\d]/g, '')}" class="contact-item">{member.contact.phone}</a>
-              {/if}
-              {#if member.contact.email}
-                <a href="mailto:{member.contact.email}" class="contact-item">{member.contact.email}</a>
-              {/if}
-              {#if member.contact.note}
-                <span class="contact-item contact-note muted">{member.contact.note}</span>
-              {/if}
-            </div>
-          {/if}
         </li>
       {/each}
     </ul>
@@ -177,28 +171,24 @@
     font-size: 0.9rem;
   }
 
+  /* Name on the left, every mark on the right: space-between across three
+     children strands the middle one. */
   .member-main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
   }
 
-  .member-contact {
+  .member-marks {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 1rem;
-    font-size: 0.85rem;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 0 0 auto;
   }
 
-  .contact-item {
-    color: var(--color-text);
-    text-decoration: none;
-  }
 
-  a.contact-item:hover {
-    color: var(--color-primary);
-    text-decoration: underline;
-  }
+
 
   .contact-offer {
     font-size: 0.85rem;
@@ -222,4 +212,16 @@
   .member-name:hover {
     color: var(--color-primary);
   }
+
+  /* A quiet mark that this person can be reached here, so the list still
+     says who is reachable without spelling out how — the how is in the card
+     (docs/adr/083). */
+  .reachable {
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #666);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.05rem 0.4rem;
+  }
+
 </style>

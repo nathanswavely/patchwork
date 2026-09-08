@@ -79,7 +79,7 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		after, limit := parsePaginationParams(r)
 		status := r.URL.Query().Get("status")
 
-		query := `SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
+		query := `SELECT p.id, p.node_id, p.author_id, p.title, p.body, p.status, COALESCE(p.state,''), p.proposal_type, p.duration_hours, p.voting_ends_at, p.created_at, p.updated_at,
 			COALESCE(p.target_doc,''), COALESCE(p.proposed_branch,''), COALESCE(p.proposed_body,''), COALESCE(p.proposed_title,''), COALESCE(p.git_sha,''),
 			` + displayNameExpr("u") + ` as author_name,
 			(SELECT COUNT(*) FROM votes v JOIN memberships m ON m.user_id = v.user_id AND m.node_id = p.node_id
@@ -124,7 +124,7 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		var proposals []proposalItem
 		for rows.Next() {
 			var p proposalItem
-			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount); err != nil {
+			if err := rows.Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.AuthorName, &p.ApproveCount, &p.RejectCount, &p.AbstainCount); err != nil {
 				continue
 			}
 			if docHidden(p.TargetDoc) {
@@ -191,6 +191,11 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			// The person this proposal is about, as opposed to the author who
 			// raised it. Set on a meritocratic nomination (docs/adr/051).
 			TargetUserID string `json:"target_user_id"`
+			// On an admin-decides patch an admin's proposal is a direct change
+			// unless they ask the members first (docs/adr/092). Ignored
+			// everywhere else: on a voting patch every proposal is put to a
+			// vote, and there is nothing for the flag to choose.
+			PutToVote bool `json:"put_to_vote"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -294,9 +299,10 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		// vote the patch's own charter promised, and was removed.
 		initialState := "voting"
 		autoApplyNow := false
+		adminDecides := gc.DecisionMethod == "admin"
 
 		switch {
-		case gc.DecisionMethod == "admin" && isNodeAdmin:
+		case adminDecides && isNodeAdmin && !req.PutToVote:
 			initialState, autoApplyNow = "in_effect", true
 
 		case decidedElsewhere && isRulesDoc:
@@ -315,14 +321,32 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			// here the vote is not coming, and the venue is the rule that says
 			// so.
 			initialState = "elsewhere"
+
+		case adminDecides && !isNodeAdmin:
+			// The maintainer decides this patch's proposals (docs/adr/092).
+			// A member's proposal is a request to them, not a question to
+			// the members: it waits, with no ballot and no clock, until an
+			// admin approves it, declines it, or puts it to an advisory
+			// vote. Born voting it was decided by the members' majority,
+			// which the patch's own rules say decides nothing here.
+
+			initialState = "awaiting_admin"
+
+		case adminDecides && isNodeAdmin && req.PutToVote:
+			// An admin asking the members first. The vote is advisory: it
+			// runs on the ordinary ballot and closes on the ordinary clock,
+			// and when it closes the proposal comes back to the admin with
+			// the tally attached instead of resolving on it.
+			initialState = "voting"
 		}
 
 		// A proposal with no ballot has no window either. NULL rather than a
 		// date nothing watches: resolveProposal only runs where there is an
 		// end to have passed, so the absence is what keeps an undecidable
-		// proposal from being decided by a clock.
+		// proposal from being decided by a clock. A direct change carries no
+		// window for the same reason — it was never open.
 		var votingEnds interface{} = votingEndsAt
-		if initialState == "elsewhere" {
+		if initialState == "elsewhere" || initialState == "awaiting_admin" || initialState == "in_effect" {
 			votingEnds = nil
 		}
 
@@ -374,8 +398,9 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			} else {
 				// The INSERT above stamped state 'in_effect'; roll it back so
 				// the unapplied record reads as an open proposal, not an
-				// applied change.
-				db.Exec("UPDATE proposals SET state = 'voting' WHERE id = ?", id)
+				// applied change. It gets the window it would have had, so
+				// the open proposal has a clock like every other.
+				db.Exec("UPDATE proposals SET state = 'voting', voting_ends_at = ? WHERE id = ?", votingEndsAt, id)
 			}
 		}
 
@@ -666,6 +691,16 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// node's current ones (docs/adr/047).
 	gc := votingTerms(db, proposalID, p.NodeID)
 
+	// An advisory vote resolves nothing (docs/adr/092). Its window closing
+	// hands the proposal back to the maintainer with the tally attached; the
+	// only things that end it are an admin's approve or decline. Idempotent:
+	// a second sweep finds the state already moved.
+	if gc.DecisionMethod == "admin" {
+		db.Exec(`UPDATE proposals SET state = 'awaiting_admin', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+		         WHERE id = ? AND state = 'voting'`, proposalID)
+		return ""
+	}
+
 	// ...except amendment_auto_apply, which is read live further down: it
 	// decides what happens after a vote, not who wins it, and switching it
 	// off has to stop in-flight amendments from applying themselves.
@@ -818,14 +853,15 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 				endsAt, parseErr = time.Parse(time.RFC3339, *p.VotingEndsAt)
 			}
 			if parseErr == nil && time.Now().UTC().After(endsAt) {
-				if newStatus := resolveProposal(db, proposalID); newStatus != "" {
-					// Re-read rather than patching Status alone: resolution
-					// moves state too, and an auto-applied amendment also
-					// stamps applied_at.
-					db.QueryRow(
-						`SELECT status, COALESCE(state,''), COALESCE(applied_at,'') FROM proposals WHERE id = ?`, proposalID,
-					).Scan(&p.Status, &p.State, &appliedAt)
-				}
+				resolveProposal(db, proposalID)
+				// Re-read rather than patching Status alone: resolution
+				// moves state too, and an auto-applied amendment also
+				// stamps applied_at. Unconditionally, because an advisory
+				// window closing moves state without returning a status
+				// (docs/adr/092).
+				db.QueryRow(
+					`SELECT status, COALESCE(state,''), COALESCE(applied_at,'') FROM proposals WHERE id = ?`, proposalID,
+				).Scan(&p.Status, &p.State, &appliedAt)
 			}
 		}
 
@@ -910,8 +946,27 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// hides the vote surfaces on the state, but the two must agree — a
 		// payload saying you may vote on something nothing will accept a vote
 		// for is the contradiction docs/adr/044 was written to end.
-		canVote := viewerID != "" && p.State != "elsewhere" &&
+		//
+		// And only while there is a ballot: `status = 'open'`, and a state
+		// with a vote in it. A direct change used to answer true here — it is
+		// born approved, and nothing above looked at that — which is the
+		// same contradiction one field over.
+		canVote := viewerID != "" && p.Status == "open" &&
+			p.State != "elsewhere" && p.State != "awaiting_admin" &&
 			inElectorateExcept(db, viewerID, p.NodeID, gc, recused)
+
+		// The maintainer's proposal, on a maintainer's patch (docs/adr/092).
+		// `advisory` says any tally here is advice, and `can_decide` is the
+		// decide gate's own answer for this viewer — a patch admin, on a
+		// proposal whose frozen terms are admin-decides, while it is open.
+		// Both from the terms rather than the patch's live rules, like
+		// everything else that decides a proposal (docs/adr/047).
+		advisory := gc.DecisionMethod == "admin"
+		canDecide := advisory && p.Status == "open" && viewerID != "" &&
+			userHasNodeRole(db, viewerID, p.NodeID, "admin")
+		var declinedBy string
+		db.QueryRow(`SELECT COALESCE(`+displayNameExpr("u")+`,'') FROM proposals p
+		             JOIN users u ON u.id = p.declined_by WHERE p.id = ?`, proposalID).Scan(&declinedBy)
 
 		result := map[string]interface{}{
 			"id":          p.ID,
@@ -930,27 +985,30 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"nominations_close_at": nominationsCloseAt,
 			"election_phase":       electionPhase(seatsContested, nominationsCloseAt, p.Status),
 			"candidates":           electionCandidates(db, proposalID, viewerID),
-			"title":            p.Title,
-			"body":             p.Body,
-			"status":           p.Status,
-			"proposal_type":    p.ProposalType,
-			"duration_hours":   p.DurationHours,
-			"voting_ends_at":   p.VotingEndsAt,
-			"created_at":       p.CreatedAt,
-			"updated_at":       p.UpdatedAt,
-			"approve_count":    approveCount,
-			"reject_count":     rejectCount,
-			"abstain_count":    abstainCount,
-			"voters":           voters,
-			"my_vote":          myVote,
-			"eligible_voters":  eligibleCount,
-			"can_vote":         canVote,
+			"title":                p.Title,
+			"body":                 p.Body,
+			"status":               p.Status,
+			"proposal_type":        p.ProposalType,
+			"duration_hours":       p.DurationHours,
+			"voting_ends_at":       p.VotingEndsAt,
+			"created_at":           p.CreatedAt,
+			"updated_at":           p.UpdatedAt,
+			"approve_count":        approveCount,
+			"reject_count":         rejectCount,
+			"abstain_count":        abstainCount,
+			"voters":               voters,
+			"my_vote":              myVote,
+			"eligible_voters":      eligibleCount,
+			"can_vote":             canVote,
 			// The terms this vote is judged by, so the page can say so rather
 			// than leaving a refused voter to guess (docs/adr/047). Fixed when
 			// voting opened — which is created_at, already in this payload.
 			"voting_terms": gc,
 			"state":        p.State,
 			"applied_at":   appliedAt,
+			"advisory":     advisory,
+			"can_decide":   canDecide,
+			"declined_by":  declinedBy,
 		}
 
 		// Include amendment-specific fields if this is a governance amendment.
@@ -1010,6 +1068,13 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// raised, the same rule docs/adr/047 applies to terms.
 		if state == "elsewhere" {
 			http.Error(w, `{"error":"this patch decides elsewhere; the decision is recorded here after it is made"}`, http.StatusConflict)
+			return
+		}
+
+		// Waiting on the maintainer (docs/adr/092): open, discussable, and
+		// carrying no ballot until an admin opens one.
+		if state == "awaiting_admin" {
+			http.Error(w, `{"error":"this proposal is waiting on the maintainer; there is no vote open on it"}`, http.StatusConflict)
 			return
 		}
 
@@ -1096,7 +1161,10 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// outcome is settled — a voting window for an electorate of one
 		// holds space for nobody. An abstain never closes early: it reads
 		// as "not deciding yet" and stays changeable until the window ends.
-		if req.Value != "abstain" {
+		//
+		// Never on an advisory vote (docs/adr/092): the sole voter there is
+		// not who decides, so their ballot settles nothing early.
+		if req.Value != "abstain" && gc.DecisionMethod != "admin" {
 			if _, sole := eligibleVotersExcept(db, nodeID, gc, voteRecused); sole == user.ID {
 				resolveProposal(db, proposalID)
 			}
@@ -1339,72 +1407,94 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Must be admin of the node.
-		if !userHasNodeRole(db, user.ID, p.NodeID, "admin") && user.Role != "admin" {
-			http.Error(w, `{"error":"only admins can make proposals official"}`, http.StatusForbidden)
+		// A patch admin's act. No `user.Role == "admin"` bypass: an instance
+		// admin "curates instance-wide options; does not override per-patch
+		// choices" (CONTEXT.md), and making a patch's decision official is
+		// the most per-patch choice there is.
+		if !userHasNodeRole(db, user.ID, p.NodeID, "admin") {
+			http.Error(w, `{"error":"only this patch's admins can make proposals official"}`, http.StatusForbidden)
 			return
 		}
 
-		// Must be in a state that allows applying: approved (voted), or voting (admin fast-track approve).
-		// 'passed' never existed in the DB (the schema CHECK rejects it), so
-		// only the CHECK-legal statuses are considered here.
-		validStates := p.State == "approved" || p.State == "voting" || p.Status == "approved" || p.Status == "open"
-		if !validStates {
+		// Two things an admin may apply: a proposal the electorate approved,
+		// on any patch — the approved → in_effect step — and an open one on
+		// an admin-decides patch, where applying is the decision itself
+		// (docs/adr/092). Nothing else. This once accepted any open proposal
+		// from any admin, which on a majority patch was an apply-before-the-
+		// vote-ends bypass the rules never granted; docs/adr/041 says every
+		// voting method votes, admins included, and the endpoint now agrees.
+		terms := votingTerms(db, proposalID, p.NodeID)
+		electorateApproved := p.State == "approved" || p.Status == "approved"
+		maintainersToDecide := terms.DecisionMethod == "admin" && p.Status == "open" &&
+			(p.State == "voting" || p.State == "awaiting_admin")
+		if !electorateApproved && !maintainersToDecide {
+			if p.Status == "open" {
+				http.Error(w, `{"error":"this patch decides proposals by vote; wait for the window to close"}`, http.StatusConflict)
+				return
+			}
 			http.Error(w, `{"error":"proposal cannot be applied in its current state"}`, http.StatusBadRequest)
 			return
 		}
 
-		// For amendments, merge the git branch.
-		if p.ProposalType == "amendment" && p.ProposedBranch != "" {
-			dataDir := governance.GetDataDir()
-			sha, err := governance.MergeBranch(dataDir, p.NodeID, p.ProposedBranch, user.DisplayName, user.Email)
-			if err != nil {
-				http.Error(w, fmt.Sprintf(`{"error":"failed to apply changes: %s"}`, err.Error()), http.StatusInternalServerError)
-				return
-			}
-
-			db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, proposalID)
-
-			// Sync rules to DB if this was a rules change.
-			if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
-				syncRulesAndNotify(db, dataDir, p.NodeID, user.ID, proposalID)
-			}
-
-			// Mirror merged markdown docs into governance_docs — the DB is
-			// canonical for linings (docs/adr/011); without this the applied
-			// amendment never appears in the governance hub.
-			syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
-
-			// Clean up the branch.
-			governance.DeleteBranch(dataDir, p.NodeID, p.ProposedBranch)
+		if err := applyProposalChanges(db, p, user); err != nil {
+			http.Error(w, fmt.Sprintf(`{"error":"failed to apply changes: %s"}`, err.Error()), http.StatusInternalServerError)
+			return
 		}
 
-		// Update state to in_effect.
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
-		db.Exec(
-			"UPDATE proposals SET state = 'in_effect', applied_at = ?, applied_by = ?, updated_at = ? WHERE id = ?",
-			now, user.ID, now, proposalID,
-		)
-
 		auth.LogAuditEvent(db, user.ID, "proposal.applied", "proposal", proposalID, "{}", clientIP(r))
-
-		// Notify members that the amendment was applied.
-		var nodeSlug, nodeName, proposalTitle string
-		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", p.NodeID).Scan(&nodeSlug, &nodeName)
-		db.QueryRow("SELECT title FROM proposals WHERE id = ?", proposalID).Scan(&proposalTitle)
-		notify(notifications.Event{
-			Type:     notifications.ProposalApplied,
-			NodeID:   p.NodeID,
-			NodeSlug: nodeSlug,
-			NodeName: nodeName,
-			ActorID:  user.ID,
-			EntityID: proposalID,
-			Title:    "Change applied: " + proposalTitle,
-			Body:     "This proposal is now in effect.",
-			Link:     weblink.Proposal(nodeSlug, proposalID),
-		})
+		notifyProposalApplied(db, p.NodeID, proposalID, user.ID)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok", "state": "in_effect"})
 	}
+}
+
+// applyProposalChanges makes a proposal official: merges an amendment's
+// branch and runs the post-merge syncs (docs/adr/011), then moves the row to
+// approved / in_effect stamped with who applied it. Shared by the
+// approved → in_effect step and the maintainer's approve (docs/adr/092) so
+// there is one apply path, not two that drift.
+func applyProposalChanges(db *database.DB, p model.Proposal, actor *model.User) error {
+	if p.ProposalType == "amendment" && p.ProposedBranch != "" {
+		dataDir := governance.GetDataDir()
+		sha, err := governance.MergeBranch(dataDir, p.NodeID, p.ProposedBranch, actor.DisplayName, actor.Email)
+		if err != nil {
+			return err
+		}
+		db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, p.ID)
+
+		if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
+			syncRulesAndNotify(db, dataDir, p.NodeID, actor.ID, p.ID)
+		}
+		// Mirror merged markdown docs into governance_docs — the DB is
+		// canonical for linings (docs/adr/011); without this the applied
+		// amendment never appears in the governance hub.
+		syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
+		governance.DeleteBranch(dataDir, p.NodeID, p.ProposedBranch)
+	}
+
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	_, err := db.Exec(
+		"UPDATE proposals SET status = 'approved', state = 'in_effect', applied_at = ?, applied_by = ?, updated_at = ? WHERE id = ?",
+		now, actor.ID, now, p.ID,
+	)
+	return err
+}
+
+// notifyProposalApplied tells the patch a proposal is now in effect.
+func notifyProposalApplied(db *database.DB, nodeID, proposalID, actorID string) {
+	var nodeSlug, nodeName, proposalTitle string
+	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&nodeSlug, &nodeName)
+	db.QueryRow("SELECT title FROM proposals WHERE id = ?", proposalID).Scan(&proposalTitle)
+	notify(notifications.Event{
+		Type:     notifications.ProposalApplied,
+		NodeID:   nodeID,
+		NodeSlug: nodeSlug,
+		NodeName: nodeName,
+		ActorID:  actorID,
+		EntityID: proposalID,
+		Title:    "Change applied: " + proposalTitle,
+		Body:     "This proposal is now in effect.",
+		Link:     weblink.Proposal(nodeSlug, proposalID),
+	})
 }

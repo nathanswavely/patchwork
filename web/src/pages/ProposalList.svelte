@@ -17,6 +17,11 @@
   let followerPermissions = $derived(patch.value.followerPermissions);
   let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.proposals === false);
   let statusFilter = $state('open');
+  // On an admin-decides patch an admin's new proposal is a change they
+  // apply, and the button says so (docs/adr/041, docs/adr/092). The patch's
+  // own role, not `isAdmin`, which is set for instance admins too.
+  let adminDecides = $derived(patch.value.node?.governance_config?.decision_method === 'admin');
+  let newLabel = $derived(adminDecides && membershipRole === 'admin' ? 'New change' : 'New Proposal');
 
   $effect(() => {
     if (slug) {
@@ -100,7 +105,7 @@
             class="btn btn-primary"
             onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/new`); }}
           >
-            New Proposal
+            {newLabel}
           </a>
         {:else if membershipRole === 'follower'}
           <p class="role-prompt muted">Become a member to create proposals and vote.</p>
@@ -148,7 +153,12 @@
                   {#if proposal.author_name}
                     <span class="muted">{isDirectRow(proposal) ? 'applied by' : 'by'} {proposal.author_name}</span>
                   {/if}
-                  {#if proposal.status === 'open' && proposal.voting_ends_at}
+                  {#if proposal.state === 'awaiting_admin'}
+                    <!-- No ballot and no clock (docs/adr/092): the row says
+                         what it is waiting for instead of a time that is
+                         not running. -->
+                    <span class="muted">waiting on the maintainer</span>
+                  {:else if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
                   {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
                     <span class="muted">{proposal.status}</span>

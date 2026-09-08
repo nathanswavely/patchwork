@@ -10,9 +10,11 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
-// StartReminderWorker runs a background goroutine that checks for upcoming
-// deadlines and events, sending reminder notifications. Same pattern as
-// ap/delivery.go — ticker + context cancellation.
+// StartReminderWorker runs a background goroutine for the sweeps that are
+// time-based rather than act-based: voting deadlines, expiring claim
+// setups, the bulletin, and hygiene. It no longer reminds anyone about an
+// event (docs/adr/093). Same pattern as ap/delivery.go — ticker + context
+// cancellation.
 func StartReminderWorker(ctx context.Context, notifier *Notifier) {
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
@@ -35,7 +37,6 @@ func StartReminderWorker(ctx context.Context, notifier *Notifier) {
 
 func runReminders(n *Notifier) {
 	checkProposalDeadlines(n)
-	checkEventReminders(n)
 	checkClaimSetupExpiring(n)
 	sendBulletin(n)
 	cleanupOldNotifications(n)
@@ -113,58 +114,6 @@ func checkProposalDeadlines(n *Notifier) {
 		n.DB.Exec(
 			`INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type) VALUES (?, ?, ?, ?)`,
 			remID, "proposal", id, "deadline",
-		)
-	}
-}
-
-// checkEventReminders finds events starting within 24 hours and sends
-// event.reminder notifications (deduped).
-func checkEventReminders(n *Notifier) {
-	now := time.Now().UTC().Format(time.RFC3339)
-	future := time.Now().Add(24 * time.Hour).UTC().Format(time.RFC3339)
-
-	rows, err := n.DB.Query(
-		`SELECT e.id, e.title, e.node_id, n.slug, n.name
-		 FROM events e
-		 JOIN nodes n ON n.id = e.node_id
-			AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
-		 WHERE e.starts_at > ?
-		   AND e.starts_at <= ?
-		   AND e.removed_at IS NULL
-		   AND e.status = 'active'
-		   AND e.id NOT IN (
-		     SELECT entity_id FROM notification_reminders_sent
-		     WHERE entity_type = 'event' AND reminder_type = 'reminder'
-		   )`,
-		now, future,
-	)
-	if err != nil {
-		log.Printf("reminders: event reminders query: %v", err)
-		return
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var id, title, nodeID, slug, name string
-		if err := rows.Scan(&id, &title, &nodeID, &slug, &name); err != nil {
-			continue
-		}
-
-		n.Notify(Event{
-			Type:     EventReminder,
-			NodeID:   nodeID,
-			NodeSlug: slug,
-			NodeName: name,
-			EntityID: id,
-			Title:    "Tomorrow: " + title,
-			Body:     "This event starts in less than 24 hours.",
-			Link:     weblink.Event(id),
-		})
-
-		remID := auth.NewUUIDv7()
-		n.DB.Exec(
-			`INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type) VALUES (?, ?, ?, ?)`,
-			remID, "event", id, "reminder",
 		)
 	}
 }
