@@ -446,6 +446,12 @@ that means two things depending on a chip in a tile's corner.
 
 Holds the patch a reader chose until they choose another — a pointer
 sweeping the canvas previews, and a preview never replaces what is open.
+No lens closes it either: narrowing a set is not a request to stop reading
+what is open, and the patch it names need not be in the narrowed set. On a
+phone the canvas chrome steps aside while one is docked — one temporary
+overlay at a time — so the lenses wait until it is dismissed; in the pane's
+slot they stay live and the surface re-narrows behind it. Changing **scope**
+is not a lens but another address, so it closes what is docked.
 _Avoid_: peek sheet, sheet (the Join sheet is an interstitial passed
 through; this is the profile, docked), bottom sheet, drawer, modal (it is
 never modal — the canvas behind it stays live on a desktop), preview
