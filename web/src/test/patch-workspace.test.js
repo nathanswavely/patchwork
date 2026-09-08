@@ -99,7 +99,7 @@ describe('#6: shells are wired to the helpers', () => {
   });
 
   it('the unclaimed profile Manage entry lands on events, not governance', () => {
-    const src = source('pages/PatchProfile.svelte');
+    const src = source('components/PatchProfileGlimpses.svelte');
     expect(src).toMatch(/isUnclaimed[\s\S]*?\/patches\/\{slug\}\/events/);
   });
 });

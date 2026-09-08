@@ -64,7 +64,7 @@ describe('JoinSheet', () => {
 // (docs/adr/042).
 describe('PatchRelationship wires the join sheet for both surfaces', () => {
   const src = source('components/PatchRelationship.svelte');
-  const profileSrc = source('pages/PatchProfile.svelte');
+  const profileSrc = source('components/PatchProfileHead.svelte');
   const shellSrc = source('components/PatchShell.svelte');
 
   it('imports JoinSheet and mounts it', () => {

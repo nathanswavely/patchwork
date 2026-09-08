@@ -103,13 +103,19 @@ describe('GovernanceList bounces unclaimed patches instead of showing an empty l
 });
 
 describe('PatchProfile treats unclaimed governance/lining as absent, not empty', () => {
-  const src = source('pages/PatchProfile.svelte');
+  const src = ['components/PatchProfileHead.svelte', 'components/PatchProfileGlimpses.svelte'].map(source).join('\n');
 
   // The page became one glimpse per room (docs/adr/042); absence is now
   // expressed by the glimpse's visibility derivation rather than by an
   // {#if} per section, but the rule is unchanged.
   it('never fetches proposals, charters, or members for an unclaimed patch', () => {
-    expect(src).toMatch(/const wantGovernance = !isUnclaimed/);
+    // `wantGovernance` is the glimpses' own gate since docs/adr/094 split
+    // the fetches out of the page, and it is `canSeeGovernance`, which
+    // leads with !isUnclaimed (asserted below). Both governance fetches
+    // pass through it, and members has its own ternary.
+    expect(src).toMatch(/wantGovernance \? api\(`nodes\/\$\{slug\}\/proposals/);
+    expect(src).toMatch(/wantGovernance \? api\(`nodes\/\$\{slug\}\/governance`\)/);
+    expect(src).toMatch(/loadActivity\(gov\)/);
     expect(src).toMatch(/isUnclaimed \? Promise\.resolve\(\{ items: \[\] \}\) : api\(`nodes\/\$\{slug\}\/members/);
   });
 

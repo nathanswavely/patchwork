@@ -334,7 +334,7 @@ describe('Where an image renders', () => {
   });
 
   it('shows the patch image in About, and opens About when it is the only thing there', () => {
-    const src = source('pages/PatchProfile.svelte');
+    const src = source('components/PatchProfileGlimpses.svelte');
     expect(src).toMatch(/<img class="patch-image" src=\{node\.image_url\} alt=\{node\.image_alt\}/);
     // Without this a patch whose only About content is a picture renders no
     // About section at all, and the picture is invisible.
