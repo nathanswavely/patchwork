@@ -104,6 +104,47 @@ func restrictPerms(path string) {
 	}
 }
 
+// renamedMigrations maps a migration's current filename to a filename it has
+// already shipped under, for the case where a merged migration is renumbered.
+//
+// The runner records the *whole filename* in schema_migrations, so renaming a
+// file that already reached a real database makes it look unapplied. Migrations
+// are not idempotent — 068_contact_items' CREATE TABLE fails with "table
+// contact_items already exists" on a second pass — and Open's error is fatal in
+// cmd/patchwork, so an unguarded rename is an instance that will not start.
+// This table closes that: a database that recorded the old name has its row
+// renamed in place, keeping applied_at, and the file is not run again.
+//
+// Entries are permanent. A name that once reached a real database never stops
+// meaning something, and dropping an entry breaks the upgrade it exists for.
+var renamedMigrations = map[string]string{
+	// 066_contact_items.sql (docs/adr/083) and 066_moved_to.sql (docs/adr/090)
+	// both reached main as 066 and both applied, because the versions differ
+	// past the number. contact_items was renumbered to 068 afterwards, by which
+	// point instances had already recorded it under the old name.
+	"068_contact_items": "066_contact_items",
+}
+
+// applyRenames rewrites schema_migrations rows recorded under a superseded
+// filename, so a database that already ran the file does not run it twice.
+func (db *DB) applyRenames(applied map[string]bool) error {
+	for current, old := range renamedMigrations {
+		if !applied[old] || applied[current] {
+			continue
+		}
+		if _, err := db.Exec(
+			"UPDATE schema_migrations SET version = ? WHERE version = ?;",
+			current, old,
+		); err != nil {
+			return fmt.Errorf("rename migration %s to %s: %w", old, current, err)
+		}
+		applied[current] = true
+		delete(applied, old)
+		log.Printf("database: migration %s was recorded as %s; renamed in place", current, old)
+	}
+	return nil
+}
+
 // migrate applies all .sql files from the migrations FS that haven't been run.
 func (db *DB) migrate(migrationsFS fs.FS) error {
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -125,6 +166,13 @@ func (db *DB) migrate(migrationsFS fs.FS) error {
 			return err
 		}
 		applied[v] = true
+	}
+	// Closed before applyRenames writes: SQLite will not take the write while
+	// this read is still open.
+	rows.Close()
+
+	if err := db.applyRenames(applied); err != nil {
+		return err
 	}
 
 	entries, err := fs.ReadDir(migrationsFS, ".")
