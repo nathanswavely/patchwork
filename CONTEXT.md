@@ -397,40 +397,46 @@ clicking opens the patch. Where there is no pointer there is only one
 gesture, so the first tap opens the **docked profile**. The quilt and the
 map behave the same way as each other on the same hardware.
 
-A card is never the thing a canvas hands back to a tap: what a patch is
-gets answered by the patch's own profile, docked. The card's job is to
-make a list of patches readable, and a list is the one place it lives.
+A card is never what a surface hands back to a tap: what a patch is gets
+answered by the patch's own profile, docked. The card's job is to make a
+list of patches readable, and a list is the one place it lives.
 
 Not a tile (that is a patch drawn as fabric on the quilt) and not a remote
 patch card (that is another quilt's patch, read-only).
 _Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement
 passed through, not a preview glanced at), preview, tile, popup, docked
-card (retired — a canvas hands back the docked profile)
+card (retired — a surface hands back the docked profile)
 
 **Docked profile**:
-A **patch profile** shown over a discovery canvas, attached to an edge of
-it: docked at the **foot** on a phone, docked in the **cards pane's slot**
-on a desktop. One thing in two forms, and which form a reader gets follows
-the room on screen, never how they arrived. It is the profile itself and
-not a summary of one — the same rendering the page shows, so a patch has
-one face and it cannot drift.
+A **patch profile** shown over a discovery surface — the quilt, the map or
+the list — attached to an edge of it: docked at the **foot** on a phone,
+docked in the **cards pane's slot** on a desktop. One thing in two forms,
+and which form a reader gets follows the room on screen, never how they
+arrived. It is the profile itself and not a summary of one — the same
+rendering the page shows, so a patch has one face and it cannot drift.
+
+A discovery surface is the only thing that hands one back. Everywhere else
+a patch is named — an events list, search results, a notification, inside
+the workspace — its link opens the page, because there is no set being
+worked through that a reader would lose.
 
 It has two heights and no third. At rest it shows the profile's **head** —
-cover, name, counts, and the relationship row — drawn from what the canvas
-already fetched, so a tap on a tile costs nothing. Pulled up it is **full
+cover, name, counts, and the relationship row — drawn from the row the
+surface already fetched, so a tap costs nothing. Pulled up it is **full
 screen**: the whole profile with its glimpses, and the pull is what fetches
-them. The canvas underneath stays alive but idle, never torn down, so
-dismissing returns the reader to the view they tapped from at the zoom and
-pan they left it.
+them. The surface underneath stays alive but idle, never torn down, so
+dismissing returns the reader to what they tapped from — the canvas at the
+zoom and pan they left it, the list at the row they had reached.
 
 Opening one is a navigation — it takes the profile's address — and its
-height is not: there is no address for a half-open sheet. Full screen has
-no surface behind it, so the tap-behind that dismisses it at rest is
-unavailable there; it closes by the handle, the dismiss, or back.
+height is not: there is no address for a half-open sheet. Full screen
+leaves nothing of the surface showing, so the tap-behind that dismisses it
+at rest is unavailable there; it closes by the handle, the dismiss, or
+back.
 
 The container is chosen by the room and its occupant by the address, so a
 remote patch docks its **remote patch card** — one gesture on a My Quilt
-canvas where local and remote tiles sit side by side, rather than a tap
+surface where local and remote patches sit side by side, rather than a tap
 that means two things depending on a chip in a tile's corner.
 
 Holds the patch a reader chose until they choose another — a pointer
@@ -550,10 +556,10 @@ _Avoid_: star for follows, favorite, bookmark, owner (as a role name)
 
 **Patch profile**:
 A patch's public face at /patches/:slug, shown in one of two homes: as a
-**page**, and — where a discovery canvas is on screen to keep — as a
+**page**, and — where a discovery surface is on screen to keep — as a
 **docked profile** over it. One address either way, and which home it
 lands in follows the room, never how the reader arrived: a link opened
-cold has no canvas to sit over.
+cold has no surface to sit over.
 Read at a glance: cover, description, and a glimpse of each of the
 patch's surfaces. Deliberately not the workspace and deliberately without
 the workspace's tab row; a person with standing enters through the
@@ -1322,7 +1328,7 @@ never that quilt's site embedded. Follow lives here (and posts home);
 everything deeper is a doorway. Reached from My Quilt tiles,
 notifications, and pasted patch links — pasting a patch's URL into the
 search opens its card. Has the two homes a patch profile has: a page, and
-docked over a canvas, where a remote tile's tap lands it. Its head draws
+docked over a discovery surface, where a remote patch's tap lands it. Its head draws
 from the follow's display snapshot, so it appears whether or not the other
 quilt is reachable.
 _Avoid_: remote profile, embedded view, preview (it is the full public
