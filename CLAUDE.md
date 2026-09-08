@@ -63,9 +63,13 @@ patchwork/
 Both `docs/adr/` and `migrations/` are sequentially numbered, and both are
 claimed by branches that can't see each other. Two branches each reading
 "the highest number on disk" will pick the same next one and both be right
-locally. Migrations collide loudly at merge; ADRs collide *silently* —
-duplicate numbers merge clean and leave every `docs/adr/0NN` citation
-ambiguous. Two ADR 017s reached main this way.
+locally. **Both collide silently** — duplicate numbers merge clean and
+leave every `docs/adr/0NN` or `migrations/0NN` citation ambiguous. Two ADR
+017s reached main this way, and so did two migration 066s. (This paragraph
+used to say migrations collide loudly. They do not — `schema_migrations`
+keys on the whole filename and `fs.ReadDir` sorts by it, so both files
+apply, in a defined order, and nothing anywhere complains. Believing
+otherwise is how the second pair got in.)
 
 Before claiming a number, check what's in flight, not just what's on disk:
 
@@ -98,6 +102,20 @@ other side's number too. Renumbering 063 → 064 meant 17 citations moved
 and two files kept theirs, because `internal/eventsource/sync.go` and
 `PatchSettingsSources.svelte` each cited *both* ADRs after the merge.
 Anchor those edits on the surrounding sentence, not on the number.
+
+**Renumbering a merged migration needs a guard, and the window to skip it
+is shorter than it looks.** Once a number is on a real database, renaming
+the file makes an applied migration look pending — and migrations are not
+idempotent (`CREATE TABLE`, `ALTER TABLE ... ADD COLUMN`), so the re-run
+errors and `database.Open`'s error is `log.Fatalf`. A bare `git mv` is a
+fleet that will not boot. The 066 renumber was argued safe because the merge
+was minutes old; it was verified from an *empty* database, which is the one
+database that cannot show the problem. Renumber only together with an entry
+in `renamedMigrations` (`internal/database/database.go`), which rewrites the
+recorded row in place — and test the upgrade path from a database carrying
+the old name, not just a fresh migrate. Those entries are permanent.
+`TestMigrationNumbersAreUnique` fails the build on a duplicate number, which
+is the check that should have existed first.
 
 Numbers are never reused once merged: `migrations/006` is intentionally
 absent, and a retired ADR keeps its number and gets a status line.
