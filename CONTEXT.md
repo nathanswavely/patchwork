@@ -415,12 +415,18 @@ the room on screen, never how they arrived. It is the profile itself and
 not a summary of one — the same rendering the page shows, so a patch has
 one face and it cannot drift.
 
-It has two heights. **Collapsed** shows the profile's head — cover, name,
-counts, and the relationship row — drawn from what the canvas already
-fetched, so a tap on a tile costs nothing. **Expanded**, pulled up by the
-handle, is the whole profile with its glimpses, and pulling it up is what
-fetches them. Dismissing it returns the reader to exactly the view they
-tapped from: a docked profile never moves the canvas behind it.
+It has two heights and no third. At rest it shows the profile's **head** —
+cover, name, counts, and the relationship row — drawn from what the canvas
+already fetched, so a tap on a tile costs nothing. Pulled up it is **full
+screen**: the whole profile with its glimpses, and the pull is what fetches
+them. The canvas underneath stays alive but idle, never torn down, so
+dismissing returns the reader to the view they tapped from at the zoom and
+pan they left it.
+
+Opening one is a navigation — it takes the profile's address — and its
+height is not: there is no address for a half-open sheet. Full screen has
+no surface behind it, so the tap-behind that dismisses it at rest is
+unavailable there; it closes by the handle, the dismiss, or back.
 
 Holds the patch a reader chose until they choose another — a pointer
 sweeping the canvas previews, and a preview never replaces what is open.
