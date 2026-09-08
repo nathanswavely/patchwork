@@ -18,6 +18,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -454,20 +455,6 @@ func (s *seeder) seedNodes() {
 
 		apID := ap.NodeAPID(ap.GetDomain(), id)
 
-		// Assign governance config based on membership policy. Leadership
-		// fields match the template forked below (seed runs after
-		// migrations, so an incomplete literal would recreate the gap
-		// migration 041 backfills).
-		var gcJSON string
-		switch n.membershipPolicy {
-		case "open":
-			gcJSON = `{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0,"leadership_model":"maintainer","succession_method":"admin_nominate","max_admins":3,"inactivity_days":90}`
-		case "approval_required":
-			gcJSON = `{"decision_method":"majority","quorum_percent":25,"default_vote_duration_hours":168,"amendment_threshold":"supermajority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":7,"leadership_model":"meritocratic","succession_method":"admin_nominate","max_admins":5,"inactivity_days":60}`
-		case "invite_only":
-			gcJSON = `{"decision_method":"consensus","quorum_percent":50,"default_vote_duration_hours":336,"amendment_threshold":"consensus","amendment_auto_apply":false,"succession_policy":"longest_tenure","min_voting_tenure_days":30,"leadership_model":"maintainer","succession_method":"founder_designate","max_admins":1}`
-		}
-
 		createdAt := s.ts(s.rng.Intn(90) + 90)
 
 		linksJSON := "[]"
@@ -486,24 +473,44 @@ func (s *seeder) seedNodes() {
 		// Seeded patches are active, so they joined when they were made
 		// (docs/adr/076). The unclaimed listings below stay NULL - a
 		// directory row is not an arrival.
-		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, governance_config, website, links, follower_permissions)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?)`,
+		// governance_config is deliberately absent from the INSERT: the cache
+		// is filled from the forked rules file below, never hand-written. The
+		// seed used to carry a JSON literal per membership policy, and the
+		// invite-only one said "consensus" while the minimal template it
+		// forked said "admin" — so a seeded band's proposals waited out a
+		// voting window the rules editor never showed. The row briefly wears
+		// migration 013's column default, exactly as a row does in CreateNode.
+		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, website, links, follower_permissions)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?)`,
 			id, s.userIDs[n.ownerIdx], n.name, n.slug, n.description,
-			n.lat, n.lng, n.address, n.membershipPolicy, string(appearanceJSON), createdAt, createdAt, createdAt, apID, gcJSON, n.website, linksJSON, fpJSON)
+			n.lat, n.lng, n.address, n.membershipPolicy, string(appearanceJSON), createdAt, createdAt, createdAt, apID, n.website, linksJSON, fpJSON)
 		if err != nil {
 			log.Fatalf("seed node %s: %v", n.slug, err)
 		}
 
-		// Fork governance repo for this node — map membership policy to template.
-		templateName := "casual"
-		switch n.membershipPolicy {
-		case "invite_only":
-			templateName = "minimal"
-		case "approval_required":
-			templateName = "collaborative"
-		}
+		// Fork the governance repo, absorb the seed's membership choices into
+		// the template's rules file, and sync the rules into the DB cache —
+		// the same three steps CreateNode takes, so a seeded patch and a
+		// patch made through the form agree with their own rules file in
+		// the same way (docs/adr/041). Fatal rather than a warning: a demo
+		// patch whose cache and rules file disagree is the bug this replaces.
+		templateName := templateForPolicy(n.membershipPolicy)
 		if err := governance.ForkForNode(s.dataDir, id, templateName); err != nil {
-			log.Printf("warning: governance fork for %s: %v", n.slug, err)
+			log.Fatalf("governance fork for %s: %v", n.slug, err)
+		}
+		rules, err := governance.ReadRules(s.dataDir, id)
+		if err != nil {
+			log.Fatalf("read governance rules for %s: %v", n.slug, err)
+		}
+		rules.MembershipPolicy = n.membershipPolicy
+		if n.followerPerms != nil {
+			rules.FollowerPermissions = model.FollowerPermissions(*n.followerPerms)
+		}
+		if _, err := governance.WriteRules(s.dataDir, id, rules, "Membership choices from patch creation"); err != nil {
+			log.Fatalf("absorb membership choices for %s: %v", n.slug, err)
+		}
+		if err := governance.SyncRulesToDB(s.db, s.dataDir, id); err != nil {
+			log.Fatalf("sync governance rules for %s: %v", n.slug, err)
 		}
 
 		s.db.Exec("UPDATE nodes SET governance_setup_complete = TRUE WHERE id = ?", id)
@@ -523,6 +530,20 @@ func (s *seeder) seedNodes() {
 		}
 	}
 	s.stats.nodes = len(nodes)
+}
+
+// templateForPolicy maps a seeded patch's membership policy to the governance
+// template it forks. The mapping is the seed's own shorthand for "a band
+// forks minimal, a co-op forks collaborative, everything else casual"; the
+// rules in force come from the template, never from this file.
+func templateForPolicy(policy string) string {
+	switch policy {
+	case "invite_only":
+		return "minimal"
+	case "approval_required":
+		return "collaborative"
+	}
+	return "casual"
 }
 
 // ---------------------------------------------------------------------------
