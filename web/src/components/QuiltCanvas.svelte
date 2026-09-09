@@ -1045,24 +1045,35 @@
         // the badge already said the name, which made the same gesture do
         // different things depending on a collision the reader can't see —
         // and the name is the one thing in the tip they already had.
+        //
+        // Pointer events rather than mouse events, and only a hovering
+        // pointer answers (isHoverPointer): a finger fires the same enter
+        // on its way to a tap, and on a laptop with a touchscreen the
+        // build-time media query below says "hover" while the finger says
+        // otherwise. The tip then arrived with the tap and stayed. A click
+        // hides it too — the tap has been answered by the docked profile,
+        // and a tip that outlives its click sits on top of that answer.
         if (interactive) {
-          g.on('mouseenter', function(event) {
+          g.on('pointerenter', function(event) {
+            if (!isHoverPointer(event)) return;
             d3.select(this).select('.overlay').attr('fill', 'var(--color-overlay-hover)');
             if (onPatchHover) onPatchHover(tile.data);
-            showTooltip(tile.data, event.clientX, event.clientY);
+            if (!tipHeld(event)) showTooltip(tile.data, event.clientX, event.clientY);
           })
-          .on('mousemove', function(event) {
+          .on('pointermove', function(event) {
+            if (!isHoverPointer(event)) return;
             if (tooltip && tooltip.style.display === 'block') {
               tooltip.style.left = event.clientX + 14 + 'px';
               tooltip.style.top = event.clientY - 10 + 'px';
             }
           })
-          .on('mouseleave', function() {
+          .on('pointerleave', function() {
             d3.select(this).select('.overlay').attr('fill', 'transparent');
             if (onPatchHover) onPatchHover(null);
-            if (tooltip) tooltip.style.display = 'none';
+            hideTooltip();
           })
-          .on('click', function() {
+          .on('click', function(event) {
+            holdTooltip(event);
             if (tile.data.slug) onPatchClick(tile.data.slug, tile.data._source || null);
           });
         }
@@ -1216,6 +1227,39 @@
     if (standingIds.size !== allChildren.length) {
       relayout(standingIds);
     }
+  }
+
+  // A pointer that hovers. Touch never does — a finger's pointerenter is
+  // the front half of a tap — so a tip shown for it would outlive the only
+  // gesture that could dismiss it. Pen and mouse both hover.
+  function isHoverPointer(event) {
+    return event.pointerType !== 'touch';
+  }
+
+  function hideTooltip() {
+    if (tooltip) tooltip.style.display = 'none';
+  }
+
+  // A click is answered by the docked profile, and opening it relays out
+  // the surface under a cursor that has not moved — at which point Chrome
+  // re-enters every element beneath it, tile included, and a tip that came
+  // back on that enter sat on top of the answer. So a click holds the tip
+  // where the cursor is, and the hold lifts when the pointer itself moves,
+  // not when the page moves under it.
+  let tipHeldAt = null;
+
+  function holdTooltip(event) {
+    hideTooltip();
+    tipHeldAt = { x: event.clientX, y: event.clientY };
+  }
+
+  function tipHeld(event) {
+    if (!tipHeldAt) return false;
+    if (Math.abs(event.clientX - tipHeldAt.x) > 3 || Math.abs(event.clientY - tipHeldAt.y) > 3) {
+      tipHeldAt = null;
+      return false;
+    }
+    return true;
   }
 
   function showTooltip(data, x, y) {
@@ -1454,21 +1498,24 @@
     // moment the pointer found the name. Same door as the tile
     // (docs/adr/078) — the badge is part of the patch, not a thing beside it.
     const tileData = tile.data;
-    label.addEventListener('mouseenter', (event) => {
+    label.addEventListener('pointerenter', (event) => {
+      if (!isHoverPointer(event)) return;
       if (onPatchHover) onPatchHover(tileData);
-      showTooltip(tileData, event.clientX, event.clientY);
+      if (!tipHeld(event)) showTooltip(tileData, event.clientX, event.clientY);
     });
-    label.addEventListener('mousemove', (event) => {
+    label.addEventListener('pointermove', (event) => {
+      if (!isHoverPointer(event)) return;
       if (tooltip && tooltip.style.display === 'block') {
         tooltip.style.left = event.clientX + 14 + 'px';
         tooltip.style.top = event.clientY - 10 + 'px';
       }
     });
-    label.addEventListener('mouseleave', () => {
+    label.addEventListener('pointerleave', () => {
       if (onPatchHover) onPatchHover(null);
-      if (tooltip) tooltip.style.display = 'none';
+      hideTooltip();
     });
-    label.addEventListener('click', () => {
+    label.addEventListener('click', (event) => {
+      holdTooltip(event);
       // A pan that started on this badge still ends in a click (synthesized
       // on touch, native on mouseup) — dragging the quilt shouldn't open
       // whatever happened to be under the pointer.

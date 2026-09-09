@@ -391,7 +391,10 @@ func TestListEvents_MalformedDateBoundStillServes(t *testing.T) {
 
 	// Ten characters, so it survives a length check, but not a calendar date.
 	// Every timestamp sorts before it, so text comparison serves them all.
-	if got := pageThroughEvents(t, db, "to=not-a-date", 50); len(got) != 5 {
+	// include_past, because omitting `from` means upcoming and the fixture's
+	// dates are fixed: without it this test began failing the moment the
+	// clock passed the earliest one, with no change to the code under test.
+	if got := pageThroughEvents(t, db, "to=not-a-date&include_past=true", 50); len(got) != 5 {
 		t.Fatalf("expected a malformed bound to compare as text (5 events), got %v", got)
 	}
 }

@@ -278,7 +278,14 @@
     return source.replace(/^https?:\/\//, '');
   }
 
+  // Where the docked profile grows from (docs/adr/094): the card the reader
+  // clicked, measured before the list gives way to the profile. A click on
+  // the canvas has no card, so the profile simply arrives.
+  let dockOrigin = $state(null);
+
   function handlePatchCardClick(patch) {
+    const rect = document.querySelector(`[data-patch-id="${CSS.escape(patch.id)}"]`)?.getBoundingClientRect();
+    dockOrigin = rect ? { left: rect.left, top: rect.top, width: rect.width, height: rect.height } : null;
     openPatch(patch.slug, patch._source || null);
   }
 
@@ -370,6 +377,7 @@
   }
 
   function handleCanvasPatchClick(slug, source = null) {
+    dockOrigin = null;
     openPatch(slug, source);
   }
 
@@ -565,8 +573,22 @@
 
   </div>
 
-  <!-- Patch cards panel -->
+  <!-- Patch cards panel — or, with a pointer and a patch docked, the
+       patch's profile in the list's place (docs/adr/094): the same slot,
+       the same width, the list back the moment it is dismissed. The pill,
+       the chips and the canvas around it are untouched, and the card the
+       reader clicked grows into it. -->
   <div class="cards-pane" class:mobile-hidden={mobileView !== 'list'}>
+    {#if dockedSlug && dockForm === 'panel'}
+      <DockedProfile
+        slug={dockedSlug}
+        host={dockedHost}
+        seed={dockedSeed}
+        form="panel"
+        origin={dockOrigin}
+        onClose={onDockClose}
+      />
+    {:else}
     <!-- The list's header carries only the list's own controls
          (docs/adr/074). The Quilt/Map switch used to sit here and now lives
          on the canvas, which is the thing it changes. -->
@@ -660,17 +682,19 @@
         {/if}
       {/if}
     </div>
+    {/if}
   </div>
 
-  <!-- The profile, docked (docs/adr/094): the patch a reader touched,
-       shown over the surface they touched it from rather than a card about
-       it. A sibling of the panes rather than a child of the quilt pane,
-       which is its own stacking context at z-index 0 to keep Leaflet's
-       ~1000s off the chrome — inside it, no z-index the sheet could carry
-       would clear the floating buttons, and the filter button sat on the
-       card's description (docs/adr/078's own correction). The panel form is
-       absolute inside this box, which is where the cards pane's slot is. -->
-  {#if dockedSlug}
+  <!-- The profile docked as a sheet (docs/adr/094): the patch a reader
+       touched, shown over the surface they touched it from rather than a
+       card about it. A sibling of the panes rather than a child of the
+       quilt pane, which is its own stacking context at z-index 0 to keep
+       Leaflet's ~1000s off the chrome — inside it, no z-index the sheet
+       could carry would clear the floating buttons, and the filter button
+       sat on the card's description (docs/adr/078's own correction). The
+       panel form is not here: it lives in the cards pane above, whose slot
+       it takes. -->
+  {#if dockedSlug && dockForm === 'sheet'}
     <DockedProfile
       slug={dockedSlug}
       host={dockedHost}
