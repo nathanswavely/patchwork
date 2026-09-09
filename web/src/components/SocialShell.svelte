@@ -29,7 +29,17 @@
   import IntroCard from './IntroCard.svelte';
   import { getLabel, loadLabel, formatMoney } from '../stores/label.svelte.js';
 
-  let { children, routeName = 'home', quiltScope = 'local' } = $props();
+  let {
+    children,
+    routeName = 'home',
+    quiltScope = 'local',
+    // True while a profile is docked at the foot of a phone. The canvas
+    // chrome steps aside for it — one temporary overlay at a time
+    // (docs/adr/094). SocialHome already does this for the view pill, which
+    // sits in the same row; these two are the rest of it, and they used to
+    // avoid the collision only by being painted over.
+    dockOpen = false,
+  } = $props();
 
   let scopeMenuOpen = $state(false);
 
@@ -414,7 +424,7 @@
        the Quilt/Map/List pill — chrome belonging to the canvas, not a
        peer of the nav items in the bottom bar (docs/adr/024).
        Hidden above 768px, where the desktop attribution strip exists. -->
-  {#if isQuiltRoute && label?.published}
+  {#if isQuiltRoute && label?.published && !dockOpen}
     <button
       class="quilt-info-fab"
       class:active={labelSheetOpen}
@@ -429,7 +439,7 @@
   <!-- Mobile only, quilt/map only: the filter FAB, opposite the info button
        on the right — same floating row as the view pill. Its badge is the
        filter's mobile announcement (docs/adr/033). -->
-  {#if isQuiltRoute}
+  {#if isQuiltRoute && !dockOpen}
     <button
       class="filter-fab"
       class:active={filterSheetOpen}
@@ -447,14 +457,14 @@
 
   <!-- The filter sheet: chips over the canvas, just above the nav row.
        Open-while-using — the collapse preference never governs a sheet. -->
-  {#if filterSheetOpen && isQuiltRoute}
+  {#if filterSheetOpen && isQuiltRoute && !dockOpen}
     <div class="filter-sheet">
       <FilterChips variant="sheet" />
     </div>
   {/if}
 
   <!-- The Label's mobile summary sheet (docs/adr/023) -->
-  {#if labelSheetOpen && label?.published}
+  {#if labelSheetOpen && label?.published && !dockOpen}
     <div class="label-sheet">
       <div class="label-sheet-head">
         <strong>{getInstanceName()}</strong>

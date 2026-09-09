@@ -75,7 +75,7 @@ describe('a list that says upcoming asks for upcoming', () => {
   });
 
   it.each([
-    ['pages/PatchProfile.svelte'],
+    ['components/PatchProfileGlimpses.svelte'],
     ['pages/Dashboard.svelte'],
     ['pages/RemotePatch.svelte'],
   ])('%s bounds its events fetch', (file) => {
@@ -86,7 +86,7 @@ describe('a list that says upcoming asks for upcoming', () => {
 });
 
 describe('the event row stacks instead of clipping', () => {
-  const src = source('pages/PatchProfile.svelte');
+  const src = source('components/PatchProfileGlimpses.svelte');
 
   // The old row was date | title | location on one line, where location
   // was flex-shrink: 0 and the title carried the ellipsis — so a postal
@@ -134,7 +134,7 @@ describe('the event row stacks instead of clipping', () => {
 
 describe('a count is a count, never the length of a capped page', () => {
   it('the profile reads the server total', () => {
-    const src = source('pages/PatchProfile.svelte');
+    const src = source('components/PatchProfileHead.svelte');
     expect(src).toMatch(/node\.upcoming_event_count[^}]*\}\s*Upcoming Events/);
     expect(src).not.toMatch(/recentEvents\.length\}?\s*Upcoming Events/);
   });

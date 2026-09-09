@@ -24,7 +24,7 @@ function source(relPath) {
 }
 
 const events = source('pages/PatchEvents.svelte');
-const profile = source('pages/PatchProfile.svelte');
+const profile = ['pages/PatchProfile.svelte', 'components/PatchProfileHead.svelte', 'components/PatchProfileGlimpses.svelte'].map(source).join('\n');
 
 describe('the events page asks the shared question', () => {
   it('calls eventPostingRight rather than deriving its own answer', () => {

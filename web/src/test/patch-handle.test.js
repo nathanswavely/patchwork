@@ -43,7 +43,9 @@ describe('handleFromDID', () => {
 });
 
 describe('PatchProfile: the handle is a fact in About', () => {
-  const src = source('pages/PatchProfile.svelte');
+  // The About glimpse moved into PatchProfileGlimpses with docs/adr/094 —
+  // the profile is one face in three containers now.
+  const src = source('components/PatchProfileGlimpses.svelte');
 
   it('derives the handle from the DID, never from the domain column', () => {
     // verification_domain stays behind on a seamrip while did travels

@@ -15645,7 +15645,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tree.go",
-          "line": 98,
+          "line": 107,
           "kind": "go-error-body",
           "raw": "failed to query nodes",
           "quote": null
@@ -17568,21 +17568,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 485,
+          "line": 519,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 533,
+          "line": 567,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 586,
+          "line": 620,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -17600,21 +17600,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 486,
+          "line": 520,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 534,
+          "line": 568,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 587,
+          "line": 621,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -17632,7 +17632,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 681,
+          "line": 723,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -17650,7 +17650,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 682,
+          "line": 724,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -17896,8 +17896,8 @@
           "quote": null
         },
         {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 461,
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 294,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -19177,6 +19177,66 @@
       ]
     },
     {
+      "id": "48845bff334a",
+      "text": "Dismiss",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/DockedProfile.svelte",
+          "line": 194,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/IntroCard.svelte",
+          "line": 126,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/SetupChecklist.svelte",
+          "line": 174,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/UnlockPanel.svelte",
+          "line": 83,
+          "kind": "attr:aria-label",
+          "raw": "Dismiss",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AdminReports.svelte",
+          "line": 142,
+          "kind": "markup",
+          "raw": "Dismiss",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AmendmentEditor.svelte",
+          "line": 197,
+          "kind": "markup",
+          "raw": "Dismiss",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Notifications.svelte",
+          "line": 171,
+          "kind": "attr:title",
+          "raw": "Dismiss",
+          "quote": "\""
+        }
+      ]
+    },
+    {
       "id": "c9f10164dbac",
       "text": "Failed to stand",
       "words": 3,
@@ -20066,14 +20126,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 398,
+          "line": 408,
           "kind": "attr:title",
           "raw": "Notifications",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 406,
+          "line": 416,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -20966,8 +21026,8 @@
           "quote": "\""
         },
         {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 430,
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 263,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -21093,14 +21153,14 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 370,
+          "line": 380,
           "kind": "attr:title",
           "raw": "What is Patchwork?",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 373,
+          "line": 383,
           "kind": "markup",
           "raw": "What is Patchwork?",
           "quote": null
@@ -21172,73 +21232,6 @@
           "kind": "markup",
           "raw": "&times;",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "48845bff334a",
-      "text": "Dismiss",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/IntroCard.svelte",
-          "line": 126,
-          "kind": "attr:aria-label",
-          "raw": "Dismiss",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/components/SetupChecklist.svelte",
-          "line": 174,
-          "kind": "attr:aria-label",
-          "raw": "Dismiss",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/components/UnlockPanel.svelte",
-          "line": 83,
-          "kind": "attr:aria-label",
-          "raw": "Dismiss",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/pages/AdminReports.svelte",
-          "line": 142,
-          "kind": "markup",
-          "raw": "Dismiss",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/AmendmentEditor.svelte",
-          "line": 197,
-          "kind": "markup",
-          "raw": "Dismiss",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Notifications.svelte",
-          "line": 171,
-          "kind": "attr:title",
-          "raw": "Dismiss",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 722,
-          "kind": "attr:aria-label",
-          "raw": "Dismiss",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 729,
-          "kind": "attr:aria-label",
-          "raw": "Dismiss",
-          "quote": "\""
         }
       ]
     },
@@ -21447,7 +21440,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 422,
+          "line": 432,
           "kind": "attr:title",
           "raw": "The Label",
           "quote": "\""
@@ -21540,7 +21533,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 468,
+          "line": 478,
           "kind": "markup",
           "raw": "About {formatMoney(label.total_monthly_minor, label.currency)}/month to keep running",
           "quote": null
@@ -21705,7 +21698,7 @@
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 461,
+          "line": 471,
           "kind": "attr:aria-label",
           "raw": "Close",
           "quote": "\""
@@ -21877,6 +21870,439 @@
           "line": 97,
           "kind": "markup",
           "raw": "Subscribe",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4efca0d10c5f",
+      "text": "About",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 146,
+          "kind": "markup",
+          "raw": "About",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a1493990b16f",
+      "text": "atproto handle, proved when this patch was claimed",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 175,
+          "kind": "markup",
+          "raw": "atproto handle, proved when this patch was claimed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8d14f6e72de8",
+      "text": "Events",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 184,
+          "kind": "markup",
+          "raw": "Events",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 259,
+          "kind": "markup",
+          "raw": "Events",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 64,
+          "kind": "markup",
+          "raw": "Events",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/EventsPage.svelte",
+          "line": 224,
+          "kind": "markup",
+          "raw": "Events",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9580d032d0b3",
+      "text": "Community-submitted",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 196,
+          "kind": "markup",
+          "raw": "Community-submitted",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/EventDetail.svelte",
+          "line": 200,
+          "kind": "markup",
+          "raw": "Community-submitted",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/EventsPage.svelte",
+          "line": 327,
+          "kind": "markup",
+          "raw": "Community-submitted",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchEvents.svelte",
+          "line": 201,
+          "kind": "markup",
+          "raw": "Community-submitted",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bdbc65f6f2e3",
+      "text": "No upcoming events.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 224,
+          "kind": "markup",
+          "raw": "No upcoming events.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1044a4c056d0",
+      "text": "Members",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 234,
+          "kind": "markup",
+          "raw": "Members",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 262,
+          "kind": "markup",
+          "raw": "Members",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "12dc83c54e6c",
+      "text": "No members yet.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 255,
+          "kind": "markup",
+          "raw": "No members yet.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 88,
+          "kind": "markup",
+          "raw": "No members yet.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsMembers.svelte",
+          "line": 191,
+          "kind": "markup",
+          "raw": "No members yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "842680564705",
+      "text": "Failed to load patch",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 108,
+          "kind": "js-string",
+          "raw": "Failed to load patch",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/components/PatchShell.svelte",
+          "line": 87,
+          "kind": "js-string",
+          "raw": "Failed to load patch",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 154,
+          "kind": "js-string",
+          "raw": "Failed to load patch",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "980876b25157",
+      "text": "Patch not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 133,
+          "kind": "markup",
+          "raw": "Patch not found",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/PatchShell.svelte",
+          "line": 186,
+          "kind": "markup",
+          "raw": "Patch not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5f9b19e0d003",
+      "text": "Back to Quilt",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "Back to Quilt",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "74a883a037bc",
+      "text": "Settings",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 175,
+          "kind": "markup",
+          "raw": "Settings",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/UserSettingsShell.svelte",
+          "line": 21,
+          "kind": "attr:title",
+          "raw": "Settings",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "d0bee1a20425",
+      "text": "No one runs this patch yet.",
+      "words": 6,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 206,
+          "kind": "markup",
+          "raw": "No one runs this patch yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a81d1482228d",
+      "text": "The community added it",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 207,
+          "kind": "markup",
+          "raw": "The community added it",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b6c5674549d8",
+      "text": "Review claims",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 209,
+          "kind": "markup",
+          "raw": "Review claims",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2b8619451300",
+      "text": "Your claim is in progress",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 211,
+          "kind": "markup",
+          "raw": "Your claim is in progress",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2f6f3119aaa9",
+      "text": "If it's yours,",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 213,
+          "kind": "markup",
+          "raw": "If it's yours,",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "efb87e779ec7",
+      "text": "claim it",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 213,
+          "kind": "markup",
+          "raw": "claim it",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "97b42f12a8f2",
+      "text": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 225,
+          "kind": "attr:title",
+          "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "2104fa974cb2",
+      "text": "Amended lining",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 227,
+          "kind": "markup",
+          "raw": "Amended lining",
           "quote": null
         }
       ]
@@ -22208,38 +22634,6 @@
       ]
     },
     {
-      "id": "842680564705",
-      "text": "Failed to load patch",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchShell.svelte",
-          "line": 87,
-          "kind": "js-string",
-          "raw": "Failed to load patch",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 154,
-          "kind": "js-string",
-          "raw": "Failed to load patch",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 153,
-          "kind": "js-string",
-          "raw": "Failed to load patch",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "09576b9b92f4",
       "text": "View the public profile",
       "words": 4,
@@ -22279,31 +22673,6 @@
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "980876b25157",
-      "text": "Patch not found",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchShell.svelte",
-          "line": 186,
-          "kind": "markup",
-          "raw": "Patch not found",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 199,
-          "kind": "markup",
-          "raw": "Patch not found",
-          "quote": null
         }
       ]
     },
@@ -22932,7 +23301,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 673,
+          "line": 635,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -23532,14 +23901,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 56,
+          "line": 66,
           "kind": "js-string",
           "raw": "My Quilt",
           "quote": "'"
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 255,
+          "line": 265,
           "kind": "markup",
           "raw": "My Quilt",
           "quote": null
@@ -23557,7 +23926,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 259,
+          "line": 269,
           "kind": "markup",
           "raw": "Connected quilts",
           "quote": null
@@ -23575,14 +23944,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 282,
+          "line": 292,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 306,
+          "line": 316,
           "kind": "attr:placeholder",
           "raw": "Search patches and events…",
           "quote": "\""
@@ -23600,7 +23969,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 329,
+          "line": 339,
           "kind": "attr:aria-label",
           "raw": "Canvas view",
           "quote": "\""
@@ -23618,14 +23987,14 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 383,
+          "line": 393,
           "kind": "attr:title",
           "raw": "Search",
           "quote": "\""
         },
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 388,
+          "line": 398,
           "kind": "markup",
           "raw": "Search",
           "quote": null
@@ -23643,7 +24012,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 423,
+          "line": 433,
           "kind": "attr:aria-label",
           "raw": "About this quilt",
           "quote": "\""
@@ -23661,7 +24030,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 437,
+          "line": 447,
           "kind": "attr:title",
           "raw": "Filter",
           "quote": "\""
@@ -23679,7 +24048,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 464,
+          "line": 474,
           "kind": "markup",
           "raw": "Stewarded by {(label.stewards || []).map((s) => `@${s.username}`).join(', ')}",
           "quote": null
@@ -23697,7 +24066,7 @@
       "occurrences": [
         {
           "file": "web/src/components/SocialShell.svelte",
-          "line": 471,
+          "line": 481,
           "kind": "markup",
           "raw": "Run by real people and open source. Feel free to build your own if you don't like this one.",
           "quote": null
@@ -24500,45 +24869,6 @@
       ]
     },
     {
-      "id": "8d14f6e72de8",
-      "text": "Events",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 259,
-          "kind": "markup",
-          "raw": "Events",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 64,
-          "kind": "markup",
-          "raw": "Events",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/EventsPage.svelte",
-          "line": 224,
-          "kind": "markup",
-          "raw": "Events",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 351,
-          "kind": "markup",
-          "raw": "Events",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "834cfc1ee237",
       "text": "Proposals",
       "words": 1,
@@ -24584,31 +24914,6 @@
           "line": 261,
           "kind": "markup",
           "raw": "Charters",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "1044a4c056d0",
-      "text": "Members",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 262,
-          "kind": "markup",
-          "raw": "Members",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 401,
-          "kind": "markup",
-          "raw": "Members",
           "quote": null
         }
       ]
@@ -25268,31 +25573,6 @@
           "kind": "js-string",
           "raw": "My Quilts",
           "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "74a883a037bc",
-      "text": "Settings",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/UserSettingsShell.svelte",
-          "line": 21,
-          "kind": "attr:title",
-          "raw": "Settings",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 233,
-          "kind": "markup",
-          "raw": "Settings",
-          "quote": null
         }
       ]
     },
@@ -30555,7 +30835,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 612,
+          "line": 574,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -35815,14 +36095,14 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 289,
+          "line": 314,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 402,
+          "line": 395,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -36379,45 +36659,6 @@
           "line": 187,
           "kind": "markup",
           "raw": "and updates with it. To change it, edit the source calendar, or\n        detach it to make it an ordinary event.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "9580d032d0b3",
-      "text": "Community-submitted",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventDetail.svelte",
-          "line": 200,
-          "kind": "markup",
-          "raw": "Community-submitted",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/EventsPage.svelte",
-          "line": 327,
-          "kind": "markup",
-          "raw": "Community-submitted",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 201,
-          "kind": "markup",
-          "raw": "Community-submitted",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 363,
-          "kind": "markup",
-          "raw": "Community-submitted",
           "quote": null
         }
       ]
@@ -42150,38 +42391,6 @@
       ]
     },
     {
-      "id": "12dc83c54e6c",
-      "text": "No members yet.",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchMembers.svelte",
-          "line": 88,
-          "kind": "markup",
-          "raw": "No members yet.",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 422,
-          "kind": "markup",
-          "raw": "No members yet.",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 191,
-          "kind": "markup",
-          "raw": "No members yet.",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "8ec32487e4a5",
       "text": "Share your patch's invite link to grow your community.",
       "words": 9,
@@ -42659,240 +42868,6 @@
           "line": 204,
           "kind": "markup",
           "raw": "{' · '}{n.reply_count} kept",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "5f9b19e0d003",
-      "text": "Back to Quilt",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 201,
-          "kind": "markup",
-          "raw": "Back to Quilt",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "48fc5dab1dfe",
-      "text": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
-      "words": 17,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 216,
-          "kind": "markup",
-          "raw": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d0bee1a20425",
-      "text": "No one runs this patch yet.",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 264,
-          "kind": "markup",
-          "raw": "No one runs this patch yet.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "a81d1482228d",
-      "text": "The community added it",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Accepted as drafted on the owner's explicit approval, 2026-08-26 (PR #175).",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 265,
-          "kind": "markup",
-          "raw": "The community added it",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b6c5674549d8",
-      "text": "Review claims",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 267,
-          "kind": "markup",
-          "raw": "Review claims",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2b8619451300",
-      "text": "Your claim is in progress",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 269,
-          "kind": "markup",
-          "raw": "Your claim is in progress",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2f6f3119aaa9",
-      "text": "If it's yours,",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 271,
-          "kind": "markup",
-          "raw": "If it's yours,",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "efb87e779ec7",
-      "text": "claim it",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 271,
-          "kind": "markup",
-          "raw": "claim it",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "97b42f12a8f2",
-      "text": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
-      "words": 16,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 283,
-          "kind": "attr:title",
-          "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "2104fa974cb2",
-      "text": "Amended lining",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 285,
-          "kind": "markup",
-          "raw": "Amended lining",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "4efca0d10c5f",
-      "text": "About",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 313,
-          "kind": "markup",
-          "raw": "About",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "a1493990b16f",
-      "text": "atproto handle, proved when this patch was claimed",
-      "words": 8,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 342,
-          "kind": "markup",
-          "raw": "atproto handle, proved when this patch was claimed",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "bdbc65f6f2e3",
-      "text": "No upcoming events.",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchProfile.svelte",
-          "line": 391,
-          "kind": "markup",
-          "raw": "No upcoming events.",
           "quote": null
         }
       ]
@@ -44147,7 +44122,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 455,
+          "line": 442,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -47754,7 +47729,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 448,
+          "line": 435,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -47772,7 +47747,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 450,
+          "line": 437,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -47790,7 +47765,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 460,
+          "line": 447,
           "kind": "markup",
           "raw": "Requested",
           "quote": null
@@ -47815,7 +47790,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 497,
+          "line": 482,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -47833,27 +47808,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 522,
+          "line": 505,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2a013e36edae",
-      "text": "View patch",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 536,
-          "kind": "markup",
-          "raw": "View patch",
           "quote": null
         }
       ]
@@ -47869,7 +47826,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 614,
+          "line": 576,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -47887,7 +47844,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 614,
+          "line": 576,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -47905,7 +47862,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 628,
+          "line": 590,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -47923,7 +47880,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 633,
+          "line": 595,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -47941,7 +47898,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 637,
+          "line": 599,
           "kind": "markup",
           "raw": "Quilt order",
           "quote": null
@@ -47959,7 +47916,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 638,
+          "line": 600,
           "kind": "markup",
           "raw": "Recently added",
           "quote": null
@@ -47977,7 +47934,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 661,
+          "line": 623,
           "kind": "markup",
           "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -47995,7 +47952,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 670,
+          "line": 632,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -48013,7 +47970,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 682,
+          "line": 644,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null
@@ -50140,6 +50097,42 @@
           "line": 152,
           "kind": "markup",
           "raw": "You're viewing this patch's public face from your own quilt. Joining,\n        RSVPs, and everything deeper live on",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "48fc5dab1dfe",
+      "text": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchProfile.svelte",
+          "line": 216,
+          "kind": "markup",
+          "raw": "{isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`} &middot; {node.upcoming_event_count || 0} Upcoming Events",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2a013e36edae",
+      "text": "View patch",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 536,
+          "kind": "markup",
+          "raw": "View patch",
           "quote": null
         }
       ]

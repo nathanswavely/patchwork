@@ -383,33 +383,83 @@ section may or may not be a card)
 A patch as rendered in a list — its cover, name, counts, a line of
 description, and the viewer's standing with it. The one rendering of a
 patch outside the quilt, and deliberately the same one wherever it
-appears. It has two homes: the **cards pane** beside a discovery surface,
-and — where the screen has no room for a pane — **docked** at the foot of
-the surface, carrying the patch a person just touched. Which home a card
-lands in follows the room on screen, never which surface the person came
-from.
+appears. It has one home: the **cards pane** beside a discovery surface,
+which on a phone is the list view filling the screen. It sits in a grid
+where tapping a card is already the convention, so the standing stays a
+labelled chip in the cover's corner rather than an invitation repeated
+eighteen times — labelled, because follower, member and admin are the
+ladder a reader is here to learn and an unlabelled glyph teaches nobody a
+word.
 
 Previewing costs a gesture the device can spare: where there is a pointer,
 pointing at a patch previews it — its card highlights in the pane — and
 clicking opens the patch. Where there is no pointer there is only one
-gesture, so the first tap previews into the docked card, and the card
-itself is how the patch is opened. The quilt and the map behave the same
-way as each other on the same hardware.
+gesture, so the first tap opens the **docked profile**. The quilt and the
+map behave the same way as each other on the same hardware.
 
-The two homes are the same card, and differ only in what the room affords.
-Docked, it stands alone above every other thing on screen, spends the width
-on a longer description, and ends in an **action row** naming what it can
-do — "View patch", and the viewer's standing beside it. In the pane it sits
-in a grid where tapping a card is already the convention, so the standing
-stays a chip in the cover's corner and no card repeats the invitation
-eighteen times. The standing is spelled out in both: follower, member and
-admin are the ladder a reader is here to learn, and an unlabelled glyph
-teaches nobody a word.
+A card is never what a surface hands back to a tap: what a patch is gets
+answered by the patch's own profile, docked. The card's job is to make a
+list of patches readable, and a list is the one place it lives.
 
 Not a tile (that is a patch drawn as fabric on the quilt) and not a remote
 patch card (that is another quilt's patch, read-only).
 _Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement
-passed through, not a preview glanced at), preview, tile, popup
+passed through, not a preview glanced at), preview, tile, popup, docked
+card (retired — a surface hands back the docked profile)
+
+**Docked profile**:
+A **patch profile** shown over a discovery surface — the quilt, the map or
+the list — attached to an edge of it: docked at the **foot** on a phone,
+docked in the **cards pane's slot** on a desktop. One thing in two forms,
+and which form a reader gets follows the room on screen, never how they
+arrived. It is the profile itself and not a summary of one — the same
+rendering the page shows, so a patch has one face and it cannot drift.
+
+A discovery surface is the only thing that hands one back. Everywhere else
+a patch is named — an events list, search results, a notification, inside
+the workspace — its link opens the page, because there is no set being
+worked through that a reader would lose.
+
+On a phone it has two heights and no third. At rest it shows the profile's
+**head** — cover, name, counts, and the relationship row — painted on the
+first frame from the row the surface already fetched, and completed by one
+request for what a quilt row cannot know: a ban that suppresses a rung, an
+open claim, and the upcoming-event count, which is never the all-time count
+sitting beside it on that row. Pulled up it is **full screen**: the whole
+profile with its glimpses, and the pull is what fetches them. In the pane's slot there are no heights: the room already
+shows a surface and a profile at once, which is the reason that form is a
+panel beside the surface rather than a sheet over it, and a reader wanting
+the profile alone has the page.
+
+The surface underneath stays alive but idle, never torn down, so dismissing
+returns the reader to what they tapped from — the canvas at the zoom and
+pan they left it, the list at the row they had reached.
+
+Opening one is a navigation — it takes the profile's address — and its
+height is not: there is no address for a half-open sheet. Choosing another
+patch while one is open replaces that address rather than pushing a second,
+so one dismissal does not walk back through every patch a reader glanced
+at. Full screen
+leaves nothing of the surface showing, so the tap-behind that dismisses it
+at rest is unavailable there; it closes by the handle, the dismiss, or
+back.
+
+The container is chosen by the room and its occupant by the address, so a
+remote patch docks its **remote patch card** — one gesture on a My Quilt
+surface where local and remote patches sit side by side, rather than a tap
+that means two things depending on a chip in a tile's corner.
+
+Holds the patch a reader chose until they choose another — a pointer
+sweeping the canvas previews, and a preview never replaces what is open.
+No lens closes it either: narrowing a set is not a request to stop reading
+what is open, and the patch it names need not be in the narrowed set. On a
+phone the canvas chrome steps aside while one is docked — one temporary
+overlay at a time — so the lenses wait until it is dismissed; in the pane's
+slot they stay live and the surface re-narrows behind it. Changing **scope**
+is not a lens but another address, so it closes what is docked.
+_Avoid_: peek sheet, sheet (the Join sheet is an interstitial passed
+through; this is the profile, docked), bottom sheet, drawer, modal (it is
+never modal — the canvas behind it stays live on a desktop), preview
 
 **Person card**:
 A person as rendered anywhere they are named — avatar, display name, their
@@ -521,7 +571,11 @@ than standing alone.
 _Avoid_: star for follows, favorite, bookmark, owner (as a role name)
 
 **Patch profile**:
-A patch's public page at /patches/:slug — the face it shows the street.
+A patch's public face at /patches/:slug, shown in one of two homes: as a
+**page**, and — where a discovery surface is on screen to keep — as a
+**docked profile** over it. One address either way, and which home it
+lands in follows the room, never how the reader arrived: a link opened
+cold has no surface to sit over.
 Read at a glance: cover, description, and a glimpse of each of the
 patch's surfaces. Deliberately not the workspace and deliberately without
 the workspace's tab row; a person with standing enters through the
@@ -1289,7 +1343,10 @@ sashing color, always naming where it lives. A card about the patch,
 never that quilt's site embedded. Follow lives here (and posts home);
 everything deeper is a doorway. Reached from My Quilt tiles,
 notifications, and pasted patch links — pasting a patch's URL into the
-search opens its card.
+search opens its card. Has the two homes a patch profile has: a page, and
+docked over a discovery surface, where a remote patch's tap lands it. Its head draws
+from the follow's display snapshot, so it appears whether or not the other
+quilt is reachable.
 _Avoid_: remote profile, embedded view, preview (it is the full public
 face)
 

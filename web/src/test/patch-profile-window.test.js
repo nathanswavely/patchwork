@@ -62,7 +62,10 @@ describe('eventPostingRight names the outcome, not the patch state', () => {
 });
 
 describe('PatchProfile', () => {
-  const src = source('pages/PatchProfile.svelte');
+  // The profile's rendering is three files since docs/adr/094 — a page,
+  // a head and its glimpses — so the window's rules are asserted against
+  // all of it, not against whichever third a line happens to live in.
+  const src = ['pages/PatchProfile.svelte', 'components/PatchProfileHead.svelte', 'components/PatchProfileGlimpses.svelte'].map(source).join('\n');
 
   it('carries no door named for the container — Manage and Governance pills are gone', () => {
     expect(src).not.toMatch(/>\s*Manage\s*</);
@@ -179,7 +182,7 @@ describe('PatchRelationship', () => {
     // The node payload does not carry a pending request, so each mount
     // reads the viewer's own memberships and passes it in. Refreshing only
     // the node after a join would leave the row offering to join again.
-    for (const host of ['pages/PatchProfile.svelte', 'components/PatchShell.svelte']) {
+    for (const host of ['components/PatchProfileHead.svelte', 'components/PatchShell.svelte']) {
       const h = source(host);
       expect(h).toContain('getPendingMembershipSlugs');
       expect(h).toMatch(/requestPending = \$derived\(getPendingMembershipSlugs\(\)\.has\(slug\)\)/);

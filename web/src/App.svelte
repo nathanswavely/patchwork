@@ -241,6 +241,40 @@
   ]);
   let isSocialHome = $derived(socialHomeRoutes.has(routeName));
 
+  // --- The overlay route (docs/adr/094) --------------------------------
+  // A patch profile has one address and two containers, and the room picks:
+  // where a discovery surface is on screen to keep, the profile docks over
+  // it; where there is none, it is the page. "Is a surface on screen" is a
+  // fact only this component holds — the router knows the address it is at,
+  // not what that address replaced — so the surface is remembered here
+  // while a docked profile sits on top of it.
+  //
+  // Dropped the moment the reader goes anywhere else: a profile reached
+  // from a third page has no surface to keep, so it renders as the page,
+  // and the canvas is never rebuilt behind a sheet just to have something
+  // there. Which is also what keeps a cold link a page — nothing was ever
+  // recorded for it.
+  const dockableRoutes = new Set(['patchProfile', 'remotePatch']);
+  let isDockable = $derived(dockableRoutes.has(routeName));
+  let dockedOver = $state(null);
+
+  $effect(() => {
+    const name = routeName;
+    if (socialHomeRoutes.has(name)) {
+      dockedOver = { routeName: name, quiltScope: scopeForRoute(name) };
+    } else if (!dockableRoutes.has(name)) {
+      dockedOver = null;
+    }
+  });
+
+  let docked = $derived(isDockable && dockedOver ? dockedOver : null);
+  // Dismissing goes back rather than forward: the entry behind a docked
+  // profile is always the surface it was docked over, because opening one
+  // pushes and changing which patch is docked replaces (SocialHome).
+  function closeDock() {
+    history.back();
+  }
+
   // Patch shell routes (governance participation + admin settings)
   const patchShellRoutes = new Set([
     'claimPatch',
@@ -579,7 +613,7 @@
 
 {:else}
   <!-- ===== SOCIAL SHELL (discovery + personal pages) ===== -->
-  <SocialShell {routeName} {quiltScope}>
+  <SocialShell {routeName} {quiltScope} dockOpen={!!docked}>
     {#snippet children()}
       {#if authRequired && !isLoggedIn()}
         <div class="auth-gate">
@@ -588,11 +622,19 @@
           <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
         </div>
 
-      <!-- ===== SOCIAL HOME: Quilt + Cards ===== -->
-      {:else if isSocialHome}
+      <!-- ===== SOCIAL HOME: Quilt + Cards =====
+           Also the branch a docked profile takes: the surface stays mounted
+           under it, at the zoom and pan the reader left it, and the profile
+           is drawn at one of the surface's edges (docs/adr/094). The
+           surface is the one component that knows which edge it can spare,
+           so it draws the dock rather than this chain. -->
+      {:else if isSocialHome || docked}
         <SocialHome
-          {quiltScope}
-          {routeName}
+          quiltScope={docked ? docked.quiltScope : quiltScope}
+          routeName={docked ? docked.routeName : routeName}
+          dockedSlug={docked ? routeParams.slug : null}
+          dockedHost={docked && routeName === 'remotePatch' ? routeParams.host : null}
+          onDockClose={closeDock}
         />
 
       <!-- ===== EVENTS ===== -->

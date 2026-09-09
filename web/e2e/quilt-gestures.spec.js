@@ -166,14 +166,19 @@ test('a tap on a name badge previews the patch', async ({ page }) => {
   // What a tap on a badge does is whatever a tap on its tile does — that is
   // the property this has always guarded, and a badge that swallows the tap
   // silently is the failure it exists to catch. The destination changed in
-  // docs/adr/078: with no pointer there is a single gesture, so the first tap
-  // previews into the docked card and the card is how the patch is opened.
-  // Staying on the quilt is now the point — a tap used to cost the reader
-  // their pan and zoom to answer "what is that one?".
-  const docked = page.locator('.docked-card');
+  // docs/adr/078: with no pointer there is a single gesture, so the tap does
+  // not cost the reader the pan and zoom they spent to ask "what is that
+  // one?". docs/adr/094 changed what it hands back — the patch's own
+  // profile, docked over the quilt, rather than a card about it — and with
+  // that, the address: a docked profile takes the profile's own, while the
+  // quilt stays mounted underneath at the transform it was left at.
+  const docked = page.locator('.dock.sheet');
   await expect(docked).toBeVisible();
   await expect(docked).toContainText(name);
-  await expect(page).toHaveURL(/\/(\?.*)?$/);
+  await expect(page).toHaveURL(/\/patches\/[^/]+$/);
+  // The quilt is behind it, not replaced by it — the whole point of an
+  // overlay route rather than a page.
+  await expect(page.locator('.quilt-pane svg')).toBeVisible();
 });
 
 test('a drag that starts on a name badge neither opens nor previews', async ({ page }) => {
@@ -183,7 +188,8 @@ test('a drag that starts on a name badge neither opens nor previews', async ({ p
   await touchDrag(page, x, y, [[20, 10], [45, 20], [70, 30], [95, 40]]);
 
   await expect(page).toHaveURL(/\/(\?.*)?$/);
-  // A drag is not a tap. Now that a tap docks a card rather than navigating,
-  // the URL alone would no longer notice a drag being mistaken for one.
-  await expect(page.locator('.docked-card')).toHaveCount(0);
+  // A drag is not a tap. A tap now takes the patch's address, so the URL
+  // does notice one again — but assert the dock's absence too, since a
+  // docked profile is what the mistake would produce.
+  await expect(page.locator('.dock')).toHaveCount(0);
 });

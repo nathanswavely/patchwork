@@ -78,7 +78,7 @@ describe('every event surface passes the event’s zone', () => {
   const surfaces = [
     'pages/EventsPage.svelte',
     'pages/EventDetail.svelte',
-    'pages/PatchProfile.svelte',
+    'components/PatchProfileGlimpses.svelte',
     'pages/PatchEvents.svelte',
     'pages/Dashboard.svelte',
     'pages/AdminEventSubmissions.svelte',

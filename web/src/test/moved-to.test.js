@@ -88,7 +88,7 @@ describe('the notice says where, and offers the in-app door when it can', () => 
 });
 
 describe('the banner is at the top of the patch page', () => {
-  const src = source('pages/PatchProfile.svelte');
+  const src = source('components/PatchProfileHead.svelte');
 
   it('renders the notice from the node it loaded', () => {
     expect(src).toMatch(/<MovedNotice url=\{node\.moved_to\} subject="patch" \/>/);
@@ -143,7 +143,7 @@ describe('a moved patch offers no rung it cannot honour', () => {
   });
 
   it('is asked for on both surfaces that draw the door', () => {
-    for (const file of ['pages/PatchProfile.svelte', 'pages/PatchEvents.svelte']) {
+    for (const file of ['components/PatchProfileGlimpses.svelte', 'pages/PatchEvents.svelte']) {
       expect(source(file)).toMatch(/hasMoved: !!node\?\.moved_to,/);
     }
   });
