@@ -57,8 +57,8 @@ describe('previewing a patch', () => {
     // A badge is stacked above the svg, so crossing onto one is a mouseleave
     // for the tile under it: the badge reports through the same door, or the
     // tip and the pane's highlight both drop when the pointer finds the name.
-    expect(quilt).toMatch(/label\.addEventListener\('mouseenter'[\s\S]{0,160}onPatchHover\(tileData\)/);
-    expect(quilt).toMatch(/label\.addEventListener\('mouseleave'[\s\S]{0,120}onPatchHover\(null\)/);
+    expect(quilt).toMatch(/label\.addEventListener\('pointerenter'[\s\S]{0,160}onPatchHover\(tileData\)/);
+    expect(quilt).toMatch(/label\.addEventListener\('pointerleave'[\s\S]{0,120}onPatchHover\(null\)/);
   });
 
   it('builds no hovering tip where there is nothing to hover with', () => {
@@ -70,6 +70,27 @@ describe('previewing a patch', () => {
       /if \(interactive && window\.matchMedia\('\(hover: hover\) and \(pointer: fine\)'\)\.matches\)/,
     );
     expect(quilt).toMatch(/function showTooltip[\s\S]{0,60}if \(!tooltip\) return;/);
+  });
+
+  it('shows the tip for a hovering pointer only, and never past its click', () => {
+    // The build-time media query is a statement about the device; a finger
+    // on a touchscreen laptop contradicts it per gesture, and its
+    // pointerenter is the front half of a tap. So each enter asks the
+    // pointer, and a click — answered by the docked profile — hides the tip
+    // rather than leaving it on top of that answer.
+    expect(quilt).toMatch(/function isHoverPointer\(event\)[\s\S]{0,80}pointerType !== 'touch'/);
+    expect(quilt).not.toMatch(/\.on\('mouseenter'/);
+    expect(quilt).not.toMatch(/addEventListener\('mouseenter'/);
+    expect(quilt).toMatch(/\.on\('pointerenter', function\(event\) \{\s*if \(!isHoverPointer\(event\)\) return;/);
+    expect(quilt).toMatch(/addEventListener\('pointerenter', \(event\) => \{\s*if \(!isHoverPointer\(event\)\) return;/);
+    expect(quilt).toMatch(/\.on\('click', function\(event\) \{\s*holdTooltip\(event\);/);
+    expect(quilt).toMatch(/addEventListener\('click', \(event\) => \{\s*holdTooltip\(event\);/);
+    // Hidden is not enough: opening the profile relays out the surface under
+    // a cursor that has not moved, and Chrome re-enters the tile beneath it.
+    // The hold lifts on the pointer's own movement, never on the page's.
+    expect(quilt).toMatch(/function tipHeld\(event\)/);
+    expect(quilt).toMatch(/if \(!tipHeld\(event\)\) showTooltip\(tile\.data/);
+    expect(quilt).toMatch(/if \(!tipHeld\(event\)\) showTooltip\(tileData/);
   });
 
   it('emphasises the marker without rebuilding the layer', () => {
@@ -148,7 +169,7 @@ describe('the docked profile', () => {
     expect(dock).toMatch(/\.dock\.sheet \{[^}]*position: fixed/);
     // A sibling of both panes, not a child of the quilt pane: it is written
     // after the cards pane, which the quilt pane closes before.
-    expect(home.indexOf('class="cards-pane"')).toBeLessThan(home.indexOf('{#if dockedSlug}'));
+    expect(home.indexOf('class="cards-pane"')).toBeLessThan(home.indexOf("{#if dockedSlug && dockForm === 'sheet'}"));
     const z = dock.match(/\.dock\.sheet \{[^}]*z-index: (\d+)/);
     expect(Number(z?.[1])).toBeGreaterThan(60); // the global bar
   });

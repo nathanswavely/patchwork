@@ -32,16 +32,18 @@
   <!-- Glimpses: one per room, each its own door. The head is above them on
        every container that shows both; on a phone the pull is what brings
        them. -->
-  <PatchProfileGlimpses
-    {slug}
-    node={loaded?.node ?? null}
-    isMember={loaded?.isMember ?? false}
-    isAdmin={loaded?.isAdmin ?? false}
-    isUnclaimed={loaded?.isUnclaimed ?? false}
-    isBanned={loaded?.isBanned ?? false}
-    membershipRole={loaded?.membershipRole ?? ''}
-    followerPermissions={loaded?.followerPermissions ?? null}
-  />
+  <div class="profile-glimpses">
+    <PatchProfileGlimpses
+      {slug}
+      node={loaded?.node ?? null}
+      isMember={loaded?.isMember ?? false}
+      isAdmin={loaded?.isAdmin ?? false}
+      isUnclaimed={loaded?.isUnclaimed ?? false}
+      isBanned={loaded?.isBanned ?? false}
+      membershipRole={loaded?.membershipRole ?? ''}
+      followerPermissions={loaded?.followerPermissions ?? null}
+    />
+  </div>
 </div>
 
 <style>
@@ -49,5 +51,12 @@
     max-width: var(--pw-measure-narrow);
     margin: 0 auto;
     /* Padding comes from SocialShell's .social-main container (issue #17). */
+  }
+
+  /* The head ends at its relationship row and the container owns the gap
+     to the first glimpse's rule (docs/adr/094) — without one the rule sat
+     on the buttons. */
+  .profile-glimpses {
+    margin-top: 1.5rem;
   }
 </style>

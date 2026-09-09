@@ -79,26 +79,95 @@ describe('one address, two containers', () => {
 });
 
 describe("two heights on a phone, none in the pane's slot", () => {
-  it('defers the glimpses to the pull, and only on a sheet', () => {
+  it('mounts the glimpses at rest but defers their fetches to the pull', () => {
+    // At rest the first section starts under the buttons and the fold cuts
+    // it — the cut is what says there is more — while a tap on the quilt
+    // stays one request: the rooms are asked only once the sheet is up.
     const src = dock();
-    expect(src).toMatch(/showGlimpses = \$derived\(!isSheet \|\| expanded\)/);
+    expect(src).toMatch(/glimpsesActive = \$derived\(!isSheet \|\| expanded\)/);
+    expect(src).toMatch(/active=\{glimpsesActive\}/);
+    expect(src).not.toMatch(/\{#if showGlimpses\}/);
+    const glimpses = source('components/PatchProfileGlimpses.svelte');
+    expect(glimpses).toMatch(/if \(s && active\) loadActivity\(gov\);/);
+    // And an empty state waits for the answer: "no events" about a patch
+    // nobody has asked yet is a lie at the fold.
+    expect(glimpses).not.toMatch(/\{:else\}\s*<p class="glimpse-empty/);
+    expect(glimpses).toMatch(/\{:else if loaded\}\s*<p class="glimpse-empty/);
+  });
+
+  it('rests at the head plus a peek of what follows', () => {
+    const src = dock();
+    expect(src).toMatch(/const PEEK = 96;/);
+    expect(src).toMatch(/sheet\.getBoundingClientRect\(\)\.top\) \+ PEEK;/);
+    // A tap on the cut-off content pulls the sheet up; a link in it is
+    // still a link.
+    expect(src).toMatch(/if \(isSheet && !expanded && !e\.target\.closest\('a, button'\)\) expanded = true;/);
   });
 
   it('lets the surface pick the form, since it measures the room', () => {
     expect(home()).toMatch(/dockForm = \$derived\(winW <= 768 \? 'sheet' : 'panel'\)/);
   });
 
+  it("puts the panel in the cards pane's slot, in the list's place", () => {
+    // The profile takes the list's box — same slot, same width — and the
+    // list is back when it is dismissed. Nothing else on the surface moves.
+    const src = home();
+    expect(src).toMatch(/<div class="cards-pane"[^>]*>\s*\{#if dockedSlug && dockForm === 'panel'\}\s*<DockedProfile/);
+    expect(src).toMatch(/\{#if dockedSlug && dockForm === 'sheet'\}\s*<DockedProfile/);
+    // A card in the pane, not a box floating over it.
+    expect(dock()).toMatch(/\.dock\.panel \{\s*position: relative;\s*flex: 1;/);
+    expect(dock()).not.toMatch(/\.dock\.panel \{[^}]*width: 45%/);
+    // And the clicked card grows into it.
+    expect(src).toMatch(/dockOrigin = rect \? \{ left: rect\.left/);
+    expect(src).toMatch(/origin=\{dockOrigin\}/);
+    expect(dock()).toMatch(/el\.animate\(/);
+  });
+
+  it('leaves Escape to a dialog open above it', () => {
+    // Both listen on the window; one Escape used to close the join sheet
+    // and the profile it was joining from together.
+    expect(dock()).toMatch(/if \(document\.querySelector\('\[role="dialog"\]\[aria-modal="true"\]'\)\) return;\s*onClose\(\);/);
+  });
+
+  it('keeps the shell on the surface while a profile is docked', () => {
+    // A shell told "patchProfile" leaves quilt mode — bordered bar, page
+    // gutters, no view pill, no chips — around a quilt that is still there.
+    expect(app()).toMatch(/<SocialShell\s+routeName=\{docked \? docked\.routeName : routeName\}\s+quiltScope=\{docked \? docked\.quiltScope : quiltScope\}/);
+  });
+
   it("measures the rest height to the head's foot, not the head's height", () => {
     // The head's height alone left the 26px handle above it unaccounted
     // for, which put the relationship row below the fold.
     expect(dock()).toMatch(/head\.getBoundingClientRect\(\)\.bottom - sheet\.getBoundingClientRect\(\)\.top/);
+    // The handle lies over the cover, out of the flow, so it cannot
+    // reintroduce the 26px the measurement above was written to catch.
+    expect(dock()).toMatch(/\.dock-handle \{\s*position: absolute;/);
+  });
+
+  it('lays the head out for a sheet, and the container owns the gap below it', () => {
+    // The head is the same rendering in every container; the sheet is a
+    // layout the container asks for — cover to the sheet's edges, text left,
+    // the relationship row's controls filling the width for a thumb.
+    expect(dock()).toMatch(/layout="docked"/);
+    const headSrc = head();
+    expect(headSrc).toMatch(/layout = 'page'/);
+    expect(headSrc).toMatch(/class="profile-head" class:docked=\{layout === 'docked'\}/);
+    expect(headSrc).toMatch(/\.profile-head\.docked \.profile-cover \{\s*margin: 0 calc\(-1 \* var\(--pw-gutter\)\)/);
+    // At rest the sheet ends at the row, so its standing menu opens upward
+    // — the sheet's rule, since the panel has room below.
+    expect(dock()).toMatch(/\.dock\.sheet \.dock-head :global\(\.standing-menu\) \{\s*top: auto;\s*bottom:/);
+    // The head ends at its row (no bottom margin), so the rule under it
+    // would sit on the buttons unless each container sets the gap.
+    expect(headSrc).toMatch(/\.profile-actions \{\s*display: flex;\s*justify-content: center;\s*\}/);
+    expect(dock()).toMatch(/\.dock-glimpses \{\s*margin-top: 1\.5rem;/);
+    expect(source('pages/PatchProfile.svelte')).toMatch(/\.profile-glimpses \{\s*margin-top: 1\.5rem;/);
   });
 
   it('is never modal — no scrim over a live canvas', () => {
     const src = dock();
     expect(src).not.toContain('sidepanel-backdrop');
     expect(src).not.toMatch(/--color-scrim/);
-    expect(src).toMatch(/e\.key === 'Escape'/);
+    expect(src).toMatch(/e\.key !== 'Escape'/);
   });
 });
 

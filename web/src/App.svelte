@@ -613,7 +613,15 @@
 
 {:else}
   <!-- ===== SOCIAL SHELL (discovery + personal pages) ===== -->
-  <SocialShell {routeName} {quiltScope} dockOpen={!!docked}>
+  <!-- While a profile is docked the shell is told the surface's route, not
+       the profile's: the surface is what is on screen, and a shell told
+       "patchProfile" leaves quilt mode — bordered bar, page gutters, no
+       view pill, no chips — around a quilt that is still there. -->
+  <SocialShell
+    routeName={docked ? docked.routeName : routeName}
+    quiltScope={docked ? docked.quiltScope : quiltScope}
+    dockOpen={!!docked}
+  >
     {#snippet children()}
       {#if authRequired && !isLoggedIn()}
         <div class="auth-gate">

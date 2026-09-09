@@ -40,9 +40,18 @@
     isBanned = false,
     membershipRole = '',
     followerPermissions = null,
+    // Whether to go and ask the rooms. A sheet at rest mounts these so the
+    // first section shows under the fold — the cut is what says there is
+    // more — but a tap on the quilt must stay one request (docs/adr/094
+    // decision 4), so the four fetches wait for the pull. About needs no
+    // fetch and renders either way.
+    active = true,
   } = $props();
 
   let recentEvents = $state([]);
+  // Whether the rooms have answered. An empty state before they have would
+  // report "no events" about a patch nobody has asked yet.
+  let loaded = $state(false);
   let members = $state([]);
   let memberTotal = $state(0);
   let recentProposals = $state([]);
@@ -96,13 +105,14 @@
     // Read so the effect re-runs when standing arrives: the head's payload
     // can land after a pull has already mounted this.
     const gov = canSeeGovernance;
-    if (s) loadActivity(gov);
+    if (s && active) loadActivity(gov);
   });
 
   async function loadActivity(wantGovernance) {
     // Unclaimed patches carry no governance and no membership (docs/adr/039)
     // — absence, not an empty state — so neither fetch runs for one.
     const asked = slug;
+    loaded = false;
     const [eventData, memberData, proposalData, charterData] = await Promise.all([
       api(`events?node_slug=${encodeURIComponent(slug)}&from=${encodeURIComponent(upcomingFrom())}&limit=${GLIMPSE_EVENTS}`).catch(() => ({ items: [] })),
       (isUnclaimed ? Promise.resolve({ items: [] }) : api(`nodes/${slug}/members?limit=12`)).catch(() => ({ items: [] })),
@@ -121,6 +131,7 @@
     memberTotal = node?.member_count ?? members.length;
     recentProposals = proposalData.items || proposalData || [];
     governanceDocs = charterData.items || charterData || [];
+    loaded = true;
   }
 
   function go(path) {
@@ -220,7 +231,7 @@
             </a>
           {/each}
         </div>
-      {:else}
+      {:else if loaded}
         <p class="glimpse-empty muted">No upcoming events.</p>
       {/if}
     </section>
@@ -251,7 +262,7 @@
             </a>
           {/each}
         </div>
-      {:else}
+      {:else if loaded}
         <p class="glimpse-empty muted">No members yet.</p>
       {/if}
     </section>
@@ -290,7 +301,7 @@
             </a>
           {/each}
         </div>
-      {:else}
+      {:else if loaded}
         <p class="glimpse-empty muted">Nothing recorded yet.</p>
       {/if}
     </section>

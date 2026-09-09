@@ -284,6 +284,56 @@ Three of the nine, none of which changes a decision:
   looked at, so only opening from the surface pushes; a swap replaces, and
   a dismissal is one `history.back()` to the surface.
 
+Two more, from the first day of holding it:
+
+- **The sheet's head is laid out for a phone, not shrunk from the page.**
+  Decision 9 made the head one rendering for three containers, and the
+  first sheet took the page's head as it was: a rounded cover inside the
+  gutter, centred copy, two small controls centred under it. The retired
+  docked card had three things worth keeping, and they are back as a
+  `layout` the container asks for rather than a second head — the cover
+  bleeds to the sheet's own edges and corners with the handle over it, the
+  text reads left, and the relationship row's controls fill the width at a
+  thumb's height. At rest the sheet ends at that row, so the standing menu
+  opens upward there: downward is below the fold, where a "Leave" nobody
+  can see is a menu that appears to do nothing. And the head ends at its
+  row with no bottom margin, so each container owns the gap to the first
+  glimpse's rule; without one the rule sat on the buttons.
+- **The sheet rests at the head plus a peek, not at the head.** "At rest
+  the profile's head" was taken literally, and a sheet that ended cleanly
+  at its buttons looked finished: nothing said there was anything to pull
+  up for, and the glimpses were mounted only on the pull, so there was
+  nothing to see. Now the glimpses mount at rest and the sheet rests 96
+  pixels past the head's foot, so the first section's rule, title and a
+  line of it show under the buttons and the fold cuts them — the cut is the
+  invitation, the way a maps app lets its photo strip start under the
+  action row. Decision 4 still holds: the glimpses carry an `active` flag
+  and their four fetches wait for the pull, and an empty state waits for
+  the answer rather than reporting "no events" about a patch nobody has
+  asked yet.
+- **The panel is the list's box, not a box over it.** Decision 5 put the
+  panel "in the cards pane's slot", and the first build read that as a
+  second box drawn over the pane's rectangle: absolute, 45% wide, its own
+  edge and shadow, while App told the shell the *profile's* route — so the
+  shell left quilt mode around a quilt that was still there, and the view
+  pill, the chips and the list all vanished under a floating card. Now the
+  shell is told the surface's route, and the panel renders inside the
+  cards pane in the list's place: the same slot, the same margins, a card
+  among where the cards were, and the list back on dismiss. The card the
+  reader clicked grows into it (a transform from the card's rectangle to
+  the panel's), because the profile is what that card was about. The
+  docked head layout — cover to the edges, text left, controls filling the
+  width — is the same in both forms, which is what "one face" was for.
+- **The hover tip outlived its click.** The quilt's tip is built only where
+  a media query says the device hovers, which is a statement about the
+  device: a finger on a touchscreen laptop contradicts it per gesture, and
+  a mouse in a narrow window satisfies it. Both put the tip over the sheet
+  the click had just opened. Each enter now asks the pointer itself
+  (`pointerType`), and a click holds the tip until the pointer moves —
+  hidden alone was not enough, because opening the profile relays out the
+  surface under a cursor that has not moved, and Chrome re-enters the tile
+  beneath it.
+
 And one collision worth recording, because it is the third time this
 geometry has bitten: the dock's dismiss button overlapped the cover's own
 overflow by six pixels — enough to eat the press, invisible to the eye. It

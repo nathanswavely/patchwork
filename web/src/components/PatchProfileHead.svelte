@@ -34,7 +34,13 @@
   import { GearSix } from 'phosphor-svelte';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
 
-  let { slug = '', seed = null, onLoaded = () => {} } = $props();
+  // `layout` is the container's word about the room, never about the patch:
+  // 'docked' is a box the profile fills — the sheet at the foot of a phone,
+  // the card in the cards pane's slot — where the cover bleeds to the box's
+  // own edges, the text sits left, and the relationship row's controls fill
+  // the width. Same cover, same name, same row — a patch has one face —
+  // laid out for a box narrower than a page.
+  let { slug = '', seed = null, onLoaded = () => {}, layout = 'page' } = $props();
 
   // The payload half. Held in one object rather than eight flags so that
   // "has the truth arrived" is one question, which is what every derived
@@ -135,6 +141,7 @@
     <a href="/" class="btn btn-secondary" onclick={go('/')}>Back to Quilt</a>
   </div>
 {:else if node}
+  <div class="profile-head" class:docked={layout === 'docked'}>
   <!-- Header: the patch's own block as a cover, name and stats sitting in it -->
   <div class="profile-header">
     <div class="profile-cover" style="background: {identityColorForPatch(node)}">
@@ -241,6 +248,7 @@
       {liningStatus}
       onChanged={reloadStanding}
     />
+  </div>
   </div>
 {/if}
 
@@ -436,5 +444,60 @@
     justify-content: center;
   }
 
-  /* Sections */
+  /* ---- The docked layout: a box the profile fills (docs/adr/094) ------ */
+  /* The cover reaches the box's own edges and top corners — the box clips
+     it — by cancelling the gutter the dock's scroll box keeps for the text
+     below. The retired docked card did this and it was the thing worth
+     keeping from it: a band of fabric edge to edge reads as the patch
+     itself, where a rounded thumbnail inside a margin reads as a card about
+     it. */
+  .profile-head.docked .profile-cover {
+    margin: 0 calc(-1 * var(--pw-gutter)) 0.75rem;
+    border-radius: 0;
+    min-height: 132px;
+  }
+
+  .profile-head.docked .cover-text {
+    padding: 0.75rem var(--pw-gutter);
+  }
+
+  /* The dismiss rides the cover's top-left corner; on a sheet the handle its
+     top centre. The name starts below both, and text reads left the way the
+     card's did — centred copy in a narrow box puts every line's start
+     somewhere else. */
+  .profile-head.docked .profile-header,
+  .profile-head.docked .amended-lining-row {
+    text-align: left;
+  }
+
+  .profile-head.docked .profile-desc {
+    margin: 0;
+    max-width: none;
+  }
+
+  /* The relationship row fills the width: one or two controls a thumb can
+     land on rather than a small pair centred under the blurb. The tap
+     height is a phone's; in the pane's card it is simply generous. */
+  .profile-head.docked .profile-actions {
+    justify-content: stretch;
+    margin-top: 0.75rem;
+  }
+
+  .profile-head.docked .profile-actions :global(.relationship-row) {
+    flex: 1;
+  }
+
+  .profile-head.docked .profile-actions :global(.relationship-row > *) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .profile-head.docked .profile-actions :global(.standing),
+  .profile-head.docked .profile-actions :global(.btn) {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+    font-size: 0.9rem;
+  }
+
 </style>
