@@ -246,6 +246,11 @@ type Node struct {
 	// pre-filled one nobody chose.
 	Timezone string `json:"timezone"`
 	Website  string `json:"website"`
+	// DID is the atproto identity a claim proved (docs/adr/062), always a
+	// `did:web` on the patch's own domain. Set on the detail response only:
+	// the handle is a fact about this one patch, not a column the quilt
+	// sorts by. Empty means the patch never verified one.
+	DID string `json:"did,omitempty"`
 	// ImageURL is a reference, never bytes (docs/adr/007): the browser fetches
 	// it from wherever the patch keeps it. ImageAlt is required alongside, and
 	// is what remains when the bytes go.

@@ -21,6 +21,7 @@
   import { isLoggedIn, isAdmin as isInstanceAdmin, getUser } from '../stores/auth.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
+  import { handleFromDID } from '../lib/atproto.js';
   import { formatEventDate, formatEventTime, upcomingFrom } from '../lib/datetime.js';
 
   // The glimpse shows three, not the five it used to fetch. A stacked row
@@ -80,7 +81,12 @@
   let showGovernance = $derived(
     canSeeGovernance && (governanceDocs.length > 0 || recentProposals.length > 0 || hasStanding || isAdmin)
   );
-  let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address || !!node?.image_url);
+  // The atproto handle a claim proved (docs/adr/062), read off the DID
+  // rather than the domain column — see lib/atproto.js for why. It counts
+  // toward About on its own: a patch whose only public fact is its handle
+  // still has something to say about what it is.
+  let atprotoHandle = $derived(handleFromDID(node?.did));
+  let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address || !!node?.image_url || !!atprotoHandle);
 
   // Keyed on the slug and on whether governance is readable, because the
   // head's payload can arrive after this mounts: a container may render the
@@ -158,6 +164,16 @@
       {/if}
       {#if node.address}
         <p class="about-address muted">{node.address}</p>
+      {/if}
+      <!-- The handle is written past tense on purpose (docs/adr/062):
+           the binding was checked once, when the claim was verified, and
+           nothing re-checks it afterwards. A checkmark or a present-tense
+           "verified" badge would promise a check that is not running. -->
+      {#if atprotoHandle}
+        <p class="about-handle">
+          <span class="handle">@{atprotoHandle}</span>
+          <span class="handle-note muted">atproto handle, proved when this patch was claimed</span>
+        </p>
       {/if}
     </section>
   {/if}
@@ -464,6 +480,24 @@
   .about-address {
     font-size: 0.85rem;
     margin-top: 0.5rem;
+  }
+
+  .about-handle {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .about-handle .handle {
+    font-size: 0.88rem;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    word-break: break-all;
+  }
+
+  .about-handle .handle-note {
+    font-size: 0.78rem;
   }
 
   /* Members */
