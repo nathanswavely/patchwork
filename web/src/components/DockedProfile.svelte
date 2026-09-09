@@ -145,6 +145,13 @@
     if (e.key === 'Escape') onClose();
   }
 
+  // What a screen reader calls this region: the patch's own name, which the
+  // seed carries and the slug backs up. A label naming the *kind* of thing
+  // ("Patch") would be a new string in the copy ledger — words a person has
+  // to own — to say less than the name does, and the head's own <h1> is
+  // already the name a sighted reader sees.
+  let regionName = $derived(seed?.name || slug);
+
   // Where the sheet sits: fully up, or down by everything but its head.
   // While a finger is on it, wherever the finger says.
   let restOffset = $derived(restH > 0 ? `calc(100% - ${restH}px)` : '100%');
@@ -166,7 +173,7 @@
   class:expanded
   class:dragging={dragY !== 0}
   style="--dock-y: {offset}"
-  aria-label="Patch"
+  aria-label={regionName}
 >
   {#if isSheet}
     <!-- The handle: the pull's target, and at full screen one of only
