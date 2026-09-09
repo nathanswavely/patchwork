@@ -74,6 +74,7 @@ several branches are in flight.
 | [091](091-a-warning-reaches-the-person-warned.md) | A warning reaches the person warned, and never carries the reporter — `warn` was a no-op that notified only the reporter; it now names the recipient's own patch or event and withholds the reason, the details and the admin's resolution note *(shares `suspend_user`'s target resolution; unmutable, like 'account.suspended')* |
 | [092](092-the-maintainer-decides-and-may-consult.md) | The maintainer decides, and may consult — on an admin-decides patch a member's proposal waits on the maintainer, any vote is advisory, and the maintainer approves or declines at any time; apply closes on voting patches *(extends 041 and 047, closes 041's apply bypass)* |
 | [093](093-a-notification-follows-an-obligation-not-an-event.md) | A notification follows an obligation, not an event — Patchwork publishes and does not broadcast; the four event notifications are deleted, cancellation is refused as the test case that proves the rule, and the calendar keeps the reminder with a per-event `.ics` *(completes 076, applies 018, corrects CLAUDE.md's follower row)* |
+| [094](094-a-tap-hands-back-the-patch-not-a-card-about-it.md) | A tap hands back the patch, not a card about it — a discovery surface docks the patch's own profile at its own address, over a surface that is never unmounted; two heights on a phone, a non-modal panel in the pane's slot, and the docked card retires *(supersedes 078's decision 7 in its object, applies 022 and 074, takes 090's tree-field precedent)* |
 
 ## Partly implemented
 
@@ -106,7 +107,6 @@ several branches are in flight.
 | [079](079-an-event-keeps-the-door-it-came-through.md) | An event keeps the door it came through — every feed carries the event's own page and Patchwork dropped it; one `event_url`, filled by ingest and by the form *(fills a gap in 031, completes 056)* |
 | [080](080-a-contact-card-is-shared-patch-by-patch.md) | A contact card is shared patch by patch — one card on the account, one switch per membership, shown only in the room; a second axis beside 006's one switch, not a second visibility toggle *(superseded by 083)* |
 | [081](081-a-noticeboard-with-replies-not-a-feed.md) | A noticeboard with replies, not a feed — members-only, replies per notice, a closed moderation kit, quiet by default; travels in a seamrip; markdown with an image reference |
-| [094](094-a-tap-hands-back-the-patch-not-a-card-about-it.md) | A tap hands back the patch, not a card about it — a discovery surface docks the patch's own profile at its own address, over a surface that is never unmounted; two heights on a phone, a non-modal panel in the pane's slot, and the docked card retires *(supersedes 078's decision 7 in its object, applies 022 and 074, takes 090's tree-field precedent)* |
 
 ## Proposed — designs on record, not built
 

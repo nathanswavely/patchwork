@@ -1,6 +1,8 @@
 # ADR 094: A tap hands back the patch, not a card about it
 
-Date: 2026-09-08. Status: **accepted**; not yet built. Supersedes ADR 078's
+Date: 2026-09-08. Status: **accepted**; **built 2026-09-08 – 09-09**, all
+nine decisions. Three of them were corrected by building — see "What
+building corrected" at the foot. Supersedes ADR 078's
 decision 7 in its object and keeps it in its rule — a preview still costs a
 gesture the device can spare; what the gesture hands back changes. Applies
 ADR 022's lens rule and ADR 074's "the discovery surfaces read the quilt"
@@ -71,7 +73,11 @@ wearing an animation.
 
 **4. Two heights on a phone; none in the pane's slot.** On a phone the
 sheet rests at the profile's **head** and pulls up to **full screen** —
-and the pull is what fetches the glimpses, so a tap costs nothing. There
+and the pull is what fetches the glimpses, so a tap costs one request
+rather than five. (This decision first said a tap costs *nothing*, on the
+strength of decision 8's seeded head. Building it found three facts a quilt
+row cannot carry — see the consequences — so the head paints from the seed
+on the first frame and one request completes it.) There
 is no third height and no strip of canvas kept at full screen: a reader
 who wants the profile with nothing behind it wants the page, which exists
 at the same address. In the pane's slot there are no heights at all. That
@@ -203,9 +209,21 @@ radius is better named than discovered.
   `loadNode` sets, so the three data tiers — the tree row, `nodes/:slug`,
   and the four glimpse calls — are currently welded into one. Unwelding
   them is the real work behind "fetches on the pull".
-- **A phone tap costs zero requests and a pull costs five.** That is the
-  trade the two heights buy, and it is the opposite way round from the
-  docked card, which cost zero for everything because it showed less.
+- **A phone tap costs one request and a pull costs four more.** Three facts
+  in the head cannot come from a quilt row, and were found by building it:
+  `is_banned` reaches a client only through `nodes/:slug`, because
+  `me/nodes` serves active and pending rows and never banned ones
+  (docs/adr/088); an open claim is `claims/mine`; and the upcoming-event
+  count is not on the tree, where substituting the all-time `event_count`
+  beside it would break the rule that the two are never labelled with each
+  other's word. So the seed paints the first frame and the payload
+  completes it — still one against the docked card's zero, and the trade
+  the two heights buy.
+- **Choosing another patch while one is docked replaces its address; only
+  opening from the surface pushes.** So a dismissal is one `history.back()`
+  to the surface, rather than a walk back through every patch a reader
+  glanced at, and the sheet resets to its head when the patch under it
+  changes.
 - **`display: none` is a legitimate idle, but only after the first build.**
   `handleResize` returns early on a 0×0 container ("Still collapsed — wait
   for a real size"), and List view already hides the canvas this way. But
@@ -228,6 +246,47 @@ radius is better named than discovered.
   only the handle. They are where sheet implementations go wrong and they
   want a device in a hand, not a decision record. The dismissal set is
   fixed: handle, dismiss, back, and at rest a tap behind.
+- **The rest height is measured from the sheet's top edge to the foot of
+  the head, not from the head's own height.** Built the second way first,
+  and the 26px handle above the head went unaccounted for: the relationship
+  row sat 25 pixels below the fold, visible from the top and impossible to
+  press. Same distinction IntroCard already records about publishing what
+  it occupies rather than what it is.
 - **Whether the retirement ships with the replacement, or the docked card
   stays until the sheet works, is not decided here.** Both are defensible;
   the sequencing belongs to whoever builds it.
+
+## What building corrected, 2026-09-09
+
+Three of the nine, none of which changes a decision:
+
+- **A seeded head is not a free head.** Decision 8 put `membership_policy`
+  on the tree so the relationship row would be right on the first frame,
+  and decision 4 concluded from that a tap costs nothing. Two more head
+  facts turned out to be unreachable from a quilt row, and one that must
+  not be faked: `is_banned` reaches a client only through `nodes/:slug`
+  (`me/nodes` serves active and pending rows, never banned ones —
+  docs/adr/088), an open claim is `claims/mine`, and the upcoming-event
+  count is not on the tree, where the all-time `event_count` beside it
+  cannot stand in for it. So the seed paints the first frame and one
+  request completes it. Adding three more fields to the busiest endpoint to
+  save one request was the alternative, and the request is cheaper.
+- **The rest height is measured to the head's foot, not from its height.**
+  Built the other way first, and the 26px handle above the head went
+  unaccounted for: the relationship row sat 25 pixels below the fold —
+  visible from the top, impossible to press, and invisible in a screenshot.
+  Found by comparing the row's rect against the viewport rather than by
+  looking. IntroCard records the same distinction about publishing what it
+  occupies rather than what it is.
+- **Choosing another patch while one is docked replaces its address.** The
+  decision said opening is a navigation and left it there. Pushing every
+  glance would make one dismissal walk back through each patch a reader
+  looked at, so only opening from the surface pushes; a swap replaces, and
+  a dismissal is one `history.back()` to the surface.
+
+And one collision worth recording, because it is the third time this
+geometry has bitten: the dock's dismiss button overlapped the cover's own
+overflow by six pixels — enough to eat the press, invisible to the eye. It
+sits at the top *left* in both forms now. docs/adr/078 recorded the filter
+button landing on the card's description; the corner a profile's cover
+keeps for Settings and the overflow is not free.
