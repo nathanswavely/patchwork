@@ -742,7 +742,9 @@
   .quilt-chips.rail-collapsed {
     /* The collapsed rail hugs at left 12px, 56px wide (its right edge is
        68px) since the hover-flicker fix — keep the same 12px gap the
-       expanded offset has. */
+       expanded offset has. The map's zoom control lives in the column
+       this leaves free (bottom-left, 12px in, 32px wide — MapView), so
+       this offset is also what keeps the chips off it. */
     left: 80px;
   }
 
