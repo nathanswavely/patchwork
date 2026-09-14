@@ -1,5 +1,5 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate gazetteer \
-        release-notes-check \
+        release-notes-check sim sim-personas sim-advance sim-sweep sim-status sim-now sim-reset \
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
         copy-test copy-report
 
@@ -54,6 +54,37 @@ test-e2e:
 # (i.e. an image update). Needs docker + curl. See docs/DEPLOYMENT.md.
 smoke-recreate:
 	bash scripts/smoke-recreate.sh
+
+# --- Governance simulation (docs/adr/096) ------------------------------------
+# A throwaway instance that cmd/sim can move through time. The product never
+# learns it is being simulated: `sim-advance` slides every stored instant into
+# the past and runs the server's own hourly passes once. See
+# docs/testing/governance-simulation.md.
+SIM_DB ?= data/sim/patchwork.db
+SIM_CONFIG ?= cmd/sim/patchwork.sim.yaml
+SIM_PERSONAS ?= cmd/sim/personas.example.yaml
+
+sim: build
+	$(PATCHWORK_BIN) -config $(SIM_CONFIG)
+
+sim-personas:
+	go run ./cmd/sim/ -db $(SIM_DB) personas $(SIM_PERSONAS)
+
+#   make sim-advance BY=30d
+sim-advance:
+	go run ./cmd/sim/ -db $(SIM_DB) advance $(BY)
+
+sim-sweep:
+	go run ./cmd/sim/ -db $(SIM_DB) sweep
+
+sim-status:
+	go run ./cmd/sim/ -db $(SIM_DB) status
+
+sim-now:
+	go run ./cmd/sim/ -db $(SIM_DB) now
+
+sim-reset:
+	rm -rf $(dir $(SIM_DB))
 
 # Validate release-notes/ before cutting a tag (docs/adr/085). Bare, it checks
 # every file parses; with TAG= it also insists that release exists, which is

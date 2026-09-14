@@ -22,20 +22,22 @@ func StartReminderWorker(ctx context.Context, notifier *Notifier) {
 
 		// Run once at startup after a short delay.
 		time.Sleep(30 * time.Second)
-		runReminders(notifier)
+		RunReminders(notifier)
 
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				runReminders(notifier)
+				RunReminders(notifier)
 			}
 		}
 	}()
 }
 
-func runReminders(n *Notifier) {
+// RunReminders is one pass of the hourly worker. Exported so cmd/sim can run
+// the same pass the server runs after it moves the world (docs/adr/096).
+func RunReminders(n *Notifier) {
 	checkProposalDeadlines(n)
 	checkClaimSetupExpiring(n)
 	sendBulletin(n)
@@ -69,8 +71,12 @@ func ExpireStaleClaims(db *database.DB) {
 // checkProposalDeadlines finds proposals where voting_ends_at is within 24 hours
 // and sends proposal.deadline notifications (deduped).
 func checkProposalDeadlines(n *Notifier) {
-	now := time.Now().UTC().Format(time.RFC3339)
-	future := time.Now().Add(24 * time.Hour).UTC().Format(time.RFC3339)
+	// The layout `voting_ends_at` is written in, so the string comparison
+	// below compares like with like. RFC3339 (`…:00Z`) sorts after the
+	// stored `…:00.000Z` for the same second, which put the window edge
+	// off by up to a second and made "like with like" a matter of luck.
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	future := time.Now().Add(24 * time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
 
 	rows, err := n.DB.Query(
 		`SELECT p.id, p.title, p.node_id, n.slug, n.name
