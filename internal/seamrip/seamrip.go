@@ -111,7 +111,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, moved_to, created_at, updated_at
+				notice_posting, notice_replies_default, public_member_list, moved_to, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -160,6 +160,13 @@ func Tables() []Table {
 				// Who may put up a notice, and whether notices take replies
 				// by default: rules the community set (docs/adr/081).
 				def("notice_posting", "members"), def("notice_replies_default", 1),
+				// Who the patch publishes (docs/adr/095). It travels because
+				// a fork that lost it would put back up a member list the
+				// original had deliberately taken down, which is the one
+				// direction this setting must never move on its own. def()
+				// so archives written before the column import as
+				// "everyone", the behaviour every patch in them had.
+				def("public_member_list", "everyone"),
 				// Where this patch says it went (docs/adr/090). It travels
 				// for the same reason a person's does: the fork is the thing
 				// somebody followed the pointer to, and a chain of moves that

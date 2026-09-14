@@ -123,7 +123,13 @@
   };
 
   const tabs = $derived.by(() =>
-    workspaceTabs({ isUnclaimed, isAdmin, membershipRole, followerPermissions }).map((t) => ({
+    workspaceTabs({
+      isUnclaimed,
+      isAdmin,
+      membershipRole,
+      followerPermissions,
+      publicMemberList: node?.public_member_list || 'everyone',
+    }).map((t) => ({
       ...t,
       href: `${basePath}/${t.id}`,
       icon: TAB_ICONS[t.id],

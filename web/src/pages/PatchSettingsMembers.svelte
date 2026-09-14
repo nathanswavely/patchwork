@@ -4,9 +4,42 @@
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import Skeleton from '../components/Skeleton.svelte';
+  import SegmentedControl from '../components/SegmentedControl.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
+  let node = $derived(patch.value.node);
+
+  // Who appears in the patch's public member list (docs/adr/095). A patch
+  // can be findable without being enumerable, and this is where the group
+  // says so once instead of asking every member to hide themselves one at
+  // a time. It only ever subtracts: a member who hid stays hidden at
+  // 'everyone' (docs/adr/006), and nothing here can put them back.
+  let publicList = $state('everyone');
+  let hydrated = false;
+  $effect(() => {
+    if (node && !hydrated) {
+      publicList = node.public_member_list || 'everyone';
+      hydrated = true;
+    }
+  });
+
+  async function setPublicList(v) {
+    const prev = publicList;
+    publicList = v;
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { public_member_list: v } });
+      showToast({
+        everyone: 'Anyone can see who is in this patch',
+        admins: 'Only admins are listed publicly now',
+        nobody: 'The member list is no longer public',
+      }[v], 'success');
+      patch.value.reload();
+    } catch (e) {
+      publicList = prev;
+      showToast(e.message || 'Failed to save', 'error');
+    }
+  }
 
   let members = $state([]);
   let loadingMembers = $state(true);
@@ -139,6 +172,31 @@
 </script>
 
 <div class="settings-members">
+  <section class="members-section">
+    <h3 class="section-heading">Public member list</h3>
+    <div class="setting-row">
+      <div class="setting-info">
+        <!-- Three things the control cannot show on its face, and each of
+             them changes whether an admin's choice does what they think. -->
+        <span class="setting-desc muted">
+          Who a visitor sees listed. Admins and members always see everyone. The member count
+          stays public either way, and this hides the list, not the people &mdash; anyone is
+          still named by what they do here in public, like a proposal they file.
+        </span>
+      </div>
+      <SegmentedControl
+        options={[
+          { value: 'everyone', label: 'Everyone' },
+          { value: 'admins', label: 'Admins only' },
+          { value: 'nobody', label: 'Nobody' },
+        ]}
+        value={publicList}
+        label="Who appears in the public member list"
+        onchange={setPublicList}
+      />
+    </div>
+  </section>
+
   <!-- Pending Requests -->
   <section class="members-section">
     <h3 class="section-heading">Pending Requests</h3>
@@ -266,6 +324,17 @@
 </div>
 
 <style>
+  /* The list control sits above the roster it governs: stacked, because the
+     sentence explaining it is longer than a row can hold beside a control. */
+  .setting-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .setting-info { display: flex; flex-direction: column; gap: 0.1rem; }
+  .setting-desc { font-size: 0.8rem; max-width: 42rem; }
+
   .settings-members {
     max-width: var(--pw-measure-narrow);
   }

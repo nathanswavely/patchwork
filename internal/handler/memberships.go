@@ -443,6 +443,32 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			}
 		}
 
+		// Who this patch publishes (docs/adr/095). Read for every viewer,
+		// because the payload carries it either way: an endpoint that just
+		// returned an empty array would leave the client unable to tell "no
+		// members yet" from "this patch does not publish its list", and
+		// those two want opposite copy.
+		publicList := "everyone"
+		db.QueryRow("SELECT public_member_list FROM nodes WHERE id = ?", nodeID).Scan(&publicList)
+
+		// The roster gate, as a SQL clause, applied to outsiders only. The
+		// states are a ladder (nodes.go, publicMemberListStates), so each is
+		// one more conjunct rather than a different query. "nobody" is
+		// written as a false clause instead of an early return so that the
+		// counts below still run: the patch's size stays public at every
+		// setting, because the quilt sizes its tile by member count and a
+		// control claiming to hide the number would be contradicted by the
+		// front page (docs/adr/095 decision 3).
+		rosterClause := ""
+		if !insider {
+			switch publicList {
+			case "admins":
+				rosterClause = " AND m.role = 'admin'"
+			case "nobody":
+				rosterClause = " AND 0"
+			}
+		}
+
 		// The pending queue is admin-only reachable (see the statusFilter gate
 		// above), so join_message rides along only there — it never appears on
 		// the active/public listing (docs/adr/040).
@@ -500,7 +526,7 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			WHERE m.node_id = ? AND m.status = ?`
 		args := []interface{}{nodeID, statusFilter}
 		if !insider {
-			query += " AND m.visible = 1 AND m.role IN ('member','admin')"
+			query += " AND m.visible = 1 AND m.role IN ('member','admin')" + rosterClause
 		}
 
 		if after != "" {
@@ -585,6 +611,15 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 		// members and never summed with them (CONTEXT.md), and an outsider's
 		// follower total is zero because follower rows are not public
 		// (docs/adr/006).
+		//
+		// The roster gate is the one filter deliberately *not* applied here
+		// (docs/adr/095 decision 3). It is less an exception to the sentence
+		// above than the point where its two halves come apart: `m.visible`
+		// hides people whose existence an outsider has no other way to learn,
+		// while the roster gate hides people whose *number* is already on the
+		// patch's quilt tile. So the control withholds the identities and
+		// states the size, and the page above says as much rather than
+		// letting a bare "40 members" promise forty rows.
 		countQuery := `SELECT
 				COALESCE(SUM(CASE WHEN m.role IN ('member','admin') THEN 1 ELSE 0 END), 0),
 				COALESCE(SUM(CASE WHEN m.role = 'follower' THEN 1 ELSE 0 END), 0)
@@ -605,6 +640,10 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			"next_cursor":    nextCursor,
 			"member_count":   memberTotal,
 			"follower_count": followerTotal,
+			// What this patch publishes, so the page can tell an empty list
+			// from a withheld one (docs/adr/095). Sent to every viewer: the
+			// admin who sets it is looking at the very room it governs.
+			"public_member_list": publicList,
 		}
 		// Only for a viewer in the room: outside it there is no offer to
 		// make, and whether anyone here is reachable is not an outsider's

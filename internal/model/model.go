@@ -272,6 +272,14 @@ type Node struct {
 	// replies unless its author says otherwise. Set on the detail response.
 	NoticePosting        string               `json:"notice_posting,omitempty"`
 	NoticeRepliesDefault bool                 `json:"notice_replies_default"`
+	// PublicMemberList is who appears in this patch's public member list
+	// (docs/adr/095): "everyone", "admins", or "nobody". A patch can be
+	// findable without being enumerable. It only ever subtracts — the
+	// listing's gate is this AND the member's own `visible` switch
+	// (docs/adr/006), so nothing here reveals somebody who chose to hide.
+	// Set on the detail response; the settings form and the member list's
+	// own copy both read it.
+	PublicMemberList string `json:"public_member_list,omitempty"`
 	FollowerPermissions  *FollowerPermissions `json:"follower_permissions,omitempty"`
 	GovernanceConfig     *GovernanceConfig    `json:"governance_config,omitempty"`
 	MemberCount          int                  `json:"member_count,omitempty"`
