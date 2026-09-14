@@ -164,9 +164,9 @@ export async function addBasemap(map, theme = 'light') {
   // drawn, and an empty frame counts. When the tile worker was missing in
   // production the style parsed, `load` fired, this check declared the map
   // healthy, and the raster fallback it exists to trigger never ran — the
-  // basemap was blank for months behind a timer reporting success. A tile
-  // reaching the map is the one thing that cannot be true unless the whole
-  // pipeline, worker included, is working.
+  // basemap was blank behind a timer reporting success, through a release.
+  // A tile reaching the map is the one thing that cannot be true unless the
+  // whole pipeline, worker included, is working.
   let painted = false;
   // A hidden tab throttles the animation frames MapLibre draws in, so a map
   // in the background hasn't failed — it just hasn't been asked to paint.
