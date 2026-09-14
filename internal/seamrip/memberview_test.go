@@ -226,6 +226,57 @@ func TestMemberExport_HiddenMembershipStopsAtTheDoor(t *testing.T) {
 	}
 }
 
+// docs/adr/095: the patch's own answer rides on top of the member's. Without
+// it this export is a route around a withheld roster — a member of one patch
+// carrying out the member list of an unrelated patch that had taken its list
+// down, which is the drift between two copies of the boundary that
+// docs/adr/089 exists to stop.
+func TestMemberExport_WithheldRosterStopsAtTheDoor(t *testing.T) {
+	db := testDB(t)
+	f := seedTwoRooms(t, db)
+
+	// pubOther is a public patch the viewer is not in. It takes its member
+	// list down; the viewer's own rooms do not.
+	mustExec(t, db, `UPDATE nodes SET public_member_list = 'nobody' WHERE id = ?`, f.pubOther)
+
+	mine := memberFiles(t, db, f.viewer)
+	if hasMembership(mine, f.stranger, f.pubOther) {
+		t.Error("a withheld member list travelled to somebody outside that patch")
+	}
+	// The patch itself still travels — it is public, and this setting is
+	// about who is listed, never about whether the patch can be seen.
+	if !has(mine["nodes.json"], "id", f.pubOther) {
+		t.Error("the patch stopped travelling; only its roster should have")
+	}
+	// And the viewer's own rooms are untouched.
+	if !hasMembership(mine, f.hiddenPerson, f.pubOwn) {
+		t.Error("a patch the viewer is inside lost rows it should keep")
+	}
+
+	// 'admins' is the middle rung: the admin row leaves, the member row
+	// does not. The shared fixture gives pubOther a visible admin but no
+	// visible plain member, so this test brings its own rather than moving
+	// a row every other test in the file reads.
+	mustExec(t, db, `UPDATE nodes SET public_member_list = 'admins' WHERE id = ?`, f.pubOther)
+	plain := f.ghost
+	mustExec(t, db,
+		`INSERT INTO memberships (id, user_id, node_id, role, status, visible, joined_at)
+		 VALUES (?, ?, ?, 'member', 'active', 1, '2026-01-01T00:00:00Z')`,
+		nextID(), plain, f.pubOther)
+	var admin string
+	db.QueryRow(`SELECT user_id FROM memberships WHERE node_id = ? AND role = 'admin' AND visible = 1 LIMIT 1`, f.pubOther).Scan(&admin)
+	if admin == "" {
+		t.Fatal("fixture needs a visible admin on pubOther")
+	}
+	mine = memberFiles(t, db, f.viewer)
+	if !hasMembership(mine, admin, f.pubOther) {
+		t.Error("an admin row did not travel from a patch publishing its admins")
+	}
+	if hasMembership(mine, plain, f.pubOther) {
+		t.Error("a member row travelled from a patch publishing only its admins")
+	}
+}
+
 func hasMembership(files map[string][]map[string]any, userID, nodeID string) bool {
 	for _, m := range files["memberships.json"] {
 		u, _ := m["user_id"].(string)

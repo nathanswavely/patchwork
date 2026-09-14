@@ -1,0 +1,23 @@
+-- 069: who appears in a patch's public member list (docs/adr/095).
+--
+-- Between "findable" and "enumerable" there was nothing. A patch could be
+-- public or private, and each member could hide themselves one at a time,
+-- which asks every person individually to make a decision the group has
+-- already made and defaults to exposed while they think about it.
+--
+-- Three states, ordered by exposure, each showing a strict subset of the
+-- one above: 'everyone' is what every existing patch already does and so
+-- is the default; 'admins' shows who runs the patch and not who is in it;
+-- 'nobody' takes the list down. NOT NULL with a CHECK, like every other
+-- enumerated column on this table, so a bad value is caught at the write.
+--
+-- The gate the public listing runs is this column AND memberships.visible
+-- (docs/adr/006) — it can only ever subtract. No setting here reveals a
+-- member who chose to be hidden, which is what keeps ADR 006's switch the
+-- member's own.
+--
+-- Numbering: 068 is the highest on main, and no open PR, local branch or
+-- other worktree had claimed 069 when this branch took it (CLAUDE.md,
+-- "Claiming a number"). Re-check before merge.
+ALTER TABLE nodes ADD COLUMN public_member_list TEXT NOT NULL DEFAULT 'everyone'
+    CHECK (public_member_list IN ('everyone', 'admins', 'nobody'));

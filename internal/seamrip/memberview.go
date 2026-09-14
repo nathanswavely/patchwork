@@ -81,6 +81,15 @@ const sqlInsiderNodes = `SELECT im.node_id FROM memberships im
 const sqlAdminNodes = `SELECT am.node_id FROM memberships am
 	WHERE am.user_id = ? AND am.status = 'active' AND am.role = 'admin'`
 
+// sqlOpenRosterNodes / sqlAdminRosterNodes: the patches that publish their
+// member list, and the ones that publish only their admins (docs/adr/095).
+// The line ListMembers draws for an outsider, in the shape a Where clause
+// can take. Neither takes a `?`; both are uncorrelated, so they compose
+// with the unaliased predicate below without depending on how SQLite
+// resolves a bare column name inside a subquery.
+const sqlOpenRosterNodes = `SELECT rn.id FROM nodes rn WHERE rn.public_member_list = 'everyone'`
+const sqlAdminRosterNodes = `SELECT rn.id FROM nodes rn WHERE rn.public_member_list = 'admins'`
+
 // sqlVisibleEvents: the events on those patches this viewer may read.
 // Members-only events only inside their own patch — a confirmed link to
 // another patch never widens visibility, which is the rule ListEvents
@@ -198,8 +207,19 @@ func memberViews() map[string]MemberView {
 			// export: visible member and admin rows are public, hidden ones
 			// and every follower row belong to the room. The viewer's own
 			// rows come along whatever they say, because those are theirs.
-			Rule:  "on a patch that travelled: the viewer's own rows, every row on a patch they are inside, and otherwise only visible member/admin rows.",
-			Where: `node_id IN (` + sqlVisibleNodes + `) AND (user_id = ? OR node_id IN (` + sqlInsiderNodes + `) OR (visible = 1 AND role IN ('member','admin')))`,
+			//
+			// And the patch's own answer on top of the member's
+			// (docs/adr/095). Without the last clause this export is a way
+			// around a withheld roster: a member of one patch could carry
+			// out the member list of an unrelated patch that had taken its
+			// list down, which is precisely the drift between two copies of
+			// the boundary that docs/adr/089 exists to prevent. Inside the
+			// room nothing changes — a member of a patch exports the room
+			// they can already see.
+			Rule: "on a patch that travelled: the viewer's own rows, every row on a patch they are inside, and otherwise only visible member/admin rows that the patch itself publishes.",
+			Where: `node_id IN (` + sqlVisibleNodes + `) AND (user_id = ? OR node_id IN (` + sqlInsiderNodes + `) OR (visible = 1 AND (` +
+				`(role IN ('member','admin') AND node_id IN (` + sqlOpenRosterNodes + `))` +
+				` OR (role = 'admin' AND node_id IN (` + sqlAdminRosterNodes + `)))))`,
 		},
 		"contact_items": {
 			// The users rule above already decided this, for the reason it
