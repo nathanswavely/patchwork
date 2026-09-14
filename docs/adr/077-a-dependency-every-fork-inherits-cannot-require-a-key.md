@@ -56,10 +56,17 @@ the map view before this change.
 
 **5. A blank map is worse than a plain one.** Vector tiles need WebGL, and
 a browser grants a limited number of contexts. Where one can't be had, or
-the context is lost, or no first frame is drawn inside 12 seconds, the
-layer is replaced with plain OSM raster filtered per theme. The timeout
-does not run against a hidden document: a backgrounded tab throttles the
-frames MapLibre draws in, and a map nobody is looking at has not failed.
+the context is lost, or no tile is parsed inside 12 seconds, the layer is
+replaced with plain OSM raster filtered per theme. The timeout does not run
+against a hidden document: a backgrounded tab throttles the frames MapLibre
+draws in, and a map nobody is looking at has not failed.
+
+The signal is a parsed tile because the obvious signals both lie. `loaded()`
+waits on every tile in view and stays false for a long time on a slow link.
+`load` looks right and is worse: it means the style parsed and a frame was
+drawn, and *an empty frame counts* — so a map rendering nothing at all
+reports success. A tile reaching the map is the one thing that cannot be
+true unless the whole pipeline, worker included, is working.
 
 OSM raster is a fallback and deliberately not the default. Their tile
 usage policy asks distributed applications not to point at donated
@@ -112,3 +119,21 @@ The binary has to run on a Raspberry Pi 4 with 2GB of RAM.
   mount starved the live maps and left them blank — the probe now answers
   once and hands its context straight back. This was found by reading the
   page, not by the suite; there is still no Svelte render library here.
+- **MapLibre's tile worker has to be handed its address.** Left alone,
+  MapLibre finds the worker by assembling a URL at runtime —
+  `new URL('./maplibre-gl-worker.mjs', import.meta.url)`, built from a
+  variable. A bundler can only emit a file it can see, and that expression
+  is computed, so Vite emitted none. In production the URL resolved against
+  the app's own chunk, hit the SPA's index.html fallback, and came back as
+  `text/html`. The worker never started, no tile was ever parsed, and every
+  map Patchwork drew was blank behind its markers. `?worker&url` plus
+  `setWorkerUrl` makes it a real build input, hashed like any other asset.
+
+  It hid for a release because it is silent from both ends. Nothing in the
+  build warns: the app compiles, the chunk loads, and the missing file is a
+  200 rather than a 404 precisely because the SPA fallback answers anything.
+  And the raster fallback above — which exists for exactly this, a GL map
+  showing nothing — did not fire, because it was watching `load`. A safety
+  net is only as good as the thing it measures, which is why point 5 now
+  measures a tile. Read the page: a suite asserting on source text could
+  not have caught this either.

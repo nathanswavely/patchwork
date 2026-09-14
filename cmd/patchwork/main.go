@@ -781,12 +781,15 @@ func main() {
 	seoWrapped := middleware.SEO(db, cfg, spaHTML)(spa)
 	mux.Handle("/", seoWrapped)
 
-	// Middleware stack: BlockAICrawlers → CORS → CSRF → routes.
+	// Middleware stack: BlockAICrawlers → Compress → CORS → CSRF → routes.
 	// BlockAICrawlers is outermost so matching crawlers are rejected before
 	// any other work; federation, preview, and search agents pass through.
+	// Compress sits above everything that writes a body — the SPA bundle and
+	// the JSON alike — and below the crawler gate, which writes none.
 	var root http.Handler = mux
 	root = middleware.CSRF(root)
 	root = middleware.CORS(cfg, root)
+	root = middleware.Compress(root)
 	root = middleware.BlockAICrawlers(root)
 
 	// Start server.
@@ -847,6 +850,16 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	f.Close()
+
+	// Everything under /assets/ carries a content hash in its name, so the
+	// bytes behind a given URL never change: a new build is a new name. That
+	// makes them cacheable for as long as a browser cares to, which is the
+	// difference between a returning visitor revalidating two megabytes and
+	// fetching nothing at all. index.html is deliberately not in here — it is
+	// the file that names the current hashes.
+	if strings.HasPrefix(path, "/assets/") {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	}
 
 	http.FileServer(h.fs).ServeHTTP(w, r)
 }
