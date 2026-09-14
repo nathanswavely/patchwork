@@ -135,8 +135,8 @@ describe('the event row stacks instead of clipping', () => {
 describe('a count is a count, never the length of a capped page', () => {
   it('the profile reads the server total', () => {
     const src = source('components/PatchProfileHead.svelte');
-    expect(src).toMatch(/node\.upcoming_event_count[^}]*\}\s*Upcoming Events/);
-    expect(src).not.toMatch(/recentEvents\.length\}?\s*Upcoming Events/);
+    expect(src).toMatch(/node\.upcoming_event_count[^}]*\}\s*Upcoming Event/);
+    expect(src).not.toMatch(/recentEvents\.length\}?\s*Upcoming Event/);
   });
 
   it('SocialHome does not call an all-time count "upcoming"', () => {

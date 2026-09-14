@@ -162,7 +162,7 @@
                with each other's word — so it joins the line when the
                payload lands rather than arriving wrong and correcting
                itself. -->
-          {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`}{#if node.upcoming_event_count !== undefined}{` · ${node.upcoming_event_count} Upcoming Events`}{/if}
+          {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Member${node.member_count === 1 ? '' : 's'}`}{#if node.upcoming_event_count !== undefined}{` · ${node.upcoming_event_count} Upcoming Event${node.upcoming_event_count === 1 ? '' : 's'}`}{/if}
         </p>
       </div>
       <div class="cover-actions">
