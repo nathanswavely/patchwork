@@ -510,7 +510,7 @@
                    remote patch it comes from a cross-quilt snapshot that
                    carries no upcoming figure at all (CONTEXT.md
                    "Upcoming events"). -->
-              <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events</p>
+              <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Member${patch.member_count === 1 ? '' : 's'}`} - {patch.event_count || 0} Event{patch.event_count === 1 ? '' : 's'}</p>
               {#if patch.description}
                 <p class="card-desc">{patch.description}</p>
               {/if}
