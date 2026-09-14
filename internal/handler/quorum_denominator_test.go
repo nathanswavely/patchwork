@@ -118,8 +118,16 @@ func TestResolveProposal_QuorumDividesByElectorate(t *testing.T) {
 		proposalID := closedProposal(t, db, nodeID, admin.ID, "Short of quorum")
 		castBallot(t, db, proposalID, admin.ID, "approve")
 
-		if got := readProposalStatus(t, db, proposalID, adminToken); got != "open" {
-			t.Errorf("status = %q, want %q — one of four is below a 50%% quorum", got, "open")
+		// Below quorum at close the proposal lapses (docs/adr/097) rather
+		// than passing — the point here is that it did not pass on one
+		// ballot out of four.
+		if got := readProposalStatus(t, db, proposalID, adminToken); got != "rejected" {
+			t.Errorf("status = %q, want %q — one of four is below a 50%% quorum", got, "rejected")
+		}
+		var state string
+		db.QueryRow(`SELECT COALESCE(state,'') FROM proposals WHERE id = ?`, proposalID).Scan(&state)
+		if state != "lapsed" {
+			t.Errorf("state = %q, want lapsed — nobody decided it, the window ran out", state)
 		}
 	})
 }

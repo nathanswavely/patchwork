@@ -961,9 +961,12 @@ func TestProposalResolution_QuorumNotMet(t *testing.T) {
 	}
 	result := decodeJSON(t, w)
 
-	// Status should remain "open" because quorum (25% of 4 = 1 vote needed) was not met (0 votes).
-	if result["status"] != "open" {
-		t.Errorf("expected status=open (quorum not met), got %v", result["status"])
+	// Quorum (25% of 4 = 1 vote needed) was not met (0 votes) and the window
+	// has closed, so the proposal lapses (docs/adr/097): the schema's
+	// terminal "rejected" status, and a state that says nobody decided it.
+	// It used to stay "open" here forever.
+	if result["status"] != "rejected" || result["state"] != "lapsed" {
+		t.Errorf("expected status=rejected state=lapsed (quorum not met at close), got %v/%v", result["status"], result["state"])
 	}
 }
 

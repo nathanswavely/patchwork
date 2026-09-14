@@ -828,6 +828,15 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			}
 		}
 
+		// A patch born under an elected template adopts elected leadership
+		// at birth, and adoption starts an election (docs/adr/051) — the
+		// same trigger a rules edit fires. Seats are only ever created by
+		// a resolved election, so without this the founder held no seat,
+		// nothing ever came due, and the calendar never ran: a co-op made
+		// with the Formal template was an unseated admin for life. Silent
+		// on every other template and where the venue is elsewhere.
+		StartElectionOnAdoption(db, id)
+
 		auth.LogAuditEvent(db, user.ID, "node.create", "node", id, "{}", clientIP(r))
 		auth.LogAuditEvent(db, user.ID, "membership.join", "membership", memID, `{"role":"admin","auto":true}`, clientIP(r))
 

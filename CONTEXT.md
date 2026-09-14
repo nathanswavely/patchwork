@@ -878,6 +878,19 @@ retired `discussion` stage, which sat ahead of a vote that would come.
 _Avoid_: pending (which review queues already use), awaiting approval (an
 admin may also decline), draft
 
+**Lapsed**:
+A proposal whose voting window closed under quorum (`state = 'lapsed'`,
+docs/adr/097). Nobody decided it either way, so every surface says "not
+decided": the banner, the list row, the notice. It carries `status =
+'rejected'` because that is the schema's only terminal "no" (the CHECK
+constraint predates the word), which is exactly why the UI reads `state`
+first and never shows a lapsed vote as one the community turned down. The
+clock closes it — the hourly proposal sweep, or a read after the deadline —
+and votes are refused after the window as before. An election that settles
+nothing is not lapsed but **unsettled** (holdover, docs/adr/051).
+_Avoid_: rejected, failed (both say the members said no), expired (says
+the proposal went stale rather than that the vote did), abandoned
+
 **Attestation**:
 A record of a decision the community made at a venue that isn't
 Patchwork — an election held at the annual meeting, an amendment carried

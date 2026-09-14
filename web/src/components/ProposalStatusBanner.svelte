@@ -293,6 +293,13 @@
     </p>
   </div>
 
+{:else if effectiveState === 'lapsed'}
+  <!-- The window closed under quorum (docs/adr/097). Nobody decided
+       anything, so this is worded as a vote that did not happen rather than
+       one that failed; the tally below is who turned up. -->
+  <div class="status-banner lapsed">
+    <p>Voting ended without reaching quorum. This proposal lapsed and was not decided.</p>
+  </div>
 {:else if effectiveState === 'rejected'}
   <div class="status-banner rejected">
     <!-- A decline is one person's decision (docs/adr/092), and the tally, if
@@ -367,7 +374,8 @@
     color: var(--color-text-muted);
   }
 
-  .withdrawn {
+  .withdrawn,
+  .lapsed {
     background: var(--color-overlay);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);

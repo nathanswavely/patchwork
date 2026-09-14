@@ -71,7 +71,7 @@
   let showsTally = $derived(
     isVoting ||
       (effectiveState === 'awaiting_admin' && hasBallots) ||
-      (['approved', 'in_effect', 'rejected', 'passed'].includes(effectiveState) && (!advisory || hasBallots))
+      (['approved', 'in_effect', 'rejected', 'lapsed', 'passed'].includes(effectiveState) && (!advisory || hasBallots))
   );
 
   // An election is a proposal that carries candidates (docs/adr/051). Its
