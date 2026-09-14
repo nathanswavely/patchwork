@@ -54,6 +54,11 @@
   let loaded = $state(false);
   let members = $state([]);
   let memberTotal = $state(0);
+  // What this patch publishes (docs/adr/095), read off the listing that
+  // applied it. Without it a follower — an outsider for this purpose — gets
+  // the standing clause below, an empty array, and a glimpse announcing
+  // "No members yet" about a patch with forty people in it.
+  let publicMemberList = $state('everyone');
   let recentProposals = $state([]);
   let governanceDocs = $state([]);
 
@@ -86,7 +91,14 @@
    * brand-new patch renders zero doors and strands its own admin.
    */
   let showEvents = $derived(recentEvents.length > 0 || hasStanding || isAdmin || postingRight !== 'none');
-  let showMembers = $derived(!isUnclaimed && (members.length > 0 || hasStanding || isAdmin));
+  // Whoever is not in the room reads the patch's public answer, instance
+  // admins excepted — they see every room already, everywhere.
+  let rosterInsider = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
+  let rosterWithheld = $derived(!rosterInsider && publicMemberList === 'nobody');
+  let rosterAdminsOnly = $derived(!rosterInsider && publicMemberList === 'admins');
+  // A withheld list collapses the glimpse rather than showing an empty one:
+  // the door it would be is the members page, and that page says why.
+  let showMembers = $derived(!isUnclaimed && !rosterWithheld && (members.length > 0 || hasStanding || isAdmin));
   let showGovernance = $derived(
     canSeeGovernance && (governanceDocs.length > 0 || recentProposals.length > 0 || hasStanding || isAdmin)
   );
@@ -129,6 +141,7 @@
     // members room's own page, not to a glimpse headed "Members".
     members = (memberData.items || memberData || []).filter((m) => m.role !== 'follower');
     memberTotal = node?.member_count ?? members.length;
+    publicMemberList = memberData.public_member_list || 'everyone';
     recentProposals = proposalData.items || proposalData || [];
     governanceDocs = charterData.items || charterData || [];
     loaded = true;
@@ -242,8 +255,10 @@
   {#if showMembers}
     <section class="profile-section">
       <div class="section-head">
-        <a class="section-title" href="/patches/{slug}/members" onclick={go(`/patches/${slug}/members`)}>Members</a>
-        {#if members.length > 0 && memberTotal > members.length}
+        <a class="section-title" href="/patches/{slug}/members" onclick={go(`/patches/${slug}/members`)}>{rosterAdminsOnly ? 'Admins' : 'Members'}</a>
+        <!-- The total belongs to a section headed Members. Beside "Admins"
+             it would count people the list below deliberately omits. -->
+        {#if !rosterAdminsOnly && members.length > 0 && memberTotal > members.length}
           <span class="section-meta muted">{memberTotal}</span>
         {/if}
       </div>

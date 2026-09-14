@@ -525,9 +525,29 @@ controls both directions — whether the membership appears on the person's
 profile and whether the person appears in the patch's public member list.
 Default: visible. A hidden membership is still seen by that patch's admins
 and members inside the workspace. There is no profile-only or list-only
-hiding; the two surfaces never disagree.
+hiding; the two surfaces never disagree. The patch's own **public member
+list** setting can withhold the list on the patch's side, but never puts a
+hidden membership back — this switch is the member's, and only ever loses
+an argument in the hiding direction.
 _Avoid_: private membership (collides with private patches), profile
 visibility (it is per-membership, not per-profile)
+
+**Public member list**:
+Who a visitor sees listed on a patch: **everyone**, **admins only**, or
+**nobody** (docs/adr/095). A patch-level setting owned by its admins,
+edited at Patch Settings → Members, and the answer to a different question
+from membership visibility — "may this patch be enumerated" rather than
+"is this person listed". It only subtracts: the listing's gate is this
+setting *and* the member's own switch. It withholds identities, never the
+count — a patch's member count stays public at every setting, because the
+quilt draws its tile from it. A patch whose size is itself sensitive wants
+a private patch, not this. It governs the patch's own surfaces (the member
+list, the profile's glimpse, the workspace tab) and stops at
+/users/:username, where what a person says about their own memberships
+stays theirs.
+_Avoid_: private members, member privacy (the members are not what is
+private; the list is), roster (fine in an ADR, not a UI word), hidden
+members (that is membership visibility)
 
 **Contact card**:
 Every way a person is willing to be reached, kept once on the account. The

@@ -19,6 +19,7 @@
  * @param {boolean} opts.isAdmin
  * @param {string}  opts.membershipRole
  * @param {object|null} opts.followerPermissions
+ * @param {string} opts.publicMemberList
  * @returns {Array<{id: string, label: string}>}
  */
 export function workspaceTabs({
@@ -26,6 +27,7 @@ export function workspaceTabs({
   isAdmin = false,
   membershipRole = '',
   followerPermissions = null,
+  publicMemberList = 'everyone',
 } = {}) {
   if (isUnclaimed) {
     const t = [{ id: 'events', label: 'Events' }];
@@ -37,8 +39,18 @@ export function workspaceTabs({
   const fp = followerPermissions;
   const isFollower = membershipRole === 'follower';
 
-  if (!isFollower || fp?.members !== false)
-    t.push({ id: 'members', label: 'Members' });
+  // What the patch publishes (docs/adr/095) — a different question from
+  // the follower key beside it, which hides a tab over a read that stays
+  // public. This one is the read. Anyone outside the room gets the public
+  // answer; the room itself, and an instance admin, always get the tab.
+  const rosterInsider = isAdmin || membershipRole === 'member' || membershipRole === 'admin';
+  const rosterHidden = !rosterInsider && publicMemberList === 'nobody';
+  const rosterAdminsOnly = !rosterInsider && publicMemberList === 'admins';
+
+  // A tab naming what is behind it: "Members" over a list of three admins
+  // misreports the patch, and the page under it says the same word.
+  if ((!isFollower || fp?.members !== false) && !rosterHidden)
+    t.push({ id: 'members', label: rosterAdminsOnly ? 'Admins' : 'Members' });
   if (!isFollower || fp?.events !== false)
     t.push({ id: 'events', label: 'Events' });
   // The noticeboard is the room's, and only the room's (docs/adr/081): a

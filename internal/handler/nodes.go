@@ -309,6 +309,10 @@ func scanGovernanceConfig(gcJSON string, n *model.Node) {
 var (
 	nodeVisibilities   = []string{"public", "private", "unlisted"}
 	membershipPolicies = []string{"open", "approval_required", "invite_only"}
+	// Who appears in the patch's public member list (docs/adr/095), in
+	// descending order of exposure. Each state shows a strict subset of the
+	// one before it, which is what lets the listing apply it as one clause.
+	publicMemberListStates = []string{"everyone", "admins", "nobody"}
 )
 
 func oneOf(v string, allowed []string) bool {
@@ -574,9 +578,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, COALESCE(moved_to,''), created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, COALESCE(moved_to,''), created_at, updated_at
 			 FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, slug,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -880,6 +884,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			"website":  true, "links": true, "visibility": true,
 			"appearance": true, "accept_event_suggestions": true,
 			"notice_posting": true, "notice_replies_default": true,
+			"public_member_list": true,
 			"image_url": true, "image_alt": true,
 			"moved_to": true,
 		}
@@ -943,6 +948,19 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		if raw, present := req["notice_replies_default"]; present {
 			if _, isBool := raw.(bool); !isBool {
 				http.Error(w, `{"error":"notice_replies_default must be true or false"}`, http.StatusBadRequest)
+				return
+			}
+		}
+
+		// Who appears in the public member list (docs/adr/095). Checked here
+		// for the same reason notice_posting is — a bad value should be a
+		// 400 and not the CHECK constraint's 500 — and this is the only
+		// write path, so this is the only place it can be checked.
+		if raw, present := req["public_member_list"]; present {
+			v, _ := raw.(string)
+			if !oneOf(v, publicMemberListStates) {
+				http.Error(w, fmt.Sprintf(`{"error":"public_member_list must be one of %s"}`,
+					strings.Join(publicMemberListStates, ", ")), http.StatusBadRequest)
 				return
 			}
 		}
