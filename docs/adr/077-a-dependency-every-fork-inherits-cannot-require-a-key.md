@@ -129,9 +129,11 @@ The binary has to run on a Raspberry Pi 4 with 2GB of RAM.
   map Patchwork drew was blank behind its markers. `?worker&url` plus
   `setWorkerUrl` makes it a real build input, hashed like any other asset.
 
-  It hid for a release because it is silent from both ends. Nothing in the
-  build warns: the app compiles, the chunk loads, and the missing file is a
-  200 rather than a 404 precisely because the SPA fallback answers anything.
+  It reached a release because it is silent from both ends — five days on
+  main and one tag, v0.26.0, which carried the maplibre 5 → 6 bump that
+  introduced it. Nothing in the build warns: the app compiles, the chunk
+  loads, and the missing file answers 200 rather than 404, precisely
+  because the SPA fallback answers anything.
   And the raster fallback above — which exists for exactly this, a GL map
   showing nothing — did not fire, because it was watching `load`. A safety
   net is only as good as the thing it measures, which is why point 5 now
