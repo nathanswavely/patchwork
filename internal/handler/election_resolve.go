@@ -216,7 +216,19 @@ func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, win
 // calendar doing its job — nobody calls an election and nobody closes one
 // (docs/adr/051).
 func SweepElections(db *database.DB) {
-	rows, err := db.Query(`SELECT id FROM proposals WHERE status = 'open' AND seats_contested > 0`)
+	// Only on a patch that is still here. `ScheduleDueElections` has always
+	// filtered this way and this sweep never did, so an archived patch went
+	// on holding the contest it was carrying when it was archived: opening
+	// voting on the calendar, notifying its members, and seating a council
+	// nobody can go and look at. A simulated collective created a duplicate
+	// patch by accident, archived it, and a fortnight later its ghost
+	// election had closed nominations and opened a ballot.
+	//
+	// The same condition `SweepProposals` uses, and for the same reason.
+	rows, err := db.Query(`SELECT p.id FROM proposals p
+	                       JOIN nodes n ON n.id = p.node_id
+	                       WHERE p.status = 'open' AND p.seats_contested > 0
+	                         AND n.status IN ('active', 'unclaimed') AND n.removed_at IS NULL`)
 	if err != nil {
 		return
 	}
