@@ -640,34 +640,43 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Totals for the header, counted under exactly the filter the listing
-		// ran — same status, same visibility gate, same join. A header derived
-		// from the loaded page states the page size as the patch's size; a
-		// header counted without the gate promises rows this viewer's listing
-		// will never hand over. Followers are counted apart from admins and
-		// members and never summed with them (CONTEXT.md), and an outsider's
-		// follower total is zero because follower rows are not public
-		// (docs/adr/006).
+		// Totals for the header: how many people this patch holds, counted
+		// exactly as GetNode and the tree endpoint count them — every active
+		// member/admin row and every active follower row, under no visibility
+		// gate at all. Deliberately *not* "how many rows this viewer's listing
+		// would hand over", which is what these used to be and what made the
+		// profile head say 40 Members over a members page saying 37.
 		//
-		// The roster gate is the one filter deliberately *not* applied here
-		// (docs/adr/095 decision 3). It is less an exception to the sentence
-		// above than the point where its two halves come apart: `m.visible`
-		// hides people whose existence an outsider has no other way to learn,
-		// while the roster gate hides people whose *number* is already on the
-		// patch's quilt tile. So the control withholds the identities and
-		// states the size, and the page above says as much rather than
-		// letting a bare "40 members" promise forty rows.
+		// The listing and the count answer different questions, so one gate
+		// cannot serve both. A count names nobody: docs/adr/006 gives a member
+		// a say over being *listed*, and docs/adr/095 decision 3 already
+		// settled that the patch's own roster gate hides who and never how
+		// many — the quilt sizes a tile by member count, so a number the front
+		// page publishes is not withheld by a second page declining to state
+		// it. `m.visible` is the weaker of the two gates and cannot reach
+		// further than the stronger one: counting under it would make a
+		// patch's published size a function of its members' private choices,
+		// and would have the quilt redraw itself per viewer.
+		//
+		// The cost, recorded rather than hidden: on a small patch a count of
+		// five over a list of two says two people are not listed. That
+		// inference came off the profile head regardless — it has always
+		// stated the ungated number directly above this page — so gating here
+		// concealed nothing and only made the two numbers fight. A patch that
+		// cannot afford the inference sets public_member_list to nobody, where
+		// no row is published and there is nothing to subtract from.
+		//
+		// Followers are counted apart from members and admins and never summed
+		// with them (CONTEXT.md). Status still follows the listing, so the
+		// admin-only pending queue counts pending rows: there the question
+		// really is how long the queue this viewer is working through is.
 		countQuery := `SELECT
 				COALESCE(SUM(CASE WHEN m.role IN ('member','admin') THEN 1 ELSE 0 END), 0),
 				COALESCE(SUM(CASE WHEN m.role = 'follower' THEN 1 ELSE 0 END), 0)
-			FROM memberships m JOIN users u ON m.user_id = u.id
+			FROM memberships m
 			WHERE m.node_id = ? AND m.status = ?`
-		countArgs := []interface{}{nodeID, statusFilter}
-		if !insider {
-			countQuery += " AND m.visible = 1 AND m.role IN ('member','admin')"
-		}
 		var memberTotal, followerTotal int
-		if err := db.QueryRow(countQuery, countArgs...).Scan(&memberTotal, &followerTotal); err != nil {
+		if err := db.QueryRow(countQuery, nodeID, statusFilter).Scan(&memberTotal, &followerTotal); err != nil {
 			http.Error(w, `{"error":"failed to list members"}`, http.StatusInternalServerError)
 			return
 		}
@@ -989,11 +998,33 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				}
 			}
 
+			// A patch with no admins at all has no mechanism left to outrank,
+			// and the three refusals below are all of the form "use this
+			// patch's own mechanism instead of the dropdown". Every one of
+			// those mechanisms is started by an admin: an attestation is
+			// recorded by one, a nomination is raised by one, a seat is added
+			// by one. So on an empty council the refusals stop protecting a
+			// mechanism and start sealing the door.
+			//
+			// Only an instance admin can be standing at that door — the other
+			// key is the one that is missing — so the condition needs no role
+			// check of its own: `userHasNodeRole(admin)` is false for
+			// everybody here by construction. Inactivity is what empties a
+			// council without anyone choosing to (docs/adr/051), and this is
+			// the route back that does not depend on the patch's own
+			// machinery still being startable.
+			//
+			// It is audited with its reason, so the record says this was a
+			// repair and not a promotion the patch's rules allowed.
+			var nodeAdmins int
+			db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'", nodeID).Scan(&nodeAdmins)
+			restoringEmptyCouncil := nodeAdmins == 0 && newRole == "admin"
+
 			// Where admins are chosen elsewhere, Patchwork does not make them
 			// (docs/adr/052). The record of that decision is what promotes,
 			// so a hand-made admin here would be a change with no decision
 			// behind it — and the next attestation would undo it anyway.
-			if newRole == "admin" && currentRole != "admin" && leadershipDecidedElsewhere(db, nodeID) {
+			if !restoringEmptyCouncil && newRole == "admin" && currentRole != "admin" && leadershipDecidedElsewhere(db, nodeID) {
 				http.Error(w, `{"error":"this patch chooses its admins elsewhere: record that decision instead"}`, http.StatusConflict)
 				return
 			}
@@ -1005,8 +1036,23 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			// docs/adr/041 named. Demotion is untouched: nothing about
 			// earning a role says the community must vote to end it, and the
 			// last-admin floor above still applies.
-			if newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "meritocratic" {
+			if !restoringEmptyCouncil && newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "meritocratic" {
 				http.Error(w, `{"error":"this patch ratifies admins by proposal: nominate them instead"}`, http.StatusConflict)
+				return
+			}
+
+			// On an elected patch the dropdown does not make an admin either
+			// (docs/adr/100). Two founders used it, believing they were doing
+			// the ordinary thing, and got three admins, zero new seats, no
+			// election, and a contest for one seat while three people held
+			// power. A control that silently outranks the mechanism the
+			// governance page advertises is worse than no control, so this
+			// says which mechanism runs and where it is: nominate into a
+			// vacant seat, or wait for the contest that fills the full one.
+			// Demotion is untouched, as it is for meritocratic, and the
+			// last-admin floor above still applies.
+			if !restoringEmptyCouncil && newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "elected" {
+				http.Error(w, `{"error":"`+electedPromotionDenial(db, nodeID)+`"}`, http.StatusConflict)
 				return
 			}
 
@@ -1026,13 +1072,30 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				DropContactSharesFor(db, targetUserID, nodeID)
 			}
 
-			_, err = db.Exec("UPDATE memberships SET role = ? WHERE id = ?", newRole, memID)
+			_, err = db.Exec("UPDATE memberships SET role = ?, "+roleSinceNow+" WHERE id = ?", newRole, memID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update role"}`, http.StatusInternalServerError)
 				return
 			}
+			// On an elected patch every admin sits in a chair the record can
+			// name (docs/adr/100), so a restoration puts them in one where a
+			// chair is free. The chair keeps its own term end — the clock
+			// belongs to the seat (docs/adr/051), and a repair is the last
+			// act that should hand out a fresh mandate.
+			if restoringEmptyCouncil {
+				if seatID := vacantSeat(db, nodeID); seatID != "" {
+					db.Exec("UPDATE seats SET holder_id = ? WHERE id = ?", targetUserID, seatID)
+					auth.LogAuditEvent(db, user.ID, "seat.filled", "seat", seatID,
+						fmt.Sprintf(`{"node_id":"%s","holder_id":"%s","reason":"council_empty"}`, nodeID, targetUserID), clientIP(r))
+				}
+			}
+
+			reason := ""
+			if restoringEmptyCouncil {
+				reason = `,"reason":"council_empty"`
+			}
 			auth.LogAuditEvent(db, user.ID, "membership.role_change", "membership", memID,
-				fmt.Sprintf(`{"target_user_id":"%s","old_role":"%s","new_role":"%s"}`, targetUserID, currentRole, newRole), clientIP(r))
+				fmt.Sprintf(`{"target_user_id":"%s","old_role":"%s","new_role":"%s"%s}`, targetUserID, currentRole, newRole, reason), clientIP(r))
 		}
 
 		// Return the updated membership.

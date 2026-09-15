@@ -162,6 +162,37 @@ export function sameZoneAsViewer(tz, at = Date.now()) {
 }
 
 /**
+ * Whether a typed zone names a *place*, which is what docs/adr/045 and
+ * docs/adr/067 say an event's time belongs to.
+ *
+ * `new Intl.DateTimeFormat('en-US', { timeZone: tz })` is not that test.
+ * It resolves the tzdata's fixed-offset compatibility entries — "EST",
+ * "MST", "EST5EDT", "CET", "Etc/GMT+5" — without complaint, and every one
+ * of them is an offset rather than a place. A patch set to "EST" renders
+ * correctly all winter and an hour early from the second Sunday of March.
+ *
+ * "UTC" stays valid: it is the terminating rung of the resolution chain,
+ * and having no offset to get wrong is the point of it.
+ *
+ * The server is the authority and refuses the same names for the same
+ * reason (internal/config.ValidTimezone); this is so a typo is visible
+ * where it was typed rather than after a round trip.
+ */
+export function isPlaceZone(tz) {
+  const name = (tz || '').trim();
+  if (!name) return false;
+  if (name === 'UTC' || name === 'Etc/UTC') return true;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: name });
+  } catch {
+    return false;
+  }
+  if (!name.includes('/')) return false;
+  if (name.startsWith('Etc/')) return false;
+  return true;
+}
+
+/**
  * "just now" / "5m ago" / "3d ago" — elapsed time, not clock time. Named
  * apart from formatEventTime on purpose: the two were both called
  * `formatTime` in different files and mean entirely different things.

@@ -88,6 +88,20 @@ refuse without it.
 - **Coverage is by construction.** The clock-seam approach would have
   been complete on the day it merged and incomplete on the day someone
   wrote the next `strftime('now')`. Shape-based selection has no such day.
+- **The present is the real clock; only the content carries the age.**
+  Moving every stored instant back by a fortnight makes the world a
+  fortnight older. It does not move today. Everything the server writes
+  afterwards is stamped now, because the server reads the wall clock and
+  always will, so a minute written after an advance is dated today beside
+  content dated a fortnight ago. That is exactly right, and it reads as
+  broken to anybody who has been told the date is something else.
+  `cmd/sim` first reported the present as now plus the accumulated
+  offset, which double counted, and two simulated members caught it
+  before I did: a secretary's minutes of the 28th came back stamped the
+  15th, and she said, fairly, that a record arguing with its own dates is
+  worth less than the notebook it came out of. The record was right and
+  the tool was wrong. **Give a persona the real date.**
+
 - **Two things stay still, and the auditor is told so.** Governance git
   repos keep their real commit dates, so a charter history view shows an
   amendment "three minutes ago" that the database says was months back.

@@ -1151,7 +1151,7 @@ func activateClaimedNode(db *database.DB, nodeID, newOwnerID, now string) error 
 			memID, newOwnerID, nodeID, now,
 		)
 	} else {
-		_, err = db.Exec("UPDATE memberships SET role = 'admin', status = 'active' WHERE user_id = ? AND node_id = ?", newOwnerID, nodeID)
+		_, err = db.Exec("UPDATE memberships SET role = 'admin', status = 'active', "+roleSinceNow+" WHERE user_id = ? AND node_id = ?", newOwnerID, nodeID)
 	}
 	if err != nil {
 		return fmt.Errorf("grant admin membership: %w", err)

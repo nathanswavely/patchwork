@@ -10,17 +10,42 @@
     proposal = null,
     canVote = false,
     canNominate = false,
+    // Everybody this contest could have on its slate: the patch's active
+    // members and admins (docs/adr/107). Empty where the page could not load
+    // them, which costs the picker and nothing else.
+    members = [],
     onChanged = () => {},
   } = $props();
 
   let phase = $derived(proposal?.election_phase || '');
   let candidates = $derived(proposal?.candidates || []);
   let seats = $derived(proposal?.seats_contested || 0);
+  // A contest that seated nobody (docs/adr/051): quorum unmet, or nobody
+  // approved. The panel used to read the seats off the tally alone, so a
+  // closed election that missed quorum still tagged its most-approved
+  // candidates "seated" — people who hold no seat, on a page whose banner
+  // says the council held over.
+  let settledNothing = $derived(proposal?.state === 'unsettled');
   let me = $derived(getUser());
   let iAmStanding = $derived(candidates.some((c) => c.user_id === me?.id));
 
+  // Who is left to put forward: everyone who may stand and is not already on
+  // the slate, minus yourself — standing is its own button, and offering your
+  // own name in a list called "put someone forward" is how somebody nominated
+  // herself by accident in the first place.
+  let nominatable = $derived(
+    members.filter((m) => m.user_id !== me?.id && !candidates.some((c) => c.user_id === m.user_id)),
+  );
+  let nomineeId = $state('');
+
   let busy = $state(false);
   let error = $state('');
+  // Whether this person's ballot is in. Seeded from the server rather than
+  // only from a save, so it survives a reload — which is how three of four
+  // simulated voters tried to find out, having been told nothing
+  // (docs/adr/106).
+  let saved = $state(false);
+  let ballotIn = $derived(saved || candidates.some((c) => c.approved_by_me));
 
   // The ballot is the set you currently hold, seeded from what the server says
   // you already approved — approval voting replaces wholesale, so an empty
@@ -38,6 +63,9 @@
     const next = new Set(approved);
     if (next.has(id)) next.delete(id); else next.add(id);
     approved = next;
+    // An edited ballot is not a saved one. The confirmation goes away the
+    // moment the thing it is confirming stops being true.
+    saved = false;
   }
 
   async function stand() {
@@ -53,6 +81,41 @@
     }
   }
 
+  // The act four surfaces have been promising (docs/adr/107). The server has
+  // always taken a `user_id` here; only the button was missing.
+  async function nominate() {
+    if (!nomineeId) return;
+    busy = true; error = '';
+    try {
+      await api(`proposals/${proposal.id}/candidates`, {
+        method: 'POST',
+        body: { user_id: nomineeId },
+      });
+      nomineeId = '';
+      seeded = '';
+      onChanged();
+    } catch (e) {
+      error = e.message || 'Failed to put them forward';
+    } finally {
+      busy = false;
+    }
+  }
+
+  // And the way back off. Your own only, which is what makes putting somebody
+  // else forward safe to offer at all.
+  async function withdraw() {
+    busy = true; error = '';
+    try {
+      await api(`proposals/${proposal.id}/candidates/me`, { method: 'DELETE' });
+      seeded = '';
+      onChanged();
+    } catch (e) {
+      error = e.message || 'Failed to withdraw';
+    } finally {
+      busy = false;
+    }
+  }
+
   async function submitBallot() {
     busy = true; error = '';
     try {
@@ -60,6 +123,11 @@
         method: 'PUT',
         body: { candidate_ids: [...approved] },
       });
+      // Say so. This said nothing at all, and every simulated voter went
+      // looking for proof somewhere else — one watched an approval counter
+      // tick up, saw it tick again when somebody else voted, and spent ten
+      // minutes working out whether the second one was hers.
+      saved = true;
       onChanged();
     } catch (e) {
       error = e.message || 'Failed to save your ballot';
@@ -85,7 +153,27 @@
       </p>
     {:else if phase === 'voting'}
       <p class="lede">
-        Approve as many candidates as you like. The {seats} most approved take the seats.
+        Approve as many candidates as you like.
+        {#if seats === 1}
+          The most approved candidate takes the seat.
+        {:else}
+          The {seats} most approved take the seats.
+        {/if}
+      </p>
+    {/if}
+
+    <!--
+      What happened to the window somebody has just missed (docs/adr/106).
+
+      Standing used to end by the Stand button disappearing, with nothing in
+      its place and nothing in the history. Three members turned up to stand
+      after nominations had closed, and the page's answer to "am I too late?"
+      was silence: Teo called it "the button gone without a trace". A closed
+      door says it is closed, and says when it closed.
+    -->
+    {#if phase !== 'nominating' && proposal.nominations_close_at}
+      <p class="muted small closed-window">
+        Standing closed {formatDay(proposal.nominations_close_at)}.
       </p>
     {/if}
 
@@ -96,7 +184,7 @@
     {:else}
       <ul class="candidates">
         {#each candidates as c, i}
-          <li class:seated={phase === 'closed' && i < seats && c.approvals > 0}>
+          <li class:seated={phase === 'closed' && !settledNothing && i < seats && c.approvals > 0}>
             {#if phase === 'voting' && canVote}
               <label>
                 <input type="checkbox" checked={approved.has(c.id)} onchange={() => toggle(c.id)} disabled={busy} />
@@ -108,7 +196,7 @@
             {#if phase !== 'nominating'}
               <span class="count">{c.approvals} approval{c.approvals === 1 ? '' : 's'}</span>
             {/if}
-            {#if phase === 'closed' && i < seats && c.approvals > 0}
+            {#if phase === 'closed' && !settledNothing && i < seats && c.approvals > 0}
               <span class="tag">seated</span>
             {/if}
           </li>
@@ -116,22 +204,63 @@
       </ul>
     {/if}
 
-    {#if phase === 'nominating' && canNominate && !iAmStanding}
-      <button class="btn btn-sm" onclick={stand} disabled={busy}>
-        {busy ? 'Standing…' : 'Stand for election'}
-      </button>
-    {:else if phase === 'nominating' && iAmStanding}
-      <p class="muted small">You are standing in this election.</p>
+    {#if phase === 'nominating' && canNominate}
+      <div class="nominating-actions">
+        {#if iAmStanding}
+          <p class="standing small">
+            You are standing in this election.
+            <button class="btn-link" onclick={withdraw} disabled={busy}>
+              {busy ? 'Withdrawing…' : 'Withdraw'}
+            </button>
+          </p>
+        {:else}
+          <button class="btn btn-sm" onclick={stand} disabled={busy}>
+            {busy ? 'Standing…' : 'Stand for election'}
+          </button>
+        {/if}
+
+        <!-- Putting somebody else forward, which every other surface has been
+             telling members they can do (docs/adr/107). Their own name, not
+             yours: the one button here used to stand you, whatever you came
+             to do. -->
+        {#if nominatable.length > 0}
+          <div class="nominate-other">
+            <label for="nominate-who">Put another member forward</label>
+            <div class="nominate-row">
+              <select id="nominate-who" bind:value={nomineeId} disabled={busy}>
+                <option value="">Choose a member</option>
+                {#each nominatable as m (m.user_id)}
+                  <option value={m.user_id}>{m.display_name || m.username}</option>
+                {/each}
+              </select>
+              <button class="btn btn-sm" onclick={nominate} disabled={busy || !nomineeId}>
+                {busy ? 'Adding…' : 'Put forward'}
+              </button>
+            </div>
+            <p class="muted small">
+              They go on the ballot straight away, and can withdraw themselves
+              until nominations close.
+            </p>
+          </div>
+        {/if}
+      </div>
     {/if}
 
     {#if phase === 'voting' && canVote && candidates.length > 0}
       <button class="btn btn-primary btn-sm" onclick={submitBallot} disabled={busy}>
-        {busy ? 'Saving…' : 'Save my ballot'}
+        {busy ? 'Saving…' : ballotIn ? 'Update my ballot' : 'Save my ballot'}
       </button>
-      <p class="muted small">
-        You can change this until voting closes. Approving nobody is the same as
-        not voting.
-      </p>
+      <!-- One sentence, not two saying the same thing. Read on the page: the
+           confirmation and the standing advice sat one above the other both
+           offering to let you change your mind. -->
+      {#if ballotIn}
+        <p class="ballot-in small">Your ballot is in. You can change it until voting closes.</p>
+      {:else}
+        <p class="muted small">
+          You can change this until voting closes. Approving nobody is the same as
+          not voting.
+        </p>
+      {/if}
     {/if}
 
     {#if error}<p class="err">{error}</p>{/if}
@@ -152,6 +281,51 @@
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
+  }
+
+  .closed-window {
+    margin: -0.15rem 0 0.5rem;
+  }
+
+  .nominating-actions {
+    display: flex;
+    flex-direction: column;
+    /* Or a column stretches every button to the panel's full width, which is
+       how the theme-less `.btn` got noticed: a full-bleed pale pill. */
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .standing {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .nominate-other label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+
+  .nominate-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .nominate-row select {
+    min-width: 0;
+    flex: 1 1 12rem;
+  }
+
+  .ballot-in {
+    margin: 0.5rem 0 0;
+    color: var(--color-success, var(--color-text));
+    font-weight: 500;
   }
 
   .seats {

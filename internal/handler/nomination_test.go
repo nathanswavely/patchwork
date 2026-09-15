@@ -155,9 +155,12 @@ func TestCreateNomination_Conditions(t *testing.T) {
 	}
 }
 
-// Nomination is the meritocratic mechanic and nobody else's.
+// Nomination is the meritocratic mechanic, and on an elected patch the
+// mechanic a mid-term vacancy borrows (docs/adr/051, docs/adr/100). A
+// maintainer designates instead, and is refused here; the elected cases are
+// in council_seats_test.go, where the seat that decides them exists.
 func TestCreateNomination_RefusedOnOtherLeadershipModels(t *testing.T) {
-	for _, lm := range []string{"maintainer", "elected"} {
+	for _, lm := range []string{"maintainer"} {
 		db := setupTestDB(t)
 		admin, adminToken := createTestUser(t, db, "nom_"+lm, "member")
 		nodeID := createTestNode(t, db, admin.ID, "Node "+lm, "nom-"+lm, "open")

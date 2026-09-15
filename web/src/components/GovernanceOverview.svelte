@@ -23,6 +23,10 @@
   // proposing a rules change is a member act — following carries no
   // governance rights.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
+  // An admin *of this patch*. The node payload sets is_admin for instance
+  // admins too, and arranging a patch's council is not theirs to do — the
+  // seat routes answer them 404.
+  let isPatchAdmin = $derived(membershipRole === 'admin');
 
   // Setup checklist fallback (docs/adr/040, CONTEXT.md "Setup checklist"):
   // "decide how you govern" has no single derivable signal for a patch
@@ -70,6 +74,170 @@
   // does on the proposal page.
   let election = $derived(overview?.election || null);
   let nextTermEnd = $derived(overview?.next_term_end || '');
+
+  // The council's chairs (docs/adr/100). The admin list above says who holds
+  // power; this says how many positions exist, which is the number the next
+  // contest contests and the number a member is asking about when they
+  // wonder how to get onto the council.
+  let isElectedModel = $derived(overview?.rules?.leadership_model === 'elected');
+  let showsCouncil = $derived(isElectedModel && !leadershipElsewhere);
+  let seats = $derived(overview?.seats || []);
+  let vacantSeats = $derived(seats.filter((s) => s.vacant));
+  let nextContestOpens = $derived(overview?.next_contest_opens || '');
+  let contestDue = $derived.by(() => {
+    if (!nextContestOpens) return false;
+    const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(nextContestOpens);
+    const opens = parts
+      ? new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]))
+      : new Date(nextContestOpens);
+    return opens <= new Date();
+  });
+
+  // One sentence per chair, about that chair. This page used to carry three
+  // general facts side by side — what an elected patch is, how a vacancy is
+  // filled, when the next seat comes up — all true, all about different
+  // chairs at different times, and a member looking at two empty seats could
+  // not tell which one applied to them. The server picks the route per seat
+  // (`fill`); this puts it into words.
+  function seatLine(seat) {
+    if (seat.fill === 'contest_open') {
+      return seat.vacant
+        ? 'In the contest running now. Whoever the members approve takes it.'
+        : `Held until ${formatDay(seat.term_ends_at)}, and in the contest running now.`;
+    }
+    if (seat.fill === 'nomination') {
+      const how = 'Filled by nomination: an admin puts a member forward and the members ratify it. That can happen today.';
+      // And the chair's own term, because whoever is nominated inherits it
+      // rather than starting a fresh one (docs/adr/051), and because it is
+      // the date an admin just set on this row.
+      return seat.term_ends_at
+        ? `${how} Whoever takes it serves out the term, to ${formatDay(seat.term_ends_at)}.`
+        : how;
+    }
+    if (seat.fill === 'contest_scheduled') {
+      return seat.contest_due
+        ? `Term ended ${formatDay(seat.term_ends_at)}. The election for it is due now, and the holder serves until a successor is elected.`
+        : `Term ends ${formatDay(seat.term_ends_at)}. Contested at the election that opens ${formatDay(seat.contest_opens)}.`;
+    }
+    if (seat.term_ends_at) {
+      return `Term ends ${formatDay(seat.term_ends_at)}. No election is scheduled.`;
+    }
+    return 'No term end, so nothing brings this seat up for election.';
+  }
+
+  // What the reader can do about this council today — including, when it is
+  // the honest answer, nothing until a date.
+  let councilAction = $derived.by(() => {
+    if (!showsCouncil) return '';
+    if (election?.phase === 'nominating') {
+      return canPropose
+        ? 'Nominations are open. You can stand, or put another member forward.'
+        : 'Nominations are open. Members of this patch can stand for a seat.';
+    }
+    if (election?.phase === 'voting') {
+      return 'The ballot is open. The members are choosing between the candidates.';
+    }
+    if (vacantSeats.length > 0) {
+      if (isPatchAdmin) {
+        return 'You can nominate a member for a vacant seat today. The members ratify it, and the appointee serves out that seat\u2019s term.';
+      }
+      // A follower is not eligible to be nominated \u2014 a nominee must be an
+      // active member \u2014 so "ask one to nominate you" would send them at a
+      // door the server closes.
+      return canPropose
+        ? 'Only an admin can put a name forward for a vacant seat. Ask one to nominate you.'
+        : 'A vacant seat is filled by nomination, and only this patch\u2019s members can be nominated for one.';
+    }
+    if (!nextContestOpens) {
+      return 'Every seat is held and no election is scheduled. Nothing changes on this council until a seat is added or a term end is set.';
+    }
+    return contestDue
+      ? 'Every seat is held and the next contest is due now. It opens shortly, and any member may stand.'
+      : `Every seat is held. There is nothing to do until ${formatDay(nextContestOpens)}, when the next contest opens and any member may stand.`;
+  });
+
+  // A patch with nobody in the admin role, which inactivity can reach without
+  // anybody choosing it (docs/adr/051: the vacancy rule may empty a patch).
+  // Left unsaid, the page shows a governance section with no admins listed
+  // and no explanation, and a member's first sign is that nothing works.
+  //
+  // What refills it differs by model, so the second sentence does too — and
+  // on an elected patch it stops at "by election", because the council block
+  // below says which chairs and when, per chair.
+  //
+  // Never on an unclaimed patch: it has no admins because nobody has claimed
+  // it, which is a different sentence and one the claim surfaces already say.
+  // PatchShell redirects the governance tab away from an unclaimed patch, so
+  // this only covers the frame before that effect runs — but that frame would
+  // otherwise carry the wrong answer.
+  let noAdmins = $derived(
+    (overview?.admins?.length ?? 0) === 0 && !patch.value.isUnclaimed,
+  );
+  let noAdminsLine = $derived.by(() => {
+    if (leadershipElsewhere)
+      return 'Nobody holds the admin role here. This patch records its leadership decisions elsewhere, so a decision made there is what puts somebody back.';
+    if (isElectedModel) return 'Nobody holds the admin role here. This council is filled by election.';
+    if (overview?.rules?.leadership_model === 'meritocratic')
+      return 'Nobody holds the admin role here. An admin is nominated by an admin and ratified by the members, so this patch cannot start one on its own until an instance admin puts somebody back.';
+    return 'Nobody holds the admin role here, so nobody can manage this patch until an instance admin puts somebody back.';
+  });
+
+  let seatBusy = $state(false);
+  let seatError = $state('');
+
+  // The election calendar, next to the chairs (docs/adr/051: the clock
+  // belongs to the seat). A vacant chair takes any future date. A held one
+  // can only be brought forward — pushing it back would hand out a term
+  // nobody voted for, which is what 051 put the clock on the seat to
+  // prevent — so the form offers the control and the server holds the rule.
+  let editingSeat = $state('');
+  let termDraft = $state('');
+
+  function editTerm(seat) {
+    editingSeat = seat.id;
+    termDraft = seat.term_ends_at || '';
+    seatError = '';
+  }
+
+  async function saveTerm(seatId) {
+    seatBusy = true;
+    seatError = '';
+    try {
+      await api(`nodes/${slug}/seats/${seatId}`, { method: 'PATCH', body: { term_ends_at: termDraft } });
+      editingSeat = '';
+      await loadOverview();
+    } catch (e) {
+      seatError = e.message || 'Could not set the term end';
+    } finally {
+      seatBusy = false;
+    }
+  }
+
+  async function addSeat() {
+    seatBusy = true;
+    seatError = '';
+    try {
+      await api(`nodes/${slug}/seats`, { method: 'POST' });
+      await loadOverview();
+    } catch (e) {
+      seatError = e.message || 'Could not add a seat';
+    } finally {
+      seatBusy = false;
+    }
+  }
+
+  async function removeSeat(seatId) {
+    seatBusy = true;
+    seatError = '';
+    try {
+      await api(`nodes/${slug}/seats/${seatId}`, { method: 'DELETE' });
+      await loadOverview();
+    } catch (e) {
+      seatError = e.message || 'Could not remove the seat';
+    } finally {
+      seatBusy = false;
+    }
+  }
 
   // A term that has run out removes nobody: the council serves until a
   // successor is elected (docs/adr/051). What it changes is that the patch is
@@ -181,9 +349,6 @@
     };
     let desc = models[rules.leadership_model] || '';
 
-    if (rules.admin_term_months > 0) {
-      desc += ` Terms last ${rules.admin_term_months} months.`;
-    }
     if (rules.inactivity_days > 0) {
       desc += ` Admins inactive for ${rules.inactivity_days} days may be asked to step down.`;
     }
@@ -289,11 +454,17 @@
     <!-- Leadership -->
     <section class="overview-section">
       <h3>Leadership: {leadershipLabel(rules?.leadership_model)}</h3>
-      {#if describeLeadership(rules)}
+      <!-- The model's general description, withheld where the council block
+           below is about to say the same thing about the actual chairs, with
+           dates. Kept, it was the first of three true-but-unhelpful sentences
+           one screen was carrying: "the community elects admins for fixed
+           terms" answers a question nobody with two empty chairs in front of
+           them is asking. -->
+      {#if !showsCouncil && describeLeadership(rules)}
         <p class="overview-narrative">{describeLeadership(rules)}</p>
       {/if}
 
-      {#if overview.admins.length > 0}
+      {#if !noAdmins}
         <div class="admin-list">
           {#each overview.admins as admin}
             <div class="admin-item">
@@ -308,22 +479,123 @@
                 <span class="admin-name">{admin.display_name || admin.username}</span>
                 <!-- `joined_at` is when this person joined the patch, in
                      whatever role they joined as — not when they became an
-                     admin, which nothing records. Labelled "Admin since" it
-                     read as a governed fact and was routinely false: a member
-                     of eight months elected to the council this morning was
-                     shown as an admin since eight months ago. -->
+                     admin. Labelled "Admin since" it read as a governed fact
+                     and was routinely false: a member of eight months elected
+                     to the council this morning was shown as an admin since
+                     eight months ago. Migration 072 does now record when a
+                     role was taken, but only for roles taken since it landed,
+                     so every admin seated before that would still be shown a
+                     date derived from their joining. The honest label is the
+                     one about joining, and the seats below carry the governed
+                     dates. -->
                 <span class="admin-since muted">Member since {formatDate(admin.joined_at)}</span>
               </div>
             </div>
           {/each}
         </div>
+      {:else}
+        <p class="no-admins">{noAdminsLine}</p>
       {/if}
 
-      <!-- When this council next faces the electorate. The rules narration
-           above says terms last N months, which is the policy; this is the
-           date, which is the accountability. Absent on a patch that sets no
-           term length — elected once, then stable, a real position. -->
-      {#if nextTermEnd}
+      <!-- The council's chairs (docs/adr/100), each saying what is true of
+           *it*. The list above says who holds power; this says what happens
+           to every position and when. One screen used to carry the three
+           general sentences instead — what an elected patch is, how a
+           vacancy is filled, when the next seat comes up — and a member
+           looking at two empty chairs could not tell which applied to them.
+           Adding a chair is an admin's act and filling it is the
+           community's, so the controls here never seat anybody. -->
+      {#if showsCouncil}
+        <div class="council">
+          <p class="council-line">
+            {#if seats.length === 0}
+              This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.
+            {:else}
+              {seats.length} seat{seats.length === 1 ? '' : 's'} on the council,
+              {vacantSeats.length === 0
+                ? 'all held'
+                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.
+              {#if rules?.admin_term_months > 0}{` Each term runs ${rules.admin_term_months} months.`}{/if}
+            {/if}
+          </p>
+
+          {#if seats.length > 0}
+            <ul class="seat-list">
+              {#each seats as seat}
+                <li class="seat-row">
+                  <div class="seat-main">
+                    <span class="seat-who" class:vacant={seat.vacant}>
+                      {seat.vacant ? 'Vacant' : (seat.display_name || seat.username)}
+                    </span>
+                    <span class="seat-fate muted">{seatLine(seat)}</span>
+                    {#if seat.fill === 'contest_open' && seat.contest_id}
+                      <a
+                        class="seat-contest"
+                        href="/patches/{slug}/governance/{seat.contest_id}"
+                        onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/${seat.contest_id}`); }}
+                      >
+                        See the contest
+                      </a>
+                    {/if}
+                  </div>
+                  {#if isPatchAdmin}
+                    <div class="seat-controls">
+                      {#if editingSeat === seat.id}
+                        <input type="date" bind:value={termDraft} disabled={seatBusy} aria-label="Term end" />
+                        <button class="btn btn-sm btn-primary" disabled={seatBusy || !termDraft} onclick={() => saveTerm(seat.id)}>
+                          Save
+                        </button>
+                        <button class="btn btn-sm" disabled={seatBusy} onclick={() => { editingSeat = ''; }}>Cancel</button>
+                      {:else}
+                        <button class="btn btn-sm" disabled={seatBusy} onclick={() => editTerm(seat)}>
+                          {seat.term_ends_at ? 'Change term end' : 'Set term end'}
+                        </button>
+                        {#if seat.vacant}
+                          <button class="btn btn-sm" disabled={seatBusy} onclick={() => removeSeat(seat.id)}>
+                            Remove seat
+                          </button>
+                        {/if}
+                      {/if}
+                    </div>
+                  {/if}
+                </li>
+              {/each}
+            </ul>
+          {/if}
+
+          <!-- What the reader can do about this council today. Second person,
+               one sentence, and where the answer is "nothing until a date"
+               it says that rather than leaving three general rules to be
+               sorted out by the person who wanted a seat. -->
+          {#if councilAction}
+            <p class="council-do">{councilAction}</p>
+          {/if}
+
+          {#if isPatchAdmin}
+            <div class="council-controls">
+              <button class="btn btn-sm" disabled={seatBusy} onclick={addSeat}>Add a seat</button>
+              <span class="council-hint muted">
+                Adding a seat does not make anybody an admin. The community fills it.
+              </span>
+            </div>
+            <p class="council-hint muted">
+              A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought
+              forward, because pushing it back would extend a term nobody voted for. Nobody loses their seat when a term ends — the
+              holder serves until a successor is elected.
+            </p>
+            {#if seatError}
+              <p class="successor-error">{seatError}</p>
+            {/if}
+          {/if}
+        </div>
+      {/if}
+
+      <!-- When this council next faces the electorate, for a patch carrying
+           seats that the council block above does not render — an elected
+           patch that moved its venue elsewhere and kept its chairs. Where
+           the block does render, every seat states its own date and this
+           line would be the fourth general sentence. -->
+      {#if nextTermEnd && !showsCouncil}
         <p class="term-line" class:lapsed={termLapsed}>
           {#if termLapsed}
             This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.
@@ -522,6 +794,114 @@
 
   .admin-since {
     font-size: 0.75rem;
+  }
+
+  .council {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .council-line {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .seat-list {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .seat-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    padding: 0.35rem 0;
+  }
+
+  .seat-row + .seat-row {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .seat-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+    flex: 1 1 14rem;
+  }
+
+  .seat-who {
+    font-weight: 500;
+  }
+
+  .seat-who.vacant {
+    font-weight: 400;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .seat-fate {
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .seat-contest {
+    font-size: 0.78rem;
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .seat-contest:hover {
+    text-decoration: underline;
+  }
+
+  .seat-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .seat-controls input[type='date'] {
+    font-size: 0.78rem;
+    min-width: 0;
+  }
+
+  .no-admins {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin: 0;
+    padding-left: 0.6rem;
+    border-left: 2px solid var(--color-primary);
+  }
+
+  .council-do {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin: 0.7rem 0 0;
+    padding-left: 0.6rem;
+    border-left: 2px solid var(--color-primary);
+  }
+
+  .council-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+
+  .council-hint {
+    font-size: 0.78rem;
+    margin: 0.4rem 0 0;
   }
 
   .term-line {

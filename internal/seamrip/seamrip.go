@@ -191,7 +191,7 @@ func Tables() []Table {
 		{
 			File: "memberships.json",
 			Name: "memberships",
-			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at
+			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at, role_since
 				FROM memberships`,
 			// `visible` is the member's own switch (docs/adr/006), and it
 			// defaults to 1. Leaving it behind meant a fork re-exposed every
@@ -203,8 +203,16 @@ func Tables() []Table {
 			// (docs/adr/080) and defaults to 0, so leaving it behind would
 			// fail the other way: every card the person had chosen to
 			// share would go silent on the fork. It travels with the card.
+			// `role_since` travels because the inactivity clock hangs off it
+			// (docs/adr/051, migration 072). Left behind, every admin would
+			// arrive on the fork with their absence measured from when they
+			// joined the patch, which is the floor that made a freshly
+			// promoted admin vacatable on sight. NULL on archives older than
+			// the column, which reads as "measure from joining" — the same
+			// answer those archives already carried.
 			Columns: cols(id("id"), id("user_id"), id("node_id"), c("role"),
-				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at")),
+				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at"),
+				def("role_since", nil)),
 		},
 		{
 			// The contact card in the shape docs/adr/083 gives it: an ordered
@@ -233,23 +241,6 @@ func Tables() []Table {
 			Name:    "contact_item_shares",
 			Query:   `SELECT item_id, node_id, created_at FROM contact_item_shares`,
 			Columns: cols(id("item_id"), id("node_id"), c("created_at")),
-		},
-		{
-			// The council's chairs (docs/adr/051). A seat outlives its holder,
-			// and `term_ends_at` is the patch's election calendar: dueness is
-			// derived from it rather than stored, so a fork arriving with no
-			// seats never schedules another election — the safety valve would
-			// have stripped the machinery that rotates leadership. Beside
-			// memberships because that is what a seat is a fact about.
-			//
-			// A vacant seat travels too: holder_id NULL is a chair waiting to
-			// be contested, which the next election needs to know about.
-			File: "seats.json",
-			Name: "seats",
-			Query: `SELECT id, node_id, holder_id, term_ends_at, created_at
-				FROM seats`,
-			Columns: cols(id("id"), id("node_id"), id("holder_id"),
-				c("term_ends_at"), c("created_at")),
 		},
 		{
 			File: "aggregators.json",
@@ -441,6 +432,32 @@ func Tables() []Table {
 				// (docs/adr/092, migration 067). Remapped like applied_by;
 				// NULL wherever the electorate decided.
 				id("declined_by"), c("created_at"), c("updated_at")),
+		},
+		{
+			// The council's chairs (docs/adr/051). A seat outlives its holder,
+			// and `term_ends_at` is the patch's election calendar: dueness is
+			// derived from it rather than stored, so a fork arriving with no
+			// seats never schedules another election — the safety valve would
+			// have stripped the machinery that rotates leadership.
+			//
+			// A vacant seat travels too: holder_id NULL is a chair waiting to
+			// be contested, which the next election needs to know about.
+			//
+			// After proposals, though a seat is a fact about a membership,
+			// because `contested_in` points at the contest deciding this
+			// chair (docs/adr/103) and Import retries only within a table —
+			// a seat landing before its contest would fail its foreign key on
+			// every pass and be dropped. The marking travels rather than being
+			// left to the importing instance to reconstruct: a fork taken
+			// mid-ballot has to empty exactly the chairs the electorate was
+			// asked about, and on a staggered council that is not derivable
+			// from the term ends alone.
+			File: "seats.json",
+			Name: "seats",
+			Query: `SELECT id, node_id, holder_id, term_ends_at, contested_in, created_at
+				FROM seats`,
+			Columns: cols(id("id"), id("node_id"), id("holder_id"),
+				c("term_ends_at"), id("contested_in"), c("created_at")),
 		},
 		{
 			// A community's record of what it decided elsewhere travels with

@@ -304,7 +304,7 @@ func applyAttestation(db *database.DB, nodeID, slug, attestationID string) {
 		if role == "admin" {
 			continue
 		}
-		if _, err := db.Exec("UPDATE memberships SET role = 'admin' WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
+		if _, err := db.Exec("UPDATE memberships SET role = 'admin', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
 			continue
 		}
 		notify(notifications.Event{
@@ -336,7 +336,7 @@ func applyAttestation(db *database.DB, nodeID, slug, attestationID string) {
 		if adminCount <= 1 {
 			break
 		}
-		if _, err := db.Exec("UPDATE memberships SET role = 'member' WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
+		if _, err := db.Exec("UPDATE memberships SET role = 'member', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
 			continue
 		}
 		notify(notifications.Event{

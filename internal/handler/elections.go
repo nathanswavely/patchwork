@@ -125,8 +125,8 @@ func jsonStringOrNull(s string) string {
 // calendar. Without them a contest that settled nothing left no seat behind,
 // so nothing was ever due again and the patch fell silent forever; with
 // them, scheduleFor finds the council overdue and tries again one breather
-// later. seatWinners reuses these seats in created order, so a settled
-// contest refills the chairs rather than adding to them.
+// later. The contest names those chairs (docs/adr/103), so a settled contest
+// refills them rather than adding to the council.
 func StartElectionOnAdoption(db *database.DB, nodeID string) {
 	gc, ok := electedHere(db, nodeID)
 	if !ok {
@@ -144,19 +144,38 @@ func StartElectionOnAdoption(db *database.DB, nodeID string) {
 		return
 	}
 
-	// How many seats the contest fills. Seat count follows from how the patch
+	// Which seats the contest fills. Seat count follows from how the patch
 	// governs (docs/adr/051) rather than from a configured cap, and at adoption
-	// the honest number is the council it already has.
-	seats := 0
-	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&seats)
-	if seats == 0 {
-		seats = seatSittingAdminsOverdue(db, nodeID)
+	// the honest answer is every chair it already has: a patch adopting
+	// elections puts its whole council to the electorate at once, and there is
+	// no staggering yet to respect.
+	if seatCount(db, nodeID) == 0 {
+		seatSittingAdminsOverdue(db, nodeID)
 	}
-	if seats == 0 {
+	chairs := seatIDs(db, nodeID)
+	if len(chairs) == 0 {
 		return
 	}
 
-	openElectionFor(db, nodeID, gc, seats)
+	openElectionFor(db, nodeID, gc, chairs)
+}
+
+// seatIDs lists a council's chairs in the order they were made, which is the
+// order a settled contest refills them in.
+func seatIDs(db *database.DB, nodeID string) []string {
+	rows, err := db.Query(`SELECT id FROM seats WHERE node_id = ? ORDER BY created_at ASC`, nodeID)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			out = append(out, id)
+		}
+	}
+	return out
 }
 
 // seatSittingAdminsOverdue creates one seat per active admin with its term
@@ -212,7 +231,16 @@ func electionLeadHours(gc model.GovernanceConfig) int {
 
 // openElectionFor creates the contest itself. Shared by adoption and by the
 // recurring cycle, so both open the same thing.
-func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, seats int) string {
+//
+// It takes the chairs, not a number (docs/adr/103). Which chairs a contest is
+// for is frozen here, the way docs/adr/047 freezes a proposal's terms: a
+// council can stagger, so "how many" does not say which, and a resolution that
+// has to guess guesses at the whole council.
+func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, chairs []string) string {
+	seats := len(chairs)
+	if seats == 0 {
+		return ""
+	}
 	nominationDays := gc.NominationDays
 	if nominationDays <= 0 {
 		nominationDays = 14
@@ -254,6 +282,11 @@ func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, 
 		return ""
 	}
 
+	// The chairs this contest is for. Nothing else may be emptied by it.
+	for _, seatID := range chairs {
+		db.Exec(`UPDATE seats SET contested_in = ? WHERE id = ? AND node_id = ?`, id, seatID, nodeID)
+	}
+
 	notify(notifications.Event{
 		Type: notifications.ProposalNew, NodeID: nodeID, NodeSlug: slug, NodeName: nodeName,
 		EntityID: id,
@@ -286,6 +319,13 @@ func systemAuthorFor(db *database.DB, nodeID string) string {
 // been here long enough to *decide*, and a candidate is being decided about.
 // The bylaws say the same ("any member may nominate themselves or another
 // member").
+//
+// Both halves of that sentence have always worked here and only the first
+// had a control (docs/adr/107). Four surfaces invited people to put somebody
+// forward; the one button posted an empty body, so it stood *you*. A member
+// who came to nominate a colleague put herself on a three-seat ballot by
+// accident and then wrote a comment asking her neighbours not to vote for
+// her, which four of them read and acted on.
 func AddCandidate(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
@@ -340,12 +380,76 @@ func AddCandidate(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// WithdrawCandidacy handles DELETE /api/v1/proposals/{id}/candidates/me.
+//
+// Your own, and nobody else's — which is what the route says rather than
+// leaving it to a check inside. A nomination you did not ask for is withdrawn
+// by *you*, because you are the person it is about; a nomination somebody
+// made by mistake is their own candidacy and theirs to take back. Neither
+// needs a record of who put the name up, and `election_candidates` keeps
+// none.
+//
+// Only while nominations are open. Once the ballot is running, people are
+// approving a slate, and a name leaving it mid-vote would silently discard
+// ballots already cast for it (docs/adr/047's frozen terms, applied to the
+// slate rather than the rules).
+//
+// This is what makes nominating somebody else safe enough to offer
+// (docs/adr/107): the bylaws let any member put another forward, and the
+// answer to "I did not want this" is a control rather than an argument.
+func WithdrawCandidacy(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		proposalID := r.PathValue("id")
+
+		var nodeID, status, nominationsClose string
+		var seats int
+		err := db.QueryRow(
+			`SELECT node_id, status, COALESCE(nominations_close_at,''), seats_contested
+			 FROM proposals WHERE id = ?`, proposalID,
+		).Scan(&nodeID, &status, &nominationsClose, &seats)
+		if err != nil || seats == 0 {
+			http.Error(w, `{"error":"election not found"}`, http.StatusNotFound)
+			return
+		}
+		if status != "open" || !electionNominating(nominationsClose) {
+			http.Error(w, `{"error":"nominations have closed: the slate is what people are voting on"}`, http.StatusConflict)
+			return
+		}
+
+		res, err := db.Exec(`DELETE FROM election_candidates WHERE proposal_id = ? AND user_id = ?`,
+			proposalID, user.ID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to withdraw"}`, http.StatusInternalServerError)
+			return
+		}
+		if n, _ := res.RowsAffected(); n == 0 {
+			http.Error(w, `{"error":"you are not standing in this election"}`, http.StatusNotFound)
+			return
+		}
+		auth.LogAuditEvent(db, user.ID, "election.withdraw", "proposal", proposalID,
+			`{"candidate":"`+user.ID+`"}`, clientIP(r))
+
+		w.WriteHeader(http.StatusNoContent)
+	}
+}
+
 // OpenElectionVoting closes nominations and starts the vote. Called when the
 // nomination window has passed.
 //
 // This is where docs/adr/047's photograph is taken for an election: the terms
 // must be fixed when the vote starts, not when the nomination period opened,
 // or a slate could be assembled under one set of rules and judged by another.
+//
+// It is also where a contest nobody stood in ends (docs/adr/106). There is
+// nothing for a ballot to be about, and opening one anyway called a whole
+// electorate to an empty page: two simulated contests sent twelve people
+// "Voting is open. Approve as many candidates as you like" over slates with
+// no names on them, then ran a fortnight to reach the conclusion that was
+// already true. A candidate who had twice failed to find a way onto a board
+// got one of them: "If I *had* clicked that one at the time, I'd have
+// arrived at an empty list and concluded, again, that this thing doesn't
+// work."
 func OpenElectionVoting(db *database.DB, proposalID string) bool {
 	var nodeID, nominationsClose, votingEnds string
 	var duration int
@@ -360,14 +464,25 @@ func OpenElectionVoting(db *database.DB, proposalID string) bool {
 		return false // still nominating
 	}
 
+	var slug, nodeName string
+	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
+
+	// An empty slate settles here rather than in a fortnight. The outcome is
+	// identical — holdover, nobody seated, the chairs released — and it is
+	// reached without inviting anybody to a ballot that cannot have a result.
+	var standing int
+	db.QueryRow(`SELECT COUNT(*) FROM election_candidates WHERE proposal_id = ?`, proposalID).Scan(&standing)
+	if standing == 0 {
+		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName, "Nobody stood.")
+		return false
+	}
+
 	var gcJSON string
 	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
 	ends := time.Now().UTC().Add(time.Duration(duration) * time.Hour).Format("2006-01-02T15:04:05.000Z")
 	db.Exec(`UPDATE proposals SET voting_ends_at = ?, voting_terms = ?,
 	         updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id = ?`, ends, gcJSON, proposalID)
 
-	var slug, nodeName string
-	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
 	notify(notifications.Event{
 		Type: notifications.ProposalVoting, NodeID: nodeID, NodeSlug: slug, NodeName: nodeName,
 		EntityID: proposalID,

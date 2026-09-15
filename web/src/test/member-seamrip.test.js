@@ -30,13 +30,26 @@ describe('Account settings: taking a copy of the quilt', () => {
     expect(src).toContain('waiting for an admin');
   });
 
+  // Whitespace-normalised, because these are sentences in a paragraph and a
+  // line wrap is not a change of promise.
+  const prose = src.replace(/\s+/g, ' ');
+
   it('names what is not in it, so nobody assumes the bundle is a contact list', () => {
-    expect(src).toContain('It does not');
-    expect(src).toContain('email addresses, contact cards, noticeboards');
+    expect(prose).toContain('It does not hold email addresses, contact cards, or noticeboards');
+  });
+
+  it('does not promise a narrower file than the boundary hands over', () => {
+    // It used to say the archive held nothing "from a patch you are not in".
+    // It holds every public patch on the quilt — which is what
+    // `internal/seamrip/memberview.go` implements and what the README inside
+    // the zip says. A member who read the old sentence and then opened the
+    // file found five patches she was not in (docs/adr/106).
+    expect(prose).not.toContain('anything from a patch you are not in');
+    expect(prose).toContain('every public patch on this quilt and the private ones you belong to');
   });
 
   it('says people arrive as stubs and re-set their own visibility', () => {
-    expect(src).toContain('sets their own');
+    expect(prose).toContain('each person sets their own visibility there');
   });
 
   it('takes the filename the server chose rather than inventing one', () => {

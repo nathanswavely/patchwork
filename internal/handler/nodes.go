@@ -595,9 +595,13 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		// (tag-derived) motif, and order decides which tag derives it.
 		n.Tags = nodeTagNames(db, n.ID)
 
-		// Same counts the tree endpoint reports, so cards and profile agree:
-		// members are admins + members; followers are counted separately and
-		// never conflated (a follower is an observer, not a member).
+		// Same counts the tree endpoint and ListMembers report, so the quilt
+		// tile, the card, the profile head and the members page all state one
+		// number: members are admins + members; followers are counted
+		// separately and never conflated (a follower is an observer, not a
+		// member). No visibility gate on either — a count names nobody, and
+		// the gates decide who is listed rather than how many there are. See
+		// ListMembers for the argument (docs/adr/095 decision 3).
 		db.QueryRow(
 			`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin','member')`, n.ID,
 		).Scan(&n.MemberCount)
@@ -614,6 +618,13 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		// node filter, including the guard that keeps a private patch's
 		// linked events off another patch's page — a count that disagrees
 		// with the list under it is the bug being fixed.
+		//
+		// The hosting patch's own gate is part of that mirror: an archived
+		// or removed patch's calendar is gone from every listing
+		// (docs/adr/034), so a confirmed link into *this* patch from one
+		// that has since been archived is counted by nothing and listed by
+		// nothing. Leaving it out of the count was the one filter ListEvents
+		// applied and this query did not.
 		db.QueryRow(
 			`SELECT COUNT(*) FROM events e JOIN nodes n ON e.node_id = n.id
 			 WHERE e.visibility = 'public' AND e.removed_at IS NULL
@@ -621,6 +632,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			   AND (e.node_id = ? OR EXISTS (
 			         SELECT 1 FROM event_links el WHERE el.event_id = e.id
 			         AND el.node_id = ? AND el.status = 'confirmed'))
+			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 			   AND (n.visibility = 'public' OR e.node_id = ?)`,
 			time.Now().UTC().Format(time.RFC3339), n.ID, n.ID, n.ID,
 		).Scan(&n.UpcomingEventCount)
@@ -959,13 +971,60 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		// it attaches is read in it — so a name that doesn't resolve would
 		// quietly move a whole calendar. "" clears it back to inheriting
 		// the instance's.
+		//
+		// Changing it changes what every inheriting event *says*, and that
+		// is never done in silence: see node_timezone.go, and the 409
+		// below.
+		var zonePlan *zoneChange
 		if raw, present := req["timezone"]; present {
 			tz, _ := raw.(string)
-			if tz = strings.TrimSpace(tz); tz == "" {
-				req["timezone"] = nil
-			} else if !settings.ValidTimezone(tz) {
-				http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+			tz = strings.TrimSpace(tz)
+			if tz != "" && !settings.ValidTimezone(tz) {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
 				return
+			}
+
+			var storedZone string
+			db.QueryRow(`SELECT COALESCE(timezone,'') FROM nodes WHERE id = ?`, nodeID).Scan(&storedZone)
+			if strings.TrimSpace(storedZone) != tz {
+				plan, err := planZoneChange(db, nodeID, storedZone, tz)
+				if err != nil {
+					http.Error(w, `{"error":"failed to read this patch's calendar"}`, http.StatusInternalServerError)
+					return
+				}
+				if plan != nil {
+					mode, _ := req["timezone_events"].(string)
+					mode = strings.TrimSpace(mode)
+					if mode != zoneKeepClock && mode != zoneKeepInstant {
+						// Do not guess. The two answers move twenty people
+						// to the wrong day in opposite directions, and only
+						// the person who typed the times knows which one
+						// they meant.
+						w.Header().Set("Content-Type", "application/json")
+						w.WriteHeader(http.StatusConflict)
+						subject := "events follow"
+						if plan.EventsAffected == 1 {
+							subject = "event follows"
+						}
+						json.NewEncoder(w).Encode(map[string]interface{}{
+							"error": fmt.Sprintf(
+								"%d %s this patch's timezone and would read as a different time. Say whether to keep their clock times or leave them where they are.",
+								plan.EventsAffected, subject),
+							"code":            "timezone_events_undecided",
+							"from":            plan.From,
+							"to":              plan.To,
+							"events_affected": plan.EventsAffected,
+							"choices":         []string{zoneKeepClock, zoneKeepInstant},
+						})
+						return
+					}
+					plan.Mode = mode
+					zonePlan = plan
+				}
+			}
+
+			if tz == "" {
+				req["timezone"] = nil
 			} else {
 				req["timezone"] = tz
 			}
@@ -1113,7 +1172,27 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// The events move only once the patch's own row says where it
+		// keeps time — see applyZoneChange on which half-state is
+		// survivable.
+		if zonePlan != nil {
+			if err := applyZoneChange(db, zonePlan); err != nil {
+				http.Error(w, `{"error":"the timezone saved, but this patch's events could not be moved"}`, http.StatusInternalServerError)
+				return
+			}
+		}
+
 		auth.LogAuditEvent(db, user.ID, "node.update", "node", nodeID, "{}", clientIP(r))
+		if zonePlan != nil {
+			// Its own entry, because "node.update" with an empty detail
+			// blob cannot tell a patch that renamed itself from one that
+			// moved four rehearsals by five hours.
+			detail, _ := json.Marshal(map[string]interface{}{
+				"from": zonePlan.From, "to": zonePlan.To, "mode": zonePlan.Mode,
+				"events_affected": zonePlan.EventsAffected, "events_moved": zonePlan.EventsMoved,
+			})
+			auth.LogAuditEvent(db, user.ID, "node.timezone", "node", nodeID, string(detail), clientIP(r))
+		}
 
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
@@ -1128,7 +1207,27 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		n.Tags = nodeTagNames(db, nodeID)
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(n)
+		if zonePlan == nil {
+			json.NewEncoder(w).Encode(n)
+			return
+		}
+		// The node stays at the top level — every existing caller decodes
+		// it straight into a Node — and the report rides alongside it, so
+		// the page that asked the question can say what the answer did.
+		body, err := json.Marshal(n)
+		if err != nil {
+			json.NewEncoder(w).Encode(n)
+			return
+		}
+		var merged map[string]json.RawMessage
+		if err := json.Unmarshal(body, &merged); err != nil {
+			json.NewEncoder(w).Encode(n)
+			return
+		}
+		if raw, err := json.Marshal(zonePlan); err == nil {
+			merged["timezone_change"] = raw
+		}
+		json.NewEncoder(w).Encode(merged)
 	}
 }
 

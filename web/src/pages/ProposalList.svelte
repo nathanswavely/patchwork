@@ -52,8 +52,9 @@
     if (status === 'approved' || status === 'applied') return 'status-approved';
     if (status === 'rejected') return 'status-rejected';
     if (status === 'open') return 'status-open';
-    // Withdrawn and lapsed both mean "ended without a decision": muted, not red.
-    if (status === 'withdrawn' || status === 'lapsed') return 'status-withdrawn';
+    // Withdrawn, lapsed and unsettled all mean "ended without a decision":
+    // muted, not red.
+    if (status === 'withdrawn' || status === 'lapsed' || status === 'unsettled') return 'status-withdrawn';
     return '';
   }
 
@@ -84,10 +85,13 @@
 
   // What the row calls the proposal's outcome. A lapsed vote carries the
   // schema's terminal "rejected" status (docs/adr/097) but nobody rejected
-  // it, so the row says what happened instead of what the column holds.
+  // it, so the row says what happened instead of what the column holds. An
+  // election that seated nobody carries the same status and is the same
+  // absence — holdover, docs/adr/051 — under its own word.
   function rowStatus(p) {
     if (isDirectRow(p)) return 'applied';
     if (p.state === 'lapsed') return 'lapsed';
+    if (p.state === 'unsettled') return 'unsettled';
     return p.status;
   }
 </script>
@@ -118,8 +122,14 @@
         {/if}
       </div>
 
+      <!-- The chips filter by outcome, not by the status column
+           (docs/adr/097, amended). A lapse and an unsettled contest both
+           carry the schema's `rejected`, so a drawer labelled Rejected was
+           opening onto three proposals nobody rejected — including the
+           reader's own. Rejected now means rejected, and the fourth chip
+           carries the two absences under the word both of them use. -->
       <div class="status-filters">
-        {#each [['open', 'Open'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['all', 'All']] as [value, label]}
+        {#each [['open', 'Open'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['not_decided', 'Not decided'], ['all', 'All']] as [value, label]}
           <button
             class="chip"
             class:selected={statusFilter === value}
@@ -134,7 +144,13 @@
         <p class="muted" style="padding: 2rem 0; text-align: center;">Loading...</p>
       {:else if proposals.length === 0}
         <p class="muted" style="padding: 2rem 0; text-align: center;">
-          No proposals{statusFilter && statusFilter !== 'all' ? ` with status "${statusFilter}"` : ''}.
+          {#if statusFilter === 'not_decided'}
+            Nothing here has lapsed or settled nothing.
+          {:else if statusFilter && statusFilter !== 'all'}
+            No {statusFilter} proposals.
+          {:else}
+            No proposals.
+          {/if}
         </p>
       {:else}
         <div class="proposal-list">

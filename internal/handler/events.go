@@ -69,6 +69,39 @@ func nullableZone(tz string) any {
 // event that inherits should inherit whether its zone is NULL or blank.
 const eventZoneSQL = `COALESCE(NULLIF(e.timezone,''), NULLIF(n.timezone,''), ?)`
 
+// validateRecurrence refuses a word the product cannot keep.
+//
+// `events.recurrence` has been a stored label since migration 001 and
+// nothing has ever expanded it. One row said "Repeats weekly" and showed
+// one date; the ICS feed carried no RRULE, so a subscriber got one
+// occurrence; every list counted it once. The label was the only part of
+// a recurring event that existed.
+//
+// The control is withdrawn rather than implemented, and the trade is
+// worth stating. Expansion is not a feature, it is a data model: real
+// occurrences or a virtual expander, an RRULE in feeds.go, an exception
+// model for the week a rehearsal moves, a diff in the ADR 031 reconciler
+// that already keys imported occurrences by start instant, and a decision
+// on every list, count, cursor and reminder about which of the four
+// Tuesdays it means. Against that, the honest alternative already ships
+// twice over: four events is four events, and a community that keeps its
+// series in Google Calendar attaches it as an event source
+// (docs/adr/031), where an RRULE *is* expanded, in the calendar's own
+// zone (docs/adr/065 decision 4), into rows every surface already
+// understands. docs/adr/049 is the rule being applied — Patchwork states
+// only what it enforces.
+//
+// Rows already carrying a word keep it: the column stays, it still
+// travels in a seamrip, and the event page renders it with the caveat it
+// always needed. What ends here is *new* ones, including from a client
+// that never saw the form.
+func validateRecurrence(v string) string {
+	if strings.TrimSpace(v) == "" {
+		return ""
+	}
+	return "this quilt does not expand recurring events — add each date as its own event, or attach the calendar as an event source in the patch's settings"
+}
+
 func ListEvents(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		after, limit := parsePaginationParams(r)
@@ -405,7 +438,11 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		req.Timezone = strings.TrimSpace(req.Timezone)
 		if req.Timezone != "" && !settings.ValidTimezone(req.Timezone) {
-			http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
+			return
+		}
+		if msg := validateRecurrence(req.Recurrence); msg != "" {
+			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
 			return
 		}
 		if req.NodeID == "" || req.Title == "" || req.StartsAt == "" {
@@ -604,11 +641,23 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			if tz = strings.TrimSpace(tz); tz == "" {
 				req["timezone"] = nil
 			} else if !settings.ValidTimezone(tz) {
-				http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
 				return
 			} else {
 				req["timezone"] = tz
 			}
+		}
+
+		// Recurrence is accepted only as a clearing (see validateRecurrence).
+		// An edit that leaves it out leaves a stored word alone; one that
+		// sends "" retires it.
+		if raw, present := req["recurrence"]; present {
+			v, _ := raw.(string)
+			if msg := validateRecurrence(v); msg != "" {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				return
+			}
+			req["recurrence"] = ""
 		}
 
 		// Same pairing rule as a patch's image: a PATCH carrying one half is

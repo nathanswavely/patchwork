@@ -684,12 +684,13 @@
       <p class="muted profile-hint">
         A copy of this quilt as you can see it, in the format a new Patchwork
         reads. It is here so a community can start again elsewhere without
-        waiting for an admin. It holds the patches, events, charters,
-        proposals and member lists that are already open to you. It does not
-        hold email addresses, contact cards, noticeboards, or anything from a
-        patch you are not in. Other people travel as a name and a picture,
-        so the new quilt invites everyone back and each person sets their own
-        visibility there.
+        waiting for an admin. It holds every public patch on this quilt and
+        the private ones you belong to, with their events, charters, member
+        lists, and proposals with their votes and discussion — the same things
+        those patches' pages show you. It does not hold email addresses,
+        contact cards, or noticeboards. Other people travel as a name and a
+        picture, so the new quilt invites everyone back and each person sets
+        their own visibility there.
       </p>
       <div class="field-actions">
         <button class="btn btn-secondary" onclick={takeMemberSeamrip} disabled={takingSeamrip}>
