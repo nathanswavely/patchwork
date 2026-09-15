@@ -921,6 +921,19 @@ nothing is not lapsed but **unsettled** (holdover, docs/adr/051).
 _Avoid_: rejected, failed (both say the members said no), expired (says
 the proposal went stale rather than that the vote did), abandoned
 
+**Unsettled**:
+An election that decided nothing (`state = 'unsettled'`, docs/adr/051's
+holdover): nobody stood, or quorum went unmet, or no candidate was
+approved. The sitting council keeps serving — "directors serve until
+their successors are elected and qualified" — so the record says the
+contest settled nothing, never that a council was turned down. The
+election-shaped sibling of **lapsed**, and it carries `status =
+'rejected'` for the same reason and with the same rule: read `state`
+first. A contest that settles nothing seats nobody, so nobody in it is
+**seated**, however the approvals fell.
+_Avoid_: failed, rejected, void, cancelled (nothing was called off — the
+contest ran and ended)
+
 **Attestation**:
 A record of a decision the community made at a venue that isn't
 Patchwork — an election held at the annual meeting, an amendment carried

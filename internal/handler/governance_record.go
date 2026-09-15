@@ -81,7 +81,8 @@ func GovernanceRecord(db *database.DB) http.HandlerFunc {
 }
 
 // settledProposals covers everything decided in Patchwork: votes that carried
-// or failed, direct changes, and elections.
+// or failed, direct changes, and elections — plus the two that decided nothing
+// and are here because their window closed, a lapse and an unsettled contest.
 func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 	out := []recordEntry{}
 	rows, err := db.Query(`
@@ -146,9 +147,18 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 			}
 		default:
 			e.Kind = "vote"
-			if status == "approved" {
+			switch {
+			case status == "approved":
 				e.Outcome = "carried"
-			} else {
+			case state == "lapsed":
+				// The window closed under quorum (docs/adr/097). Nobody
+				// decided it either way, so it is not a vote that failed —
+				// and the `rejected` it carries is the schema's only
+				// terminal "no", not the community's answer. Read off the
+				// state for the same reason the election branch above reads
+				// off the seats: the status column cannot tell them apart.
+				e.Outcome = "lapsed"
+			default:
 				e.Outcome = "failed"
 			}
 		}

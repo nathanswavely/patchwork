@@ -298,6 +298,16 @@
   <div class="status-banner lapsed">
     <p>Voting ended without reaching quorum. This proposal lapsed and was not decided.</p>
   </div>
+
+{:else if effectiveState === 'unsettled'}
+  <!-- An election that seated nobody: no candidates, quorum unmet, or
+       nobody approved (docs/adr/051). The election-shaped sibling of a
+       lapse — holdover, not a rejection — so it never wears the tally
+       sentence below, which would read "0 approved, 0 rejected" over a
+       contest the community simply did not settle. -->
+  <div class="status-banner unsettled">
+    <p>This election settled nothing; nobody was seated. The council continues until a successor is elected.</p>
+  </div>
 {:else if effectiveState === 'rejected'}
   <div class="status-banner rejected">
     <!-- A decline is one person's decision (docs/adr/092), and the tally, if
@@ -373,7 +383,8 @@
   }
 
   .withdrawn,
-  .lapsed {
+  .lapsed,
+  .unsettled {
     background: var(--color-overlay);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);

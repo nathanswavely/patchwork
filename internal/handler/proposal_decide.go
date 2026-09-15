@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -108,7 +109,8 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 
 		if req.Decision == "approve" {
 			if err := applyProposalChanges(db, p, user); err != nil {
-				http.Error(w, fmt.Sprintf(`{"error":"failed to apply changes: %s"}`, err.Error()), http.StatusInternalServerError)
+				log.Printf("proposal %s: maintainer approve failed to apply: %v", proposalID, err)
+				http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 				return
 			}
 			auth.LogAuditEvent(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))

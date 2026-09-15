@@ -72,6 +72,17 @@
 
   let quorumNeeded = $derived(Math.ceil(electorateSize * quorumPercent / 100));
 
+  // Whether more votes can still arrive. "Not yet met" is a promise about
+  // the future, and on a proposal that has lapsed there is no future to
+  // promise: late enthusiasm reopens nothing (docs/adr/097). Either the
+  // proposal has settled, or the clock has run out on a vote the page is
+  // still rendering ahead of the sweep.
+  let windowClosed = $derived.by(() => {
+    if (propState !== 'voting' && propState !== 'open') return true;
+    const left = timeLeftFor(votingEndsAt);
+    return !!(left && left.ended);
+  });
+
   let timeLeft = $derived.by(() => {
     const left = timeLeftFor(votingEndsAt);
     if (!left) return '';
@@ -160,7 +171,7 @@
       {#if quorumMet}
         <span class="quorum-met">Quorum met ({totalVotes} of {electorateSize} voted, {quorumPercent}% needed)</span>
       {:else}
-        <span class="quorum-unmet">Quorum not yet met ({totalVotes} of {quorumNeeded} needed)</span>
+        <span class="quorum-unmet">{windowClosed ? 'Quorum not met' : 'Quorum not yet met'} ({totalVotes} of {quorumNeeded} needed)</span>
       {/if}
     {:else}
       <span class="quorum-none muted">No quorum required</span>

@@ -425,3 +425,108 @@ func TestElection_CannotBeWithdrawn(t *testing.T) {
 		t.Errorf("an ordinary proposal is still withdrawable, got %d: %s", dw.Code, dw.Body.String())
 	}
 }
+
+// An election that seated nobody is not one the community turned down.
+//
+// `status` stays inside the schema's CHECK, so all three holdover paths write
+// 'rejected' there and the state column is the only place the difference can
+// live — the same split docs/adr/097 made for a lapse. Without it the proposal
+// banner read "This proposal did not pass. 0 approved, 0 rejected." over a
+// contest nobody voted in, beside a notice correctly saying it settled nothing.
+func TestElection_UnsettledCarriesItsOwnState(t *testing.T) {
+	// Every way an election can settle nothing (docs/adr/051): nobody stood,
+	// quorum unmet, and a slate nobody approved.
+	t.Run("no candidates", func(t *testing.T) {
+		db := setupTestDB(t)
+		admin, _ := createTestUser(t, db, "elecu1", "member")
+		nodeID := electedNode(t, db, admin.ID, "Elec U1", "elec-u1", 0, 12)
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+		id := openElection(t, db, nodeID)
+		closeNominations(t, db, id)
+		handler.OpenElectionVoting(db, id)
+		expireProposal(t, db, id)
+		handler.SweepElections(db)
+		assertUnsettled(t, db, id)
+	})
+
+	t.Run("quorum unmet", func(t *testing.T) {
+		db := setupTestDB(t)
+		admin, adminToken := createTestUser(t, db, "elecu2", "member")
+		nodeID := electedNode(t, db, admin.ID, "Elec U2", "elec-u2", 100, 12)
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		challenger, challengerToken := createTestUser(t, db, "elecu2c", "member")
+		createTestMembership(t, db, challenger.ID, nodeID, "member", "active")
+		bystander, _ := createTestUser(t, db, "elecu2b", "member")
+		createTestMembership(t, db, bystander.ID, nodeID, "member", "active")
+
+		id := openElection(t, db, nodeID)
+		standFor(t, db, id, challengerToken, "")
+		closeNominations(t, db, id)
+		handler.OpenElectionVoting(db, id)
+		castApprovals(t, db, id, adminToken, []string{candidateIDFor(t, db, id, challenger.ID)})
+		expireProposal(t, db, id)
+		handler.SweepElections(db)
+		assertUnsettled(t, db, id)
+	})
+
+	t.Run("nobody approved", func(t *testing.T) {
+		db := setupTestDB(t)
+		admin, _ := createTestUser(t, db, "elecu3", "member")
+		nodeID := electedNode(t, db, admin.ID, "Elec U3", "elec-u3", 0, 12)
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		challenger, challengerToken := createTestUser(t, db, "elecu3c", "member")
+		createTestMembership(t, db, challenger.ID, nodeID, "member", "active")
+
+		id := openElection(t, db, nodeID)
+		standFor(t, db, id, challengerToken, "")
+		closeNominations(t, db, id)
+		handler.OpenElectionVoting(db, id)
+		expireProposal(t, db, id)
+		handler.SweepElections(db)
+		assertUnsettled(t, db, id)
+	})
+}
+
+func assertUnsettled(t *testing.T, db *database.DB, proposalID string) {
+	t.Helper()
+	var status, state string
+	db.QueryRow(`SELECT status, COALESCE(state,'') FROM proposals WHERE id = ?`, proposalID).Scan(&status, &state)
+	// The status column is coarse on purpose (docs/adr/097): a fifth value
+	// would be a migration for a word, and the CHECK allows four.
+	if status != "rejected" {
+		t.Errorf("expected status to stay inside the schema's CHECK as 'rejected', got %q", status)
+	}
+	if state != "unsettled" {
+		t.Errorf("expected state 'unsettled' so the UI can tell holdover from a rejection, got %q", state)
+	}
+}
+
+// A resolved election is still 'closed' to the phase logic, which reads status
+// rather than state (election_view.go). Giving the unsettled close its own
+// state must not reopen a contest that has ended.
+func TestElection_UnsettledStaysClosedToThePhaseLogic(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "elecu4", "member")
+	nodeID := electedNode(t, db, admin.ID, "Elec U4", "elec-u4", 0, 12)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	id := openElection(t, db, nodeID)
+	closeNominations(t, db, id)
+	handler.OpenElectionVoting(db, id)
+	expireProposal(t, db, id)
+	handler.SweepElections(db)
+
+	r := authedRequest("GET", "/api/v1/proposals/"+id, nil, adminToken)
+	w := serveMux(t, db, "GET", "/api/v1/proposals/{id}", handler.GetProposal(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	body := decodeJSON(t, w)
+	if got := body["election_phase"]; got != "closed" {
+		t.Errorf("expected phase 'closed', got %v", got)
+	}
+	if got := body["state"]; got != "unsettled" {
+		t.Errorf("expected the page to be handed state 'unsettled', got %v", got)
+	}
+}
