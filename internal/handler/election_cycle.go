@@ -63,6 +63,46 @@ func ScheduleDueElections(db *database.DB) {
 	}
 }
 
+// nextContestOpens is the day the calendar next opens a contest on this
+// council, derived from the same two facts scheduleFor derives dueness from:
+// the earliest seat term end, and how long a whole contest takes. Nothing
+// stores this date and nothing should — a stored one is a second description
+// of the seats' own clocks, waiting to disagree with them.
+//
+// Empty where no contest is coming: a patch that does not elect here, one
+// that sets no term length, or one with no dated seat. A date already past
+// means the contest is due now and the next sweep opens it.
+func nextContestOpens(db *database.DB, nodeID string, gc model.GovernanceConfig) string {
+	return contestOpensFor(gc, nextTermEnd(db, nodeID))
+}
+
+// contestOpensFor is the same arithmetic for one chair: that seat's own term
+// end, less the time a whole contest takes.
+//
+// Per seat rather than per council, because staggering is a policy
+// docs/adr/051 deliberately left free — two chairs with different term ends
+// come up at different times, and one date printed for the whole council is
+// wrong about at least one of them. The governance page states this per row
+// now, which is what it takes for a member reading two vacant chairs to learn
+// what happens to *those* chairs rather than three general facts about
+// councils.
+//
+// Empty where no contest is coming: a patch that does not elect here, one
+// that sets no term length, or a seat with no term end.
+func contestOpensFor(gc model.GovernanceConfig, termEnd string) string {
+	if gc.LeadershipModel != "elected" || gc.LeadershipVenue == "elsewhere" || gc.AdminTermMonths <= 0 {
+		return ""
+	}
+	if termEnd == "" {
+		return ""
+	}
+	end, err := time.Parse("2006-01-02", termEnd)
+	if err != nil {
+		return ""
+	}
+	return end.Add(-time.Duration(electionLeadHours(gc)) * time.Hour).Format("2006-01-02")
+}
+
 func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig) {
 	// One contest at a time. A second concurrent election for the same council
 	// would split the electorate between two slates deciding one thing.
@@ -78,11 +118,26 @@ func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig
 
 	// Seats whose term ends within the time a contest takes. A term already
 	// past counts — that council is overdue, and holdover has been carrying it.
-	var due int
-	db.QueryRow(`SELECT COUNT(*) FROM seats
-	             WHERE node_id = ? AND term_ends_at IS NOT NULL AND term_ends_at <= ?`,
-		nodeID, dueBy).Scan(&due)
-	if due == 0 {
+	//
+	// These chairs, and only these: a staggered council puts up the chairs
+	// whose terms have run out and leaves the rest alone (docs/adr/103).
+	// Soonest term first, so a contest that fills fewer chairs than it puts up
+	// fills the most overdue ones.
+	rows, err := db.Query(`SELECT id FROM seats
+	                       WHERE node_id = ? AND term_ends_at IS NOT NULL AND term_ends_at <= ?
+	                       ORDER BY term_ends_at ASC, created_at ASC`, nodeID, dueBy)
+	if err != nil {
+		return
+	}
+	var due []string
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			due = append(due, id)
+		}
+	}
+	rows.Close()
+	if len(due) == 0 {
 		return
 	}
 
@@ -103,6 +158,6 @@ func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig
 	}
 
 	if id := openElectionFor(db, nodeID, gc, due); id != "" {
-		log.Printf("election: %s is due (%d seat(s) at term end), opened %s", slug, due, id)
+		log.Printf("election: %s is due (%d seat(s) at term end), opened %s", slug, len(due), id)
 	}
 }

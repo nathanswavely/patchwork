@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -108,7 +109,8 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 
 		if req.Decision == "approve" {
 			if err := applyProposalChanges(db, p, user); err != nil {
-				http.Error(w, fmt.Sprintf(`{"error":"failed to apply changes: %s"}`, err.Error()), http.StatusInternalServerError)
+				log.Printf("proposal %s: maintainer approve failed to apply: %v", proposalID, err)
+				http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 				return
 			}
 			auth.LogAuditEvent(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
@@ -196,6 +198,10 @@ func OpenAdvisoryVote(db *database.DB) http.HandlerFunc {
 		}
 		auth.LogAuditEvent(db, user.ID, "proposal.advisory_vote_opened", "proposal", proposalID,
 			fmt.Sprintf(`{"duration_hours":%d}`, req.DurationHours), clientIP(r))
+
+		// The advisory ballot opens here rather than at creation, so this is
+		// where its electorate is written down as told (docs/adr/093).
+		seedVoteAudienceNow(db, proposalID, p.NodeID)
 
 		var nodeSlug, nodeName, title string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", p.NodeID).Scan(&nodeSlug, &nodeName)

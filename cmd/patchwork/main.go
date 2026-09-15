@@ -246,6 +246,9 @@ func main() {
 		sweep := func() {
 			handler.SweepElections(db)
 			handler.SweepProposals(db)
+			// After the windows that closed have closed: the people a still-
+			// open vote is waiting on, told once each (docs/adr/093).
+			handler.SweepVoteNotices(db)
 		}
 		sweep()
 		for {
@@ -409,6 +412,9 @@ func main() {
 	mux.HandleFunc("GET /api/v1/auth/step-up", middleware.AuthRequired(db, handler.StepUpStatus(db)))
 	mux.HandleFunc("POST /api/v1/auth/step-up/begin", middleware.AuthRequired(db, handler.StepUpBegin(db, wa)))
 	mux.HandleFunc("POST /api/v1/auth/step-up/finish", middleware.AuthRequired(db, handler.StepUpFinish(db, wa)))
+	// The way through for a person whose device makes no passkey
+	// (docs/adr/099). Burns a recovery code that predates this session.
+	mux.HandleFunc("POST /api/v1/auth/step-up/recovery", middleware.AuthRequired(db, handler.StepUpRecovery(db)))
 
 	mux.HandleFunc("POST /api/v1/auth/webauthn/register/begin", middleware.AuthRequired(db, handler.WebAuthnRegisterBegin(db, wa)))
 	mux.HandleFunc("POST /api/v1/auth/webauthn/register/finish", middleware.AuthRequired(db, handler.WebAuthnRegisterFinish(db, wa)))
@@ -472,6 +478,13 @@ func main() {
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/leave", middleware.AuthRequired(db, handler.LeaveNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/withdraw", middleware.AuthRequired(db, handler.WithdrawMembershipRequest(db)))
+	// Membership invitations (docs/adr/098): an admin asks by username, the
+	// person answers. Accept and decline are the invitee's own row only.
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations", middleware.AuthRequired(db, handler.InviteMember(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations/accept", middleware.AuthRequired(db, handler.AcceptInvitation(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations/decline", middleware.AuthRequired(db, handler.DeclineInvitation(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/invitations/{userId}", middleware.AuthRequired(db, handler.RescindInvitation(db)))
+	mux.HandleFunc("GET /api/v1/users/me/invitations", middleware.AuthRequired(db, handler.ListMyInvitations(db)))
 	// Maintainer succession (docs/adr/051). Naming a successor decides who
 	// inherits the patch, so it is step-up gated like the other power moves.
 	mux.HandleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.SetSuccessor(db))))
@@ -480,6 +493,16 @@ func main() {
 	// set of candidates one person approves, so it is a PUT of the whole set
 	// rather than an append.
 	mux.HandleFunc("POST /api/v1/proposals/{id}/candidates", middleware.AuthRequired(db, handler.AddCandidate(db)))
+	// The council's size is its seats, added and removed explicitly by an
+	// admin of the patch (docs/adr/100). Neither act seats or unseats anybody
+	// — removal only ever touches an empty chair — so neither is step-up
+	// gated the way a power transfer is.
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/seats", middleware.AuthRequired(db, handler.AddSeat(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/seats/{id}", middleware.AuthRequired(db, handler.RemoveSeat(db)))
+	// A seat's term end is the patch's election calendar (docs/adr/051 put the
+	// clock on the seat). An admin may bring a chair's date forward; pushing a
+	// held one back would hand out a term nobody voted for, and is refused.
+	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/seats/{id}", middleware.AuthRequired(db, handler.SetSeatTerm(db)))
 	mux.HandleFunc("PUT /api/v1/proposals/{id}/ballot", middleware.AuthRequired(db, handler.CastElectionBallot(db)))
 	// Attestations (docs/adr/052, docs/adr/053) — decisions a community made
 	// somewhere Patchwork was not. Public to read: the whole value is that the

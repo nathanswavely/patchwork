@@ -450,7 +450,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, COALESCE(n.moved_to,''), n.created_at, n.updated_at FROM nodes n"
+		query := "SELECT n.id, n.owner_id, n.name, n.slug, n.description, n.latitude, n.longitude, n.address, COALESCE(n.timezone,'') AS timezone, n.website, COALESCE(n.image_url,''), COALESCE(n.image_alt,''), COALESCE(n.links,'[]'), COALESCE(n.follower_permissions,'{}'), COALESCE(n.governance_config,'{}'), n.visibility, n.membership_policy, COALESCE(n.appearance,''), n.status, n.accept_event_suggestions, COALESCE(n.moved_to,''), n.founded_at, n.created_at, n.updated_at FROM nodes n"
 		var conditions []string
 		var args []interface{}
 
@@ -538,7 +538,7 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			var n model.Node
 			var linksJSON, fpJSON, gcJSON, apJSON string
 			if err := rows.Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.AcceptEventSuggestions, &n.MovedTo,
-				&n.CreatedAt, &n.UpdatedAt); err != nil {
+				&n.FoundedAt, &n.CreatedAt, &n.UpdatedAt); err != nil {
 				continue
 			}
 			scanNodeLinks(linksJSON, &n)
@@ -578,9 +578,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, COALESCE(moved_to,''), created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, COALESCE(moved_to,''), founded_at, created_at, updated_at
 			 FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, slug,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -618,6 +618,13 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		// node filter, including the guard that keeps a private patch's
 		// linked events off another patch's page — a count that disagrees
 		// with the list under it is the bug being fixed.
+		//
+		// The hosting patch's own gate is part of that mirror: an archived
+		// or removed patch's calendar is gone from every listing
+		// (docs/adr/034), so a confirmed link into *this* patch from one
+		// that has since been archived is counted by nothing and listed by
+		// nothing. Leaving it out of the count was the one filter ListEvents
+		// applied and this query did not.
 		db.QueryRow(
 			`SELECT COUNT(*) FROM events e JOIN nodes n ON e.node_id = n.id
 			 WHERE e.visibility = 'public' AND e.removed_at IS NULL
@@ -625,6 +632,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			   AND (e.node_id = ? OR EXISTS (
 			         SELECT 1 FROM event_links el WHERE el.event_id = e.id
 			         AND el.node_id = ? AND el.status = 'confirmed'))
+			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 			   AND (n.visibility = 'public' OR e.node_id = ?)`,
 			time.Now().UTC().Format(time.RFC3339), n.ID, n.ID, n.ID,
 		).Scan(&n.UpcomingEventCount)
@@ -802,15 +810,17 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			memID, user.ID, id,
 		)
 
-		// Auto-create default governance doc (lining).
-		CreateDefaultLining(db, id, user.ID)
-
 		// Fork governance repo for the new patch, absorb the creation form's
 		// membership choices into the template's rules file, and sync the
 		// rules into the DB cache. Without the sync, the rules in force are
 		// invisible to every DB read path — the gap that left admin-decides
 		// patches waiting out voting windows (docs/adr/041). Skipped entirely
 		// when the fork fails; the startup backfill heals such nodes later.
+		//
+		// The fork comes before the lining, the order patch setup already
+		// uses (claims.go): CreateDefaultLining mirrors the lining into the
+		// repo, and there was no repo yet, so every creation logged a git
+		// warning for a mirror the fork's own first commit then supplied.
 		dataDir := governance.GetDataDir()
 		if err := governance.ForkForNode(dataDir, id, req.Template); err != nil {
 			log.Printf("warning: governance fork for node %s: %v", id, err)
@@ -836,14 +846,21 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			}
 		}
 
+		// Auto-create default governance doc (lining). After the fork, so
+		// the repo it mirrors into exists.
+		CreateDefaultLining(db, id, user.ID)
+
 		// A patch born under an elected template adopts elected leadership
-		// at birth, and adoption starts an election (docs/adr/051) — the
-		// same trigger a rules edit fires. Seats are only ever created by
-		// a resolved election, so without this the founder held no seat,
-		// nothing ever came due, and the calendar never ran: a co-op made
-		// with the Formal template was an unseated admin for life. Silent
-		// on every other template and where the venue is elsewhere.
-		StartElectionOnAdoption(db, id)
+		// at birth. It does not hold an election at birth (docs/adr/098):
+		// docs/adr/051's "adoption starts an election" is for a community
+		// that already exists, and a founder alone has nobody to elect from
+		// — the contest was one seat, opened the day the page was made,
+		// attributed to the founder, and one the founder could not vote in.
+		// The founder is seated for one term instead, and the calendar opens
+		// the first real election a lead time before that term ends, as it
+		// opens every one after. Silent on every other template and where
+		// the venue is elsewhere.
+		SeatFounder(db, id, user.ID, clientIP(r))
 
 		auth.LogAuditEvent(db, user.ID, "node.create", "node", id, "{}", clientIP(r))
 		auth.LogAuditEvent(db, user.ID, "membership.join", "membership", memID, `{"role":"admin","auto":true}`, clientIP(r))
@@ -851,9 +868,9 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), founded_at, created_at, updated_at
 			 FROM nodes WHERE id = ?`, id,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
 		scanNodeLinks(linksJSON, &n)
 		scanFollowerPermissions(fpJSON, &n)
 		scanGovernanceConfig(gcJSON, &n)
@@ -864,6 +881,19 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(n)
 	}
+}
+
+// validateFoundedAt checks a founding date (docs/adr/098): YYYY-MM-DD, and
+// not after today in UTC. Returns "" when it is acceptable.
+func validateFoundedAt(v string) string {
+	d, err := time.Parse("2006-01-02", v)
+	if err != nil || d.Format("2006-01-02") != v {
+		return "founded_at must be a date like 2015-06-01"
+	}
+	if d.After(time.Now().UTC()) {
+		return "founded_at cannot be in the future"
+	}
+	return ""
 }
 
 // UpdateNode handles PATCH /api/v1/nodes/{slug}.
@@ -898,8 +928,24 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			"appearance": true, "accept_event_suggestions": true,
 			"notice_posting": true, "notice_replies_default": true,
 			"public_member_list": true,
-			"image_url": true, "image_alt": true,
-			"moved_to": true,
+			"image_url":          true, "image_alt": true,
+			"moved_to": true, "founded_at": true,
+		}
+
+		// When the group started (docs/adr/098). A date, never in the
+		// future: it caps the voting tenure a patch may require, so a date
+		// ahead of today would ask nothing of anyone until it arrived. ""
+		// clears it back to "started with its row".
+		if raw, present := req["founded_at"]; present {
+			v, _ := raw.(string)
+			if v = strings.TrimSpace(v); v == "" {
+				req["founded_at"] = nil
+			} else if msg := validateFoundedAt(v); msg != "" {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				return
+			} else {
+				req["founded_at"] = v
+			}
 		}
 
 		// The moved-to pointer (docs/adr/090). Checked here, at the one write
@@ -925,13 +971,60 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		// it attaches is read in it — so a name that doesn't resolve would
 		// quietly move a whole calendar. "" clears it back to inheriting
 		// the instance's.
+		//
+		// Changing it changes what every inheriting event *says*, and that
+		// is never done in silence: see node_timezone.go, and the 409
+		// below.
+		var zonePlan *zoneChange
 		if raw, present := req["timezone"]; present {
 			tz, _ := raw.(string)
-			if tz = strings.TrimSpace(tz); tz == "" {
-				req["timezone"] = nil
-			} else if !settings.ValidTimezone(tz) {
-				http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+			tz = strings.TrimSpace(tz)
+			if tz != "" && !settings.ValidTimezone(tz) {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
 				return
+			}
+
+			var storedZone string
+			db.QueryRow(`SELECT COALESCE(timezone,'') FROM nodes WHERE id = ?`, nodeID).Scan(&storedZone)
+			if strings.TrimSpace(storedZone) != tz {
+				plan, err := planZoneChange(db, nodeID, storedZone, tz)
+				if err != nil {
+					http.Error(w, `{"error":"failed to read this patch's calendar"}`, http.StatusInternalServerError)
+					return
+				}
+				if plan != nil {
+					mode, _ := req["timezone_events"].(string)
+					mode = strings.TrimSpace(mode)
+					if mode != zoneKeepClock && mode != zoneKeepInstant {
+						// Do not guess. The two answers move twenty people
+						// to the wrong day in opposite directions, and only
+						// the person who typed the times knows which one
+						// they meant.
+						w.Header().Set("Content-Type", "application/json")
+						w.WriteHeader(http.StatusConflict)
+						subject := "events follow"
+						if plan.EventsAffected == 1 {
+							subject = "event follows"
+						}
+						json.NewEncoder(w).Encode(map[string]interface{}{
+							"error": fmt.Sprintf(
+								"%d %s this patch's timezone and would read as a different time. Say whether to keep their clock times or leave them where they are.",
+								plan.EventsAffected, subject),
+							"code":            "timezone_events_undecided",
+							"from":            plan.From,
+							"to":              plan.To,
+							"events_affected": plan.EventsAffected,
+							"choices":         []string{zoneKeepClock, zoneKeepInstant},
+						})
+						return
+					}
+					plan.Mode = mode
+					zonePlan = plan
+				}
+			}
+
+			if tz == "" {
+				req["timezone"] = nil
 			} else {
 				req["timezone"] = tz
 			}
@@ -1079,14 +1172,34 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// The events move only once the patch's own row says where it
+		// keeps time — see applyZoneChange on which half-state is
+		// survivable.
+		if zonePlan != nil {
+			if err := applyZoneChange(db, zonePlan); err != nil {
+				http.Error(w, `{"error":"the timezone saved, but this patch's events could not be moved"}`, http.StatusInternalServerError)
+				return
+			}
+		}
+
 		auth.LogAuditEvent(db, user.ID, "node.update", "node", nodeID, "{}", clientIP(r))
+		if zonePlan != nil {
+			// Its own entry, because "node.update" with an empty detail
+			// blob cannot tell a patch that renamed itself from one that
+			// moved four rehearsals by five hours.
+			detail, _ := json.Marshal(map[string]interface{}{
+				"from": zonePlan.From, "to": zonePlan.To, "mode": zonePlan.Mode,
+				"events_affected": zonePlan.EventsAffected, "events_moved": zonePlan.EventsMoved,
+			})
+			auth.LogAuditEvent(db, user.ID, "node.timezone", "node", nodeID, string(detail), clientIP(r))
+		}
 
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), notice_posting, notice_replies_default, COALESCE(moved_to,''), created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), notice_posting, notice_replies_default, COALESCE(moved_to,''), founded_at, created_at, updated_at
 			 FROM nodes WHERE id = ?`, nodeID,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.NoticePosting, &n.NoticeRepliesDefault, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.NoticePosting, &n.NoticeRepliesDefault, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
 		scanNodeLinks(linksJSON, &n)
 		scanFollowerPermissions(fpJSON, &n)
 		scanGovernanceConfig(gcJSON, &n)
@@ -1094,7 +1207,27 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		n.Tags = nodeTagNames(db, nodeID)
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(n)
+		if zonePlan == nil {
+			json.NewEncoder(w).Encode(n)
+			return
+		}
+		// The node stays at the top level — every existing caller decodes
+		// it straight into a Node — and the report rides alongside it, so
+		// the page that asked the question can say what the answer did.
+		body, err := json.Marshal(n)
+		if err != nil {
+			json.NewEncoder(w).Encode(n)
+			return
+		}
+		var merged map[string]json.RawMessage
+		if err := json.Unmarshal(body, &merged); err != nil {
+			json.NewEncoder(w).Encode(n)
+			return
+		}
+		if raw, err := json.Marshal(zonePlan); err == nil {
+			merged["timezone_change"] = raw
+		}
+		json.NewEncoder(w).Encode(merged)
 	}
 }
 

@@ -164,6 +164,63 @@ func TestCycle_FailedElectionGetsABreather(t *testing.T) {
 	}
 }
 
+// The dead end docs/adr/098 closes. A patch switches to elected, its first
+// contest settles nothing, and — since seats were only ever created by a
+// resolved election — there were none, nothing was due, and the calendar
+// never ran again. Adoption now seats the sitting council overdue, so the
+// seats outlive the failed contest and the cycle retries after its breather.
+func TestCycle_UnsettledAdoptionContestIsRetried(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "cyc7", "member")
+	nodeID := electedNode(t, db, admin.ID, "Cyc Seven", "cyc-seven", 0, 12)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	second, _ := createTestUser(t, db, "cyc7b", "member")
+	createTestMembership(t, db, second.ID, nodeID, "admin", "active")
+
+	id := openElection(t, db, nodeID)
+	var contested int
+	db.QueryRow(`SELECT seats_contested FROM proposals WHERE id = ?`, id).Scan(&contested)
+	if contested != 2 {
+		t.Fatalf("expected the two-admin council contested, got %d", contested)
+	}
+
+	// Nobody stands; the window runs out; the sweep closes it unsettled and,
+	// on the same pass, finds the council overdue but inside its breather.
+	closeNominations(t, db, id)
+	handler.OpenElectionVoting(db, id)
+	expireProposal(t, db, id)
+	handler.SweepElections(db)
+
+	var status string
+	db.QueryRow(`SELECT status FROM proposals WHERE id = ?`, id).Scan(&status)
+	if status != "rejected" {
+		t.Fatalf("expected the contest closed unsettled, got %q", status)
+	}
+	var seats int
+	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ? AND holder_id IN (?, ?)`, nodeID, admin.ID, second.ID).Scan(&seats)
+	if seats != 2 {
+		t.Errorf("holdover: both seats must survive an unsettled contest with their holders, got %d", seats)
+	}
+	if adminCount(t, db, nodeID) != 2 {
+		t.Errorf("holdover: both admins keep serving, got %d", adminCount(t, db, nodeID))
+	}
+	if got := openElectionCount(t, db, nodeID); got != 0 {
+		t.Errorf("expected a breather before the retry, got %d open", got)
+	}
+
+	// One contest length later the calendar tries again, for the same two seats.
+	old := time.Now().UTC().AddDate(0, 0, -30).Format("2006-01-02T15:04:05.000Z")
+	db.Exec(`UPDATE proposals SET updated_at = ? WHERE id = ?`, old, id)
+	handler.ScheduleDueElections(db)
+	if got := openElectionCount(t, db, nodeID); got != 1 {
+		t.Fatalf("expected the calendar to retry once the breather passed, got %d open", got)
+	}
+	db.QueryRow(`SELECT seats_contested FROM proposals WHERE node_id = ? AND status = 'open'`, nodeID).Scan(&contested)
+	if contested != 2 {
+		t.Errorf("the retry contests the same council, got %d seat(s)", contested)
+	}
+}
+
 // The governance hub can see the contest the patch is running (docs/adr/051).
 //
 // It could not. The needs-a-vote banner deliberately stays quiet during

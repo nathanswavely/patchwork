@@ -27,15 +27,23 @@ func TestCreateProposal_IsBornVoting(t *testing.T) {
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// A voting patch, so docs/adr/041's direct-change path is not in play.
+	// Meritocratic, because a membership proposal has to name somebody
+	// (docs/adr/100) and a nomination is the only membership proposal there
+	// is — which makes this loop cover the type as members meet it.
 	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
-		`{"decision_method":"majority","quorum_percent":25,"default_vote_duration_hours":72,"amendment_threshold":"majority","min_voting_tenure_days":0}`,
+		`{"decision_method":"majority","quorum_percent":25,"default_vote_duration_hours":72,"amendment_threshold":"majority","min_voting_tenure_days":0,"leadership_model":"meritocratic"}`,
 		nodeID)
+	nominee, _ := createTestUser(t, db, "bornvotingnominee", "member")
+	createTestMembership(t, db, nominee.ID, nodeID, "member", "active")
 
 	for _, proposalType := range []string{"action", "other", "membership"} {
 		body := map[string]interface{}{
 			"title":         "Born voting",
 			"body":          "Body",
 			"proposal_type": proposalType,
+		}
+		if proposalType == "membership" {
+			body["target_user_id"] = nominee.ID
 		}
 		r := authedRequest("POST", "/api/v1/nodes/born-voting/proposals", body, adminToken)
 		w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)

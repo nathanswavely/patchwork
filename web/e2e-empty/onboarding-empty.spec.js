@@ -89,6 +89,10 @@ test('empty instance steers the first user to create a patch', async ({ page }) 
   await expect(page).toHaveURL(/\/patches\/new/);
 
   await page.getByLabel('Name').fill('First Patch');
+  // Who can join is asked and required (docs/adr/098): the API defaults an
+  // omitted policy to open, and two simulated founders' patches were public
+  // for half an hour before they found the switch.
+  await page.getByRole('radio', { name: /^Open/ }).check();
   await page.getByRole('button', { name: 'Create Patch' }).click();
 
   // Landed on the new patch's profile, not back in onboarding.

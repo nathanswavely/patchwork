@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { timeLeft as timeLeftFor, timeLeftPhrase } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from './ConfirmAction.svelte';
 
@@ -50,13 +51,10 @@
   let effectiveState = $derived(propState || (status === 'open' ? 'voting' : status === 'passed' || status === 'approved' ? 'approved' : status));
 
   let timeLeft = $derived.by(() => {
-    if (!votingEndsAt) return '';
-    const ms = new Date(votingEndsAt) - new Date();
-    if (ms <= 0) return 'Voting ended';
-    const days = Math.floor(ms / 86400000);
-    const hours = Math.floor((ms % 86400000) / 3600000);
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
-    return `${hours} hour${hours > 1 ? 's' : ''} left`;
+    const left = timeLeftFor(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'Voting ended';
+    return `${timeLeftPhrase(left)} left`;
   });
 
   // "Cast your vote below" only when there is a vote below. A viewer outside
@@ -300,6 +298,16 @@
   <div class="status-banner lapsed">
     <p>Voting ended without reaching quorum. This proposal lapsed and was not decided.</p>
   </div>
+
+{:else if effectiveState === 'unsettled'}
+  <!-- An election that seated nobody: no candidates, quorum unmet, or
+       nobody approved (docs/adr/051). The election-shaped sibling of a
+       lapse — holdover, not a rejection — so it never wears the tally
+       sentence below, which would read "0 approved, 0 rejected" over a
+       contest the community simply did not settle. -->
+  <div class="status-banner unsettled">
+    <p>This election settled nothing; nobody was seated. The council continues until a successor is elected.</p>
+  </div>
 {:else if effectiveState === 'rejected'}
   <div class="status-banner rejected">
     <!-- A decline is one person's decision (docs/adr/092), and the tally, if
@@ -375,7 +383,8 @@
   }
 
   .withdrawn,
-  .lapsed {
+  .lapsed,
+  .unsettled {
     background: var(--color-overlay);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);

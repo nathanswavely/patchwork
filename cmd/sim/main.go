@@ -57,7 +57,7 @@ func usage() {
   advance <duration>     move the world back by a duration (30d, 720h, 2w) and run the sweeps
   sweep                  run the election and reminder passes without moving anything
   status                 what every patch's governance is doing right now
-  now                    the simulated date (real clock plus everything advanced so far)
+  now                    today, and how far the world has been aged
 
 `)
 	flag.PrintDefaults()
@@ -374,7 +374,8 @@ func cmdAdvance(dbPath, dir, arg string) error {
 	for t, why := range total.Skipped {
 		fmt.Printf("  %-32s kept (%s)\n", t, why)
 	}
-	fmt.Printf("\nsimulated date is now %s\n", simulatedNow(ledger).Format("Mon 2006-01-02 15:04 UTC"))
+	fmt.Printf("\ntoday is %s; the world is %s\n",
+		simulatedNow(ledger).Format("Mon 2006-01-02 15:04 UTC"), worldAge(ledger))
 	return nil
 }
 
@@ -400,6 +401,7 @@ func runSweeps(db *database.DB) {
 	handler.SetNotifier(n)
 	handler.SweepElections(db)
 	handler.SweepProposals(db)
+	handler.SweepVoteNotices(db)
 	notifications.RunReminders(n)
 	// Handlers notify on a goroutine; give the in-app channel a moment to
 	// land its rows before the process exits.
@@ -478,8 +480,28 @@ func diffLines(a, b worldSnapshot) []string {
 
 // ---- status / now ----------------------------------------------------------
 
+// simulatedNow is the world's present, and it is simply now.
+//
+// This used to add the ledger's total, and that was double counting. Moving
+// every stored instant *back* by a fortnight is what makes the world a
+// fortnight older; the present it is older *than* is the real clock, because
+// the server stamps every new row with the real clock and always will. Two
+// simulated members caught the error before I did — a secretary's minutes of
+// "28 September" came back stamped the 15th, and she rightly said a record
+// that argues with its own dates is worth less than the notebook it came
+// out of. The record was right and the tool was wrong.
 func simulatedNow(l clockLedger) time.Time {
-	return time.Now().UTC().Add(time.Duration(l.TotalHours * float64(time.Hour)))
+	return time.Now().UTC()
+}
+
+// worldAge is how far the world has been moved, which is the number worth
+// printing beside the date: the content is this much older than today.
+func worldAge(l clockLedger) string {
+	days := l.TotalHours / 24
+	if days == 0 {
+		return "unmoved"
+	}
+	return fmt.Sprintf("aged by %.0f day(s) across %d advance(s)", days, len(l.Entries))
 }
 
 func cmdNow(dir string) error {
@@ -487,9 +509,8 @@ func cmdNow(dir string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("real      %s\nsimulated %s  (%d advances, %.0f hours)\n",
-		time.Now().UTC().Format("Mon 2006-01-02 15:04 UTC"),
-		simulatedNow(l).Format("Mon 2006-01-02 15:04 UTC"), len(l.Entries), l.TotalHours)
+	fmt.Printf("today     %s\nthe world %s\n\nThis is the date to give a persona: the server stamps everything it\nwrites from here with this clock. The age is carried by the content\nalready in the world, not by the calendar.\n",
+		simulatedNow(l).Format("Mon 2006-01-02 15:04 UTC"), worldAge(l))
 	return nil
 }
 
@@ -500,7 +521,8 @@ func cmdStatus(dbPath, dir string) error {
 	}
 	defer db.Close()
 	l, _ := readLedger(dir)
-	fmt.Printf("simulated date %s\n\n", simulatedNow(l).Format("Mon 2006-01-02 15:04 UTC"))
+	fmt.Printf("today %s; the world is %s\n\n",
+		simulatedNow(l).Format("Mon 2006-01-02 15:04 UTC"), worldAge(l))
 
 	rows, err := db.Query(`SELECT id, slug, name, membership_policy, COALESCE(governance_config,'{}')
 	                       FROM nodes WHERE status = 'active' AND removed_at IS NULL ORDER BY name`)

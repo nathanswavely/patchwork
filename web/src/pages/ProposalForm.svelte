@@ -2,11 +2,11 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { formatDay } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
-  let isAdmin = $derived(patch.value.isAdmin);
   let membershipRole = $derived(patch.value.membershipRole);
 
   // The New Proposal button on the proposals list is already gated, but this
@@ -55,35 +55,56 @@
     { value: 336, label: '2 weeks' },
   ];
 
-  const typeOptions = [
-    { value: 'action', label: 'Action', description: 'Propose a concrete action for the community to take' },
-    { value: 'membership', label: 'Membership', description: 'Request or propose changes to membership' },
-    { value: 'other', label: 'Other', description: 'Any other proposal that needs community input' },
-  ];
-
-  // Nominating an admin, on meritocratic patches only (docs/adr/051). The
-  // community ratifies admins there, so an admin nominates instead of
-  // promoting — the member list refuses a direct promotion.
+  // Nominating an admin (docs/adr/051, docs/adr/100). A meritocratic patch
+  // ratifies admins, and an elected one fills a mid-term vacancy the same
+  // way — so there the nomination also needs a vacant seat to land in.
+  // `membershipRole`, not `isAdmin`: the node payload sets is_admin for
+  // instance admins too, and the server refuses them.
   let nomineeId = $state('');
-  let isMeritocratic = $state(false);
+  let leadershipModel = $state('');
+  let vacantSeats = $state(0);
+  let nextContestOpens = $state('');
   let nominatable = $state([]);
-  let canNominate = $derived(isAdmin && isMeritocratic);
+  let isMeritocratic = $derived(leadershipModel === 'meritocratic');
+  let isElected = $derived(leadershipModel === 'elected');
+  let canNominate = $derived(isPatchAdmin && (isMeritocratic || (isElected && vacantSeats > 0)));
+
+  // A membership proposal is a nomination and nothing else (docs/adr/100):
+  // it has to name the person it is about, and only someone who may nominate
+  // can raise one. Offering the type to everyone is what left a member with
+  // no way to ask for a seat except a targetless vote on his own name.
+  let typeOptions = $derived([
+    { value: 'action', label: 'Action', description: 'Propose a concrete action for the community to take' },
+    ...(canNominate
+      ? [{ value: 'membership', label: 'Membership', description: 'Nominate an active member for admin' }]
+      : []),
+    { value: 'other', label: 'Other', description: 'Any other proposal that needs community input' },
+  ]);
 
   $effect(() => {
     if (slug) loadGovernanceContext();
   });
 
+  // Keep the chosen type valid: an elected patch whose last seat was filled
+  // stops offering Membership, and a radio left on a vanished option would
+  // submit a type the server refuses.
+  $effect(() => {
+    if (proposalType === 'membership' && !canNominate) proposalType = 'action';
+  });
+
   async function loadGovernanceContext() {
     try {
       const ov = await api(`nodes/${slug}/governance/overview`);
-      isMeritocratic = ov?.rules?.leadership_model === 'meritocratic';
-      if (!isMeritocratic || !isAdmin) return;
+      leadershipModel = ov?.rules?.leadership_venue === 'elsewhere' ? '' : (ov?.rules?.leadership_model || '');
+      vacantSeats = (ov?.seats || []).filter((s) => !s.holder_id).length;
+      nextContestOpens = ov?.next_contest_opens || '';
+      if (!canNominate) return;
       const data = await api(`nodes/${slug}/members`);
       // Only plain members can be nominated: an admin already holds the role,
       // and a follower is not on the ladder.
       nominatable = (data.items || data || []).filter((m) => m.role === 'member');
     } catch {
-      isMeritocratic = false;
+      leadershipModel = '';
       nominatable = [];
     }
   }
@@ -93,8 +114,8 @@
       error = 'Title is required';
       return;
     }
-    if (proposalType === 'membership' && canNominate && nomineeId && nominatable.length === 0) {
-      error = 'There is nobody to nominate yet';
+    if (proposalType === 'membership' && !nomineeId) {
+      error = 'Choose the member this nomination is about';
       return;
     }
 
@@ -113,7 +134,7 @@
       if (adminDecides && isPatchAdmin) payload.put_to_vote = putToVote;
       // Only a membership proposal carries a subject, and only where the
       // community ratifies admins.
-      if (proposalType === 'membership' && canNominate && nomineeId) {
+      if (proposalType === 'membership' && nomineeId) {
         payload.target_user_id = nomineeId;
       }
       const result = await api(`nodes/${slug}/proposals`, {
@@ -200,21 +221,40 @@
                nominate; everywhere else a membership proposal is ordinary. -->
           {#if proposalType === 'membership' && canNominate}
             <div class="nominee-field">
-              <label for="nominee">Nominate for admin</label>
+              <label for="nominee">Nominate for admin <span class="required">*</span></label>
               {#if nominatable.length > 0}
-                <select id="nominee" bind:value={nomineeId} disabled={submitting}>
-                  <option value="">Nobody. This is an ordinary membership proposal</option>
+                <select id="nominee" bind:value={nomineeId} disabled={submitting} required>
+                  <option value="">Choose a member</option>
                   {#each nominatable as m}
                     <option value={m.user_id}>{m.display_name || m.username}</option>
                   {/each}
                 </select>
                 <p class="nominee-hint muted">
-                  If this passes, they become an admin. Nobody has to approve it afterwards.
+                  {#if isElected}
+                    If this passes, they take the vacant seat and serve out its term. Nobody has to approve it afterwards.
+                  {:else}
+                    If this passes, they become an admin. Nobody has to approve it afterwards.
+                  {/if}
                 </p>
               {:else}
                 <p class="nominee-hint muted">There is nobody to nominate yet.</p>
               {/if}
             </div>
+          {/if}
+
+          <!-- An elected patch with no vacancy: say where the way onto the
+               council actually is, rather than leaving someone to invent
+               one (docs/adr/100). -->
+          {#if isElected && !canNominate}
+            <p class="nominee-hint muted">
+              {#if !isPatchAdmin}
+                Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.
+              {:else if nextContestOpens}
+                Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.
+              {:else}
+                Every seat on the council is held, so there is nobody to nominate. You can add a seat on the Governance page.
+              {/if}
+            </p>
           {/if}
         </div>
 

@@ -60,7 +60,14 @@
   // whole voter list and the frozen terms live.
   function outcomeLine(e) {
     if (e.kind === 'vote') {
-      return e.outcome === 'carried' ? 'Carried by a vote.' : 'Put to a vote and did not carry.';
+      if (e.outcome === 'carried') return 'Carried by a vote.';
+      // A lapse is not a vote that failed (docs/adr/097). The window closed
+      // under quorum, so "did not carry" — which says the members answered
+      // no — is the one thing the Record must not say about it.
+      if (e.outcome === 'lapsed') {
+        return 'Put to a vote. Nobody decided it either way; the proposal lapsed.';
+      }
+      return 'Put to a vote and did not carry.';
     }
     if (e.kind === 'direct') {
       // A maintainer's decision either way (docs/adr/092). A decline is
@@ -107,7 +114,10 @@
       {:else}
         <ol class="entries">
           {#each entries as e}
-            <li class="entry" class:unsettled={e.outcome === 'unsettled' || e.outcome === 'failed'}>
+            <li
+              class="entry"
+              class:unsettled={e.outcome === 'unsettled' || e.outcome === 'failed' || e.outcome === 'lapsed'}
+            >
               <div class="entry-head">
                 <span class="kind">{KIND_LABEL[e.kind] || e.kind}</span>
                 <span class="when muted">{formatDay(e.at)}</span>

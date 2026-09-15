@@ -112,11 +112,17 @@
       : `${start} – ${formatDate(event.ends_at, event.timezone)} · ${formatTime(event.ends_at, event.timezone)}`;
   });
 
+  // Recurrence is no longer something an organizer can choose: the word
+  // was stored, displayed, and never expanded — one row, one date, and an
+  // ICS feed with no RRULE, so "Repeats weekly" promised a subscriber four
+  // Tuesdays and handed them one. Rows that already carry a word keep it,
+  // and this is where it is told the truth: the series is what the
+  // organizer said, and this page is one date of it.
   const RECURRENCE_LABELS = {
-    daily: 'Repeats daily',
-    weekly: 'Repeats weekly',
-    biweekly: 'Repeats every two weeks',
-    monthly: 'Repeats monthly',
+    daily: 'The organizer says this repeats daily',
+    weekly: 'The organizer says this repeats weekly',
+    biweekly: 'The organizer says this repeats every two weeks',
+    monthly: 'The organizer says this repeats monthly',
   };
 </script>
 
@@ -218,7 +224,7 @@
       {#if event.recurrence && RECURRENCE_LABELS[event.recurrence]}
         <div class="meta-row">
           <ArrowsClockwise size={16} weight="duotone" />
-          <span>{RECURRENCE_LABELS[event.recurrence]}</span>
+          <span>{RECURRENCE_LABELS[event.recurrence]}{' — only this date is on the calendar'}</span>
         </div>
       {/if}
       {#if eventLinkHost}

@@ -61,7 +61,11 @@ Audited as `proposal.lapsed` with no actor: the clock closed it.
 **Under quorum while the window runs, nothing changes.** Votes may still
 come. The lapse is decided at close, by the same code on the same read.
 
-**Born elected means adopted elected.** Applied here rather than decided:
+**Born elected means adopted elected.** *Superseded the same day by
+docs/adr/098: a founder alone has nobody to elect from, so creation now
+seats the founder for a founding term and the calendar opens the first
+real contest before that term ends. The intent — that the calendar runs
+at all — stands.* Applied here rather than decided:
 docs/adr/051 says adopting elected leadership starts an election, and a
 patch created under the Formal template adopts it at birth. The creation
 path never fired that trigger — only a rules edit did — and since seats
@@ -88,3 +92,30 @@ again — which is holdover doing what it is for.
   again raises it again, with the record of the lapse behind it.
 - The simulation's `advance` runs this sweep too (cmd/sim), because the
   point of docs/adr/096 is to run the product's own passes.
+
+## Amendment, 2026-09-15: the chip was split after all
+
+The first consequence above judged a third outcome chip to be "a fourth tab
+for the sake of a word", on the reasoning that most patches will never fill
+the list. Two epochs of the simulation have overtaken that. The drawer marked
+*Rejected* now opens, on the co-op, onto three proposals and all three say
+*lapsed* — no vote in that patch has ever been rejected by anybody. The member
+whose own proposal is in there has named it twice.
+
+So the count was wrong in both directions. The chip is not rarely used; it is
+the chip a young patch fills *first*, because a community inside its tenure
+window lapses its early votes and rejects nothing. And the cost was never the
+tab — it was that the one word this ADR says not to use about a lapse was
+printed on the drawer holding every one of them, which is the same mistake the
+banner, the row and the notice were each fixed for. The rows were taught the
+word and the filter above them was not.
+
+The list now filters by **outcome** rather than by the status column.
+*Rejected* means `status = 'rejected'` and a state that is neither `lapsed`
+nor `unsettled` — the members answered no. A fourth chip, **Not decided**,
+carries both absences: the vote that missed quorum at close and the contest
+that seated nobody (docs/adr/051's holdover), which are the same event under
+two names and belong in one drawer. No schema moves; `status` is still the
+four the CHECK allows and `state` is still where the truth is. Only the query
+learned to read the second column, which is what every surface above it had
+already been taught to do.

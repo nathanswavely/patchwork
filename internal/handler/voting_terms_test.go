@@ -53,6 +53,7 @@ func TestVotingTerms_RulesEditDoesNotMoveARunningVote(t *testing.T) {
 		admin, adminToken := createTestUser(t, db, "vt_admin1", "member")
 		member, memberToken := createTestUser(t, db, "vt_member1", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Terms One", "terms-one", "open")
+		predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		createTestMembership(t, db, member.ID, nodeID, "member", "active")
 		setNodeRules(t, db, nodeID, `{"decision_method":"majority","quorum_percent":0,"min_voting_tenure_days":0}`)
@@ -73,6 +74,7 @@ func TestVotingTerms_RulesEditDoesNotMoveARunningVote(t *testing.T) {
 		admin, adminToken := createTestUser(t, db, "vt_admin2", "member")
 		member, memberToken := createTestUser(t, db, "vt_member2", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Terms Two", "terms-two", "open")
+		predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		createTestMembership(t, db, member.ID, nodeID, "member", "active")
 		setNodeRules(t, db, nodeID, `{"decision_method":"majority","quorum_percent":0,"min_voting_tenure_days":30}`)
@@ -175,6 +177,7 @@ func TestVotingTerms_NeedsVoteAsksPerProposal(t *testing.T) {
 	admin, adminToken := createTestUser(t, db, "vt_hub_admin", "member")
 	member, memberToken := createTestUser(t, db, "vt_hub_member", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Terms Hub", "terms-hub", "open")
+	predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, member.ID, nodeID, "member", "active")
 

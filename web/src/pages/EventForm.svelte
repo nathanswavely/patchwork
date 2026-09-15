@@ -1,7 +1,7 @@
 <script>
   import { X } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
-  import { toZonedInputValue, fromZonedInputValue, sameZoneAsViewer } from '../lib/datetime.js';
+  import { toZonedInputValue, fromZonedInputValue, sameZoneAsViewer, isPlaceZone } from '../lib/datetime.js';
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import VocabLabel from '../components/VocabLabel.svelte';
   import WorkspaceSearch from '../components/WorkspaceSearch.svelte';
@@ -26,7 +26,6 @@
   let location = $state('');
   let startsAt = $state('');
   let endsAt = $state('');
-  let recurrence = $state('');
   // A flyer or show photo, held wherever the patch already keeps it
   // (docs/adr/007). The description is required alongside it, and the server
   // refuses the pair without one.
@@ -54,17 +53,12 @@
   let patchTimezone = $state('');
   let zoneOverridden = $state(false);
 
-  // Whether a typed zone is one this browser can resolve. The server checks
-  // too and is the authority; this is so a typo is visible before a save
-  // round trip rather than after it.
-  function isValidZone(tz) {
-    try {
-      new Intl.DateTimeFormat('en-US', { timeZone: tz });
-      return true;
-    } catch {
-      return false;
-    }
-  }
+  // Whether a typed zone names a place this browser can resolve. Shared
+  // with patch settings and matched by the server, which is the authority;
+  // this is so a typo is visible before a save round trip rather than
+  // after it. A fixed-offset name like EST is refused here too — see
+  // isPlaceZone.
+  const isValidZone = isPlaceZone;
 
   // What zone this event would get from its patch alone. Fetched rather
   // than assumed: an event payload's zone arrives already resolved, so an
@@ -120,7 +114,6 @@
       timezone = event.timezone || '';
       startsAt = toZonedInputValue(event.starts_at, timezone);
       endsAt = toZonedInputValue(event.ends_at, timezone);
-      recurrence = event.recurrence || '';
       hostingPatch = {
         id: event.node_id,
         name: event.node_name || '',
@@ -250,7 +243,8 @@
     if (!title.trim()) return 'Title is required';
     if (!nodeId) return 'Please select a patch';
     if (!startsAt) return 'Start date/time is required';
-    if (timezone && !isValidZone(timezone)) return 'Timezone must be an IANA name, like America/New_York';
+    if (timezone && !isValidZone(timezone))
+      return 'Timezone must name a place, like America/New_York. A fixed-offset name like EST is an hour wrong for half the year.';
     return '';
   }
 
@@ -274,7 +268,6 @@
         // Sent only when it differs from what the patch would supply, so an
         // ordinary event stays inheriting rather than freezing a copy.
         timezone: timezone && timezone !== patchTimezone ? timezone : undefined,
-        recurrence: recurrence || undefined,
         image_url: imageUrl.trim(),
         image_alt: imageAlt.trim(),
         event_url: eventUrl.trim(),
@@ -336,16 +329,33 @@
           </div>
         </div>
       {:else}
-      <h1>{!isEdit && lockSlug ? 'Suggest an' : isEdit ? 'Edit' : 'Create'} <VocabLabel term="event" /></h1>
-      <p class="muted" style="margin-bottom: 1.5rem;">
-        {#if isEdit}
-          Update your event details.
-        {:else if lockSlug}
+      <!-- The heading follows who is posting, not which door they came in
+           through (docs/adr/026): a member or admin of the patch posts
+           directly, and only an outsider's event is held for review. Both
+           reach this form from the patch page, and an admin whose own form
+           said "will be reviewed" was reading somebody else's sentence.
+           `willReview` is false until the locked patch has loaded, so the
+           heading waits for it rather than flipping mid-load. -->
+      {#if isEdit}
+        <h1>Edit <VocabLabel term="event" /></h1>
+        <p class="muted" style="margin-bottom: 1.5rem;">Update your event details.</p>
+      {:else if lockSlug && !hostingPatch && !error}
+        <h1>New <VocabLabel term="event" /></h1>
+        <p class="muted" style="margin-bottom: 1.5rem;">Loading patch...</p>
+      {:else if lockSlug && willReview}
+        <h1>Suggest an <VocabLabel term="event" /></h1>
+        <p class="muted" style="margin-bottom: 1.5rem;">
           Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.
-        {:else}
-          Schedule a new event for your community.
-        {/if}
-      </p>
+        </p>
+      {:else if lockSlug}
+        <h1>Create <VocabLabel term="event" /></h1>
+        <p class="muted" style="margin-bottom: 1.5rem;">
+          Add an event for {hostingPatch?.name || 'this patch'}. It appears as soon as you save it.
+        </p>
+      {:else}
+        <h1>Create <VocabLabel term="event" /></h1>
+        <p class="muted" style="margin-bottom: 1.5rem;">Schedule a new event for your community.</p>
+      {/if}
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div class="field">
@@ -482,7 +492,7 @@
               An IANA name. Clear it to go back to
               {patchTimezone ? patchTimezone.replace(/_/g, ' ') : "the patch's timezone"}.
               {#if timezone && !isValidZone(timezone)}
-                <span class="zone-invalid">Not a timezone this quilt knows.</span>
+                <span class="zone-invalid">Not a place this quilt keeps time in. Try America/New_York.</span>
               {/if}
             </p>
           {:else}
@@ -490,17 +500,6 @@
               This event is in a different timezone
             </button>
           {/if}
-        </div>
-
-        <div class="field">
-          <label for="recurrence">Recurrence</label>
-          <select id="recurrence" bind:value={recurrence} disabled={submitting}>
-            <option value="">One-time</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="biweekly">Every Two Weeks</option>
-            <option value="monthly">Monthly</option>
-          </select>
         </div>
 
         {#if error}

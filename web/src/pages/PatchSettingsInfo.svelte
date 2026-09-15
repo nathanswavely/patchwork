@@ -7,6 +7,7 @@
   import TagPicker from '../components/TagPicker.svelte';
   import MapLocationPicker from '../components/MapLocationPicker.svelte';
   import { hasMapLocation, formatCoord } from '../lib/mapLocation.js';
+  import { isPlaceZone } from '../lib/datetime.js';
   import { suggestPlace, worthLookingUp } from '../lib/placeSuggestion.js';
 
   const patch = getContext('patch');
@@ -154,20 +155,59 @@
     tags = Array.isArray(node?.tags) ? [...node.tags] : [];
   }
 
+  // Changing this patch's zone changes what time its events say
+  // (docs/adr/067: the stored instant and the wall clock it reads as are
+  // different things). The events that inherit the patch's zone do not
+  // move; their readings do — four rehearsals typed as 7pm start saying
+  // 2pm. The server refuses to guess which was meant and answers 409 with
+  // the count, and this is the question it asks.
+  let zoneChoice = $state(null);
+  let zoneSaving = $state('');
+
   // Checked before the round trip so a typo is visible where it was typed.
   // The server validates too and is the authority; a zone it cannot resolve
   // would silently hand every event in this patch the quilt's clock instead.
+  // A fixed-offset name like EST is refused as well — it is not a place,
+  // and it is an hour wrong for half the year.
   async function saveTimezone(newValue) {
     const tz = (newValue || '').trim();
-    if (tz) {
-      try {
-        new Intl.DateTimeFormat('en-US', { timeZone: tz });
-      } catch {
-        showToast('That is not a timezone this quilt knows', 'error');
+    if (tz && !isPlaceZone(tz)) {
+      showToast('That is not a place this quilt keeps time in. Try America/New_York.', 'error');
+      return;
+    }
+    try {
+      await saveField('timezone', tz);
+    } catch (e) {
+      if (e?.status === 409 && e?.data?.code === 'timezone_events_undecided') {
+        zoneChoice = { ...e.data, timezone: tz };
         return;
       }
+      showToast(e.message || 'Failed to save the timezone', 'error');
     }
-    await saveField('timezone', tz);
+  }
+
+  async function resolveZoneChange(mode) {
+    zoneSaving = mode;
+    try {
+      const result = await api(`nodes/${slug}`, {
+        method: 'PATCH',
+        body: { timezone: zoneChoice.timezone, timezone_events: mode },
+      });
+      const moved = result?.timezone_change?.events_moved ?? 0;
+      const affected = result?.timezone_change?.events_affected ?? 0;
+      showToast(
+        mode === 'keep_clock'
+          ? `Timezone saved. ${moved} event${moved === 1 ? '' : 's'} kept ${moved === 1 ? 'its' : 'their'} listed time.`
+          : `Timezone saved. ${affected} event${affected === 1 ? '' : 's'} stayed put and now read in ${zoneChoice.to.replace(/_/g, ' ')}.`,
+        'success'
+      );
+      zoneChoice = null;
+      patch.value.reload();
+    } catch (e) {
+      showToast(e.message || 'Failed to save the timezone', 'error');
+    } finally {
+      zoneSaving = '';
+    }
   }
 
   async function saveField(field, newValue) {
@@ -290,6 +330,40 @@
     }
   }
 
+  // When the group started (docs/adr/098). A date input rather than an
+  // InlineEdit, which has no date type. Blank means the group started with
+  // its patch; a date means it predates it, and the voting tenure the patch
+  // may require is capped at that age.
+  let foundedAt = $state('');
+  let foundedSeeded = $state('');
+  let savingFounded = $state(false);
+  let foundedError = $state('');
+  const today = new Date().toISOString().slice(0, 10);
+
+  $effect(() => {
+    if (node?.id && foundedSeeded !== node.id) {
+      foundedAt = node.founded_at || '';
+      foundedSeeded = node.id;
+    }
+  });
+
+  let foundedDirty = $derived(foundedAt !== (node?.founded_at || ''));
+
+  async function saveFoundedAt(value) {
+    savingFounded = true;
+    foundedError = '';
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { founded_at: value } });
+      showToast('Saved', 'success');
+      foundedSeeded = '';
+      patch.value.reload();
+    } catch (e) {
+      foundedError = e.message || 'Could not save that date';
+    } finally {
+      savingFounded = false;
+    }
+  }
+
   async function removeLink(index) {
     const updatedLinks = links.filter((_, i) => i !== index);
     savingLinks = true;
@@ -377,10 +451,60 @@
       placeholder={instanceTimezone || 'e.g. America/New_York'}
     />
     <p class="field-hint muted">
-      An IANA name. Leave it empty to follow the quilt{instanceTimezone
+      An IANA place name. Leave it empty to follow the quilt{instanceTimezone
         ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`
         : ''}.
     </p>
+
+    <!--
+      The question docs/adr/067 makes unavoidable. Two answers, both
+      defensible, neither a default: re-anchoring rewrites stored instants
+      and leaving them alone rewrites every reading. Whichever is chosen,
+      the toast says what happened and to how many.
+    -->
+    {#if zoneChoice}
+      <div class="zone-choice">
+        <p class="zone-choice-lead">
+          {zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}
+          follow{zoneChoice.events_affected === 1 ? 's' : ''} this patch's timezone.
+          Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}
+          changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.
+        </p>
+        <div class="zone-choice-actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            disabled={!!zoneSaving}
+            onclick={() => resolveZoneChange('keep_clock')}
+          >{zoneSaving === 'keep_clock'
+              ? 'Moving...'
+              : zoneChoice.events_affected === 1
+                ? 'Keep the listed time'
+                : 'Keep the listed times'}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            disabled={!!zoneSaving}
+            onclick={() => resolveZoneChange('keep_instant')}
+          >{zoneSaving === 'keep_instant'
+              ? 'Saving...'
+              : zoneChoice.events_affected === 1
+                ? 'Leave the event where it is'
+                : 'Leave the events where they are'}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            disabled={!!zoneSaving}
+            onclick={() => (zoneChoice = null)}
+          >Cancel</button>
+        </div>
+        <p class="muted zone-choice-hint">
+          Keeping listed times moves each event to the new zone, so 7pm stays 7pm.
+          Leaving them where they are keeps the exact moment and changes the clock time shown.
+          Events with a timezone of their own, and events from a calendar feed, are not touched.
+        </p>
+      </div>
+    {/if}
 
     <!-- Map location (issue #4). Sharing a section with the address does
          not make them one claim: an address never implies a map position. -->
@@ -438,6 +562,41 @@
     onSave={(v) => saveField('website', v)}
     placeholder="https://..."
   />
+
+  <!-- When the group started (docs/adr/098). Its own field because the
+       voting tenure a patch may require is capped at its age, and a group
+       older than its patch should be able to say so. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Founded</span>
+    </div>
+    <input
+      class="founded-input"
+      type="date"
+      max={today}
+      bind:value={foundedAt}
+      disabled={savingFounded}
+    />
+    <p class="muted tags-hint">
+      When this group started, if it predates its patch. Voting tenure is never
+      required to be longer than the group has existed.
+    </p>
+    {#if foundedError}<p class="image-error">{foundedError}</p>{/if}
+    {#if foundedDirty}
+      <div class="tags-actions">
+        <button
+          class="btn btn-primary btn-sm"
+          onclick={() => saveFoundedAt(foundedAt)}
+          disabled={savingFounded}
+        >{savingFounded ? 'Saving...' : 'Save'}</button>
+        <button
+          class="btn btn-secondary btn-sm"
+          onclick={() => { foundedAt = node?.founded_at || ''; foundedError = ''; }}
+          disabled={savingFounded}
+        >Cancel</button>
+      </div>
+    {/if}
+  </div>
 
   <!-- The image and its description save together, unlike every other field
        here. They are only valid as a pair (docs/adr/007), so two separate
@@ -643,6 +802,30 @@
     font-size: 0.85rem;
   }
 
+  .zone-choice {
+    margin: -0.5rem 0 1.25rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+  }
+
+  .zone-choice-lead {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .zone-choice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .zone-choice-hint {
+    margin: 0.75rem 0 0;
+    font-size: 0.85rem;
+  }
+
   .settings-info {
     max-width: var(--pw-measure-narrow);
   }
@@ -685,6 +868,16 @@
 
   .image-section .btn {
     align-self: flex-start;
+  }
+
+  .founded-input {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-family: inherit;
   }
 
   .moved-input {

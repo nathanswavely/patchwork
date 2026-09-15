@@ -660,6 +660,16 @@ muted where a standing is not.
 _Avoid_: standing control (a request is not standing), pending badge (a
 badge is not clickable), cancel button
 
+**Invited**:
+A person an admin has asked into a patch by username and who has not yet
+answered (docs/adr/098). The requester's mirror image: the ask runs the
+other way and the answer is theirs. Not a member and not a requester — no
+role, no thread, absent from every count, listing, audience and electorate
+until they accept; declining leaves no row. The membership status is
+`invited`; a request stays `pending`.
+_Avoid_: pending (that is a request nobody answered), requested, pending
+invite, invitee (in UI copy — say "invited")
+
 **Trusted contributor**:
 An instance-level grant — given and revoked by the instance admin, never
 earned automatically — that lets a person record events on unclaimed patches
@@ -920,6 +930,19 @@ and votes are refused after the window as before. An election that settles
 nothing is not lapsed but **unsettled** (holdover, docs/adr/051).
 _Avoid_: rejected, failed (both say the members said no), expired (says
 the proposal went stale rather than that the vote did), abandoned
+
+**Unsettled**:
+An election that decided nothing (`state = 'unsettled'`, docs/adr/051's
+holdover): nobody stood, or quorum went unmet, or no candidate was
+approved. The sitting council keeps serving — "directors serve until
+their successors are elected and qualified" — so the record says the
+contest settled nothing, never that a council was turned down. The
+election-shaped sibling of **lapsed**, and it carries `status =
+'rejected'` for the same reason and with the same rule: read `state`
+first. A contest that settles nothing seats nobody, so nobody in it is
+**seated**, however the approvals fell.
+_Avoid_: failed, rejected, void, cancelled (nothing was called off — the
+contest ran and ended)
 
 **Attestation**:
 A record of a decision the community made at a venue that isn't
