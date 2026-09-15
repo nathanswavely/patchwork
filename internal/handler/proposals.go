@@ -534,6 +534,34 @@ func electorateFilter(db *database.DB, nodeID, prefix string, gc model.Governanc
 	return cond, args
 }
 
+// voteEligibleAt is the day a member still inside the tenure window may
+// first cast a ballot here, as a date, or "" when tenure is not what is
+// stopping them — they may already vote, they are not in the room at all,
+// or this patch has no tenure bar in force.
+//
+// The page needs this because the frozen terms carry the *configured*
+// number and the gate enforces the *effective* one (docs/adr/098), so a
+// page reading `min_voting_tenure_days` recites a rule that may not be
+// running. Five simulated members read "voting requires 30 days'
+// membership" under a button that took their vote; one pressed it and
+// could not tell whether it had counted.
+func voteEligibleAt(db *database.DB, nodeID, userID string, gc model.GovernanceConfig) string {
+	days := effectiveTenureDays(db, nodeID, gc)
+	if days <= 0 || userID == "" {
+		return ""
+	}
+	var eligible, today string
+	err := db.QueryRow(
+		`SELECT date(joined_at, ?), date('now') FROM memberships
+		 WHERE node_id = ? AND user_id = ? AND `+electorateMembership(""),
+		fmt.Sprintf("+%d days", days), nodeID, userID,
+	).Scan(&eligible, &today)
+	if err != nil || eligible <= today {
+		return ""
+	}
+	return eligible
+}
+
 // mayPropose reports whether one person may author a proposal on a node.
 //
 // It is electorateMembership without the tenure clause, and deliberately so:
@@ -1077,11 +1105,20 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			// than leaving a refused voter to guess (docs/adr/047). Fixed when
 			// voting opened — which is created_at, already in this payload.
 			"voting_terms": gc,
-			"state":        p.State,
-			"applied_at":   appliedAt,
-			"advisory":     advisory,
-			"can_decide":   canDecide,
-			"declined_by":  declinedBy,
+			// The tenure actually in force, which on a patch younger than its
+			// own bar is none (docs/adr/098). The page must say this number
+			// and never `voting_terms.min_voting_tenure_days`, or it recites a
+			// rule the gate is not running.
+			"tenure_days": effectiveTenureDays(db, p.NodeID, gc),
+			// And, for a member the tenure is still holding back, the day it
+			// stops: "you can vote from the 15th" is the whole answer to the
+			// question they are actually asking.
+			"vote_eligible_at": voteEligibleAt(db, p.NodeID, viewerID, gc),
+			"state":            p.State,
+			"applied_at":       appliedAt,
+			"advisory":         advisory,
+			"can_decide":       canDecide,
+			"declined_by":      declinedBy,
 		}
 
 		// Include amendment-specific fields if this is a governance amendment.

@@ -29,11 +29,17 @@
     // of the terms' two thresholds applies.
     advisory = false,
     proposalType = '',
+    // The tenure actually in force and, for a member still inside it, the
+    // day it lifts — both the server's answers (docs/adr/098). Never
+    // `terms.min_voting_tenure_days`: the frozen terms carry the number the
+    // patch configured, and a patch younger than that number is not running
+    // it, so the page was reciting a rule while the button took the vote.
+    tenureDays = 0,
+    voteEligibleAt = '',
     onVote = () => {},
   } = $props();
 
   let quorumPercent = $derived(terms?.quorum_percent || 0);
-  let tenureDays = $derived(terms?.min_voting_tenure_days || 0);
   // The amendment threshold applies to amendments and to nothing else —
   // resolveProposal reads it only for proposal_type 'amendment'. This used
   // to prefer it for every proposal, so an action proposal on a
@@ -84,13 +90,31 @@
     return explanations[threshold] || threshold;
   });
 
+  // The day the tenure bar lifts for this viewer, in words. A date answers
+  // the question a waiting member is actually asking; the rule in the
+  // abstract does not.
+  let eligibleDate = $derived(
+    voteEligibleAt
+      ? new Date(`${voteEligibleAt}T00:00:00`).toLocaleDateString(undefined, {
+          month: 'long',
+          day: 'numeric',
+        })
+      : ''
+  );
+
   let termsLine = $derived.by(() => {
     if (!terms) return '';
     const when = openedAt
       ? new Date(openedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
       : '';
     const head = when ? `Rules as of ${when}` : 'Rules fixed when voting opened';
-    if (tenureDays > 0) {
+    // Only the tenure in force, and only when it is holding somebody back.
+    // A member who may already vote does not need the rule recited at them,
+    // and a patch too young to run the rule must not print it at all.
+    if (eligibleDate) {
+      return `${head} — you can vote here from ${eligibleDate}`;
+    }
+    if (tenureDays > 0 && !canVote) {
       return `${head} — voting requires ${tenureDays} days' membership`;
     }
     return head;
