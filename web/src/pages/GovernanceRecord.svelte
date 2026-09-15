@@ -79,9 +79,15 @@
       return e.actor ? `Applied by ${e.actor}.` : 'Applied without a vote.';
     }
     if (e.kind === 'election') {
+      // Not "the council kept serving" (docs/adr/106). This line is read
+      // months later and cannot know what the council was on the day; five
+      // members of a co-op with no admins at all read it five times down one
+      // page, beside a council block saying nobody held the role. What the
+      // record can always say truthfully is what the *contest* did, and the
+      // council block two inches away says what the council is.
       return e.outcome === 'seated'
         ? 'The electorate seated a council.'
-        : 'Settled nothing. The council kept serving.';
+        : 'Settled nothing. Nobody was elected.';
     }
     if (e.kind === 'council') {
       const who = e.names?.length ? e.names.join(', ') : '';

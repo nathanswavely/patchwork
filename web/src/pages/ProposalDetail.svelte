@@ -169,6 +169,7 @@
       {canDecide}
       declinedBy={proposal.declined_by || ''}
       electionPhase={proposal.election_phase || ''}
+      nominationsCloseAt={proposal.nominations_close_at || null}
       onStateChange={handleStateChange}
     />
 

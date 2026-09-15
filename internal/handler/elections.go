@@ -379,6 +379,16 @@ func AddCandidate(db *database.DB) http.HandlerFunc {
 // This is where docs/adr/047's photograph is taken for an election: the terms
 // must be fixed when the vote starts, not when the nomination period opened,
 // or a slate could be assembled under one set of rules and judged by another.
+//
+// It is also where a contest nobody stood in ends (docs/adr/106). There is
+// nothing for a ballot to be about, and opening one anyway called a whole
+// electorate to an empty page: two simulated contests sent twelve people
+// "Voting is open. Approve as many candidates as you like" over slates with
+// no names on them, then ran a fortnight to reach the conclusion that was
+// already true. A candidate who had twice failed to find a way onto a board
+// got one of them: "If I *had* clicked that one at the time, I'd have
+// arrived at an empty list and concluded, again, that this thing doesn't
+// work."
 func OpenElectionVoting(db *database.DB, proposalID string) bool {
 	var nodeID, nominationsClose, votingEnds string
 	var duration int
@@ -393,14 +403,25 @@ func OpenElectionVoting(db *database.DB, proposalID string) bool {
 		return false // still nominating
 	}
 
+	var slug, nodeName string
+	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
+
+	// An empty slate settles here rather than in a fortnight. The outcome is
+	// identical — holdover, nobody seated, the chairs released — and it is
+	// reached without inviting anybody to a ballot that cannot have a result.
+	var standing int
+	db.QueryRow(`SELECT COUNT(*) FROM election_candidates WHERE proposal_id = ?`, proposalID).Scan(&standing)
+	if standing == 0 {
+		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName, "Nobody stood.")
+		return false
+	}
+
 	var gcJSON string
 	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
 	ends := time.Now().UTC().Add(time.Duration(duration) * time.Hour).Format("2006-01-02T15:04:05.000Z")
 	db.Exec(`UPDATE proposals SET voting_ends_at = ?, voting_terms = ?,
 	         updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id = ?`, ends, gcJSON, proposalID)
 
-	var slug, nodeName string
-	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
 	notify(notifications.Event{
 		Type: notifications.ProposalVoting, NodeID: nodeID, NodeSlug: slug, NodeName: nodeName,
 		EntityID: proposalID,
