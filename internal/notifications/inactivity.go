@@ -324,11 +324,14 @@ func fillEmptyCouncil(n *Notifier, nodeID, slug, name string, rules governanceRu
 		// brought forward and never pushed back. Here every chair is empty,
 		// so there is no mandate to shorten at all.
 		//
-		// And only when the whole council is empty, which is the condition
-		// this branch already stands on. A contest opened for *some* of a
-		// council's chairs would have seatWinners refill the chairs in
-		// created order and vacate the rest, which on a partly-held council
-		// unseats colleagues the electorate never voted out.
+		// Every chair, which is safe because every chair is empty — the
+		// condition this branch already stands on. It had to be: a contest
+		// opened for *some* of a council's chairs used to refill them in
+		// created order and vacate the rest, unseating colleagues the
+		// electorate never voted out. docs/adr/103 fixed that by having a
+		// contest name its chairs, so a partial contest is now an ordinary
+		// thing; this branch still moves them all, because here they are all
+		// empty and all equally overdue.
 		if advanceContests(n.DB, nodeID, rules) > 0 {
 			announceCouncilEmpty(n, nodeID, slug, name,
 				"Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and that election is now due: it opens shortly, and any member of this patch may stand.")

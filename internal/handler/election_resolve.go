@@ -2,6 +2,7 @@ package handler
 
 import (
 	"log"
+	"sort"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -38,6 +39,10 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	var slug, nodeName string
 	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
 
+	// The chairs this contest is for (docs/adr/103). Everything below touches
+	// these and nothing else.
+	chairs := contestedSeats(db, nodeID, proposalID, seats)
+
 	tally := tallyElection(db, proposalID)
 	if len(tally) == 0 {
 		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName,
@@ -68,7 +73,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	// happened to stand.
 	var winners []electionTallyRow
 	for _, t := range tally {
-		if t.Approvals == 0 || len(winners) == seats {
+		if t.Approvals == 0 || len(winners) == len(chairs) {
 			break
 		}
 		winners = append(winners, t)
@@ -79,7 +84,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 		return true
 	}
 
-	seatWinners(db, nodeID, slug, nodeName, proposalID, winners, electionTermEnd(gc))
+	seatWinners(db, nodeID, slug, nodeName, proposalID, winners, chairs, electionTermEnd(gc))
 
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	db.Exec(`UPDATE proposals SET status = 'approved', state = 'in_effect', applied_at = ?, updated_at = ?
@@ -104,6 +109,10 @@ func closeElectionUnsettled(db *database.DB, proposalID, nodeID, slug, nodeName,
 	// record beside it correctly said it settled nothing. A simulated
 	// candidate read that as the community turning him down.
 	db.Exec(`UPDATE proposals SET status = 'rejected', state = 'unsettled', updated_at = ? WHERE id = ?`, now, proposalID)
+	// The chairs go back to being ordinary chairs. Holdover means nothing
+	// happened to them, and a chair still marked as being decided would show
+	// a contest on the governance page that has already closed.
+	db.Exec(`UPDATE seats SET contested_in = NULL WHERE contested_in = ?`, proposalID)
 	auth.LogAuditEvent(db, "", "election.unsettled", "proposal", proposalID,
 		`{"node_id":"`+nodeID+`"}`, "")
 	notify(notifications.Event{
@@ -126,39 +135,97 @@ func electionTermEnd(gc model.GovernanceConfig) string {
 	return time.Now().UTC().AddDate(0, gc.AdminTermMonths, 0).Format("2006-01-02")
 }
 
-// seatWinners fills the council. Winners take seats and the admin role; admins
-// the electorate did not return step down, which is the other half of what an
-// election decides.
+// contestedSeats is which chairs this contest decides, oldest chair first —
+// the order winners are seated in.
+//
+// The set is frozen when the contest opens (docs/adr/103). A contest that
+// opened before `seats.contested_in` existed names none, so it is
+// reconstructed the way the calendar picked it: the chairs whose terms end
+// soonest, as many as the contest counts. That is a reading of history, not a
+// guess about intent — `scheduleFor` chose exactly that set, in exactly that
+// order, and a contest in flight when a server upgrades has to resolve
+// somehow.
+func contestedSeats(db *database.DB, nodeID, proposalID string, seats int) []string {
+	chairs := seatsMarked(db, proposalID)
+	if len(chairs) > 0 {
+		return chairs
+	}
+	if seats <= 0 {
+		return nil
+	}
+	rows, err := db.Query(`SELECT id FROM seats WHERE node_id = ?
+	                       ORDER BY COALESCE(term_ends_at,'9999-12-31') ASC, created_at ASC
+	                       LIMIT ?`, nodeID, seats)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			chairs = append(chairs, id)
+		}
+	}
+	return chairs
+}
+
+// seatsMarked lists the chairs a contest claimed when it opened.
+func seatsMarked(db *database.DB, proposalID string) []string {
+	rows, err := db.Query(`SELECT id FROM seats WHERE contested_in = ? ORDER BY created_at ASC`, proposalID)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+// seatWinners fills the chairs the contest was for. Winners take those chairs
+// and the admin role; whoever held one of them and was not returned steps
+// down, which is the other half of what an election decides.
+//
+// **Only those chairs.** This used to refill the council in created order and
+// step down every admin it had not seated, which is right for a contest
+// covering the whole council and wrong for every other kind. A council with
+// one chair ending in March and two running to the following year put its
+// March chair up, and the resolution seated the winner in the *oldest* chair,
+// emptied the other two, and removed two admins nobody had voted out
+// (docs/adr/103). Staggering is what docs/adr/051 put the clock on the seat
+// for, and SetSeatTerm is the box that makes it; the contest had to learn
+// which chairs it was for.
 //
 // The last-admin floor still holds. Every winner becomes an admin before
 // anyone steps down, so a resolved election cannot empty a patch.
-func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, winners []electionTallyRow, termEnds string) {
-	seated := map[string]bool{}
-
-	// Reuse existing seats before making new ones: a seat outlives its holder
-	// (docs/adr/051), so an election refills the council's chairs rather than
-	// replacing the furniture.
-	var existing []string
-	rows, err := db.Query(`SELECT id FROM seats WHERE node_id = ? ORDER BY created_at ASC`, nodeID)
-	if err == nil {
-		for rows.Next() {
-			var id string
-			if rows.Scan(&id) == nil {
-				existing = append(existing, id)
-			}
+func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, winners []electionTallyRow, chairs []string, termEnds string) {
+	// Who sat in a contested chair going in. Read before anything is written:
+	// these are the people the contest is deciding about, and they are the
+	// only people it may unseat.
+	incumbent := map[string]bool{}
+	for _, seatID := range chairs {
+		var holder string
+		db.QueryRow(`SELECT COALESCE(holder_id,'') FROM seats WHERE id = ?`, seatID).Scan(&holder)
+		if holder != "" {
+			incumbent[holder] = true
 		}
-		rows.Close()
 	}
 
+	// Reuse the contested chairs rather than making new ones: a seat outlives
+	// its holder (docs/adr/051), so an election refills the chairs it was for
+	// rather than replacing the furniture.
+	seated := map[string]bool{}
 	for i, wnr := range winners {
-		seated[wnr.UserID] = true
-		if i < len(existing) {
-			db.Exec(`UPDATE seats SET holder_id = ?, term_ends_at = ? WHERE id = ?`,
-				wnr.UserID, nullIfEmpty(termEnds), existing[i])
-		} else {
-			db.Exec(`INSERT INTO seats (id, node_id, holder_id, term_ends_at) VALUES (?, ?, ?, ?)`,
-				auth.NewUUIDv7(), nodeID, wnr.UserID, nullIfEmpty(termEnds))
+		if i >= len(chairs) {
+			break // more winners than chairs is not something a tally can produce
 		}
+		seated[wnr.UserID] = true
+		db.Exec(`UPDATE seats SET holder_id = ?, term_ends_at = ?, contested_in = NULL WHERE id = ?`,
+			wnr.UserID, nullIfEmpty(termEnds), chairs[i])
 
 		var role string
 		db.QueryRow(`SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'`,
@@ -179,25 +246,29 @@ func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, win
 		})
 	}
 
-	// A seat beyond the ones just filled is vacant: its holder was not
-	// returned, and the chair stays for the next contest.
-	for i := len(winners); i < len(existing); i++ {
-		db.Exec(`UPDATE seats SET holder_id = NULL WHERE id = ?`, existing[i])
+	// A contested chair beyond the ones just filled is vacant: it was put to
+	// the electorate and nobody won it. The chair stays for the next contest.
+	for i := len(winners); i < len(chairs); i++ {
+		db.Exec(`UPDATE seats SET holder_id = NULL, contested_in = NULL WHERE id = ?`, chairs[i])
 	}
 
-	sitting, err := db.Query(`SELECT user_id FROM memberships
-	                          WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID)
-	if err != nil {
-		return
-	}
+	// Step down the incumbents the electorate did not return — and only them.
+	// An admin holding an uncontested chair was not on this ballot and keeps
+	// both chair and role.
 	var toStepDown []string
-	for sitting.Next() {
-		var uid string
-		if sitting.Scan(&uid) == nil && !seated[uid] {
+	for uid := range incumbent {
+		if seated[uid] {
+			continue
+		}
+		// Somebody who also holds a chair this contest was not for stays: the
+		// role follows the chairs, and they still have one.
+		var stillSeated int
+		db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ? AND holder_id = ?`, nodeID, uid).Scan(&stillSeated)
+		if stillSeated == 0 {
 			toStepDown = append(toStepDown, uid)
 		}
 	}
-	sitting.Close()
+	sort.Strings(toStepDown) // a stable order, so the last-admin floor is not a coin toss
 
 	for _, uid := range toStepDown {
 		var admins int
