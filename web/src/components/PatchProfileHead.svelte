@@ -30,7 +30,7 @@
   import PatchRelationship from './PatchRelationship.svelte';
   import PatchOverflow from './PatchOverflow.svelte';
   import MovedNotice from './MovedNotice.svelte';
-  import { getPendingMembershipSlugs, getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
+  import { getPendingMembershipSlugs, getInvitedMembershipSlugs, getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
   import { GearSix } from 'phosphor-svelte';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
 
@@ -70,6 +70,10 @@
   let isBanned = $derived(loaded ? loaded.isBanned : false);
   let hasStanding = $derived(['follower', 'member', 'admin'].includes(membershipRole));
   let requestPending = $derived(getPendingMembershipSlugs().has(slug));
+  // An unanswered invitation (docs/adr/098): like a request, it lives in
+  // the viewer's own store and never in the node payload, which reports
+  // standing only for an active row.
+  let invited = $derived(getInvitedMembershipSlugs().has(slug));
 
   $effect(() => {
     if (slug) loadNode();
@@ -245,6 +249,7 @@
       {isBanned}
       {membershipRole}
       {requestPending}
+      {invited}
       {liningStatus}
       onChanged={reloadStanding}
     />

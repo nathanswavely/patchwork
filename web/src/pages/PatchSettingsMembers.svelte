@@ -60,16 +60,52 @@
     }
   });
 
+  // Invitations (docs/adr/098): the door an invite-only patch never had.
+  // An admin asks by username; the person answers. The list rides on the
+  // members payload under its own key, for the patch's admins only.
+  let invited = $state([]);
+  let inviteUsername = $state('');
+  let inviting = $state(false);
+
   async function loadMembers() {
     loadingMembers = true;
     try {
       const data = await api(`nodes/${slug}/members`);
       members = data.items || data || [];
+      invited = data.invited || [];
       roleEdits = {};
     } catch {
       members = [];
+      invited = [];
     } finally {
       loadingMembers = false;
+    }
+  }
+
+  async function inviteMember(e) {
+    e?.preventDefault?.();
+    const username = inviteUsername.trim();
+    if (!username || inviting) return;
+    inviting = true;
+    try {
+      await api(`nodes/${slug}/invitations`, { method: 'POST', body: { username } });
+      showToast('Invitation sent', 'success');
+      inviteUsername = '';
+      await loadMembers();
+    } catch (err) {
+      showToast(err.message || 'Could not invite', 'error');
+    } finally {
+      inviting = false;
+    }
+  }
+
+  async function rescindInvitation(userId) {
+    try {
+      await api(`nodes/${slug}/invitations/${userId}`, { method: 'DELETE' });
+      showToast('Invitation rescinded', 'success');
+      await loadMembers();
+    } catch (err) {
+      showToast(err.message || 'Could not rescind invitation', 'error');
     }
   }
 
@@ -233,6 +269,52 @@
               <!-- The join sheet's optional intro note (docs/adr/040) — quoted, never editable here. -->
               <p class="join-message">&ldquo;{member.join_message}&rdquo;</p>
             {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </section>
+
+  <!-- Invitations (docs/adr/098). Above the roster because it is how the
+       roster grows on an invite-only patch; on any other it is one more
+       way in, and costs the same. -->
+  <section class="members-section">
+    <h3 class="section-heading">Invite a member</h3>
+    <form class="invite-form" onsubmit={inviteMember}>
+      <input
+        class="invite-input"
+        type="text"
+        placeholder="Username"
+        aria-label="Username to invite"
+        autocomplete="off"
+        bind:value={inviteUsername}
+        disabled={inviting}
+      />
+      <button class="btn btn-primary btn-sm" type="submit" disabled={inviting || !inviteUsername.trim()}>
+        Invite
+      </button>
+    </form>
+    <!-- The one thing the form cannot show: what pressing Invite does not
+         do. It asks; it never admits. -->
+    <p class="setting-desc muted">They're notified and join only if they accept.</p>
+
+    {#if !loadingMembers && invited.length > 0}
+      <h4 class="subheading">Invited</h4>
+      <ul class="member-list">
+        {#each invited as person (person.user_id)}
+          <li class="member-row">
+            <div class="member-info">
+              <span class="member-name">{person.display_name || person.username}</span>
+              <span class="badge badge-invited">invited</span>
+            </div>
+            <div class="member-actions">
+              <ConfirmAction
+                label="Rescind"
+                confirmLabel="Rescind"
+                variant="danger"
+                onConfirm={() => rescindInvitation(person.user_id)}
+              />
+            </div>
           </li>
         {/each}
       </ul>
@@ -421,6 +503,39 @@
   .badge-pending {
     background: var(--color-warning);
     color: var(--color-on-warning);
+  }
+
+  /* Invitations: the field and its button on one line, the list below. */
+  .invite-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 24rem;
+  }
+
+  .invite-input {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.55rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+  }
+
+  .subheading {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin: 1rem 0 0.4rem;
+  }
+
+  /* Invited is a wait, not a standing: the muted overlay, not a colour. */
+  .badge-invited {
+    background: var(--color-overlay);
+    color: var(--color-text-muted);
   }
 
   .badge-banned {

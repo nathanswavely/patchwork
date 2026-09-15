@@ -111,7 +111,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, public_member_list, moved_to, created_at, updated_at
+				notice_posting, notice_replies_default, public_member_list, moved_to, founded_at, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -174,6 +174,12 @@ func Tables() []Table {
 				// far end. def() so archives written before the column import
 				// as NULL, which is "hasn't moved".
 				def("moved_to", nil),
+				// When the group started (docs/adr/098). A fact about the
+				// community, like activated_at, and it decides who may vote:
+				// a fork that dropped it would drop the tenure bar a patch
+				// had deliberately kept. def() so archives written before the
+				// column import as NULL - "started with its row".
+				def("founded_at", nil),
 				c("created_at"), c("updated_at")),
 		},
 		{

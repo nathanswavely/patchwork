@@ -116,12 +116,35 @@ func TestElection_AdoptionOpensOne(t *testing.T) {
 		t.Errorf("voting must not be open during nominations, got %q", votingEnds)
 	}
 
-	// Idempotent — a second rules edit must not open a rival contest.
+	// The sitting council is seated before it is contested (docs/adr/098):
+	// one seat per admin, term already ended. Holdover made literal — the
+	// council serves until a successor is elected, and an overdue seat is
+	// what "until" looks like to the calendar. Without these, a contest
+	// that settled nothing left no seat behind and nothing was ever due.
+	today := time.Now().UTC().Format("2006-01-02")
+	var overdue int
+	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ? AND term_ends_at = ? AND holder_id IN (?, ?)`,
+		nodeID, today, admin.ID, second.ID).Scan(&overdue)
+	if overdue != 2 {
+		t.Errorf("expected both sitting admins holding overdue seats, got %d", overdue)
+	}
+	var audited int
+	db.QueryRow(`SELECT COUNT(*) FROM audit_log WHERE action = 'seat.holdover' AND entity_type = 'seat' AND user_id IS NULL`).Scan(&audited)
+	if audited != 2 {
+		t.Errorf("expected two actorless seat.holdover audit entries, got %d", audited)
+	}
+
+	// Idempotent — a second rules edit must not open a rival contest, nor
+	// seat the council twice.
 	handler.StartElectionOnAdoption(db, nodeID)
 	var count int
 	db.QueryRow(`SELECT COUNT(*) FROM proposals WHERE node_id = ? AND seats_contested > 0`, nodeID).Scan(&count)
 	if count != 1 {
 		t.Errorf("expected exactly one election, got %d", count)
+	}
+	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&count)
+	if count != 2 {
+		t.Errorf("expected the two seats untouched, got %d", count)
 	}
 }
 

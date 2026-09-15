@@ -184,10 +184,14 @@ func TestSweepProposals_IgnoresElections(t *testing.T) {
 }
 
 // A patch born under an elected template adopts elected leadership at
-// birth, and adoption starts an election (docs/adr/051). Creation never
-// fired that trigger, so a Formal co-op's founder held no seat and its
-// calendar never ran.
-func TestCreateNode_ElectedTemplateOpensFirstElection(t *testing.T) {
+// birth, and is seated rather than contested (docs/adr/098). The contest
+// docs/adr/097 opened here was one seat, opened the day the page was made,
+// attributed to the founder, and one the founder could not vote in — and
+// when it settled nothing there was still no seat, so nothing was ever due
+// and the calendar never ran again. The founder now holds a seat for one
+// term, and the calendar opens the first real election a lead time before
+// that term ends, the way it opens every one after.
+func TestCreateNode_ElectedTemplateSeatsTheFounder(t *testing.T) {
 	db := setupTestDB(t)
 	oldDir := governance.GetDataDir()
 	tmp := t.TempDir()
@@ -196,7 +200,7 @@ func TestCreateNode_ElectedTemplateOpensFirstElection(t *testing.T) {
 	if err := governance.InitInstanceRepo(tmp); err != nil {
 		t.Fatalf("init instance repo: %v", err)
 	}
-	_, token := createTestUser(t, db, "born-elected", "member")
+	founder, token := createTestUser(t, db, "born-elected", "member")
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/v1/nodes", middleware.AuthRequired(db, handler.CreateNode(db)))
 
@@ -214,23 +218,46 @@ func TestCreateNode_ElectedTemplateOpensFirstElection(t *testing.T) {
 		json.NewDecoder(w.Body).Decode(&node)
 		return node["id"].(string)
 	}
+	elections := func(nodeID string) int {
+		var n int
+		db.QueryRow(`SELECT COUNT(*) FROM proposals WHERE node_id = ? AND seats_contested > 0`, nodeID).Scan(&n)
+		return n
+	}
 
 	formal := create("Born Elected", "formal")
-	var elections, seats int
-	db.QueryRow(`SELECT COUNT(*), COALESCE(MAX(seats_contested),0) FROM proposals WHERE node_id = ? AND seats_contested > 0 AND status = 'open'`,
-		formal).Scan(&elections, &seats)
-	if elections != 1 || seats != 1 {
-		t.Errorf("formal template: want one open election for the founder's seat, got %d election(s) contesting %d", elections, seats)
+	if got := elections(formal); got != 0 {
+		t.Errorf("formal template: no election opens at birth, got %d", got)
 	}
-	var nominations string
-	db.QueryRow(`SELECT COALESCE(nominations_close_at,'') FROM proposals WHERE node_id = ? AND seats_contested > 0`, formal).Scan(&nominations)
-	if nominations == "" {
-		t.Error("the first election should open with a nomination window")
+	var seats int
+	var holder, termEnds string
+	db.QueryRow(`SELECT COUNT(*), COALESCE(MAX(holder_id),''), COALESCE(MAX(term_ends_at),'') FROM seats WHERE node_id = ?`,
+		formal).Scan(&seats, &holder, &termEnds)
+	if seats != 1 || holder != founder.ID {
+		t.Errorf("formal template: want one seat held by the founder, got %d seat(s) held by %q", seats, holder)
+	}
+	// Formal's term is 12 months; the founder's runs one term from today.
+	if want := time.Now().UTC().AddDate(0, 12, 0).Format("2006-01-02"); termEnds != want {
+		t.Errorf("founder's term ends %q, want %q", termEnds, want)
+	}
+	var audited int
+	db.QueryRow(`SELECT COUNT(*) FROM audit_log WHERE action = 'seat.founded' AND entity_type = 'seat' AND user_id = ?`,
+		founder.ID).Scan(&audited)
+	if audited != 1 {
+		t.Errorf("expected one seat.founded audit entry by the founder, got %d", audited)
+	}
+	// A council a year from its term end is not due: the calendar leaves a
+	// newborn patch alone.
+	handler.ScheduleDueElections(db)
+	if got := elections(formal); got != 0 {
+		t.Errorf("the calendar opened an election on a patch seated today: %d", got)
 	}
 
 	casual := create("Born Casual", "casual")
-	db.QueryRow(`SELECT COUNT(*) FROM proposals WHERE node_id = ? AND seats_contested > 0`, casual).Scan(&elections)
-	if elections != 0 {
-		t.Errorf("casual template (maintainer): expected no election, got %d", elections)
+	if got := elections(casual); got != 0 {
+		t.Errorf("casual template (maintainer): expected no election, got %d", got)
+	}
+	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ?`, casual).Scan(&seats)
+	if seats != 0 {
+		t.Errorf("casual template (maintainer): a maintainer holds no seat, got %d", seats)
 	}
 }

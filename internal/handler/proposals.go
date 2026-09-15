@@ -457,17 +457,79 @@ func electorateMembership(prefix string) string {
 	return prefix + "status = 'active' AND " + prefix + "role IN ('admin','member')"
 }
 
-// electorateFilter is electorateMembership plus the governance config's minimum
-// voting tenure — the whole condition for "may vote here, right now" — together
-// with the args the tenure term binds.
-func electorateFilter(prefix string, gc model.GovernanceConfig) (string, []interface{}) {
+// effectiveTenureDays is the minimum voting tenure a patch may require right
+// now: the configured number, capped at the patch's own age in whole days
+// (docs/adr/098). Nobody can be asked to have been here longer than the
+// patch has — on the Formal defaults a patch made this morning asked its
+// founder for thirty days, counted an electorate of nobody, and lapsed its
+// own first rules vote with no ballots.
+//
+// Age runs from `founded_at` where the patch states one (a date; an
+// organisation moving rules it already lives by keeps its full bar from the
+// first day) and otherwise from the row's creation instant. The instant, not
+// its date: anchoring on midnight would put the founder outside the cutoff
+// for part of every day of the ramp.
+//
+// Every reader of MinVotingTenureDays goes through here — the gate, the
+// denominator, the denial message and the "needs your vote" count — so the
+// electorate stays one set (docs/adr/044).
+func effectiveTenureDays(db *database.DB, nodeID string, gc model.GovernanceConfig) int {
+	if gc.MinVotingTenureDays <= 0 {
+		return 0
+	}
+	var foundedAt, createdAt string
+	db.QueryRow("SELECT COALESCE(founded_at,''), created_at FROM nodes WHERE id = ?", nodeID).Scan(&foundedAt, &createdAt)
+	var since time.Time
+	if d, err := time.Parse("2006-01-02", foundedAt); err == nil {
+		since = d
+	} else if t, err := parseStoredInstant(createdAt); err == nil {
+		since = t
+	} else {
+		// A row with no readable age is treated as brand new rather than
+		// ancient: the cap exists to let people vote, and an unreadable
+		// timestamp should not be the thing that stops them.
+		return 0
+	}
+	age := int(time.Since(since).Hours() / 24)
+	if age < 0 {
+		age = 0
+	}
+	// Younger than its own bar, a patch has no bar (docs/adr/098). Not
+	// min(bar, age): that only ever admits people who joined on the first
+	// day, because everyone after has less tenure than the patch has age
+	// and so waits the full configured number anyway — the co-op's board,
+	// joining on day two, would have been shut out of the first month's
+	// votes, which is the finding this exists to fix. The rule protects a
+	// community from newcomers, and until the patch is as old as the rule
+	// there is nobody who is not one.
+	if age < gc.MinVotingTenureDays {
+		return 0
+	}
+	return gc.MinVotingTenureDays
+}
+
+// parseStoredInstant reads a stored ISO 8601 timestamp in either of the
+// shapes the schema writes: with milliseconds (the strftime default) or
+// without.
+func parseStoredInstant(s string) (time.Time, error) {
+	if t, err := time.Parse("2006-01-02T15:04:05.000Z", s); err == nil {
+		return t, nil
+	}
+	return time.Parse(time.RFC3339, s)
+}
+
+// electorateFilter is electorateMembership plus the minimum voting tenure in
+// force — the whole condition for "may vote here, right now" — together with
+// the args the tenure term binds. The tenure is effectiveTenureDays, never
+// the raw configured number.
+func electorateFilter(db *database.DB, nodeID, prefix string, gc model.GovernanceConfig) (string, []interface{}) {
 	cond := electorateMembership(prefix)
 	var args []interface{}
-	if gc.MinVotingTenureDays > 0 {
+	if days := effectiveTenureDays(db, nodeID, gc); days > 0 {
 		// Stored timestamps are ISO 8601 with a 'T'; format the cutoff the
 		// same way so the string comparison stays chronological.
 		cond += " AND " + prefix + "joined_at <= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', ?)"
-		args = append(args, fmt.Sprintf("-%d days", gc.MinVotingTenureDays))
+		args = append(args, fmt.Sprintf("-%d days", days))
 	}
 	return cond, args
 }
@@ -502,7 +564,7 @@ func inElectorateExcept(db *database.DB, userID, nodeID string, gc model.Governa
 	if exceptUserID != "" && userID == exceptUserID {
 		return false
 	}
-	cond, args := electorateFilter("", gc)
+	cond, args := electorateFilter(db, nodeID, "", gc)
 	all := append([]interface{}{nodeID, userID}, args...)
 	var one int
 	return db.QueryRow(
@@ -529,8 +591,8 @@ func electorateDenialExcept(db *database.DB, userID, nodeID string, gc model.Gov
 	if inElectorate(db, userID, nodeID, gc) {
 		return ""
 	}
-	if gc.MinVotingTenureDays > 0 && inElectorate(db, userID, nodeID, model.GovernanceConfig{}) {
-		return fmt.Sprintf("must be a member for at least %d days to vote", gc.MinVotingTenureDays)
+	if days := effectiveTenureDays(db, nodeID, gc); days > 0 && inElectorate(db, userID, nodeID, model.GovernanceConfig{}) {
+		return fmt.Sprintf("must be a member for at least %d days to vote", days)
 	}
 	return "must be member of node to vote"
 }
@@ -643,7 +705,7 @@ func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (
 // casting while still dividing quorum by them would make a nomination
 // unpassable.
 func eligibleVotersExcept(db *database.DB, nodeID string, gc model.GovernanceConfig, exceptUserID string) (int, string) {
-	cond, tenureArgs := electorateFilter("", gc)
+	cond, tenureArgs := electorateFilter(db, nodeID, "", gc)
 	args := append([]interface{}{nodeID}, tenureArgs...)
 	if exceptUserID != "" {
 		cond += " AND user_id != ?"

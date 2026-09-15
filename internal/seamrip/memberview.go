@@ -216,8 +216,15 @@ func memberViews() map[string]MemberView {
 			// the boundary that docs/adr/089 exists to prevent. Inside the
 			// room nothing changes — a member of a patch exports the room
 			// they can already see.
-			Rule: "on a patch that travelled: the viewer's own rows, every row on a patch they are inside, and otherwise only visible member/admin rows that the patch itself publishes.",
-			Where: `node_id IN (` + sqlVisibleNodes + `) AND (user_id = ? OR node_id IN (` + sqlInsiderNodes + `) OR (visible = 1 AND (` +
+			//
+			// The public branch also pins status = 'active', as ListMembers
+			// does for an outsider. Without it an invited row (docs/adr/098)
+			// — role 'member', visible by default, nobody's decision yet —
+			// would leave as a member of a patch the person never agreed
+			// to join, and a pending request or a departed member would
+			// travel the same way.
+			Rule: "on a patch that travelled: the viewer's own rows, every row on a patch they are inside, and otherwise only visible active member/admin rows that the patch itself publishes.",
+			Where: `node_id IN (` + sqlVisibleNodes + `) AND (user_id = ? OR node_id IN (` + sqlInsiderNodes + `) OR (visible = 1 AND status = 'active' AND (` +
 				`(role IN ('member','admin') AND node_id IN (` + sqlOpenRosterNodes + `))` +
 				` OR (role = 'admin' AND node_id IN (` + sqlAdminRosterNodes + `)))))`,
 		},

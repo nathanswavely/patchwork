@@ -67,6 +67,7 @@ func TestResolveProposal_QuorumDividesByElectorate(t *testing.T) {
 		db := setupTestDB(t)
 		admin, adminToken := createTestUser(t, db, "quorum_admin", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Quorum Node", "quorum-node", "open")
+		predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		backdateMembership(t, db, admin.ID, nodeID, 60)
 
@@ -142,6 +143,7 @@ func TestGetProposal_CanVoteFollowsElectorate(t *testing.T) {
 	newMember, newMemberToken := createTestUser(t, db, "cv_new_member", "member")
 	follower, followerToken := createTestUser(t, db, "cv_follower", "member")
 	nodeID := createTestNode(t, db, admin.ID, "CanVote Node", "canvote-node", "open")
+	predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, member.ID, nodeID, "member", "active")
 	createTestMembership(t, db, newMember.ID, nodeID, "member", "active")

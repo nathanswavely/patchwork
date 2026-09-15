@@ -79,14 +79,38 @@ func JoinNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Check for existing membership.
+		var existingID, existingStatus, existingRole string
+		err := db.QueryRow("SELECT id, status, role FROM memberships WHERE user_id = ? AND node_id = ?", user.ID, nodeID).Scan(&existingID, &existingStatus, &existingRole)
+
+		// An invited person pressing the ordinary button is accepting
+		// (docs/adr/098). Checked ahead of the policy gate on purpose: the
+		// patch is invite_only precisely when invitations are the door, and
+		// refusing the person who was asked in for having been asked in is
+		// the bug this route exists to close.
+		if err == nil && existingStatus == "invited" {
+			if isFollow {
+				// Following would overwrite the invitation with a lesser
+				// relationship, silently. The page never offers it here; the
+				// API says what the two answers are.
+				http.Error(w, `{"error":"you have been invited to join this patch: accept or decline the invitation"}`, http.StatusConflict)
+				return
+			}
+			if err := acceptInvitedRow(db, r, user, existingID, nodeID); err != nil {
+				http.Error(w, `{"error":"failed to accept invitation"}`, http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(map[string]string{"status": "active", "membership_id": existingID})
+			return
+		}
+
 		if !isFollow && membershipPolicy == "invite_only" {
 			http.Error(w, `{"error":"this node is invite only"}`, http.StatusForbidden)
 			return
 		}
 
-		// Check for existing membership.
-		var existingID, existingStatus, existingRole string
-		err := db.QueryRow("SELECT id, status, role FROM memberships WHERE user_id = ? AND node_id = ?", user.ID, nodeID).Scan(&existingID, &existingStatus, &existingRole)
 		if err == nil {
 			// Membership row exists.
 			if existingStatus == "banned" {
@@ -417,12 +441,25 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 
 		user := middleware.UserFromContext(r.Context())
 
-		// Only allow pending/banned status filter for node admins or site admins.
-		if statusFilter == "pending" || statusFilter == "banned" {
-			if user == nil || (user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "admin")) {
+		// The patch's own admins hold every management verb here, and the
+		// one surface that is theirs alone: who has been invited and has not
+		// answered (docs/adr/098). Not an instance admin with no role in the
+		// patch — the room rule of docs/adr/081.
+		patchAdmin := user != nil && userHasNodeRole(db, user.ID, nodeID, "admin")
+
+		// Only allow pending/banned status filter for node admins or site
+		// admins. Anything else — 'invited', 'left', a typo — lists as
+		// active: an invited row is served under its own key below, to the
+		// patch's admins only, and never as a page of members wearing the
+		// role they would have.
+		switch statusFilter {
+		case "pending", "banned":
+			if user == nil || (user.Role != "admin" && !patchAdmin) {
 				// Non-admins just see active members.
 				statusFilter = "active"
 			}
+		default:
+			statusFilter = "active"
 		}
 
 		// The patch's admins and members see the full list, including hidden
@@ -652,6 +689,13 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			payload["viewer_shares_contact"] = viewerShares
 			payload["any_contact_shared"] = anyContact
 		}
+		// Outstanding invitations, for the patch's own admins and nobody
+		// else (docs/adr/098). A separate key rather than rows in `items`:
+		// an invited person is not a member, and nothing that counts or
+		// pages members should have to know the difference.
+		if patchAdmin {
+			payload["invited"] = invitedPeople(db, nodeID)
+		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(payload)
 	}
@@ -674,6 +718,9 @@ func ListMyMemberships(db *database.DB) http.HandlerFunc {
 				WHERE s.node_id = m.node_id AND ci.user_id = m.user_id)
 			FROM memberships m JOIN nodes n ON m.node_id = n.id
 			WHERE m.user_id = ? AND m.status IN ('active', 'pending') AND n.status IN ('active','unclaimed')`
+		// Not 'invited' (docs/adr/098). Every client counts this list as
+		// "my patches", and an invitation is not one; the caller's open
+		// invitations are GET /users/me/invitations, read by name.
 		args := []interface{}{user.ID}
 
 		if after != "" {
@@ -920,6 +967,15 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			newRole := *req.Role
 			if newRole != "member" && newRole != "follower" && newRole != "admin" {
 				http.Error(w, `{"error":"invalid role value"}`, http.StatusBadRequest)
+				return
+			}
+
+			// An invited row has no role to change (docs/adr/098): the
+			// person has not said yes, and a role set here would be what
+			// they became the moment they did — admin, without anyone
+			// having asked them into that.
+			if currentStatus == "invited" {
+				http.Error(w, `{"error":"they have not accepted the invitation yet"}`, http.StatusBadRequest)
 				return
 			}
 

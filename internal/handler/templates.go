@@ -137,8 +137,10 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 		}
 		var gc model.GovernanceConfig
 		json.Unmarshal([]byte(termsJSON), &gc)
-		if gc.MinVotingTenureDays > 0 {
-			if time.Since(joined) < time.Duration(gc.MinVotingTenureDays)*24*time.Hour {
+		// The tenure in force is capped at the patch's age (docs/adr/098),
+		// read through the same helper the gate uses.
+		if days := effectiveTenureDays(db, nodeID, gc); days > 0 {
+			if time.Since(joined) < time.Duration(days)*24*time.Hour {
 				continue
 			}
 		}
