@@ -319,6 +319,13 @@ func systemAuthorFor(db *database.DB, nodeID string) string {
 // been here long enough to *decide*, and a candidate is being decided about.
 // The bylaws say the same ("any member may nominate themselves or another
 // member").
+//
+// Both halves of that sentence have always worked here and only the first
+// had a control (docs/adr/107). Four surfaces invited people to put somebody
+// forward; the one button posted an empty body, so it stood *you*. A member
+// who came to nominate a colleague put herself on a three-seat ballot by
+// accident and then wrote a comment asking her neighbours not to vote for
+// her, which four of them read and acted on.
 func AddCandidate(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
@@ -373,12 +380,76 @@ func AddCandidate(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// WithdrawCandidacy handles DELETE /api/v1/proposals/{id}/candidates/me.
+//
+// Your own, and nobody else's — which is what the route says rather than
+// leaving it to a check inside. A nomination you did not ask for is withdrawn
+// by *you*, because you are the person it is about; a nomination somebody
+// made by mistake is their own candidacy and theirs to take back. Neither
+// needs a record of who put the name up, and `election_candidates` keeps
+// none.
+//
+// Only while nominations are open. Once the ballot is running, people are
+// approving a slate, and a name leaving it mid-vote would silently discard
+// ballots already cast for it (docs/adr/047's frozen terms, applied to the
+// slate rather than the rules).
+//
+// This is what makes nominating somebody else safe enough to offer
+// (docs/adr/107): the bylaws let any member put another forward, and the
+// answer to "I did not want this" is a control rather than an argument.
+func WithdrawCandidacy(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		proposalID := r.PathValue("id")
+
+		var nodeID, status, nominationsClose string
+		var seats int
+		err := db.QueryRow(
+			`SELECT node_id, status, COALESCE(nominations_close_at,''), seats_contested
+			 FROM proposals WHERE id = ?`, proposalID,
+		).Scan(&nodeID, &status, &nominationsClose, &seats)
+		if err != nil || seats == 0 {
+			http.Error(w, `{"error":"election not found"}`, http.StatusNotFound)
+			return
+		}
+		if status != "open" || !electionNominating(nominationsClose) {
+			http.Error(w, `{"error":"nominations have closed: the slate is what people are voting on"}`, http.StatusConflict)
+			return
+		}
+
+		res, err := db.Exec(`DELETE FROM election_candidates WHERE proposal_id = ? AND user_id = ?`,
+			proposalID, user.ID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to withdraw"}`, http.StatusInternalServerError)
+			return
+		}
+		if n, _ := res.RowsAffected(); n == 0 {
+			http.Error(w, `{"error":"you are not standing in this election"}`, http.StatusNotFound)
+			return
+		}
+		auth.LogAuditEvent(db, user.ID, "election.withdraw", "proposal", proposalID,
+			`{"candidate":"`+user.ID+`"}`, clientIP(r))
+
+		w.WriteHeader(http.StatusNoContent)
+	}
+}
+
 // OpenElectionVoting closes nominations and starts the vote. Called when the
 // nomination window has passed.
 //
 // This is where docs/adr/047's photograph is taken for an election: the terms
 // must be fixed when the vote starts, not when the nomination period opened,
 // or a slate could be assembled under one set of rules and judged by another.
+//
+// It is also where a contest nobody stood in ends (docs/adr/106). There is
+// nothing for a ballot to be about, and opening one anyway called a whole
+// electorate to an empty page: two simulated contests sent twelve people
+// "Voting is open. Approve as many candidates as you like" over slates with
+// no names on them, then ran a fortnight to reach the conclusion that was
+// already true. A candidate who had twice failed to find a way onto a board
+// got one of them: "If I *had* clicked that one at the time, I'd have
+// arrived at an empty list and concluded, again, that this thing doesn't
+// work."
 func OpenElectionVoting(db *database.DB, proposalID string) bool {
 	var nodeID, nominationsClose, votingEnds string
 	var duration int
@@ -393,14 +464,25 @@ func OpenElectionVoting(db *database.DB, proposalID string) bool {
 		return false // still nominating
 	}
 
+	var slug, nodeName string
+	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
+
+	// An empty slate settles here rather than in a fortnight. The outcome is
+	// identical — holdover, nobody seated, the chairs released — and it is
+	// reached without inviting anybody to a ballot that cannot have a result.
+	var standing int
+	db.QueryRow(`SELECT COUNT(*) FROM election_candidates WHERE proposal_id = ?`, proposalID).Scan(&standing)
+	if standing == 0 {
+		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName, "Nobody stood.")
+		return false
+	}
+
 	var gcJSON string
 	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
 	ends := time.Now().UTC().Add(time.Duration(duration) * time.Hour).Format("2006-01-02T15:04:05.000Z")
 	db.Exec(`UPDATE proposals SET voting_ends_at = ?, voting_terms = ?,
 	         updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id = ?`, ends, gcJSON, proposalID)
 
-	var slug, nodeName string
-	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
 	notify(notifications.Event{
 		Type: notifications.ProposalVoting, NodeID: nodeID, NodeSlug: slug, NodeName: nodeName,
 		EntityID: proposalID,

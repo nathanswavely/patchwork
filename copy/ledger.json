@@ -3905,7 +3905,7 @@
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 455,
+          "line": 537,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -8687,14 +8687,21 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 334,
+          "line": 341,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 431,
+          "line": 412,
+          "kind": "go-error-body",
+          "raw": "election not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/elections.go",
+          "line": 513,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
@@ -8712,7 +8719,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 338,
+          "line": 345,
           "kind": "go-error-body",
           "raw": "nominations have closed",
           "quote": null
@@ -8730,7 +8737,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 343,
+          "line": 350,
           "kind": "go-error-body",
           "raw": "must be a member of this patch to nominate",
           "quote": null
@@ -8748,7 +8755,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 356,
+          "line": 363,
           "kind": "go-error-body",
           "raw": "a candidate must be an active member of this patch",
           "quote": null
@@ -8766,9 +8773,63 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 364,
+          "line": 371,
           "kind": "go-error-body",
           "raw": "failed to add the candidate",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "36e9bc4a891c",
+      "text": "nominations have closed: the slate is what people are voting on",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/107: a nomination you can make and take back; read on the page",
+      "occurrences": [
+        {
+          "file": "internal/handler/elections.go",
+          "line": 416,
+          "kind": "go-error-body",
+          "raw": "nominations have closed: the slate is what people are voting on",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5e2d86096993",
+      "text": "failed to withdraw",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/107: a nomination you can make and take back; read on the page",
+      "occurrences": [
+        {
+          "file": "internal/handler/elections.go",
+          "line": 423,
+          "kind": "go-error-body",
+          "raw": "failed to withdraw",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "31b815af60fd",
+      "text": "you are not standing in this election",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/107: a nomination you can make and take back; read on the page",
+      "occurrences": [
+        {
+          "file": "internal/handler/elections.go",
+          "line": 427,
+          "kind": "go-error-body",
+          "raw": "you are not standing in this election",
           "quote": null
         }
       ]
@@ -8784,7 +8845,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 435,
+          "line": 517,
           "kind": "go-error-body",
           "raw": "this election has closed",
           "quote": null
@@ -8802,7 +8863,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 439,
+          "line": 521,
           "kind": "go-error-body",
           "raw": "nominations are still open; voting has not started",
           "quote": null
@@ -19394,6 +19455,13 @@
           "quote": null
         },
         {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 231,
+          "kind": "markup",
+          "raw": "Choose a member",
+          "quote": null
+        },
+        {
           "file": "web/src/pages/ProposalForm.svelte",
           "line": 227,
           "kind": "markup",
@@ -20203,9 +20271,52 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 56,
+          "line": 78,
           "kind": "js-string",
           "raw": "Failed to stand",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "1b96be804e81",
+      "text": "Failed to put them forward",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/107: a nomination you can make and take back; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 98,
+          "kind": "js-string",
+          "raw": "Failed to put them forward",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b7a2fbb4daca",
+      "text": "Failed to withdraw",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 113,
+          "kind": "js-string",
+          "raw": "Failed to withdraw",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/components/ProposalStatusBanner.svelte",
+          "line": 136,
+          "kind": "js-string",
+          "raw": "Failed to withdraw",
           "quote": "'"
         }
       ]
@@ -20221,7 +20332,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 71,
+          "line": 133,
           "kind": "js-string",
           "raw": "Failed to save your ballot",
           "quote": "'"
@@ -20239,7 +20350,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 81,
+          "line": 143,
           "kind": "markup",
           "raw": "Nominations",
           "quote": null
@@ -20257,7 +20368,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 81,
+          "line": 143,
           "kind": "markup",
           "raw": "The ballot",
           "quote": null
@@ -20275,7 +20386,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 81,
+          "line": 143,
           "kind": "markup",
           "raw": "Result",
           "quote": null
@@ -20293,7 +20404,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 82,
+          "line": 144,
           "kind": "markup",
           "raw": "{seats} seat{seats === 1 ? '' : 's'}",
           "quote": null
@@ -20311,7 +20422,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 87,
+          "line": 149,
           "kind": "markup",
           "raw": "Anyone who is a member can stand.",
           "quote": null
@@ -20329,7 +20440,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 89,
+          "line": 151,
           "kind": "markup",
           "raw": "Nominations close {formatDay(proposal.nominations_close_at)}, and voting opens then.",
           "quote": null
@@ -20337,19 +20448,73 @@
       ]
     },
     {
-      "id": "f303b1f938e3",
-      "text": "Approve as many candidates as you like. The {seats} most approved take the seats.",
-      "words": 14,
+      "id": "aa636e9fcf9c",
+      "text": "Approve as many candidates as you like.",
+      "words": 7,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 94,
+          "line": 156,
           "kind": "markup",
-          "raw": "Approve as many candidates as you like. The {seats} most approved take the seats.",
+          "raw": "Approve as many candidates as you like.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8bf850d5dd61",
+      "text": "The most approved candidate takes the seat.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 158,
+          "kind": "markup",
+          "raw": "The most approved candidate takes the seat.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2c72b92aae11",
+      "text": "The {seats} most approved take the seats.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 160,
+          "kind": "markup",
+          "raw": "The {seats} most approved take the seats.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "614e8ddf5e6c",
+      "text": "Standing closed {formatDay(proposal.nominations_close_at)}.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 176,
+          "kind": "markup",
+          "raw": "Standing closed {formatDay(proposal.nominations_close_at)}.",
           "quote": null
         }
       ]
@@ -20365,7 +20530,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 115,
+          "line": 197,
           "kind": "markup",
           "raw": "{c.approvals} approval{c.approvals === 1 ? '' : 's'}",
           "quote": null
@@ -20383,7 +20548,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 118,
+          "line": 200,
           "kind": "markup",
           "raw": "seated",
           "quote": null
@@ -20401,9 +20566,63 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 130,
+          "line": 211,
           "kind": "markup",
           "raw": "You are standing in this election.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "07ef53b4db6a",
+      "text": "Put another member forward",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/107: a nomination you can make and take back; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 228,
+          "kind": "markup",
+          "raw": "Put another member forward",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "59f0791980f7",
+      "text": "They go on the ballot straight away, and can withdraw themselves until nominations close.",
+      "words": 14,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/107: a nomination you can make and take back; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 241,
+          "kind": "markup",
+          "raw": "They go on the ballot straight away, and can withdraw themselves\n              until nominations close.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e6f0931df24f",
+      "text": "Your ballot is in. You can change it until voting closes.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 257,
+          "kind": "markup",
+          "raw": "Your ballot is in. You can change it until voting closes.",
           "quote": null
         }
       ]
@@ -20419,9 +20638,9 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 138,
+          "line": 260,
           "kind": "markup",
-          "raw": "You can change this until voting closes. Approving nobody is the same as\n        not voting.",
+          "raw": "You can change this until voting closes. Approving nobody is the same as\n          not voting.",
           "quote": null
         }
       ]
@@ -24096,7 +24315,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 737,
+          "line": 738,
           "kind": "markup",
           "raw": "Decline",
           "quote": null
@@ -24257,7 +24476,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 56,
+          "line": 59,
           "kind": "js-string",
           "raw": "Voting ended",
           "quote": "'"
@@ -24282,7 +24501,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 67,
+          "line": 70,
           "kind": "js-string",
           "raw": "Voting is open.",
           "quote": "'"
@@ -24300,14 +24519,14 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 68,
+          "line": 71,
           "kind": "js-string",
           "raw": " Cast your vote below.",
           "quote": "'"
         },
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 77,
+          "line": 80,
           "kind": "js-string",
           "raw": " Cast your vote below.",
           "quote": "'"
@@ -24325,7 +24544,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 75,
+          "line": 78,
           "kind": "js-string",
           "raw": "Advisory vote. ",
           "quote": "'"
@@ -24343,7 +24562,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 76,
+          "line": 79,
           "kind": "js-string",
           "raw": "The maintainer decides.",
           "quote": "'"
@@ -24361,7 +24580,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 92,
+          "line": 95,
           "kind": "js-string",
           "raw": "Approved. The change is in effect",
           "quote": "'"
@@ -24379,7 +24598,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 95,
+          "line": 98,
           "kind": "js-string",
           "raw": "Failed to decide",
           "quote": "'"
@@ -24397,7 +24616,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 105,
+          "line": 108,
           "kind": "js-string",
           "raw": "Advisory vote opened",
           "quote": "'"
@@ -24415,7 +24634,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 108,
+          "line": 111,
           "kind": "js-string",
           "raw": "Failed to open the vote",
           "quote": "'"
@@ -24433,7 +24652,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 118,
+          "line": 121,
           "kind": "js-string",
           "raw": "Change is now in effect",
           "quote": "'"
@@ -24451,7 +24670,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 121,
+          "line": 124,
           "kind": "js-string",
           "raw": "Failed to apply",
           "quote": "'"
@@ -24469,7 +24688,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 130,
+          "line": 133,
           "kind": "js-string",
           "raw": "Proposal withdrawn",
           "quote": "'"
@@ -24477,20 +24696,20 @@
       ]
     },
     {
-      "id": "b7a2fbb4daca",
-      "text": "Failed to withdraw",
-      "words": 3,
-      "tier": "label",
+      "id": "f615a4f1211b",
+      "text": "Nominations are open until {formatDay(nominationsCloseAt)}. Voting starts then.",
+      "words": 8,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 133,
-          "kind": "js-string",
-          "raw": "Failed to withdraw",
-          "quote": "'"
+          "line": 154,
+          "kind": "markup",
+          "raw": "Nominations are open until {formatDay(nominationsCloseAt)}. Voting starts then.",
+          "quote": null
         }
       ]
     },
@@ -24505,7 +24724,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 144,
+          "line": 156,
           "kind": "markup",
           "raw": "Nominations are open. Voting starts when they close.",
           "quote": null
@@ -24523,7 +24742,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 212,
+          "line": 226,
           "kind": "markup",
           "raw": "The members have been asked and the vote has closed. The maintainer decides, with the tally below.",
           "quote": null
@@ -24541,7 +24760,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 214,
+          "line": 228,
           "kind": "markup",
           "raw": "Waiting on the maintainer. This patch's admins decide its proposals, and may ask the members first.",
           "quote": null
@@ -24559,7 +24778,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 231,
+          "line": 245,
           "kind": "markup",
           "raw": "Ask the members",
           "quote": null
@@ -24577,7 +24796,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 254,
+          "line": 268,
           "kind": "markup",
           "raw": "Open for discussion. This patch decides at meetings, not here, and what\n      it decides gets recorded on the charter afterwards.",
           "quote": null
@@ -24595,7 +24814,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 271,
+          "line": 285,
           "kind": "markup",
           "raw": "The community approved this change. An admin needs to make it official.",
           "quote": null
@@ -24613,7 +24832,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 285,
+          "line": 299,
           "kind": "markup",
           "raw": "This change is in effect.",
           "quote": null
@@ -24631,7 +24850,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 287,
+          "line": 301,
           "kind": "markup",
           "raw": "The maintainer approved this. It is in effect.",
           "quote": null
@@ -24649,7 +24868,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 289,
+          "line": 303,
           "kind": "markup",
           "raw": "Approved. This change is now in effect.",
           "quote": null
@@ -24667,7 +24886,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 299,
+          "line": 313,
           "kind": "markup",
           "raw": "Voting ended without reaching quorum. This proposal lapsed and was not decided.",
           "quote": null
@@ -24675,19 +24894,19 @@
       ]
     },
     {
-      "id": "22594156b425",
-      "text": "This election settled nothing; nobody was seated. The council continues until a successor is elected.",
+      "id": "2caaf3220ab0",
+      "text": "This election settled nothing; nobody was seated, and the seats it was for are unchanged.",
       "words": 15,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Saying lapsed everywhere, and telling people a vote carried (docs/adr/097, epoch 2 findings F-059..F-063). Left as drafted; listed for a later voice review.",
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 309,
+          "line": 327,
           "kind": "markup",
-          "raw": "This election settled nothing; nobody was seated. The council continues until a successor is elected.",
+          "raw": "This election settled nothing; nobody was seated, and the seats it was for are unchanged.",
           "quote": null
         }
       ]
@@ -24703,7 +24922,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 317,
+          "line": 335,
           "kind": "markup",
           "raw": "Declined by {declinedBy}.",
           "quote": null
@@ -24721,7 +24940,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 319,
+          "line": 337,
           "kind": "markup",
           "raw": "This proposal did not pass. {approveCount} approved, {rejectCount} rejected.",
           "quote": null
@@ -24739,7 +24958,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 326,
+          "line": 344,
           "kind": "markup",
           "raw": "Withdrawn by the author.",
           "quote": null
@@ -28340,7 +28559,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 746,
+          "line": 747,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -31049,19 +31268,19 @@
       ]
     },
     {
-      "id": "1fa81d44d91c",
-      "text": "A copy of this quilt as you can see it, in the format a new Patchwork reads. It is here so a community can start again elsewhere without waiting for an admin. It holds the patches, events, charters, proposals and member lists that are already open to you. It does not hold email addresses, contact cards, noticeboards, or anything from a patch you are not in. Other people travel as a name and a picture, so the new quilt invites everyone back and each person sets their own visibility there.",
-      "words": 90,
+      "id": "748805390041",
+      "text": "A copy of this quilt as you can see it, in the format a new Patchwork reads. It is here so a community can start again elsewhere without waiting for an admin. It holds every public patch on this quilt and the private ones you belong to, with their events, charters, member lists, and proposals with their votes and discussion — the same things those patches' pages show you. It does not hold email addresses, contact cards, or noticeboards. Other people travel as a name and a picture, so the new quilt invites everyone back and each person sets their own visibility there.",
+      "words": 103,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 685,
           "kind": "markup",
-          "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds the patches, events, charters,\n        proposals and member lists that are already open to you. It does not\n        hold email addresses, contact cards, noticeboards, or anything from a\n        patch you are not in. Other people travel as a name and a picture,\n        so the new quilt invites everyone back and each person sets their own\n        visibility there.",
+          "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds every public patch on this quilt and\n        the private ones you belong to, with their events, charters, member\n        lists, and proposals with their votes and discussion — the same things\n        those patches' pages show you. It does not hold email addresses,\n        contact cards, or noticeboards. Other people travel as a name and a\n        picture, so the new quilt invites everyone back and each person sets\n        their own visibility there.",
           "quote": null
         }
       ]
@@ -31077,7 +31296,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 703,
+          "line": 704,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -31095,7 +31314,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 706,
+          "line": 707,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -31113,7 +31332,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 707,
+          "line": 708,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
@@ -31131,7 +31350,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 712,
+          "line": 713,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -31149,7 +31368,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 714,
+          "line": 715,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
@@ -31167,7 +31386,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 719,
+          "line": 720,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -31185,7 +31404,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 721,
+          "line": 722,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -31203,7 +31422,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 748,
+          "line": 749,
           "kind": "markup",
           "raw": "Delete your account",
           "quote": null
@@ -31221,7 +31440,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 751,
+          "line": 752,
           "kind": "markup",
           "raw": "This happens immediately and cannot be undone.",
           "quote": null
@@ -31239,7 +31458,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 754,
+          "line": 755,
           "kind": "markup",
           "raw": "Erased:",
           "quote": null
@@ -31257,7 +31476,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 754,
+          "line": 755,
           "kind": "markup",
           "raw": "your email address, display name, bio, links,\n          avatar and contact card. Your passkeys, recovery codes and sessions.\n          Your personal calendar link and notification settings. Every patch\n          membership you hold, the quilts you have connected or followed, and\n          any claim still awaiting review.",
           "quote": null
@@ -31275,7 +31494,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 761,
+          "line": 762,
           "kind": "markup",
           "raw": "Kept:",
           "quote": null
@@ -31293,7 +31512,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 761,
+          "line": 762,
           "kind": "markup",
           "raw": "what you took part in. Proposals, votes,\n          comments, notices, events and recorded decisions stay so the\n          community's record stays whole. They will read as",
           "quote": null
@@ -31311,7 +31530,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 764,
+          "line": 765,
           "kind": "markup",
           "raw": "&ldquo;Deleted account&rdquo;",
           "quote": null
@@ -31329,7 +31548,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 764,
+          "line": 765,
           "kind": "markup",
           "raw": "with no name and no\n          link. Your profile page stops existing, and your username stays\n          retired so nobody else can take it.",
           "quote": null
@@ -31347,7 +31566,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 769,
+          "line": 770,
           "kind": "markup",
           "raw": "Copies that already federated to other servers, or that went out in an\n          export taken before today, are outside this site's reach.",
           "quote": null
@@ -31365,7 +31584,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 776,
+          "line": 777,
           "kind": "markup",
           "raw": "You are the only admin of\n              {blockingPatches.length === 1 ? 'this patch' : 'these patches'}.\n              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first,\n              then come back. You can name a successor, promote another admin, or hold an election.",
           "quote": null
@@ -31383,7 +31602,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 792,
+          "line": 793,
           "kind": "markup",
           "raw": "Type your username to confirm:",
           "quote": null
@@ -31401,7 +31620,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 811,
+          "line": 812,
           "kind": "markup",
           "raw": "Really delete your account? You will be signed out.",
           "quote": null
@@ -41145,7 +41364,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 83,
+          "line": 89,
           "kind": "js-string",
           "raw": "The electorate seated a council.",
           "quote": "'"
@@ -41153,19 +41372,19 @@
       ]
     },
     {
-      "id": "3cb2f8ff8377",
-      "text": "Settled nothing. The council kept serving.",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
+      "id": "162021507e98",
+      "text": "Settled nothing. Nobody was elected.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 84,
+          "line": 90,
           "kind": "js-string",
-          "raw": "Settled nothing. The council kept serving.",
+          "raw": "Settled nothing. Nobody was elected.",
           "quote": "'"
         }
       ]
@@ -41181,7 +41400,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 88,
+          "line": 94,
           "kind": "js-string",
           "raw": "A meeting chose the council.",
           "quote": "'"
@@ -41199,7 +41418,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 90,
+          "line": 96,
           "kind": "js-string",
           "raw": "A meeting adopted this text.",
           "quote": "'"
@@ -41217,7 +41436,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 99,
+          "line": 105,
           "kind": "markup",
           "raw": "Record",
           "quote": null
@@ -41235,7 +41454,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 103,
+          "line": 109,
           "kind": "markup",
           "raw": "Everything this patch has settled, newest first.",
           "quote": null
@@ -41253,7 +41472,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 112,
+          "line": 118,
           "kind": "markup",
           "raw": "Nothing settled yet. Proposals show up here once they close.",
           "quote": null
@@ -48330,7 +48549,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 119,
+          "line": 124,
           "kind": "js-string",
           "raw": "Failed to load proposal",
           "quote": "'"
@@ -48348,7 +48567,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 211,
+          "line": 248,
           "kind": "markup",
           "raw": "Why this change",
           "quote": null
@@ -48366,7 +48585,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 226,
+          "line": 263,
           "kind": "markup",
           "raw": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},\n              after this was drafted. The changes below compare against the older text.",
           "quote": null
@@ -48384,7 +48603,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 236,
+          "line": 273,
           "kind": "markup",
           "raw": "This {isDirectChange ? 'change' : 'proposal'} modifies",
           "quote": null
@@ -48402,7 +48621,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 247,
+          "line": 284,
           "kind": "markup",
           "raw": "This proposal modifies a members-only document. The text of the\n                change is visible to members.",
           "quote": null
@@ -48420,7 +48639,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 271,
+          "line": 309,
           "kind": "markup",
           "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null
@@ -53646,6 +53865,60 @@
           "line": 444,
           "kind": "markup",
           "raw": "Not a timezone this quilt knows.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f303b1f938e3",
+      "text": "Approve as many candidates as you like. The {seats} most approved take the seats.",
+      "words": 14,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 94,
+          "kind": "markup",
+          "raw": "Approve as many candidates as you like. The {seats} most approved take the seats.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "22594156b425",
+      "text": "This election settled nothing; nobody was seated. The council continues until a successor is elected.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Saying lapsed everywhere, and telling people a vote carried (docs/adr/097, epoch 2 findings F-059..F-063). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ProposalStatusBanner.svelte",
+          "line": 309,
+          "kind": "markup",
+          "raw": "This election settled nothing; nobody was seated. The council continues until a successor is elected.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1fa81d44d91c",
+      "text": "A copy of this quilt as you can see it, in the format a new Patchwork reads. It is here so a community can start again elsewhere without waiting for an admin. It holds the patches, events, charters, proposals and member lists that are already open to you. It does not hold email addresses, contact cards, noticeboards, or anything from a patch you are not in. Other people travel as a name and a picture, so the new quilt invites everyone back and each person sets their own visibility there.",
+      "words": 90,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 685,
+          "kind": "markup",
+          "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds the patches, events, charters,\n        proposals and member lists that are already open to you. It does not\n        hold email addresses, contact cards, noticeboards, or anything from a\n        patch you are not in. Other people travel as a name and a picture,\n        so the new quilt invites everyone back and each person sets their own\n        visibility there.",
           "quote": null
         }
       ]

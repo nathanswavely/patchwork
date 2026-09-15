@@ -1,6 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
-  import { timeLeft as timeLeftFor, timeLeftPhrase } from '../lib/datetime.js';
+  import { timeLeft as timeLeftFor, timeLeftPhrase, formatDay } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from './ConfirmAction.svelte';
 
@@ -29,6 +29,9 @@
     // nomination window — over a panel correctly saying nominations close in
     // two weeks, and with an empty time-left leaving "Voting is open. .".
     electionPhase = '',
+    // When standing shuts. A different deadline from votingEndsAt, and the
+    // only one that matters while nominations are open (docs/adr/106).
+    nominationsCloseAt = null,
     onStateChange = () => {},
   } = $props();
 
@@ -141,7 +144,18 @@
        no ballot and no clock, so the phase decides this branch, not the
        state. -->
   <div class="status-banner voting">
-    <p>Nominations are open. Voting starts when they close.</p>
+    <!-- With the date (docs/adr/106). This said only that nominations were
+         open; the one number on the page was the voting countdown, which is
+         a different deadline. Three members of a co-op arrived to stand after
+         the window had shut, and the person who told them when it shut had
+         read the wrong line. A window is its closing date. -->
+    <p>
+      {#if nominationsCloseAt}
+        Nominations are open until {formatDay(nominationsCloseAt)}. Voting starts then.
+      {:else}
+        Nominations are open. Voting starts when they close.
+      {/if}
+    </p>
     {#if mayWithdraw}
       <div class="banner-actions">
         <ConfirmAction
@@ -306,7 +320,11 @@
        sentence below, which would read "0 approved, 0 rejected" over a
        contest the community simply did not settle. -->
   <div class="status-banner unsettled">
-    <p>This election settled nothing; nobody was seated. The council continues until a successor is elected.</p>
+    <!-- Not "the council continues" (docs/adr/106): this banner outlives the
+         council it would be describing, and on a patch with no admins it was
+         the same comfortable lie the record was telling. The seats it names
+         are the ones this contest was for (docs/adr/103). -->
+    <p>This election settled nothing; nobody was seated, and the seats it was for are unchanged.</p>
   </div>
 {:else if effectiveState === 'rejected'}
   <div class="status-banner rejected">

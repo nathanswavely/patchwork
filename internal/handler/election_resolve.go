@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -19,6 +20,15 @@ import (
 // "Directors serve until their successors are elected and qualified" is
 // boilerplate in real bylaws for a reason — an election that settles nothing
 // must never be able to empty a patch.
+//
+// Holdover is also a sentence, and the sentence has to be true (docs/adr/106).
+// "The council continues until a successor is elected" describes a council
+// that exists. Said to a patch with no admins at all it is a comfortable lie,
+// and five simulated members read it five times over a year while their co-op
+// had nobody in charge. One of them stopped reading the page because of it:
+// "Reading a comforting sentence I know to be false, five times in a row, is
+// what made me stop trusting the rest of the page." So this file asks the
+// council what it is before it says what happened to it.
 
 // resolveElection closes a finished election. Reports whether it resolved.
 func resolveElection(db *database.DB, proposalID string) bool {
@@ -45,8 +55,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 
 	tally := tallyElection(db, proposalID)
 	if len(tally) == 0 {
-		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName,
-			"No candidates stood. The council continues until a successor is elected.")
+		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName, "No candidates stood.")
 		return true
 	}
 
@@ -63,8 +72,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	db.QueryRow(`SELECT COUNT(DISTINCT voter_id) FROM election_ballots WHERE proposal_id = ?`, proposalID).Scan(&voted)
 	eligible, _ := eligibleVoters(db, nodeID, gc)
 	if gc.QuorumPercent > 0 && (eligible == 0 || (voted*100/eligible) < gc.QuorumPercent) {
-		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName,
-			"Not enough people voted. The council continues until a successor is elected.")
+		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName, "Not enough people voted.")
 		return true
 	}
 
@@ -79,8 +87,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 		winners = append(winners, t)
 	}
 	if len(winners) == 0 {
-		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName,
-			"No candidate was approved by anyone. The council continues until a successor is elected.")
+		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName, "No candidate was approved by anyone.")
 		return true
 	}
 
@@ -98,7 +105,11 @@ func resolveElection(db *database.DB, proposalID string) bool {
 // closeElectionUnsettled ends an election that decided nothing. The council is
 // untouched — that is what holdover means — and the record says so rather than
 // reading as though a council had been rejected.
+//
+// `why` is the half of the sentence about the contest; holdoverLine is the
+// half about the council, and it is the half that can be false (docs/adr/106).
 func closeElectionUnsettled(db *database.DB, proposalID, nodeID, slug, nodeName, why string) {
+	why = why + " " + holdoverLine(db, nodeID)
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	// `status` stays inside the schema's CHECK (open/approved/rejected/
 	// withdrawn) and `state` carries the truth — the same split docs/adr/097
@@ -123,6 +134,34 @@ func closeElectionUnsettled(db *database.DB, proposalID, nodeID, slug, nodeName,
 		Link:     weblink.Proposal(slug, proposalID),
 	})
 	log.Printf("election: %s unsettled", slug)
+}
+
+// holdoverLine says what an unsettled contest leaves behind, and it is the
+// one sentence here that can be wrong.
+//
+// With somebody still in a chair, holdover is the reassuring and true thing:
+// the sitting council carries on. With every chair empty there is no council
+// to carry on, and saying there is tells a patch in trouble that it is fine.
+// docs/adr/102 made an empty council a state the product accepts; this is the
+// product admitting to it at the moment it happens, in the notification, the
+// first time rather than the fifth.
+func holdoverLine(db *database.DB, nodeID string) string {
+	var held, total int
+	db.QueryRow(`SELECT COUNT(holder_id), COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&held, &total)
+	if held > 0 {
+		return "The council continues until a successor is elected."
+	}
+	// No chairs at all is not this file's problem to explain — a patch with
+	// no seats has no contest either — but it must not claim empty ones.
+	if total == 0 {
+		return "Nobody was elected."
+	}
+	seats := "seats are"
+	if total == 1 {
+		seats = "seat is"
+	}
+	return "Nobody was elected, so all " + strconv.Itoa(total) + " " + seats +
+		" still empty and this patch has no admins."
 }
 
 // electionTermEnd is when the council this election seats stops serving. Empty
