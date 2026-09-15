@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -87,7 +88,15 @@ func RedeemRecoveryCode(db *database.DB) http.HandlerFunc {
 		}
 
 		auth.SetSessionCookie(w, sessionToken)
-		auth.LogAuditEvent(db, user.ID, "user.login", "user", user.ID, `{"method":"recovery_code"}`, ip)
+		// Redeeming a code is itself the proof step-up asks for, so the
+		// window opens on arrival (docs/adr/099). Without this, somebody
+		// with no passkey who signed in *because* they had no passkey would
+		// land needing a second code they cannot yet use — the batch they
+		// just made postdates this session by design.
+		if _, err := auth.GrantSudo(db, sessionToken); err != nil {
+			log.Printf("recovery sign-in: could not open the step-up window: %v", err)
+		}
+		auth.LogAuditEvent(db, user.ID, "user.login", "user", user.ID, `{"method":"recovery_code","step_up":true}`, ip)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(user)

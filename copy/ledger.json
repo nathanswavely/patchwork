@@ -3821,14 +3821,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 668,
+          "line": 754,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 829,
+          "line": 915,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -6984,14 +6984,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 590,
+          "line": 676,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/recovery.go",
-          "line": 85,
+          "line": 86,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
@@ -7052,7 +7052,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 508,
+          "line": 517,
           "kind": "go-error-body",
           "raw": "failed to begin step-up",
           "quote": null
@@ -7070,14 +7070,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 525,
+          "line": 534,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 576,
+          "line": 662,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
@@ -7095,7 +7095,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 538,
+          "line": 547,
+          "kind": "go-error-body",
+          "raw": "no session",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/auth.go",
+          "line": 600,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
@@ -7120,9 +7127,78 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 543,
+          "line": 552,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/auth.go",
+          "line": 626,
+          "kind": "go-error-body",
+          "raw": "failed to open confirmation window",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "06e2d96b2381",
+      "text": "a recovery code is required",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 584,
+          "kind": "go-error-body",
+          "raw": "a recovery code is required",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5ad04702ddd5",
+      "text": "too many attempts. Wait a couple of minutes",
+      "words": 8,
+      "tier": "helper",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 594,
+          "kind": "go-error-body",
+          "raw": "too many attempts. Wait a couple of minutes",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/recovery.go",
+          "line": 73,
+          "kind": "go-error-body",
+          "raw": "too many attempts. Wait a couple of minutes",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "too many attempts — wait a couple of minutes"
+    },
+    {
+      "id": "274638817518",
+      "text": "failed to check that code",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/auth.go",
+          "line": 615,
+          "kind": "go-error-body",
+          "raw": "failed to check that code",
           "quote": null
         }
       ]
@@ -7138,7 +7214,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 562,
+          "line": 648,
           "kind": "go-error-body",
           "raw": "failed to begin login",
           "quote": null
@@ -7156,7 +7232,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 688,
+          "line": 774,
           "kind": "go-error-body",
           "raw": "failed to update where you moved to",
           "quote": null
@@ -7174,7 +7250,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 697,
+          "line": 783,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -7192,7 +7268,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 707,
+          "line": 793,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -7210,7 +7286,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 718,
+          "line": 804,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -7228,7 +7304,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 726,
+          "line": 812,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -7246,7 +7322,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 740,
+          "line": 826,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -7264,7 +7340,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 785,
+          "line": 871,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -7282,14 +7358,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 821,
+          "line": 907,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 862,
+          "line": 948,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -7307,7 +7383,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 841,
+          "line": 927,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -7325,14 +7401,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 845,
+          "line": 931,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 876,
+          "line": 962,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -7350,7 +7426,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 871,
+          "line": 957,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -14542,7 +14618,7 @@
       "occurrences": [
         {
           "file": "internal/handler/recovery.go",
-          "line": 21,
+          "line": 22,
           "kind": "go-error-body",
           "raw": "failed to generate recovery codes",
           "quote": null
@@ -14560,7 +14636,7 @@
       "occurrences": [
         {
           "file": "internal/handler/recovery.go",
-          "line": 42,
+          "line": 43,
           "kind": "go-error-body",
           "raw": "failed to load recovery code status",
           "quote": null
@@ -14578,31 +14654,12 @@
       "occurrences": [
         {
           "file": "internal/handler/recovery.go",
-          "line": 64,
+          "line": 65,
           "kind": "go-error-body",
           "raw": "username and code are required",
           "quote": null
         }
       ]
-    },
-    {
-      "id": "5ad04702ddd5",
-      "text": "too many attempts. Wait a couple of minutes",
-      "words": 8,
-      "tier": "helper",
-      "status": "human",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/handler/recovery.go",
-          "line": 72,
-          "kind": "go-error-body",
-          "raw": "too many attempts. Wait a couple of minutes",
-          "quote": null
-        }
-      ],
-      "previous_ai_text": "too many attempts — wait a couple of minutes"
     },
     {
       "id": "56eb9ed0d58a",
@@ -14615,7 +14672,7 @@
       "occurrences": [
         {
           "file": "internal/handler/recovery.go",
-          "line": 79,
+          "line": 80,
           "kind": "go-error-body",
           "raw": "invalid username or recovery code",
           "quote": null
@@ -17902,21 +17959,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 519,
+          "line": 520,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 567,
+          "line": 568,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 628,
+          "line": 629,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -17934,21 +17991,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 520,
+          "line": 521,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 568,
+          "line": 569,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 629,
+          "line": 630,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -17966,7 +18023,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 731,
+          "line": 732,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -17984,7 +18041,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 732,
+          "line": 733,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -19451,6 +19508,13 @@
         {
           "file": "web/src/components/JoinSheet.svelte",
           "line": 126,
+          "kind": "markup",
+          "raw": "Cancel",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 228,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -22115,37 +22179,37 @@
       ]
     },
     {
-      "id": "932ccebb2225",
-      "text": "Passkey needed.",
+      "id": "0b9de661bdda",
+      "text": "Confirmation needed.",
       "words": 2,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/components/PasskeyNotice.svelte",
-          "line": 15,
+          "line": 18,
           "kind": "markup",
-          "raw": "Passkey needed.",
+          "raw": "Confirmation needed.",
           "quote": null
         }
       ]
     },
     {
-      "id": "4e16dfa7d2ab",
-      "text": "To {action} you'll be asked to confirm with a passkey, and you don't have one enrolled yet.",
-      "words": 17,
-      "tier": "prose",
-      "status": "human",
+      "id": "ea76edfd883f",
+      "text": "To {action} you'll be asked to confirm, and you don't have a passkey enrolled yet.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/components/PasskeyNotice.svelte",
-          "line": 16,
+          "line": 19,
           "kind": "markup",
-          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
+          "raw": "To {action} you'll be asked to confirm, and you don't have a passkey\n    enrolled yet.",
           "quote": null
         }
       ]
@@ -22161,7 +22225,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PasskeyNotice.svelte",
-          "line": 17,
+          "line": 20,
           "kind": "markup",
           "raw": "Add a passkey",
           "quote": null
@@ -22169,19 +22233,19 @@
       ]
     },
     {
-      "id": "b29224a95caa",
-      "text": "first. It takes a moment and uses the sign-in you already have.",
-      "words": 12,
-      "tier": "helper",
+      "id": "b4e70228a3e4",
+      "text": "first — it takes a moment and uses the sign-in you already have. If this device can't make one, a recovery code confirms too, once you've signed in again with one.",
+      "words": 31,
+      "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/components/PasskeyNotice.svelte",
-          "line": 17,
+          "line": 20,
           "kind": "markup",
-          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
+          "raw": "first — it\n    takes a moment and uses the sign-in you already have. If this device\n    can't make one, a recovery code confirms too, once you've signed in again\n    with one.",
           "quote": null
         }
       ]
@@ -24543,6 +24607,326 @@
         }
       ],
       "previous_ai_text": "Run by real people. Yours to seamrip if it ever comes to that."
+    },
+    {
+      "id": "d086520f1ff9",
+      "text": "That passkey check did not go through.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 101,
+          "kind": "js-string",
+          "raw": "That passkey check did not go through.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "148952f8e745",
+      "text": "You can enter a recovery code instead.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 102,
+          "kind": "js-string",
+          "raw": "You can enter a recovery code instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b9ff32020727",
+      "text": "This account has no recovery codes.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 131,
+          "kind": "js-string",
+          "raw": "This account has no recovery codes.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "530b79b341c6",
+      "text": "Make a set at Settings → Security. You will need to sign in again with one of them before a code can confirm anything.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 132,
+          "kind": "js-string",
+          "raw": "Make a set at Settings → Security. You will need to sign in again with one of them before a code can confirm anything.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "1c202de30b69",
+      "text": "Every one of your recovery codes was made during this sign-in, so none of them can confirm anything yet.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 135,
+          "kind": "js-string",
+          "raw": "Every one of your recovery codes was made during this sign-in, so none of them can confirm anything yet.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7ddf1f78dc6a",
+      "text": "Sign out and sign back in using one of your codes. That signs you in and confirms you at once, and the rest of the set works from then on.",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 136,
+          "kind": "js-string",
+          "raw": "Sign out and sign back in using one of your codes. That signs you in and confirms you at once, and the rest of the set works from then on.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "833980b9068d",
+      "text": "Too many attempts. Wait a couple of minutes and try again.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 139,
+          "kind": "js-string",
+          "raw": "Too many attempts. Wait a couple of minutes and try again.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "1bff170a2873",
+      "text": "That recovery code is not right, or it has already been used.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 143,
+          "kind": "js-string",
+          "raw": "That recovery code is not right, or it has already been used.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "f53eae88b7de",
+      "text": "Each code works once. Try another from your set.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 144,
+          "kind": "js-string",
+          "raw": "Each code works once. Try another from your set.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fe00b67b6dd1",
+      "text": "Confirmed",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 154,
+          "kind": "markup",
+          "raw": "Confirmed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9c1eaa8289cc",
+      "text": "Make a new set at Settings → Security, then sign out and sign back in using one of them — a code only confirms things once it is older than your sign-in.",
+      "words": 32,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 161,
+          "kind": "markup",
+          "raw": "Make a new set at Settings → Security, then sign out and sign back in\n      using one of them — a code only confirms things once it is older than\n      your sign-in.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6176eec272e8",
+      "text": "Confirm it's you",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 171,
+          "kind": "markup",
+          "raw": "Confirm it's you",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "55084dbda166",
+      "text": "This action can't be undone, so Patchwork asks for a fresh proof it's you — not just the session you're already signed in with.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 173,
+          "kind": "markup",
+          "raw": "This action can't be undone, so Patchwork asks for a fresh proof it's\n      you — not just the session you're already signed in with.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5bda8302b5ec",
+      "text": "Recovery code",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 191,
+          "kind": "markup",
+          "raw": "Recovery code",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 210,
+          "kind": "markup",
+          "raw": "Recovery code",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f28222f8a597",
+      "text": "xxxx-xxxx-xxxx",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 200,
+          "kind": "attr:placeholder",
+          "raw": "xxxx-xxxx-xxxx",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 228,
+          "kind": "attr:placeholder",
+          "raw": "xxxx-xxxx-xxxx",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "ce2ca0126ca4",
+      "text": "{recoveryReady} of your recovery codes can confirm this. Each one works once.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 205,
+          "kind": "markup",
+          "raw": "{recoveryReady} of your recovery codes can confirm this. Each one\n          works once.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0271ffaec427",
+      "text": "A recovery code has to be older than this sign-in to confirm anything. If you just made a set, sign out and sign back in with one of the codes; if you have none, make a set at Settings → Security.",
+      "words": 41,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StepUpPrompt.svelte",
+          "line": 210,
+          "kind": "markup",
+          "raw": "A recovery code has to be older than this sign-in to confirm\n          anything. If you just made a set, sign out and sign back in with one\n          of the codes; if you have none, make a set at Settings → Security.",
+          "quote": null
+        }
+      ]
     },
     {
       "id": "b1ae867aaa75",
@@ -27236,9 +27620,27 @@
       "occurrences": [
         {
           "file": "web/src/lib/stepUp.js",
-          "line": 26,
+          "line": 30,
           "kind": "js-string",
           "raw": "This action needs a passkey. Enroll one in Security settings first.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "9e5452f408d9",
+      "text": "That recovery code could not be checked.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/stepUp.js",
+          "line": 63,
+          "kind": "js-string",
+          "raw": "That recovery code could not be checked.",
           "quote": "'"
         }
       ]
@@ -27254,7 +27656,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/stepUp.js",
-          "line": 58,
+          "line": 120,
           "kind": "js-string",
           "raw": "Confirmation was cancelled.",
           "quote": "'"
@@ -27424,37 +27826,37 @@
       ]
     },
     {
-      "id": "ab6d7a8d5289",
-      "text": "Passkey check was cancelled or timed out. You can try again.",
-      "words": 11,
-      "tier": "helper",
+      "id": "7d3261d64fd1",
+      "text": "Passkey check was cancelled or timed out. You can try again, or confirm with a recovery code.",
+      "words": 17,
+      "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/lib/webauthn.js",
           "line": 144,
           "kind": "js-string",
-          "raw": "Passkey check was cancelled or timed out. You can try again.",
+          "raw": "Passkey check was cancelled or timed out. You can try again, or confirm with a recovery code.",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "5d6b76c5726d",
-      "text": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.",
-      "words": 30,
+      "id": "52d1d72fa30e",
+      "text": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with a recovery code or an email link below, then add a passkey from Settings → Security.",
+      "words": 34,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/lib/webauthn.js",
           "line": 146,
           "kind": "js-string",
-          "raw": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.",
+          "raw": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with a recovery code or an email link below, then add a passkey from Settings → Security.",
           "quote": "'"
         }
       ]
@@ -27478,19 +27880,55 @@
       ]
     },
     {
-      "id": "bb9954aa5253",
-      "text": "This device cannot create the kind of passkey this site needs. Use an email link instead.",
+      "id": "3b79e9272f15",
+      "text": "This device cannot produce the passkey check this site needs. Confirm with a recovery code instead.",
       "words": 16,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/lib/webauthn.js",
-          "line": 152,
+          "line": 157,
           "kind": "js-string",
-          "raw": "This device cannot create the kind of passkey this site needs. Use an email link instead.",
+          "raw": "This device cannot produce the passkey check this site needs. Confirm with a recovery code instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "32285035811b",
+      "text": "This device cannot create the kind of passkey this site needs, so you cannot add one here. Recovery codes work instead — make a set at Settings → Security.",
+      "words": 29,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 160,
+          "kind": "js-string",
+          "raw": "This device cannot create the kind of passkey this site needs, so you cannot add one here. Recovery codes work instead — make a set at Settings → Security.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "84419f5764f1",
+      "text": "This device cannot use the kind of passkey this site needs. Sign in with a recovery code or an email link below.",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 162,
+          "kind": "js-string",
+          "raw": "This device cannot use the kind of passkey this site needs. Sign in with a recovery code or an email link below.",
           "quote": "'"
         }
       ]
@@ -27506,7 +27944,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/webauthn.js",
-          "line": 154,
+          "line": 164,
           "kind": "js-string",
           "raw": "This page address does not match the one your passkey was created for.",
           "quote": "'"
@@ -27524,7 +27962,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/webauthn.js",
-          "line": 156,
+          "line": 166,
           "kind": "js-string",
           "raw": "Passkey prompt was closed.",
           "quote": "'"
@@ -27549,7 +27987,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/webauthn.js",
-          "line": 158,
+          "line": 168,
           "kind": "js-string",
           "raw": "Passkey request failed.",
           "quote": "'"
@@ -41353,7 +41791,7 @@
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 490,
+          "line": 500,
           "kind": "attr:placeholder",
           "raw": "Passkey",
           "quote": "\""
@@ -41415,24 +41853,6 @@
       ]
     },
     {
-      "id": "5bda8302b5ec",
-      "text": "Recovery code",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Login.svelte",
-          "line": 210,
-          "kind": "markup",
-          "raw": "Recovery code",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "ddf74233178a",
       "text": "Enter your username and one of your saved recovery codes. Each code works once.",
       "words": 14,
@@ -41447,24 +41867,6 @@
           "kind": "markup",
           "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "f28222f8a597",
-      "text": "xxxx-xxxx-xxxx",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Login.svelte",
-          "line": 228,
-          "kind": "attr:placeholder",
-          "raw": "xxxx-xxxx-xxxx",
-          "quote": "\""
         }
       ]
     },
@@ -48253,7 +48655,7 @@
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 489,
+          "line": 499,
           "kind": "attr:aria-label",
           "raw": "Passkey name",
           "quote": "\""
@@ -48442,19 +48844,19 @@
       ]
     },
     {
-      "id": "0be75492ef8e",
-      "text": "If you lose your passkey, a recovery code signs you in. Each code works once.",
-      "words": 15,
-      "tier": "helper",
+      "id": "5e27f7fc4e35",
+      "text": "If you lose your passkey, a recovery code signs you in. A code also confirms actions that can't be undone, the way a passkey does. Each code works once.",
+      "words": 29,
+      "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
           "line": 418,
           "kind": "markup",
-          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
+          "raw": "If you lose your passkey, a recovery code signs you in. A code also\n      confirms actions that can't be undone, the way a passkey does. Each\n      code works once.",
           "quote": null
         }
       ]
@@ -48470,9 +48872,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 425,
+          "line": 426,
           "kind": "markup",
           "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9a00d3a7bf15",
+      "text": "These codes confirm sensitive actions only after you sign in again with one of them. Sign out, sign back in with a code, and the rest of the set can confirm from then on.",
+      "words": 34,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Step-up by recovery code (docs/adr/099). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SecuritySettings.svelte",
+          "line": 434,
+          "kind": "markup",
+          "raw": "These codes confirm sensitive actions only after you sign in again\n          with one of them. Sign out, sign back in with a code, and the rest\n          of the set can confirm from then on.",
           "quote": null
         }
       ]
@@ -48488,7 +48908,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 445,
+          "line": 455,
           "kind": "markup",
           "raw": "{recoveryStatus.remaining} of {recoveryStatus.total} codes left.",
           "quote": null
@@ -48506,7 +48926,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 448,
+          "line": 458,
           "kind": "markup",
           "raw": "Running low. Generate a fresh set.",
           "quote": null
@@ -48524,7 +48944,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 457,
+          "line": 467,
           "kind": "markup",
           "raw": "New codes replace the old set. Anything already written down\n            stops working.",
           "quote": null
@@ -48542,7 +48962,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 462,
+          "line": 472,
           "kind": "markup",
           "raw": "No recovery codes yet.",
           "quote": null
@@ -48560,7 +48980,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 474,
+          "line": 484,
           "kind": "markup",
           "raw": "Name this passkey",
           "quote": null
@@ -48578,7 +48998,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 476,
+          "line": 486,
           "kind": "markup",
           "raw": "It's saved and ready to use.",
           "quote": null
@@ -48597,7 +49017,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 498,
+          "line": 508,
           "kind": "markup",
           "raw": "Keep \"{namingDefault}\"",
           "quote": null
@@ -51308,6 +51728,132 @@
           "line": 185,
           "kind": "markup",
           "raw": "{proposalCounts[m.node_slug]} open",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "932ccebb2225",
+      "text": "Passkey needed.",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PasskeyNotice.svelte",
+          "line": 15,
+          "kind": "markup",
+          "raw": "Passkey needed.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4e16dfa7d2ab",
+      "text": "To {action} you'll be asked to confirm with a passkey, and you don't have one enrolled yet.",
+      "words": 17,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PasskeyNotice.svelte",
+          "line": 16,
+          "kind": "markup",
+          "raw": "To {action} you'll be asked to confirm with a passkey, and you don't have\n    one enrolled yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b29224a95caa",
+      "text": "first. It takes a moment and uses the sign-in you already have.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PasskeyNotice.svelte",
+          "line": 17,
+          "kind": "markup",
+          "raw": "first.\n    It takes a moment and uses the sign-in you already have.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ab6d7a8d5289",
+      "text": "Passkey check was cancelled or timed out. You can try again.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 144,
+          "kind": "js-string",
+          "raw": "Passkey check was cancelled or timed out. You can try again.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "5d6b76c5726d",
+      "text": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 146,
+          "kind": "js-string",
+          "raw": "No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "bb9954aa5253",
+      "text": "This device cannot create the kind of passkey this site needs. Use an email link instead.",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/lib/webauthn.js",
+          "line": 152,
+          "kind": "js-string",
+          "raw": "This device cannot create the kind of passkey this site needs. Use an email link instead.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "0be75492ef8e",
+      "text": "If you lose your passkey, a recovery code signs you in. Each code works once.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/SecuritySettings.svelte",
+          "line": 418,
+          "kind": "markup",
+          "raw": "If you lose your passkey, a recovery code signs you in. Each code works\n      once.",
           "quote": null
         }
       ]
