@@ -225,9 +225,17 @@ func TestPublicMemberListOnlySubtracts(t *testing.T) {
 
 	for _, setting := range []string{"everyone", "admins", "nobody"} {
 		setPublicMemberList(t, db, f.nodeID, setting)
-		names, _, _ := listRoster(t, db, "rostersubtract", "")
+		names, count, _ := listRoster(t, db, "rostersubtract", "")
 		if rosterLists(names, "rostersubtract-member") {
 			t.Errorf("public_member_list=%s revealed a member who had hidden themselves: %v", setting, names)
+		}
+		// Subtracted from the list, counted in the total. Decision 3 holds for
+		// the member's own switch as well as for this setting: a count names
+		// nobody, and the profile head above this page has always stated the
+		// ungated number. Counting under the switch here is what used to make
+		// the two disagree.
+		if count != 2 {
+			t.Errorf("public_member_list=%s: expected member_count to stay 2 with a hidden member, got %d", setting, count)
 		}
 	}
 
@@ -242,6 +250,56 @@ func TestPublicMemberListOnlySubtracts(t *testing.T) {
 	names, _, _ := listRoster(t, db, "rostersubtract", "")
 	if len(names) != 0 {
 		t.Errorf("expected a hidden admin to stay hidden at 'admins', got %v", names)
+	}
+}
+
+// The number is one number. Whatever the setting, and whoever is hiding, the
+// members page must state what the profile head states — the head is rendered
+// directly above it, and the quilt sizes this patch's tile by the same figure.
+// Asserted endpoint-against-endpoint rather than against a literal, because
+// the failure being guarded is the two drifting apart.
+func TestPublicMemberListCountMatchesTheProfileHead(t *testing.T) {
+	db := setupTestDB(t)
+	f := newRosterFixture(t, db, "rostercount")
+
+	// One more member, hidden under docs/adr/006, so the listing and the count
+	// cannot coincide by accident at any rung.
+	extra, _ := createTestUser(t, db, "rostercount-hidden", "member")
+	hiddenID := createTestMembership(t, db, extra.ID, f.nodeID, "member", "active")
+	if _, err := db.Exec("UPDATE memberships SET visible = 0 WHERE id = ?", hiddenID); err != nil {
+		t.Fatalf("hide membership: %v", err)
+	}
+
+	headCount := func() int {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/nodes/rostercount", nil, "")
+		w := servePublicMux(t, "GET", "/api/v1/nodes/{slug}", handler.GetNode(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected 200 from the detail endpoint, got %d: %s", w.Code, w.Body.String())
+		}
+		var detail struct {
+			Node struct {
+				MemberCount int `json:"member_count"`
+			} `json:"node"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &detail); err != nil {
+			t.Fatalf("decode: %v", err)
+		}
+		return detail.Node.MemberCount
+	}
+
+	for _, setting := range []string{"everyone", "admins", "nobody"} {
+		setPublicMemberList(t, db, f.nodeID, setting)
+		names, count, _ := listRoster(t, db, "rostercount", "")
+		if head := headCount(); count != head {
+			t.Errorf("public_member_list=%s: members page says %d, profile head says %d", setting, count, head)
+		}
+		if count != 3 {
+			t.Errorf("public_member_list=%s: expected 3 (admin, member, hidden member), got %d", setting, count)
+		}
+		if len(names) >= count {
+			t.Errorf("public_member_list=%s: expected fewer listed rows than counted people, got %v", setting, names)
+		}
 	}
 }
 

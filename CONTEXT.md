@@ -127,8 +127,18 @@ event link, which is declared), connection (in UI copy — say thread)
 Admins plus members — never followers. A follower is an interested
 observer, not a member; follower interest is its own count. The two are
 never summed in anything user-facing.
+
+One number, ungated. It counts every active member/admin row, including
+memberships their holders have hidden (docs/adr/006) and rows a patch's
+`public_member_list` withholds (docs/adr/095 decision 3). A count names
+nobody — the visibility gates decide who is *listed*, not how many there
+are — and the quilt already sizes a patch's tile by this number, so a
+surface that counted under its own gate would contradict the front page
+rather than conceal anything. The same holds for follower count. Where a
+list is shorter than the count it sits under, the page says why if it can
+(the roster note) and never restates the count to match the page.
 _Avoid_: community size (ambiguous), total members (when it includes
-followers)
+followers), counting the loaded page of rows
 
 **Upcoming events**:
 A patch's events that have not yet started — the number the patch profile

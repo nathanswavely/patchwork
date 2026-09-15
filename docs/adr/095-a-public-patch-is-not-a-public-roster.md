@@ -119,6 +119,23 @@ before — so the empty state says the list is not public rather than
 letting `No members yet` tell a follower something false about a patch
 with forty people in it.
 
+**One number, on every surface.** Decision 3 says the count stays public.
+Shipping it showed that the count was not one number to begin with:
+`ListMembers` had always counted under the same `m.visible` gate its
+listing ran, while `GetNode` and the tree endpoint counted every active
+row. A patch with three hidden memberships therefore told the same
+signed-out visitor "40 Members" in its profile head and "37 members" on
+the page directly below it. That predates this ADR — it is docs/adr/006's
+gate, not this one's — and it is fixed the way decision 3 points: every
+surface states the ungated number. A count names nobody, so the gates here
+decide who is *listed*, never how many there are. Gating every surface
+instead was the other coherent answer and is refused for decision 3's own
+reason: the quilt would then size a patch's tile differently for each
+viewer, and one member flipping their own switch would shrink their
+patch's published size. The cost is the small-patch inference — five
+counted over two listed says two people are not listed — which the profile
+head already published and which `nobody` is the answer to.
+
 **Known limit, recorded so it is not mistaken for a bug.** This hides the
 list. It does not un-name a member whom some *other* public surface
 names: a proposal carries `author_name` on a public read, an event

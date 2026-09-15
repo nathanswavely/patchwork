@@ -603,34 +603,43 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Totals for the header, counted under exactly the filter the listing
-		// ran — same status, same visibility gate, same join. A header derived
-		// from the loaded page states the page size as the patch's size; a
-		// header counted without the gate promises rows this viewer's listing
-		// will never hand over. Followers are counted apart from admins and
-		// members and never summed with them (CONTEXT.md), and an outsider's
-		// follower total is zero because follower rows are not public
-		// (docs/adr/006).
+		// Totals for the header: how many people this patch holds, counted
+		// exactly as GetNode and the tree endpoint count them — every active
+		// member/admin row and every active follower row, under no visibility
+		// gate at all. Deliberately *not* "how many rows this viewer's listing
+		// would hand over", which is what these used to be and what made the
+		// profile head say 40 Members over a members page saying 37.
 		//
-		// The roster gate is the one filter deliberately *not* applied here
-		// (docs/adr/095 decision 3). It is less an exception to the sentence
-		// above than the point where its two halves come apart: `m.visible`
-		// hides people whose existence an outsider has no other way to learn,
-		// while the roster gate hides people whose *number* is already on the
-		// patch's quilt tile. So the control withholds the identities and
-		// states the size, and the page above says as much rather than
-		// letting a bare "40 members" promise forty rows.
+		// The listing and the count answer different questions, so one gate
+		// cannot serve both. A count names nobody: docs/adr/006 gives a member
+		// a say over being *listed*, and docs/adr/095 decision 3 already
+		// settled that the patch's own roster gate hides who and never how
+		// many — the quilt sizes a tile by member count, so a number the front
+		// page publishes is not withheld by a second page declining to state
+		// it. `m.visible` is the weaker of the two gates and cannot reach
+		// further than the stronger one: counting under it would make a
+		// patch's published size a function of its members' private choices,
+		// and would have the quilt redraw itself per viewer.
+		//
+		// The cost, recorded rather than hidden: on a small patch a count of
+		// five over a list of two says two people are not listed. That
+		// inference came off the profile head regardless — it has always
+		// stated the ungated number directly above this page — so gating here
+		// concealed nothing and only made the two numbers fight. A patch that
+		// cannot afford the inference sets public_member_list to nobody, where
+		// no row is published and there is nothing to subtract from.
+		//
+		// Followers are counted apart from members and admins and never summed
+		// with them (CONTEXT.md). Status still follows the listing, so the
+		// admin-only pending queue counts pending rows: there the question
+		// really is how long the queue this viewer is working through is.
 		countQuery := `SELECT
 				COALESCE(SUM(CASE WHEN m.role IN ('member','admin') THEN 1 ELSE 0 END), 0),
 				COALESCE(SUM(CASE WHEN m.role = 'follower' THEN 1 ELSE 0 END), 0)
-			FROM memberships m JOIN users u ON m.user_id = u.id
+			FROM memberships m
 			WHERE m.node_id = ? AND m.status = ?`
-		countArgs := []interface{}{nodeID, statusFilter}
-		if !insider {
-			countQuery += " AND m.visible = 1 AND m.role IN ('member','admin')"
-		}
 		var memberTotal, followerTotal int
-		if err := db.QueryRow(countQuery, countArgs...).Scan(&memberTotal, &followerTotal); err != nil {
+		if err := db.QueryRow(countQuery, nodeID, statusFilter).Scan(&memberTotal, &followerTotal); err != nil {
 			http.Error(w, `{"error":"failed to list members"}`, http.StatusInternalServerError)
 			return
 		}

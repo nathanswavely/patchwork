@@ -31,7 +31,12 @@
 
   // The header's counts come from the server, never from the loaded array:
   // the listing is paged, so counting what happened to arrive would report
-  // the page size as the patch's size.
+  // the page size as the patch's size. They are also the ungated counts —
+  // the same numbers the profile head above this page and the patch's quilt
+  // tile state — so on a patch where somebody has hidden their membership
+  // (docs/adr/006) or the roster is withheld (docs/adr/095), the count sits
+  // above a shorter list on purpose. Do not derive it from `members`: that
+  // is the bug that had the head saying 40 and this page saying 37.
   let memberCount = $state(0);
   let followerCount = $state(0);
 
