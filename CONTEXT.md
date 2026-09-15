@@ -529,6 +529,18 @@ hiding; the two surfaces never disagree. The patch's own **public member
 list** setting can withhold the list on the patch's side, but never puts a
 hidden membership back — this switch is the member's, and only ever loses
 an argument in the hiding direction.
+
+The profile and the member list are where the switch is *read*, not the
+whole of what it means. The rule is that no public read names a membership
+its holder hid, and a surface that names people by something only a member
+can do is such a read: a patch's voter list is a member list assembled from
+the other end, and named one until it was fixed. Where withholding a name
+would damage a record, the name is **substituted**, not the row dropped —
+see `HiddenMemberName` beside `DeletedAccountName` in
+`internal/handler/deleted_accounts.go`, which is the same move for a
+different reason. Deliberately still named, because the act is the person's
+own public speech rather than a byproduct of membership: a proposal's
+author, a comment's author, a candidate standing for a seat.
 _Avoid_: private membership (collides with private patches), profile
 visibility (it is per-membership, not per-profile)
 

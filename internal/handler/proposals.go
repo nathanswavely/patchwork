@@ -896,6 +896,27 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		// LEFT JOIN, so a voter with no membership row at all (an instance
 		// admin from before the vote gate closed) still appears, uncounted:
 		// countedBallot is NULL for them, and the CASE falls through to 0.
+		// A hidden membership is not named to anyone outside the room
+		// (docs/adr/006). Only members vote, so a public voter list naming
+		// somebody publishes the one fact their switch took down — and
+		// across a patch's proposals it reassembles the member list the
+		// switch removed them from. The room itself still sees every name,
+		// which is what ADR 006 means by hidden-inside-the-workspace.
+		//
+		// The row stays. Substituting the name rather than dropping the
+		// ballot is what keeps the paragraph above true: the list is the
+		// complete record, and ProposalDetail.svelte reads an empty one as
+		// "no vote ever happened" to recognise a direct change. Filter it
+		// and a proposal that was voted on and passed would claim it never
+		// was.
+		//
+		// The substitution is in Go rather than in SQL like
+		// displayNameExpr's, because this one turns on who is asking. A
+		// tombstone is a fact about the row; a hidden membership is a fact
+		// about the row *and* the viewer, and a per-viewer CASE is a worse
+		// place to read that than a named boolean here.
+		inRoom := viewerIsInPatchRoom(db, r, p.NodeID)
+
 		type voterInfo struct {
 			UserID      string `json:"user_id"`
 			DisplayName string `json:"display_name"`
@@ -906,7 +927,8 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 		var voters []voterInfo
 		rows, err := db.Query(
 			`SELECT v.user_id, `+displayNameExpr("u")+` as display_name, `+usernameExpr("u")+` as username, v.value,
-			        CASE WHEN `+countedBallot+` THEN 1 ELSE 0 END as counted
+			        CASE WHEN `+countedBallot+` THEN 1 ELSE 0 END as counted,
+			        COALESCE(m.visible, 1) as membership_visible
 			 FROM votes v
 			 JOIN users u ON u.id = v.user_id
 			 JOIN proposals p ON p.id = v.proposal_id
@@ -918,7 +940,20 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			defer rows.Close()
 			for rows.Next() {
 				var vi voterInfo
-				if err := rows.Scan(&vi.UserID, &vi.DisplayName, &vi.Username, &vi.Value, &vi.Counted); err == nil {
+				var membershipVisible bool
+				if err := rows.Scan(&vi.UserID, &vi.DisplayName, &vi.Username, &vi.Value, &vi.Counted, &membershipVisible); err == nil {
+					// COALESCE(...,1) above means a voter with no membership
+					// row reads as visible. That is deliberate: they left, and
+					// a departed voter has no membership to hide. ADR 006
+					// governs a switch on a row that exists.
+					if !membershipVisible && !inRoom {
+						// The id goes with the name. Left in place it would
+						// link one anonymous ballot to another across every
+						// proposal this patch has run, which is the member
+						// list again, assembled from the other end.
+						vi.UserID, vi.Username = "", ""
+						vi.DisplayName = HiddenMemberName
+					}
 					voters = append(voters, vi)
 				}
 			}
