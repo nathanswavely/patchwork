@@ -4157,14 +4157,14 @@
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 109,
+          "line": 115,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 273,
+          "line": 343,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -15679,7 +15679,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 116,
+          "line": 122,
           "kind": "go-error-body",
           "raw": "failed to reset the name",
           "quote": null
@@ -15697,7 +15697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 122,
+          "line": 128,
           "kind": "go-error-body",
           "raw": "invalid name",
           "quote": null
@@ -15715,7 +15715,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 127,
+          "line": 133,
           "kind": "go-error-body",
           "raw": "name cannot be empty",
           "quote": null
@@ -15733,7 +15733,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 131,
+          "line": 137,
           "kind": "go-error-body",
           "raw": "name must be 100 characters or fewer",
           "quote": null
@@ -15751,7 +15751,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 135,
+          "line": 141,
           "kind": "go-error-body",
           "raw": "failed to save name",
           "quote": null
@@ -15769,7 +15769,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 149,
+          "line": 155,
           "kind": "go-error-body",
           "raw": "invalid description",
           "quote": null
@@ -15787,7 +15787,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 155,
+          "line": 161,
           "kind": "go-error-body",
           "raw": "description must be 500 characters or fewer",
           "quote": null
@@ -15805,7 +15805,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 160,
+          "line": 166,
           "kind": "go-error-body",
           "raw": "failed to reset the description",
           "quote": null
@@ -15823,9 +15823,27 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 164,
+          "line": 170,
           "kind": "go-error-body",
           "raw": "failed to save description",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "403164555978",
+      "text": "failed to read this quilt's calendars",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 193,
+          "kind": "go-error-body",
+          "raw": "failed to read this quilt's calendars",
           "quote": null
         }
       ]
@@ -15841,7 +15859,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 173,
+          "line": 224,
           "kind": "go-error-body",
           "raw": "failed to clear the timezone",
           "quote": null
@@ -15859,9 +15877,27 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 180,
+          "line": 228,
           "kind": "go-error-body",
           "raw": "failed to save the timezone",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "94a6d3141427",
+      "text": "the timezone was saved but its events could not all be moved",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 238,
+          "kind": "go-error-body",
+          "raw": "the timezone was saved but its events could not all be moved",
           "quote": null
         }
       ]
@@ -15877,7 +15913,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 188,
+          "line": 251,
           "kind": "go-error-body",
           "raw": "invalid icon_design",
           "quote": null
@@ -15895,7 +15931,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 193,
+          "line": 256,
           "kind": "go-error-body",
           "raw": "failed to clear the icon",
           "quote": null
@@ -15913,7 +15949,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 203,
+          "line": 266,
           "kind": "go-error-body",
           "raw": "failed to save the icon",
           "quote": null
@@ -15931,7 +15967,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 215,
+          "line": 278,
           "kind": "go-error-body",
           "raw": "failed to save policy",
           "quote": null
@@ -15949,7 +15985,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 279,
+          "line": 349,
           "kind": "go-error-body",
           "raw": "confirmation name does not match the quilt name",
           "quote": null
@@ -15967,7 +16003,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 290,
+          "line": 360,
           "kind": "go-error-body",
           "raw": "wipe failed, no data was deleted",
           "quote": null
@@ -21592,21 +21628,28 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 61,
+          "line": 74,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 73,
+          "line": 97,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 143,
+          "line": 110,
+          "kind": "js-string",
+          "raw": "Failed to save",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 180,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -28064,7 +28107,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 305,
+          "line": 342,
           "kind": "markup",
           "raw": "Quilt Settings",
           "quote": null
@@ -28304,7 +28347,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 492,
+          "line": 582,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -30786,7 +30829,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 468,
+          "line": 558,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -34447,24 +34490,6 @@
       ]
     },
     {
-      "id": "0d4dc82b4d3c",
-      "text": "That is not a timezone this quilt knows",
-      "words": 8,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 52,
-          "kind": "js-string",
-          "raw": "That is not a timezone this quilt knows",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "ef4d7fd858ee",
       "text": "Timezone saved",
       "words": 2,
@@ -34475,7 +34500,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 59,
+          "line": 67,
           "kind": "js-string",
           "raw": "Timezone saved",
           "quote": "'"
@@ -34493,7 +34518,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 59,
+          "line": 67,
           "kind": "js-string",
           "raw": "Timezone reset to the configured default",
           "quote": "'"
@@ -34511,7 +34536,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 71,
+          "line": 108,
           "kind": "js-string",
           "raw": "Policy saved",
           "quote": "'"
@@ -34529,7 +34554,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 141,
+          "line": 178,
           "kind": "js-string",
           "raw": "Quilt identity saved",
           "quote": "'"
@@ -34547,7 +34572,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 160,
+          "line": 197,
           "kind": "js-string",
           "raw": "Quilt name reset to the deployment default",
           "quote": "'"
@@ -34565,7 +34590,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 160,
+          "line": 197,
           "kind": "js-string",
           "raw": "Description reset to the deployment default",
           "quote": "'"
@@ -34583,7 +34608,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 162,
+          "line": 199,
           "kind": "js-string",
           "raw": "Failed to reset",
           "quote": "'"
@@ -34601,7 +34626,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 230,
+          "line": 267,
           "kind": "js-string",
           "raw": "Quilt icon saved",
           "quote": "'"
@@ -34619,7 +34644,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 232,
+          "line": 269,
           "kind": "js-string",
           "raw": "Failed to save the icon",
           "quote": "'"
@@ -34637,7 +34662,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 244,
+          "line": 281,
           "kind": "js-string",
           "raw": "Quilt icon reset",
           "quote": "'"
@@ -34655,7 +34680,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 246,
+          "line": 283,
           "kind": "js-string",
           "raw": "Failed to reset the icon",
           "quote": "'"
@@ -34673,7 +34698,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 279,
+          "line": 316,
           "kind": "js-string",
           "raw": "Export failed",
           "quote": "'"
@@ -34691,7 +34716,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 296,
+          "line": 333,
           "kind": "js-string",
           "raw": "Wipe failed",
           "quote": "'"
@@ -34709,7 +34734,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 306,
+          "line": 343,
           "kind": "markup",
           "raw": "How this quilt presents itself, here and on other quilts.",
           "quote": null
@@ -34727,7 +34752,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 316,
+          "line": 353,
           "kind": "markup",
           "raw": "Identity",
           "quote": null
@@ -34745,7 +34770,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 319,
+          "line": 356,
           "kind": "markup",
           "raw": "Quilt name",
           "quote": null
@@ -34763,7 +34788,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 323,
+          "line": 360,
           "kind": "markup",
           "raw": "Set here in the admin panel. Overrides the name in patchwork.yaml.",
           "quote": null
@@ -34781,7 +34806,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 331,
+          "line": 368,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -34827,7 +34852,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 335,
+          "line": 372,
           "kind": "markup",
           "raw": "Set here in the admin panel. Overrides the description in patchwork.yaml.",
           "quote": null
@@ -34845,7 +34870,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 343,
+          "line": 380,
           "kind": "markup",
           "raw": "Domain",
           "quote": null
@@ -34863,7 +34888,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 345,
+          "line": 382,
           "kind": "markup",
           "raw": "The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.",
           "quote": null
@@ -34881,7 +34906,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 357,
+          "line": 394,
           "kind": "markup",
           "raw": "Quilt Icon",
           "quote": null
@@ -34899,7 +34924,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 360,
+          "line": 397,
           "kind": "markup",
           "raw": "Represents this quilt in the quilt switcher and in other people's Connected Quilts.\n          Draft it here, in the same drafter patches use for their tiles.",
           "quote": null
@@ -34917,7 +34942,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 372,
+          "line": 409,
           "kind": "attr:aria-label",
           "raw": "Quilt icon preview",
           "quote": "\""
@@ -34935,7 +34960,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 377,
+          "line": 414,
           "kind": "markup",
           "raw": "Drafted for this quilt.",
           "quote": null
@@ -34953,7 +34978,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 379,
+          "line": 416,
           "kind": "markup",
           "raw": "Assigned from the quilt's name. Draft your own below.",
           "quote": null
@@ -34971,7 +34996,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 388,
+          "line": 425,
           "kind": "markup",
           "raw": "Reset icon",
           "quote": null
@@ -34989,7 +35014,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 396,
+          "line": 433,
           "kind": "markup",
           "raw": "Start from a block",
           "quote": null
@@ -35007,7 +35032,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 412,
+          "line": 449,
           "kind": "markup",
           "raw": "Starting over replaces what's on the canvas. Nothing is saved until you save.",
           "quote": null
@@ -35025,7 +35050,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 421,
+          "line": 458,
           "kind": "markup",
           "raw": "Timekeeping",
           "quote": null
@@ -35043,7 +35068,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 423,
+          "line": 460,
           "kind": "markup",
           "raw": "Where this quilt keeps time. An event shows the wall clock of the place\n        it happens, so this is what a patch falls back to when it has not named\n        a timezone of its own, and what a calendar feed's zoneless times mean\n        when it is imported. Everyone reading from elsewhere sees the event's\n        own clock, with the zone named next to it.",
           "quote": null
@@ -35061,7 +35086,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 430,
+          "line": 467,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -35086,7 +35111,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 439,
+          "line": 476,
           "kind": "markup",
           "raw": "An IANA name, like America/New_York or Europe/Berlin.",
           "quote": null
@@ -35104,7 +35129,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 441,
+          "line": 478,
           "kind": "markup",
           "raw": "Clear it to go back to {timezoneConfigured.replace(/_/g, ' ')} from patchwork.yaml.",
           "quote": null
@@ -35112,19 +35137,91 @@
       ]
     },
     {
-      "id": "48bb5f37c35d",
-      "text": "Not a timezone this quilt knows.",
-      "words": 6,
+      "id": "728c21bd2c42",
+      "text": "Not a place this quilt can keep time in.",
+      "words": 9,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 444,
+          "line": 481,
           "kind": "markup",
-          "raw": "Not a timezone this quilt knows.",
+          "raw": "Not a place this quilt can keep time in.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6bf9b2ea108a",
+      "text": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 496,
+          "kind": "markup",
+          "raw": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "57c51228191b",
+      "text": "across {zoneChoice.patches_affected} patch{zoneChoice.patches_affected === 1 ? '' : 'es'}",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 498,
+          "kind": "markup",
+          "raw": "across {zoneChoice.patches_affected} patch{zoneChoice.patches_affected === 1 ? '' : 'es'}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5567b49de563",
+      "text": "inherit{zoneChoice.events_affected === 1 ? 's' : ''} this quilt's timezone. Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')} changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
+      "words": 32,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 500,
+          "kind": "markup",
+          "raw": "inherit{zoneChoice.events_affected === 1 ? 's' : ''} this quilt's timezone.\n              Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}\n              changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "60300e48c3c1",
+      "text": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm. Leaving them where they are keeps the exact moment and changes the clock time shown. Patches with a timezone of their own, events with one, and events from a calendar feed are not touched.",
+      "words": 48,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 533,
+          "kind": "markup",
+          "raw": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm.\n              Leaving them where they are keeps the exact moment and changes the clock time shown.\n              Patches with a timezone of their own, events with one, and events from\n              a calendar feed are not touched.",
           "quote": null
         }
       ]
@@ -35140,7 +35237,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 454,
+          "line": 544,
           "kind": "markup",
           "raw": "The Lining",
           "quote": null
@@ -35158,7 +35255,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 456,
+          "line": 546,
           "kind": "markup",
           "raw": "Every patch starts with the lining and can amend its copy by proposal.\n        Amended patches always wear a public badge; this policy also keeps them\n        out of the quilt, search, the map, and public feeds for everyone.\n        Direct links still work.",
           "quote": null
@@ -35176,7 +35273,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 473,
+          "line": 563,
           "kind": "markup",
           "raw": "Data Export (Seamrip)",
           "quote": null
@@ -35194,7 +35291,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 481,
+          "line": 571,
           "kind": "markup",
           "raw": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.",
           "quote": null
@@ -35213,7 +35310,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 494,
+          "line": 584,
           "kind": "markup",
           "raw": "Wipe this quilt",
           "quote": null
@@ -35231,7 +35328,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 497,
+          "line": 587,
           "kind": "markup",
           "raw": "Erases",
           "quote": null
@@ -35249,7 +35346,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 497,
+          "line": 587,
           "kind": "markup",
           "raw": "all community data",
           "quote": null
@@ -35267,7 +35364,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 497,
+          "line": 587,
           "kind": "markup",
           "raw": ": every patch, person, event,\n          proposal, and governance record. The deployment returns to first-run.\n          The server, domain, and configuration survive. The community's data\n          does not. This cannot be undone. Download an export first.",
           "quote": null
@@ -35285,7 +35382,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 503,
+          "line": 593,
           "kind": "markup",
           "raw": "Type the quilt name to confirm:",
           "quote": null
@@ -35303,7 +35400,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 522,
+          "line": 612,
           "kind": "markup",
           "raw": "Really erase everything? You will be signed out.",
           "quote": null
@@ -53513,6 +53610,42 @@
           "line": 383,
           "kind": "go-error-body",
           "raw": "this council is running a contest: the calendar can move once it settles",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0d4dc82b4d3c",
+      "text": "That is not a timezone this quilt knows",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 52,
+          "kind": "js-string",
+          "raw": "That is not a timezone this quilt knows",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "48bb5f37c35d",
+      "text": "Not a timezone this quilt knows.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 444,
+          "kind": "markup",
+          "raw": "Not a timezone this quilt knows.",
           "quote": null
         }
       ]
