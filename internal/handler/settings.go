@@ -103,7 +103,13 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			HideAmendedLinings *bool `json:"hide_amended_linings"`
 			// The quilt's zone (docs/adr/045). Empty string clears the
 			// override and falls back to geographic.timezone.
-			Timezone *string `json:"timezone"`
+			//
+			// Changing it changes what every *inheriting* event on every
+			// patch says, so it is never done in silence: see
+			// instance_timezone.go, and the 409 below. TimezoneEvents is
+			// the answer to that refusal.
+			Timezone       *string `json:"timezone"`
+			TimezoneEvents string  `json:"timezone_events"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -166,19 +172,76 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			}
 		}
 
+		var zonePlan *zoneChange
 		if req.Timezone != nil {
 			tz := strings.TrimSpace(*req.Timezone)
+			if tz != "" && !settings.ValidTimezone(tz) {
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
+				return
+			}
+
+			// What the quilt reads in now, and what it would read in after.
+			// Both resolved rather than compared as stored strings: clearing
+			// an override that matches geographic.timezone changes nothing,
+			// and asking a question with no consequences is how people learn
+			// to click through the ones that have them (docs/adr/101).
+			before := settings.EffectiveTimezone(db)
+			after := settings.EffectiveTimezoneWith(tz)
+			if before != after {
+				plan, err := planInstanceZoneChange(db, before, after)
+				if err != nil {
+					http.Error(w, `{"error":"failed to read this quilt's calendars"}`, http.StatusInternalServerError)
+					return
+				}
+				if plan != nil {
+					mode := strings.TrimSpace(req.TimezoneEvents)
+					if mode != zoneKeepClock && mode != zoneKeepInstant {
+						// Do not guess, and do not guess on somebody else's
+						// behalf least of all: these events belong to patches
+						// whose admins are not in this room.
+						w.Header().Set("Content-Type", "application/json")
+						w.WriteHeader(http.StatusConflict)
+						json.NewEncoder(w).Encode(map[string]interface{}{
+							"error": fmt.Sprintf(
+								"%d %s inherit this quilt's timezone and would read as a different time. Say whether to keep their clock times or leave them where they are.",
+								plan.EventsAffected, zoneChangeSubject(plan)),
+							"code":             "timezone_events_undecided",
+							"from":             plan.From,
+							"to":               plan.To,
+							"events_affected":  plan.EventsAffected,
+							"patches_affected": plan.PatchesAffected,
+							"choices":          []string{zoneKeepClock, zoneKeepInstant},
+						})
+						return
+					}
+					plan.Mode = mode
+					zonePlan = plan
+				}
+			}
+
 			if tz == "" {
 				if err := settings.Unset(db, settings.KeyTimezone); err != nil {
 					http.Error(w, `{"error":"failed to clear the timezone"}`, http.StatusInternalServerError)
 					return
 				}
-			} else if !settings.ValidTimezone(tz) {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
-				return
 			} else if err := settings.Set(db, settings.KeyTimezone, tz); err != nil {
 				http.Error(w, `{"error":"failed to save the timezone"}`, http.StatusInternalServerError)
 				return
+			}
+
+			// After the setting is written, never before: of the two
+			// half-states, a zone that saved with its events unmoved is one
+			// somebody can still finish, and events re-anchored to a zone the
+			// quilt does not keep is a calendar nobody can reason about.
+			if zonePlan != nil {
+				if err := applyZoneChange(db, zonePlan); err != nil {
+					http.Error(w, `{"error":"the timezone was saved but its events could not all be moved"}`, http.StatusInternalServerError)
+					return
+				}
+				auth.LogAuditEvent(db, adminUser.ID, "admin.instance_timezone_changed", "instance", "",
+					fmt.Sprintf(`{"from":%q,"to":%q,"mode":%q,"events_affected":%d,"patches_affected":%d,"events_moved":%d}`,
+						zonePlan.From, zonePlan.To, zonePlan.Mode,
+						zonePlan.EventsAffected, zonePlan.PatchesAffected, zonePlan.EventsMoved), clientIP(r))
 			}
 		}
 
@@ -223,14 +286,21 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		_, descOverridden := settings.Get(db, settings.KeyDescription)
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		resp := map[string]interface{}{
 			"status":                 "ok",
 			"name":                   settings.EffectiveName(db, cfg),
 			"description":            settings.EffectiveDescription(db, cfg),
 			"name_overridden":        nameOverridden,
 			"description_overridden": descOverridden,
 			"icon":                   currentIconState(db, cfg),
-		})
+		}
+		// What was done, and to how many. The panel says it back rather than
+		// leaving an admin who has just moved nine patches' calendars to
+		// wonder whether it took (docs/adr/105).
+		if zonePlan != nil {
+			resp["timezone_change"] = zonePlan
+		}
+		json.NewEncoder(w).Encode(resp)
 	}
 }
 

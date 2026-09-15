@@ -509,22 +509,12 @@ func effectiveTenureDays(db *database.DB, nodeID string, gc model.GovernanceConf
 	if gc.MinVotingTenureDays <= 0 {
 		return 0
 	}
-	var foundedAt, createdAt string
-	db.QueryRow("SELECT COALESCE(founded_at,''), created_at FROM nodes WHERE id = ?", nodeID).Scan(&foundedAt, &createdAt)
-	var since time.Time
-	if d, err := time.Parse("2006-01-02", foundedAt); err == nil {
-		since = d
-	} else if t, err := parseStoredInstant(createdAt); err == nil {
-		since = t
-	} else {
+	age, known := patchAgeDays(db, nodeID)
+	if !known {
 		// A row with no readable age is treated as brand new rather than
 		// ancient: the cap exists to let people vote, and an unreadable
 		// timestamp should not be the thing that stops them.
 		return 0
-	}
-	age := int(time.Since(since).Hours() / 24)
-	if age < 0 {
-		age = 0
 	}
 	// Younger than its own bar, a patch has no bar (docs/adr/098). Not
 	// min(bar, age): that only ever admits people who joined on the first
@@ -538,6 +528,37 @@ func effectiveTenureDays(db *database.DB, nodeID string, gc model.GovernanceConf
 		return 0
 	}
 	return gc.MinVotingTenureDays
+}
+
+// patchAgeDays is how old a patch is, in whole days, and whether that is
+// knowable at all.
+//
+// Age runs from `founded_at` where the patch states one (a date; an
+// organisation moving rules it already lives by keeps its full bar from the
+// first day) and otherwise from the row's creation instant. The instant, not
+// its date: anchoring on midnight would put the founder outside the cutoff
+// for part of every day of the ramp.
+//
+// Its own function because two surfaces ask: the tenure cap enforces it, and
+// the rules editor states it back to the person setting the bar
+// (docs/adr/104). One definition, or the editor promises a date the gate does
+// not honour.
+func patchAgeDays(db *database.DB, nodeID string) (int, bool) {
+	var foundedAt, createdAt string
+	db.QueryRow("SELECT COALESCE(founded_at,''), created_at FROM nodes WHERE id = ?", nodeID).Scan(&foundedAt, &createdAt)
+	var since time.Time
+	if d, err := time.Parse("2006-01-02", foundedAt); err == nil {
+		since = d
+	} else if t, err := parseStoredInstant(createdAt); err == nil {
+		since = t
+	} else {
+		return 0, false
+	}
+	age := int(time.Since(since).Hours() / 24)
+	if age < 0 {
+		age = 0
+	}
+	return age, true
 }
 
 // parseStoredInstant reads a stored ISO 8601 timestamp in either of the
