@@ -123,11 +123,13 @@ func currentElection(db *database.DB, nodeID string) *liveElection {
 // next date is the one a member is asking about. Empty where the patch sets no
 // term length — a council serving until the next election, which is a real
 // position rather than an omission.
+//
+// Read off the same chairs the calendar reads (docs/adr/108), so the date a
+// member is given and the contest that opens are answers about one set.
 func nextTermEnd(db *database.DB, nodeID string) string {
-	var end string
-	db.QueryRow(
-		`SELECT COALESCE(MIN(term_ends_at),'') FROM seats
-		 WHERE node_id = ? AND term_ends_at IS NOT NULL AND term_ends_at != ''`, nodeID,
-	).Scan(&end)
-	return end
+	seats := calendarSeats(db, nodeID)
+	if len(seats) == 0 {
+		return ""
+	}
+	return seats[0].termEnd // soonest first
 }

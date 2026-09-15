@@ -123,3 +123,29 @@ describe('Putting somebody forward, and taking your own name back', () => {
     expect(page).toMatch(/proposal\?\.election_phase === 'nominating' && canNominate/);
   });
 });
+
+/**
+ * A chair nobody wins keeps the council's clock (docs/adr/108).
+ *
+ * An empty chair's term end never moved, so it was overdue on every pass and
+ * the calendar re-contested it after each breather for ever: six contests 56
+ * days apart under a page saying "Each term runs 12 months". And while the
+ * breather ran, the page said the next contest was due now, every day, for
+ * four weeks.
+ */
+describe('The council page tells the truth about its own calendar', () => {
+  const overview = source('components/GovernanceOverview.svelte');
+
+  it('has a sentence for a vacant chair nobody can nominate into', () => {
+    expect(overview).toMatch(/seat\.fill === 'contest_fills'/);
+    expect(overview).toMatch(/Vacant, and this patch has no admins to put a name forward\./);
+    expect(overview).toMatch(/The election that fills it opens \$\{formatDay\(seat\.contest_opens\)\}/);
+  });
+
+  it('stops telling an admin-less patch to ask an admin', () => {
+    expect(overview).toMatch(/\(overview\?\.admins\?\.length \?\? 0\) === 0/);
+    expect(overview).toMatch(
+      /Nobody holds the admin role here, so nobody can put a name forward\./
+    );
+  });
+});
