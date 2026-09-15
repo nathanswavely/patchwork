@@ -105,6 +105,11 @@ const (
 	MembershipRoleChanged NotificationType = "membership.role_changed"
 	MembershipBanned      NotificationType = "membership.banned"
 	MembershipReinstated  NotificationType = "membership.reinstated"
+	// MembershipInvited reaches the one person an admin invited by username
+	// (docs/adr/098). Consent stays with them: the row is 'invited' until
+	// they accept or decline, and this is how they learn there is anything
+	// to answer.
+	MembershipInvited NotificationType = "membership.invited"
 
 	// There is deliberately no type for an event being created, updated,
 	// cancelled or about to start (docs/adr/093). An event is a fact
@@ -216,6 +221,7 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	MembershipRoleChanged: {CategoryMembership, "Your role was changed", AudienceSpecificUser, PriorityHigh},
 	MembershipBanned:      {CategoryMembership, "You have been removed", AudienceSpecificUser, PriorityHigh},
 	MembershipReinstated:  {CategoryMembership, "You have been reinstated", AudienceSpecificUser, PriorityHigh},
+	MembershipInvited:     {CategoryMembership, "You're invited to join a patch", AudienceSpecificUser, PriorityHigh},
 
 	EventSuggested:          {CategoryEvents, "Event suggested to your patch", AudienceAdminsOnly, PriorityHigh},
 	EventSubmissionApproved: {CategoryEvents, "Your event was approved", AudienceSpecificUser, PriorityHigh},
@@ -302,6 +308,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
 		GovernanceInactivityWarning,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
+		MembershipInvited,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed, ProgramOffer,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,

@@ -8,15 +8,29 @@ let memberships = $state([]);
 let loaded = $state(false);
 
 /**
+ * Patches the person has been invited into and has not answered
+ * (docs/adr/098). Held apart from `memberships` on purpose: every consumer
+ * of getMemberships() — the zero-memberships onboarding redirect in
+ * App.svelte, the event form's host picker, the unlock panel — counts what
+ * it holds as "my patches", and an invitation is not one. The server keeps
+ * them apart the same way (me/nodes never serves an invited row; they are
+ * users/me/invitations), so a caller here cannot inherit the mistake.
+ */
+let invitations = $state([]);
+
+/**
  * Load the current user's memberships. Call after auth check.
  */
 export async function loadMemberships() {
-  try {
-    const data = await api('me/nodes');
-    memberships = data.items || data || [];
-  } catch {
-    memberships = [];
-  }
+  const [mine, invited] = await Promise.all([
+    api('me/nodes').catch(() => null),
+    api('users/me/invitations').catch(() => null),
+  ]);
+  memberships = mine?.items || mine || [];
+  // Filtered by status even though the endpoint serves nothing else, so a
+  // stub that answers every path with the same rows cannot turn a
+  // membership into an invitation.
+  invitations = (invited?.items || []).filter((i) => i.status === 'invited');
   loaded = true;
 }
 
@@ -25,6 +39,7 @@ export async function loadMemberships() {
  */
 export function clearMemberships() {
   memberships = [];
+  invitations = [];
   loaded = false;
 }
 
@@ -81,4 +96,24 @@ export function getPendingMembershipSlugs() {
     if (m.status === 'pending') set.add(m.node_slug);
   }
   return set;
+}
+
+/**
+ * Get a Set of slugs where the user holds an unanswered invitation
+ * (docs/adr/098). Read by name, like a pending request: the relationship
+ * row offers Accept and Decline here instead of Follow, and nothing else
+ * consults it, because being asked in is not being in.
+ */
+export function getInvitedMembershipSlugs() {
+  const set = new Set();
+  for (const i of invitations) set.add(i.node_slug);
+  return set;
+}
+
+/**
+ * The invitations themselves — slug, patch name, when — for a surface that
+ * lists them rather than checks one.
+ */
+export function getInvitations() {
+  return invitations;
 }

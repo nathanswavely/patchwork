@@ -270,8 +270,8 @@ type Node struct {
 	// The noticeboard's two settings (docs/adr/081): who may put up a
 	// notice ("admins" or "members"), and whether a new notice takes
 	// replies unless its author says otherwise. Set on the detail response.
-	NoticePosting        string               `json:"notice_posting,omitempty"`
-	NoticeRepliesDefault bool                 `json:"notice_replies_default"`
+	NoticePosting        string `json:"notice_posting,omitempty"`
+	NoticeRepliesDefault bool   `json:"notice_replies_default"`
 	// PublicMemberList is who appears in this patch's public member list
 	// (docs/adr/095): "everyone", "admins", or "nobody". A patch can be
 	// findable without being enumerable. It only ever subtracts — the
@@ -279,11 +279,11 @@ type Node struct {
 	// (docs/adr/006), so nothing here reveals somebody who chose to hide.
 	// Set on the detail response; the settings form and the member list's
 	// own copy both read it.
-	PublicMemberList string `json:"public_member_list,omitempty"`
-	FollowerPermissions  *FollowerPermissions `json:"follower_permissions,omitempty"`
-	GovernanceConfig     *GovernanceConfig    `json:"governance_config,omitempty"`
-	MemberCount          int                  `json:"member_count,omitempty"`
-	FollowerCount        int                  `json:"follower_count,omitempty"`
+	PublicMemberList    string               `json:"public_member_list,omitempty"`
+	FollowerPermissions *FollowerPermissions `json:"follower_permissions,omitempty"`
+	GovernanceConfig    *GovernanceConfig    `json:"governance_config,omitempty"`
+	MemberCount         int                  `json:"member_count,omitempty"`
+	FollowerCount       int                  `json:"follower_count,omitempty"`
 	// Events not yet started — distinct from the tree endpoint's
 	// event_count, which is every active event past and future
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
@@ -295,6 +295,13 @@ type Node struct {
 	// (docs/adr/076). Distinct from CreatedAt, which is when the row was
 	// written, and from UpdatedAt, which every later edit moves.
 	ActivatedAt *string `json:"activated_at,omitempty"`
+	// FoundedAt is when the group behind this patch started, as a date
+	// (docs/adr/098). NULL means it started when its row was written. It is
+	// what caps the minimum voting tenure: nobody is asked to have been here
+	// longer than the patch has, so a patch that says it was founded in 2015
+	// keeps its full bar and one made this morning asks for none. Set on the
+	// detail response and by the patch's admins at Settings -> Info.
+	FoundedAt *string `json:"founded_at"`
 	// MovedTo is where this patch says it has gone (docs/adr/090). Set by
 	// the patch's own admins, rendered as a banner on its page and a line
 	// on its card, and carried on the AP actor as `movedTo`. The patch

@@ -50,6 +50,66 @@ func electionNominating(nominationsCloseAt string) bool {
 	return time.Now().UTC().Before(closes)
 }
 
+// electedHere reads a patch's rules and reports whether Patchwork runs its
+// leadership: `elected`, and not decided elsewhere (docs/adr/052).
+func electedHere(db *database.DB, nodeID string) (model.GovernanceConfig, bool) {
+	var gcJSON string
+	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
+	var gc model.GovernanceConfig
+	if json.Unmarshal([]byte(gcJSON), &gc) != nil {
+		return gc, false
+	}
+	return gc, gc.LeadershipModel == "elected" && gc.LeadershipVenue != "elsewhere"
+}
+
+// SeatFounder gives a patch born elected its first seat (docs/adr/098): the
+// founding admin holds it for one term from today, and the calendar opens
+// the first real election a lead time before that term ends, the way
+// ScheduleDueElections opens every one after.
+//
+// No election opens at birth. docs/adr/051's "adoption starts an election"
+// is written for a community that already exists — a council holding over
+// through a contest its members can judge. A founder alone has nobody to
+// elect from: the contest would be one seat, opened the day the page was
+// made, attributed to the founder, unstoppable, and one the founder could
+// not vote in. And since seats were only ever created by a *resolved*
+// election, that contest settling nothing left no seat behind, nothing ever
+// came due, and the calendar never ran again. A seat with a term is what the
+// calendar needs; a contest is not.
+//
+// Silent on every other model and where the venue is elsewhere. Idempotent:
+// a patch that already has seats keeps them.
+func SeatFounder(db *database.DB, nodeID, founderID, ip string) {
+	gc, ok := electedHere(db, nodeID)
+	if !ok {
+		return
+	}
+	var seats int
+	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&seats)
+	if seats > 0 {
+		return
+	}
+	id := auth.NewUUIDv7()
+	termEnds := electionTermEnd(gc)
+	if _, err := db.Exec(`INSERT INTO seats (id, node_id, holder_id, term_ends_at) VALUES (?, ?, ?, ?)`,
+		id, nodeID, founderID, nullIfEmpty(termEnds)); err != nil {
+		log.Printf("election: seat founder of %s: %v", nodeID, err)
+		return
+	}
+	auth.LogAuditEvent(db, founderID, "seat.founded", "seat", id,
+		`{"node_id":"`+nodeID+`","term_ends_at":`+jsonStringOrNull(termEnds)+`}`, ip)
+}
+
+// jsonStringOrNull renders a date for an audit payload: the string, or null
+// where the patch sets no term.
+func jsonStringOrNull(s string) string {
+	if s == "" {
+		return "null"
+	}
+	b, _ := json.Marshal(s)
+	return string(b)
+}
+
 // StartElectionOnAdoption opens a patch's first election when it adopts
 // elected leadership in Patchwork (docs/adr/051: "adopting `elected` starts an
 // election"). Idempotent, and silent where it does not apply.
@@ -57,14 +117,19 @@ func electionNominating(nominationsCloseAt string) bool {
 // It does nothing where the venue is elsewhere (docs/adr/052) — there the
 // first attestation supplies the council, and a cycle nobody votes in would
 // collect quorum failures and teach people to ignore governance notices.
+//
+// A patch with no seats yet gets them here, before the contest: one per
+// sitting admin, each with its term already ended (docs/adr/098). That is
+// 051's holdover made literal — the council serves until a successor is
+// elected, and an overdue seat is exactly what "until" looks like on the
+// calendar. Without them a contest that settled nothing left no seat behind,
+// so nothing was ever due again and the patch fell silent forever; with
+// them, scheduleFor finds the council overdue and tries again one breather
+// later. seatWinners reuses these seats in created order, so a settled
+// contest refills the chairs rather than adding to them.
 func StartElectionOnAdoption(db *database.DB, nodeID string) {
-	var gcJSON string
-	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
-	var gc model.GovernanceConfig
-	if json.Unmarshal([]byte(gcJSON), &gc) != nil {
-		return
-	}
-	if gc.LeadershipModel != "elected" || gc.LeadershipVenue == "elsewhere" {
+	gc, ok := electedHere(db, nodeID)
+	if !ok {
 		return
 	}
 
@@ -85,14 +150,48 @@ func StartElectionOnAdoption(db *database.DB, nodeID string) {
 	seats := 0
 	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&seats)
 	if seats == 0 {
-		db.QueryRow(`SELECT COUNT(*) FROM memberships
-		             WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&seats)
+		seats = seatSittingAdminsOverdue(db, nodeID)
 	}
 	if seats == 0 {
 		return
 	}
 
 	openElectionFor(db, nodeID, gc, seats)
+}
+
+// seatSittingAdminsOverdue creates one seat per active admin with its term
+// ending today, and returns how many it made. Audited per seat with no actor:
+// nobody appointed anyone, the rules change found them sitting.
+func seatSittingAdminsOverdue(db *database.DB, nodeID string) int {
+	rows, err := db.Query(`SELECT user_id FROM memberships
+	                       WHERE node_id = ? AND role = 'admin' AND status = 'active'
+	                       ORDER BY joined_at ASC`, nodeID)
+	if err != nil {
+		return 0
+	}
+	var admins []string
+	for rows.Next() {
+		var uid string
+		if rows.Scan(&uid) == nil {
+			admins = append(admins, uid)
+		}
+	}
+	rows.Close()
+
+	today := time.Now().UTC().Format("2006-01-02")
+	made := 0
+	for _, uid := range admins {
+		id := auth.NewUUIDv7()
+		if _, err := db.Exec(`INSERT INTO seats (id, node_id, holder_id, term_ends_at) VALUES (?, ?, ?, ?)`,
+			id, nodeID, uid, today); err != nil {
+			log.Printf("election: holdover seat on %s: %v", nodeID, err)
+			continue
+		}
+		auth.LogAuditEvent(db, "", "seat.holdover", "seat", id,
+			`{"node_id":"`+nodeID+`","holder_id":"`+uid+`","term_ends_at":"`+today+`"}`, "")
+		made++
+	}
+	return made
 }
 
 // electionLeadHours is how long a whole contest takes: the nomination window

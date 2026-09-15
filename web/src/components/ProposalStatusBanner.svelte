@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { timeLeft as timeLeftFor, timeLeftPhrase } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from './ConfirmAction.svelte';
 
@@ -50,13 +51,10 @@
   let effectiveState = $derived(propState || (status === 'open' ? 'voting' : status === 'passed' || status === 'approved' ? 'approved' : status));
 
   let timeLeft = $derived.by(() => {
-    if (!votingEndsAt) return '';
-    const ms = new Date(votingEndsAt) - new Date();
-    if (ms <= 0) return 'Voting ended';
-    const days = Math.floor(ms / 86400000);
-    const hours = Math.floor((ms % 86400000) / 3600000);
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
-    return `${hours} hour${hours > 1 ? 's' : ''} left`;
+    const left = timeLeftFor(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'Voting ended';
+    return `${timeLeftPhrase(left)} left`;
   });
 
   // "Cast your vote below" only when there is a vote below. A viewer outside

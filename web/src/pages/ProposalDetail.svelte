@@ -277,6 +277,8 @@
               abstainCount={proposal.abstain_count || 0}
               electorateSize={proposal.eligible_voters || 0}
               terms={proposal.voting_terms}
+              tenureDays={proposal.tenure_days || 0}
+              voteEligibleAt={proposal.vote_eligible_at || ''}
               openedAt={proposal.created_at}
               userVote={proposal.my_vote}
               votingEndsAt={proposal.voting_ends_at}

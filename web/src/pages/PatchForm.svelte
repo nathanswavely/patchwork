@@ -3,6 +3,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { loadMemberships } from '../stores/memberships.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import TemplatePreviewDrawer from '../components/TemplatePreviewDrawer.svelte';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
@@ -59,11 +60,48 @@
   // Fired when the address field loses focus, not on every keystroke: a map
   // that materializes mid-typing shoves every control below it down the page
   // while somebody is still using one.
+  //
+  // The same shove happens on blur when the blur *is* a press: mousedown on
+  // Create Patch blurs the address field, the picker (320px of map) lands
+  // above the button, and mouseup arrives on the map instead — the press is
+  // swallowed. So while a pointer is down, the reveal waits for it to come
+  // up, plus a tick so the click has dispatched against the layout it
+  // started on. The suggestion itself is unchanged: it is still only a
+  // proposal until somebody confirms it (docs/adr/082).
+  let pointerHeld = false;
+
+  $effect(() => {
+    const down = () => { pointerHeld = true; };
+    const up = () => { pointerHeld = false; };
+    // Capture phase, so the flag is set before the press blurs anything.
+    window.addEventListener('pointerdown', down, true);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    return () => {
+      window.removeEventListener('pointerdown', down, true);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+  });
+
+  function pointerReleased() {
+    return new Promise((resolve) => {
+      const done = () => {
+        window.removeEventListener('pointerup', done);
+        window.removeEventListener('pointercancel', done);
+        setTimeout(resolve, 0);
+      };
+      window.addEventListener('pointerup', done);
+      window.addEventListener('pointercancel', done);
+    });
+  }
+
   async function addressSettled() {
     const q = address.trim();
     if (!worthLookingUp(q)) return;
     if (q === lastLookedUp) return;
     lastLookedUp = q;
+    if (pointerHeld) await pointerReleased();
     showPicker = true;
     // A marker the person already placed is theirs; never propose over it.
     if (placed) return;
@@ -88,6 +126,18 @@
     showPicker = false;
   }
   let visibility = $state(initial?.visibility || 'public');
+  // Who can join. The API defaults an omitted membership_policy to open,
+  // and the create form never asked, so a patch meant to be invite-only was
+  // public until its founder found the switch inside the rules editor. It
+  // starts unset: the person chooses. Setup mode (docs/adr/039) does not
+  // ask — the claimed listing keeps the policy it already carries, and the
+  // setup PATCH does not accept one.
+  let membershipPolicy = $state('');
+  const membershipPolicies = [
+    { id: 'open', name: 'Open', desc: 'Anyone can join.' },
+    { id: 'approval_required', name: 'Approval required', desc: 'Anyone can ask to join; an admin approves each request.' },
+    { id: 'invite_only', name: 'Invite only', desc: 'Only people an admin invites can join.' },
+  ];
   // Minimal is the default (docs/adr/041): the typical new patch is one
   // person running a listing; ceremony is opted into, not inherited.
   let template = $state('minimal');
@@ -178,6 +228,7 @@
 
   function validate() {
     if (!name.trim()) return 'Name is required';
+    if (mode !== 'setup' && !membershipPolicy) return 'Choose who can join';
     return '';
   }
 
@@ -246,6 +297,10 @@
       } catch (e) {
         showToast('Patch set up. Finish edits in Patch Settings.', 'info');
       }
+      // The claimant is this patch's admin now, but the memberships store
+      // still says they belong nowhere, and the zero-membership redirect in
+      // App.svelte reads that store. Refresh it before landing.
+      await loadMemberships();
       navigate(`/patches/${setupSlug}`);
       submitting = false;
       return;
@@ -260,11 +315,17 @@
         latitude: placed ? latitude : undefined,
         longitude: placed ? longitude : undefined,
         visibility,
+        membership_policy: membershipPolicy,
         template,
         appearance,
         tags: tags.length > 0 ? tags : undefined,
       };
       const result = await api('nodes', { method: 'POST', body });
+      // Creating a patch makes you its admin, server-side. The memberships
+      // store loaded before that row existed, and App.svelte's onboarding
+      // redirect sends anyone with zero memberships to /welcome — which is
+      // where a founder landed instead of on their patch. Refresh first.
+      await loadMemberships();
       showToast('Patch created', 'success');
       navigate(`/patches/${result.slug}`);
     } catch (e) {
@@ -481,6 +542,23 @@
           {/if}
         </div>
 
+        {#if mode !== 'setup'}
+          <fieldset class="field policy-field">
+            <legend>Who can join <span class="required">*</span></legend>
+            <div class="policy-grid">
+              {#each membershipPolicies as p (p.id)}
+                <label class="policy-card" class:selected={membershipPolicy === p.id}>
+                  <input type="radio" name="membership_policy" value={p.id} bind:group={membershipPolicy} disabled={submitting} required />
+                  <span class="policy-info">
+                    <strong>{p.name}</strong>
+                    <span class="policy-desc">{p.desc}</span>
+                  </span>
+                </label>
+              {/each}
+            </div>
+          </fieldset>
+        {/if}
+
         <div class="field">
           <label>Governance Template</label>
           <p class="field-hint muted">How should this patch be organized? You can change this later.</p>
@@ -525,6 +603,8 @@
     </div>
   </div>
 </div>
+
+<svelte:window onkeydown={(e) => { if (e.key === 'Escape' && previewTemplate) previewTemplate = ''; }} />
 
 {#if previewTemplate}
   <TemplatePreviewDrawer templateId={previewTemplate} onClose={() => previewTemplate = ''} />
@@ -707,6 +787,68 @@
   .motif-swatch.selected {
     border-color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  }
+
+  .policy-field {
+    border: none;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .policy-field legend {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    padding: 0;
+    margin-bottom: 0.25rem;
+  }
+
+  .policy-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .policy-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+
+  .policy-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .policy-card.selected {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  }
+
+  .policy-card input[type="radio"] {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .policy-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .policy-info strong {
+    font-size: 0.9rem;
+  }
+
+  .policy-desc {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
   }
 
   .template-grid {

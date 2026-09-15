@@ -61,7 +61,11 @@ Audited as `proposal.lapsed` with no actor: the clock closed it.
 **Under quorum while the window runs, nothing changes.** Votes may still
 come. The lapse is decided at close, by the same code on the same read.
 
-**Born elected means adopted elected.** Applied here rather than decided:
+**Born elected means adopted elected.** *Superseded the same day by
+docs/adr/098: a founder alone has nobody to elect from, so creation now
+seats the founder for a founding term and the calendar opens the first
+real contest before that term ends. The intent — that the calendar runs
+at all — stands.* Applied here rather than decided:
 docs/adr/051 says adopting elected leadership starts an election, and a
 patch created under the Formal template adopts it at birth. The creation
 path never fired that trigger — only a rules edit did — and since seats
