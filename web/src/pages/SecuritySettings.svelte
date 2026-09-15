@@ -415,8 +415,9 @@
   <section class="pw-section">
     <h2>Recovery codes</h2>
     <p class="muted" style="margin-bottom: 1rem;">
-      If you lose your passkey, a recovery code signs you in. Each code works
-      once.
+      If you lose your passkey, a recovery code signs you in. A code also
+      confirms actions that can't be undone, the way a passkey does. Each
+      code works once.
     </p>
 
     {#if newCodes.length > 0}
@@ -424,6 +425,15 @@
         <p class="codes-warning">
           Write these down or save them somewhere safe. This is the only time
           they're shown.
+        </p>
+        <!-- The sentence that makes docs/adr/099 discoverable. A code the
+             current session could have minted proves nothing, so the window
+             it opens is withheld until the code is older than the sign-in —
+             which costs one sign-out, once. -->
+        <p class="muted codes-confirm-note">
+          These codes confirm sensitive actions only after you sign in again
+          with one of them. Sign out, sign back in with a code, and the rest
+          of the set can confirm from then on.
         </p>
         <ul class="codes-list">
           {#each newCodes as code (code)}
@@ -610,6 +620,12 @@
     color: var(--color-warning, #b45309);
     font-size: 0.85rem;
     font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+
+  .codes-confirm-note {
+    font-size: 0.85rem;
+    line-height: 1.5;
     margin-bottom: 0.75rem;
   }
 

@@ -409,6 +409,9 @@ func main() {
 	mux.HandleFunc("GET /api/v1/auth/step-up", middleware.AuthRequired(db, handler.StepUpStatus(db)))
 	mux.HandleFunc("POST /api/v1/auth/step-up/begin", middleware.AuthRequired(db, handler.StepUpBegin(db, wa)))
 	mux.HandleFunc("POST /api/v1/auth/step-up/finish", middleware.AuthRequired(db, handler.StepUpFinish(db, wa)))
+	// The way through for a person whose device makes no passkey
+	// (docs/adr/099). Burns a recovery code that predates this session.
+	mux.HandleFunc("POST /api/v1/auth/step-up/recovery", middleware.AuthRequired(db, handler.StepUpRecovery(db)))
 
 	mux.HandleFunc("POST /api/v1/auth/webauthn/register/begin", middleware.AuthRequired(db, handler.WebAuthnRegisterBegin(db, wa)))
 	mux.HandleFunc("POST /api/v1/auth/webauthn/register/finish", middleware.AuthRequired(db, handler.WebAuthnRegisterFinish(db, wa)))
