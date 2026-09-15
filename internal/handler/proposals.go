@@ -228,6 +228,17 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 				return
 			}
 		}
+		// And a membership proposal has to be about somebody (docs/adr/100).
+		// Without a target it is the shape a candidacy takes when the product
+		// offers no other: it changes nothing whichever way it closes, and
+		// somebody who wanted a seat found themselves the subject of a public
+		// vote published under a Reject button. Elections are the exception
+		// and never reach here — the calendar writes them directly, with
+		// candidates rather than a target.
+		if req.ProposalType == "membership" && req.TargetUserID == "" {
+			http.Error(w, `{"error":"a membership proposal has to name the person it is about"}`, http.StatusBadRequest)
+			return
+		}
 
 		// The rules in force, read once. Everything below decides from this
 		// same photograph — the default duration, whether the ballot exists,

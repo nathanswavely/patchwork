@@ -170,6 +170,8 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		// Get governance config from DB cache.
 		var gcJSON, membershipPolicy string
 		db.QueryRow("SELECT COALESCE(governance_config,'{}'), membership_policy FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON, &membershipPolicy)
+		var overviewGC model.GovernanceConfig
+		json.Unmarshal([]byte(gcJSON), &overviewGC)
 
 		// Get admin list.
 		type adminInfo struct {
@@ -252,8 +254,18 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// The contest this patch is running, and when its council next
 			// faces the electorate (docs/adr/051). Both nil/empty on a patch
 			// that does not elect, so the hub renders neither.
-			"election":           currentElection(db, nodeID),
-			"next_term_end":      nextTermEnd(db, nodeID),
+			"election":      currentElection(db, nodeID),
+			"next_term_end": nextTermEnd(db, nodeID),
+			// The council's chairs, held and vacant (docs/adr/100). The
+			// admin list above says who holds power; this says how many
+			// positions there are, which is the number the next contest
+			// contests and the number a member is asking about when they
+			// wonder how to get on the council. Empty on every patch that
+			// does not elect, so the hub renders nothing.
+			"seats": seatsOf(db, nodeID),
+			// When the calendar next opens a contest. Derived from the
+			// seats' own term ends, never stored (see nextContestOpens).
+			"next_contest_opens": nextContestOpens(db, nodeID, overviewGC),
 			"membership_policy":  membershipPolicy,
 			"admins":             admins,
 			"successor":          successor,

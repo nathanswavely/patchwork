@@ -63,6 +63,30 @@ func ScheduleDueElections(db *database.DB) {
 	}
 }
 
+// nextContestOpens is the day the calendar next opens a contest on this
+// council, derived from the same two facts scheduleFor derives dueness from:
+// the earliest seat term end, and how long a whole contest takes. Nothing
+// stores this date and nothing should — a stored one is a second description
+// of the seats' own clocks, waiting to disagree with them.
+//
+// Empty where no contest is coming: a patch that does not elect here, one
+// that sets no term length, or one with no dated seat. A date already past
+// means the contest is due now and the next sweep opens it.
+func nextContestOpens(db *database.DB, nodeID string, gc model.GovernanceConfig) string {
+	if gc.LeadershipModel != "elected" || gc.LeadershipVenue == "elsewhere" || gc.AdminTermMonths <= 0 {
+		return ""
+	}
+	end := nextTermEnd(db, nodeID)
+	if end == "" {
+		return ""
+	}
+	termEnd, err := time.Parse("2006-01-02", end)
+	if err != nil {
+		return ""
+	}
+	return termEnd.Add(-time.Duration(electionLeadHours(gc)) * time.Hour).Format("2006-01-02")
+}
+
 func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig) {
 	// One contest at a time. A second concurrent election for the same council
 	// would split the electorate between two slates deciding one thing.

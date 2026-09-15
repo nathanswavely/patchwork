@@ -23,6 +23,10 @@
   // proposing a rules change is a member act — following carries no
   // governance rights.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
+  // An admin *of this patch*. The node payload sets is_admin for instance
+  // admins too, and arranging a patch's council is not theirs to do — the
+  // seat routes answer them 404.
+  let isPatchAdmin = $derived(membershipRole === 'admin');
 
   // Setup checklist fallback (docs/adr/040, CONTEXT.md "Setup checklist"):
   // "decide how you govern" has no single derivable signal for a patch
@@ -70,6 +74,53 @@
   // does on the proposal page.
   let election = $derived(overview?.election || null);
   let nextTermEnd = $derived(overview?.next_term_end || '');
+
+  // The council's chairs (docs/adr/100). The admin list above says who holds
+  // power; this says how many positions exist, which is the number the next
+  // contest contests and the number a member is asking about when they
+  // wonder how to get onto the council.
+  let isElectedModel = $derived(overview?.rules?.leadership_model === 'elected');
+  let showsCouncil = $derived(isElectedModel && !leadershipElsewhere);
+  let seats = $derived(overview?.seats || []);
+  let vacantSeats = $derived(seats.filter((s) => !s.holder_id));
+  let nextContestOpens = $derived(overview?.next_contest_opens || '');
+  let contestDue = $derived.by(() => {
+    if (!nextContestOpens) return false;
+    const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(nextContestOpens);
+    const opens = parts
+      ? new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]))
+      : new Date(nextContestOpens);
+    return opens <= new Date();
+  });
+
+  let seatBusy = $state(false);
+  let seatError = $state('');
+
+  async function addSeat() {
+    seatBusy = true;
+    seatError = '';
+    try {
+      await api(`nodes/${slug}/seats`, { method: 'POST' });
+      await loadOverview();
+    } catch (e) {
+      seatError = e.message || 'Could not add a seat';
+    } finally {
+      seatBusy = false;
+    }
+  }
+
+  async function removeSeat(seatId) {
+    seatBusy = true;
+    seatError = '';
+    try {
+      await api(`nodes/${slug}/seats/${seatId}`, { method: 'DELETE' });
+      await loadOverview();
+    } catch (e) {
+      seatError = e.message || 'Could not remove the seat';
+    } finally {
+      seatBusy = false;
+    }
+  }
 
   // A term that has run out removes nobody: the council serves until a
   // successor is elected (docs/adr/051). What it changes is that the patch is
@@ -319,6 +370,78 @@
         </div>
       {/if}
 
+      <!-- The council's chairs (docs/adr/100). The list above says who holds
+           power; this says how many positions there are, which is what the
+           next contest contests. Adding a chair is an admin's act and
+           filling it is the community's, so the controls here never touch a
+           held seat. -->
+      {#if showsCouncil}
+        <div class="council">
+          <p class="council-line">
+            {#if seats.length === 0}
+              This council has no seats yet.
+            {:else}
+              {seats.length} seat{seats.length === 1 ? '' : 's'} on the council,
+              {vacantSeats.length === 0
+                ? 'all held'
+                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.
+            {/if}
+          </p>
+
+          {#if seats.length > 0}
+            <ul class="seat-list">
+              {#each seats as seat}
+                <li class="seat-row">
+                  <span class="seat-who" class:vacant={!seat.holder_id}>
+                    {seat.holder_id ? (seat.display_name || seat.username) : 'Vacant'}
+                  </span>
+                  {#if seat.term_ends_at}
+                    <span class="seat-term muted">Term ends {formatDay(seat.term_ends_at)}</span>
+                  {/if}
+                  {#if isPatchAdmin && !seat.holder_id}
+                    <button class="btn btn-sm seat-remove" disabled={seatBusy} onclick={() => removeSeat(seat.id)}>
+                      Remove seat
+                    </button>
+                  {/if}
+                </li>
+              {/each}
+            </ul>
+          {/if}
+
+          <!-- Where a member might look for a way onto the council. Sam
+               found nothing here and raised a proposal about himself, which
+               carried no target, changed nothing, and put his name under a
+               Reject button. -->
+          {#if vacantSeats.length > 0}
+            <p class="council-hint muted">
+              A vacant seat is filled by nomination: an admin puts a name forward and the members ratify it.
+            </p>
+          {:else if nextContestOpens}
+            <p class="council-hint muted">
+              {contestDue
+                ? 'Every seat is held. The next contest is due now, and any member may stand when it opens.'
+                : `Every seat is held. The next contest opens ${formatDay(nextContestOpens)}, and any member may stand then.`}
+            </p>
+          {:else}
+            <p class="council-hint muted">
+              Every seat is held, and no contest is scheduled.
+            </p>
+          {/if}
+
+          {#if isPatchAdmin}
+            <div class="council-controls">
+              <button class="btn btn-sm" disabled={seatBusy} onclick={addSeat}>Add a seat</button>
+              <span class="council-hint muted">
+                Adding a seat does not make anybody an admin. The community fills it.
+              </span>
+            </div>
+            {#if seatError}
+              <p class="successor-error">{seatError}</p>
+            {/if}
+          {/if}
+        </div>
+      {/if}
+
       <!-- When this council next faces the electorate. The rules narration
            above says terms last N months, which is the policy; this is the
            date, which is the accountability. Absent on a patch that sets no
@@ -522,6 +645,65 @@
 
   .admin-since {
     font-size: 0.75rem;
+  }
+
+  .council {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .council-line {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .seat-list {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .seat-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+  }
+
+  .seat-who {
+    font-weight: 500;
+  }
+
+  .seat-who.vacant {
+    font-weight: 400;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .seat-term {
+    font-size: 0.78rem;
+  }
+
+  .seat-remove {
+    margin-left: auto;
+  }
+
+  .council-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+
+  .council-hint {
+    font-size: 0.78rem;
+    margin: 0.4rem 0 0;
   }
 
   .term-line {

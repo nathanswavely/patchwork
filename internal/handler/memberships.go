@@ -1010,6 +1010,21 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				return
 			}
 
+			// On an elected patch the dropdown does not make an admin either
+			// (docs/adr/100). Two founders used it, believing they were doing
+			// the ordinary thing, and got three admins, zero new seats, no
+			// election, and a contest for one seat while three people held
+			// power. A control that silently outranks the mechanism the
+			// governance page advertises is worse than no control, so this
+			// says which mechanism runs and where it is: nominate into a
+			// vacant seat, or wait for the contest that fills the full one.
+			// Demotion is untouched, as it is for meritocratic, and the
+			// last-admin floor above still applies.
+			if newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "elected" {
+				http.Error(w, `{"error":"`+electedPromotionDenial(db, nodeID)+`"}`, http.StatusConflict)
+				return
+			}
+
 			// No cap on promotion. docs/adr/049 enforced max_admins here and
 			// docs/adr/051 retracts it: how many admins a patch has is a
 			// function of how it governs, not a number it configures, and
