@@ -9,6 +9,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -27,20 +28,65 @@ import (
 // number and never becomes it (docs/adr/051 retracted its enforcement, and
 // migration 041 backfilled 3 into nearly every patch).
 
-// seatView is a seat as every surface reads it: the chair, who is in it, and
-// when its term ends. A vacant seat carries no holder and still carries a
-// term — the clock belongs to the seat, not the person (docs/adr/051).
+// Seat fill routes. One chair, one answer — which is the whole point of
+// carrying them (F-067).
+//
+// A member looked at a council page that said, all at once, "the community
+// elects admins for fixed terms", "a vacant seat is filled by nomination", and
+// "next seat comes up Sep 1, 2027", and could not tell which sentence was
+// about the two empty chairs in front of him. All three were true, of
+// different chairs at different times. So the server decides per seat which
+// one applies and the page states only that.
+const (
+	// seatFillContest — a contest is running right now and this chair is in
+	// it. It outranks the others: while the community is deciding the
+	// council, that is what is happening to every chair.
+	seatFillContest = "contest_open"
+	// seatFillNomination — vacant, and fillable today: an admin puts a name
+	// forward and the members ratify (docs/adr/100, docs/adr/051).
+	seatFillNomination = "nomination"
+	// seatFillScheduled — held, and contested at the election the calendar
+	// opens on ContestOpens. Where that date has arrived, ContestDue says so
+	// and holdover is carrying the holder until a successor is elected.
+	seatFillScheduled = "contest_scheduled"
+	// seatFillNone — held, with no calendar: no term end, or a patch that
+	// sets no term length. Elected once, then stable, which is a real
+	// position rather than an omission.
+	seatFillNone = "none"
+)
+
+// seatView is a seat as every surface reads it: the chair, who is in it, when
+// its term ends, and what happens to it next. A vacant seat carries no holder
+// and still carries a term — the clock belongs to the seat, not the person
+// (docs/adr/051).
 type seatView struct {
 	ID          string `json:"id"`
 	HolderID    string `json:"holder_id,omitempty"`
 	Username    string `json:"username,omitempty"`
 	DisplayName string `json:"display_name,omitempty"`
 	TermEndsAt  string `json:"term_ends_at,omitempty"`
+	// Vacant is stated rather than left to the client to infer from an absent
+	// holder, because it is the fact the rest of the row turns on.
+	Vacant bool `json:"vacant"`
+	// Fill is which of the seatFill* routes applies to this chair now.
+	Fill string `json:"fill"`
+	// ContestOpens is when the calendar opens the contest for this chair,
+	// derived from this seat's own term end (docs/adr/051 put the clock on
+	// the seat so staggered chairs come up separately). Empty unless Fill is
+	// seatFillScheduled.
+	ContestOpens string `json:"contest_opens,omitempty"`
+	// ContestDue is true when that day has arrived and the sweep has not run
+	// yet — the council is overdue and holdover is carrying it.
+	ContestDue bool `json:"contest_due,omitempty"`
+	// ContestID is the open election deciding this chair, when Fill is
+	// seatFillContest, so the row can link to it.
+	ContestID string `json:"contest_id,omitempty"`
 }
 
 // seatsOf lists a patch's council in the order the chairs were made, which is
-// the order seatWinners refills them in.
-func seatsOf(db *database.DB, nodeID string) []seatView {
+// the order seatWinners refills them in, with each chair's own answer to
+// "what happens to this one".
+func seatsOf(db *database.DB, nodeID string, gc model.GovernanceConfig) []seatView {
 	out := []seatView{}
 	rows, err := db.Query(`
 		SELECT s.id, COALESCE(s.holder_id,''), COALESCE(`+usernameExpr("u")+`,''),
@@ -58,7 +104,39 @@ func seatsOf(db *database.DB, nodeID string) []seatView {
 		}
 		out = append(out, s)
 	}
+	rows.Close()
+
+	contestID := openContestID(db, nodeID)
+	today := time.Now().UTC().Format("2006-01-02")
+	for i := range out {
+		out[i].Vacant = out[i].HolderID == ""
+		switch {
+		case contestID != "":
+			out[i].Fill = seatFillContest
+			out[i].ContestID = contestID
+		case out[i].Vacant:
+			out[i].Fill = seatFillNomination
+		default:
+			opens := contestOpensFor(gc, out[i].TermEndsAt)
+			if opens == "" {
+				out[i].Fill = seatFillNone
+				continue
+			}
+			out[i].Fill = seatFillScheduled
+			out[i].ContestOpens = opens
+			out[i].ContestDue = opens <= today
+		}
+	}
 	return out
+}
+
+// openContestID is the election this council is running, or empty. Dates are
+// ISO, so a string compare is a date compare.
+func openContestID(db *database.DB, nodeID string) string {
+	var id string
+	db.QueryRow(`SELECT id FROM proposals WHERE node_id = ? AND status = 'open' AND seats_contested > 0
+	             ORDER BY created_at DESC LIMIT 1`, nodeID).Scan(&id)
+	return id
 }
 
 // vacantSeat returns the id of a seat nobody holds, oldest chair first, or
@@ -186,7 +264,7 @@ func AddSeat(db *database.DB) http.HandlerFunc {
 			`{"node_id":"`+nodeID+`","term_ends_at":`+jsonStringOrNull(termEnds)+`}`, clientIP(r))
 
 		total := seatCount(db, nodeID)
-		announceCouncilSize(db, nodeID, user.ID,
+		announceCouncil(db, nodeID, user.ID,
 			"A seat was added to the council",
 			"The council now has "+strconv.Itoa(total)+" seat"+plural(total)+". The new seat is vacant until somebody is elected or nominated into it.")
 
@@ -239,7 +317,7 @@ func RemoveSeat(db *database.DB) http.HandlerFunc {
 			`{"node_id":"`+nodeID+`"}`, clientIP(r))
 
 		total := seatCount(db, nodeID)
-		announceCouncilSize(db, nodeID, user.ID,
+		announceCouncil(db, nodeID, user.ID,
 			"A vacant seat was removed from the council",
 			"The council now has "+strconv.Itoa(total)+" seat"+plural(total)+".")
 
@@ -247,13 +325,120 @@ func RemoveSeat(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// announceCouncilSize tells the members the council changed size.
+// SetSeatTerm handles PATCH /api/v1/nodes/{slug}/seats/{id}.
+//
+// `admin_term_months` and `seats.term_ends_at` were readable on four surfaces
+// and settable on none. A founder who wanted her co-op's terms to end in
+// November — because the members voted for November — found every seat saying
+// September 2027 and no box anywhere. This is the box, and it sits beside the
+// chairs.
+//
+// **What it will not do is extend a sitting term.** docs/adr/051's integrity
+// argument is that the clock belongs to the seat precisely so that "appointment
+// can fill a gap but can never manufacture a mandate"; a council that can push
+// its own term ends out has the same power in a plainer form, and can outrun
+// its election calendar indefinitely without ever facing the electorate. So:
+//
+//   - a **vacant** chair takes any future date. Nobody holds a mandate in an
+//     empty chair, so nothing is manufactured, and this is what first-cohort
+//     staggering is made of (051: "spreading a first cohort is just setting
+//     shorter initial dates on some of them").
+//   - a **held** chair's date may only be brought *forward*, or set for the
+//     first time on a chair that had none. Both directions make the seat
+//     contestable sooner, never later. Nobody is removed by it — holdover
+//     means the holder serves until a successor is elected (051) — so the
+//     worst an admin can do to a colleague with this is call an election.
+//
+// Refused while a contest is running, because an election is judged by the
+// terms it opened with (docs/adr/047) and its own calendar is one of them.
+func SetSeatTerm(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		nodeID, ok := seatRoom(db, w, r)
+		if !ok {
+			return
+		}
+		seatID := r.PathValue("id")
+
+		var req struct {
+			TermEndsAt string `json:"term_ends_at"`
+		}
+		if json.NewDecoder(r.Body).Decode(&req) != nil {
+			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+			return
+		}
+		newEnd, err := time.Parse("2006-01-02", req.TermEndsAt)
+		if err != nil {
+			http.Error(w, `{"error":"a term end is a date, as 2027-11-01"}`, http.StatusBadRequest)
+			return
+		}
+		today := time.Now().UTC().Format("2006-01-02")
+		if req.TermEndsAt < today {
+			http.Error(w, `{"error":"a term end must be today or later: a date in the past would say a contest was already overdue when it was not"}`, http.StatusBadRequest)
+			return
+		}
+		termEnds := newEnd.Format("2006-01-02")
+
+		if contestID := openContestID(db, nodeID); contestID != "" {
+			http.Error(w, `{"error":"this council is running a contest: the calendar can move once it settles"}`, http.StatusConflict)
+			return
+		}
+
+		var holderID, holderName, currentEnd string
+		if err := db.QueryRow(
+			`SELECT COALESCE(s.holder_id,''), COALESCE(`+displayNameExpr("u")+`,''), COALESCE(s.term_ends_at,'')
+			 FROM seats s LEFT JOIN users u ON u.id = s.holder_id
+			 WHERE s.id = ? AND s.node_id = ?`, seatID, nodeID,
+		).Scan(&holderID, &holderName, &currentEnd); err != nil {
+			http.Error(w, `{"error":"seat not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// The one refusal. A held chair's date may come forward and may be set
+		// where there was none; it may never move out.
+		if holderID != "" && currentEnd != "" && termEnds > currentEnd {
+			who := holderName
+			if who == "" {
+				who = "Somebody"
+			}
+			http.Error(w, `{"error":"`+who+` holds this seat until `+readableDay(currentEnd)+
+				`. A held seat's term can be brought forward but not pushed back: extending it would hand out a term nobody voted for. Add a seat, or set an earlier date."}`,
+				http.StatusConflict)
+			return
+		}
+
+		if _, err := db.Exec(`UPDATE seats SET term_ends_at = ? WHERE id = ? AND node_id = ?`,
+			termEnds, seatID, nodeID); err != nil {
+			http.Error(w, `{"error":"failed to set the term end"}`, http.StatusInternalServerError)
+			return
+		}
+
+		auth.LogAuditEvent(db, user.ID, "seat.term_set", "seat", seatID,
+			`{"node_id":"`+nodeID+`","term_ends_at":`+jsonStringOrNull(termEnds)+
+				`,"previous_term_ends_at":`+jsonStringOrNull(currentEnd)+`}`, clientIP(r))
+
+		// Every member hears it: this is the patch's election calendar, and a
+		// date moving is the difference between standing for a seat this year
+		// and standing for it next year.
+		announceCouncil(db, nodeID, user.ID,
+			// announceCouncil appends " of <patch>", so the title has to read
+			// as a phrase that takes it.
+			"A term end moved on the council",
+			"One seat's term now ends "+readableDay(termEnds)+". The election for that seat is scheduled from its term end.")
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(seatView{ID: seatID, HolderID: holderID, TermEndsAt: termEnds, Vacant: holderID == ""})
+	}
+}
+
+// announceCouncil tells the members the council's furniture changed — a chair
+// added or dissolved, or an election date moved.
 //
 // governance.rules_changed, not a type of its own: how many chairs a council
 // has is part of how the patch governs, it reaches every member in the
 // governance category, and it is muted and mailed with the rest of that
 // category rather than being one more switch to find.
-func announceCouncilSize(db *database.DB, nodeID, actorID, title, body string) {
+func announceCouncil(db *database.DB, nodeID, actorID, title, body string) {
 	var slug, nodeName string
 	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
 	notify(notifications.Event{
@@ -266,6 +451,16 @@ func announceCouncilSize(db *database.DB, nodeID, actorID, title, body string) {
 		Body:     body,
 		Link:     weblink.PatchGovernance(slug),
 	})
+}
+
+// readableDay renders a stored calendar date for a person to read. The column
+// is ISO and stays ISO; what a member gets in a notification is not.
+func readableDay(iso string) string {
+	d, err := time.Parse("2006-01-02", iso)
+	if err != nil {
+		return iso
+	}
+	return d.Format("January 2, 2006")
 }
 
 // plural is the "s" on a counted noun, so the copy does not have to branch.

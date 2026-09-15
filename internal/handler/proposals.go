@@ -93,7 +93,20 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			WHERE p.node_id = ?`
 		args := []interface{}{nodeID}
 
-		if status != "" && status != "all" {
+		// The filter is by outcome, not by the status column (docs/adr/097,
+		// amended). A lapse and an unsettled contest both carry `rejected` —
+		// the schema's only terminal "no", and adding a fifth would be a
+		// migration for a word — so filtering on the column put three
+		// proposals nobody rejected in a drawer labelled Rejected. The two
+		// state values are what the product means, and the query reads them.
+		switch status {
+		case "", "all":
+			// Every proposal.
+		case "not_decided":
+			query += " AND COALESCE(p.state,'') IN ('lapsed', 'unsettled')"
+		case "rejected":
+			query += " AND p.status = 'rejected' AND COALESCE(p.state,'') NOT IN ('lapsed', 'unsettled')"
+		default:
 			query += " AND p.status = ?"
 			args = append(args, status)
 		}

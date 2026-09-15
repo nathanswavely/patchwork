@@ -262,7 +262,12 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// contests and the number a member is asking about when they
 			// wonder how to get on the council. Empty on every patch that
 			// does not elect, so the hub renders nothing.
-			"seats": seatsOf(db, nodeID),
+			// Each chair carries its own answer to "what happens to this
+			// one" — vacant and fillable by nomination today, in the contest
+			// running now, contested when the calendar opens on a date, or
+			// held with no calendar at all. The page states that per row
+			// instead of three general facts about councils side by side.
+			"seats": seatsOf(db, nodeID, overviewGC),
 			// When the calendar next opens a contest. Derived from the
 			// seats' own term ends, never stored (see nextContestOpens).
 			"next_contest_opens": nextContestOpens(db, nodeID, overviewGC),

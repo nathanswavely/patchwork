@@ -73,18 +73,34 @@ func ScheduleDueElections(db *database.DB) {
 // that sets no term length, or one with no dated seat. A date already past
 // means the contest is due now and the next sweep opens it.
 func nextContestOpens(db *database.DB, nodeID string, gc model.GovernanceConfig) string {
+	return contestOpensFor(gc, nextTermEnd(db, nodeID))
+}
+
+// contestOpensFor is the same arithmetic for one chair: that seat's own term
+// end, less the time a whole contest takes.
+//
+// Per seat rather than per council, because staggering is a policy
+// docs/adr/051 deliberately left free — two chairs with different term ends
+// come up at different times, and one date printed for the whole council is
+// wrong about at least one of them. The governance page states this per row
+// now, which is what it takes for a member reading two vacant chairs to learn
+// what happens to *those* chairs rather than three general facts about
+// councils.
+//
+// Empty where no contest is coming: a patch that does not elect here, one
+// that sets no term length, or a seat with no term end.
+func contestOpensFor(gc model.GovernanceConfig, termEnd string) string {
 	if gc.LeadershipModel != "elected" || gc.LeadershipVenue == "elsewhere" || gc.AdminTermMonths <= 0 {
 		return ""
 	}
-	end := nextTermEnd(db, nodeID)
-	if end == "" {
+	if termEnd == "" {
 		return ""
 	}
-	termEnd, err := time.Parse("2006-01-02", end)
+	end, err := time.Parse("2006-01-02", termEnd)
 	if err != nil {
 		return ""
 	}
-	return termEnd.Add(-time.Duration(electionLeadHours(gc)) * time.Hour).Format("2006-01-02")
+	return end.Add(-time.Duration(electionLeadHours(gc)) * time.Hour).Format("2006-01-02")
 }
 
 func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig) {

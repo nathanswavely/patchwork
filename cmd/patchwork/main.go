@@ -499,6 +499,10 @@ func main() {
 	// gated the way a power transfer is.
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/seats", middleware.AuthRequired(db, handler.AddSeat(db)))
 	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/seats/{id}", middleware.AuthRequired(db, handler.RemoveSeat(db)))
+	// A seat's term end is the patch's election calendar (docs/adr/051 put the
+	// clock on the seat). An admin may bring a chair's date forward; pushing a
+	// held one back would hand out a term nobody voted for, and is refused.
+	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/seats/{id}", middleware.AuthRequired(db, handler.SetSeatTerm(db)))
 	mux.HandleFunc("PUT /api/v1/proposals/{id}/ballot", middleware.AuthRequired(db, handler.CastElectionBallot(db)))
 	// Attestations (docs/adr/052, docs/adr/053) — decisions a community made
 	// somewhere Patchwork was not. Public to read: the whole value is that the

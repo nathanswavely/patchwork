@@ -970,7 +970,7 @@
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 246,
+          "line": 334,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -3947,14 +3947,14 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 156,
+          "line": 167,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 345,
+          "line": 369,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4080,21 +4080,21 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 201,
+          "line": 214,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1397,
+          "line": 1410,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1588,
+          "line": 1601,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4144,6 +4144,13 @@
         {
           "file": "internal/handler/revisions.go",
           "line": 108,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/seats.go",
+          "line": 367,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4539,21 +4546,21 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 140,
+          "line": 151,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 226,
+          "line": 237,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 580,
+          "line": 604,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4672,14 +4679,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 161,
+          "line": 174,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/seats.go",
-          "line": 96,
+          "line": 174,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5042,7 +5049,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1628,
+          "line": 1641,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5607,14 +5614,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1517,
+          "line": 1530,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1571,
+          "line": 1584,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6337,35 +6344,35 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1096,
+          "line": 1109,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1321,
+          "line": 1334,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1486,
+          "line": 1499,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1563,
+          "line": 1576,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1673,
+          "line": 1686,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -6415,49 +6422,49 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 284,
+          "line": 308,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 290,
+          "line": 314,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 329,
+          "line": 353,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 490,
+          "line": 514,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 495,
+          "line": 519,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 543,
+          "line": 567,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 547,
+          "line": 571,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
@@ -8089,7 +8096,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 178,
+          "line": 191,
           "kind": "go-error-body",
           "raw": "must be member of node",
           "quote": null
@@ -9769,14 +9776,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 146,
+          "line": 157,
           "kind": "go-error-body",
           "raw": "admin access required",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 335,
+          "line": 359,
           "kind": "go-error-body",
           "raw": "admin access required",
           "quote": null
@@ -9794,14 +9801,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 160,
+          "line": 171,
           "kind": "go-error-body",
           "raw": "title is required",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 205,
+          "line": 218,
           "kind": "go-error-body",
           "raw": "title is required",
           "quote": null
@@ -9819,14 +9826,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 169,
+          "line": 180,
           "kind": "go-error-body",
           "raw": "visibility must be public or members",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 357,
+          "line": 381,
           "kind": "go-error-body",
           "raw": "visibility must be public or members",
           "quote": null
@@ -9844,14 +9851,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 177,
+          "line": 188,
           "kind": "go-error-body",
           "raw": "that title is reserved for the lining",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 382,
+          "line": 406,
           "kind": "go-error-body",
           "raw": "that title is reserved for the lining",
           "quote": null
@@ -9869,7 +9876,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 187,
+          "line": 198,
           "kind": "go-error-body",
           "raw": "failed to create governance doc",
           "quote": null
@@ -9887,7 +9894,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 238,
+          "line": 254,
           "kind": "go-error-body",
           "raw": "failed to list governance docs",
           "quote": null
@@ -9905,7 +9912,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 349,
+          "line": 373,
           "kind": "go-error-body",
           "raw": "title, body, or visibility is required",
           "quote": null
@@ -9923,7 +9930,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 353,
+          "line": 377,
           "kind": "go-error-body",
           "raw": "title cannot be empty",
           "quote": null
@@ -9941,7 +9948,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 366,
+          "line": 390,
           "kind": "go-error-body",
           "raw": "the lining's title cannot be changed",
           "quote": null
@@ -9959,7 +9966,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 370,
+          "line": 394,
           "kind": "go-error-body",
           "raw": "the lining is always public",
           "quote": null
@@ -9977,7 +9984,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 374,
+          "line": 398,
           "kind": "go-error-body",
           "raw": "the lining can only be changed by amendment proposal",
           "quote": null
@@ -9995,7 +10002,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 413,
+          "line": 437,
           "kind": "go-error-body",
           "raw": "failed to update governance doc",
           "quote": null
@@ -10013,7 +10020,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 536,
+          "line": 560,
           "kind": "go-error-body",
           "raw": "from and to query params are required",
           "quote": null
@@ -10031,7 +10038,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 553,
+          "line": 577,
           "kind": "go-error-body",
           "raw": "governance repos not configured",
           "quote": null
@@ -10049,7 +10056,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 559,
+          "line": 583,
           "kind": "go-error-body",
           "raw": "version not found",
           "quote": null
@@ -14212,7 +14219,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 109,
+          "line": 122,
           "kind": "go-error-body",
           "raw": "failed to list proposals",
           "quote": null
@@ -14230,7 +14237,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 215,
+          "line": 228,
           "kind": "go-error-body",
           "raw": "invalid proposal_type",
           "quote": null
@@ -14248,7 +14255,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 223,
+          "line": 236,
           "kind": "go-error-body",
           "raw": "a proposal about a person must be of type membership",
           "quote": null
@@ -14266,7 +14273,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 239,
+          "line": 252,
           "kind": "go-error-body",
           "raw": "a membership proposal has to name the person it is about",
           "quote": null
@@ -14284,7 +14291,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 276,
+          "line": 289,
           "kind": "go-error-body",
           "raw": "this patch decides at meetings, and the governance rules are not something a meeting adopts. Ask an admin to apply the change directly (docs/adr/053).",
           "quote": null
@@ -14302,7 +14309,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 300,
+          "line": 313,
           "kind": "go-error-body",
           "raw": "failed to create amendment branch: %s",
           "quote": null
@@ -14320,7 +14327,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 374,
+          "line": 387,
           "kind": "go-error-body",
           "raw": "failed to create proposal",
           "quote": null
@@ -14338,7 +14345,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1326,
+          "line": 1339,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -14356,7 +14363,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1337,
+          "line": 1350,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -14374,7 +14381,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1344,
+          "line": 1357,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -14392,7 +14399,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1355,
+          "line": 1368,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -14410,7 +14417,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1401,
+          "line": 1414,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -14428,7 +14435,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1420,
+          "line": 1433,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -14446,7 +14453,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1491,
+          "line": 1504,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -14464,7 +14471,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1509,
+          "line": 1522,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -14482,7 +14489,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1528,
+          "line": 1541,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -14500,7 +14507,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1593,
+          "line": 1606,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -14518,7 +14525,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1606,
+          "line": 1619,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -14536,7 +14543,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1640,
+          "line": 1653,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -14561,7 +14568,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1682,
+          "line": 1695,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -14579,7 +14586,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1699,
+          "line": 1712,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -14597,7 +14604,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1702,
+          "line": 1715,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null
@@ -15334,7 +15341,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 100,
+          "line": 178,
           "kind": "go-error-body",
           "raw": "only this patch's admins can change its council seats",
           "quote": null
@@ -15352,7 +15359,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 108,
+          "line": 186,
           "kind": "go-error-body",
           "raw": "this patch chooses its council elsewhere: record that decision instead",
           "quote": null
@@ -15370,7 +15377,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 116,
+          "line": 194,
           "kind": "go-error-body",
           "raw": "seats belong to the elected model; this patch makes admins another way",
           "quote": null
@@ -15388,7 +15395,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 181,
+          "line": 259,
           "kind": "go-error-body",
           "raw": "failed to add a seat",
           "quote": null
@@ -15406,7 +15413,14 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 221,
+          "line": 299,
+          "kind": "go-error-body",
+          "raw": "seat not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/seats.go",
+          "line": 393,
           "kind": "go-error-body",
           "raw": "seat not found",
           "quote": null
@@ -15424,9 +15438,81 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 234,
+          "line": 312,
           "kind": "go-error-body",
           "raw": "failed to remove the seat",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f8c62993057f",
+      "text": "a term end is a date, as 2027-11-01",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 372,
+          "kind": "go-error-body",
+          "raw": "a term end is a date, as 2027-11-01",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "10682523e787",
+      "text": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 377,
+          "kind": "go-error-body",
+          "raw": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8eedcfc5152a",
+      "text": "this council is running a contest: the calendar can move once it settles",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 383,
+          "kind": "go-error-body",
+          "raw": "this council is running a contest: the calendar can move once it settles",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "16b8f8c25a18",
+      "text": "failed to set the term end",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 412,
+          "kind": "go-error-body",
+          "raw": "failed to set the term end",
           "quote": null
         }
       ]
@@ -18408,13 +18494,6 @@
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
-        },
-        {
-          "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 362,
-          "kind": "markup",
-          "raw": "Nothing recorded yet.",
-          "quote": null
         }
       ]
     },
@@ -20732,7 +20811,7 @@
         },
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 107,
+          "line": 139,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -20788,7 +20867,7 @@
         },
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 138,
+          "line": 144,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -20828,6 +20907,186 @@
       ]
     },
     {
+      "id": "7e379558c7e1",
+      "text": "In the contest running now. Whoever the members approve takes it.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 105,
+          "kind": "js-string",
+          "raw": "In the contest running now. Whoever the members approve takes it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "efa2dcd0b16a",
+      "text": "Filled by nomination: an admin puts a member forward and the members ratify it. That can happen today.",
+      "words": 18,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 109,
+          "kind": "js-string",
+          "raw": "Filled by nomination: an admin puts a member forward and the members ratify it. That can happen today.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7773c21d34a6",
+      "text": "No term end, so nothing brings this seat up for election.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 125,
+          "kind": "js-string",
+          "raw": "No term end, so nothing brings this seat up for election.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "6a258c4f5fab",
+      "text": "Nominations are open. You can stand, or put another member forward.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 134,
+          "kind": "js-string",
+          "raw": "Nominations are open. You can stand, or put another member forward.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "733c5f2934c3",
+      "text": "Nominations are open. Members of this patch can stand for a seat.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 135,
+          "kind": "js-string",
+          "raw": "Nominations are open. Members of this patch can stand for a seat.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "db81ebcc7957",
+      "text": "The ballot is open. The members are choosing between the candidates.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 138,
+          "kind": "js-string",
+          "raw": "The ballot is open. The members are choosing between the candidates.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "cb4da358c6d1",
+      "text": "Only an admin can put a name forward for a vacant seat. Ask one to nominate you.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 148,
+          "kind": "js-string",
+          "raw": "Only an admin can put a name forward for a vacant seat. Ask one to nominate you.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "72cb57863850",
+      "text": "Every seat is held and no election is scheduled. Nothing changes on this council until a seat is added or a term end is set.",
+      "words": 25,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 152,
+          "kind": "js-string",
+          "raw": "Every seat is held and no election is scheduled. Nothing changes on this council until a seat is added or a term end is set.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fe899f1542de",
+      "text": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 155,
+          "kind": "js-string",
+          "raw": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "db7ee95c0cc5",
+      "text": "Could not set the term end",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 184,
+          "kind": "js-string",
+          "raw": "Could not set the term end",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "97be8ad413f3",
       "text": "Could not add a seat",
       "words": 5,
@@ -20838,7 +21097,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 106,
+          "line": 197,
           "kind": "js-string",
           "raw": "Could not add a seat",
           "quote": "'"
@@ -20856,7 +21115,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 119,
+          "line": 210,
           "kind": "js-string",
           "raw": "Could not remove the seat",
           "quote": "'"
@@ -20874,7 +21133,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 182,
+          "line": 273,
           "kind": "js-string",
           "raw": "Naming a successor needs a passkey. Enroll one in Security settings first.",
           "quote": "'"
@@ -20892,7 +21151,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 183,
+          "line": 274,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -21015,7 +21274,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 200,
+          "line": 291,
           "kind": "js-string",
           "raw": "The maintainer makes all decisions for this patch, and may ask the members before deciding.",
           "quote": "'"
@@ -21033,7 +21292,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 201,
+          "line": 292,
           "kind": "js-string",
           "raw": "Your patch decides things by majority vote. More than half must agree.",
           "quote": "'"
@@ -21051,7 +21310,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 202,
+          "line": 293,
           "kind": "js-string",
           "raw": "Decisions require a supermajority: at least 2 out of 3 voters must agree.",
           "quote": "'"
@@ -21069,7 +21328,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 203,
+          "line": 294,
           "kind": "js-string",
           "raw": "Decisions require consensus. Everyone, or nearly everyone, must agree.",
           "quote": "'"
@@ -21087,7 +21346,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 210,
+          "line": 301,
           "kind": "js-string",
           "raw": " Any number of votes counts. No minimum participation required.",
           "quote": "'"
@@ -21105,7 +21364,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 229,
+          "line": 320,
           "kind": "js-string",
           "raw": "One person maintains this patch. They handle day-to-day decisions and can designate a successor.",
           "quote": "'"
@@ -21123,7 +21382,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 230,
+          "line": 321,
           "kind": "js-string",
           "raw": "Admins earn their role through sustained contribution. When a seat opens, existing admins nominate from active members and the community ratifies.",
           "quote": "'"
@@ -21141,7 +21400,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 231,
+          "line": 322,
           "kind": "js-string",
           "raw": "The community elects admins for fixed terms. Regular elections ensure power rotates.",
           "quote": "'"
@@ -21159,7 +21418,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 267,
+          "line": 355,
           "kind": "markup",
           "raw": "Failed to load governance overview.",
           "quote": null
@@ -21177,7 +21436,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 276,
+          "line": 364,
           "kind": "markup",
           "raw": "{overview.needs_vote} proposal{overview.needs_vote > 1 ? 's' : ''} need{overview.needs_vote === 1 ? 's' : ''} your vote",
           "quote": null
@@ -21195,7 +21454,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 295,
+          "line": 383,
           "kind": "markup",
           "raw": "Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}",
           "quote": null
@@ -21213,7 +21472,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 302,
+          "line": 390,
           "kind": "markup",
           "raw": "Closing {formatDay(election.nominations_close_at)}.",
           "quote": null
@@ -21231,7 +21490,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 314,
+          "line": 402,
           "kind": "markup",
           "raw": "How decisions are made",
           "quote": null
@@ -21249,7 +21508,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 320,
+          "line": 408,
           "kind": "markup",
           "raw": "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.",
           "quote": null
@@ -21268,7 +21527,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 327,
+          "line": 415,
           "kind": "markup",
           "raw": "An admin changes these rules directly.",
           "quote": null
@@ -21286,7 +21545,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 342,
+          "line": 430,
           "kind": "markup",
           "raw": "Leadership: {leadershipLabel(rules?.leadership_model)}",
           "quote": null
@@ -21304,7 +21563,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 366,
+          "line": 460,
           "kind": "markup",
           "raw": "Member since {formatDate(admin.joined_at)}",
           "quote": null
@@ -21312,19 +21571,19 @@
       ]
     },
     {
-      "id": "801386ee40d2",
-      "text": "This council has no seats yet.",
-      "words": 6,
-      "tier": "helper",
+      "id": "7c1fc5e8624c",
+      "text": "This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.",
+      "words": 21,
+      "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 382,
+          "line": 479,
           "kind": "markup",
-          "raw": "This council has no seats yet.",
+          "raw": "This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.",
           "quote": null
         }
       ]
@@ -21340,7 +21599,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 384,
+          "line": 481,
           "kind": "markup",
           "raw": "{seats.length} seat{seats.length === 1 ? '' : 's'} on the council,\n              {vacantSeats.length === 0\n                ? 'all held'\n                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.",
           "quote": null
@@ -21348,56 +21607,20 @@
       ]
     },
     {
-      "id": "96c0b29e2b9e",
-      "text": "Term ends {formatDay(seat.term_ends_at)}",
-      "words": 3,
+      "id": "5182905422f8",
+      "text": "Term end",
+      "words": 2,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 399,
-          "kind": "markup",
-          "raw": "Term ends {formatDay(seat.term_ends_at)}",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "cdbe1483fcb4",
-      "text": "A vacant seat is filled by nomination: an admin puts a name forward and the members ratify it.",
-      "words": 18,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
-      "occurrences": [
-        {
-          "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 417,
-          "kind": "markup",
-          "raw": "A vacant seat is filled by nomination: an admin puts a name forward and the members ratify it.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "072294869b28",
-      "text": "Every seat is held, and no contest is scheduled.",
-      "words": 9,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
-      "occurrences": [
-        {
-          "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 427,
-          "kind": "markup",
-          "raw": "Every seat is held, and no contest is scheduled.",
-          "quote": null
+          "line": 511,
+          "kind": "attr:aria-label",
+          "raw": "Term end",
+          "quote": "\""
         }
       ]
     },
@@ -21412,7 +21635,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 433,
+          "line": 543,
           "kind": "markup",
           "raw": "Add a seat",
           "quote": null
@@ -21430,9 +21653,27 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 435,
+          "line": 545,
           "kind": "markup",
           "raw": "Adding a seat does not make anybody an admin. The community fills it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f7798e98a35b",
+      "text": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought forward, because pushing it back would extend a term nobody voted for. Nobody loses their seat when a term ends — the holder serves until a successor is elected.",
+      "words": 52,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 549,
+          "kind": "markup",
+          "raw": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought\n              forward, because pushing it back would extend a term nobody voted for. Nobody loses their seat when a term ends — the\n              holder serves until a successor is elected.",
           "quote": null
         }
       ]
@@ -21448,7 +21689,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 452,
+          "line": 568,
           "kind": "markup",
           "raw": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
           "quote": null
@@ -21466,7 +21707,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 454,
+          "line": 570,
           "kind": "markup",
           "raw": "Next seat comes up {formatDay(nextTermEnd)}.",
           "quote": null
@@ -21484,7 +21725,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 465,
+          "line": 581,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -21502,7 +21743,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 477,
+          "line": 593,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -21520,7 +21761,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 491,
+          "line": 607,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -21538,7 +21779,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 491,
+          "line": 607,
           "kind": "markup",
           "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
@@ -21557,7 +21798,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 494,
+          "line": 610,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -21575,7 +21816,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 500,
+          "line": 616,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -21593,7 +21834,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 514,
+          "line": 630,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -21611,14 +21852,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 526,
+          "line": 642,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 530,
+          "line": 646,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -21706,7 +21947,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 531,
+          "line": 647,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -21731,7 +21972,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 328,
+          "line": 349,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -22596,7 +22837,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 194,
+          "line": 215,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -22614,7 +22855,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 223,
+          "line": 244,
           "kind": "markup",
           "raw": "atproto handle, proved when this patch was claimed",
           "quote": null
@@ -22632,7 +22873,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 232,
+          "line": 253,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -22671,7 +22912,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 244,
+          "line": 265,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -22710,7 +22951,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 284,
+          "line": 305,
           "kind": "markup",
           "raw": "{moreEvents} more upcoming",
           "quote": null
@@ -22728,7 +22969,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 287,
+          "line": 308,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -22746,7 +22987,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 320,
+          "line": 341,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -22763,6 +23004,31 @@
           "line": 370,
           "kind": "markup",
           "raw": "No members yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b4e929d8bcfe",
+      "text": "Documents",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 360,
+          "kind": "markup",
+          "raw": "Documents",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/GovernanceList.svelte",
+          "line": 97,
+          "kind": "markup",
+          "raw": "Documents",
           "quote": null
         }
       ]
@@ -39940,7 +40206,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 44,
+          "line": 58,
           "kind": "js-string",
           "raw": "Failed to load governance documents",
           "quote": "'"
@@ -39958,7 +40224,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 62,
+          "line": 82,
           "kind": "js-string",
           "raw": "Hidden from visitors",
           "quote": "'"
@@ -39976,85 +40242,10 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 64,
+          "line": 84,
           "kind": "js-string",
           "raw": "Failed to change visibility",
           "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "4228bb07a94a",
-      "text": "This content is only visible to members.",
-      "words": 7,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/GovernanceList.svelte",
-          "line": 75,
-          "kind": "markup",
-          "raw": "This content is only visible to members.",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 192,
-          "kind": "markup",
-          "raw": "This content is only visible to members.",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchMembers.svelte",
-          "line": 93,
-          "kind": "markup",
-          "raw": "This content is only visible to members.",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/ProposalList.svelte",
-          "line": 103,
-          "kind": "markup",
-          "raw": "This content is only visible to members.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "10f7bb778082",
-      "text": "Become a member to access documents.",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/GovernanceList.svelte",
-          "line": 76,
-          "kind": "markup",
-          "raw": "Become a member to access documents.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b4e929d8bcfe",
-      "text": "Documents",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/GovernanceList.svelte",
-          "line": 83,
-          "kind": "markup",
-          "raw": "Documents",
-          "quote": null
         }
       ]
     },
@@ -40069,9 +40260,45 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 86,
+          "line": 100,
           "kind": "markup",
           "raw": "New documents start members only. Publish one to let visitors and\n              other quilts read it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c65a6806540d",
+      "text": "Minutes of a meeting go in a document. Recording an adopted text, below, replaces a charter with the version a meeting adopted.",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceList.svelte",
+          "line": 110,
+          "kind": "markup",
+          "raw": "Minutes of a meeting go in a document. Recording an adopted\n                text, below, replaces a charter with the version a meeting\n                adopted.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "59c22a9bc442",
+      "text": "Members-only documents are not listed here.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceList.svelte",
+          "line": 119,
+          "kind": "markup",
+          "raw": "Members-only documents are not listed here.",
           "quote": null
         }
       ]
@@ -40087,27 +40314,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 101,
+          "line": 133,
           "kind": "markup",
           "raw": "These documents define how this community makes decisions.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "4efd9b350dd6",
-      "text": "No governance documents yet.",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/GovernanceList.svelte",
-          "line": 111,
-          "kind": "markup",
-          "raw": "No governance documents yet.",
           "quote": null
         }
       ]
@@ -40123,7 +40332,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 124,
+          "line": 163,
           "kind": "markup",
           "raw": "Updated {new Date(doc.updated_at).toLocaleDateString()}",
           "quote": null
@@ -40141,7 +40350,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 128,
+          "line": 167,
           "kind": "attr:title",
           "raw": "The shared baseline every patch starts with. Always public; changed only by amendment.",
           "quote": "\""
@@ -40159,7 +40368,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 129,
+          "line": 168,
           "kind": "markup",
           "raw": "The lining",
           "quote": null
@@ -42634,6 +42843,38 @@
           "kind": "js-string",
           "raw": "Upload failed",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4228bb07a94a",
+      "text": "This content is only visible to members.",
+      "words": 7,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchEvents.svelte",
+          "line": 192,
+          "kind": "markup",
+          "raw": "This content is only visible to members.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 93,
+          "kind": "markup",
+          "raw": "This content is only visible to members.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/ProposalList.svelte",
+          "line": 103,
+          "kind": "markup",
+          "raw": "This content is only visible to members.",
+          "quote": null
         }
       ]
     },
@@ -45931,19 +46172,19 @@
       ]
     },
     {
-      "id": "02f1785d5db5",
-      "text": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page.",
-      "words": 44,
+      "id": "7918ceb57d94",
+      "text": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
+      "words": 52,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
           "line": 360,
           "kind": "markup",
-          "raw": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page.",
+          "raw": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
           "quote": null
         }
       ]
@@ -48080,19 +48321,55 @@
       ]
     },
     {
-      "id": "f6363f97e569",
-      "text": "No proposals{statusFilter && statusFilter !== 'all' ? ` with status \"${statusFilter}\"` : ''}.",
-      "words": 13,
+      "id": "3e845896be0d",
+      "text": "Nothing here has lapsed or settled nothing.",
+      "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 141,
+          "line": 148,
           "kind": "markup",
-          "raw": "No proposals{statusFilter && statusFilter !== 'all' ? ` with status \"${statusFilter}\"` : ''}.",
+          "raw": "Nothing here has lapsed or settled nothing.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "11440c1ab504",
+      "text": "No {statusFilter} proposals.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalList.svelte",
+          "line": 150,
+          "kind": "markup",
+          "raw": "No {statusFilter} proposals.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "baf566cbf448",
+      "text": "No proposals.",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalList.svelte",
+          "line": 152,
+          "kind": "markup",
+          "raw": "No proposals.",
           "quote": null
         }
       ]
@@ -48108,7 +48385,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 168,
+          "line": 180,
           "kind": "markup",
           "raw": "waiting on the maintainer",
           "quote": null
@@ -52581,6 +52858,96 @@
           "line": 414,
           "kind": "markup",
           "raw": "An IANA name. Leave it empty to follow the quilt{instanceTimezone\n        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n        : ''}.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "801386ee40d2",
+      "text": "This council has no seats yet.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 382,
+          "kind": "markup",
+          "raw": "This council has no seats yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "96c0b29e2b9e",
+      "text": "Term ends {formatDay(seat.term_ends_at)}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 399,
+          "kind": "markup",
+          "raw": "Term ends {formatDay(seat.term_ends_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cdbe1483fcb4",
+      "text": "A vacant seat is filled by nomination: an admin puts a name forward and the members ratify it.",
+      "words": 18,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 417,
+          "kind": "markup",
+          "raw": "A vacant seat is filled by nomination: an admin puts a name forward and the members ratify it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "072294869b28",
+      "text": "Every seat is held, and no contest is scheduled.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 427,
+          "kind": "markup",
+          "raw": "Every seat is held, and no contest is scheduled.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "02f1785d5db5",
+      "text": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page.",
+      "words": 44,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsMembers.svelte",
+          "line": 360,
+          "kind": "markup",
+          "raw": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page.",
           "quote": null
         }
       ]
