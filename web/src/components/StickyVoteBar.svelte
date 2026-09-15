@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { timeLeft as timeLeftFor, timeLeftShort } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
 
   let {
@@ -16,13 +17,10 @@
   let voting = $state(false);
 
   let timeLeft = $derived.by(() => {
-    if (!votingEndsAt) return '';
-    const ms = new Date(votingEndsAt) - new Date();
-    if (ms <= 0) return 'ended';
-    const days = Math.floor(ms / 86400000);
-    const hours = Math.floor((ms % 86400000) / 3600000);
-    if (days > 0) return `${days}d`;
-    return `${hours}h`;
+    const left = timeLeftFor(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'ended';
+    return timeLeftShort(left);
   });
 
   async function castVote(value) {

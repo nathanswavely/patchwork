@@ -24,10 +24,24 @@
     { value: 336, label: '2 weeks' },
   ];
 
+  // What happens when inactivity empties the last admin seat
+  // (internal/notifications/inactivity.go). The Collaborative and Formal
+  // templates store 'nomination' and 'election' here; the select used to
+  // know neither, so it rendered with nothing chosen and a save would have
+  // quietly rewritten the patch's policy. The sweep runs the longest-tenure
+  // rule for both today, and each hint says so rather than promising a
+  // mechanic the patch does not run.
   const SUCCESSION_OPTIONS = [
-    { value: 'longest_tenure', label: 'Longest-tenured member' },
-    { value: 'instance_admin', label: 'Instance admin intervenes' },
-    { value: 'freeze', label: 'Patch freezes' },
+    { value: 'longest_tenure', label: 'Longest-tenured members step in',
+      hint: 'The three longest-standing members become interim admins.' },
+    { value: 'nomination', label: 'Nomination',
+      hint: 'Admins name their successors. If none are left to, the three longest-standing members step in.' },
+    { value: 'election', label: 'Election',
+      hint: 'Members elect the next admins. Until then, the three longest-standing members step in.' },
+    { value: 'instance_admin', label: 'Instance admin intervenes',
+      hint: 'An instance admin is notified and decides who runs the patch.' },
+    { value: 'freeze', label: 'Patch freezes',
+      hint: 'Nobody is promoted; the patch keeps running with no admin.' },
   ];
 
   const TENURE_OPTIONS = [
@@ -68,6 +82,17 @@
   let followerMembers = $state(true);
 
   let adminDecides = $derived(decisionMethod === 'admin');
+
+  // A stored value this editor has no option for still round-trips: it is
+  // shown as itself and left alone, never swapped for the first option. The
+  // rules file is whole-document (CLAUDE.md: a field this drops is a field
+  // the next unrelated edit resets).
+  let successionOptions = $derived(
+    SUCCESSION_OPTIONS.some((o) => o.value === successionPolicy)
+      ? SUCCESSION_OPTIONS
+      : [...SUCCESSION_OPTIONS, { value: successionPolicy, label: successionPolicy, hint: '' }]
+  );
+  let successionHint = $derived(successionOptions.find((o) => o.value === successionPolicy)?.hint || '');
 
   // Initialize from currentRules
   $effect(() => {
@@ -227,10 +252,13 @@
   <div class="field">
     <label for="re-succession">Succession Policy</label>
     <select id="re-succession" bind:value={successionPolicy}>
-      {#each SUCCESSION_OPTIONS as opt}
+      {#each successionOptions as opt (opt.value)}
         <option value={opt.value}>{opt.label}</option>
       {/each}
     </select>
+    {#if successionHint}
+      <p class="venue-hint muted">{successionHint}</p>
+    {/if}
   </div>
 
   {#if !adminDecides}
