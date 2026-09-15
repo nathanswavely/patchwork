@@ -1291,11 +1291,16 @@ func TestListMembersCountsWholePatchNotJustThePage(t *testing.T) {
 	}
 }
 
-// The totals must match what this viewer's listing can actually show, or the
-// header promises rows the list will never hand over: an outsider sees only
-// visible member/admin rows (docs/adr/006), so hidden rows and followers are
-// outside their count.
-func TestListMembersCountsHonourTheViewersVisibility(t *testing.T) {
+// The totals say how big the patch is, not how long this viewer's page is.
+// They are the ungated count — every active row, hidden memberships and
+// followers included — so the members page states the same number the profile
+// head and the quilt tile do (CONTEXT.md "Member count"). A count names
+// nobody; docs/adr/006's switch decides who is *listed*, and docs/adr/095
+// decision 3 already settled the same question for the stronger roster gate.
+//
+// The listing itself is unchanged: an outsider still gets visible member/admin
+// rows only, which is why the count can and does exceed what they can see.
+func TestListMembersCountsStateThePatchsSizeNotThePage(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "admin61", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Quiet Node", "quiet-node", "open")
@@ -1309,7 +1314,7 @@ func TestListMembersCountsHonourTheViewersVisibility(t *testing.T) {
 	follower, _ := createTestUser(t, db, "follow61", "member")
 	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
 
-	// The room's own admin counts everybody the listing carries.
+	// The room's own admin counts everybody.
 	r := authedRequest("GET", "/api/v1/nodes/quiet-node/members", nil, adminToken)
 	w := serveMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
 	inside := decodeJSON(t, w)
@@ -1320,16 +1325,43 @@ func TestListMembersCountsHonourTheViewersVisibility(t *testing.T) {
 		t.Errorf("insider: expected follower_count=1, got %v", got)
 	}
 
-	// An anonymous visitor counts only the rows they can be shown.
+	// An anonymous visitor is handed one row and the same two numbers. The
+	// gap between them is the point: the alternative is a page that quietly
+	// disagrees with the head above it.
 	r = authedRequest("GET", "/api/v1/nodes/quiet-node/members", nil, "")
 	w = servePublicMux(t, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
 	outside := decodeJSON(t, w)
 	items, _ := outside["items"].([]interface{})
-	if got := outside["member_count"].(float64); got != float64(len(items)) || got != 1 {
-		t.Errorf("outsider: expected member_count=1 matching %d listed rows, got %v", len(items), got)
+	if len(items) != 1 {
+		t.Errorf("outsider: expected the one visible member/admin row, got %d", len(items))
 	}
-	if got := outside["follower_count"].(float64); got != 0 {
-		t.Errorf("outsider: expected follower_count=0 (followers are not public), got %v", got)
+	if got := outside["member_count"].(float64); got != 2 {
+		t.Errorf("outsider: expected member_count=2 (the hidden member is counted, not listed), got %v", got)
+	}
+	if got := outside["follower_count"].(float64); got != 1 {
+		t.Errorf("outsider: expected follower_count=1, got %v", got)
+	}
+
+	// And the number they are handed is the number GetNode states in the
+	// profile head directly above this page. This is the disagreement the
+	// ungated count exists to close, so it is asserted against the other
+	// endpoint rather than against a literal.
+	r = authedRequest("GET", "/api/v1/nodes/quiet-node", nil, "")
+	w = servePublicMux(t, "GET", "/api/v1/nodes/{slug}", handler.GetNode(db), r)
+	var detail struct {
+		Node struct {
+			MemberCount   int `json:"member_count"`
+			FollowerCount int `json:"follower_count"`
+		} `json:"node"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &detail); err != nil {
+		t.Fatalf("decode node detail: %v", err)
+	}
+	if got := outside["member_count"].(float64); got != float64(detail.Node.MemberCount) {
+		t.Errorf("members page says %v members, profile head says %d", got, detail.Node.MemberCount)
+	}
+	if got := outside["follower_count"].(float64); got != float64(detail.Node.FollowerCount) {
+		t.Errorf("members page says %v following, profile head says %d", got, detail.Node.FollowerCount)
 	}
 }
 

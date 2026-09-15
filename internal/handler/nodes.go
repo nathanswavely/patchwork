@@ -595,9 +595,13 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		// (tag-derived) motif, and order decides which tag derives it.
 		n.Tags = nodeTagNames(db, n.ID)
 
-		// Same counts the tree endpoint reports, so cards and profile agree:
-		// members are admins + members; followers are counted separately and
-		// never conflated (a follower is an observer, not a member).
+		// Same counts the tree endpoint and ListMembers report, so the quilt
+		// tile, the card, the profile head and the members page all state one
+		// number: members are admins + members; followers are counted
+		// separately and never conflated (a follower is an observer, not a
+		// member). No visibility gate on either — a count names nobody, and
+		// the gates decide who is listed rather than how many there are. See
+		// ListMembers for the argument (docs/adr/095 decision 3).
 		db.QueryRow(
 			`SELECT COUNT(*) FROM memberships WHERE node_id = ? AND status = 'active' AND role IN ('admin','member')`, n.ID,
 		).Scan(&n.MemberCount)
