@@ -77,3 +77,49 @@ describe('Saving a ballot says so', () => {
     expect(panel).toMatch(/approved = next;\s*\n\s*\/\/[\s\S]*?\n\s*saved = false;/);
   });
 });
+
+/**
+ * A nomination you can make, and take back (docs/adr/107).
+ *
+ * Four surfaces promised "put someone forward" and none had it; the one
+ * button posted an empty body, so it stood you. A member who came to
+ * nominate a colleague put herself on a three-seat ballot by accident, could
+ * not get off, and wrote a comment asking her neighbours not to vote for her
+ * — which four of them read and acted on.
+ */
+describe('Putting somebody forward, and taking your own name back', () => {
+  const panel = source('components/ElectionPanel.svelte');
+  const page = source('pages/ProposalDetail.svelte');
+
+  it('sends the chosen member rather than an empty body', () => {
+    expect(panel).toMatch(/body: \{ user_id: nomineeId \}/);
+    // Standing yourself is still its own act, with its own empty body.
+    expect(panel).toMatch(/method: 'POST', body: \{\} \}/);
+  });
+
+  it('never offers you your own name in the put-somebody-forward list', () => {
+    expect(panel).toMatch(/m\.user_id !== me\?\.id && !candidates\.some\(\(c\) => c\.user_id === m\.user_id\)/);
+  });
+
+  it('has a way off the slate, and it is your own name only', () => {
+    expect(panel).toMatch(/proposals\/\$\{proposal\.id\}\/candidates\/me`, \{ method: 'DELETE' \}/);
+    expect(panel).toMatch(/\{busy \? 'Withdrawing…' : 'Withdraw'\}/);
+  });
+
+  it('says what putting somebody forward does to them', () => {
+    expect(panel).toMatch(
+      /They go on the ballot straight away, and can withdraw themselves\s*\n?\s*until nominations close\./
+    );
+  });
+
+  it('pages the member list, so the twenty-first member can be nominated', () => {
+    // docs/adr/095 pages that endpoint; a picker that ignores next_cursor
+    // makes everyone below the first page un-nominatable.
+    expect(page).toMatch(/next_cursor/);
+    expect(page).toMatch(/limit=100/);
+  });
+
+  it('loads the list only while it can be used', () => {
+    expect(page).toMatch(/proposal\?\.election_phase === 'nominating' && canNominate/);
+  });
+});

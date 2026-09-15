@@ -315,7 +315,17 @@ button:disabled {
   align-items: center;
   gap: 0.5rem;
   padding: var(--btn-pad-y) var(--btn-pad-x);
-  border: 1px solid transparent;
+  /* A themed surface, not the browser's. `.btn` set no background and no
+     colour of its own, so a button wearing it without a variant fell through
+     to the user agent's ButtonFace — a pale grey pill with near-invisible
+     text in dark mode, ignoring the theme entirely. Sixteen buttons across
+     eight components are written that way ("Stand for election", "Record a
+     decision", "Link", "Review"), all of them meaning "the ordinary action
+     here". This is what that looks like; the variants below still override
+     it. */
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: var(--btn-font);
   /* Explicit: <a class="btn"> inherits the body's 1.5 while <button> uses
@@ -323,6 +333,10 @@ button:disabled {
   line-height: 1.2;
   font-weight: 500;
   transition: background 150ms ease, border-color 150ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
 }
 
 .btn-sm {

@@ -110,6 +110,11 @@
     return () => patch.value.setBreadcrumbExtra?.([]);
   });
 
+  // Everybody who could be put forward in this contest (docs/adr/107).
+  // Loaded only while nominations are open, and only for somebody who may
+  // nominate — the picker is the only thing that uses it.
+  let electionMembers = $state([]);
+
   async function loadProposal() {
     loading = true;
     error = '';
@@ -120,6 +125,37 @@
       proposal = null;
     } finally {
       loading = false;
+    }
+    if (proposal?.election_phase === 'nominating' && canNominate) {
+      loadElectionMembers();
+    } else {
+      electionMembers = [];
+    }
+  }
+
+  // Paged, because the members endpoint is (docs/adr/095) and a picker that
+  // stops at twenty silently hides the twenty-first person from nomination.
+  async function loadElectionMembers() {
+    const slug = patch.value.slug;
+    if (!slug) return;
+    const found = [];
+    let cursor = '';
+    try {
+      for (let page = 0; page < 20; page++) {
+        const q = cursor ? `?limit=100&cursor=${encodeURIComponent(cursor)}` : '?limit=100';
+        const data = await api(`nodes/${slug}/members${q}`);
+        for (const m of data.items || []) {
+          // Anyone the server would accept as a candidate: an active member
+          // or admin of this patch. A follower is not on the ladder.
+          if (m.role === 'member' || m.role === 'admin') found.push(m);
+        }
+        cursor = data.next_cursor || '';
+        if (!cursor) break;
+      }
+      electionMembers = found;
+    } catch {
+      // The picker is missing and nothing else is; standing still works.
+      electionMembers = [];
     }
   }
 
@@ -259,6 +295,7 @@
             proposal={proposal}
             canVote={canVote}
             canNominate={canNominate}
+            members={electionMembers}
             onChanged={loadProposal}
           />
         {/if}

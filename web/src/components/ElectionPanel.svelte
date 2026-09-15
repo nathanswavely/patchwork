@@ -10,6 +10,10 @@
     proposal = null,
     canVote = false,
     canNominate = false,
+    // Everybody this contest could have on its slate: the patch's active
+    // members and admins (docs/adr/107). Empty where the page could not load
+    // them, which costs the picker and nothing else.
+    members = [],
     onChanged = () => {},
   } = $props();
 
@@ -24,6 +28,15 @@
   let settledNothing = $derived(proposal?.state === 'unsettled');
   let me = $derived(getUser());
   let iAmStanding = $derived(candidates.some((c) => c.user_id === me?.id));
+
+  // Who is left to put forward: everyone who may stand and is not already on
+  // the slate, minus yourself — standing is its own button, and offering your
+  // own name in a list called "put someone forward" is how somebody nominated
+  // herself by accident in the first place.
+  let nominatable = $derived(
+    members.filter((m) => m.user_id !== me?.id && !candidates.some((c) => c.user_id === m.user_id)),
+  );
+  let nomineeId = $state('');
 
   let busy = $state(false);
   let error = $state('');
@@ -63,6 +76,41 @@
       onChanged();
     } catch (e) {
       error = e.message || 'Failed to stand';
+    } finally {
+      busy = false;
+    }
+  }
+
+  // The act four surfaces have been promising (docs/adr/107). The server has
+  // always taken a `user_id` here; only the button was missing.
+  async function nominate() {
+    if (!nomineeId) return;
+    busy = true; error = '';
+    try {
+      await api(`proposals/${proposal.id}/candidates`, {
+        method: 'POST',
+        body: { user_id: nomineeId },
+      });
+      nomineeId = '';
+      seeded = '';
+      onChanged();
+    } catch (e) {
+      error = e.message || 'Failed to put them forward';
+    } finally {
+      busy = false;
+    }
+  }
+
+  // And the way back off. Your own only, which is what makes putting somebody
+  // else forward safe to offer at all.
+  async function withdraw() {
+    busy = true; error = '';
+    try {
+      await api(`proposals/${proposal.id}/candidates/me`, { method: 'DELETE' });
+      seeded = '';
+      onChanged();
+    } catch (e) {
+      error = e.message || 'Failed to withdraw';
     } finally {
       busy = false;
     }
@@ -156,12 +204,46 @@
       </ul>
     {/if}
 
-    {#if phase === 'nominating' && canNominate && !iAmStanding}
-      <button class="btn btn-sm" onclick={stand} disabled={busy}>
-        {busy ? 'Standing…' : 'Stand for election'}
-      </button>
-    {:else if phase === 'nominating' && iAmStanding}
-      <p class="muted small">You are standing in this election.</p>
+    {#if phase === 'nominating' && canNominate}
+      <div class="nominating-actions">
+        {#if iAmStanding}
+          <p class="standing small">
+            You are standing in this election.
+            <button class="btn-link" onclick={withdraw} disabled={busy}>
+              {busy ? 'Withdrawing…' : 'Withdraw'}
+            </button>
+          </p>
+        {:else}
+          <button class="btn btn-sm" onclick={stand} disabled={busy}>
+            {busy ? 'Standing…' : 'Stand for election'}
+          </button>
+        {/if}
+
+        <!-- Putting somebody else forward, which every other surface has been
+             telling members they can do (docs/adr/107). Their own name, not
+             yours: the one button here used to stand you, whatever you came
+             to do. -->
+        {#if nominatable.length > 0}
+          <div class="nominate-other">
+            <label for="nominate-who">Put another member forward</label>
+            <div class="nominate-row">
+              <select id="nominate-who" bind:value={nomineeId} disabled={busy}>
+                <option value="">Choose a member</option>
+                {#each nominatable as m (m.user_id)}
+                  <option value={m.user_id}>{m.display_name || m.username}</option>
+                {/each}
+              </select>
+              <button class="btn btn-sm" onclick={nominate} disabled={busy || !nomineeId}>
+                {busy ? 'Adding…' : 'Put forward'}
+              </button>
+            </div>
+            <p class="muted small">
+              They go on the ballot straight away, and can withdraw themselves
+              until nominations close.
+            </p>
+          </div>
+        {/if}
+      </div>
     {/if}
 
     {#if phase === 'voting' && canVote && candidates.length > 0}
@@ -203,6 +285,41 @@
 
   .closed-window {
     margin: -0.15rem 0 0.5rem;
+  }
+
+  .nominating-actions {
+    display: flex;
+    flex-direction: column;
+    /* Or a column stretches every button to the panel's full width, which is
+       how the theme-less `.btn` got noticed: a full-bleed pale pill. */
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .standing {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .nominate-other label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+
+  .nominate-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .nominate-row select {
+    min-width: 0;
+    flex: 1 1 12rem;
   }
 
   .ballot-in {

@@ -319,6 +319,13 @@ func systemAuthorFor(db *database.DB, nodeID string) string {
 // been here long enough to *decide*, and a candidate is being decided about.
 // The bylaws say the same ("any member may nominate themselves or another
 // member").
+//
+// Both halves of that sentence have always worked here and only the first
+// had a control (docs/adr/107). Four surfaces invited people to put somebody
+// forward; the one button posted an empty body, so it stood *you*. A member
+// who came to nominate a colleague put herself on a three-seat ballot by
+// accident and then wrote a comment asking her neighbours not to vote for
+// her, which four of them read and acted on.
 func AddCandidate(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
@@ -370,6 +377,60 @@ func AddCandidate(db *database.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(map[string]string{"user_id": nominee})
+	}
+}
+
+// WithdrawCandidacy handles DELETE /api/v1/proposals/{id}/candidates/me.
+//
+// Your own, and nobody else's — which is what the route says rather than
+// leaving it to a check inside. A nomination you did not ask for is withdrawn
+// by *you*, because you are the person it is about; a nomination somebody
+// made by mistake is their own candidacy and theirs to take back. Neither
+// needs a record of who put the name up, and `election_candidates` keeps
+// none.
+//
+// Only while nominations are open. Once the ballot is running, people are
+// approving a slate, and a name leaving it mid-vote would silently discard
+// ballots already cast for it (docs/adr/047's frozen terms, applied to the
+// slate rather than the rules).
+//
+// This is what makes nominating somebody else safe enough to offer
+// (docs/adr/107): the bylaws let any member put another forward, and the
+// answer to "I did not want this" is a control rather than an argument.
+func WithdrawCandidacy(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+		proposalID := r.PathValue("id")
+
+		var nodeID, status, nominationsClose string
+		var seats int
+		err := db.QueryRow(
+			`SELECT node_id, status, COALESCE(nominations_close_at,''), seats_contested
+			 FROM proposals WHERE id = ?`, proposalID,
+		).Scan(&nodeID, &status, &nominationsClose, &seats)
+		if err != nil || seats == 0 {
+			http.Error(w, `{"error":"election not found"}`, http.StatusNotFound)
+			return
+		}
+		if status != "open" || !electionNominating(nominationsClose) {
+			http.Error(w, `{"error":"nominations have closed: the slate is what people are voting on"}`, http.StatusConflict)
+			return
+		}
+
+		res, err := db.Exec(`DELETE FROM election_candidates WHERE proposal_id = ? AND user_id = ?`,
+			proposalID, user.ID)
+		if err != nil {
+			http.Error(w, `{"error":"failed to withdraw"}`, http.StatusInternalServerError)
+			return
+		}
+		if n, _ := res.RowsAffected(); n == 0 {
+			http.Error(w, `{"error":"you are not standing in this election"}`, http.StatusNotFound)
+			return
+		}
+		auth.LogAuditEvent(db, user.ID, "election.withdraw", "proposal", proposalID,
+			`{"candidate":"`+user.ID+`"}`, clientIP(r))
+
+		w.WriteHeader(http.StatusNoContent)
 	}
 }
 
