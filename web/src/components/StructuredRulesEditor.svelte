@@ -1,5 +1,5 @@
 <script>
-  let { currentRules = null, onSave = () => {} } = $props();
+  let { currentRules = null, electorate = null, onSave = () => {} } = $props();
 
   const DECISION_OPTIONS = [
     { value: 'admin', label: 'Admin decides' },
@@ -51,6 +51,17 @@
     { value: 90, label: '90 days' },
   ];
 
+  // What each rule does, in one sentence, beside the control that sets it.
+  // The method is the one knob whose consequence a founder cannot work out
+  // from its label: "Full consensus" reads as agreement and means any single
+  // member can defeat anything.
+  const DECISION_HINTS = {
+    admin: 'An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.',
+    majority: 'More approvals than rejections carries a proposal.',
+    supermajority: 'Two thirds of the ballots cast must approve.',
+    consensus: 'One reject defeats a proposal, however many approve it.',
+  };
+
   const MEMBERSHIP_OPTIONS = [
     { value: 'open', label: 'Open' },
     { value: 'approval_required', label: 'Approval required' },
@@ -93,6 +104,61 @@
       : [...SUCCESSION_OPTIONS, { value: successionPolicy, label: successionPolicy, hint: '' }]
   );
   let successionHint = $derived(successionOptions.find((o) => o.value === successionPolicy)?.hint || '');
+
+  // What these numbers come to for this patch today (docs/adr/104).
+  //
+  // The arithmetic is the server's, mirrored: `votesNeeded` is
+  // `votesNeededForQuorum`, and the tenure rule is `effectiveTenureDays` —
+  // a patch younger than its own bar has no bar (docs/adr/098). A sentence
+  // here that the gate does not honour would be worse than no sentence.
+  let memberCount = $derived(electorate?.members ?? 0);
+  let tenures = $derived(electorate?.tenure_days || []);
+  let patchAgeDays = $derived(electorate?.patch_age_days ?? 0);
+  let tenureInForce = $derived(minVotingTenureDays > 0 && patchAgeDays >= minVotingTenureDays);
+  let canVoteToday = $derived(
+    tenureInForce ? tenures.filter((d) => d >= minVotingTenureDays).length : memberCount,
+  );
+  let votesNeeded = $derived(
+    quorumPercent <= 0 || canVoteToday <= 0
+      ? 0
+      : Math.min(canVoteToday, Math.ceil((canVoteToday * quorumPercent) / 100)),
+  );
+
+  let decisionHint = $derived(DECISION_HINTS[decisionMethod] || '');
+
+  let quorumHint = $derived.by(() => {
+    if (!electorate) return '';
+    if (quorumPercent <= 0) {
+      return 'No quorum: however few people vote, the result stands.';
+    }
+    if (canVoteToday === 0) {
+      return 'Nobody can vote here today, so no quorum can be met and a proposal would close with nothing decided.';
+    }
+    // "1 of the 1 person" is arithmetic, not a sentence. On a patch of one
+    // every quorum comes to the same thing, so say that instead.
+    if (canVoteToday === 1) {
+      return 'One person can vote here today, so that single ballot is the whole quorum. An abstention counts toward it.';
+    }
+    return `${votesNeeded} of the ${canVoteToday} people who can vote today must cast a ballot, or a proposal closes with nothing decided. An abstention counts toward it.`;
+  });
+
+  let tenureHint = $derived.by(() => {
+    if (minVotingTenureDays <= 0) return 'Everybody votes from the day they join.';
+    if (!electorate) return '';
+    if (!tenureInForce) {
+      // "0 days old" is what the number says and not what a person would.
+      const age =
+        patchAgeDays === 0 ? 'was made today'
+        : patchAgeDays === 1 ? 'is a day old'
+        : `is ${patchAgeDays} days old`;
+      return `Not in force yet: this patch ${age}, younger than the wait it asks for, so every member can vote until it is ${minVotingTenureDays} days old.`;
+    }
+    const held = memberCount - canVoteToday;
+    if (held === 0) {
+      return `All ${memberCount} of your members have been here ${minVotingTenureDays} days, so all of them can vote.`;
+    }
+    return `${canVoteToday} of your ${memberCount} members have been here ${minVotingTenureDays} days. The other ${held} cannot vote yet, and ${held === 1 ? 'is' : 'are'} not counted toward a quorum.`;
+  });
 
   // Initialize from currentRules
   $effect(() => {
@@ -174,12 +240,18 @@
         <option value={opt.value}>{opt.label}</option>
       {/each}
     </select>
+    {#if decisionHint}
+      <p class="venue-hint muted">{decisionHint}</p>
+    {/if}
   </div>
 
   {#if !adminDecides}
     <div class="field">
       <label for="re-quorum">Quorum (%)</label>
       <input id="re-quorum" type="number" min="0" max="100" bind:value={quorumPercent} />
+      {#if quorumHint}
+        <p class="venue-hint muted">{quorumHint}</p>
+      {/if}
     </div>
 
     <div class="field">
@@ -269,6 +341,9 @@
           <option value={opt.value}>{opt.label}</option>
         {/each}
       </select>
+      {#if tenureHint}
+        <p class="venue-hint muted">{tenureHint}</p>
+      {/if}
     </div>
   {/if}
 
