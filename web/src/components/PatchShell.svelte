@@ -18,7 +18,7 @@
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
   import PatchRelationship from './PatchRelationship.svelte';
-  import { getPendingMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
+  import { getPendingMembershipSlugs, getInvitedMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard } from 'phosphor-svelte';
 
   let { slug = '', activeTab = 'governance', children } = $props();
@@ -99,6 +99,9 @@
   // not carry it — membership_role is set only for an active row — so it
   // comes from the viewer's own memberships, which me/nodes does serve.
   let requestPending = $derived(getPendingMembershipSlugs().has(slug));
+  // An unanswered invitation (docs/adr/098), from the same store for the
+  // same reason: the node payload states standing for an active row only.
+  let invited = $derived(getInvitedMembershipSlugs().has(slug));
 
   // Joining or following changes two things: the node payload's
   // membership_role and the store a pending request lives in. Refresh both,
@@ -227,6 +230,7 @@
           {isBanned}
           {membershipRole}
           {requestPending}
+          {invited}
           {liningStatus}
           onChanged={reloadStanding}
           size="sm"

@@ -413,3 +413,45 @@ export function reinterpretUTCAsLocal(iso, tz) {
     `T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
   return fromZonedInputValue(wall, tz) || iso;
 }
+
+// ---------------------------------------------------------------------------
+// How long a voting window has left.
+
+const DAY_MS = 86_400_000;
+const HOUR_MS = 3_600_000;
+const MINUTE_MS = 60_000;
+
+/**
+ * The time left before `endsAt`, in the one unit a person would say.
+ *
+ * Four surfaces each floored the days, so a 14-day window read "13 days
+ * left" the moment it opened and never once said "14". Days round up:
+ * with more than a day to go, the day the window closes on is a day that
+ * counts. Under a day the hours are floored, as before — "5 hours left"
+ * with 5h40m to go is the usual way to say it — and under an hour it says
+ * minutes rather than "0 hours".
+ *
+ * Returns null for no end at all, `{ ended: true }` once it has passed,
+ * otherwise `{ ended: false, unit: 'day' | 'hour' | 'minute', n }`.
+ */
+export function timeLeft(endsAt, now = new Date()) {
+  if (!endsAt) return null;
+  const ms = new Date(endsAt) - now;
+  if (Number.isNaN(ms)) return null;
+  if (ms <= 0) return { ended: true, unit: null, n: 0 };
+  if (ms >= DAY_MS) return { ended: false, unit: 'day', n: Math.ceil(ms / DAY_MS) };
+  if (ms >= HOUR_MS) return { ended: false, unit: 'hour', n: Math.floor(ms / HOUR_MS) };
+  return { ended: false, unit: 'minute', n: Math.max(1, Math.ceil(ms / MINUTE_MS)) };
+}
+
+/** "14 days", "5 hours", "1 minute" — for a sentence. */
+export function timeLeftPhrase(left) {
+  if (!left || left.ended || !left.unit) return '';
+  return `${left.n} ${left.unit}${left.n === 1 ? '' : 's'}`;
+}
+
+/** "14d", "5h", "12m" — for a chip. */
+export function timeLeftShort(left) {
+  if (!left || left.ended || !left.unit) return '';
+  return `${left.n}${left.unit[0]}`;
+}

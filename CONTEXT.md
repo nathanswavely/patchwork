@@ -662,6 +662,16 @@ muted where a standing is not.
 _Avoid_: standing control (a request is not standing), pending badge (a
 badge is not clickable), cancel button
 
+**Invited**:
+A person an admin has asked into a patch by username and who has not yet
+answered (docs/adr/098). The requester's mirror image: the ask runs the
+other way and the answer is theirs. Not a member and not a requester — no
+role, no thread, absent from every count, listing, audience and electorate
+until they accept; declining leaves no row. The membership status is
+`invited`; a request stays `pending`.
+_Avoid_: pending (that is a request nobody answered), requested, pending
+invite, invitee (in UI copy — say "invited")
+
 **Trusted contributor**:
 An instance-level grant — given and revoked by the instance admin, never
 earned automatically — that lets a person record events on unclaimed patches

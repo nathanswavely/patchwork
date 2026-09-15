@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { timeLeft, timeLeftShort } from '../lib/datetime.js';
   import { docLabel } from '../lib/docLabel.js';
   import { navigate } from '../stores/router.svelte.js';
 
@@ -62,17 +63,10 @@
   }
 
   function timeRemaining(votingEndsAt) {
-    if (!votingEndsAt) return '';
-    const now = new Date();
-    const end = new Date(votingEndsAt);
-    const diff = end - now;
-    if (diff <= 0) return 'Voting ended';
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(hours / 24);
-    if (days > 0) return `${days}d ${hours % 24}h left`;
-    if (hours > 0) return `${hours}h left`;
-    const mins = Math.floor(diff / (1000 * 60));
-    return `${mins}m left`;
+    const left = timeLeft(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'Voting ended';
+    return `${timeLeftShort(left)} left`;
   }
 
   function voteTallyPercent(approve, reject) {

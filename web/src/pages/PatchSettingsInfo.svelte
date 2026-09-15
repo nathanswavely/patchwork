@@ -290,6 +290,40 @@
     }
   }
 
+  // When the group started (docs/adr/098). A date input rather than an
+  // InlineEdit, which has no date type. Blank means the group started with
+  // its patch; a date means it predates it, and the voting tenure the patch
+  // may require is capped at that age.
+  let foundedAt = $state('');
+  let foundedSeeded = $state('');
+  let savingFounded = $state(false);
+  let foundedError = $state('');
+  const today = new Date().toISOString().slice(0, 10);
+
+  $effect(() => {
+    if (node?.id && foundedSeeded !== node.id) {
+      foundedAt = node.founded_at || '';
+      foundedSeeded = node.id;
+    }
+  });
+
+  let foundedDirty = $derived(foundedAt !== (node?.founded_at || ''));
+
+  async function saveFoundedAt(value) {
+    savingFounded = true;
+    foundedError = '';
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { founded_at: value } });
+      showToast('Saved', 'success');
+      foundedSeeded = '';
+      patch.value.reload();
+    } catch (e) {
+      foundedError = e.message || 'Could not save that date';
+    } finally {
+      savingFounded = false;
+    }
+  }
+
   async function removeLink(index) {
     const updatedLinks = links.filter((_, i) => i !== index);
     savingLinks = true;
@@ -438,6 +472,41 @@
     onSave={(v) => saveField('website', v)}
     placeholder="https://..."
   />
+
+  <!-- When the group started (docs/adr/098). Its own field because the
+       voting tenure a patch may require is capped at its age, and a group
+       older than its patch should be able to say so. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Founded</span>
+    </div>
+    <input
+      class="founded-input"
+      type="date"
+      max={today}
+      bind:value={foundedAt}
+      disabled={savingFounded}
+    />
+    <p class="muted tags-hint">
+      When this group started, if it predates its patch. Voting tenure is never
+      required to be longer than the group has existed.
+    </p>
+    {#if foundedError}<p class="image-error">{foundedError}</p>{/if}
+    {#if foundedDirty}
+      <div class="tags-actions">
+        <button
+          class="btn btn-primary btn-sm"
+          onclick={() => saveFoundedAt(foundedAt)}
+          disabled={savingFounded}
+        >{savingFounded ? 'Saving...' : 'Save'}</button>
+        <button
+          class="btn btn-secondary btn-sm"
+          onclick={() => { foundedAt = node?.founded_at || ''; foundedError = ''; }}
+          disabled={savingFounded}
+        >Cancel</button>
+      </div>
+    {/if}
+  </div>
 
   <!-- The image and its description save together, unlike every other field
        here. They are only valid as a pair (docs/adr/007), so two separate
@@ -685,6 +754,16 @@
 
   .image-section .btn {
     align-self: flex-start;
+  }
+
+  .founded-input {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-family: inherit;
   }
 
   .moved-input {

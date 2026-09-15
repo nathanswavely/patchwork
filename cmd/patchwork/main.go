@@ -472,6 +472,13 @@ func main() {
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/leave", middleware.AuthRequired(db, handler.LeaveNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/withdraw", middleware.AuthRequired(db, handler.WithdrawMembershipRequest(db)))
+	// Membership invitations (docs/adr/098): an admin asks by username, the
+	// person answers. Accept and decline are the invitee's own row only.
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations", middleware.AuthRequired(db, handler.InviteMember(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations/accept", middleware.AuthRequired(db, handler.AcceptInvitation(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations/decline", middleware.AuthRequired(db, handler.DeclineInvitation(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/invitations/{userId}", middleware.AuthRequired(db, handler.RescindInvitation(db)))
+	mux.HandleFunc("GET /api/v1/users/me/invitations", middleware.AuthRequired(db, handler.ListMyInvitations(db)))
 	// Maintainer succession (docs/adr/051). Naming a successor decides who
 	// inherits the patch, so it is step-up gated like the other power moves.
 	mux.HandleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.SetSuccessor(db))))

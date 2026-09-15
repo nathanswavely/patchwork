@@ -1103,6 +1103,7 @@ func TestVoteOnProposal_TenureCheck(t *testing.T) {
 	admin, adminToken := createTestUser(t, db, "tenure_admin", "member")
 	newMember, newMemberToken := createTestUser(t, db, "tenure_new", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Tenure Node", "tenure-node", "open")
+	predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, newMember.ID, nodeID, "member", "active")
 
