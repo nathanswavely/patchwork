@@ -191,7 +191,7 @@ func Tables() []Table {
 		{
 			File: "memberships.json",
 			Name: "memberships",
-			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at
+			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at, role_since
 				FROM memberships`,
 			// `visible` is the member's own switch (docs/adr/006), and it
 			// defaults to 1. Leaving it behind meant a fork re-exposed every
@@ -203,8 +203,16 @@ func Tables() []Table {
 			// (docs/adr/080) and defaults to 0, so leaving it behind would
 			// fail the other way: every card the person had chosen to
 			// share would go silent on the fork. It travels with the card.
+			// `role_since` travels because the inactivity clock hangs off it
+			// (docs/adr/051, migration 072). Left behind, every admin would
+			// arrive on the fork with their absence measured from when they
+			// joined the patch, which is the floor that made a freshly
+			// promoted admin vacatable on sight. NULL on archives older than
+			// the column, which reads as "measure from joining" — the same
+			// answer those archives already carried.
 			Columns: cols(id("id"), id("user_id"), id("node_id"), c("role"),
-				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at")),
+				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at"),
+				def("role_since", nil)),
 		},
 		{
 			// The contact card in the shape docs/adr/083 gives it: an ordered

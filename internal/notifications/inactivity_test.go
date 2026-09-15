@@ -100,18 +100,6 @@ func roleOfSeat(t *testing.T, db *database.DB, memID string) string {
 	return role
 }
 
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	out := ""
-	for n > 0 {
-		out = string(rune('0'+n%10)) + out
-		n /= 10
-	}
-	return out
-}
-
 // Quiet past the first threshold: contacted, seat intact.
 func TestSweep_WarnsBeforeItVacates(t *testing.T) {
 	db := sweepDB(t)
@@ -227,10 +215,15 @@ func TestSweep_EmptiedPatchGetsLongestTenuredInterims(t *testing.T) {
 	goneSeat := seedSeat(t, db, gone, nodeID, "admin", 400)
 	seedProposalBy(t, db, nodeID, gone, 120)
 
+	// All four are around: the plan says "the three longest-tenured *active*
+	// members", and a member who has not been seen since before the vacate
+	// threshold is not one (see promoteLongestTenured).
 	oldest := seedPerson(t, db, "oldestmember")
 	oldestSeat := seedSeat(t, db, oldest, nodeID, "member", 300)
+	seedProposalBy(t, db, nodeID, oldest, 3)
 	middle := seedPerson(t, db, "middlemember")
 	middleSeat := seedSeat(t, db, middle, nodeID, "member", 200)
+	seedProposalBy(t, db, nodeID, middle, 3)
 	newest := seedPerson(t, db, "newestmember")
 	newestSeat := seedSeat(t, db, newest, nodeID, "member", 10)
 	fourth := seedPerson(t, db, "fourthmember")
