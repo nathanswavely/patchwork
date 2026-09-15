@@ -48,10 +48,11 @@
   }
 
   function statusClass(status) {
-    if (status === 'approved') return 'status-approved';
+    if (status === 'approved' || status === 'applied') return 'status-approved';
     if (status === 'rejected') return 'status-rejected';
     if (status === 'open') return 'status-open';
-    if (status === 'withdrawn') return 'status-withdrawn';
+    // Withdrawn and lapsed both mean "ended without a decision": muted, not red.
+    if (status === 'withdrawn' || status === 'lapsed') return 'status-withdrawn';
     return '';
   }
 
@@ -85,6 +86,15 @@
   // says "applied" rather than "approved".
   function isDirectRow(p) {
     return p.status === 'approved' && !((p.approve_count || 0) + (p.reject_count || 0) + (p.abstain_count || 0));
+  }
+
+  // What the row calls the proposal's outcome. A lapsed vote carries the
+  // schema's terminal "rejected" status (docs/adr/097) but nobody rejected
+  // it, so the row says what happened instead of what the column holds.
+  function rowStatus(p) {
+    if (isDirectRow(p)) return 'applied';
+    if (p.state === 'lapsed') return 'lapsed';
+    return p.status;
   }
 </script>
 
@@ -161,7 +171,7 @@
                   {:else if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
                   {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
-                    <span class="muted">{proposal.status}</span>
+                    <span class="muted">{rowStatus(proposal)}</span>
                   {/if}
                 </div>
                 {#if (proposal.approve_count || 0) + (proposal.reject_count || 0) > 0}
@@ -176,7 +186,7 @@
                   </div>
                 {/if}
               </div>
-              <span class="badge {statusClass(proposal.status)}">{isDirectRow(proposal) ? 'applied' : proposal.status}</span>
+              <span class="badge {statusClass(rowStatus(proposal))}">{rowStatus(proposal)}</span>
             </a>
           {/each}
         </div>

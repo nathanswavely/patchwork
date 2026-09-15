@@ -676,10 +676,11 @@ func eligibleVotersExcept(db *database.DB, nodeID string, gc model.GovernanceCon
 // the voting window expiring, or the sole-voter early close (docs/adr/041).
 func resolveProposal(db *database.DB, proposalID string) string {
 	var p model.Proposal
+	var votingEndsAt string
 	err := db.QueryRow(
-		`SELECT id, node_id, author_id, status, proposal_type, COALESCE(target_doc,''), COALESCE(proposed_title,''), COALESCE(target_user_id,'')
+		`SELECT id, node_id, author_id, title, status, proposal_type, COALESCE(target_doc,''), COALESCE(proposed_title,''), COALESCE(target_user_id,''), COALESCE(voting_ends_at,'')
 		 FROM proposals WHERE id = ?`, proposalID,
-	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Status, &p.ProposalType, &p.TargetDoc, &p.ProposedTitle, &p.TargetUserID)
+	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Status, &p.ProposalType, &p.TargetDoc, &p.ProposedTitle, &p.TargetUserID, &votingEndsAt)
 	if err != nil || p.Status != "open" {
 		return ""
 	}
@@ -728,7 +729,17 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	totalVotes := approveCount + rejectCount + abstainCount
 	quorumMet := gc.QuorumPercent == 0 || (eligibleCount > 0 && (totalVotes*100/eligibleCount) >= gc.QuorumPercent)
 	if !quorumMet {
-		// Quorum not met — leave open.
+		// Under quorum while the window runs: leave open, votes may still
+		// come. Under quorum once it has closed: the proposal lapses
+		// (docs/adr/097). It used to stay open here forever — the list said
+		// "voting", the vote endpoint said "voting period has ended", and
+		// nothing told anybody. On the Formal defaults that was a new
+		// co-op's first proposal, since tenure keeps most joiners out of
+		// the electorate for a month.
+		if windowClosed(votingEndsAt) {
+			lapseProposal(db, p, totalVotes)
+			return "lapsed"
+		}
 		return ""
 	}
 

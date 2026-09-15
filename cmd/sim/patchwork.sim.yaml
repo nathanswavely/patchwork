@@ -1,0 +1,14 @@
+# Config for a governance simulation instance (docs/adr/096).
+#
+# A throwaway database that cmd/sim is allowed to move through time. Paths are
+# relative to the repo root. Boot it with `make sim`; mint people with
+# `make sim-personas`; move the calendar with `make sim-advance BY=30d`.
+instance:
+  name: Simulation Patchwork
+  domain: localhost
+
+server:
+  port: "8097"
+
+database:
+  path: data/sim/patchwork.db

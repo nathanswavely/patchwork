@@ -234,21 +234,26 @@ func main() {
 	defer reminderCancel()
 	notifications.StartReminderWorker(reminderCtx, notifier)
 
-	// Elections move on a calendar, not on a person (docs/adr/051): nominations
-	// close and voting opens, voting ends and the council is seated. Hourly is
-	// plenty — the windows are days long.
-	electionCtx, electionCancel := context.WithCancel(context.Background())
-	defer electionCancel()
+	// Votes move on a calendar, not on a person: an election's nominations
+	// close and voting opens, voting ends and the council is seated
+	// (docs/adr/051); an ordinary proposal's window closes and it resolves
+	// or lapses (docs/adr/097). Hourly is plenty — the windows are days long.
+	sweepCtx, sweepCancel := context.WithCancel(context.Background())
+	defer sweepCancel()
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
 		defer ticker.Stop()
-		handler.SweepElections(db)
+		sweep := func() {
+			handler.SweepElections(db)
+			handler.SweepProposals(db)
+		}
+		sweep()
 		for {
 			select {
-			case <-electionCtx.Done():
+			case <-sweepCtx.Done():
 				return
 			case <-ticker.C:
-				handler.SweepElections(db)
+				sweep()
 			}
 		}
 	}()
