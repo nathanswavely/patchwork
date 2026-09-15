@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { formatDay } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import Skeleton from '../components/Skeleton.svelte';
@@ -38,6 +39,32 @@
     } catch (e) {
       publicList = prev;
       showToast(e.message || 'Failed to save', 'error');
+    }
+  }
+
+  // Where the council is elected, this dropdown does not make an admin
+  // (docs/adr/100). Two founders used it believing they were doing the
+  // ordinary thing and ended up with three admins, no new seats and no
+  // election, on a patch whose governance page says the community elects
+  // its council. The Admin option is withdrawn here and the section says
+  // what fills a seat instead.
+  let council = $state(null);
+  let electedCouncil = $derived(
+    council?.rules?.leadership_model === 'elected' && council?.rules?.leadership_venue !== 'elsewhere'
+  );
+  let councilSeats = $derived(council?.seats || []);
+  let vacantSeats = $derived(councilSeats.filter((seat) => !seat.holder_id).length);
+  let nextContestOpens = $derived(council?.next_contest_opens || '');
+
+  $effect(() => {
+    if (slug) loadCouncil();
+  });
+
+  async function loadCouncil() {
+    try {
+      council = await api(`nodes/${slug}/governance/overview`);
+    } catch {
+      council = null;
     }
   }
 
@@ -325,6 +352,18 @@
   <section class="members-section">
     <h3 class="section-heading">Active Members</h3>
 
+    {#if electedCouncil}
+      <p class="council-note muted">
+        {#if vacantSeats > 0}
+          This patch elects its council, so admins are not made here. {vacantSeats} seat{vacantSeats === 1 ? ' is' : 's are'} vacant: an admin nominates a member on the Governance page and the members ratify it.
+        {:else if nextContestOpens}
+          This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page.
+        {:else}
+          This patch elects its council, so admins are not made here. Every seat is held and no contest is scheduled. To make room, add a seat on the Governance page.
+        {/if}
+      </p>
+    {/if}
+
     {#if loadingMembers}
       <Skeleton lines={4} height="0.9rem" />
     {:else if members.length === 0}
@@ -345,7 +384,12 @@
               >
                 <option value="follower">Follower</option>
                 <option value="member">Member</option>
-                <option value="admin">Admin</option>
+                <!-- Kept for somebody who already holds the seat, so the
+                     control can show their role and demote them. Demotion is
+                     untouched; only making an admin moved. -->
+                {#if !electedCouncil || member.role === 'admin'}
+                  <option value="admin">Admin</option>
+                {/if}
               </select>
               {#if roleEdits[member.user_id] && roleEdits[member.user_id] !== member.role}
                 <button class="btn btn-primary btn-sm" onclick={() => saveRole(member.user_id)}>
@@ -488,6 +532,12 @@
     align-items: center;
     gap: 0.5rem;
     flex-shrink: 0;
+  }
+
+  .council-note {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin: 0 0 0.75rem;
   }
 
   .role-select {

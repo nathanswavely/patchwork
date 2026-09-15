@@ -490,6 +490,12 @@ func main() {
 	// set of candidates one person approves, so it is a PUT of the whole set
 	// rather than an append.
 	mux.HandleFunc("POST /api/v1/proposals/{id}/candidates", middleware.AuthRequired(db, handler.AddCandidate(db)))
+	// The council's size is its seats, added and removed explicitly by an
+	// admin of the patch (docs/adr/100). Neither act seats or unseats anybody
+	// — removal only ever touches an empty chair — so neither is step-up
+	// gated the way a power transfer is.
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/seats", middleware.AuthRequired(db, handler.AddSeat(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/seats/{id}", middleware.AuthRequired(db, handler.RemoveSeat(db)))
 	mux.HandleFunc("PUT /api/v1/proposals/{id}/ballot", middleware.AuthRequired(db, handler.CastElectionBallot(db)))
 	// Attestations (docs/adr/052, docs/adr/053) — decisions a community made
 	// somewhere Patchwork was not. Public to read: the whole value is that the

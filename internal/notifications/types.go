@@ -94,6 +94,13 @@ const (
 	// it goes, which is the whole point of the warning: the shipped succession
 	// plan gives them the gap between day 30 and day 60 to answer.
 	GovernanceInactivityWarning NotificationType = "governance.inactivity_warning"
+	// GovernanceSeatUnavailable reaches an elected patch's admins when a
+	// ratified nomination could not be seated — the members approved
+	// somebody and every seat was held by the time the vote closed
+	// (docs/adr/100). Its own type because it is the one outcome where an
+	// approved proposal changes nothing, and because adding a chair is the
+	// admins' act: no other governance type reaches them alone.
+	GovernanceSeatUnavailable NotificationType = "governance.seat_unavailable"
 	// GovernanceSuccessionNeeded reaches instance admins on a patch whose
 	// succession policy asks them to step in — the one policy Patchwork
 	// cannot carry out on its own.
@@ -213,6 +220,7 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	GovernanceRulesChangedMidVote: {CategoryGovernance, "Rules changed while votes are open", AudienceAllMembers, PriorityHigh},
 	LiningUpdated:                 {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
 	GovernanceInactivityWarning:   {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
+	GovernanceSeatUnavailable:     {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
 	GovernanceSuccessionNeeded:    {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
@@ -306,7 +314,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		ProposalNew, ProposalVoting, ProposalVoteReceived, ProposalApproved,
 		ProposalRejected, ProposalApplied, ProposalComment, ProposalDeadline,
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
-		GovernanceInactivityWarning,
+		GovernanceInactivityWarning, GovernanceSeatUnavailable,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		MembershipInvited,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
