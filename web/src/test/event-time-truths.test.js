@@ -121,3 +121,48 @@ describe('PatchProfileGlimpses — the count and the list agree', () => {
     expect(src).toMatch(/href="\/patches\/\{slug\}\/events"/);
   });
 });
+
+/**
+ * The same question, one rung up (docs/adr/105).
+ *
+ * The quilt's zone is the rung an event falls through to when neither it nor
+ * its patch names one, so moving it changes what every inheriting event on
+ * every patch says — and the people whose events those are are not in the
+ * admin panel. docs/adr/101 named this as the clearest follow-up; this is it.
+ */
+describe('AdminQuiltSettings — moving the quilt asks the same question', () => {
+  const src = source('pages/AdminQuiltSettings.svelte');
+
+  it('checks the typed zone with the shared place rule, not with Intl alone', () => {
+    expect(src).toMatch(/import \{ isPlaceZone \} from '\.\.\/lib\/datetime\.js'/);
+    expect(src).toMatch(/return isPlaceZone\(tz\)/);
+    expect(src).not.toMatch(/new Intl\.DateTimeFormat\('en-US', \{ timeZone: tz \}\)/);
+  });
+
+  it('catches the server 409 and holds the choice rather than toasting an error', () => {
+    expect(src).toMatch(/e\?\.status === 409 && e\?\.data\?\.code === 'timezone_events_undecided'/);
+    expect(src).toMatch(/zoneChoice = \{ \.\.\.e\.data, timezone: tz \}/);
+  });
+
+  it('counts the patches as well as the events, because that is the radius', () => {
+    expect(src).toMatch(/zoneChoice\.patches_affected/);
+    expect(src).toMatch(/zoneChoice\.events_affected/);
+  });
+
+  it('offers exactly the two honest answers, and neither is preselected', () => {
+    expect(src).toMatch(/resolveZoneChange\('keep_clock'\)/);
+    expect(src).toMatch(/resolveZoneChange\('keep_instant'\)/);
+    expect(src).toMatch(/>Cancel</);
+  });
+
+  // The safety that makes the question answerable at all: a community that
+  // said where it keeps time is not in the count and is told so.
+  it('says which calendars it will not touch', () => {
+    expect(src).toMatch(/Patches with a timezone of their own, events with one, and events from/);
+  });
+
+  it('re-sends the choice as timezone_events and reports what it did', () => {
+    expect(src).toMatch(/body: \{ timezone: zoneChoice\.timezone, timezone_events: mode \}/);
+    expect(src).toMatch(/saved\?\.timezone_change\?\.events_moved/);
+  });
+});

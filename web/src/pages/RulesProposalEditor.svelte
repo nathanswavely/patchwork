@@ -21,6 +21,11 @@
 
   let currentRules = $state(null);
   let proposedRules = $state(null);
+  // Who votes here today, so the editor can say what a quorum or a tenure
+  // bar comes to for this patch rather than leaving a founder to guess
+  // (docs/adr/104). Its own request: the rules payload is spread back into
+  // the submission, so nothing that is not a rule may travel in it.
+  let electorate = $state(null);
   let loading = $state(true);
   let error = $state('');
 
@@ -111,6 +116,13 @@
       const data = await api(`nodes/${slug}/governance/rules`);
       currentRules = data.rules || data;
       proposedRules = JSON.parse(JSON.stringify(currentRules)); // deep copy
+      // Best effort, and never fatal: the form works without the sentences,
+      // and failing to load them must not stop somebody changing their rules.
+      try {
+        electorate = await api(`nodes/${slug}/governance/electorate`);
+      } catch {
+        electorate = null;
+      }
     } catch (e) {
       error = e.message || 'Failed to load rules';
     } finally {
@@ -233,6 +245,7 @@
       <div class="editor-card">
         <StructuredRulesEditor
           currentRules={currentRules}
+          electorate={electorate}
           onSave={handleRulesChange}
         />
 

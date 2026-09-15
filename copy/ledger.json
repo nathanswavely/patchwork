@@ -4087,14 +4087,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1410,
+          "line": 1431,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1601,
+          "line": 1622,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4157,14 +4157,14 @@
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 109,
+          "line": 115,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 273,
+          "line": 343,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4533,6 +4533,13 @@
         {
           "file": "internal/handler/events.go",
           "line": 464,
+          "kind": "go-error-body",
+          "raw": "node not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/governance_electorate.go",
+          "line": 55,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5049,7 +5056,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1641,
+          "line": 1662,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5614,14 +5621,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1530,
+          "line": 1551,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1584,
+          "line": 1605,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6344,35 +6351,35 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1109,
+          "line": 1130,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1334,
+          "line": 1355,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1499,
+          "line": 1520,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1576,
+          "line": 1597,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1686,
+          "line": 1707,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -9761,6 +9768,42 @@
           "line": 441,
           "kind": "go-error-body",
           "raw": "failed to disable feed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1ef0b783ede4",
+      "text": "only this patch's members can see who votes here",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "internal/handler/governance_electorate.go",
+          "line": 62,
+          "kind": "go-error-body",
+          "raw": "only this patch's members can see who votes here",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4a7492536b0f",
+      "text": "failed to read the electorate",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "internal/handler/governance_electorate.go",
+          "line": 71,
+          "kind": "go-error-body",
+          "raw": "failed to read the electorate",
           "quote": null
         }
       ]
@@ -14345,7 +14388,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1339,
+          "line": 1360,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -14363,7 +14406,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1350,
+          "line": 1371,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -14381,7 +14424,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1357,
+          "line": 1378,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -14399,7 +14442,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1368,
+          "line": 1389,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -14417,7 +14460,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1414,
+          "line": 1435,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -14435,7 +14478,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1433,
+          "line": 1454,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -14453,7 +14496,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1504,
+          "line": 1525,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -14471,7 +14514,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1522,
+          "line": 1543,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -14489,7 +14532,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1541,
+          "line": 1562,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -14507,7 +14550,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1606,
+          "line": 1627,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -14525,7 +14568,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1619,
+          "line": 1640,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -14543,7 +14586,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1653,
+          "line": 1674,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -14568,7 +14611,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1695,
+          "line": 1716,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -14586,7 +14629,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1712,
+          "line": 1733,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -14604,7 +14647,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1715,
+          "line": 1736,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null
@@ -15636,7 +15679,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 116,
+          "line": 122,
           "kind": "go-error-body",
           "raw": "failed to reset the name",
           "quote": null
@@ -15654,7 +15697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 122,
+          "line": 128,
           "kind": "go-error-body",
           "raw": "invalid name",
           "quote": null
@@ -15672,7 +15715,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 127,
+          "line": 133,
           "kind": "go-error-body",
           "raw": "name cannot be empty",
           "quote": null
@@ -15690,7 +15733,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 131,
+          "line": 137,
           "kind": "go-error-body",
           "raw": "name must be 100 characters or fewer",
           "quote": null
@@ -15708,7 +15751,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 135,
+          "line": 141,
           "kind": "go-error-body",
           "raw": "failed to save name",
           "quote": null
@@ -15726,7 +15769,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 149,
+          "line": 155,
           "kind": "go-error-body",
           "raw": "invalid description",
           "quote": null
@@ -15744,7 +15787,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 155,
+          "line": 161,
           "kind": "go-error-body",
           "raw": "description must be 500 characters or fewer",
           "quote": null
@@ -15762,7 +15805,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 160,
+          "line": 166,
           "kind": "go-error-body",
           "raw": "failed to reset the description",
           "quote": null
@@ -15780,9 +15823,27 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 164,
+          "line": 170,
           "kind": "go-error-body",
           "raw": "failed to save description",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "403164555978",
+      "text": "failed to read this quilt's calendars",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 193,
+          "kind": "go-error-body",
+          "raw": "failed to read this quilt's calendars",
           "quote": null
         }
       ]
@@ -15798,7 +15859,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 173,
+          "line": 224,
           "kind": "go-error-body",
           "raw": "failed to clear the timezone",
           "quote": null
@@ -15816,9 +15877,27 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 180,
+          "line": 228,
           "kind": "go-error-body",
           "raw": "failed to save the timezone",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "94a6d3141427",
+      "text": "the timezone was saved but its events could not all be moved",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 238,
+          "kind": "go-error-body",
+          "raw": "the timezone was saved but its events could not all be moved",
           "quote": null
         }
       ]
@@ -15834,7 +15913,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 188,
+          "line": 251,
           "kind": "go-error-body",
           "raw": "invalid icon_design",
           "quote": null
@@ -15852,7 +15931,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 193,
+          "line": 256,
           "kind": "go-error-body",
           "raw": "failed to clear the icon",
           "quote": null
@@ -15870,7 +15949,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 203,
+          "line": 266,
           "kind": "go-error-body",
           "raw": "failed to save the icon",
           "quote": null
@@ -15888,7 +15967,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 215,
+          "line": 278,
           "kind": "go-error-body",
           "raw": "failed to save policy",
           "quote": null
@@ -15906,7 +15985,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 279,
+          "line": 349,
           "kind": "go-error-body",
           "raw": "confirmation name does not match the quilt name",
           "quote": null
@@ -15924,7 +16003,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 290,
+          "line": 360,
           "kind": "go-error-body",
           "raw": "wipe failed, no data was deleted",
           "quote": null
@@ -21621,21 +21700,28 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 61,
+          "line": 74,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 73,
+          "line": 97,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 143,
+          "line": 110,
+          "kind": "js-string",
+          "raw": "Failed to save",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 180,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -23294,7 +23380,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 287,
+          "line": 362,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -24207,7 +24293,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 216,
+          "line": 228,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -25195,7 +25281,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 274,
+          "line": 287,
           "kind": "markup",
           "raw": "(optional)",
           "quote": null
@@ -26015,7 +26101,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 171,
+          "line": 237,
           "kind": "markup",
           "raw": "Decision Method",
           "quote": null
@@ -26040,7 +26126,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 186,
+          "line": 258,
           "kind": "markup",
           "raw": "Default Voting Period",
           "quote": null
@@ -26065,7 +26151,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 195,
+          "line": 267,
           "kind": "markup",
           "raw": "Amendment Threshold",
           "quote": null
@@ -26090,7 +26176,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 206,
+          "line": 278,
           "kind": "markup",
           "raw": "Auto-Apply Amendments",
           "quote": null
@@ -26115,7 +26201,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 253,
+          "line": 325,
           "kind": "markup",
           "raw": "Succession Policy",
           "quote": null
@@ -26176,7 +26262,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 226,
+          "line": 298,
           "kind": "markup",
           "raw": "Where admins are chosen",
           "quote": null
@@ -26201,7 +26287,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 239,
+          "line": 311,
           "kind": "markup",
           "raw": "Where proposals are decided",
           "quote": null
@@ -26226,7 +26312,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 276,
+          "line": 351,
           "kind": "markup",
           "raw": "Membership Policy",
           "quote": null
@@ -26251,7 +26337,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 285,
+          "line": 360,
           "kind": "markup",
           "raw": "Follower Permissions",
           "quote": null
@@ -26397,14 +26483,14 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 228,
+          "line": 300,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 241,
+          "line": 313,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
@@ -26429,14 +26515,14 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 229,
+          "line": 301,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 242,
+          "line": 314,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
@@ -26529,7 +26615,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 56,
+          "line": 67,
           "kind": "js-string",
           "raw": "Approval required",
           "quote": "'"
@@ -26561,7 +26647,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 57,
+          "line": 68,
           "kind": "js-string",
           "raw": "Invite only",
           "quote": "'"
@@ -26756,6 +26842,150 @@
       ]
     },
     {
+      "id": "79a56a104724",
+      "text": "An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.",
+      "words": 23,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 59,
+          "kind": "js-string",
+          "raw": "An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "dc4edd5c0ba5",
+      "text": "More approvals than rejections carries a proposal.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 60,
+          "kind": "js-string",
+          "raw": "More approvals than rejections carries a proposal.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4c1020f4d4c1",
+      "text": "Two thirds of the ballots cast must approve.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 61,
+          "kind": "js-string",
+          "raw": "Two thirds of the ballots cast must approve.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "64402a8d72dc",
+      "text": "One reject defeats a proposal, however many approve it.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 62,
+          "kind": "js-string",
+          "raw": "One reject defeats a proposal, however many approve it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8d650b1deddf",
+      "text": "No quorum: however few people vote, the result stands.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 132,
+          "kind": "js-string",
+          "raw": "No quorum: however few people vote, the result stands.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "0f261ff2c0c2",
+      "text": "Nobody can vote here today, so no quorum can be met and a proposal would close with nothing decided.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 135,
+          "kind": "js-string",
+          "raw": "Nobody can vote here today, so no quorum can be met and a proposal would close with nothing decided.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "cfde3365e98a",
+      "text": "One person can vote here today, so that single ballot is the whole quorum. An abstention counts toward it.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 140,
+          "kind": "js-string",
+          "raw": "One person can vote here today, so that single ballot is the whole quorum. An abstention counts toward it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "0afb1b5d496e",
+      "text": "Everybody votes from the day they join.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 146,
+          "kind": "js-string",
+          "raw": "Everybody votes from the day they join.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "42907c9208ac",
       "text": "Quorum (%)",
       "words": 2,
@@ -26766,7 +26996,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 181,
+          "line": 250,
           "kind": "markup",
           "raw": "Quorum (%)",
           "quote": null
@@ -26784,7 +27014,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 216,
+          "line": 288,
           "kind": "markup",
           "raw": "People don't vote on proposals about themselves",
           "quote": null
@@ -26802,7 +27032,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 219,
+          "line": 291,
           "kind": "markup",
           "raw": "Someone nominated for admin sits their own vote out. They stay in the\n        electorate for everything else.",
           "quote": null
@@ -26820,7 +27050,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 232,
+          "line": 304,
           "kind": "markup",
           "raw": "Pick the second if your board is elected at a meeting, on paper, or in\n      another tool. Patchwork will stop conducting leadership changes and let\n      an admin record what was decided.",
           "quote": null
@@ -26838,7 +27068,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 245,
+          "line": 317,
           "kind": "markup",
           "raw": "Pick the second if your members decide at meetings. Proposals stay open\n      for discussion and lose the vote buttons, and an admin records the\n      adopted text on the charter afterwards. Rules changes stay a direct\n      change an admin applies.",
           "quote": null
@@ -26856,7 +27086,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 266,
+          "line": 338,
           "kind": "markup",
           "raw": "Minimum Voting Tenure",
           "quote": null
@@ -26874,7 +27104,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 288,
+          "line": 363,
           "kind": "markup",
           "raw": "Proposals",
           "quote": null
@@ -26906,7 +27136,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 289,
+          "line": 364,
           "kind": "markup",
           "raw": "Charters",
           "quote": null
@@ -26924,7 +27154,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 290,
+          "line": 365,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -27967,7 +28197,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 305,
+          "line": 342,
           "kind": "markup",
           "raw": "Quilt Settings",
           "quote": null
@@ -28207,7 +28437,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 492,
+          "line": 582,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -30689,7 +30919,7 @@
         },
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 468,
+          "line": 558,
           "kind": "markup",
           "raw": "Hide patches that amended the lining",
           "quote": null
@@ -34350,24 +34580,6 @@
       ]
     },
     {
-      "id": "0d4dc82b4d3c",
-      "text": "That is not a timezone this quilt knows",
-      "words": 8,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 52,
-          "kind": "js-string",
-          "raw": "That is not a timezone this quilt knows",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "ef4d7fd858ee",
       "text": "Timezone saved",
       "words": 2,
@@ -34378,7 +34590,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 59,
+          "line": 67,
           "kind": "js-string",
           "raw": "Timezone saved",
           "quote": "'"
@@ -34396,7 +34608,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 59,
+          "line": 67,
           "kind": "js-string",
           "raw": "Timezone reset to the configured default",
           "quote": "'"
@@ -34414,7 +34626,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 71,
+          "line": 108,
           "kind": "js-string",
           "raw": "Policy saved",
           "quote": "'"
@@ -34432,7 +34644,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 141,
+          "line": 178,
           "kind": "js-string",
           "raw": "Quilt identity saved",
           "quote": "'"
@@ -34450,7 +34662,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 160,
+          "line": 197,
           "kind": "js-string",
           "raw": "Quilt name reset to the deployment default",
           "quote": "'"
@@ -34468,7 +34680,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 160,
+          "line": 197,
           "kind": "js-string",
           "raw": "Description reset to the deployment default",
           "quote": "'"
@@ -34486,7 +34698,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 162,
+          "line": 199,
           "kind": "js-string",
           "raw": "Failed to reset",
           "quote": "'"
@@ -34504,7 +34716,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 230,
+          "line": 267,
           "kind": "js-string",
           "raw": "Quilt icon saved",
           "quote": "'"
@@ -34522,7 +34734,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 232,
+          "line": 269,
           "kind": "js-string",
           "raw": "Failed to save the icon",
           "quote": "'"
@@ -34540,7 +34752,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 244,
+          "line": 281,
           "kind": "js-string",
           "raw": "Quilt icon reset",
           "quote": "'"
@@ -34558,7 +34770,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 246,
+          "line": 283,
           "kind": "js-string",
           "raw": "Failed to reset the icon",
           "quote": "'"
@@ -34576,7 +34788,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 279,
+          "line": 316,
           "kind": "js-string",
           "raw": "Export failed",
           "quote": "'"
@@ -34594,7 +34806,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 296,
+          "line": 333,
           "kind": "js-string",
           "raw": "Wipe failed",
           "quote": "'"
@@ -34612,7 +34824,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 306,
+          "line": 343,
           "kind": "markup",
           "raw": "How this quilt presents itself, here and on other quilts.",
           "quote": null
@@ -34630,7 +34842,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 316,
+          "line": 353,
           "kind": "markup",
           "raw": "Identity",
           "quote": null
@@ -34648,7 +34860,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 319,
+          "line": 356,
           "kind": "markup",
           "raw": "Quilt name",
           "quote": null
@@ -34666,7 +34878,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 323,
+          "line": 360,
           "kind": "markup",
           "raw": "Set here in the admin panel. Overrides the name in patchwork.yaml.",
           "quote": null
@@ -34684,7 +34896,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 331,
+          "line": 368,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -34730,7 +34942,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 335,
+          "line": 372,
           "kind": "markup",
           "raw": "Set here in the admin panel. Overrides the description in patchwork.yaml.",
           "quote": null
@@ -34748,7 +34960,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 343,
+          "line": 380,
           "kind": "markup",
           "raw": "Domain",
           "quote": null
@@ -34766,7 +34978,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 345,
+          "line": 382,
           "kind": "markup",
           "raw": "The domain is deployment configuration (patchwork.yaml) and cannot be changed here. Federation identities minted with it are permanent.",
           "quote": null
@@ -34784,7 +34996,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 357,
+          "line": 394,
           "kind": "markup",
           "raw": "Quilt Icon",
           "quote": null
@@ -34802,7 +35014,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 360,
+          "line": 397,
           "kind": "markup",
           "raw": "Represents this quilt in the quilt switcher and in other people's Connected Quilts.\n          Draft it here, in the same drafter patches use for their tiles.",
           "quote": null
@@ -34820,7 +35032,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 372,
+          "line": 409,
           "kind": "attr:aria-label",
           "raw": "Quilt icon preview",
           "quote": "\""
@@ -34838,7 +35050,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 377,
+          "line": 414,
           "kind": "markup",
           "raw": "Drafted for this quilt.",
           "quote": null
@@ -34856,7 +35068,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 379,
+          "line": 416,
           "kind": "markup",
           "raw": "Assigned from the quilt's name. Draft your own below.",
           "quote": null
@@ -34874,7 +35086,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 388,
+          "line": 425,
           "kind": "markup",
           "raw": "Reset icon",
           "quote": null
@@ -34892,7 +35104,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 396,
+          "line": 433,
           "kind": "markup",
           "raw": "Start from a block",
           "quote": null
@@ -34910,7 +35122,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 412,
+          "line": 449,
           "kind": "markup",
           "raw": "Starting over replaces what's on the canvas. Nothing is saved until you save.",
           "quote": null
@@ -34928,7 +35140,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 421,
+          "line": 458,
           "kind": "markup",
           "raw": "Timekeeping",
           "quote": null
@@ -34946,7 +35158,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 423,
+          "line": 460,
           "kind": "markup",
           "raw": "Where this quilt keeps time. An event shows the wall clock of the place\n        it happens, so this is what a patch falls back to when it has not named\n        a timezone of its own, and what a calendar feed's zoneless times mean\n        when it is imported. Everyone reading from elsewhere sees the event's\n        own clock, with the zone named next to it.",
           "quote": null
@@ -34964,7 +35176,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 430,
+          "line": 467,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -34989,7 +35201,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 439,
+          "line": 476,
           "kind": "markup",
           "raw": "An IANA name, like America/New_York or Europe/Berlin.",
           "quote": null
@@ -35007,7 +35219,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 441,
+          "line": 478,
           "kind": "markup",
           "raw": "Clear it to go back to {timezoneConfigured.replace(/_/g, ' ')} from patchwork.yaml.",
           "quote": null
@@ -35015,19 +35227,91 @@
       ]
     },
     {
-      "id": "48bb5f37c35d",
-      "text": "Not a timezone this quilt knows.",
-      "words": 6,
+      "id": "728c21bd2c42",
+      "text": "Not a place this quilt can keep time in.",
+      "words": 9,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 444,
+          "line": 481,
           "kind": "markup",
-          "raw": "Not a timezone this quilt knows.",
+          "raw": "Not a place this quilt can keep time in.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6bf9b2ea108a",
+      "text": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 496,
+          "kind": "markup",
+          "raw": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "57c51228191b",
+      "text": "across {zoneChoice.patches_affected} patch{zoneChoice.patches_affected === 1 ? '' : 'es'}",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 498,
+          "kind": "markup",
+          "raw": "across {zoneChoice.patches_affected} patch{zoneChoice.patches_affected === 1 ? '' : 'es'}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5567b49de563",
+      "text": "inherit{zoneChoice.events_affected === 1 ? 's' : ''} this quilt's timezone. Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')} changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
+      "words": 32,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 500,
+          "kind": "markup",
+          "raw": "inherit{zoneChoice.events_affected === 1 ? 's' : ''} this quilt's timezone.\n              Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}\n              changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "60300e48c3c1",
+      "text": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm. Leaving them where they are keeps the exact moment and changes the clock time shown. Patches with a timezone of their own, events with one, and events from a calendar feed are not touched.",
+      "words": 48,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/105: the quilt-wide zone consent step; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 533,
+          "kind": "markup",
+          "raw": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm.\n              Leaving them where they are keeps the exact moment and changes the clock time shown.\n              Patches with a timezone of their own, events with one, and events from\n              a calendar feed are not touched.",
           "quote": null
         }
       ]
@@ -35043,7 +35327,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 454,
+          "line": 544,
           "kind": "markup",
           "raw": "The Lining",
           "quote": null
@@ -35061,7 +35345,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 456,
+          "line": 546,
           "kind": "markup",
           "raw": "Every patch starts with the lining and can amend its copy by proposal.\n        Amended patches always wear a public badge; this policy also keeps them\n        out of the quilt, search, the map, and public feeds for everyone.\n        Direct links still work.",
           "quote": null
@@ -35079,7 +35363,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 473,
+          "line": 563,
           "kind": "markup",
           "raw": "Data Export (Seamrip)",
           "quote": null
@@ -35097,7 +35381,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 481,
+          "line": 571,
           "kind": "markup",
           "raw": "Download this quilt's portable community data as a zip: patches, people, memberships, events, proposals with votes, and governance records. Credentials, sessions, and federation keys deliberately stay behind, as do followers from other sites, since the addresses they follow belong to this quilt rather than to the patches. For a full backup of the deployment itself, back up the server's data directory.",
           "quote": null
@@ -35116,7 +35400,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 494,
+          "line": 584,
           "kind": "markup",
           "raw": "Wipe this quilt",
           "quote": null
@@ -35134,7 +35418,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 497,
+          "line": 587,
           "kind": "markup",
           "raw": "Erases",
           "quote": null
@@ -35152,7 +35436,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 497,
+          "line": 587,
           "kind": "markup",
           "raw": "all community data",
           "quote": null
@@ -35170,7 +35454,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 497,
+          "line": 587,
           "kind": "markup",
           "raw": ": every patch, person, event,\n          proposal, and governance record. The deployment returns to first-run.\n          The server, domain, and configuration survive. The community's data\n          does not. This cannot be undone. Download an export first.",
           "quote": null
@@ -35188,7 +35472,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 503,
+          "line": 593,
           "kind": "markup",
           "raw": "Type the quilt name to confirm:",
           "quote": null
@@ -35206,7 +35490,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
-          "line": 522,
+          "line": 612,
           "kind": "markup",
           "raw": "Really erase everything? You will be signed out.",
           "quote": null
@@ -36417,7 +36701,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 173,
+          "line": 185,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -36442,7 +36726,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 189,
+          "line": 201,
           "kind": "js-string",
           "raw": "Change applied",
           "quote": "'"
@@ -36467,7 +36751,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 189,
+          "line": 201,
           "kind": "js-string",
           "raw": "Proposal created",
           "quote": "'"
@@ -36499,7 +36783,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 192,
+          "line": 204,
           "kind": "js-string",
           "raw": "Failed to create proposal",
           "quote": "'"
@@ -36549,7 +36833,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 206,
+          "line": 218,
           "kind": "markup",
           "raw": "Become a member to take part in how this patch governs itself.",
           "quote": null
@@ -36646,7 +36930,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 259,
+          "line": 272,
           "kind": "markup",
           "raw": "Your changes",
           "quote": null
@@ -36671,7 +36955,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 269,
+          "line": 282,
           "kind": "markup",
           "raw": "Summary of changes",
           "quote": null
@@ -36714,7 +36998,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 275,
+          "line": 288,
           "kind": "attr:placeholder",
           "raw": "Help others understand why this change matters.",
           "quote": "\""
@@ -48111,14 +48395,14 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 184,
+          "line": 196,
           "kind": "js-string",
           "raw": "Governance Rules",
           "quote": "'"
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 222,
+          "line": 234,
           "kind": "markup",
           "raw": "Governance Rules",
           "quote": null
@@ -49231,7 +49515,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 66,
+          "line": 71,
           "kind": "js-string",
           "raw": "Change rules",
           "quote": "'"
@@ -49249,7 +49533,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 66,
+          "line": 71,
           "kind": "js-string",
           "raw": "Propose rules change",
           "quote": "'"
@@ -49267,7 +49551,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 115,
+          "line": 127,
           "kind": "js-string",
           "raw": "Failed to load rules",
           "quote": "'"
@@ -49285,14 +49569,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 144,
+          "line": 156,
           "kind": "js-string",
           "raw": "Update governance rules",
           "quote": "'"
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 162,
+          "line": 174,
           "kind": "js-string",
           "raw": "Update governance rules",
           "quote": "'"
@@ -49310,7 +49594,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 205,
+          "line": 217,
           "kind": "markup",
           "raw": "Only members can propose a change to these rules.",
           "quote": null
@@ -49328,7 +49612,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 227,
+          "line": 239,
           "kind": "markup",
           "raw": "Restored unsaved changes from {draftTimestamp ? new Date(draftTimestamp).toLocaleTimeString() : 'earlier'}",
           "quote": null
@@ -49346,7 +49630,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 228,
+          "line": 240,
           "kind": "markup",
           "raw": "Discard",
           "quote": null
@@ -49364,7 +49648,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 251,
+          "line": 264,
           "kind": "markup",
           "raw": "Changes",
           "quote": null
@@ -53416,6 +53700,42 @@
           "line": 383,
           "kind": "go-error-body",
           "raw": "this council is running a contest: the calendar can move once it settles",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0d4dc82b4d3c",
+      "text": "That is not a timezone this quilt knows",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 52,
+          "kind": "js-string",
+          "raw": "That is not a timezone this quilt knows",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "48bb5f37c35d",
+      "text": "Not a timezone this quilt knows.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminQuiltSettings.svelte",
+          "line": 444,
+          "kind": "markup",
+          "raw": "Not a timezone this quilt knows.",
           "quote": null
         }
       ]

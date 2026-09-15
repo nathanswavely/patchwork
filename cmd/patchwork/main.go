@@ -593,6 +593,10 @@ func main() {
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/governance", middleware.AuthRequired(db, handler.CreateGovernanceDoc(db)))
 	mux.HandleFunc("PUT /api/v1/governance/{id}", middleware.AuthRequired(db, handler.UpdateGovernanceDoc(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/rules", handler.GetGovernanceRules(db))
+	// Beside the rules rather than part of them: the editor spreads what the
+	// rules endpoint sends back into its submission, so facts about the patch
+	// cannot travel in that payload (docs/adr/104).
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/electorate", middleware.AuthRequired(db, handler.GovernanceElectorate(db)))
 
 	// Comments.
 	mux.HandleFunc("GET /api/v1/proposals/{id}/comments", handler.ListComments(db))
