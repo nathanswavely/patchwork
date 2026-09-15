@@ -39,8 +39,10 @@ import (
 // one applies and the page states only that.
 const (
 	// seatFillContest — a contest is running right now and this chair is in
-	// it. It outranks the others: while the community is deciding the
-	// council, that is what is happening to every chair.
+	// it. It outranks the others for that chair: while the community is
+	// deciding a seat, that is what is happening to it. A chair the contest
+	// did not put up reads as it always did, because nothing is happening to
+	// it (docs/adr/103).
 	seatFillContest = "contest_open"
 	// seatFillNomination — vacant, and fillable today: an admin puts a name
 	// forward and the members ratify (docs/adr/100, docs/adr/051).
@@ -84,13 +86,18 @@ type seatView struct {
 }
 
 // seatsOf lists a patch's council in the order the chairs were made, which is
-// the order seatWinners refills them in, with each chair's own answer to
+// the order a settled contest refills them in, with each chair's own answer to
 // "what happens to this one".
 func seatsOf(db *database.DB, nodeID string, gc model.GovernanceConfig) []seatView {
 	out := []seatView{}
+	// contestedIn runs alongside: which contest claimed each chair, if any. It
+	// is not part of the payload — what a reader needs is the route, and
+	// ContestID already carries the link.
+	var contestedIn []string
 	rows, err := db.Query(`
 		SELECT s.id, COALESCE(s.holder_id,''), COALESCE(`+usernameExpr("u")+`,''),
-		       COALESCE(`+displayNameExpr("u")+`,''), COALESCE(s.term_ends_at,'')
+		       COALESCE(`+displayNameExpr("u")+`,''), COALESCE(s.term_ends_at,''),
+		       COALESCE(s.contested_in,'')
 		FROM seats s LEFT JOIN users u ON u.id = s.holder_id
 		WHERE s.node_id = ? ORDER BY s.created_at ASC`, nodeID)
 	if err != nil {
@@ -99,10 +106,12 @@ func seatsOf(db *database.DB, nodeID string, gc model.GovernanceConfig) []seatVi
 	defer rows.Close()
 	for rows.Next() {
 		var s seatView
-		if rows.Scan(&s.ID, &s.HolderID, &s.Username, &s.DisplayName, &s.TermEndsAt) != nil {
+		var in string
+		if rows.Scan(&s.ID, &s.HolderID, &s.Username, &s.DisplayName, &s.TermEndsAt, &in) != nil {
 			continue
 		}
 		out = append(out, s)
+		contestedIn = append(contestedIn, in)
 	}
 	rows.Close()
 
@@ -111,7 +120,11 @@ func seatsOf(db *database.DB, nodeID string, gc model.GovernanceConfig) []seatVi
 	for i := range out {
 		out[i].Vacant = out[i].HolderID == ""
 		switch {
-		case contestID != "":
+		// Only the chairs the contest put up (docs/adr/103). A staggered
+		// council running a one-seat contest has two chairs that nobody is
+		// voting on, and telling their holders an election is deciding them
+		// is the same false sentence F-067 was about, one layer down.
+		case contestID != "" && contestedIn[i] == contestID:
 			out[i].Fill = seatFillContest
 			out[i].ContestID = contestID
 		case out[i].Vacant:
@@ -139,11 +152,20 @@ func openContestID(db *database.DB, nodeID string) string {
 	return id
 }
 
-// vacantSeat returns the id of a seat nobody holds, oldest chair first, or
-// empty when the council is full.
+// vacantSeat returns the id of a seat nobody holds and nobody is voting on,
+// oldest chair first, or empty when there is none to hand out.
+//
+// A chair in a running contest is not vacant in the sense this asks about
+// (docs/adr/103). It is empty *because* the members are deciding who sits in
+// it, and every caller here is a way of putting somebody in a chair without
+// an election — a ratified nomination, an interim appointment. Seating one of
+// those into the chair being voted on would settle the contest before it
+// closed, and the ballot would then unseat them.
 func vacantSeat(db *database.DB, nodeID string) string {
 	var id string
 	db.QueryRow(`SELECT id FROM seats WHERE node_id = ? AND holder_id IS NULL
+	             AND (contested_in IS NULL
+	                  OR contested_in NOT IN (SELECT id FROM proposals WHERE status = 'open'))
 	             ORDER BY created_at ASC LIMIT 1`, nodeID).Scan(&id)
 	return id
 }
@@ -289,14 +311,22 @@ func RemoveSeat(db *database.DB) http.HandlerFunc {
 		}
 		seatID := r.PathValue("id")
 
-		var holderID, holderName string
+		var holderID, holderName, contestedIn string
 		err := db.QueryRow(
-			`SELECT COALESCE(s.holder_id,''), COALESCE(`+displayNameExpr("u")+`,'')
+			`SELECT COALESCE(s.holder_id,''), COALESCE(`+displayNameExpr("u")+`,''), COALESCE(s.contested_in,'')
 			 FROM seats s LEFT JOIN users u ON u.id = s.holder_id
 			 WHERE s.id = ? AND s.node_id = ?`, seatID, nodeID,
-		).Scan(&holderID, &holderName)
+		).Scan(&holderID, &holderName, &contestedIn)
 		if err != nil {
 			http.Error(w, `{"error":"seat not found"}`, http.StatusNotFound)
+			return
+		}
+		// A chair people are voting on is not furniture to move. It is empty
+		// precisely because the contest is deciding who sits in it, and
+		// dissolving it mid-ballot would throw away a vote already cast
+		// (docs/adr/103).
+		if contestedIn != "" && contestedIn == openContestID(db, nodeID) {
+			http.Error(w, `{"error":"this seat is in the contest running now: it can be removed once that settles"}`, http.StatusConflict)
 			return
 		}
 		if holderID != "" {
@@ -349,8 +379,11 @@ func RemoveSeat(db *database.DB) http.HandlerFunc {
 //     means the holder serves until a successor is elected (051) — so the
 //     worst an admin can do to a colleague with this is call an election.
 //
-// Refused while a contest is running, because an election is judged by the
-// terms it opened with (docs/adr/047) and its own calendar is one of them.
+// Refused on a chair that is in the contest running now, because an election
+// is judged by the terms it opened with (docs/adr/047) and its own calendar is
+// one of them. Only that chair: a staggered council's other chairs are not on
+// that ballot, and a founder setting next year's dates should not have to wait
+// out a contest for a seat she is not touching (docs/adr/103).
 func SetSeatTerm(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
@@ -379,18 +412,19 @@ func SetSeatTerm(db *database.DB) http.HandlerFunc {
 		}
 		termEnds := newEnd.Format("2006-01-02")
 
-		if contestID := openContestID(db, nodeID); contestID != "" {
-			http.Error(w, `{"error":"this council is running a contest: the calendar can move once it settles"}`, http.StatusConflict)
+		var holderID, holderName, currentEnd, contestedIn string
+		if err := db.QueryRow(
+			`SELECT COALESCE(s.holder_id,''), COALESCE(`+displayNameExpr("u")+`,''),
+			        COALESCE(s.term_ends_at,''), COALESCE(s.contested_in,'')
+			 FROM seats s LEFT JOIN users u ON u.id = s.holder_id
+			 WHERE s.id = ? AND s.node_id = ?`, seatID, nodeID,
+		).Scan(&holderID, &holderName, &currentEnd, &contestedIn); err != nil {
+			http.Error(w, `{"error":"seat not found"}`, http.StatusNotFound)
 			return
 		}
 
-		var holderID, holderName, currentEnd string
-		if err := db.QueryRow(
-			`SELECT COALESCE(s.holder_id,''), COALESCE(`+displayNameExpr("u")+`,''), COALESCE(s.term_ends_at,'')
-			 FROM seats s LEFT JOIN users u ON u.id = s.holder_id
-			 WHERE s.id = ? AND s.node_id = ?`, seatID, nodeID,
-		).Scan(&holderID, &holderName, &currentEnd); err != nil {
-			http.Error(w, `{"error":"seat not found"}`, http.StatusNotFound)
+		if contestedIn != "" && contestedIn == openContestID(db, nodeID) {
+			http.Error(w, `{"error":"this seat is in the contest running now: its term can move once that settles"}`, http.StatusConflict)
 			return
 		}
 

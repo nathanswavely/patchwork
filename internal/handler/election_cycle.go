@@ -118,11 +118,26 @@ func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig
 
 	// Seats whose term ends within the time a contest takes. A term already
 	// past counts — that council is overdue, and holdover has been carrying it.
-	var due int
-	db.QueryRow(`SELECT COUNT(*) FROM seats
-	             WHERE node_id = ? AND term_ends_at IS NOT NULL AND term_ends_at <= ?`,
-		nodeID, dueBy).Scan(&due)
-	if due == 0 {
+	//
+	// These chairs, and only these: a staggered council puts up the chairs
+	// whose terms have run out and leaves the rest alone (docs/adr/103).
+	// Soonest term first, so a contest that fills fewer chairs than it puts up
+	// fills the most overdue ones.
+	rows, err := db.Query(`SELECT id FROM seats
+	                       WHERE node_id = ? AND term_ends_at IS NOT NULL AND term_ends_at <= ?
+	                       ORDER BY term_ends_at ASC, created_at ASC`, nodeID, dueBy)
+	if err != nil {
+		return
+	}
+	var due []string
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			due = append(due, id)
+		}
+	}
+	rows.Close()
+	if len(due) == 0 {
 		return
 	}
 
@@ -143,6 +158,6 @@ func scheduleFor(db *database.DB, nodeID, slug string, gc model.GovernanceConfig
 	}
 
 	if id := openElectionFor(db, nodeID, gc, due); id != "" {
-		log.Printf("election: %s is due (%d seat(s) at term end), opened %s", slug, due, id)
+		log.Printf("election: %s is due (%d seat(s) at term end), opened %s", slug, len(due), id)
 	}
 }

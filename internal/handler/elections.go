@@ -125,8 +125,8 @@ func jsonStringOrNull(s string) string {
 // calendar. Without them a contest that settled nothing left no seat behind,
 // so nothing was ever due again and the patch fell silent forever; with
 // them, scheduleFor finds the council overdue and tries again one breather
-// later. seatWinners reuses these seats in created order, so a settled
-// contest refills the chairs rather than adding to them.
+// later. The contest names those chairs (docs/adr/103), so a settled contest
+// refills them rather than adding to the council.
 func StartElectionOnAdoption(db *database.DB, nodeID string) {
 	gc, ok := electedHere(db, nodeID)
 	if !ok {
@@ -144,19 +144,38 @@ func StartElectionOnAdoption(db *database.DB, nodeID string) {
 		return
 	}
 
-	// How many seats the contest fills. Seat count follows from how the patch
+	// Which seats the contest fills. Seat count follows from how the patch
 	// governs (docs/adr/051) rather than from a configured cap, and at adoption
-	// the honest number is the council it already has.
-	seats := 0
-	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&seats)
-	if seats == 0 {
-		seats = seatSittingAdminsOverdue(db, nodeID)
+	// the honest answer is every chair it already has: a patch adopting
+	// elections puts its whole council to the electorate at once, and there is
+	// no staggering yet to respect.
+	if seatCount(db, nodeID) == 0 {
+		seatSittingAdminsOverdue(db, nodeID)
 	}
-	if seats == 0 {
+	chairs := seatIDs(db, nodeID)
+	if len(chairs) == 0 {
 		return
 	}
 
-	openElectionFor(db, nodeID, gc, seats)
+	openElectionFor(db, nodeID, gc, chairs)
+}
+
+// seatIDs lists a council's chairs in the order they were made, which is the
+// order a settled contest refills them in.
+func seatIDs(db *database.DB, nodeID string) []string {
+	rows, err := db.Query(`SELECT id FROM seats WHERE node_id = ? ORDER BY created_at ASC`, nodeID)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var id string
+		if rows.Scan(&id) == nil {
+			out = append(out, id)
+		}
+	}
+	return out
 }
 
 // seatSittingAdminsOverdue creates one seat per active admin with its term
@@ -212,7 +231,16 @@ func electionLeadHours(gc model.GovernanceConfig) int {
 
 // openElectionFor creates the contest itself. Shared by adoption and by the
 // recurring cycle, so both open the same thing.
-func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, seats int) string {
+//
+// It takes the chairs, not a number (docs/adr/103). Which chairs a contest is
+// for is frozen here, the way docs/adr/047 freezes a proposal's terms: a
+// council can stagger, so "how many" does not say which, and a resolution that
+// has to guess guesses at the whole council.
+func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, chairs []string) string {
+	seats := len(chairs)
+	if seats == 0 {
+		return ""
+	}
 	nominationDays := gc.NominationDays
 	if nominationDays <= 0 {
 		nominationDays = 14
@@ -252,6 +280,11 @@ func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, 
 	if err != nil {
 		log.Printf("election: start for %s: %v", slug, err)
 		return ""
+	}
+
+	// The chairs this contest is for. Nothing else may be emptied by it.
+	for _, seatID := range chairs {
+		db.Exec(`UPDATE seats SET contested_in = ? WHERE id = ? AND node_id = ?`, id, seatID, nodeID)
 	}
 
 	notify(notifications.Event{

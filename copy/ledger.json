@@ -3905,7 +3905,7 @@
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 422,
+          "line": 455,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4150,7 +4150,7 @@
         },
         {
           "file": "internal/handler/seats.go",
-          "line": 367,
+          "line": 400,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4686,7 +4686,7 @@
         },
         {
           "file": "internal/handler/seats.go",
-          "line": 174,
+          "line": 196,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -8680,14 +8680,14 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 301,
+          "line": 334,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 398,
+          "line": 431,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
@@ -8705,7 +8705,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 305,
+          "line": 338,
           "kind": "go-error-body",
           "raw": "nominations have closed",
           "quote": null
@@ -8723,7 +8723,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 310,
+          "line": 343,
           "kind": "go-error-body",
           "raw": "must be a member of this patch to nominate",
           "quote": null
@@ -8741,7 +8741,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 323,
+          "line": 356,
           "kind": "go-error-body",
           "raw": "a candidate must be an active member of this patch",
           "quote": null
@@ -8759,7 +8759,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 331,
+          "line": 364,
           "kind": "go-error-body",
           "raw": "failed to add the candidate",
           "quote": null
@@ -8777,7 +8777,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 402,
+          "line": 435,
           "kind": "go-error-body",
           "raw": "this election has closed",
           "quote": null
@@ -8795,7 +8795,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 406,
+          "line": 439,
           "kind": "go-error-body",
           "raw": "nominations are still open; voting has not started",
           "quote": null
@@ -15341,7 +15341,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 178,
+          "line": 200,
           "kind": "go-error-body",
           "raw": "only this patch's admins can change its council seats",
           "quote": null
@@ -15359,7 +15359,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 186,
+          "line": 208,
           "kind": "go-error-body",
           "raw": "this patch chooses its council elsewhere: record that decision instead",
           "quote": null
@@ -15377,7 +15377,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 194,
+          "line": 216,
           "kind": "go-error-body",
           "raw": "seats belong to the elected model; this patch makes admins another way",
           "quote": null
@@ -15395,7 +15395,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 259,
+          "line": 281,
           "kind": "go-error-body",
           "raw": "failed to add a seat",
           "quote": null
@@ -15413,16 +15413,34 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 299,
+          "line": 321,
           "kind": "go-error-body",
           "raw": "seat not found",
           "quote": null
         },
         {
           "file": "internal/handler/seats.go",
-          "line": 393,
+          "line": 422,
           "kind": "go-error-body",
           "raw": "seat not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e89384ba2da5",
+      "text": "this seat is in the contest running now: it can be removed once that settles",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/103: the refusal names the chair, not the council",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 329,
+          "kind": "go-error-body",
+          "raw": "this seat is in the contest running now: it can be removed once that settles",
           "quote": null
         }
       ]
@@ -15438,7 +15456,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 312,
+          "line": 342,
           "kind": "go-error-body",
           "raw": "failed to remove the seat",
           "quote": null
@@ -15456,7 +15474,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 372,
+          "line": 405,
           "kind": "go-error-body",
           "raw": "a term end is a date, as 2027-11-01",
           "quote": null
@@ -15474,7 +15492,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 377,
+          "line": 410,
           "kind": "go-error-body",
           "raw": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
           "quote": null
@@ -15482,19 +15500,19 @@
       ]
     },
     {
-      "id": "8eedcfc5152a",
-      "text": "this council is running a contest: the calendar can move once it settles",
-      "words": 13,
+      "id": "073c4f8133bc",
+      "text": "this seat is in the contest running now: its term can move once that settles",
+      "words": 15,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "note": "docs/adr/103: the refusal names the chair, not the council",
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 383,
+          "line": 427,
           "kind": "go-error-body",
-          "raw": "this council is running a contest: the calendar can move once it settles",
+          "raw": "this seat is in the contest running now: its term can move once that settles",
           "quote": null
         }
       ]
@@ -15510,7 +15528,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 412,
+          "line": 446,
           "kind": "go-error-body",
           "raw": "failed to set the term end",
           "quote": null
@@ -16666,7 +16684,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 334,
+          "line": 337,
           "kind": "go-string",
           "raw": "Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and that election is now due: it opens shortly, and any member of this patch may stand.",
           "quote": "\""
@@ -16684,7 +16702,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 338,
+          "line": 341,
           "kind": "go-string",
           "raw": "Every seat was vacated for inactivity, so this patch has no admins. It elects its council, and no election can be scheduled — its seats carry no term end. An instance admin has been told.",
           "quote": "\""
@@ -16702,7 +16720,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 340,
+          "line": 343,
           "kind": "go-string",
           "raw": "Its seats were vacated for inactivity. It elects its council and no contest can be scheduled, so nothing will refill it on its own.",
           "quote": "\""
@@ -16720,7 +16738,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 347,
+          "line": 350,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity, so this patch has no admins. Here a new admin is nominated by an admin and ratified by the members, so an instance admin has been told.",
           "quote": "\""
@@ -16738,7 +16756,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 349,
+          "line": 352,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity. Here admins are nominated by an admin and ratified by the members, so with none left nobody can start one.",
           "quote": "\""
@@ -16756,7 +16774,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 442,
+          "line": 445,
           "kind": "go-string",
           "raw": "You now run ",
           "quote": "\""
@@ -16774,7 +16792,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 443,
+          "line": 446,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, and you were named as the successor. You can hand the patch on, or step down, from Settings.",
           "quote": "\""
@@ -16792,7 +16810,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 458,
+          "line": 461,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy asks an instance admin to step in, and one has been told.",
           "quote": "\""
@@ -16810,7 +16828,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 460,
+          "line": 463,
           "kind": "go-string",
           "raw": "Its last admin seat was vacated for inactivity, and its succession policy asks an instance admin to step in.",
           "quote": "\""
@@ -16828,7 +16846,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 465,
+          "line": 468,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy is to stop rather than hand the patch to somebody else, so nobody has been appointed.",
           "quote": "\""
@@ -16846,7 +16864,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 475,
+          "line": 478,
           "kind": "go-string",
           "raw": "Its admin seat was vacated for inactivity, so this patch has no admins. Its succession policy hands the patch to its longest-standing active members, and nobody here has taken part recently enough to be one. An instance admin has been told.",
           "quote": "\""
@@ -16864,7 +16882,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 477,
+          "line": 480,
           "kind": "go-string",
           "raw": "Its last admin seat was vacated for inactivity, and nobody in the patch has taken part recently enough to be made an interim admin.",
           "quote": "\""
@@ -16882,7 +16900,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 573,
+          "line": 576,
           "kind": "go-string",
           "raw": "You are now an interim admin of ",
           "quote": "\""
@@ -16900,7 +16918,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
-          "line": 574,
+          "line": 577,
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing active members.",
           "quote": "\""
@@ -53291,6 +53309,24 @@
           "kind": "go-string",
           "raw": "Its admin seats were vacated for inactivity, and this patch's succession policy hands them to its longest-standing members.",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "8eedcfc5152a",
+      "text": "this council is running a contest: the calendar can move once it settles",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 383,
+          "kind": "go-error-body",
+          "raw": "this council is running a contest: the calendar can move once it settles",
+          "quote": null
         }
       ]
     }
