@@ -119,9 +119,24 @@ const (
 	// approved proposal changes nothing, and because adding a chair is the
 	// admins' act: no other governance type reaches them alone.
 	GovernanceSeatUnavailable NotificationType = "governance.seat_unavailable"
+	// GovernanceCouncilEmpty reaches a patch's members when inactivity has
+	// vacated every admin seat (docs/adr/051). It says the patch has nobody
+	// running it and what fills it next, which differs by leadership model —
+	// a contest that is now due, a nomination nobody is left to raise, or an
+	// instance admin who has been told.
+	//
+	// It follows an obligation rather than reporting the world
+	// (docs/adr/093): who decides in a member's name is a term of that
+	// membership, and this is that term changing. The members are also the
+	// only people who can act on it — they are the electorate, and they are
+	// who a nomination names. High, because a member who does not hear it
+	// finds out by discovering that nothing works.
+	GovernanceCouncilEmpty NotificationType = "governance.council_empty"
 	// GovernanceSuccessionNeeded reaches instance admins on a patch whose
-	// succession policy asks them to step in — the one policy Patchwork
-	// cannot carry out on its own.
+	// succession policy asks them to step in, and on any patch inactivity
+	// has emptied that cannot refill itself — a meritocratic one with nobody
+	// left to raise a nomination, an elected one with no contest on its
+	// calendar, or one whose longest-standing members are all gone too.
 	GovernanceSuccessionNeeded NotificationType = "governance.succession_needed"
 
 	MembershipJoined      NotificationType = "membership.joined"
@@ -254,6 +269,7 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	LiningUpdated:                 {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
 	GovernanceInactivityWarning:   {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
 	GovernanceSeatUnavailable:     {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
+	GovernanceCouncilEmpty:        {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
 	GovernanceSuccessionNeeded:    {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
@@ -347,7 +363,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		ProposalNew, ProposalVoting, ProposalOpenToYou, ProposalVoteReceived, ProposalApproved,
 		ProposalRejected, ProposalApplied, ProposalComment, ProposalTurnout, ProposalDeadline,
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
-		GovernanceInactivityWarning, GovernanceSeatUnavailable,
+		GovernanceInactivityWarning, GovernanceSeatUnavailable, GovernanceCouncilEmpty,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		MembershipInvited,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,

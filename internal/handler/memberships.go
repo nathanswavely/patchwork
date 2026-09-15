@@ -989,11 +989,33 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				}
 			}
 
+			// A patch with no admins at all has no mechanism left to outrank,
+			// and the three refusals below are all of the form "use this
+			// patch's own mechanism instead of the dropdown". Every one of
+			// those mechanisms is started by an admin: an attestation is
+			// recorded by one, a nomination is raised by one, a seat is added
+			// by one. So on an empty council the refusals stop protecting a
+			// mechanism and start sealing the door.
+			//
+			// Only an instance admin can be standing at that door — the other
+			// key is the one that is missing — so the condition needs no role
+			// check of its own: `userHasNodeRole(admin)` is false for
+			// everybody here by construction. Inactivity is what empties a
+			// council without anyone choosing to (docs/adr/051), and this is
+			// the route back that does not depend on the patch's own
+			// machinery still being startable.
+			//
+			// It is audited with its reason, so the record says this was a
+			// repair and not a promotion the patch's rules allowed.
+			var nodeAdmins int
+			db.QueryRow("SELECT COUNT(*) FROM memberships WHERE node_id = ? AND role = 'admin' AND status = 'active'", nodeID).Scan(&nodeAdmins)
+			restoringEmptyCouncil := nodeAdmins == 0 && newRole == "admin"
+
 			// Where admins are chosen elsewhere, Patchwork does not make them
 			// (docs/adr/052). The record of that decision is what promotes,
 			// so a hand-made admin here would be a change with no decision
 			// behind it — and the next attestation would undo it anyway.
-			if newRole == "admin" && currentRole != "admin" && leadershipDecidedElsewhere(db, nodeID) {
+			if !restoringEmptyCouncil && newRole == "admin" && currentRole != "admin" && leadershipDecidedElsewhere(db, nodeID) {
 				http.Error(w, `{"error":"this patch chooses its admins elsewhere: record that decision instead"}`, http.StatusConflict)
 				return
 			}
@@ -1005,7 +1027,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			// docs/adr/041 named. Demotion is untouched: nothing about
 			// earning a role says the community must vote to end it, and the
 			// last-admin floor above still applies.
-			if newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "meritocratic" {
+			if !restoringEmptyCouncil && newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "meritocratic" {
 				http.Error(w, `{"error":"this patch ratifies admins by proposal: nominate them instead"}`, http.StatusConflict)
 				return
 			}
@@ -1020,7 +1042,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			// vacant seat, or wait for the contest that fills the full one.
 			// Demotion is untouched, as it is for meritocratic, and the
 			// last-admin floor above still applies.
-			if newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "elected" {
+			if !restoringEmptyCouncil && newRole == "admin" && currentRole != "admin" && leadershipModel(db, nodeID) == "elected" {
 				http.Error(w, `{"error":"`+electedPromotionDenial(db, nodeID)+`"}`, http.StatusConflict)
 				return
 			}
@@ -1041,13 +1063,30 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				DropContactSharesFor(db, targetUserID, nodeID)
 			}
 
-			_, err = db.Exec("UPDATE memberships SET role = ? WHERE id = ?", newRole, memID)
+			_, err = db.Exec("UPDATE memberships SET role = ?, "+roleSinceNow+" WHERE id = ?", newRole, memID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update role"}`, http.StatusInternalServerError)
 				return
 			}
+			// On an elected patch every admin sits in a chair the record can
+			// name (docs/adr/100), so a restoration puts them in one where a
+			// chair is free. The chair keeps its own term end — the clock
+			// belongs to the seat (docs/adr/051), and a repair is the last
+			// act that should hand out a fresh mandate.
+			if restoringEmptyCouncil {
+				if seatID := vacantSeat(db, nodeID); seatID != "" {
+					db.Exec("UPDATE seats SET holder_id = ? WHERE id = ?", targetUserID, seatID)
+					auth.LogAuditEvent(db, user.ID, "seat.filled", "seat", seatID,
+						fmt.Sprintf(`{"node_id":"%s","holder_id":"%s","reason":"council_empty"}`, nodeID, targetUserID), clientIP(r))
+				}
+			}
+
+			reason := ""
+			if restoringEmptyCouncil {
+				reason = `,"reason":"council_empty"`
+			}
 			auth.LogAuditEvent(db, user.ID, "membership.role_change", "membership", memID,
-				fmt.Sprintf(`{"target_user_id":"%s","old_role":"%s","new_role":"%s"}`, targetUserID, currentRole, newRole), clientIP(r))
+				fmt.Sprintf(`{"target_user_id":"%s","old_role":"%s","new_role":"%s"%s}`, targetUserID, currentRole, newRole, reason), clientIP(r))
 		}
 
 		// Return the updated membership.

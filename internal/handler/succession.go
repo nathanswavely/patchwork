@@ -22,6 +22,26 @@ import (
 // catalogued, stored and rendered and read by nothing. Its trigger is the
 // maintainer leaving, which is also what lets them leave at all.
 
+// roleSinceNow is the SET clause every write that changes a membership's role
+// carries with it (migration 072).
+//
+// `memberships.role_since` is when this person got the role they hold now, and
+// it is a floor the inactivity sweep measures absence from (docs/adr/051).
+// Without it the floor was `joined_at`, so somebody promoted to fill an
+// absence was already older than the vacate threshold on the day they were
+// appointed: vacated on the next pass, replaced by the next member down, and
+// round again — 1,348 successions in a simulated year.
+//
+// It is a constant spliced into the SQL rather than a bound parameter because
+// the statements it joins are a mix of positional-argument shapes, and a
+// literal `strftime` keeps the timestamp in the same format and the same clock
+// as every other column written by the same statement.
+//
+// Paths that write `joined_at = now` in the same statement — a follower
+// upgrading, an invitation being accepted — deliberately do not carry it:
+// NULL reads as `joined_at`, which is the same instant.
+const roleSinceNow = "role_since = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"
+
 // leadershipModel reads the node's cached governance config. Empty when the
 // config is absent or unparseable, which reads as "not maintainer" everywhere
 // this is used — the conservative direction, since every caller is deciding
@@ -169,7 +189,7 @@ func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
 	}
 
 	if _, err := db.Exec(
-		"UPDATE memberships SET role = 'admin' WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		"UPDATE memberships SET role = 'admin', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'",
 		nomineeID, nodeID,
 	); err != nil {
 		return
@@ -372,7 +392,7 @@ func succeedOnDeparture(db *database.DB, r *http.Request, nodeID, slug, departin
 	}
 
 	if _, err := db.Exec(
-		"UPDATE memberships SET role = 'admin' WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		"UPDATE memberships SET role = 'admin', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'",
 		successorID, nodeID,
 	); err != nil {
 		return false

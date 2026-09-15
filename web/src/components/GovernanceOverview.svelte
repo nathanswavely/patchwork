@@ -156,6 +156,32 @@
       : `Every seat is held. There is nothing to do until ${formatDay(nextContestOpens)}, when the next contest opens and any member may stand.`;
   });
 
+  // A patch with nobody in the admin role, which inactivity can reach without
+  // anybody choosing it (docs/adr/051: the vacancy rule may empty a patch).
+  // Left unsaid, the page shows a governance section with no admins listed
+  // and no explanation, and a member's first sign is that nothing works.
+  //
+  // What refills it differs by model, so the second sentence does too — and
+  // on an elected patch it stops at "by election", because the council block
+  // below says which chairs and when, per chair.
+  //
+  // Never on an unclaimed patch: it has no admins because nobody has claimed
+  // it, which is a different sentence and one the claim surfaces already say.
+  // PatchShell redirects the governance tab away from an unclaimed patch, so
+  // this only covers the frame before that effect runs — but that frame would
+  // otherwise carry the wrong answer.
+  let noAdmins = $derived(
+    (overview?.admins?.length ?? 0) === 0 && !patch.value.isUnclaimed,
+  );
+  let noAdminsLine = $derived.by(() => {
+    if (leadershipElsewhere)
+      return 'Nobody holds the admin role here. This patch records its leadership decisions elsewhere, so a decision made there is what puts somebody back.';
+    if (isElectedModel) return 'Nobody holds the admin role here. This council is filled by election.';
+    if (overview?.rules?.leadership_model === 'meritocratic')
+      return 'Nobody holds the admin role here. An admin is nominated by an admin and ratified by the members, so this patch cannot start one on its own until an instance admin puts somebody back.';
+    return 'Nobody holds the admin role here, so nobody can manage this patch until an instance admin puts somebody back.';
+  });
+
   let seatBusy = $state(false);
   let seatError = $state('');
 
@@ -438,7 +464,7 @@
         <p class="overview-narrative">{describeLeadership(rules)}</p>
       {/if}
 
-      {#if overview.admins.length > 0}
+      {#if !noAdmins}
         <div class="admin-list">
           {#each overview.admins as admin}
             <div class="admin-item">
@@ -453,15 +479,22 @@
                 <span class="admin-name">{admin.display_name || admin.username}</span>
                 <!-- `joined_at` is when this person joined the patch, in
                      whatever role they joined as — not when they became an
-                     admin, which nothing records. Labelled "Admin since" it
-                     read as a governed fact and was routinely false: a member
-                     of eight months elected to the council this morning was
-                     shown as an admin since eight months ago. -->
+                     admin. Labelled "Admin since" it read as a governed fact
+                     and was routinely false: a member of eight months elected
+                     to the council this morning was shown as an admin since
+                     eight months ago. Migration 072 does now record when a
+                     role was taken, but only for roles taken since it landed,
+                     so every admin seated before that would still be shown a
+                     date derived from their joining. The honest label is the
+                     one about joining, and the seats below carry the governed
+                     dates. -->
                 <span class="admin-since muted">Member since {formatDate(admin.joined_at)}</span>
               </div>
             </div>
           {/each}
         </div>
+      {:else}
+        <p class="no-admins">{noAdminsLine}</p>
       {/if}
 
       <!-- The council's chairs (docs/adr/100), each saying what is true of
@@ -840,6 +873,14 @@
   .seat-controls input[type='date'] {
     font-size: 0.78rem;
     min-width: 0;
+  }
+
+  .no-admins {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin: 0;
+    padding-left: 0.6rem;
+    border-left: 2px solid var(--color-primary);
   }
 
   .council-do {

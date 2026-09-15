@@ -166,7 +166,7 @@ func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, win
 		if role == "admin" {
 			continue
 		}
-		if _, err := db.Exec(`UPDATE memberships SET role = 'admin'
+		if _, err := db.Exec(`UPDATE memberships SET role = 'admin', `+roleSinceNow+`
 		                      WHERE user_id = ? AND node_id = ? AND status = 'active'`, wnr.UserID, nodeID); err != nil {
 			continue
 		}
@@ -205,7 +205,7 @@ func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, win
 		if admins <= 1 {
 			break
 		}
-		if _, err := db.Exec(`UPDATE memberships SET role = 'member'
+		if _, err := db.Exec(`UPDATE memberships SET role = 'member', `+roleSinceNow+`
 		                      WHERE user_id = ? AND node_id = ? AND status = 'active'`, uid, nodeID); err != nil {
 			continue
 		}

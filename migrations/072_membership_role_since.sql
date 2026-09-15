@@ -1,0 +1,25 @@
+-- When somebody got the role they hold now (docs/adr/051).
+--
+-- The inactivity sweep asks "has this person been absent from governance",
+-- and it measured that from the later of their activity and their *joining*.
+-- For a member promoted to fill somebody else's absence that floor is already
+-- older than the vacate threshold, so a new admin was absent the instant they
+-- were appointed: vacated on the next pass, replaced by the next-longest
+-- serving member, and round again. A simulated year produced 1,348
+-- successions on five patches. Promotion has to reset the clock, and nothing
+-- recorded when a promotion happened.
+--
+-- The audit log was the alternative and is the wrong source. `membership.
+-- role_change`, `membership.ratified`, `membership.succession` and
+-- `seat.filled` each say a role moved, but they key on different entities
+-- (some on the membership id, `membership.ratified` on the user id), they are
+-- an append-only record rather than a column anything joins, and they are
+-- prunable. Behaviour that depends on the audit log being present is
+-- behaviour that changes when a log is pruned, and "whose seat is safe" is
+-- not a question that may have a different answer after housekeeping.
+--
+-- NULL means "not recorded", which reads as the old floor: measure from
+-- joined_at. No backfill, because there is nothing true to backfill with —
+-- every membership from before this column got its role at a moment nobody
+-- wrote down, and joined_at is the honest stand-in the readers already use.
+ALTER TABLE memberships ADD COLUMN role_since TEXT;
