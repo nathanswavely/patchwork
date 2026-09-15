@@ -95,7 +95,15 @@ func resolveElection(db *database.DB, proposalID string) bool {
 // reading as though a council had been rejected.
 func closeElectionUnsettled(db *database.DB, proposalID, nodeID, slug, nodeName, why string) {
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
-	db.Exec(`UPDATE proposals SET status = 'rejected', state = 'rejected', updated_at = ? WHERE id = ?`, now, proposalID)
+	// `status` stays inside the schema's CHECK (open/approved/rejected/
+	// withdrawn) and `state` carries the truth — the same split docs/adr/097
+	// made for a lapse, for the same reason: a fifth status would be a
+	// migration for a word. Without a state of its own this wrote 'rejected'
+	// and the banner read "This proposal did not pass. 0 approved, 0
+	// rejected." over a contest nobody voted in, while the notice and the
+	// record beside it correctly said it settled nothing. A simulated
+	// candidate read that as the community turning him down.
+	db.Exec(`UPDATE proposals SET status = 'rejected', state = 'unsettled', updated_at = ? WHERE id = ?`, now, proposalID)
 	auth.LogAuditEvent(db, "", "election.unsettled", "proposal", proposalID,
 		`{"node_id":"`+nodeID+`"}`, "")
 	notify(notifications.Event{

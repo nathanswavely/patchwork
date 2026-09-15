@@ -155,6 +155,22 @@
     try { return new URL(url).hostname.replace(/^www\./, ''); }
     catch { return url; }
   }
+
+  // What the pill calls a proposal's outcome, read off `state` before
+  // `status` the way the proposals list does.
+  //
+  // Two outcomes carry `status = 'rejected'` without anybody having rejected
+  // anything: a vote whose window closed under quorum (lapsed, docs/adr/097)
+  // and an election that seated nobody (unsettled, holdover — docs/adr/051).
+  // The schema's CHECK has no word for either, so printing the column put
+  // REJECTED in error red under the name of a candidate the patch had simply
+  // not voted on. The pill is the link's accessible name too, so the word is
+  // the whole fix on both counts.
+  function outcomeWord(p) {
+    if (p.state === 'lapsed') return 'lapsed';
+    if (p.state === 'unsettled') return 'unsettled';
+    return p.status;
+  }
 </script>
 
 {#if node}
@@ -301,18 +317,21 @@
             </a>
           {/each}
           {#each recentProposals as proposal (proposal.id)}
+            {@const outcome = outcomeWord(proposal)}
             <a
               class="row-item"
               href="/patches/{slug}/governance/{proposal.id}"
               onclick={go(`/patches/${slug}/governance/${proposal.id}`)}
             >
               <span class="row-title">{proposal.title}</span>
+              <!-- Red is for a decision the patch made. Lapsed and unsettled
+                   are absences, so they keep the pill's muted default. -->
               <span
                 class="proposal-status"
-                class:status-open={proposal.status === 'open'}
-                class:status-accepted={proposal.status === 'accepted'}
-                class:status-rejected={proposal.status === 'rejected'}
-              >{proposal.status}</span>
+                class:status-open={outcome === 'open'}
+                class:status-accepted={outcome === 'accepted'}
+                class:status-rejected={outcome === 'rejected'}
+              >{outcome}</span>
             </a>
           {/each}
         </div>

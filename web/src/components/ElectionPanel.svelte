@@ -16,6 +16,12 @@
   let phase = $derived(proposal?.election_phase || '');
   let candidates = $derived(proposal?.candidates || []);
   let seats = $derived(proposal?.seats_contested || 0);
+  // A contest that seated nobody (docs/adr/051): quorum unmet, or nobody
+  // approved. The panel used to read the seats off the tally alone, so a
+  // closed election that missed quorum still tagged its most-approved
+  // candidates "seated" — people who hold no seat, on a page whose banner
+  // says the council held over.
+  let settledNothing = $derived(proposal?.state === 'unsettled');
   let me = $derived(getUser());
   let iAmStanding = $derived(candidates.some((c) => c.user_id === me?.id));
 
@@ -96,7 +102,7 @@
     {:else}
       <ul class="candidates">
         {#each candidates as c, i}
-          <li class:seated={phase === 'closed' && i < seats && c.approvals > 0}>
+          <li class:seated={phase === 'closed' && !settledNothing && i < seats && c.approvals > 0}>
             {#if phase === 'voting' && canVote}
               <label>
                 <input type="checkbox" checked={approved.has(c.id)} onchange={() => toggle(c.id)} disabled={busy} />
@@ -108,7 +114,7 @@
             {#if phase !== 'nominating'}
               <span class="count">{c.approvals} approval{c.approvals === 1 ? '' : 's'}</span>
             {/if}
-            {#if phase === 'closed' && i < seats && c.approvals > 0}
+            {#if phase === 'closed' && !settledNothing && i < seats && c.approvals > 0}
               <span class="tag">seated</span>
             {/if}
           </li>

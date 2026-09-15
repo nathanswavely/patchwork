@@ -778,11 +778,23 @@ func eligibleVotersExcept(db *database.DB, nodeID string, gc model.GovernanceCon
 func resolveProposal(db *database.DB, proposalID string) string {
 	var p model.Proposal
 	var votingEndsAt string
+	var seatsContested int
 	err := db.QueryRow(
-		`SELECT id, node_id, author_id, title, status, proposal_type, COALESCE(target_doc,''), COALESCE(proposed_title,''), COALESCE(target_user_id,''), COALESCE(voting_ends_at,'')
+		`SELECT id, node_id, author_id, title, status, proposal_type, COALESCE(target_doc,''), COALESCE(proposed_title,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(target_user_id,''), COALESCE(voting_ends_at,''), COALESCE(seats_contested,0)
 		 FROM proposals WHERE id = ?`, proposalID,
-	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Status, &p.ProposalType, &p.TargetDoc, &p.ProposedTitle, &p.TargetUserID, &votingEndsAt)
+	).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Status, &p.ProposalType, &p.TargetDoc, &p.ProposedTitle, &p.ProposedBranch, &p.ProposedBody, &p.TargetUserID, &votingEndsAt, &seatsContested)
 	if err != nil || p.Status != "open" {
+		return ""
+	}
+
+	// An election is resolveElection's, and only its (docs/adr/051): a
+	// contest is settled by seating a council, not by a majority over a
+	// question, and its ballots are not in `votes` at all. The sweep has
+	// always split them; the read path never did, so a reader arriving
+	// between an election's deadline and the next hourly pass could run it
+	// through the ordinary tally. Nothing carried it there, and now that a
+	// resolution tells the whole patch what it decided, nothing may.
+	if seatsContested > 0 {
 		return ""
 	}
 
@@ -870,7 +882,20 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// proposal still showing an open vote. 'approved' is a resting state:
 	// the community decided, an admin still makes it official, which is the
 	// approved → in_effect step the state machine describes.
-	db.Exec("UPDATE proposals SET status = ?, state = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", newStatus, newStatus, proposalID)
+	//
+	// `AND status = 'open'` makes this the one write that settles the vote,
+	// the way lapseProposal's does: three paths call resolveProposal (the
+	// sweep, a read after the window, a sole voter's ballot) and two of them
+	// can arrive at once. Whoever loses the race stops here rather than
+	// re-resolving a settled proposal and telling everybody a second time.
+	res, updErr := db.Exec("UPDATE proposals SET status = ?, state = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND status = 'open'", newStatus, newStatus, proposalID)
+	if updErr != nil {
+		log.Printf("proposal %s: resolve failed: %v", proposalID, updErr)
+		return ""
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return ""
+	}
 
 	// A ratified nomination takes effect on approval (docs/adr/051). There is
 	// no admin "apply" step: the community ratifying is the whole decision,
@@ -887,10 +912,23 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// the moment it is flipped, including for votes already running
 	// (docs/adr/047).
 	if newStatus == "approved" && p.ProposalType == "amendment" && p.TargetDoc != "" && liveGC.AmendmentAutoApply {
-		var branch string
-		db.QueryRow("SELECT COALESCE(proposed_branch,'') FROM proposals WHERE id = ?", proposalID).Scan(&branch)
+		branch := p.ProposedBranch
 		if branch != "" {
-			sha, mergeErr := governance.MergeBranch(governance.GetDataDir(), p.NodeID, branch, "Patchwork System", "system@patchwork.local")
+			// The branch may be gone — a repo rebuilt from the database
+			// carries `main` and nothing else (docs/adr/084). The proposed
+			// text is not gone, so re-derive the branch from it rather than
+			// fail an amendment the members carried.
+			mergeErr := ensureAmendmentBranch(governance.GetDataDir(), p.NodeID, branch, p.TargetDoc, p.ProposedBody)
+			var sha string
+			if mergeErr == nil {
+				sha, mergeErr = governance.MergeBranch(governance.GetDataDir(), p.NodeID, branch, "Patchwork System", "system@patchwork.local")
+			}
+			if mergeErr != nil {
+				// The vote still carried; it is now an approved proposal
+				// waiting on an admin, and the notice below says so. Loud in
+				// the log, because an auto-apply patch is not expecting one.
+				log.Printf("proposal %s: auto-apply merge failed, left approved for an admin: %v", proposalID, mergeErr)
+			}
 			if mergeErr == nil {
 				db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, proposalID)
 				// Same post-merge DB syncs as the manual ApplyProposal path
@@ -915,6 +953,8 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	auth.LogAuditEvent(db, "", "proposal.resolved", "proposal", proposalID,
 		fmt.Sprintf(`{"result":"%s","approve":%d,"reject":%d,"abstain":%d,"quorum_met":true}`, newStatus, approveCount, rejectCount, abstainCount), "")
 
+	notifyProposalResolved(db, p, newStatus)
+
 	// Broadcast resolution
 	go func() {
 		resolveActivity := ap.ProposalResolvedActivity(
@@ -926,6 +966,68 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	}()
 
 	return newStatus
+}
+
+// notifyProposalResolved tells a patch's members what their own vote decided.
+//
+// A vote that carried told nobody at all. On the Formal template, which ships
+// `amendment_auto_apply: false`, that is the whole failure: the proposal is
+// stamped approved, the Record files it under what the patch has settled, and
+// the rule does not change until an admin applies it — and the admin is
+// exactly the person nobody informed. So the notice says which of the two
+// happened, in its own words, rather than announcing an outcome and letting
+// people assume the change landed with it.
+//
+// One notice per resolution, to the members (docs/adr/093: the obligation a
+// member took on is that proposals are decided in their name, and admins hold
+// the further duty inside the same patch). An admin-only second notice was
+// the obvious alternative and would have reached every admin twice for one
+// decision, which is how people learn to read neither.
+//
+// No actor: the clock and the electorate settled it, not whoever happened to
+// be on the page, so the notice reaches everyone including the last voter.
+func notifyProposalResolved(db *database.DB, p model.Proposal, outcome string) {
+	var slug, name string
+	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", p.NodeID).Scan(&slug, &name)
+
+	event := notifications.Event{
+		NodeID:   p.NodeID,
+		NodeSlug: slug,
+		NodeName: name,
+		EntityID: p.ID,
+		Link:     weblink.Proposal(slug, p.ID),
+	}
+
+	if outcome != "approved" {
+		event.Type = notifications.ProposalRejected
+		event.Title = "Not carried: " + p.Title
+		event.Body = "Voting closed and the proposal did not carry."
+		notify(event)
+		return
+	}
+
+	// Which of the two approved endings this is, read back from the row the
+	// steps above just wrote rather than re-deriving it: a ratified
+	// nomination and an auto-applied amendment both land in_effect, and
+	// everything else is waiting on somebody.
+	var state string
+	db.QueryRow("SELECT COALESCE(state,'') FROM proposals WHERE id = ?", p.ID).Scan(&state)
+	if state == "in_effect" {
+		event.Type = notifications.ProposalApplied
+		event.Title = "Carried and in effect: " + p.Title
+		event.Body = "Voting closed and the proposal carried. The change is in effect."
+		notify(event)
+		return
+	}
+
+	// ProposalApproved has sat registered and unsent since the registry was
+	// written. This is the case it was for, and it is not the same case as
+	// ProposalApplied: saying "applied" here would tell a patch its rule had
+	// changed while the rule sat exactly as it was.
+	event.Type = notifications.ProposalApproved
+	event.Title = "Carried: " + p.Title
+	event.Body = "Voting closed and the proposal carried. It is not in effect yet — an admin of this patch has to apply it. Until then nothing has changed."
+	notify(event)
 }
 
 // GetProposal handles GET /api/v1/proposals/{id}.
@@ -1558,7 +1660,8 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		if err := applyProposalChanges(db, p, user); err != nil {
-			http.Error(w, fmt.Sprintf(`{"error":"failed to apply changes: %s"}`, err.Error()), http.StatusInternalServerError)
+			log.Printf("proposal %s: apply failed: %v", proposalID, err)
+			http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 			return
 		}
 
@@ -1578,6 +1681,9 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 func applyProposalChanges(db *database.DB, p model.Proposal, actor *model.User) error {
 	if p.ProposalType == "amendment" && p.ProposedBranch != "" {
 		dataDir := governance.GetDataDir()
+		if err := ensureAmendmentBranch(dataDir, p.NodeID, p.ProposedBranch, p.TargetDoc, p.ProposedBody); err != nil {
+			return err
+		}
 		sha, err := governance.MergeBranch(dataDir, p.NodeID, p.ProposedBranch, actor.DisplayName, actor.Email)
 		if err != nil {
 			return err
@@ -1601,6 +1707,41 @@ func applyProposalChanges(db *database.DB, p model.Proposal, actor *model.User) 
 	)
 	return err
 }
+
+// ensureAmendmentBranch makes sure the branch an amendment merges from is
+// there before anything tries to merge it.
+//
+// A rebuilt repo has `main` and nothing else (docs/adr/084): `Repair` writes
+// what the `governance_docs` rows attest to, and a pending amendment's
+// proposed text has no row — it lives in `proposals.proposed_body`, which is
+// canonical all the same (docs/adr/011). So a patch restored from its
+// database alone held decisions its members had taken and could never enact,
+// and the button that was supposed to enact them answered with a git error
+// about a ref. The text was never lost; only the mirror of it was, and the
+// mirror is the derived half.
+//
+// A branch that is still there is used as it is. This creates an absence and
+// overwrites nothing.
+func ensureAmendmentBranch(dataDir, nodeID, branch, targetDoc, proposedBody string) error {
+	if branch == "" || targetDoc == "" {
+		return nil
+	}
+	created, err := governance.EnsureBranch(dataDir, nodeID, branch, targetDoc, proposedBody)
+	if err != nil {
+		return err
+	}
+	if created {
+		log.Printf("governance: reconstructed branch %s for node %s from the proposal's canonical text", branch, nodeID)
+	}
+	return nil
+}
+
+// applyFailureMessage is what a person sees when making a decision official
+// does not work. The Go error goes to the log, where somebody can act on it;
+// what reaches the admin says what state their patch is in and what to do
+// next, because "branch amendment-01a0a26e not found: reference not found"
+// is the app talking to itself in front of them.
+const applyFailureMessage = "This change could not be written to the patch's governance record, so nothing has changed yet. The decision still stands and you can try again. If it keeps failing, your instance admin can run the governance repair (patchwork -repair-governance) with the server stopped."
 
 // notifyProposalApplied tells the patch a proposal is now in effect.
 func notifyProposalApplied(db *database.DB, nodeID, proposalID, actorID string) {

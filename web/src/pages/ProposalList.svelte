@@ -52,8 +52,9 @@
     if (status === 'approved' || status === 'applied') return 'status-approved';
     if (status === 'rejected') return 'status-rejected';
     if (status === 'open') return 'status-open';
-    // Withdrawn and lapsed both mean "ended without a decision": muted, not red.
-    if (status === 'withdrawn' || status === 'lapsed') return 'status-withdrawn';
+    // Withdrawn, lapsed and unsettled all mean "ended without a decision":
+    // muted, not red.
+    if (status === 'withdrawn' || status === 'lapsed' || status === 'unsettled') return 'status-withdrawn';
     return '';
   }
 
@@ -84,10 +85,13 @@
 
   // What the row calls the proposal's outcome. A lapsed vote carries the
   // schema's terminal "rejected" status (docs/adr/097) but nobody rejected
-  // it, so the row says what happened instead of what the column holds.
+  // it, so the row says what happened instead of what the column holds. An
+  // election that seated nobody carries the same status and is the same
+  // absence — holdover, docs/adr/051 — under its own word.
   function rowStatus(p) {
     if (isDirectRow(p)) return 'applied';
     if (p.state === 'lapsed') return 'lapsed';
+    if (p.state === 'unsettled') return 'unsettled';
     return p.status;
   }
 </script>
