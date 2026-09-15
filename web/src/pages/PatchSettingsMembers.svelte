@@ -53,7 +53,7 @@
     council?.rules?.leadership_model === 'elected' && council?.rules?.leadership_venue !== 'elsewhere'
   );
   let councilSeats = $derived(council?.seats || []);
-  let vacantSeats = $derived(councilSeats.filter((seat) => !seat.holder_id).length);
+  let vacantSeats = $derived(councilSeats.filter((seat) => seat.vacant).length);
   let nextContestOpens = $derived(council?.next_contest_opens || '');
 
   $effect(() => {
@@ -357,7 +357,7 @@
         {#if vacantSeats > 0}
           This patch elects its council, so admins are not made here. {vacantSeats} seat{vacantSeats === 1 ? ' is' : 's are'} vacant: an admin nominates a member on the Governance page and the members ratify it.
         {:else if nextContestOpens}
-          This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page.
+          This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.
         {:else}
           This patch elects its council, so admins are not made here. Every seat is held and no contest is scheduled. To make room, add a seat on the Governance page.
         {/if}

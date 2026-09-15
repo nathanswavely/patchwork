@@ -34,11 +34,18 @@
   let {
     slug = '',
     node = null,
+    // Standing as the node payload reports it — true for followers too, which
+    // is why every gate below reads `membershipRole` instead. Kept in the
+    // bundle the containers hand over.
     isMember = false,
     isAdmin = false,
     isUnclaimed = false,
     isBanned = false,
     membershipRole = '',
+    // Taken, and deliberately not read for governance. Follower permissions
+    // set what a patch's *workspace* offers a follower (docs/adr/050); they
+    // never decide what the patch's public face shows, and the containers
+    // that mount this pass the whole standing bundle.
     followerPermissions = null,
     // Whether to go and ask the rooms. A sheet at rest mounts these so the
     // first section shows under the fold — the cut is what says there is
@@ -61,14 +68,27 @@
   let publicMemberList = $state('everyone');
   let recentProposals = $state([]);
   let governanceDocs = $state([]);
+  // Whether the governance list this viewer got held only what the patch
+  // published. Read off the listing that applied the rule, so the empty
+  // state can say which kind of empty it is without counting anything it
+  // was not shown.
+  let governancePublishedOnly = $state(false);
 
   // Standing is the membership relationship, never instance-admin power:
   // an instance admin can manage any patch without standing in it.
   let hasStanding = $derived(['follower', 'member', 'admin'].includes(membershipRole));
 
-  let canSeeGovernance = $derived(
-    !isUnclaimed && (isMember || isAdmin || followerPermissions?.proposals === true || followerPermissions?.charters === true)
-  );
+  // Governance is asked about on every claimed patch, for every viewer, and
+  // the server decides what comes back: a document published to everyone
+  // reaches everyone (docs/adr/036), and proposals are a public read
+  // (docs/adr/050). This used to require `followerPermissions.charters` or
+  // `.proposals`, which meant the Minimal template's two `false`s hid the
+  // whole section from a signed-out visitor — so a patch that had
+  // deliberately published its minutes showed a stranger nothing about
+  // documents, and the sentence promising "posted here" led nowhere (F-052).
+  // Unclaimed patches carry no governance at all (docs/adr/039): absence,
+  // not an empty room.
+  let canSeeGovernance = $derived(!isUnclaimed);
 
   // What posting an event here would actually do — see eventPostingRight.
   let postingRight = $derived(eventPostingRight({
@@ -152,6 +172,7 @@
     publicMemberList = memberData.public_member_list || 'everyone';
     recentProposals = proposalData.items || proposalData || [];
     governanceDocs = charterData.items || charterData || [];
+    governancePublishedOnly = charterData.published_only === true;
     loaded = true;
   }
 
@@ -326,6 +347,18 @@
     <section class="profile-section">
       <div class="section-head">
         <a class="section-title" href="/patches/{slug}/governance" onclick={go(`/patches/${slug}/governance`)}>Governance</a>
+        <!-- The named door a patch's own blurb points at when it says the
+             minutes are posted here. It renders only when this viewer has at
+             least one document to open, so a patch that has published
+             nothing never grows a door onto an empty room (docs/adr/042:
+             every door names a room, and no false ones). -->
+        {#if governanceDocs.length > 0}
+          <a
+            class="section-action"
+            href="/patches/{slug}/governance/docs"
+            onclick={go(`/patches/${slug}/governance/docs`)}
+          >Documents</a>
+        {/if}
       </div>
       {#if governanceDocs.length > 0 || recentProposals.length > 0}
         <div class="doc-list">
@@ -359,7 +392,12 @@
           {/each}
         </div>
       {:else if loaded}
-        <p class="glimpse-empty muted">Nothing recorded yet.</p>
+        <!-- Two kinds of empty, two sentences. A viewer who is shown only
+             what the patch published must not read "nothing recorded" and
+             take it for the patch's whole record. -->
+        <p class="glimpse-empty muted">
+          {governancePublishedOnly ? 'Nothing published yet.' : 'Nothing recorded yet.'}
+        </p>
       {/if}
     </section>
   {/if}

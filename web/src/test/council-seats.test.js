@@ -49,15 +49,18 @@ describe('GovernanceOverview — the council is countable', () => {
     expect(src).toMatch(/\{#if showsCouncil\}/);
   });
 
+  // The row now leads with its own sentence rather than a bare date — see
+  // council-calendar.test.js, where the per-seat wording lives.
   it('lists every seat, held or vacant, with its own term end', () => {
     expect(src).toMatch(/\{#each seats as seat\}/);
-    expect(src).toMatch(/\{seat\.holder_id \? \(seat\.display_name \|\| seat\.username\) : 'Vacant'\}/);
-    expect(src).toMatch(/Term ends \{formatDay\(seat\.term_ends_at\)\}/);
+    expect(src).toMatch(/\{seat\.vacant \? 'Vacant' : \(seat\.display_name \|\| seat\.username\)\}/);
+    expect(src).toMatch(/Term ends \$\{formatDay\(seat\.term_ends_at\)\}/);
   });
 
   it('offers the seat controls to an admin of this patch only, and removal only on an empty chair', () => {
     expect(src).toMatch(/let isPatchAdmin = \$derived\(membershipRole === 'admin'\)/);
-    expect(src).toMatch(/\{#if isPatchAdmin && !seat\.holder_id\}/);
+    expect(src).toMatch(/\{#if isPatchAdmin\}\s*\n\s*<div class="seat-controls">/);
+    expect(src).toMatch(/\{#if seat\.vacant\}/);
     expect(src).toMatch(/Remove seat/);
     expect(src).toMatch(/Add a seat/);
   });
@@ -66,9 +69,13 @@ describe('GovernanceOverview — the council is countable', () => {
     expect(src).toMatch(/Adding a seat does not make anybody an admin\. The community fills it\./);
   });
 
+  // Sam read those two sentences side by side and still could not tell which
+  // was about the chairs in front of him, so they are now stated per chair
+  // and once more as what *he* can do today. council-calendar.test.js holds
+  // the wording; this only holds that the hub is still where he finds it.
   it('tells a member looking for a way onto the council where it is', () => {
-    expect(src).toMatch(/A vacant seat is filled by nomination: an admin puts a name forward and the members ratify it\./);
-    expect(src).toMatch(/The next contest opens \$\{formatDay\(nextContestOpens\)\}, and any member may stand then\./);
+    expect(src).toMatch(/Filled by nomination: an admin puts a member forward and the members ratify it\./);
+    expect(src).toMatch(/There is nothing to do until \$\{formatDay\(nextContestOpens\)\}, when the next contest opens and any member may stand\./);
   });
 
   it('posts and deletes against the seat routes', () => {
