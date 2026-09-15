@@ -57,7 +57,7 @@ func usage() {
   advance <duration>     move the world back by a duration (30d, 720h, 2w) and run the sweeps
   sweep                  run the election and reminder passes without moving anything
   status                 what every patch's governance is doing right now
-  now                    the simulated date (real clock plus everything advanced so far)
+  now                    today, and how far the world has been aged
 
 `)
 	flag.PrintDefaults()
@@ -401,6 +401,7 @@ func runSweeps(db *database.DB) {
 	handler.SetNotifier(n)
 	handler.SweepElections(db)
 	handler.SweepProposals(db)
+	handler.SweepVoteNotices(db)
 	notifications.RunReminders(n)
 	// Handlers notify on a goroutine; give the in-app channel a moment to
 	// land its rows before the process exits.

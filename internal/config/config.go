@@ -156,15 +156,68 @@ func (c *Config) Location() *time.Location {
 	return loc
 }
 
+// BadTimezoneMessage is what every write path says when a zone name is
+// refused. One sentence, in one place, because the person typing it into
+// the admin panel, into patch settings and into patchwork.yaml all need
+// the same correction and would otherwise get three different ones.
+const BadTimezoneMessage = `timezone must be an IANA zone name for a place, like America/New_York or Europe/Berlin — a fixed-offset name like EST is an hour wrong for half the year`
+
+// ValidTimezone reports whether name is an IANA zone naming a *place*.
+//
+// time.LoadLocation is not that test. The tzdata ships compatibility
+// entries for callers that predate the area/location scheme — "EST",
+// "MST", "HST", "EST5EDT", "CET", "Etc/GMT+5" — and every one of them
+// loads without error. They are offsets wearing a zone's clothes: "EST"
+// is a fixed −05:00 that never observes daylight saving, so a patch that
+// sets it renders every summer evening an hour early, starting the second
+// Sunday of the following March and with nothing anywhere complaining.
+// docs/adr/045 and docs/adr/067 are explicit that an event's time belongs
+// to a *place*, and a place is an area/location name.
+//
+// "UTC" is the exception and stays valid: it is the terminating rung of
+// the resolution chain (settings.EffectiveTimezone can return nothing
+// else when a quilt configures nothing), and being offsetless is the
+// whole point of it rather than a bug waiting for March.
+//
+// "Local" is rejected along with the rest — it resolves to whatever the
+// host's TZ happens to be, which is a property of the machine the binary
+// runs on and not of the community it serves.
+func ValidTimezone(name string) bool {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return false
+	}
+	if name == "UTC" || name == "Etc/UTC" {
+		return true
+	}
+	if _, err := time.LoadLocation(name); err != nil {
+		return false
+	}
+	// Area/Location, so "EST", "CET", "GMT", "Zulu", "EST5EDT" and
+	// "Local" are all out on one rule.
+	if !strings.Contains(name, "/") {
+		return false
+	}
+	// Etc/* is the fixed-offset family (and signed backwards, at that:
+	// Etc/GMT+5 is UTC−5). Etc/UTC is handled above.
+	if strings.HasPrefix(name, "Etc/") {
+		return false
+	}
+	return true
+}
+
 // parseTimezone resolves an IANA timezone name. Empty is UTC.
 func parseTimezone(name string) (*time.Location, error) {
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return time.UTC, nil
 	}
+	if !ValidTimezone(name) {
+		return nil, fmt.Errorf("%q: %s", name, BadTimezoneMessage)
+	}
 	loc, err := time.LoadLocation(name)
 	if err != nil {
-		return nil, fmt.Errorf("%q is not an IANA timezone name (try \"America/New_York\", \"Europe/Berlin\", \"UTC\")", name)
+		return nil, fmt.Errorf("%q: %s", name, BadTimezoneMessage)
 	}
 	return loc, nil
 }

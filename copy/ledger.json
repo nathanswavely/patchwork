@@ -3933,14 +3933,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 393,
+          "line": 426,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 587,
+          "line": 624,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4010,14 +4010,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 705,
+          "line": 713,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 907,
+          "line": 915,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4087,14 +4087,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1353,
+          "line": 1397,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1544,
+          "line": 1588,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4525,7 +4525,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 427,
+          "line": 464,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4623,14 +4623,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 895,
+          "line": 903,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1143,
+          "line": 1238,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5028,21 +5028,21 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 644,
+          "line": 693,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1100,
+          "line": 1155,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1584,
+          "line": 1628,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5530,14 +5530,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 581,
+          "line": 618,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 723,
+          "line": 772,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5551,14 +5551,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 901,
+          "line": 909,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1149,
+          "line": 1244,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5607,14 +5607,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1473,
+          "line": 1517,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1527,
+          "line": 1571,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5916,7 +5916,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 476,
+          "line": 513,
           "kind": "go-error-body",
           "raw": "failed to create event",
           "quote": null
@@ -6192,14 +6192,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 292,
+          "line": 325,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 702,
+          "line": 751,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
@@ -6252,35 +6252,35 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 313,
+          "line": 346,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 322,
+          "line": 355,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 542,
+          "line": 579,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 715,
+          "line": 764,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 746,
+          "line": 795,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6337,35 +6337,35 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1052,
+          "line": 1096,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1277,
+          "line": 1321,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1442,
+          "line": 1486,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1519,
+          "line": 1563,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1629,
+          "line": 1673,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -9585,48 +9585,9 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 246,
+          "line": 279,
           "kind": "go-error-body",
           "raw": "failed to list events",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "cea3e2f881d2",
-      "text": "timezone must be an IANA zone name, like America/New_York",
-      "words": 9,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
-      "occurrences": [
-        {
-          "file": "internal/handler/events.go",
-          "line": 408,
-          "kind": "go-error-body",
-          "raw": "timezone must be an IANA zone name, like America/New_York",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/events.go",
-          "line": 607,
-          "kind": "go-error-body",
-          "raw": "timezone must be an IANA zone name, like America/New_York",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/nodes.go",
-          "line": 967,
-          "kind": "go-error-body",
-          "raw": "timezone must be an IANA zone name, like America/New_York",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/settings.go",
-          "line": 177,
-          "kind": "go-error-body",
-          "raw": "timezone must be an IANA zone name, like America/New_York",
           "quote": null
         }
       ]
@@ -9642,7 +9603,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 412,
+          "line": 449,
           "kind": "go-error-body",
           "raw": "node_id, title, and starts_at are required",
           "quote": null
@@ -9660,7 +9621,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 458,
+          "line": 495,
           "kind": "go-error-body",
           "raw": "community submissions are disabled on this instance",
           "quote": null
@@ -9685,7 +9646,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 462,
+          "line": 499,
           "kind": "go-error-body",
           "raw": "this patch does not accept event suggestions",
           "quote": null
@@ -9703,7 +9664,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 550,
+          "line": 587,
           "kind": "go-error-body",
           "raw": "this event comes from an event source. Edit it in the source calendar, or detach it first",
           "quote": null
@@ -9722,7 +9683,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 659,
+          "line": 708,
           "kind": "go-error-body",
           "raw": "failed to update event",
           "quote": null
@@ -9740,14 +9701,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 734,
+          "line": 783,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 741,
+          "line": 790,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
@@ -12958,7 +12919,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 709,
+          "line": 717,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -12997,14 +12958,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 719,
+          "line": 727,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 980,
+          "line": 1035,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
@@ -13022,7 +12983,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 724,
+          "line": 732,
           "kind": "go-error-body",
           "raw": "membership_policy must be one of %s",
           "quote": null
@@ -13040,9 +13001,27 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 781,
+          "line": 789,
           "kind": "go-error-body",
           "raw": "failed to create node",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8161b036afb9",
+      "text": "failed to read this patch's calendar",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 988,
+          "kind": "go-error-body",
+          "raw": "failed to read this patch's calendar",
           "quote": null
         }
       ]
@@ -13058,7 +13037,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 991,
+          "line": 1046,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -13076,7 +13055,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 997,
+          "line": 1052,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -13094,7 +13073,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1009,
+          "line": 1064,
           "kind": "go-error-body",
           "raw": "public_member_list must be one of %s",
           "quote": null
@@ -13112,14 +13091,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1032,
+          "line": 1087,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1039,
+          "line": 1094,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -13137,7 +13116,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1050,
+          "line": 1105,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -13155,9 +13134,27 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1112,
+          "line": 1167,
           "kind": "go-error-body",
           "raw": "failed to update node",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "10ebbc2d889b",
+      "text": "the timezone saved, but this patch's events could not be moved",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 1176,
+          "kind": "go-error-body",
+          "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
         }
       ]
@@ -13173,7 +13170,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1157,
+          "line": 1252,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -14341,7 +14338,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1282,
+          "line": 1326,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -14359,7 +14356,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1293,
+          "line": 1337,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -14377,7 +14374,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1300,
+          "line": 1344,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -14395,7 +14392,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1311,
+          "line": 1355,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -14413,7 +14410,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1357,
+          "line": 1401,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -14431,7 +14428,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1376,
+          "line": 1420,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -14449,7 +14446,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1447,
+          "line": 1491,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -14467,7 +14464,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1465,
+          "line": 1509,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -14485,7 +14482,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1484,
+          "line": 1528,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -14503,7 +14500,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1549,
+          "line": 1593,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -14521,7 +14518,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1562,
+          "line": 1606,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -14539,7 +14536,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1596,
+          "line": 1640,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -14564,7 +14561,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1638,
+          "line": 1682,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -14582,7 +14579,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1655,
+          "line": 1699,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -14600,7 +14597,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1658,
+          "line": 1702,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null
@@ -16591,42 +16588,6 @@
       ]
     },
     {
-      "id": "f079699744e4",
-      "text": "Voting ends soon:",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 113,
-          "kind": "go-string",
-          "raw": "Voting ends soon: ",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "7865c4aa0c73",
-      "text": "Less than 24 hours to vote on this proposal.",
-      "words": 9,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "internal/notifications/reminders.go",
-          "line": 114,
-          "kind": "go-string",
-          "raw": "Less than 24 hours to vote on this proposal.",
-          "quote": "\""
-        }
-      ]
-    },
-    {
       "id": "a44ccf7c9b77",
       "text": "Your approved claim on",
       "words": 4,
@@ -16637,7 +16598,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 178,
+          "line": 127,
           "kind": "go-string",
           "raw": "Your approved claim on ",
           "quote": "\""
@@ -16655,7 +16616,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/reminders.go",
-          "line": 192,
+          "line": 141,
           "kind": "go-string",
           "raw": "January 2, 2006",
           "quote": "\""
@@ -16817,7 +16778,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 205,
+          "line": 223,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -16835,7 +16796,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 206,
+          "line": 224,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -16853,7 +16814,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 207,
+          "line": 225,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -16871,7 +16832,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 208,
+          "line": 226,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -16889,7 +16850,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 209,
+          "line": 227,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -16907,7 +16868,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 210,
+          "line": 228,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -16925,7 +16886,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 211,
+          "line": 229,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -16933,19 +16894,55 @@
       ]
     },
     {
-      "id": "0e69602e9e4a",
-      "text": "Voting ends in 24 hours",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
+      "id": "3dd357446984",
+      "text": "Voting ends in 24 hours and you have not voted",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 212,
+          "line": 237,
           "kind": "go-string",
-          "raw": "Voting ends in 24 hours",
+          "raw": "Voting ends in 24 hours and you have not voted",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "9ed70d08d2ba",
+      "text": "An open vote you can take part in",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 244,
+          "kind": "go-string",
+          "raw": "An open vote you can take part in",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "3ef8f0ac27ba",
+      "text": "A vote you have not cast is short of quorum",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 245,
+          "kind": "go-string",
+          "raw": "A vote you have not cast is short of quorum",
           "quote": "\""
         }
       ]
@@ -16961,7 +16958,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 214,
+          "line": 247,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -16979,7 +16976,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 219,
+          "line": 252,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -16997,7 +16994,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 220,
+          "line": 253,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -17015,7 +17012,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 221,
+          "line": 254,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -17033,7 +17030,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 222,
+          "line": 255,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -17051,7 +17048,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 223,
+          "line": 256,
           "kind": "go-string",
           "raw": "A ratified nomination had no seat",
           "quote": "\""
@@ -17069,7 +17066,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 224,
+          "line": 257,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -17087,7 +17084,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 226,
+          "line": 259,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -17105,7 +17102,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 227,
+          "line": 260,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -17123,7 +17120,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 228,
+          "line": 261,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -17141,7 +17138,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 229,
+          "line": 262,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -17159,7 +17156,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 230,
+          "line": 263,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -17177,7 +17174,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 231,
+          "line": 264,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -17195,7 +17192,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 232,
+          "line": 265,
           "kind": "go-string",
           "raw": "You're invited to join a patch",
           "quote": "\""
@@ -17213,7 +17210,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 234,
+          "line": 267,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -17231,7 +17228,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 235,
+          "line": 268,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -17249,7 +17246,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 236,
+          "line": 269,
           "kind": "go-string",
           "raw": "Your event was declined",
           "quote": "\""
@@ -17267,7 +17264,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 238,
+          "line": 271,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -17285,7 +17282,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 239,
+          "line": 272,
           "kind": "go-string",
           "raw": "Event link confirmed",
           "quote": "\""
@@ -17303,7 +17300,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 243,
+          "line": 276,
           "kind": "go-string",
           "raw": "A listing matched one of your programs",
           "quote": "\""
@@ -17321,7 +17318,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 248,
+          "line": 281,
           "kind": "go-string",
           "raw": "A notice for your patch",
           "quote": "\""
@@ -17339,7 +17336,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 249,
+          "line": 282,
           "kind": "go-string",
           "raw": "Reply on a notice you're in",
           "quote": "\""
@@ -17357,7 +17354,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 250,
+          "line": 283,
           "kind": "go-string",
           "raw": "A notice or reply was reported",
           "quote": "\""
@@ -17375,7 +17372,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 252,
+          "line": 285,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -17393,7 +17390,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 253,
+          "line": 286,
           "kind": "go-string",
           "raw": "New patch submission",
           "quote": "\""
@@ -17411,7 +17408,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 254,
+          "line": 287,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -17429,7 +17426,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 255,
+          "line": 288,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
           "quote": "\""
@@ -17447,7 +17444,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 257,
+          "line": 290,
           "kind": "go-string",
           "raw": "Your claim was approved",
           "quote": "\""
@@ -17465,7 +17462,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 262,
+          "line": 295,
           "kind": "go-string",
           "raw": "New patches this month",
           "quote": "\""
@@ -17483,7 +17480,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 263,
+          "line": 296,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -18414,7 +18411,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 339,
+          "line": 362,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -18848,7 +18845,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 385,
+          "line": 378,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -19675,7 +19672,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 610,
+          "line": 700,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -20069,7 +20066,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 202,
+          "line": 195,
           "kind": "js-string",
           "raw": "Unclaimed patches",
           "quote": "'"
@@ -20184,7 +20181,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 336,
+          "line": 376,
           "kind": "js-string",
           "raw": "Failed to remove link",
           "quote": "'"
@@ -20424,7 +20421,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 399,
+          "line": 392,
           "kind": "attr:title",
           "raw": "Choose a different patch",
           "quote": "\""
@@ -20456,7 +20453,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 412,
+          "line": 405,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -20596,7 +20593,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 350,
+          "line": 343,
           "kind": "markup",
           "raw": "New",
           "quote": null
@@ -20972,7 +20969,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 255,
+          "line": 295,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -21734,7 +21731,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 305,
+          "line": 328,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -21759,14 +21756,14 @@
         },
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 159,
+          "line": 165,
           "kind": "markup",
           "raw": "Edit",
           "quote": null
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 347,
+          "line": 340,
           "kind": "markup",
           "raw": "Edit",
           "quote": null
@@ -22599,7 +22596,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 186,
+          "line": 194,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -22617,7 +22614,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 215,
+          "line": 223,
           "kind": "markup",
           "raw": "atproto handle, proved when this patch was claimed",
           "quote": null
@@ -22635,7 +22632,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 224,
+          "line": 232,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -22674,14 +22671,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 236,
+          "line": 244,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
         },
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 200,
+          "line": 206,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -22703,6 +22700,24 @@
       ]
     },
     {
+      "id": "c35186a632f5",
+      "text": "{moreEvents} more upcoming",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileGlimpses.svelte",
+          "line": 284,
+          "kind": "markup",
+          "raw": "{moreEvents} more upcoming",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "bdbc65f6f2e3",
       "text": "No upcoming events.",
       "words": 3,
@@ -22713,7 +22728,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 264,
+          "line": 287,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -22731,7 +22746,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 297,
+          "line": 320,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -22777,7 +22792,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 154,
+          "line": 147,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -29076,7 +29091,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 287,
+          "line": 327,
           "kind": "js-string",
           "raw": "Could not save that link",
           "quote": "'"
@@ -29198,7 +29213,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 305,
+          "line": 298,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -29437,7 +29452,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 537,
+          "line": 627,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -29745,7 +29760,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 575,
+          "line": 665,
           "kind": "attr:placeholder",
           "raw": "Label (optional)",
           "quote": "\""
@@ -33651,13 +33666,6 @@
           "kind": "js-string",
           "raw": "That is not a timezone this quilt knows",
           "quote": "'"
-        },
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 166,
-          "kind": "js-string",
-          "raw": "That is not a timezone this quilt knows",
-          "quote": "'"
         }
       ]
     },
@@ -33985,7 +33993,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 374,
+          "line": 367,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -34265,7 +34273,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 490,
+          "line": 483,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -34320,13 +34328,6 @@
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
           "line": 444,
-          "kind": "markup",
-          "raw": "Not a timezone this quilt knows.",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 502,
           "kind": "markup",
           "raw": "Not a timezone this quilt knows.",
           "quote": null
@@ -34852,7 +34853,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 597,
+          "line": 687,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -35697,7 +35698,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 250,
+          "line": 243,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -37729,7 +37730,7 @@
         },
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 128,
+          "line": 134,
           "kind": "markup",
           "raw": "Event not found",
           "quote": null
@@ -37827,73 +37828,73 @@
       ]
     },
     {
-      "id": "07449971ceaf",
-      "text": "Repeats daily",
-      "words": 2,
-      "tier": "label",
+      "id": "0b181676ced7",
+      "text": "The organizer says this repeats daily",
+      "words": 6,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 116,
+          "line": 122,
           "kind": "js-string",
-          "raw": "Repeats daily",
+          "raw": "The organizer says this repeats daily",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "cb5e71b17566",
-      "text": "Repeats weekly",
-      "words": 2,
-      "tier": "label",
+      "id": "34b37b4d3323",
+      "text": "The organizer says this repeats weekly",
+      "words": 6,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 117,
+          "line": 123,
           "kind": "js-string",
-          "raw": "Repeats weekly",
+          "raw": "The organizer says this repeats weekly",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "d1991ba5e2d5",
-      "text": "Repeats every two weeks",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
+      "id": "f569923303fd",
+      "text": "The organizer says this repeats every two weeks",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 118,
+          "line": 124,
           "kind": "js-string",
-          "raw": "Repeats every two weeks",
+          "raw": "The organizer says this repeats every two weeks",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "c550252a4dfd",
-      "text": "Repeats monthly",
-      "words": 2,
-      "tier": "label",
+      "id": "fc4e93039bc5",
+      "text": "The organizer says this repeats monthly",
+      "words": 6,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 119,
+          "line": 125,
           "kind": "js-string",
-          "raw": "Repeats monthly",
+          "raw": "The organizer says this repeats monthly",
           "quote": "'"
         }
       ]
@@ -37909,7 +37910,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 125,
+          "line": 131,
           "kind": "markup",
           "raw": "Loading event...",
           "quote": null
@@ -37927,7 +37928,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 139,
+          "line": 145,
           "kind": "markup",
           "raw": "Awaiting review",
           "quote": null
@@ -37945,7 +37946,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 141,
+          "line": 147,
           "kind": "markup",
           "raw": "The {event.node_status === 'unclaimed' ? 'quilt admins' : 'patch admins'}\n          will look at this event before it appears on the calendar. Only you\n          and the reviewers can see it for now.",
           "quote": null
@@ -37963,7 +37964,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 181,
+          "line": 187,
           "kind": "markup",
           "raw": "This event comes from one of",
           "quote": null
@@ -37981,7 +37982,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 186,
+          "line": 192,
           "kind": "markup",
           "raw": "this patch's event sources",
           "quote": null
@@ -37999,7 +38000,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 187,
+          "line": 193,
           "kind": "markup",
           "raw": "and updates with it. To change it, edit the source calendar, or\n        detach it to make it an ordinary event.",
           "quote": null
@@ -38017,7 +38018,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 232,
+          "line": 238,
           "kind": "markup",
           "raw": "Tickets &amp; details on {eventLinkHost}",
           "quote": null
@@ -38035,7 +38036,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventDetail.svelte",
-          "line": 259,
+          "line": 265,
           "kind": "markup",
           "raw": "Add to calendar",
           "quote": null
@@ -38053,7 +38054,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 133,
+          "line": 126,
           "kind": "js-string",
           "raw": "Failed to load event",
           "quote": "'"
@@ -38071,7 +38072,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 251,
+          "line": 244,
           "kind": "js-string",
           "raw": "Please select a patch",
           "quote": "'"
@@ -38089,7 +38090,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 252,
+          "line": 245,
           "kind": "js-string",
           "raw": "Start date/time is required",
           "quote": "'"
@@ -38107,21 +38108,21 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 288,
+          "line": 281,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 297,
+          "line": 290,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 317,
+          "line": 310,
           "kind": "markup",
           "raw": "Submitted for review",
           "quote": null
@@ -38139,7 +38140,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 290,
+          "line": 283,
           "kind": "js-string",
           "raw": "Event updated",
           "quote": "'"
@@ -38157,7 +38158,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 299,
+          "line": 292,
           "kind": "js-string",
           "raw": "Event created",
           "quote": "'"
@@ -38175,7 +38176,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 304,
+          "line": 297,
           "kind": "js-string",
           "raw": "Failed to update event",
           "quote": "'"
@@ -38193,7 +38194,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 304,
+          "line": 297,
           "kind": "js-string",
           "raw": "Failed to create event",
           "quote": "'"
@@ -38211,7 +38212,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 319,
+          "line": 312,
           "kind": "markup",
           "raw": "The {pendingReviewers} will look at it. Your event will appear on\n            the calendar once it's approved.",
           "quote": null
@@ -38229,7 +38230,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 348,
+          "line": 341,
           "kind": "markup",
           "raw": "Update your event details.",
           "quote": null
@@ -38247,7 +38248,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 351,
+          "line": 344,
           "kind": "markup",
           "raw": "Loading patch...",
           "quote": null
@@ -38265,7 +38266,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 353,
+          "line": 346,
           "kind": "markup",
           "raw": "Suggest an",
           "quote": null
@@ -38283,7 +38284,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 355,
+          "line": 348,
           "kind": "markup",
           "raw": "Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.",
           "quote": null
@@ -38301,14 +38302,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 358,
+          "line": 351,
           "kind": "markup",
           "raw": "Create",
           "quote": null
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 363,
+          "line": 356,
           "kind": "markup",
           "raw": "Create",
           "quote": null
@@ -38326,7 +38327,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 360,
+          "line": 353,
           "kind": "markup",
           "raw": "Add an event for {hostingPatch?.name || 'this patch'}. It appears as soon as you save it.",
           "quote": null
@@ -38344,7 +38345,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 364,
+          "line": 357,
           "kind": "markup",
           "raw": "Schedule a new event for your community.",
           "quote": null
@@ -38362,7 +38363,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 369,
+          "line": 362,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -38415,7 +38416,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 379,
+          "line": 372,
           "kind": "markup",
           "raw": "Hosting Patch",
           "quote": null
@@ -38433,7 +38434,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 419,
+          "line": 412,
           "kind": "markup",
           "raw": "You aren't a member of this patch, so the {reviewers} will look\n              at your event before it appears.",
           "quote": null
@@ -38451,7 +38452,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 426,
+          "line": 419,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -38465,7 +38466,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 386,
+          "line": 426,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -38483,7 +38484,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 427,
+          "line": 420,
           "kind": "attr:placeholder",
           "raw": "Where is this happening?",
           "quote": "\""
@@ -38501,7 +38502,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 434,
+          "line": 427,
           "kind": "markup",
           "raw": "Event page",
           "quote": null
@@ -38519,14 +38520,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 435,
+          "line": 428,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 444,
+          "line": 437,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -38554,21 +38555,21 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 473,
+          "line": 563,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 518,
+          "line": 608,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 569,
+          "line": 659,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -38600,7 +38601,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 437,
+          "line": 430,
           "kind": "markup",
           "raw": "Where to buy tickets or read more, if this event has a page\n            somewhere else.",
           "quote": null
@@ -38618,7 +38619,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 443,
+          "line": 436,
           "kind": "markup",
           "raw": "Image address",
           "quote": null
@@ -38650,7 +38651,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 446,
+          "line": 439,
           "kind": "markup",
           "raw": "Link a flyer or photo you already have online. Patchwork points at\n            it and never keeps a copy.",
           "quote": null
@@ -38675,7 +38676,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 456,
+          "line": 449,
           "kind": "markup",
           "raw": "Describe the image",
           "quote": null
@@ -38696,7 +38697,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 520,
+          "line": 610,
           "kind": "attr:placeholder",
           "raw": "Describe the image",
           "quote": "\""
@@ -38714,7 +38715,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 457,
+          "line": 450,
           "kind": "attr:placeholder",
           "raw": "Flyer for the March show",
           "quote": "\""
@@ -38732,7 +38733,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 459,
+          "line": 452,
           "kind": "markup",
           "raw": "Read aloud by screen readers, and shown if the image stops\n              loading.",
           "quote": null
@@ -38750,7 +38751,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 467,
+          "line": 460,
           "kind": "markup",
           "raw": "Starts At",
           "quote": null
@@ -38768,7 +38769,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 471,
+          "line": 464,
           "kind": "markup",
           "raw": "Ends At",
           "quote": null
@@ -38786,7 +38787,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 484,
+          "line": 477,
           "kind": "markup",
           "raw": "Times are in {timezone.replace(/_/g, ' ')}{zoneOverridden ? '' : \", this patch's timezone\"}.",
           "quote": null
@@ -38804,7 +38805,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 499,
+          "line": 492,
           "kind": "markup",
           "raw": "An IANA name. Clear it to go back to\n              {patchTimezone ? patchTimezone.replace(/_/g, ' ') : \"the patch's timezone\"}.",
           "quote": null
@@ -38812,109 +38813,19 @@
       ]
     },
     {
-      "id": "18b155979fce",
-      "text": "Recurrence",
-      "words": 1,
-      "tier": "label",
+      "id": "62c715e3b5fc",
+      "text": "Not a place this quilt keeps time in. Try America/New_York.",
+      "words": 10,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 513,
+          "line": 495,
           "kind": "markup",
-          "raw": "Recurrence",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ddd7eb99b357",
-      "text": "One-time",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 515,
-          "kind": "markup",
-          "raw": "One-time",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b36c2611dcdf",
-      "text": "Daily",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 516,
-          "kind": "markup",
-          "raw": "Daily",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "2975132481a7",
-      "text": "Weekly",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 517,
-          "kind": "markup",
-          "raw": "Weekly",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "87ae147b3076",
-      "text": "Every Two Weeks",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 518,
-          "kind": "markup",
-          "raw": "Every Two Weeks",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "9b11f6b707d2",
-      "text": "Monthly",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 519,
-          "kind": "markup",
-          "raw": "Monthly",
+          "raw": "Not a place this quilt keeps time in. Try America/New_York.",
           "quote": null
         }
       ]
@@ -43546,7 +43457,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 436,
+          "line": 526,
           "kind": "markup",
           "raw": "Looking for this address...",
           "quote": null
@@ -44737,7 +44648,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 79,
+          "line": 80,
           "kind": "js-string",
           "raw": "Map location saved",
           "quote": "'"
@@ -44755,7 +44666,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 83,
+          "line": 84,
           "kind": "js-string",
           "raw": "Failed to save map location",
           "quote": "'"
@@ -44773,7 +44684,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 96,
+          "line": 97,
           "kind": "js-string",
           "raw": "Removed from map",
           "quote": "'"
@@ -44791,7 +44702,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 100,
+          "line": 101,
           "kind": "js-string",
           "raw": "Failed to remove from map",
           "quote": "'"
@@ -44809,7 +44720,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 143,
+          "line": 144,
           "kind": "js-string",
           "raw": "Tags saved",
           "quote": "'"
@@ -44827,9 +44738,34 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 147,
+          "line": 148,
           "kind": "js-string",
           "raw": "Failed to save tags",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4b6136634547",
+      "text": "Failed to save the timezone",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 185,
+          "kind": "js-string",
+          "raw": "Failed to save the timezone",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 207,
+          "kind": "js-string",
+          "raw": "Failed to save the timezone",
           "quote": "'"
         }
       ]
@@ -44845,7 +44781,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 210,
+          "line": 250,
           "kind": "js-string",
           "raw": "Could not save the image",
           "quote": "'"
@@ -44863,7 +44799,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 223,
+          "line": 263,
           "kind": "js-string",
           "raw": "On the quilt. Anyone can find this patch through the quilt, search, the map, and public event feeds, and other quilts can follow it.",
           "quote": "'"
@@ -44881,7 +44817,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 229,
+          "line": 269,
           "kind": "js-string",
           "raw": "Off the quilt. Kept out of the quilt, search, the map, and public feeds, and it does not federate.",
           "quote": "'"
@@ -44899,7 +44835,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 241,
+          "line": 281,
           "kind": "js-string",
           "raw": "Failed to save visibility",
           "quote": "'"
@@ -44917,7 +44853,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 321,
+          "line": 361,
           "kind": "js-string",
           "raw": "Could not save that date",
           "quote": "'"
@@ -44935,7 +44871,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 333,
+          "line": 373,
           "kind": "js-string",
           "raw": "Link removed",
           "quote": "'"
@@ -44953,7 +44889,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 352,
+          "line": 392,
           "kind": "js-string",
           "raw": "Link added",
           "quote": "'"
@@ -44971,7 +44907,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 355,
+          "line": 395,
           "kind": "js-string",
           "raw": "Failed to add link",
           "quote": "'"
@@ -44989,7 +44925,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 368,
+          "line": 408,
           "kind": "attr:placeholder",
           "raw": "Patch name",
           "quote": "\""
@@ -45007,7 +44943,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 376,
+          "line": 416,
           "kind": "attr:placeholder",
           "raw": "Describe this patch",
           "quote": "\""
@@ -45025,7 +44961,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 393,
+          "line": 433,
           "kind": "attr:placeholder",
           "raw": "e.g. Lancaster, PA",
           "quote": "\""
@@ -45033,19 +44969,55 @@
       ]
     },
     {
-      "id": "83dafb42923d",
-      "text": "An IANA name. Leave it empty to follow the quilt{instanceTimezone ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}` : ''}.",
-      "words": 21,
+      "id": "e515f85206c2",
+      "text": "An IANA place name. Leave it empty to follow the quilt{instanceTimezone ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}` : ''}.",
+      "words": 22,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 414,
+          "line": 454,
           "kind": "markup",
-          "raw": "An IANA name. Leave it empty to follow the quilt{instanceTimezone\n        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n        : ''}.",
+          "raw": "An IANA place name. Leave it empty to follow the quilt{instanceTimezone\n        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n        : ''}.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d450a4e34595",
+      "text": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'} follow{zoneChoice.events_affected === 1 ? 's' : ''} this patch's timezone. Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')} changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
+      "words": 40,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 468,
+          "kind": "markup",
+          "raw": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}\n          follow{zoneChoice.events_affected === 1 ? 's' : ''} this patch's timezone.\n          Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}\n          changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "09b441ac39a6",
+      "text": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm. Leaving them where they are keeps the exact moment and changes the clock time shown. Events with a timezone of their own, and events from a calendar feed, are not touched.",
+      "words": 45,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Vote outreach and the timezone decision (epoch 2 findings F-064/065/074/075/076, docs/adr/101). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 502,
+          "kind": "markup",
+          "raw": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm.\n          Leaving them where they are keeps the exact moment and changes the clock time shown.\n          Events with a timezone of their own, and events from a calendar feed, are not touched.",
           "quote": null
         }
       ]
@@ -45061,7 +45033,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 422,
+          "line": 512,
           "kind": "markup",
           "raw": "Map location",
           "quote": null
@@ -45079,7 +45051,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 425,
+          "line": 515,
           "kind": "markup",
           "raw": "On the map at",
           "quote": null
@@ -45097,7 +45069,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 428,
+          "line": 518,
           "kind": "markup",
           "raw": "Not on the map.",
           "quote": null
@@ -45115,7 +45087,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 431,
+          "line": 521,
           "kind": "markup",
           "raw": "Placing a marker adds this patch to the map. The marker can be\n        approximate, and is separate from the address above.",
           "quote": null
@@ -45133,7 +45105,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 481,
+          "line": 571,
           "kind": "markup",
           "raw": "Founded",
           "quote": null
@@ -45151,7 +45123,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 491,
+          "line": 581,
           "kind": "markup",
           "raw": "When this group started, if it predates its patch. Voting tenure is never\n      required to be longer than the group has existed.",
           "quote": null
@@ -45169,7 +45141,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 517,
+          "line": 607,
           "kind": "markup",
           "raw": "Image",
           "quote": null
@@ -45187,7 +45159,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 523,
+          "line": 613,
           "kind": "markup",
           "raw": "Link a picture you already have online. Patchwork points at it and never\n      keeps a copy, so it stays yours.",
           "quote": null
@@ -45205,7 +45177,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 561,
+          "line": 651,
           "kind": "markup",
           "raw": "No links added.",
           "quote": null
@@ -45223,7 +45195,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 600,
+          "line": 690,
           "kind": "markup",
           "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
           "quote": null
@@ -45241,7 +45213,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 622,
+          "line": 712,
           "kind": "markup",
           "raw": "Visibility",
           "quote": null
@@ -45259,7 +45231,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 625,
+          "line": 715,
           "kind": "markup",
           "raw": "Patch specific configuration. Events, members, and documents carry their own visibility.",
           "quote": null
@@ -45278,7 +45250,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 646,
+          "line": 736,
           "kind": "markup",
           "raw": "Either way, anyone holding a direct link can open this patch's page. Private\n      keeps it from being found, not from being visited.",
           "quote": null
@@ -45296,7 +45268,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 654,
+          "line": 744,
           "kind": "markup",
           "raw": "Event suggestions",
           "quote": null
@@ -45314,7 +45286,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 663,
+          "line": 753,
           "kind": "markup",
           "raw": "Let non-members suggest events to this patch",
           "quote": null
@@ -45332,7 +45304,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 666,
+          "line": 756,
           "kind": "markup",
           "raw": "Suggestions wait in your events queue until an admin approves them.",
           "quote": null
@@ -45350,7 +45322,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 674,
+          "line": 764,
           "kind": "markup",
           "raw": "We have moved",
           "quote": null
@@ -45368,7 +45340,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 677,
+          "line": 767,
           "kind": "markup",
           "raw": "Point this patch at its new home. The page here keeps working and stays\n      readable, with a banner saying where the patch went. New joins, new\n      follows and event suggestions from outside are turned away and sent to\n      the new address. Members and admins keep everything they had. Clear the\n      field to undo it.",
           "quote": null
@@ -45386,7 +45358,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 688,
+          "line": 778,
           "kind": "attr:placeholder",
           "raw": "https://their-quilt.example.com/patches/gallery-row",
           "quote": "\""
@@ -52354,6 +52326,261 @@
           "line": 163,
           "kind": "markup",
           "raw": "Quorum not yet met ({totalVotes} of {quorumNeeded} needed)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cea3e2f881d2",
+      "text": "timezone must be an IANA zone name, like America/New_York",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "occurrences": [
+        {
+          "file": "internal/handler/events.go",
+          "line": 408,
+          "kind": "go-error-body",
+          "raw": "timezone must be an IANA zone name, like America/New_York",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/events.go",
+          "line": 607,
+          "kind": "go-error-body",
+          "raw": "timezone must be an IANA zone name, like America/New_York",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 967,
+          "kind": "go-error-body",
+          "raw": "timezone must be an IANA zone name, like America/New_York",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/settings.go",
+          "line": 177,
+          "kind": "go-error-body",
+          "raw": "timezone must be an IANA zone name, like America/New_York",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f079699744e4",
+      "text": "Voting ends soon:",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/reminders.go",
+          "line": 113,
+          "kind": "go-string",
+          "raw": "Voting ends soon: ",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "7865c4aa0c73",
+      "text": "Less than 24 hours to vote on this proposal.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/notifications/reminders.go",
+          "line": 114,
+          "kind": "go-string",
+          "raw": "Less than 24 hours to vote on this proposal.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "07449971ceaf",
+      "text": "Repeats daily",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventDetail.svelte",
+          "line": 116,
+          "kind": "js-string",
+          "raw": "Repeats daily",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "cb5e71b17566",
+      "text": "Repeats weekly",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventDetail.svelte",
+          "line": 117,
+          "kind": "js-string",
+          "raw": "Repeats weekly",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c550252a4dfd",
+      "text": "Repeats monthly",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventDetail.svelte",
+          "line": 119,
+          "kind": "js-string",
+          "raw": "Repeats monthly",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "18b155979fce",
+      "text": "Recurrence",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 513,
+          "kind": "markup",
+          "raw": "Recurrence",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ddd7eb99b357",
+      "text": "One-time",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 515,
+          "kind": "markup",
+          "raw": "One-time",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b36c2611dcdf",
+      "text": "Daily",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 516,
+          "kind": "markup",
+          "raw": "Daily",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2975132481a7",
+      "text": "Weekly",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 517,
+          "kind": "markup",
+          "raw": "Weekly",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "87ae147b3076",
+      "text": "Every Two Weeks",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 518,
+          "kind": "markup",
+          "raw": "Every Two Weeks",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9b11f6b707d2",
+      "text": "Monthly",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 519,
+          "kind": "markup",
+          "raw": "Monthly",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "83dafb42923d",
+      "text": "An IANA name. Leave it empty to follow the quilt{instanceTimezone ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}` : ''}.",
+      "words": 21,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Timezone controls and their hints (docs/adr/045). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 414,
+          "kind": "markup",
+          "raw": "An IANA name. Leave it empty to follow the quilt{instanceTimezone\n        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n        : ''}.",
           "quote": null
         }
       ]

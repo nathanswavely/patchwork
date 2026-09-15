@@ -199,6 +199,10 @@ func OpenAdvisoryVote(db *database.DB) http.HandlerFunc {
 		auth.LogAuditEvent(db, user.ID, "proposal.advisory_vote_opened", "proposal", proposalID,
 			fmt.Sprintf(`{"duration_hours":%d}`, req.DurationHours), clientIP(r))
 
+		// The advisory ballot opens here rather than at creation, so this is
+		// where its electorate is written down as told (docs/adr/093).
+		seedVoteAudienceNow(db, proposalID, p.NodeID)
+
 		var nodeSlug, nodeName, title string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", p.NodeID).Scan(&nodeSlug, &nodeName)
 		db.QueryRow("SELECT title FROM proposals WHERE id = ?", proposalID).Scan(&title)
