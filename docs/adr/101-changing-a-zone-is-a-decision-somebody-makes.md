@@ -93,3 +93,16 @@ date is on the calendar.
   reconciler in front of it.
 - `Etc/UTC` and `UTC` remain legal, because an instance that genuinely
   keeps no local time is a real deployment, not a mistake.
+
+## Amendment, 2026-09-15: the follow-up is done
+
+The second consequence above named the instance-wide zone as the clearest
+follow-up and said the consent flow was not wired to it. It is now:
+docs/adr/105 gives `PATCH /api/v1/admin/settings` the same 409, the same two
+answers, and a count that names the patches as well as the events — and only
+what actually inherits, so a patch that named its own zone is untouched. The
+admin panel's own zone box also stopped trusting `Intl`, which this ADR asked
+for and only the patch form had done.
+
+The consequence text above stays as it was written. What was known when is the
+point of keeping these.

@@ -43,8 +43,8 @@ const (
 	zoneKeepInstant = "keep_instant"
 )
 
-// zoneChange is what a pending patch-timezone change does to the events
-// that inherit it.
+// zoneChange is what a pending timezone change does to the events that
+// inherit it — a patch's own zone, or the whole quilt's (docs/adr/105).
 type zoneChange struct {
 	From string `json:"from"`
 	To   string `json:"to"`
@@ -55,6 +55,10 @@ type zoneChange struct {
 	// EventsMoved is how many stored instants were actually rewritten —
 	// equal to EventsAffected under keep_clock, zero under keep_instant.
 	EventsMoved int `json:"events_moved"`
+	// PatchesAffected is how many patches those events belong to. Only the
+	// quilt-wide change carries it: on one patch the answer is always one,
+	// and a count of one patch in the copy would read as a mistake.
+	PatchesAffected int `json:"patches_affected,omitempty"`
 
 	affected []zoneAffectedEvent
 }
@@ -63,6 +67,7 @@ type zoneAffectedEvent struct {
 	ID       string
 	StartsAt string
 	EndsAt   string
+	NodeID   string
 }
 
 // resolveNodeZone collapses a patch's stored zone through the chain
@@ -126,6 +131,20 @@ func planZoneChange(db *database.DB, nodeID, storedFrom, storedTo string) (*zone
 		return nil, nil
 	}
 	return plan, nil
+}
+
+// zoneLocations resolves a plan's two zone names. Shared so the planner
+// and the writer never disagree about what a name means.
+func zoneLocations(from, to string) (*time.Location, *time.Location, error) {
+	fromLoc, err := time.LoadLocation(from)
+	if err != nil {
+		return nil, nil, err
+	}
+	toLoc, err := time.LoadLocation(to)
+	if err != nil {
+		return nil, nil, err
+	}
+	return fromLoc, toLoc, nil
 }
 
 // applyZoneChange rewrites the affected instants under keep_clock and
