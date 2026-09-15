@@ -30,6 +30,18 @@ func nullOrText(s string) interface{} {
 	return s
 }
 
+// standInElection puts somebody on the slate without going through the
+// nomination handler — the ballot-opening tests need a candidate to exist,
+// not a member act to be exercised.
+func standInElection(t *testing.T, db *database.DB, proposalID, userID string) {
+	t.Helper()
+	if _, err := db.Exec(
+		`INSERT INTO election_candidates (id, proposal_id, user_id) VALUES (?, ?, ?)`,
+		auth.NewUUIDv7(), proposalID, userID); err != nil {
+		t.Fatalf("stand in election: %v", err)
+	}
+}
+
 func openElectionCount(t *testing.T, db *database.DB, nodeID string) int {
 	t.Helper()
 	var n int
@@ -264,6 +276,9 @@ func TestGovernanceOverview_SurfacesTheLiveElection(t *testing.T) {
 	}
 
 	// Once nominations close and the ballot opens, the phase moves with it.
+	// Somebody has to be standing for there to be a ballot at all
+	// (docs/adr/106): an empty slate settles at the close of nominations.
+	standInElection(t, db, id, admin.ID)
 	closeNominations(t, db, id)
 	if !handler.OpenElectionVoting(db, id) {
 		t.Fatal("expected voting to open")

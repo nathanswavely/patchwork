@@ -24,6 +24,12 @@ func TestSweepElections_SkipsArchivedPatches(t *testing.T) {
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	id := openElection(t, db, nodeID)
 
+	// Somebody stands, because a contest with an empty slate now settles at
+	// the moment nominations close rather than opening a ballot nobody can
+	// vote in (docs/adr/106) — and this test is about the archive, not about
+	// the slate.
+	standInElection(t, db, id, admin.ID)
+
 	// The contest is mid-flight: nominations have run out, so the next sweep
 	// would open its ballot.
 	closeNominations(t, db, id)

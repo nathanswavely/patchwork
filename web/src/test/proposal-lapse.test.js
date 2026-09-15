@@ -105,14 +105,18 @@ describe('an unsettled election is a lapse in election shape (docs/adr/051)', ()
   const panel = source('components/ElectionPanel.svelte');
   const list = source('pages/ProposalList.svelte');
 
-  it('the banner says the council held over rather than reciting a 0-0 tally', () => {
+  it('the banner says nobody was seated rather than reciting a 0-0 tally', () => {
     const unsettled = banner.indexOf("effectiveState === 'unsettled'");
     const rejected = banner.indexOf("effectiveState === 'rejected'");
     expect(unsettled).toBeGreaterThan(-1);
     expect(unsettled).toBeLessThan(rejected);
     expect(banner).toMatch(
-      /This election settled nothing; nobody was seated\. The council continues until a successor is elected\./
+      /This election settled nothing; nobody was seated, and the seats it was for are unchanged\./
     );
+    // Not "the council continues": this banner outlives the council it would
+    // be describing, and on a patch with no admins it was a comfortable lie
+    // (docs/adr/106).
+    expect(banner).not.toMatch(/The council continues until a successor is elected/);
   });
 
   it('the banner styles it muted, like withdrawn and lapsed', () => {

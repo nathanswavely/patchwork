@@ -493,6 +493,10 @@ func main() {
 	// set of candidates one person approves, so it is a PUT of the whole set
 	// rather than an append.
 	mux.HandleFunc("POST /api/v1/proposals/{id}/candidates", middleware.AuthRequired(db, handler.AddCandidate(db)))
+	// Your own candidacy, and the route says so (docs/adr/107). Standing was
+	// irreversible, which is what made a mis-click on a public ballot a thing
+	// somebody had to write a comment to undo.
+	mux.HandleFunc("DELETE /api/v1/proposals/{id}/candidates/me", middleware.AuthRequired(db, handler.WithdrawCandidacy(db)))
 	// The council's size is its seats, added and removed explicitly by an
 	// admin of the patch (docs/adr/100). Neither act seats or unseats anybody
 	// — removal only ever touches an empty chair — so neither is step-up
