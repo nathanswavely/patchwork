@@ -107,6 +107,14 @@
   // toward About on its own: a patch whose only public fact is its handle
   // still has something to say about what it is.
   let atprotoHandle = $derived(handleFromDID(node?.did));
+
+  // What this capped list is not showing. Read off the server's count
+  // rather than off a second fetch: upcoming_event_count is counted under
+  // exactly the gates GET /api/v1/events applies, so the two can only
+  // disagree by the page size — which is the whole gap this reports.
+  let moreEvents = $derived(
+    Math.max(0, (node?.upcoming_event_count ?? recentEvents.length) - recentEvents.length)
+  );
   let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address || !!node?.image_url || !!atprotoHandle);
 
   // Keyed on the slug and on whether governance is readable, because the
@@ -260,6 +268,21 @@
             </a>
           {/each}
         </div>
+        {#if moreEvents > 0}
+          <!--
+            The head states the patch's whole upcoming count and this list
+            is capped at three, so a choir with four rehearsals read
+            "4 Upcoming Events" over three of them and said nothing about
+            the fourth. The count is the right number — a venue with forty
+            shows must not advertise three — so the glimpse is what has to
+            admit it is a glimpse.
+          -->
+          <a
+            class="glimpse-more"
+            href="/patches/{slug}/events"
+            onclick={go(`/patches/${slug}/events`)}
+          >{moreEvents} more upcoming</a>
+        {/if}
       {:else if loaded}
         <p class="glimpse-empty muted">No upcoming events.</p>
       {/if}
@@ -393,6 +416,19 @@
   .glimpse-empty {
     font-size: 0.85rem;
     padding: 0.25rem 0;
+  }
+
+  .glimpse-more {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .glimpse-more:hover {
+    color: var(--color-text);
+    text-decoration: underline;
   }
 
   /* Events */

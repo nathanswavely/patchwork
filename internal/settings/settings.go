@@ -9,7 +9,6 @@ package settings
 import (
 	"strings"
 	"sync/atomic"
-	"time"
 
 	// The distroless image ships no tzdata, and a configured zone name has
 	// to resolve wherever the binary runs.
@@ -133,10 +132,17 @@ func EffectiveTimezone(db *database.DB) string {
 	return "UTC"
 }
 
-// ValidTimezone reports whether name is a zone this binary can resolve.
-// The distroless image carries no tzdata, so the answer comes from the
-// embedded copy rather than the host.
+// ValidTimezone reports whether name is a zone a patch, an event or this
+// quilt may keep time in. The distroless image carries no tzdata, so the
+// answer comes from the embedded copy rather than the host.
+//
+// Delegated to config so the API write paths and patchwork.yaml refuse
+// the same names for the same reason — notably the fixed-offset
+// compatibility entries time.LoadLocation happily resolves. See
+// config.ValidTimezone for why "EST" is not a timezone.
 func ValidTimezone(name string) bool {
-	_, err := time.LoadLocation(strings.TrimSpace(name))
-	return err == nil
+	return config.ValidTimezone(name)
 }
+
+// BadTimezoneMessage is the correction every refusal carries.
+const BadTimezoneMessage = config.BadTimezoneMessage

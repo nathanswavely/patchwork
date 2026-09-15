@@ -434,6 +434,14 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			ap.BroadcastToFollowers(db, "node", nodeID, activity)
 		}()
 
+		// Write down who this announcement reaches with standing to vote, so
+		// the hourly pass can tell a person who was never told from one who
+		// was (docs/adr/093). Before the notify, because the notify is a
+		// goroutine and this is the record it is measured against.
+		if initialState == "voting" {
+			seedVoteAudienceNow(db, id, nodeID)
+		}
+
 		// Notify members about the new proposal.
 		var nodeName string
 		db.QueryRow("SELECT name FROM nodes WHERE id = ?", nodeID).Scan(&nodeName)
@@ -744,30 +752,66 @@ func eligibleVoters(db *database.DB, nodeID string, gc model.GovernanceConfig) (
 // casting while still dividing quorum by them would make a nomination
 // unpassable.
 func eligibleVotersExcept(db *database.DB, nodeID string, gc model.GovernanceConfig, exceptUserID string) (int, string) {
+	ids := electorateUserIDs(db, nodeID, gc, exceptUserID)
+	sole := ""
+	if len(ids) == 1 {
+		sole = ids[0]
+	}
+	return len(ids), sole
+}
+
+// electorateUserIDs names the electorate rather than counting it: the same
+// set eligibleVoters counts, the vote gate admits and the tally credits,
+// listed out (docs/adr/044).
+//
+// Asking who is in the room is a different question from asking how many are,
+// and the pass that tells people they still owe a vote needs the first one
+// (docs/adr/093). It is one query, not a second definition: everything about
+// who belongs comes from electorateFilter, and eligibleVoters is now a count
+// of what this returns.
+func electorateUserIDs(db *database.DB, nodeID string, gc model.GovernanceConfig, exceptUserID string) []string {
 	cond, tenureArgs := electorateFilter(db, nodeID, "", gc)
 	args := append([]interface{}{nodeID}, tenureArgs...)
 	if exceptUserID != "" {
 		cond += " AND user_id != ?"
 		args = append(args, exceptUserID)
 	}
-	rows, err := db.Query(`SELECT user_id FROM memberships WHERE node_id = ? AND `+cond, args...)
+	rows, err := db.Query(`SELECT user_id FROM memberships WHERE node_id = ? AND `+cond+` ORDER BY joined_at`, args...)
 	if err != nil {
-		return 0, ""
+		return nil
 	}
 	defer rows.Close()
-	count := 0
-	sole := ""
+	var ids []string
 	for rows.Next() {
 		var id string
 		if rows.Scan(&id) == nil {
-			count++
-			sole = id
+			ids = append(ids, id)
 		}
 	}
-	if count != 1 {
-		sole = ""
+	return ids
+}
+
+// quorumReached is the quorum test, written once. resolveProposal decides a
+// vote with it; the turnout notice tells people where the vote stands with it
+// (docs/adr/093). A notice quoting arithmetic the resolver does not run would
+// be worse than no notice.
+func quorumReached(gc model.GovernanceConfig, cast, eligible int) bool {
+	return gc.QuorumPercent == 0 || (eligible > 0 && (cast*100/eligible) >= gc.QuorumPercent)
+}
+
+// votesNeededForQuorum is the smallest number of ballots that satisfies
+// quorumReached, or 0 where this patch asks for no quorum. The ceiling, not
+// the percentage: "4 needed" is the sentence a person can act on, and
+// "50% needed" is the one five simulated members read and did nothing about.
+func votesNeededForQuorum(gc model.GovernanceConfig, eligible int) int {
+	if gc.QuorumPercent <= 0 || eligible <= 0 {
+		return 0
 	}
-	return count, sole
+	needed := (eligible*gc.QuorumPercent + 99) / 100
+	if needed > eligible {
+		needed = eligible
+	}
+	return needed
 }
 
 // resolveProposal tallies an open proposal and finalizes it: status update,
@@ -840,7 +884,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	recused := recusedSubject(db, p.NodeID, gc, p.TargetUserID)
 	eligibleCount, _ := eligibleVotersExcept(db, p.NodeID, gc, recused)
 	totalVotes := approveCount + rejectCount + abstainCount
-	quorumMet := gc.QuorumPercent == 0 || (eligibleCount > 0 && (totalVotes*100/eligibleCount) >= gc.QuorumPercent)
+	quorumMet := quorumReached(gc, totalVotes, eligibleCount)
 	if !quorumMet {
 		// Under quorum while the window runs: leave open, votes may still
 		// come. Under quorum once it has closed: the proposal lapses

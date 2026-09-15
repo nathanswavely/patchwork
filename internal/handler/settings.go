@@ -174,7 +174,7 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 					return
 				}
 			} else if !settings.ValidTimezone(tz) {
-				http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
 				return
 			} else if err := settings.Set(db, settings.KeyTimezone, tz); err != nil {
 				http.Error(w, `{"error":"failed to save the timezone"}`, http.StatusInternalServerError)

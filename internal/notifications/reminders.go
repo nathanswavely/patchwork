@@ -5,14 +5,13 @@ import (
 	"log"
 	"time"
 
-	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // StartReminderWorker runs a background goroutine for the sweeps that are
-// time-based rather than act-based: voting deadlines, expiring claim
-// setups, the bulletin, and hygiene. It no longer reminds anyone about an
+// time-based rather than act-based: expiring claim setups, the bulletin,
+// inactive seats, and hygiene. It no longer reminds anyone about an
 // event (docs/adr/093). Same pattern as ap/delivery.go — ticker + context
 // cancellation.
 func StartReminderWorker(ctx context.Context, notifier *Notifier) {
@@ -38,7 +37,13 @@ func StartReminderWorker(ctx context.Context, notifier *Notifier) {
 // RunReminders is one pass of the hourly worker. Exported so cmd/sim can run
 // the same pass the server runs after it moves the world (docs/adr/096).
 func RunReminders(n *Notifier) {
-	checkProposalDeadlines(n)
+	// The proposal-deadline notice used to be sent from here, to every member
+	// of the patch, once per proposal, in the last 24 hours. It now belongs
+	// to handler.SweepVoteNotices, which addresses it to the people who are
+	// still carrying the obligation and says where the vote stands
+	// (docs/adr/093). It lives there because the electorate is one set
+	// expressed once (docs/adr/044), and that one expression is in
+	// internal/handler — which this package cannot import.
 	checkClaimSetupExpiring(n)
 	sendBulletin(n)
 	cleanupOldNotifications(n)
@@ -65,62 +70,6 @@ func ExpireStaleClaims(db *database.DB) {
 	}
 	if rows, _ := result.RowsAffected(); rows > 0 {
 		log.Printf("reminders: expired %d stale claims", rows)
-	}
-}
-
-// checkProposalDeadlines finds proposals where voting_ends_at is within 24 hours
-// and sends proposal.deadline notifications (deduped).
-func checkProposalDeadlines(n *Notifier) {
-	// The layout `voting_ends_at` is written in, so the string comparison
-	// below compares like with like. RFC3339 (`…:00Z`) sorts after the
-	// stored `…:00.000Z` for the same second, which put the window edge
-	// off by up to a second and made "like with like" a matter of luck.
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
-	future := time.Now().Add(24 * time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
-
-	rows, err := n.DB.Query(
-		`SELECT p.id, p.title, p.node_id, n.slug, n.name
-		 FROM proposals p
-		 JOIN nodes n ON n.id = p.node_id
-			AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
-		 WHERE p.status = 'open'
-		   AND p.voting_ends_at > ?
-		   AND p.voting_ends_at <= ?
-		   AND p.id NOT IN (
-		     SELECT entity_id FROM notification_reminders_sent
-		     WHERE entity_type = 'proposal' AND reminder_type = 'deadline'
-		   )`,
-		now, future,
-	)
-	if err != nil {
-		log.Printf("reminders: proposal deadlines query: %v", err)
-		return
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var id, title, nodeID, slug, name string
-		if err := rows.Scan(&id, &title, &nodeID, &slug, &name); err != nil {
-			continue
-		}
-
-		n.Notify(Event{
-			Type:     ProposalDeadline,
-			NodeID:   nodeID,
-			NodeSlug: slug,
-			NodeName: name,
-			EntityID: id,
-			Title:    "Voting ends soon: " + title,
-			Body:     "Less than 24 hours to vote on this proposal.",
-			Link:     weblink.Proposal(slug, id),
-		})
-
-		// Mark as sent.
-		remID := auth.NewUUIDv7()
-		n.DB.Exec(
-			`INSERT OR IGNORE INTO notification_reminders_sent (id, entity_type, entity_id, reminder_type) VALUES (?, ?, ?, ?)`,
-			remID, "proposal", id, "deadline",
-		)
 	}
 }
 

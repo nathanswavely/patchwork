@@ -76,6 +76,24 @@ const (
 	ProposalApplied      NotificationType = "proposal.applied"
 	ProposalComment      NotificationType = "proposal.comment"
 	ProposalDeadline     NotificationType = "proposal.deadline"
+	// ProposalOpenToYou reaches one person who may vote on a proposal that
+	// was already open before they could: they joined after it was raised,
+	// or their voting tenure began while it ran (docs/adr/098, where
+	// eligibility can start with no membership event at all). An obligation
+	// arrives with membership, and ProposalNew above only ever reached
+	// whoever was in the room at the instant the question was asked — seven
+	// of a simulated co-op's eight members were never told their rules vote
+	// existed. Specific-user rather than all-members, because the people who
+	// already heard must not hear again.
+	ProposalOpenToYou NotificationType = "proposal.open_to_you"
+	// ProposalTurnout is the mid-window notice, sent once, only to someone
+	// who still owes a ballot and only while the vote is short of quorum —
+	// which is to say, only while turning up would change the outcome. The
+	// 24-hour notice below is the day before it is any use; this one names
+	// the turnout against what quorum needs, at a point where the patch can
+	// still act on it. Its own type so it can be muted on its own, and its
+	// own dedupe key, because the deadline notice has one already.
+	ProposalTurnout NotificationType = "proposal.turnout"
 
 	GovernanceDocUpdated   NotificationType = "governance.doc_updated"
 	GovernanceRulesChanged NotificationType = "governance.rules_changed"
@@ -209,7 +227,22 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	ProposalRejected:     {CategoryProposals, "Proposal rejected", AudienceAllMembers, PriorityHigh},
 	ProposalApplied:      {CategoryProposals, "Amendment applied", AudienceAllMembers, PriorityHigh},
 	ProposalComment:      {CategoryProposals, "Comment on a proposal you're in", AudienceParticipants, PriorityNormal},
-	ProposalDeadline:     {CategoryProposals, "Voting ends in 24 hours", AudienceAllMembers, PriorityHigh},
+	// Addressed, not broadcast. This went to every member including the ones
+	// who had already voted and the person who wrote the proposal, and it is
+	// the one proposal type email is on for by default — so the mailing this
+	// system does about a vote was aimed at the people with nothing left to
+	// do about it. Specific-user now: handler.SweepVoteNotices sends one per
+	// person who is in the electorate and has not cast a ballot. Still High,
+	// and it now reaches strictly fewer mailboxes than before.
+	ProposalDeadline: {CategoryProposals, "Voting ends in 24 hours and you have not voted", AudienceSpecificUser, PriorityHigh},
+	// Normal, not High, for both of the below, and deliberately: ProposalNew
+	// is Normal, and these two carry the same news to people who could not
+	// have received it. Mailing a latecomer what an incumbent only got a bell
+	// for would be a stranger rule than the one it replaced, and the comment
+	// on GovernanceRulesChanged says what mailing every member about every
+	// stage of every vote does to a whole category.
+	ProposalOpenToYou: {CategoryProposals, "An open vote you can take part in", AudienceSpecificUser, PriorityNormal},
+	ProposalTurnout:   {CategoryProposals, "A vote you have not cast is short of quorum", AudienceSpecificUser, PriorityNormal},
 
 	GovernanceDocUpdated: {CategoryGovernance, "Document updated", AudienceAllMembers, PriorityNormal},
 	// Normal, not high: a patch tuning its own rules is significant but not
@@ -311,8 +344,8 @@ func TypesForCategory(cat Category) []NotificationType {
 	var types []NotificationType
 	// Maintain a stable order by iterating a known list.
 	allTypes := []NotificationType{
-		ProposalNew, ProposalVoting, ProposalVoteReceived, ProposalApproved,
-		ProposalRejected, ProposalApplied, ProposalComment, ProposalDeadline,
+		ProposalNew, ProposalVoting, ProposalOpenToYou, ProposalVoteReceived, ProposalApproved,
+		ProposalRejected, ProposalApplied, ProposalComment, ProposalTurnout, ProposalDeadline,
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
 		GovernanceInactivityWarning, GovernanceSeatUnavailable,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,

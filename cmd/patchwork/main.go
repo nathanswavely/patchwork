@@ -246,6 +246,9 @@ func main() {
 		sweep := func() {
 			handler.SweepElections(db)
 			handler.SweepProposals(db)
+			// After the windows that closed have closed: the people a still-
+			// open vote is waiting on, told once each (docs/adr/093).
+			handler.SweepVoteNotices(db)
 		}
 		sweep()
 		for {
