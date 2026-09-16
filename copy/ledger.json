@@ -814,7 +814,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 223,
+          "line": 225,
           "kind": "js-string",
           "raw": "Bands, solo artists, pop-up projects",
           "quote": "'"
@@ -839,7 +839,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 224,
+          "line": 226,
           "kind": "js-string",
           "raw": "Small group. Majority rules.",
           "quote": "'"
@@ -901,7 +901,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 225,
+          "line": 227,
           "kind": "js-string",
           "raw": "Open community, structured process. Trust builds through contribution.",
           "quote": "'"
@@ -945,7 +945,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 226,
+          "line": 228,
           "kind": "js-string",
           "raw": "Coalition-scale governance. Elected council, term limits, full accountability.",
           "quote": "'"
@@ -977,7 +977,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 226,
+          "line": 228,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -20226,6 +20226,42 @@
       ]
     },
     {
+      "id": "efb52e7172b7",
+      "text": "Theme",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Control label. 'Theme' is the light/dark choice and nothing else here — the quilt's registers are the row below, deliberately not called a theme (docs/adr/112).",
+      "occurrences": [
+        {
+          "file": "web/src/components/DisplayMenu.svelte",
+          "line": 37,
+          "kind": "markup",
+          "raw": "Theme",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "88c45d9e526c",
+      "text": "Colors",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Control label. 'Colors' rather than 'Patch colors' because the choice reaches tag chips and neighbour-quilt sashing too, not only patches (docs/adr/112).",
+      "occurrences": [
+        {
+          "file": "web/src/components/DisplayMenu.svelte",
+          "line": 51,
+          "kind": "markup",
+          "raw": "Colors",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "48845bff334a",
       "text": "Dismiss",
       "words": 1,
@@ -20713,7 +20749,7 @@
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2338,
+          "line": 2434,
           "kind": "markup",
           "raw": "Try Again",
           "quote": null
@@ -21240,7 +21276,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 145,
+          "line": 141,
           "kind": "attr:aria-label",
           "raw": "Create new",
           "quote": "\""
@@ -21258,7 +21294,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 150,
+          "line": 146,
           "kind": "markup",
           "raw": "New",
           "quote": null
@@ -21283,7 +21319,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 181,
+          "line": 177,
           "kind": "markup",
           "raw": "Instance admin",
           "quote": null
@@ -21301,10 +21337,28 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 194,
+          "line": 189,
           "kind": "markup",
           "raw": "Log Out",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "34e108c0896d",
+      "text": "Display",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Control label for the signed-out menu. 'Display' because 'Theme' is the row inside it, 'Appearance' is the patch's own tile design, and 'Settings' is a page (docs/adr/112).",
+      "occurrences": [
+        {
+          "file": "web/src/components/GlobalBar.svelte",
+          "line": 207,
+          "kind": "attr:aria-label",
+          "raw": "Display",
+          "quote": "\""
         }
       ]
     },
@@ -21319,7 +21373,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 214,
+          "line": 226,
           "kind": "attr:title",
           "raw": "Notifications",
           "quote": "\""
@@ -21365,7 +21419,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 218,
+          "line": 230,
           "kind": "markup",
           "raw": "Mark all read",
           "quote": null
@@ -21390,7 +21444,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 223,
+          "line": 235,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -21432,7 +21486,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 539,
+          "line": 541,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -21485,7 +21539,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 225,
+          "line": 237,
           "kind": "markup",
           "raw": "You're all caught up",
           "quote": null
@@ -25055,7 +25109,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 603,
+          "line": 626,
           "kind": "js-string",
           "raw": "This quilt",
           "quote": "'"
@@ -25073,7 +25127,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 970,
+          "line": 993,
           "kind": "js-string",
           "raw": "'Space Grotesk Variable', system-ui, sans-serif",
           "quote": "\""
@@ -25091,7 +25145,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2333,
+          "line": 2429,
           "kind": "markup",
           "raw": "Loading quilt...",
           "quote": null
@@ -25109,14 +25163,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2344,
+          "line": 2440,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2371,
+          "line": 2467,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -25134,14 +25188,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2351,
+          "line": 2447,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2378,
+          "line": 2474,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -25173,14 +25227,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2354,
+          "line": 2450,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2381,
+          "line": 2477,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
@@ -25198,7 +25252,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2359,
+          "line": 2455,
           "kind": "markup",
           "raw": "This quilt is empty.",
           "quote": null
@@ -25216,7 +25270,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2360,
+          "line": 2456,
           "kind": "markup",
           "raw": "Create the first patch to get started.",
           "quote": null
@@ -27534,7 +27588,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 392,
+          "line": 394,
           "kind": "markup",
           "raw": "Remove",
           "quote": null
@@ -28814,7 +28868,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 38,
+          "line": 40,
           "kind": "js-string",
           "raw": "Adolescents, 1981",
           "quote": "'"
@@ -28832,7 +28886,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 46,
+          "line": 48,
           "kind": "js-string",
           "raw": "Pink Razors",
           "quote": "'"
@@ -28850,7 +28904,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 47,
+          "line": 49,
           "kind": "js-string",
           "raw": "Chixdiggit!, 2005",
           "quote": "'"
@@ -28868,7 +28922,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 55,
+          "line": 57,
           "kind": "js-string",
           "raw": "Greatest Songs",
           "quote": "'"
@@ -28886,7 +28940,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 56,
+          "line": 58,
           "kind": "js-string",
           "raw": "NOFX, 2004",
           "quote": "'"
@@ -28904,7 +28958,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 64,
+          "line": 66,
           "kind": "js-string",
           "raw": "Allroy's Revenge",
           "quote": "\""
@@ -28922,7 +28976,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 65,
+          "line": 67,
           "kind": "js-string",
           "raw": "All, 1989",
           "quote": "'"
@@ -28940,7 +28994,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 74,
+          "line": 76,
           "kind": "js-string",
           "raw": "Less Than Jake, 2003",
           "quote": "'"
@@ -28958,7 +29012,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 82,
+          "line": 84,
           "kind": "js-string",
           "raw": "All the Shoes",
           "quote": "'"
@@ -28976,7 +29030,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 83,
+          "line": 85,
           "kind": "js-string",
           "raw": "NOFX, 1997",
           "quote": "'"
@@ -28994,7 +29048,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 91,
+          "line": 93,
           "kind": "js-string",
           "raw": "Bottles to the Ground",
           "quote": "'"
@@ -29012,7 +29066,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 92,
+          "line": 94,
           "kind": "js-string",
           "raw": "NOFX, 2000",
           "quote": "'"
@@ -29030,7 +29084,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 100,
+          "line": 102,
           "kind": "js-string",
           "raw": "Liberal Animation",
           "quote": "'"
@@ -29048,7 +29102,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 101,
+          "line": 103,
           "kind": "js-string",
           "raw": "NOFX, 1988",
           "quote": "'"
@@ -30356,14 +30410,14 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 275,
+          "line": 277,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 333,
+          "line": 335,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -35222,7 +35276,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 372,
+          "line": 374,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -36140,7 +36194,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 416,
+          "line": 418,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -38508,7 +38562,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 350,
+          "line": 352,
           "kind": "markup",
           "raw": "Create Patch",
           "quote": null
@@ -39817,7 +39871,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 412,
+          "line": 414,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -41385,7 +41439,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 527,
+          "line": 529,
           "kind": "markup",
           "raw": "The lining",
           "quote": null
@@ -44259,7 +44313,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 226,
+          "line": 228,
           "kind": "js-string",
           "raw": "Arts districts, coalitions (100+ people)",
           "quote": "'"
@@ -44277,7 +44331,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 230,
+          "line": 232,
           "kind": "js-string",
           "raw": "Name is required",
           "quote": "'"
@@ -44302,7 +44356,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 231,
+          "line": 233,
           "kind": "js-string",
           "raw": "Choose who can join",
           "quote": "'"
@@ -44320,7 +44374,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 268,
+          "line": 270,
           "kind": "js-string",
           "raw": "Your setup window has expired. The patch is claimable again.",
           "quote": "'"
@@ -44338,7 +44392,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 271,
+          "line": 273,
           "kind": "js-string",
           "raw": "This patch is no longer claimable.",
           "quote": "'"
@@ -44356,7 +44410,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 274,
+          "line": 276,
           "kind": "js-string",
           "raw": "Failed to complete setup",
           "quote": "'"
@@ -44374,7 +44428,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 296,
+          "line": 298,
           "kind": "js-string",
           "raw": "This patch is yours",
           "quote": "'"
@@ -44392,7 +44446,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 298,
+          "line": 300,
           "kind": "js-string",
           "raw": "Patch set up. Finish edits in Patch Settings.",
           "quote": "'"
@@ -44410,7 +44464,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 329,
+          "line": 331,
           "kind": "js-string",
           "raw": "Patch created",
           "quote": "'"
@@ -44428,7 +44482,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 332,
+          "line": 334,
           "kind": "js-string",
           "raw": "Failed to create patch",
           "quote": "'"
@@ -44446,7 +44500,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 344,
+          "line": 346,
           "kind": "markup",
           "raw": "Set up your patch",
           "quote": null
@@ -44464,7 +44518,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 345,
+          "line": 347,
           "kind": "markup",
           "raw": "Complete this patch's details to activate it.",
           "quote": null
@@ -44482,7 +44536,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 347,
+          "line": 349,
           "kind": "markup",
           "raw": "Approval expires {formatExpiry(expiresAt)}.",
           "quote": null
@@ -44500,7 +44554,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 351,
+          "line": 353,
           "kind": "markup",
           "raw": "Start a new community, collective, venue, or group.",
           "quote": null
@@ -44518,7 +44572,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 353,
+          "line": 355,
           "kind": "markup",
           "raw": "Creating a patch makes you its admin. Know a group that isn't yours to run?",
           "quote": null
@@ -44536,7 +44590,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 353,
+          "line": 355,
           "kind": "markup",
           "raw": "instead.",
           "quote": null
@@ -44554,14 +44608,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 360,
+          "line": 362,
           "kind": "markup",
           "raw": "Address",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 380,
+          "line": 382,
           "kind": "markup",
           "raw": "Address",
           "quote": null
@@ -44586,7 +44640,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 362,
+          "line": 364,
           "kind": "markup",
           "raw": "This is the patch's existing address.",
           "quote": null
@@ -44604,7 +44658,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 367,
+          "line": 369,
           "kind": "markup",
           "raw": "Name",
           "quote": null
@@ -44629,7 +44683,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 368,
+          "line": 370,
           "kind": "attr:placeholder",
           "raw": "e.g. Gallery Row, Lancaster Beats Lab",
           "quote": "\""
@@ -44647,7 +44701,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 373,
+          "line": 375,
           "kind": "attr:placeholder",
           "raw": "What is this patch about?",
           "quote": "\""
@@ -44665,7 +44719,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 386,
+          "line": 388,
           "kind": "attr:placeholder",
           "raw": "Where is this based?",
           "quote": "\""
@@ -44683,7 +44737,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 392,
+          "line": 394,
           "kind": "markup",
           "raw": "On the map.",
           "quote": null
@@ -44701,7 +44755,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 395,
+          "line": 397,
           "kind": "markup",
           "raw": "Looking for this address...",
           "quote": null
@@ -44726,7 +44780,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 411,
+          "line": 413,
           "kind": "markup",
           "raw": "Website",
           "quote": null
@@ -44751,7 +44805,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 418,
+          "line": 420,
           "kind": "markup",
           "raw": "What kind of patch is this? Tags help people find you, and new\n            patches are placed near others with the same tags on the quilt.\n            The first tag decides your default motif.",
           "quote": null
@@ -44769,7 +44823,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 426,
+          "line": 428,
           "kind": "markup",
           "raw": "Tile",
           "quote": null
@@ -44787,7 +44841,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 428,
+          "line": 430,
           "kind": "markup",
           "raw": "How this patch looks on the quilt. You can change it anytime\n            in Patch Settings → Appearance, and draft your own block there too.",
           "quote": null
@@ -44805,14 +44859,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 440,
+          "line": 442,
           "kind": "attr:aria-label",
           "raw": "Tile preview",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 192,
+          "line": 195,
           "kind": "attr:aria-label",
           "raw": "Tile preview",
           "quote": "\""
@@ -44830,14 +44884,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 447,
+          "line": 449,
           "kind": "attr:title",
           "raw": "Rotate 90°",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 194,
+          "line": 197,
           "kind": "attr:title",
           "raw": "Rotate 90°",
           "quote": "\""
@@ -44855,14 +44909,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 453,
+          "line": 455,
           "kind": "attr:aria-label",
           "raw": "Palette",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 246,
+          "line": 249,
           "kind": "markup",
           "raw": "Palette",
           "quote": null
@@ -44880,14 +44934,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 472,
+          "line": 474,
           "kind": "attr:aria-label",
           "raw": "Block",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 279,
+          "line": 282,
           "kind": "markup",
           "raw": "Block",
           "quote": null
@@ -44905,14 +44959,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 500,
+          "line": 502,
           "kind": "markup",
           "raw": "Motif",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 309,
+          "line": 312,
           "kind": "markup",
           "raw": "Motif",
           "quote": null
@@ -44930,7 +44984,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 502,
+          "line": 504,
           "kind": "markup",
           "raw": "Optional. The mark that appears beside the name on the quilt.\n            Unset, it follows your first tag. You can change it later in\n            Patch Settings.",
           "quote": null
@@ -44948,7 +45002,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 529,
+          "line": 531,
           "kind": "markup",
           "raw": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
           "quote": null
@@ -44967,7 +45021,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 547,
+          "line": 549,
           "kind": "markup",
           "raw": "Who can join",
           "quote": null
@@ -44985,7 +45039,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 563,
+          "line": 565,
           "kind": "markup",
           "raw": "Governance Template",
           "quote": null
@@ -45003,7 +45057,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 564,
+          "line": 566,
           "kind": "markup",
           "raw": "How should this patch be organized? You can change this later.",
           "quote": null
@@ -45611,7 +45665,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 154,
+          "line": 157,
           "kind": "js-string",
           "raw": "Appearance saved",
           "quote": "'"
@@ -45629,7 +45683,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 157,
+          "line": 160,
           "kind": "js-string",
           "raw": "Failed to save appearance",
           "quote": "'"
@@ -45647,7 +45701,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 167,
+          "line": 170,
           "kind": "js-string",
           "raw": "Appearance reset",
           "quote": "'"
@@ -45665,7 +45719,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 170,
+          "line": 173,
           "kind": "js-string",
           "raw": "Failed to reset appearance",
           "quote": "'"
@@ -45683,7 +45737,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 179,
+          "line": 182,
           "kind": "markup",
           "raw": "Choose how this patch appears on the quilt. The first fabric of the\n    bundle also becomes the patch's color on cards and labels.",
           "quote": null
@@ -45701,7 +45755,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 195,
+          "line": 198,
           "kind": "markup",
           "raw": "Rotate ({draft.rotation}°)",
           "quote": null
@@ -45719,7 +45773,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 201,
+          "line": 204,
           "kind": "markup",
           "raw": "This appearance is chosen by patch admins.",
           "quote": null
@@ -45737,7 +45791,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 203,
+          "line": 206,
           "kind": "markup",
           "raw": "This appearance was assigned automatically. Pick and save to make it yours.",
           "quote": null
@@ -45755,7 +45809,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 212,
+          "line": 215,
           "kind": "markup",
           "raw": "Reset appearance",
           "quote": null
@@ -45773,7 +45827,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 218,
+          "line": 221,
           "kind": "markup",
           "raw": "After a reset, the tile gets an automatically assigned look, which\n          may change as the quilt grows.",
           "quote": null
@@ -45791,7 +45845,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 225,
+          "line": 228,
           "kind": "attr:aria-label",
           "raw": "Block source",
           "quote": "\""
@@ -45809,7 +45863,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 248,
+          "line": 251,
           "kind": "markup",
           "raw": "Pre-cut bundles. Picking one fills your fabrics below.",
           "quote": null
@@ -45827,7 +45881,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
-          "line": 311,
+          "line": 314,
           "kind": "markup",
           "raw": "The mark beside this patch's name on the quilt and on cards.",
           "quote": null
