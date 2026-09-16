@@ -2215,6 +2215,41 @@
     };
   });
 
+  // The cards pane changing width (docs/adr/111). Nothing above catches it:
+  // the ResizeObserver watches .quilt-pane, which is `inset: 0` — full-bleed
+  // *behind* the pane — so the container's own size never moves when the
+  // pane's does. Every other consumer of insetRight reads it inside a pass
+  // something else triggers, which is why widening the pane used to leave the
+  // quilt centred for the old width.
+  //
+  // Re-centre, never re-zoom. The quilt is centred in [0, vw - padRight], so
+  // when padRight goes from P1 to P2 the centre moves by (P1 - P2)/2 — hiding
+  // the pane slides the quilt right into the room it just gained. A zoom-fit
+  // would have been consistent with "the canvas zoom-fits at rest"
+  // (docs/adr/074) and was rejected: moving a divider is not a request to be
+  // taken somewhere, and a reader zoomed into one corner stays there. 150ms
+  // is the pane's own width transition, so the two edges move together.
+  let lastInsetRight = null;
+  $effect(() => {
+    const inset = insetRight;
+    untrack(() => {
+      const prev = lastInsetRight;
+      lastInsetRight = inset;
+      // First read establishes the baseline; the opening layout centres
+      // itself from insetRight already.
+      if (prev === null || prev === inset) return;
+      if (!svgSelection || !zoomBehavior || !placedTiles.length) return;
+      const { vw } = getContainerSize();
+      if (!vw) return;
+      const dx = (Math.round(vw * prev) - Math.round(vw * inset)) / 2;
+      if (!dx) return;
+      const t = currentTransform;
+      svgSelection.transition('paneWidth').duration(150).ease(d3.easeCubicInOut)
+        .call(zoomBehavior.transform,
+          d3.zoomIdentity.translate(t.x + dx, t.y).scale(t.k));
+    });
+  });
+
   onMount(() => {
     loadData();
     // The tooltip lives on <body>, not in this component's markup:
