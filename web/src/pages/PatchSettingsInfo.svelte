@@ -147,6 +147,11 @@
   let tags = $state([]);
   let savingTags = $state(false);
   let tagsSynced = false;
+  // Words proposed in this editing session, not yet sent. Distinct from
+  // node.pending_tags, which are the suggestions already waiting for review
+  // (docs/adr/114) — those arrive only for this patch's admins.
+  let suggestTags = $state([]);
+  let pendingTags = $derived(Array.isArray(node?.pending_tags) ? node.pending_tags : []);
   $effect(() => {
     if (node && !tagsSynced) {
       tags = Array.isArray(node.tags) ? [...node.tags] : [];
@@ -155,14 +160,21 @@
   });
 
   let tagsDirty = $derived(
-    JSON.stringify(tags) !== JSON.stringify(Array.isArray(node?.tags) ? node.tags : [])
+    JSON.stringify(tags) !== JSON.stringify(Array.isArray(node?.tags) ? node.tags : []) ||
+    suggestTags.length > 0
   );
 
   async function saveTags() {
     savingTags = true;
     try {
-      await api(`nodes/${slug}`, { method: 'PATCH', body: { tags } });
-      showToast('Tags saved', 'success');
+      // Sent separately: the server rejects an unknown name in `tags`, and
+      // its replace-all is scoped to approved tags so this cannot delete a
+      // suggestion already waiting.
+      const body = { tags };
+      if (suggestTags.length > 0) body.suggest_tags = suggestTags;
+      await api(`nodes/${slug}`, { method: 'PATCH', body });
+      showToast(suggestTags.length > 0 ? 'Tags saved, suggestions sent for review' : 'Tags saved', 'success');
+      suggestTags = [];
       tagsSynced = false;
       patch.value.reload();
     } catch (e) {
@@ -174,6 +186,19 @@
 
   function resetTags() {
     tags = Array.isArray(node?.tags) ? [...node.tags] : [];
+    suggestTags = [];
+  }
+
+  // Taking a suggestion back is its own act, never a side effect of saving
+  // the form (docs/adr/114).
+  async function withdrawSuggestion(name) {
+    try {
+      await api(`nodes/${slug}/suggested-tags/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      showToast(`Withdrew ${name}`, 'success');
+      patch.value.reload();
+    } catch (e) {
+      showToast(e.message || 'Failed to withdraw', 'error');
+    }
   }
 
   // Changing this patch's zone changes what time its events say
@@ -710,8 +735,16 @@
     <p class="muted tags-hint">
       Tags help people find this patch, and the quilt places patches with
       shared tags near each other. The first tag decides the default motif.
+      Missing a word? Suggest it, and an admin decides whether it joins the
+      quilt's tags.
     </p>
-    <TagPicker bind:selected={tags} disabled={savingTags} />
+    <TagPicker
+      bind:selected={tags}
+      bind:suggested={suggestTags}
+      pending={pendingTags}
+      onWithdraw={withdrawSuggestion}
+      disabled={savingTags}
+    />
     {#if tagsDirty}
       <div class="tags-actions">
         <button class="btn btn-primary btn-sm" onclick={saveTags} disabled={savingTags}>

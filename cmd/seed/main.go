@@ -423,35 +423,12 @@ type nodeLink struct {
 func (s *seeder) seedNodes() {
 	nodes := s.profile.nodes
 
-	// Available palettes for auto-assignment.
-	palettes := []string{
-		"adolescents", "pinkRazors", "greatestSongs", "allroysRevenge",
-		"anthem", "allTheShoes", "bottlesToTheGround", "liberalAnimation",
-	}
-
 	slugToID := make(map[string]string)
-	for i, n := range nodes {
+	for _, n := range nodes {
 		id := auth.NewUUIDv7()
 		slugToID[n.slug] = id
 
-		// Use explicit palette if set, otherwise cycle. Block stays unset
-		// (hash-assigned) unless the node def pins one.
-		palette := n.palette
-		if palette == "" {
-			palette = palettes[i%len(palettes)]
-		}
-		appearance := map[string]interface{}{"palette": palette}
-		if n.block != "" {
-			appearance["block"] = n.block
-		}
-		if n.draftBlock != "" {
-			// A drafted block (docs/adr/029) replaces the curated pick.
-			appearance = map[string]interface{}{"block": json.RawMessage(n.draftBlock)}
-			if len(n.bundle) > 0 {
-				appearance["bundle"] = n.bundle
-			}
-		}
-		appearanceJSON, _ := json.Marshal(appearance)
+		appearanceJSON := appearanceFor(n)
 
 		apID := ap.NodeAPID(ap.GetDomain(), id)
 
@@ -483,7 +460,7 @@ func (s *seeder) seedNodes() {
 		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, website, links, follower_permissions)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?)`,
 			id, s.userIDs[n.ownerIdx], n.name, n.slug, n.description,
-			n.lat, n.lng, n.address, n.membershipPolicy, string(appearanceJSON), createdAt, createdAt, createdAt, apID, n.website, linksJSON, fpJSON)
+			n.lat, n.lng, n.address, n.membershipPolicy, appearanceJSON, createdAt, createdAt, createdAt, apID, n.website, linksJSON, fpJSON)
 		if err != nil {
 			log.Fatalf("seed node %s: %v", n.slug, err)
 		}
@@ -530,6 +507,47 @@ func (s *seeder) seedNodes() {
 		}
 	}
 	s.stats.nodes = len(nodes)
+}
+
+// appearanceFor renders a patch's chosen tile appearance, or nil when the
+// profile chose none for it.
+//
+// nil reaches the INSERT as SQL NULL, which is the unset state a patch made
+// through the form carries (docs/adr/004) and the state most real patches
+// stay in: Lancaster measured 54 of 58 patches unset on 2026-09-16. The
+// seeder used to cycle a palette onto every patch, so a seeded quilt was
+// 100% hand-styled and the hash-assignment branch of paletteForPatch
+// (web/src/lib/quiltTheme.js) never rendered in local dev — the one path
+// nobody could look at, in a frontend suite that asserts against source text
+// and so cannot catch a rendering bug. The profile still pins an appearance
+// on the handful of patches that exist to demonstrate one.
+func appearanceFor(n nodeDef) interface{} {
+	var appearance map[string]interface{}
+	switch {
+	case n.draftBlock != "":
+		// A drafted block (docs/adr/029) replaces the curated pick.
+		appearance = map[string]interface{}{"block": json.RawMessage(n.draftBlock)}
+	case n.palette != "" || n.block != "" || len(n.bundle) > 0:
+		appearance = map[string]interface{}{}
+		if n.palette != "" {
+			appearance["palette"] = n.palette
+		}
+		if n.block != "" {
+			appearance["block"] = n.block
+		}
+	default:
+		return nil
+	}
+	// A bundle rides with either kind of block: it names the fabrics, and a
+	// curated block wears a custom cut as readily as a drafted one.
+	if len(n.bundle) > 0 {
+		appearance["bundle"] = n.bundle
+	}
+	b, err := json.Marshal(appearance)
+	if err != nil {
+		log.Fatalf("seed appearance for %s: %v", n.slug, err)
+	}
+	return string(b)
 }
 
 // templateForPolicy maps a seeded patch's membership policy to the governance
@@ -1624,13 +1642,7 @@ func (s *seeder) seedUnclaimedPatches() {
 
 	unclaimed := s.profile.unclaimed
 
-	// Available palettes for unclaimed patches.
-	unclaimedPalettes := []string{
-		"adolescents", "pinkRazors", "greatestSongs", "allroysRevenge",
-		"anthem", "allTheShoes", "bottlesToTheGround", "liberalAnimation",
-	}
-
-	for i, u := range unclaimed {
+	for _, u := range unclaimed {
 		id := auth.NewUUIDv7()
 		nodeSlug := slug(u.name)
 
@@ -1640,7 +1652,9 @@ func (s *seeder) seedUnclaimedPatches() {
 			linksJSON = string(b)
 		}
 
-		appearanceJSON := fmt.Sprintf(`{"palette":%q}`, unclaimedPalettes[i%len(unclaimedPalettes)])
+		// Appearance stays NULL, and for an unclaimed patch that is not just
+		// the honest default (see appearanceFor) but the only truthful one:
+		// nobody has claimed it, so nobody has chosen how its tile looks.
 		apID := fmt.Sprintf("https://%s/ap/nodes/%s", "patchwork.local", id)
 		createdAt := s.ts(s.rng.Intn(60) + 30)
 
@@ -1659,7 +1673,7 @@ func (s *seeder) seedUnclaimedPatches() {
 		_, err := s.db.Exec(
 			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, appearance, status, submitted_by, submission_source, ap_id, created_at, updated_at)
 			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, 'unclaimed', ?, ?, ?, ?, ?)`,
-			id, u.name, nodeSlug, u.desc, u.lat, u.lng, u.address, u.website, linksJSON, appearanceJSON, submittedBy, submissionSource, apID, createdAt, createdAt,
+			id, u.name, nodeSlug, u.desc, u.lat, u.lng, u.address, u.website, linksJSON, nil, submittedBy, submissionSource, apID, createdAt, createdAt,
 		)
 		if err != nil {
 			log.Printf("warning: seed unclaimed %s: %v", u.name, err)

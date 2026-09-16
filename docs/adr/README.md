@@ -24,7 +24,7 @@ several branches are in flight.
 | [017](017-long-sessions-bounded-by-idle-and-step-up.md) | Sessions stay long, bounded by idle timeout and step-up auth |
 | [018](018-email-recipes-not-a-platform.md) | Email is one relay plus recipes, not a platform |
 | [020](020-recovery-without-a-delivery-channel.md) | Account recovery without a delivery channel |
-| [021](021-tags-are-the-only-classification.md) | Tags are the only classification; the affinity tag term is not a thread |
+| [021](021-tags-are-the-only-classification.md) | Tags are the only classification; the affinity tag term is not a thread *(amended by 113)* |
 | [022](022-discovery-narrowing-three-lenses.md) | Discovery narrowing is three independent lenses (amended by 033) |
 | [023](023-the-label-stewardship-disclosure.md) | The Label — how a quilt is run, who stewards it, what it costs |
 | [024](024-cross-quilt-following.md) | Cross-quilt following — switcher to browse, home-side follows |
@@ -142,3 +142,4 @@ several branches are in flight.
 | # | Decision |
 |---|----------|
 | [016](016-pure-go-sqlite-driver.md) | Pure-Go SQLite driver — spiked, measured, reverted |
+| [114](114-a-patch-may-ask-for-a-word.md) | A patch may ask for a word: a suggested tag is a pending row in the one vocabulary, worn provisionally by the patch that proposed it and invisible to everyone else until an instance admin approves it *(amends 021; applies 002, 026, 086, 089)* |

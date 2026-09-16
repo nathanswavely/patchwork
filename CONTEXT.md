@@ -153,7 +153,8 @@ the all-time number)
 **Tag**:
 A label a patch wears, chosen by that patch's admins — many per patch —
 from a single vocabulary curated by the instance admin. Patch admins pick
-from the list; only instance admins change the list. Tags power discovery:
+from the list, and may propose a word that is not on it (see **Suggested
+tag**); only instance admins change the list itself. Tags power discovery:
 filtering, onboarding interests, and the tag-derived motif. Shared tags
 also weakly attract patches in the quilt — a declared similarity that
 matters most for patches too new or thin to have member overlap, and that
@@ -163,6 +164,21 @@ There is no second classification system — "category" is this concept and
 never a separate one. Tags never label people or events — an event matches
 a tag through its patch.
 _Avoid_: category, genre, topic, label (as a noun)
+
+**Suggested tag**:
+A word a patch's admin proposes for the instance's **tag** vocabulary,
+worn provisionally by the patch that proposed it and invisible to everyone
+else until an instance admin approves it. Until then it is not a tag: it
+does not filter, does not derive a motif, does not attract patches on the
+quilt, and does not travel in a member seamrip. Approving it makes it an
+ordinary tag for the whole quilt at once, including any other patch that
+proposed the same word. Declining it spends the word: it cannot be
+suggested again, though an instance admin can still create it outright.
+The vocabulary stays the instance admin's to change, and a suggestion asks
+them to.
+_Avoid_: tag submission (a person submits patches and events,
+docs/adr/026), custom tag (no patch owns one), category (that is this
+concept, see **Tag**)
 
 **Quilt**:
 The treemap visualization of all patches on one instance, placed by member
