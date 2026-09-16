@@ -782,11 +782,13 @@ func main() {
 
 		// Git smart HTTP for governance repos (federation transport).
 		// Uses a wrapper that only handles /governance.git/ paths, passing through otherwise.
-		gitHandler := governance.GitHTTPHandler(func(slug string) string {
-			return handler.NodeIDFromSlug(db, slug)
-		})
-		mux.HandleFunc("GET /api/v1/nodes/{slug}/governance.git/info/refs", gitHandler.ServeHTTP)
-		mux.HandleFunc("POST /api/v1/nodes/{slug}/governance.git/git-upload-pack", gitHandler.ServeHTTP)
+		//
+		// AuthOptional, and not anonymous: a clone takes the whole repo,
+		// members-only charters included, so the transport carries the
+		// whole-shelf gate (docs/adr/110) and needs to know who is asking.
+		gitHandler := governance.GitHTTPHandler(handler.GovernanceRepoNodeID(db))
+		mux.HandleFunc("GET /api/v1/nodes/{slug}/governance.git/info/refs", middleware.AuthOptional(db, gitHandler.ServeHTTP))
+		mux.HandleFunc("POST /api/v1/nodes/{slug}/governance.git/git-upload-pack", middleware.AuthOptional(db, gitHandler.ServeHTTP))
 	} else {
 		log.Println("federation: disabled (federation.enabled=false) — AP, WebFinger, and git transport not mounted")
 	}

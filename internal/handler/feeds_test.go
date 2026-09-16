@@ -318,7 +318,8 @@ func TestEventICS_OneEventForOneNight(t *testing.T) {
 // A non-public event is a file only its patch's members can take away.
 // The events table spells that 'private' or 'unlisted'; ListEvents admits
 // either only for a member or admin of the event's own patch, and this
-// endpoint follows it rather than GetEvent, which gates neither.
+// endpoint follows it. GetEvent applies the same rule — see
+// TestGetEvent_NonPublicEventNeedsTheRoom, which is the JSON half of this.
 func TestEventICS_NonPublicEventNeedsTheRoom(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := feedTestConfig()

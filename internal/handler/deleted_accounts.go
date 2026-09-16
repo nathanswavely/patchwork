@@ -2,8 +2,10 @@ package handler
 
 import (
 	"database/sql"
+	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 )
 
 // Rendering a deleted person (docs/adr/086).
@@ -55,4 +57,44 @@ func displayNameExpr(alias string) string {
 func usernameExpr(alias string) string {
 	return "CASE WHEN " + alias + ".deleted_at IS NOT NULL THEN ''" +
 		" ELSE COALESCE(" + alias + ".username, '') END"
+}
+
+// Rendering a hidden membership (docs/adr/006).
+//
+// A sibling of the substitution above, and a different shape of the same
+// problem: a person whose acts must survive a read that their name must not.
+// The difference is what the rule turns on. A tombstone is a fact about the
+// row, so it can be decided in SQL once; a hidden membership is a fact about
+// the row *and* who is asking, so the caller decides and this file supplies
+// only the label and the question.
+
+// HiddenMemberName is what stands in for a member who switched their
+// membership out of sight (docs/adr/006) on a surface someone outside the
+// room is reading. It names the state of the membership, not the person,
+// the way DeletedAccountName names the state of the account.
+const HiddenMemberName = "Hidden member"
+
+// viewerIsInPatchRoom reports whether the request's viewer is inside a
+// patch: an active admin or member of it, or an instance admin. This is the
+// line ADR 006 draws for hidden memberships — "still seen by that patch's
+// admins and members inside the workspace" — and it is deliberately
+// narrower than canReadPatchDocs, which admits a follower holding the
+// charters permission. A follower is an observer, not a member, and the
+// people in a patch are not theirs to enumerate.
+func viewerIsInPatchRoom(db *database.DB, r *http.Request, nodeID string) bool {
+	user := middleware.UserFromContext(r.Context())
+	if user == nil {
+		return false
+	}
+	if user.Role == "admin" {
+		return true
+	}
+	var role string
+	if err := db.QueryRow(
+		"SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active' AND role IN ('member','admin')",
+		user.ID, nodeID,
+	).Scan(&role); err != nil {
+		return false
+	}
+	return role != ""
 }
