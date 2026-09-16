@@ -135,6 +135,7 @@ several branches are in flight.
 | [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only *(amended: A and B built as 064 and 062, D retired, C optional)* |
 | [059](059-the-handle-is-a-subscribe-option.md) | The handle is a subscribe option — the patch actor exists and no surface says so |
 | [060](060-a-fork-keeps-its-threads-and-loses-its-audience.md) | A fork keeps its threads and loses its audience — the reach gap in the seamrip boundary |
+| [112](112-the-quilt-opens-loud-and-muted-only-takes-away.md) | The quilt opens loud, and muted only ever takes away — a viewer-side Colors choice that caps chroma and never adds it, with no instance default to move it *(measurement gate on hash-palette hue clustering before it ships)* |
 
 ## Rejected after evaluation
 
