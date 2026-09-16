@@ -7,14 +7,33 @@
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import JoinSheet from '../components/JoinSheet.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { CONTACT_KIND_WORD } from '../lib/contactItems.js';
 
   let patches = $state([]);
   let loading = $state(true);
   let error = $state('');
 
+  // Claims the caller holds (docs/adr/039). Deliberately not part of
+  // me/nodes: an approved claimant holds no membership until setup activates
+  // the patch, so a claim is not a relationship to a patch — it is an act
+  // still owed on one. Until this section existed, the only trace of an
+  // approved claim was the notification that announced it, and the 14-day
+  // setup window could close without the claimant seeing a thing.
+  let myClaims = $state([]);
+
   $effect(() => {
     loadPatches();
+    loadClaims();
   });
+
+  async function loadClaims() {
+    try {
+      const data = await api('users/me/claims');
+      myClaims = data.items || [];
+    } catch {
+      myClaims = [];
+    }
+  }
 
   async function loadPatches() {
     loading = true;
@@ -43,8 +62,6 @@
   let sharingFor = $state(null);
   let sharingIds = $state([]);
   let sharingBusy = $state(false);
-
-  const KIND_WORD = { phone: 'Phone', email: 'Email', handle: 'Handle', note: 'Note' };
 
   $effect(() => {
     api('users/me/contact-items')
@@ -236,7 +253,7 @@
                 disabled={sharingBusy}
                 onchange={() => toggleSharingId(it.id)}
               />
-              <span class="contact-picker-kind">{KIND_WORD[it.kind] || it.kind}</span>
+              <span class="contact-picker-kind">{CONTACT_KIND_WORD[it.kind] || it.kind}</span>
               <span class="contact-picker-value">{it.value}</span>
               {#if it.label}<span class="muted">{' · '}{it.label}</span>{/if}
             </label>
@@ -269,9 +286,51 @@
     <p class="muted">Loading...</p>
   {:else if error}
     <p class="error-text">{error}</p>
-  {:else if patches.length === 0}
-    <p class="muted">You haven't joined any patches yet.</p>
   {:else}
+    {#if myClaims.length > 0}
+      <section class="patch-section">
+        <h3 class="section-heading">Claiming</h3>
+        {#each myClaims as c (c.id)}
+          <div class="patch-row">
+            <div class="patch-info">
+              <a href="/patches/{c.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${c.node_slug}`); }}>
+                {c.node_name || c.node_slug}
+              </a>
+              {#if c.status === 'approved'}
+                <!-- The thing this section exists to say. Not a badge on the
+                     patch itself: docs/adr/039 keeps the patch reading
+                     unclaimed to every visitor, and this is the claimant
+                     reading their own claim. -->
+                <span
+                  class="badge ready-badge"
+                  title="Your claim cleared. Setup is where the patch becomes active and you become its admin. Until you submit it, the patch still reads as unclaimed to everyone else."
+                >ready to set up</span>
+              {:else}
+                <span class="badge state-badge" title="Nobody has answered this claim yet.">claim under review</span>
+              {/if}
+              <span class="muted joined-date">
+                {#if c.status === 'approved' && c.setup_expires_at}
+                  expires {formatDate(c.setup_expires_at)}
+                {:else}
+                  claimed {formatDate(c.created_at)}
+                {/if}
+              </span>
+            </div>
+            <div class="patch-actions">
+              {#if c.status === 'approved'}
+                <button class="btn btn-primary btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/setup`)}>Set up patch</button>
+              {:else}
+                <button class="btn btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/claim`)}>View claim</button>
+              {/if}
+            </div>
+          </div>
+        {/each}
+      </section>
+    {/if}
+
+    {#if patches.length === 0 && myClaims.length === 0}
+    <p class="muted">You haven't joined any patches yet.</p>
+    {:else if patches.length > 0}
     {#if cardEmpty && (adminPatches.length > 0 || memberPatches.length > 0)}
       <p class="muted contact-hint">
         Your contact card is empty. Add the ways you are willing to be reached
@@ -378,6 +437,7 @@
         {/each}
       </section>
     {/if}
+    {/if}
   {/if}
 </div>
 
@@ -480,6 +540,16 @@
     border: 1px dashed var(--color-border);
     color: var(--color-text-muted);
     font-weight: 500;
+  }
+
+  /* An act still owed, not a state being endured: this one is the only
+     badge on the page that asks for something, so it is the only one that
+     carries the page's own colour. */
+  .ready-badge {
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 600;
   }
 
   .contact-hint {

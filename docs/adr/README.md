@@ -92,6 +92,7 @@ several branches are in flight.
 | [109](109-an-election-nobody-proposed.md) | An election nobody proposed — the calendar signs its own contests with the `_system` sentinel instead of the longest-standing admin, whose bell they were ringing; a settled contest tells the patch rather than only the winner; it gets a banner of its own; and a candidate's name on the ballot is a link to them rather than the control that votes for them *(applies 051, 093, 097)* |
 | [110](110-a-clone-takes-the-whole-shelf.md) | A clone takes the whole shelf — the governance git transport served every members-only charter, its history and its diffs to anyone unauthenticated, and now asks `canReadPatchDocs`, the same rule the REST listing asks; refusal and not-found are one 404 so a private patch is no oracle *(found by an outside review, latent not live; applies 006, 036, 050, 086)* |
 | [111](111-the-reader-can-put-the-list-away.md) | The reader can put the list away — one bit, shown or hidden, persisted like the collapsed rail rather than session-ephemeral like a lens; the control is the shell’s, parks against the pane’s own edge and travels with it, and is the rail’s toggle mirrored; hiding suspends the in-view lens and a docked profile opens the pane without overwriting the setting; 45% stops being a literal in three files *(intermediate widths were built, used and removed; amends 074, 094)* |
+| [113](113-a-signature-says-what-it-covers.md) | A signature says what it covers, and the verifier names the set: an inbound HTTP Signature has to sign `(request-target)`, `host`, `date`, plus `digest` on any request with a body, rather than choosing its own coverage and leaving the skew window, the digest check and the inbox path resting on unsigned values *(found by the same outside review as 110; also records why the `rand.Read` note is a comment and not a guard)* |
 
 ## Partly implemented
 
@@ -134,6 +135,7 @@ several branches are in flight.
 | [058](058-atproto-is-a-source-not-a-second-federation.md) | atproto is a source and an identity, not a second federation — no relay, no AppView, public slice only *(amended: A and B built as 064 and 062, D retired, C optional)* |
 | [059](059-the-handle-is-a-subscribe-option.md) | The handle is a subscribe option — the patch actor exists and no surface says so |
 | [060](060-a-fork-keeps-its-threads-and-loses-its-audience.md) | A fork keeps its threads and loses its audience — the reach gap in the seamrip boundary |
+| [112](112-the-quilt-opens-loud-and-muted-only-takes-away.md) | The quilt opens loud, and muted only ever takes away — a viewer-side Colors choice that caps chroma and never adds it, with no instance default to move it *(measurement gate on hash-palette hue clustering before it ships)* |
 
 ## Rejected after evaluation
 
