@@ -106,6 +106,18 @@ func VerifySignature(req *http.Request, publicKeyPEM string) error {
 	}
 	headers := strings.Split(headersStr, " ")
 
+	// A signature only proves what it signs, so the sender does not get to
+	// choose how little that is.
+	covered := make(map[string]bool, len(headers))
+	for _, h := range headers {
+		covered[strings.ToLower(strings.TrimSpace(h))] = true
+	}
+	for _, want := range requiredSignedHeaders(req.Method) {
+		if !covered[want] {
+			return fmt.Errorf("signature does not cover %s", want)
+		}
+	}
+
 	// Rebuild signing string
 	var signParts []string
 	for _, h := range headers {
@@ -141,6 +153,32 @@ func VerifySignature(req *http.Request, publicKeyPEM string) error {
 	// Verify
 	hash := sha256.Sum256([]byte(signingString))
 	return rsa.VerifyPKCS1v15(rsaPubKey, crypto.SHA256, hash[:], sigBytes)
+}
+
+// requiredSignedHeaders names the headers an inbound signature has to cover
+// before the rest of the verification means anything.
+//
+// The verifier used to rebuild the signing string from whatever list the
+// sender supplied, defaulting to "date" alone when the list was absent. Every
+// check downstream then rested on a value nobody had signed: checkDateSkew
+// reads the Date header and treats it as authentic, which is only true if the
+// signature covers it; the inbox compares Digest against the body only when a
+// Digest header happens to be present, so a body is unauthenticated without
+// it; and without (request-target), a POST captured for one inbox can be
+// replayed into another. The compensating checks did hold this closed in
+// practice. Naming the set is what makes them true by construction rather
+// than by the good manners of the sender.
+//
+// The set is what our own SignRequest covers and what mainstream fediverse
+// implementations send: (request-target), host and date always, plus digest
+// on any method that carries a body.
+func requiredSignedHeaders(method string) []string {
+	switch strings.ToUpper(method) {
+	case http.MethodPost, http.MethodPut, http.MethodPatch:
+		return []string{"(request-target)", "host", "date", "digest"}
+	default:
+		return []string{"(request-target)", "host", "date"}
+	}
 }
 
 // signatureHeaderValue returns the value to use for a given header name when
