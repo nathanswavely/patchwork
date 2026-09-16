@@ -219,7 +219,17 @@
         {#if proposal.target_doc}
           <span class="target-badge">to {docLabel(proposal.target_doc)}</span>
         {/if}
-        <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
+        <!-- An election has no proposer (docs/adr/109). It used to wear the
+             longest-standing admin's name, so a contest a timer opened at
+             four in the morning read "Proposed by Priya Natarajan" on a
+             public page while Priya was nine months away. Keyed on the
+             election itself rather than on the author id, so contests raised
+             before the calendar started signing them read right too. -->
+        {#if proposal.election_phase}
+          <span class="muted">Opened by this patch&rsquo;s election calendar</span>
+        {:else}
+          <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
+        {/if}
         <span class="muted">{new Date(proposal.created_at).toLocaleDateString()}</span>
       </div>
     </div>

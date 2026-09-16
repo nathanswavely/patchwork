@@ -398,3 +398,103 @@ func TestListEvents_MalformedDateBoundStillServes(t *testing.T) {
 		t.Fatalf("expected a malformed bound to compare as text (5 events), got %v", got)
 	}
 }
+
+// TestGetEvent_NonPublicEventNeedsTheRoom: the event detail endpoint reads the
+// event's own visibility, the way ListEvents and EventICS already do. Before
+// this gate existed a members-only event was fully readable by anyone holding
+// the permalink — the CSV door (event_upload.go) accepts a visibility column,
+// so there was a real path to a hidden event nothing hid.
+func TestGetEvent_NonPublicEventNeedsTheRoom(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "detailroomadmin", "member")
+	member, memberToken := createTestUser(t, db, "detailroommember", "member")
+	follower, followerToken := createTestUser(t, db, "detailroomfollower", "member")
+	_, outsiderToken := createTestUser(t, db, "detailroomoutsider", "member")
+	// An instance admin holding no role in the patch is an outsider here,
+	// exactly as ListEvents treats them: the moderation panel reads events
+	// through its own queries, never this one.
+	_, instanceAdminToken := createTestUser(t, db, "detailroominstance", "admin")
+	nodeID := createTestNode(t, db, admin.ID, "Closed Detail", "closed-detail", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+	createTestMembership(t, db, follower.ID, nodeID, "follower", "active")
+
+	eventID := seedEvent(t, db, nodeID, admin.ID, "House Meeting", daysOut(2))
+
+	for _, vis := range []string{"private", "unlisted"} {
+		if _, err := db.Exec(`UPDATE events SET visibility = ? WHERE id = ?`, vis, eventID); err != nil {
+			t.Fatal(err)
+		}
+		for _, tc := range []struct {
+			who, token string
+			want       int
+		}{
+			{"a member", memberToken, http.StatusOK},
+			{"an admin", adminToken, http.StatusOK},
+			{"a follower", followerToken, http.StatusNotFound},
+			{"an outsider", outsiderToken, http.StatusNotFound},
+			{"an instance admin with no role there", instanceAdminToken, http.StatusNotFound},
+			{"nobody", "", http.StatusNotFound},
+		} {
+			r := authedRequest("GET", "/api/v1/events/"+eventID, nil, tc.token)
+			w := serveOptionalAuthMux(t, db, "GET", "/api/v1/events/{id}", handler.GetEvent(db), r)
+			if w.Code != tc.want {
+				t.Errorf("%s on a %s event: code=%d, want %d", tc.who, vis, w.Code, tc.want)
+			}
+		}
+	}
+
+	// The same event, public again, is readable by anyone — a private
+	// *patch* is unlisted rather than locked, and this gate reads the
+	// event's visibility, never the patch's.
+	if _, err := db.Exec(`UPDATE events SET visibility = 'public' WHERE id = ?`, eventID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`UPDATE nodes SET visibility = 'private' WHERE id = ?`, nodeID); err != nil {
+		t.Fatal(err)
+	}
+	r := authedRequest("GET", "/api/v1/events/"+eventID, nil, "")
+	w := serveOptionalAuthMux(t, db, "GET", "/api/v1/events/{id}", handler.GetEvent(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("a public event on a private patch stays readable: code=%d, want 200", w.Code)
+	}
+}
+
+// TestGetEvent_NonPublicSubmissionStillReachesItsReviewers: the submission gate
+// (docs/adr/026) decides the whole question for a pending event, so the
+// visibility gate must not run on top of it. An instance admin reviewing a
+// submission to an unclaimed patch holds no membership there, and a
+// members-only submission that 404s is one nobody can answer.
+func TestGetEvent_NonPublicSubmissionStillReachesItsReviewers(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "detailpendadmin", "member")
+	submitter, submitterToken := createTestUser(t, db, "detailpendsubmitter", "member")
+	_, instanceAdminToken := createTestUser(t, db, "detailpendinstance", "admin")
+	_, outsiderToken := createTestUser(t, db, "detailpendoutsider", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Queue Detail", "queue-detail", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	eventID := seedEvent(t, db, nodeID, submitter.ID, "Unreviewed Show", daysOut(3))
+	if _, err := db.Exec(
+		`UPDATE events SET status = 'pending_review', visibility = 'private' WHERE id = ?`, eventID,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, tc := range []struct {
+		who, token string
+		want       int
+	}{
+		{"its submitter", submitterToken, http.StatusOK},
+		{"the patch admin reviewing it", adminToken, http.StatusOK},
+		{"an instance admin", instanceAdminToken, http.StatusOK},
+		{"an outsider", outsiderToken, http.StatusNotFound},
+		{"nobody", "", http.StatusNotFound},
+	} {
+		r := authedRequest("GET", "/api/v1/events/"+eventID, nil, tc.token)
+		w := serveOptionalAuthMux(t, db, "GET", "/api/v1/events/{id}", handler.GetEvent(db), r)
+		if w.Code != tc.want {
+			t.Errorf("%s on a members-only submission: code=%d, want %d", tc.who, w.Code, tc.want)
+		}
+	}
+}

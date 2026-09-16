@@ -3905,7 +3905,7 @@
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 537,
+          "line": 539,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3933,28 +3933,28 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 426,
+          "line": 444,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 624,
+          "line": 642,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 167,
+          "line": 189,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 369,
+          "line": 391,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4087,14 +4087,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1431,
+          "line": 1466,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1622,
+          "line": 1657,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4532,7 +4532,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 464,
+          "line": 482,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4553,21 +4553,21 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 151,
+          "line": 173,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 237,
+          "line": 259,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 604,
+          "line": 626,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5042,7 +5042,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 693,
+          "line": 711,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5056,7 +5056,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1662,
+          "line": 1697,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5544,14 +5544,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 618,
+          "line": 636,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 772,
+          "line": 790,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5621,14 +5621,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1551,
+          "line": 1586,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1605,
+          "line": 1640,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5930,7 +5930,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 513,
+          "line": 531,
           "kind": "go-error-body",
           "raw": "failed to create event",
           "quote": null
@@ -6213,7 +6213,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 751,
+          "line": 769,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
@@ -6273,28 +6273,35 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 355,
+          "line": 360,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 579,
+          "line": 373,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 764,
+          "line": 597,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 795,
+          "line": 782,
+          "kind": "go-error-body",
+          "raw": "event not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/events.go",
+          "line": 813,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6358,28 +6365,28 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1355,
+          "line": 1390,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1520,
+          "line": 1555,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1597,
+          "line": 1632,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1707,
+          "line": 1742,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -6429,49 +6436,49 @@
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 308,
+          "line": 330,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 314,
+          "line": 336,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 353,
+          "line": 375,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 514,
+          "line": 536,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 519,
+          "line": 541,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 567,
+          "line": 589,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 571,
+          "line": 593,
           "kind": "go-error-body",
           "raw": "governance doc not found",
           "quote": null
@@ -8687,21 +8694,21 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 341,
+          "line": 343,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 412,
+          "line": 414,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 513,
+          "line": 515,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
@@ -8719,7 +8726,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 345,
+          "line": 347,
           "kind": "go-error-body",
           "raw": "nominations have closed",
           "quote": null
@@ -8737,7 +8744,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 350,
+          "line": 352,
           "kind": "go-error-body",
           "raw": "must be a member of this patch to nominate",
           "quote": null
@@ -8755,7 +8762,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 363,
+          "line": 365,
           "kind": "go-error-body",
           "raw": "a candidate must be an active member of this patch",
           "quote": null
@@ -8773,7 +8780,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 371,
+          "line": 373,
           "kind": "go-error-body",
           "raw": "failed to add the candidate",
           "quote": null
@@ -8791,7 +8798,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 416,
+          "line": 418,
           "kind": "go-error-body",
           "raw": "nominations have closed: the slate is what people are voting on",
           "quote": null
@@ -8809,7 +8816,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 423,
+          "line": 425,
           "kind": "go-error-body",
           "raw": "failed to withdraw",
           "quote": null
@@ -8827,7 +8834,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 427,
+          "line": 429,
           "kind": "go-error-body",
           "raw": "you are not standing in this election",
           "quote": null
@@ -8845,7 +8852,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 517,
+          "line": 519,
           "kind": "go-error-body",
           "raw": "this election has closed",
           "quote": null
@@ -8863,7 +8870,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 521,
+          "line": 523,
           "kind": "go-error-body",
           "raw": "nominations are still open; voting has not started",
           "quote": null
@@ -9678,7 +9685,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 449,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "node_id, title, and starts_at are required",
           "quote": null
@@ -9696,7 +9703,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 495,
+          "line": 513,
           "kind": "go-error-body",
           "raw": "community submissions are disabled on this instance",
           "quote": null
@@ -9721,7 +9728,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 499,
+          "line": 517,
           "kind": "go-error-body",
           "raw": "this patch does not accept event suggestions",
           "quote": null
@@ -9739,7 +9746,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 587,
+          "line": 605,
           "kind": "go-error-body",
           "raw": "this event comes from an event source. Edit it in the source calendar, or detach it first",
           "quote": null
@@ -9758,7 +9765,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 708,
+          "line": 726,
           "kind": "go-error-body",
           "raw": "failed to update event",
           "quote": null
@@ -9776,14 +9783,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 783,
+          "line": 801,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 790,
+          "line": 808,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
@@ -9880,14 +9887,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 157,
+          "line": 179,
           "kind": "go-error-body",
           "raw": "admin access required",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 359,
+          "line": 381,
           "kind": "go-error-body",
           "raw": "admin access required",
           "quote": null
@@ -9905,7 +9912,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 171,
+          "line": 193,
           "kind": "go-error-body",
           "raw": "title is required",
           "quote": null
@@ -9930,14 +9937,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 180,
+          "line": 202,
           "kind": "go-error-body",
           "raw": "visibility must be public or members",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 381,
+          "line": 403,
           "kind": "go-error-body",
           "raw": "visibility must be public or members",
           "quote": null
@@ -9955,14 +9962,14 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 188,
+          "line": 210,
           "kind": "go-error-body",
           "raw": "that title is reserved for the lining",
           "quote": null
         },
         {
           "file": "internal/handler/governance.go",
-          "line": 406,
+          "line": 428,
           "kind": "go-error-body",
           "raw": "that title is reserved for the lining",
           "quote": null
@@ -9980,7 +9987,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 198,
+          "line": 220,
           "kind": "go-error-body",
           "raw": "failed to create governance doc",
           "quote": null
@@ -9998,7 +10005,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 254,
+          "line": 276,
           "kind": "go-error-body",
           "raw": "failed to list governance docs",
           "quote": null
@@ -10016,7 +10023,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 373,
+          "line": 395,
           "kind": "go-error-body",
           "raw": "title, body, or visibility is required",
           "quote": null
@@ -10034,7 +10041,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 377,
+          "line": 399,
           "kind": "go-error-body",
           "raw": "title cannot be empty",
           "quote": null
@@ -10052,7 +10059,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 390,
+          "line": 412,
           "kind": "go-error-body",
           "raw": "the lining's title cannot be changed",
           "quote": null
@@ -10070,7 +10077,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 394,
+          "line": 416,
           "kind": "go-error-body",
           "raw": "the lining is always public",
           "quote": null
@@ -10088,7 +10095,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 398,
+          "line": 420,
           "kind": "go-error-body",
           "raw": "the lining can only be changed by amendment proposal",
           "quote": null
@@ -10106,7 +10113,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 437,
+          "line": 459,
           "kind": "go-error-body",
           "raw": "failed to update governance doc",
           "quote": null
@@ -10124,7 +10131,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 560,
+          "line": 582,
           "kind": "go-error-body",
           "raw": "from and to query params are required",
           "quote": null
@@ -10142,7 +10149,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 577,
+          "line": 599,
           "kind": "go-error-body",
           "raw": "governance repos not configured",
           "quote": null
@@ -10160,7 +10167,7 @@
       "occurrences": [
         {
           "file": "internal/handler/governance.go",
-          "line": 583,
+          "line": 605,
           "kind": "go-error-body",
           "raw": "version not found",
           "quote": null
@@ -14449,7 +14456,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1360,
+          "line": 1395,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -14467,7 +14474,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1371,
+          "line": 1406,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -14485,7 +14492,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1378,
+          "line": 1413,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -14503,7 +14510,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1389,
+          "line": 1424,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -14521,7 +14528,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1435,
+          "line": 1470,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -14539,7 +14546,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1454,
+          "line": 1489,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -14557,7 +14564,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1525,
+          "line": 1560,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -14575,7 +14582,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1543,
+          "line": 1578,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -14593,7 +14600,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1562,
+          "line": 1597,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -14611,7 +14618,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1627,
+          "line": 1662,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -14629,7 +14636,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1640,
+          "line": 1675,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -14647,7 +14654,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1674,
+          "line": 1709,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -14672,7 +14679,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1716,
+          "line": 1751,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -14690,7 +14697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1733,
+          "line": 1768,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -14708,7 +14715,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1736,
+          "line": 1771,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null
@@ -19456,7 +19463,7 @@
         },
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 231,
+          "line": 235,
           "kind": "markup",
           "raw": "Choose a member",
           "quote": null
@@ -20530,7 +20537,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 197,
+          "line": 201,
           "kind": "markup",
           "raw": "{c.approvals} approval{c.approvals === 1 ? '' : 's'}",
           "quote": null
@@ -20548,7 +20555,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 200,
+          "line": 204,
           "kind": "markup",
           "raw": "seated",
           "quote": null
@@ -20566,7 +20573,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 211,
+          "line": 215,
           "kind": "markup",
           "raw": "You are standing in this election.",
           "quote": null
@@ -20584,7 +20591,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 228,
+          "line": 232,
           "kind": "markup",
           "raw": "Put another member forward",
           "quote": null
@@ -20602,7 +20609,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 241,
+          "line": 245,
           "kind": "markup",
           "raw": "They go on the ballot straight away, and can withdraw themselves\n              until nominations close.",
           "quote": null
@@ -20620,7 +20627,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 257,
+          "line": 261,
           "kind": "markup",
           "raw": "Your ballot is in. You can change it until voting closes.",
           "quote": null
@@ -20638,7 +20645,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 260,
+          "line": 264,
           "kind": "markup",
           "raw": "You can change this until voting closes. Approving nobody is the same as\n          not voting.",
           "quote": null
@@ -24858,6 +24865,24 @@
       ]
     },
     {
+      "id": "c35b9b70b0d0",
+      "text": "This election has closed and the council below is seated.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/109: an election nobody proposed; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/components/ProposalStatusBanner.svelte",
+          "line": 304,
+          "kind": "markup",
+          "raw": "This election has closed and the council below is seated.",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "c0b55bd21270",
       "text": "This change is in effect.",
       "words": 5,
@@ -24868,7 +24893,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 299,
+          "line": 311,
           "kind": "markup",
           "raw": "This change is in effect.",
           "quote": null
@@ -24886,7 +24911,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 301,
+          "line": 313,
           "kind": "markup",
           "raw": "The maintainer approved this. It is in effect.",
           "quote": null
@@ -24904,7 +24929,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 303,
+          "line": 315,
           "kind": "markup",
           "raw": "Approved. This change is now in effect.",
           "quote": null
@@ -24922,7 +24947,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 313,
+          "line": 325,
           "kind": "markup",
           "raw": "Voting ended without reaching quorum. This proposal lapsed and was not decided.",
           "quote": null
@@ -24940,7 +24965,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 327,
+          "line": 339,
           "kind": "markup",
           "raw": "This election settled nothing; nobody was seated, and the seats it was for are unchanged.",
           "quote": null
@@ -24958,7 +24983,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 335,
+          "line": 347,
           "kind": "markup",
           "raw": "Declined by {declinedBy}.",
           "quote": null
@@ -24976,7 +25001,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 337,
+          "line": 349,
           "kind": "markup",
           "raw": "This proposal did not pass. {approveCount} approved, {rejectCount} rejected.",
           "quote": null
@@ -24994,7 +25019,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
-          "line": 344,
+          "line": 356,
           "kind": "markup",
           "raw": "Withdrawn by the author.",
           "quote": null
@@ -48593,6 +48618,24 @@
       ]
     },
     {
+      "id": "bb1e2fa4faab",
+      "text": "Opened by this patch&rsquo;s election calendar",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/109: an election nobody proposed; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalDetail.svelte",
+          "line": 229,
+          "kind": "markup",
+          "raw": "Opened by this patch&rsquo;s election calendar",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "c41a3fe1665f",
       "text": "Why this change",
       "words": 3,
@@ -48603,7 +48646,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 248,
+          "line": 258,
           "kind": "markup",
           "raw": "Why this change",
           "quote": null
@@ -48621,7 +48664,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 263,
+          "line": 273,
           "kind": "markup",
           "raw": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},\n              after this was drafted. The changes below compare against the older text.",
           "quote": null
@@ -48639,7 +48682,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 273,
+          "line": 283,
           "kind": "markup",
           "raw": "This {isDirectChange ? 'change' : 'proposal'} modifies",
           "quote": null
@@ -48657,7 +48700,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 284,
+          "line": 294,
           "kind": "markup",
           "raw": "This proposal modifies a members-only document. The text of the\n                change is visible to members.",
           "quote": null
@@ -48675,7 +48718,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 309,
+          "line": 319,
           "kind": "markup",
           "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null

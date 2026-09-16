@@ -349,9 +349,27 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 
 		// A pending submission is visible only to its submitter and its
 		// reviewers (docs/adr/026) — to everyone else it doesn't exist yet.
+		// That branch decides the whole question for a submission, so the
+		// visibility gate below is the published event's rule and never
+		// runs on top of it: an instance admin reviewing a submission to an
+		// unclaimed patch holds no membership there, and a members-only
+		// submission must not vanish from the queue that has to answer it.
 		user := middleware.UserFromContext(r.Context())
 		if e.Status == "pending_review" {
 			if user == nil || (user.ID != e.CreatedBy && user.Role != "admin" && !userHasNodeRole(db, user.ID, e.NodeID, "admin")) {
+				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
+				return
+			}
+		} else if e.Visibility != "public" {
+			// Members-only events are for a member or admin of the event's
+			// OWN patch, which is the rule ListEvents and EventICS already
+			// apply — a confirmed link never widens visibility. A 404 rather
+			// than a 403: to someone who can't read it, the event doesn't
+			// exist. A private *patch* is unlisted rather than locked, so
+			// its public events stay readable by anyone holding the link,
+			// exactly as its page stays readable — this gate reads the
+			// event's own visibility and never the patch's.
+			if user == nil || !userHasNodeRole(db, user.ID, e.NodeID, "member", "admin") {
 				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 				return
 			}

@@ -391,6 +391,8 @@ The seamrip mechanism is a governance safety valve: if a community's leadership 
 
 **Governance repos don't travel, so they get rebuilt** (docs/adr/084). Rows without repos — a seamrip import, or a restore from the SQLite file alone — read fine and can never be *written*, because every governance write starts at `openBare`. `governance.Repair` reconciles the derived repos with the canonical `governance_docs` rows: create-missing on every boot (strictly create-missing, never a write into a repo that exists), and `patchwork -repair-governance` for the whole reconciliation with a per-patch summary, server stopped. It is a flag on the server binary rather than a `cmd/repair` because the distroless image ships only `/patchwork`. Synthetic commits are authored `Patchwork repair` and labelled in the charter history view — a rebuilt history must never pass for a real one.
 
+**A repo has no seam, so its door carries the whole rule** (docs/adr/110). The git smart-HTTP transport hands over the entire bare repository — every doc body, its revision history, its diffs, and the editors' names in the commit metadata — so it is gated on `canReadPatchDocs`, the same whole-shelf rule the REST listing asks, and never on per-document visibility: there is no half-clone. `DirectEdit` mirrors members-only docs in regardless of visibility, so anything that opens one of these repos to a caller is opening all of it. The refusal and the not-found are deliberately one 404.
+
 ## Cutting a release
 
 A `v*` tag publishes an image only if `release-notes/vX.Y.Z.md` is already on
