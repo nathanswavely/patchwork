@@ -92,7 +92,11 @@ var artsNodes = []nodeDef{
 		lat:         40.0392, lng: -76.3050,
 		membershipPolicy: "approval_required",
 		address:          "N Prince St, Lancaster, PA 17603",
-		website:          "https://galleryrow.example",
+		// A palette with no block: the third way a tile can be dressed, and
+		// the one a patch lands in by picking fabrics and leaving the block
+		// alone. The block stays hash-assigned.
+		palette: "pinkRazors",
+		website: "https://galleryrow.example",
 		links: []nodeLink{
 			{URL: "https://instagram.example/galleryrow", Label: "Instagram"},
 		},
