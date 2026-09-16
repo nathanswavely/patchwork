@@ -178,6 +178,76 @@ export function setChipsCollapsed(collapsed) {
   localStorage.setItem(CHIPS_KEY, collapsed ? '1' : '0');
 }
 
+// --- The cards pane's width (docs/adr/111) ---
+// How wide the list beside a discovery surface is, at three stops the reader
+// sets: two columns, one column, hidden. The stop names how many cards sit
+// side by side rather than a percentage, because the pane exists to hold
+// cards and that is the only unit a reader can see. Hidden is the width's
+// zero, not a second concept — one fact, one control, one stored value.
+//
+// It sits here beside the chips rather than in the surface because the
+// *shell* needs it too: the filter chips clear the pane's right edge, and
+// they live in SocialShell, which has no other reason to know the pane
+// exists. Until this, 45% was a literal in three places across two files.
+//
+// An arrangement, not a lens: it persists, the way the collapsed rail and
+// the collapsed chips do and the way the filter, the order and the in-view
+// lens deliberately do not (docs/adr/022, docs/adr/074).
+const PANE_KEY = 'patchwork-cards-pane-stop';
+export const PANE_STOPS = ['two', 'one', 'hidden'];
+
+// One column is `22.5% + 10px` — the width at which a single card is as wide
+// as each of the two were, given the pane's 16px side padding and the grid's
+// 12px gap. So changing stops hands back half the pane and leaves the card's
+// size alone: what the reader gains is quilt, not a bigger card.
+//
+// Half a scrollbar out in practice (295px vs 287px on Windows at 1440),
+// because the scrollbar sits inside the pane and is subtracted once either
+// way. Deliberately not corrected: the exact term is `+ scrollbar/2`, and
+// the scrollbar is 15–17px on Windows, zero under macOS overlay scrollbars,
+// and only there while the list overflows — measuring it would make the
+// pane's width depend on how many patches this quilt happens to have.
+const PANE_CSS = { two: '45%', one: 'calc(22.5% + 10px)', hidden: '0px' };
+const PANE_COLUMNS = { two: 2, one: 1, hidden: 1 };
+
+const storedStop = PANE_STOPS.includes(localStorage.getItem(PANE_KEY))
+  ? localStorage.getItem(PANE_KEY)
+  : 'two';
+
+let paneStop = $state(storedStop);
+// The stop a docked profile borrows, and the one the cycle returns to from
+// hidden. Never 'hidden' — hidden is where you come back *from*, so a reader
+// who left the pane hidden last session returns to two columns.
+let lastOpenStop = $state(storedStop === 'hidden' ? 'two' : storedStop);
+
+export function getPaneStop() { return paneStop; }
+export function getLastOpenPaneStop() { return lastOpenStop; }
+export function paneWidthCSS(stop) { return PANE_CSS[stop] ?? PANE_CSS.two; }
+export function paneColumns(stop) { return PANE_COLUMNS[stop] ?? 2; }
+
+// The fraction of the window the pane covers — what the canvases take as
+// `insetRight`. Derived rather than stored so it can never drift from the
+// CSS width above; the 10px is the same 10px.
+export function paneFraction(stop, winW) {
+  if (stop === 'hidden' || !winW) return 0;
+  if (stop === 'one') return Math.min(0.5, 0.225 + 10 / winW);
+  return 0.45;
+}
+
+export function setPaneStop(stop) {
+  if (!PANE_STOPS.includes(stop)) return;
+  paneStop = stop;
+  if (stop !== 'hidden') lastOpenStop = stop;
+  localStorage.setItem(PANE_KEY, stop);
+}
+
+// Two columns -> one column -> hidden -> two columns. The chevron points the
+// way the pane's edge is about to travel, so the control never has to be
+// read to be understood.
+export function cyclePaneStop() {
+  setPaneStop(PANE_STOPS[(PANE_STOPS.indexOf(paneStop) + 1) % PANE_STOPS.length]);
+}
+
 // --- Loaders ---
 export async function loadInstance() {
   if (instanceLoaded) return;

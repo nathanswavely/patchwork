@@ -1,5 +1,5 @@
 <script>
-  import { Heart, Wrench, UsersThree, LinkBreak, FrameCorners } from 'phosphor-svelte';
+  import { Heart, Wrench, UsersThree, LinkBreak, FrameCorners, CaretLeft, CaretRight } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate, replaceRoute } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
@@ -21,6 +21,13 @@
     getInViewOnly,
     setInViewOnly,
     toggleInViewOnly,
+    getPaneStop,
+    getLastOpenPaneStop,
+    setPaneStop,
+    cyclePaneStop,
+    paneWidthCSS,
+    paneColumns,
+    paneFraction,
   } from '../stores/quilt.svelte.js';
   import {
     getRemoteFollows, findRemoteFollow,
@@ -90,18 +97,54 @@
     return list;
   });
 
-  // On desktop the cards panel floats over the right 45% of the canvas, so
-  // the quilt centers itself in the remaining left portion. On mobile the
-  // panes toggle full-screen instead — no inset.
   let winW = $state(window.innerWidth);
-  let quiltInset = $derived(winW <= 768 ? 0 : 0.45);
 
   // Which form the dock takes is a fact about the room, and this surface
-  // measures the room already — the same width the inset above reads.
+  // measures the room already — the same width the inset below reads.
   // Below the breakpoint there is no room beside the canvas, so a profile
   // docks at its foot; above it, the cards pane's slot is a profile wide
   // (docs/adr/094).
   let dockForm = $derived(winW <= 768 ? 'sheet' : 'panel');
+
+  // --- The cards pane's width (docs/adr/111) ---
+  // The reader's stop, and the one actually in force. They differ in exactly
+  // one case: a docked profile takes the pane's slot (docs/adr/094), and a
+  // zero-width slot is no slot. So hidden yields to the last open stop for as
+  // long as a profile is docked, and the stored stop is left alone —
+  // dismissing returns the pane to hidden. The room makes space for what was
+  // asked for without overwriting what was chosen.
+  let paneStop = $derived(getPaneStop());
+  let dockNeedsPane = $derived(!!dockedSlug && dockForm === 'panel');
+  let effectivePaneStop = $derived(
+    paneStop === 'hidden' && dockNeedsPane ? getLastOpenPaneStop() : paneStop
+  );
+  let paneHidden = $derived(winW > 768 && effectivePaneStop === 'hidden');
+
+  // On desktop the cards pane floats over the right of the canvas, so the
+  // quilt centers itself in the remaining left portion. On mobile the panes
+  // toggle full-screen instead — no inset, and no stops either.
+  let quiltInset = $derived(winW <= 768 ? 0 : paneFraction(effectivePaneStop, winW));
+
+  // The one published fact (docs/adr/111). `.cards-pane` sizes from it and
+  // the shell's filter chips clear their right edge with it — 45% used to be
+  // a literal in three places across two files, agreeing by luck. Set on the
+  // document element because the chips live in SocialShell, which is not this
+  // component's parent in any sense it could pass a prop through.
+  $effect(() => {
+    const w = winW <= 768 ? '100%' : paneWidthCSS(effectivePaneStop);
+    document.documentElement.style.setProperty('--pw-cards-pane-w', w);
+  });
+
+  // Where the button is going next, and which way the pane's edge travels to
+  // get there. The chevron is the whole message; the title names the stop.
+  let nextPaneStop = $derived(
+    paneStop === 'two' ? 'one' : paneStop === 'one' ? 'hidden' : 'two'
+  );
+  let paneButtonLabel = $derived(
+    nextPaneStop === 'one' ? 'Narrow the patch list to one column'
+      : nextPaneStop === 'hidden' ? 'Hide the patch list'
+      : 'Show the patch list'
+  );
 
   // Mobile view toggle. 'main' shows the full-bleed background pane (quilt
   // OR map, per the route); 'list' shows the patch cards. Quilt-vs-map stays
@@ -265,7 +308,13 @@
   // nobody can see is the silent-lens failure docs/adr/022 exists to prevent.
   // This is an absence, not a second behaviour: the lens needs two visible
   // panes, and mobile has one.
-  let lensAvailable = $derived(winW > 768);
+  //
+  // The hidden stop is that same case at desktop width (docs/adr/111), so the
+  // gate grows a second term rather than a second behaviour: there is no list
+  // to narrow and no header for the toggle to live in. Suspended and not
+  // cleared — the store keeps the setting, exactly as the mobile gate does,
+  // because it is the reader's and not this surface's to discard.
+  let lensAvailable = $derived(winW > 768 && !paneHidden);
   let inViewActive = $derived(lensAvailable && getInViewOnly());
 
   let filtered = $derived.by(() => {
@@ -578,7 +627,13 @@
        the same width, the list back the moment it is dismissed. The pill,
        the chips and the canvas around it are untouched, and the card the
        reader clicked grows into it. -->
-  <div class="cards-pane" class:mobile-hidden={mobileView !== 'list'}>
+  <div
+    class="cards-pane"
+    class:mobile-hidden={mobileView !== 'list'}
+    class:pane-hidden={paneHidden}
+    style="--pw-cards-columns: {paneColumns(effectivePaneStop)}"
+    inert={paneHidden || null}
+  >
     {#if dockedSlug && dockForm === 'panel'}
       <DockedProfile
         slug={dockedSlug}
@@ -622,6 +677,21 @@
           <option value="recent">Recently added</option>
           <option value="alpha">A→Z</option>
         </select>
+        <!-- The width control (docs/adr/111). It arranges the room rather
+             than the list, so it is the shell's by ADR 074's rule — but it
+             sits at the end of the list's header while there is a header to
+             sit in, because that is where a reader looks for it. At the
+             hidden stop it is the floating button on the canvas below. -->
+        {#if winW > 768}
+          <button
+            class="list-control pane-stop"
+            onclick={cyclePaneStop}
+            title={paneButtonLabel}
+            aria-label={paneButtonLabel}
+          >
+            <CaretRight size={14} weight="bold" />
+          </button>
+        {/if}
       </div>
     </div>
 
@@ -685,6 +755,24 @@
     {/if}
   </div>
 
+  <!-- The width control's other home (docs/adr/111). At the hidden stop the
+       header went down with the pane, so the control moves to the canvas
+       chrome layer — the same floating glass the view switcher and the chips
+       already share. One button, two homes, and only ever one of them on
+       screen: a control that can delete its own container has to survive
+       deleting it. The chevron points left because that is the way the
+       pane's edge travels to come back. -->
+  {#if paneHidden}
+    <button
+      class="pane-reopen"
+      onclick={() => setPaneStop(getLastOpenPaneStop())}
+      title={paneButtonLabel}
+      aria-label={paneButtonLabel}
+    >
+      <CaretLeft size={16} weight="bold" />
+    </button>
+  {/if}
+
   <!-- The profile docked as a sheet (docs/adr/094): the patch a reader
        touched, shown over the surface they touched it from rather than a
        card about it. A sibling of the panes rather than a child of the
@@ -745,22 +833,81 @@
      CARDS PANE — floats over the right side of the canvas; the pane
      itself is transparent so the quilt pans behind the cards
      ================================================================ */
+  /* The width is the reader's, at three stops (docs/adr/111), published as
+     one custom property so the shell's filter chips can clear the same edge
+     the pane occupies. 45% used to be written here, in quiltInset, and again
+     in SocialShell's chip offset — three literals agreeing by luck.
+     The transition matches the sidebar rail's, and the canvas re-centres over
+     the same duration so the quilt and this edge move together. */
   .cards-pane {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-    width: 45%;
+    width: var(--pw-cards-pane-w, 45%);
     display: flex;
     flex-direction: column;
     padding-top: 56px; /* clear the glass top bar */
     min-height: 0;
     z-index: 10;
+    transition: width 150ms ease;
   }
 
+  /* At the hidden stop the pane is zero-width and its contents are clipped
+     rather than unmounted, so the width transition has something to carry
+     out. Nothing inside can be reached or tabbed to on the way. */
+  .cards-pane.pane-hidden {
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* The way back in: canvas chrome, on the same floating layer and with the
+     same glass recipe as the view switcher, pinned to the edge the pane
+     vacated. */
+  .pane-reopen {
+    position: fixed;
+    top: 68px;
+    right: 12px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: var(--color-glass);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: 0 2px 12px var(--color-shadow);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 150ms ease;
+  }
+
+  .pane-reopen:hover {
+    color: var(--color-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cards-pane {
+      transition: none;
+    }
+  }
+
+  /* The header has to survive the one-column stop (docs/adr/111), where it
+     has roughly half the width it was drawn at. It wraps onto a second row
+     rather than squeezing: unwrapped, the count broke mid-phrase ("37 /
+     results"), "In view" broke across two lines, and the width control
+     itself was pushed off the end — a control that cannot be reached at one
+     of its own stops. `margin-left: auto` on the group keeps it right-
+     aligned on whichever row it lands on. */
   .cards-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
+    row-gap: 6px;
     gap: 8px;
     margin: 12px 16px 0;
     padding: 10px 14px;
@@ -780,6 +927,7 @@
   .cards-count {
     font-size: 0.8rem;
     color: var(--color-text-muted);
+    white-space: nowrap;
   }
 
   /* The list's own controls (docs/adr/074) — both change the list, so both
@@ -804,8 +952,16 @@
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-text-muted);
+    white-space: nowrap;
     cursor: pointer;
     transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  }
+
+  /* Icon only — the chevron's direction is the whole message, so the button
+     is square rather than a pill with a label that would not fit at the
+     stop it exists to reach. */
+  .list-control.pane-stop {
+    padding: 4px 7px;
   }
 
   .list-control:hover,
@@ -834,9 +990,16 @@
     display: none;
   }
 
+  /* The column count comes from the stop, not from the width (docs/adr/111).
+     The project's `repeat(auto-fill, minmax(...))` idiom is the wrong tool
+     here and was tried first: auto-fill derives columns *from* width, while
+     the stop derives width *from* columns, and above ~1600px the two
+     disagree — the one-column stop would have shown two columns on a 1920
+     window and three on a 2560 one. A count computed from the same stop the
+     width is cannot disagree with it. Mobile keeps its own rule below. */
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(var(--pw-cards-columns, 2), minmax(0, 1fr));
     gap: 12px;
   }
 
@@ -1171,6 +1334,18 @@
       flex: 1;
       padding-top: 68px;
       background: var(--color-bg);
+    }
+
+    /* The stops are desktop-only (docs/adr/111) — below the breakpoint the
+       panes toggle full-screen, so there is no width to divide and no header
+       for the control to live in. The phone keeps the two columns it has
+       always had, whatever stop was last set on a wide screen. */
+    .cards-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pane-reopen {
+      display: none;
     }
 
     .cards-scroll {
