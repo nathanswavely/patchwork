@@ -1775,6 +1775,47 @@ palette primary.
 Distinct from tag colors, which color tags, not patches.
 _Avoid_: brand color, accent
 
+**Muted colors**:
+The second way a patch's colors are drawn: every fabric in its tile becomes
+that patch's identity color at a fixed lightness step, with chroma only ever
+capped, never added. The lightness ramp is shared by every tile, so a muted
+quilt varies by hue alone — and a patch that chose neutrals stays neutral,
+because nothing is invented for it. It reaches every colour that stands for
+something — tiles, card covers, map markers, profile banners, tag chips,
+neighbour-quilt sashing — with one exception: the **block drafter** always
+draws Default, because a tool for choosing fabric must show the fabric that
+was chosen. The block, the rotation and the stored bundle are untouched:
+what changes is how a viewer is shown them, never what the patch chose.
+Every instance opens in Default, and no instance setting moves that —
+Default is the intent, Muted is the accommodation.
+_Avoid_: theme (that is light/dark), appearance (that is the patch's own
+tile design), palette (that is a pre-cut bundle), quilt mode (a CSS class
+already means "on a quilt route"), calm/quiet/low-stimulation mode (they
+name a complaint rather than the colours), accessibility mode
+
+**Hover dim**:
+The scrim every tile *except* the hovered one takes while a pointer rests on
+the quilt, so the tile under the pointer is the one at full strength. A
+behaviour, not a preference — nothing to set and nothing to persist. It dims
+rather than mutes, deliberately: **Muted colors** owns chroma, so a hover
+that muted would do nothing at all for a reader already in Muted. It engages
+after a short dwell and holds while the pointer crosses between tiles, for
+the reason the name badges hold theirs — a whole-canvas scrim flipping at
+every tile boundary strobes. Desktop only; a touch reader gets the docked
+profile instead (docs/adr/094).
+_Avoid_: spotlight, focus mode, highlight (the hovered tile is not
+brightened — everything else is dimmed), muting (that is the standing
+colour choice)
+
+**Display menu**:
+The two standing choices a viewer makes about how Patchwork looks to them —
+**Theme** (light · dark · system) and **Colors** (default · muted). Held per
+browser, never on the account, so it reaches a reader with no account; it
+sits in the account menu in the global bar when signed in and in that same
+slot when signed out, so the control does not move when somebody joins.
+_Avoid_: settings (that is the Settings page), preferences, appearance,
+view options
+
 **Ink on fabric**:
 Anything drawn over a patch's own fabric rather than over a theme surface
 — the cover's name and stats, the unclaimed mark's disc, the block

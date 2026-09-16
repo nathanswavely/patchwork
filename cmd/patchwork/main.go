@@ -731,6 +731,9 @@ func main() {
 	mux.HandleFunc("GET /api/v1/admin/event-submissions", middleware.AdminRequired(db, handler.ListAdminEventSubmissions(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/claim", middleware.AuthRequired(db, handler.RequestClaim(db, cfg)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/claims/mine", middleware.AuthRequired(db, handler.MyClaim(db, cfg)))
+	// Every open claim the caller holds, across patches — My Patches is built
+	// from memberships and an approved claimant has none yet (docs/adr/039).
+	mux.HandleFunc("GET /api/v1/users/me/claims", middleware.AuthRequired(db, handler.MyClaims(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/verify", middleware.AuthRequired(db, handler.VerifyClaim(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/withdraw", middleware.AuthRequired(db, handler.WithdrawClaim(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/resend-email", middleware.AuthRequired(db, handler.ResendClaimEmail(db, cfg)))
