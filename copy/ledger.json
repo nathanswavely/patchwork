@@ -28796,7 +28796,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 20,
+          "line": 38,
           "kind": "js-string",
           "raw": "Adolescents, 1981",
           "quote": "'"
@@ -28814,7 +28814,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 28,
+          "line": 46,
           "kind": "js-string",
           "raw": "Pink Razors",
           "quote": "'"
@@ -28832,7 +28832,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 29,
+          "line": 47,
           "kind": "js-string",
           "raw": "Chixdiggit!, 2005",
           "quote": "'"
@@ -28850,7 +28850,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 37,
+          "line": 55,
           "kind": "js-string",
           "raw": "Greatest Songs",
           "quote": "'"
@@ -28868,7 +28868,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 38,
+          "line": 56,
           "kind": "js-string",
           "raw": "NOFX, 2004",
           "quote": "'"
@@ -28886,7 +28886,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 46,
+          "line": 64,
           "kind": "js-string",
           "raw": "Allroy's Revenge",
           "quote": "\""
@@ -28904,7 +28904,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 47,
+          "line": 65,
           "kind": "js-string",
           "raw": "All, 1989",
           "quote": "'"
@@ -28922,7 +28922,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 56,
+          "line": 74,
           "kind": "js-string",
           "raw": "Less Than Jake, 2003",
           "quote": "'"
@@ -28940,7 +28940,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 64,
+          "line": 82,
           "kind": "js-string",
           "raw": "All the Shoes",
           "quote": "'"
@@ -28958,7 +28958,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 65,
+          "line": 83,
           "kind": "js-string",
           "raw": "NOFX, 1997",
           "quote": "'"
@@ -28976,7 +28976,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 73,
+          "line": 91,
           "kind": "js-string",
           "raw": "Bottles to the Ground",
           "quote": "'"
@@ -28994,7 +28994,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 74,
+          "line": 92,
           "kind": "js-string",
           "raw": "NOFX, 2000",
           "quote": "'"
@@ -29012,7 +29012,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 82,
+          "line": 100,
           "kind": "js-string",
           "raw": "Liberal Animation",
           "quote": "'"
@@ -29030,7 +29030,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/quiltTheme.js",
-          "line": 83,
+          "line": 101,
           "kind": "js-string",
           "raw": "NOFX, 1988",
           "quote": "'"
@@ -45695,19 +45695,19 @@
       ]
     },
     {
-      "id": "457041671cbc",
-      "text": "Pre-cut bundles from the record crate. Picking one fills your fabrics below.",
-      "words": 12,
+      "id": "7d58d1d5ad45",
+      "text": "Pre-cut bundles. Picking one fills your fabrics below.",
+      "words": 8,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Was 'Pre-cut bundles from the record crate.' The crate described all eight palettes; docs/adr/112 added eighteen wall cuts to the same picker, so it described 8 of 26. The flourish was dropped rather than rewritten — putting voice back here is a human call, not a mechanical one.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsAppearance.svelte",
           "line": 248,
           "kind": "markup",
-          "raw": "Pre-cut bundles from the record crate. Picking one fills your fabrics below.",
+          "raw": "Pre-cut bundles. Picking one fills your fabrics below.",
           "quote": null
         }
       ]
