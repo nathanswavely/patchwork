@@ -814,7 +814,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 223,
+          "line": 226,
           "kind": "js-string",
           "raw": "Bands, solo artists, pop-up projects",
           "quote": "'"
@@ -839,7 +839,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 224,
+          "line": 227,
           "kind": "js-string",
           "raw": "Small group. Majority rules.",
           "quote": "'"
@@ -901,7 +901,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 225,
+          "line": 228,
           "kind": "js-string",
           "raw": "Open community, structured process. Trust builds through contribution.",
           "quote": "'"
@@ -945,7 +945,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 226,
+          "line": 229,
           "kind": "js-string",
           "raw": "Coalition-scale governance. Elected council, term limits, full accountability.",
           "quote": "'"
@@ -977,7 +977,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 226,
+          "line": 229,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -4010,14 +4010,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 717,
+          "line": 730,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 919,
+          "line": 963,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4172,6 +4172,13 @@
         {
           "file": "internal/handler/succession.go",
           "line": 290,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/tags.go",
+          "line": 544,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4637,14 +4644,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 907,
+          "line": 951,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1242,
+          "line": 1316,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5049,7 +5056,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1159,
+          "line": 1232,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5565,14 +5572,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 913,
+          "line": 957,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1248,
+          "line": 1322,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -8566,6 +8573,13 @@
         {
           "file": "internal/handler/notifications.go",
           "line": 405,
+          "kind": "go-error-body",
+          "raw": "patch not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/tags.go",
+          "line": 446,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -13037,14 +13051,21 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 721,
+          "line": 734,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
         },
         {
           "file": "internal/handler/tags.go",
-          "line": 70,
+          "line": 170,
+          "kind": "go-error-body",
+          "raw": "name is required",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/tags.go",
+          "line": 175,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -13076,14 +13097,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 731,
+          "line": 744,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1039,
+          "line": 1083,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
@@ -13101,7 +13122,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 736,
+          "line": 749,
           "kind": "go-error-body",
           "raw": "membership_policy must be one of %s",
           "quote": null
@@ -13119,7 +13140,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 793,
+          "line": 813,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -13137,7 +13158,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 992,
+          "line": 1036,
           "kind": "go-error-body",
           "raw": "failed to read this patch's calendar",
           "quote": null
@@ -13155,7 +13176,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1050,
+          "line": 1094,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -13173,7 +13194,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1056,
+          "line": 1100,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -13191,7 +13212,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1068,
+          "line": 1112,
           "kind": "go-error-body",
           "raw": "public_member_list must be one of %s",
           "quote": null
@@ -13209,14 +13230,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1091,
+          "line": 1135,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1098,
+          "line": 1142,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -13234,9 +13255,34 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1109,
+          "line": 1156,
           "kind": "go-error-body",
           "raw": "failed to update tags",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cb2d47ea0c3c",
+      "text": "suggest_tags must be an array of tag names",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 1165,
+          "kind": "go-error-body",
+          "raw": "suggest_tags must be an array of tag names",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 1172,
+          "kind": "go-error-body",
+          "raw": "suggest_tags must be an array of tag names",
           "quote": null
         }
       ]
@@ -13252,7 +13298,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1171,
+          "line": 1244,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -13270,7 +13316,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1180,
+          "line": 1253,
           "kind": "go-error-body",
           "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
@@ -13288,7 +13334,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1256,
+          "line": 1330,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -16216,9 +16262,45 @@
       "occurrences": [
         {
           "file": "internal/handler/tags.go",
-          "line": 40,
+          "line": 132,
           "kind": "go-error-body",
           "raw": "failed to list tags",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3578591ecfda",
+      "text": "tag already exists",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 187,
+          "kind": "go-error-body",
+          "raw": "tag already exists",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "afc34ac3ca01",
+      "text": "failed to create tag",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 197,
+          "kind": "go-error-body",
+          "raw": "failed to create tag",
           "quote": null
         }
       ]
@@ -16234,7 +16316,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tags.go",
-          "line": 81,
+          "line": 212,
           "kind": "go-error-body",
           "raw": "tag already exists or failed to create",
           "quote": null
@@ -16252,14 +16334,14 @@
       "occurrences": [
         {
           "file": "internal/handler/tags.go",
-          "line": 98,
+          "line": 237,
           "kind": "go-error-body",
           "raw": "tag id required",
           "quote": null
         },
         {
           "file": "internal/handler/tags.go",
-          "line": 138,
+          "line": 277,
           "kind": "go-error-body",
           "raw": "tag id required",
           "quote": null
@@ -16277,7 +16359,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tags.go",
-          "line": 106,
+          "line": 245,
           "kind": "go-error-body",
           "raw": "motif is required (empty string clears it)",
           "quote": null
@@ -16295,7 +16377,7 @@
       "occurrences": [
         {
           "file": "internal/handler/tags.go",
-          "line": 116,
+          "line": 255,
           "kind": "go-error-body",
           "raw": "failed to update tag",
           "quote": null
@@ -16313,14 +16395,14 @@
       "occurrences": [
         {
           "file": "internal/handler/tags.go",
-          "line": 121,
+          "line": 260,
           "kind": "go-error-body",
           "raw": "tag not found",
           "quote": null
         },
         {
           "file": "internal/handler/tags.go",
-          "line": 151,
+          "line": 290,
           "kind": "go-error-body",
           "raw": "tag not found",
           "quote": null
@@ -16338,9 +16420,207 @@
       "occurrences": [
         {
           "file": "internal/handler/tags.go",
-          "line": 146,
+          "line": 285,
           "kind": "go-error-body",
           "raw": "failed to delete tag",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7ce2662454e5",
+      "text": "only patch admins can withdraw a suggested tag",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 450,
+          "kind": "go-error-body",
+          "raw": "only patch admins can withdraw a suggested tag",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0fb7259f737d",
+      "text": "failed to withdraw suggested tag",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 460,
+          "kind": "go-error-body",
+          "raw": "failed to withdraw suggested tag",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "072980305556",
+      "text": "no such suggested tag on this patch",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 464,
+          "kind": "go-error-body",
+          "raw": "no such suggested tag on this patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "48928c39ed36",
+      "text": "failed to list tag suggestions",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 495,
+          "kind": "go-error-body",
+          "raw": "failed to list tag suggestions",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a45ab4ac0655",
+      "text": "suggestion not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 550,
+          "kind": "go-error-body",
+          "raw": "suggestion not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "99af37a6a64b",
+      "text": "that tag is not awaiting review",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 554,
+          "kind": "go-error-body",
+          "raw": "that tag is not awaiting review",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b82086fb5095",
+      "text": "failed to reject suggestion",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 571,
+          "kind": "go-error-body",
+          "raw": "failed to reject suggestion",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6c8feab6f85d",
+      "text": "that is not a usable tag name",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 582,
+          "kind": "go-error-body",
+          "raw": "that is not a usable tag name",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "82c28ca64251",
+      "text": "failed to rename suggestion",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 612,
+          "kind": "go-error-body",
+          "raw": "failed to rename suggestion",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a8f071a3431b",
+      "text": "failed to approve suggestion",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 627,
+          "kind": "go-error-body",
+          "raw": "failed to approve suggestion",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "58846e28ecd0",
+      "text": "action must be approve or reject",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/handler/tags.go",
+          "line": 637,
+          "kind": "go-error-body",
+          "raw": "action must be approve or reject",
           "quote": null
         }
       ]
@@ -17181,19 +17461,19 @@
       ]
     },
     {
-      "id": "57aab4d833e7",
-      "text": "Claim requests, submissions",
-      "words": 3,
+      "id": "24fe74812a42",
+      "text": "Claim requests, submissions, suggested tags",
+      "words": 5,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
           "line": 37,
           "kind": "go-string",
-          "raw": "Claim requests, submissions",
+          "raw": "Claim requests, submissions, suggested tags",
           "quote": "\""
         }
       ]
@@ -17263,7 +17543,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 238,
+          "line": 247,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -17281,7 +17561,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 239,
+          "line": 248,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -17299,7 +17579,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 240,
+          "line": 249,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -17317,7 +17597,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 241,
+          "line": 250,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -17335,7 +17615,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 242,
+          "line": 251,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -17353,7 +17633,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 243,
+          "line": 252,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -17371,7 +17651,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 244,
+          "line": 253,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -17389,7 +17669,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 252,
+          "line": 261,
           "kind": "go-string",
           "raw": "Voting ends in 24 hours and you have not voted",
           "quote": "\""
@@ -17407,7 +17687,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 259,
+          "line": 268,
           "kind": "go-string",
           "raw": "An open vote you can take part in",
           "quote": "\""
@@ -17425,7 +17705,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 260,
+          "line": 269,
           "kind": "go-string",
           "raw": "A vote you have not cast is short of quorum",
           "quote": "\""
@@ -17443,7 +17723,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 262,
+          "line": 271,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -17461,7 +17741,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 267,
+          "line": 276,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -17479,7 +17759,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 268,
+          "line": 277,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -17497,7 +17777,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 269,
+          "line": 278,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -17515,7 +17795,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 270,
+          "line": 279,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -17533,7 +17813,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 271,
+          "line": 280,
           "kind": "go-string",
           "raw": "A ratified nomination had no seat",
           "quote": "\""
@@ -17551,7 +17831,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 272,
+          "line": 281,
           "kind": "go-string",
           "raw": "This patch has no admins",
           "quote": "\""
@@ -17569,7 +17849,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 273,
+          "line": 282,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -17587,7 +17867,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 275,
+          "line": 284,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -17605,7 +17885,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 276,
+          "line": 285,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -17623,7 +17903,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 277,
+          "line": 286,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -17641,7 +17921,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 278,
+          "line": 287,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -17659,7 +17939,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 279,
+          "line": 288,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -17677,7 +17957,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 280,
+          "line": 289,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -17695,7 +17975,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 281,
+          "line": 290,
           "kind": "go-string",
           "raw": "You're invited to join a patch",
           "quote": "\""
@@ -17713,7 +17993,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 283,
+          "line": 292,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -17731,7 +18011,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 284,
+          "line": 293,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -17749,9 +18029,45 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 285,
+          "line": 294,
           "kind": "go-string",
           "raw": "Your event was declined",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "b33a83e8ebcf",
+      "text": "A tag you suggested was approved",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 299,
+          "kind": "go-string",
+          "raw": "A tag you suggested was approved",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "892d9a6d484c",
+      "text": "A tag you suggested was declined",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 300,
+          "kind": "go-string",
+          "raw": "A tag you suggested was declined",
           "quote": "\""
         }
       ]
@@ -17767,7 +18083,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 287,
+          "line": 302,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -17785,7 +18101,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 288,
+          "line": 303,
           "kind": "go-string",
           "raw": "Event link confirmed",
           "quote": "\""
@@ -17803,7 +18119,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 292,
+          "line": 307,
           "kind": "go-string",
           "raw": "A listing matched one of your programs",
           "quote": "\""
@@ -17821,7 +18137,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 297,
+          "line": 312,
           "kind": "go-string",
           "raw": "A notice for your patch",
           "quote": "\""
@@ -17839,7 +18155,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 298,
+          "line": 313,
           "kind": "go-string",
           "raw": "Reply on a notice you're in",
           "quote": "\""
@@ -17857,7 +18173,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 299,
+          "line": 314,
           "kind": "go-string",
           "raw": "A notice or reply was reported",
           "quote": "\""
@@ -17875,7 +18191,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 301,
+          "line": 316,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -17893,9 +18209,27 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 302,
+          "line": 317,
           "kind": "go-string",
           "raw": "New patch submission",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "a93edc237329",
+      "text": "A tag was suggested",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 318,
+          "kind": "go-string",
+          "raw": "A tag was suggested",
           "quote": "\""
         }
       ]
@@ -17911,7 +18245,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 303,
+          "line": 319,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -17929,7 +18263,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 304,
+          "line": 320,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
           "quote": "\""
@@ -17947,7 +18281,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 306,
+          "line": 322,
           "kind": "go-string",
           "raw": "Your claim was approved",
           "quote": "\""
@@ -17965,7 +18299,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 311,
+          "line": 327,
           "kind": "go-string",
           "raw": "New patches this month",
           "quote": "\""
@@ -17983,7 +18317,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 312,
+          "line": 328,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -20175,7 +20509,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 700,
+          "line": 733,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -20322,6 +20656,13 @@
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
           "line": 136,
+          "kind": "js-string",
+          "raw": "Failed to withdraw",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 179,
           "kind": "js-string",
           "raw": "Failed to withdraw",
           "quote": "'"
@@ -20835,7 +21176,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 376,
+          "line": 401,
           "kind": "js-string",
           "raw": "Failed to remove link",
           "quote": "'"
@@ -21414,7 +21755,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 539,
+          "line": 548,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -21918,7 +22259,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 295,
+          "line": 320,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -24642,6 +24983,13 @@
         {
           "file": "web/src/components/ProposalStatusBanner.svelte",
           "line": 98,
+          "kind": "js-string",
+          "raw": "Failed to decide",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 64,
           "kind": "js-string",
           "raw": "Failed to decide",
           "quote": "'"
@@ -27467,6 +27815,24 @@
       ]
     },
     {
+      "id": "f2e0aaf12286",
+      "text": "Enter a word to suggest.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 75,
+          "kind": "js-string",
+          "raw": "Enter a word to suggest.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "4d0ab4a16ff2",
       "text": "Selected tags, in priority order",
       "words": 5,
@@ -27477,7 +27843,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 41,
+          "line": 107,
           "kind": "attr:aria-label",
           "raw": "Selected tags, in priority order",
           "quote": "\""
@@ -27495,7 +27861,14 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 56,
+          "line": 122,
+          "kind": "attr:title",
+          "raw": "Remove",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 157,
           "kind": "attr:title",
           "raw": "Remove",
           "quote": "\""
@@ -27516,9 +27889,81 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 392,
+          "line": 400,
           "kind": "markup",
           "raw": "Remove",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0522936be707",
+      "text": "Suggested tags awaiting review",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 131,
+          "kind": "attr:aria-label",
+          "raw": "Suggested tags awaiting review",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "80cfa3e7f28d",
+      "text": "waiting",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "waiting",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "164546a9c548",
+      "text": "Withdraw",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 142,
+          "kind": "attr:title",
+          "raw": "Withdraw",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "c0d99120fe84",
+      "text": "to suggest",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 151,
+          "kind": "markup",
+          "raw": "to suggest",
           "quote": null
         }
       ]
@@ -27534,7 +27979,7 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 65,
+          "line": 166,
           "kind": "attr:aria-label",
           "raw": "Available tags",
           "quote": "\""
@@ -27552,9 +27997,81 @@
       "occurrences": [
         {
           "file": "web/src/components/TagPicker.svelte",
-          "line": 79,
+          "line": 180,
           "kind": "markup",
           "raw": "No tags yet. The instance admin curates the list.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e74d61c267f0",
+      "text": "Suggest a tag",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 186,
+          "kind": "attr:placeholder",
+          "raw": "Suggest a tag",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "1b29cba9d72a",
+      "text": "Suggest a tag that is not on the list",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 190,
+          "kind": "attr:aria-label",
+          "raw": "Suggest a tag that is not on the list",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "4effad823b04",
+      "text": "Suggest",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 198,
+          "kind": "markup",
+          "raw": "Suggest",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4a003e609a52",
+      "text": "A suggested tag stays on this patch privately until an admin adds it to the quilt's tags.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TagPicker.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "A suggested tag stays on this patch privately until an admin adds it to\n      the quilt's tags.",
           "quote": null
         }
       ]
@@ -30209,7 +30726,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 327,
+          "line": 352,
           "kind": "js-string",
           "raw": "Could not save that link",
           "quote": "'"
@@ -30338,14 +30855,14 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 275,
+          "line": 278,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 333,
+          "line": 341,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -30570,7 +31087,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 627,
+          "line": 652,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -30878,7 +31395,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 665,
+          "line": 690,
           "kind": "attr:placeholder",
           "raw": "Label (optional)",
           "quote": "\""
@@ -35100,7 +35617,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 372,
+          "line": 380,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -36011,21 +36528,21 @@
         },
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 82,
+          "line": 114,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 416,
+          "line": 424,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 687,
+          "line": 712,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -36112,6 +36629,49 @@
       ]
     },
     {
+      "id": "aa8c2c2dae7f",
+      "text": "Tag added to the vocabulary",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 60,
+          "kind": "js-string",
+          "raw": "Tag added to the vocabulary",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8a52d2824570",
+      "text": "Suggestion declined",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 60,
+          "kind": "js-string",
+          "raw": "Suggestion declined",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchEvents.svelte",
+          "line": 89,
+          "kind": "js-string",
+          "raw": "Suggestion declined",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "6658557065dd",
       "text": "Tag created",
       "words": 2,
@@ -36122,7 +36682,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 47,
+          "line": 79,
           "kind": "js-string",
           "raw": "Tag created",
           "quote": "'"
@@ -36140,7 +36700,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 51,
+          "line": 83,
           "kind": "js-string",
           "raw": "Failed to create tag",
           "quote": "'"
@@ -36158,7 +36718,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 61,
+          "line": 93,
           "kind": "js-string",
           "raw": "Motif set",
           "quote": "'"
@@ -36176,7 +36736,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 61,
+          "line": 93,
           "kind": "js-string",
           "raw": "Motif cleared",
           "quote": "'"
@@ -36194,7 +36754,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 65,
+          "line": 97,
           "kind": "js-string",
           "raw": "Failed to update tag",
           "quote": "'"
@@ -36212,7 +36772,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 72,
+          "line": 104,
           "kind": "js-string",
           "raw": "Tag deleted",
           "quote": "'"
@@ -36230,7 +36790,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 76,
+          "line": 108,
           "kind": "js-string",
           "raw": "Failed to delete tag",
           "quote": "'"
@@ -36248,10 +36808,64 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 84,
+          "line": 116,
           "kind": "markup",
           "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c5fb2453fe2c",
+      "text": "Suggested tags",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 124,
+          "kind": "markup",
+          "raw": "Suggested tags",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "571baca9a41a",
+      "text": "Words patch admins asked for. A suggestion sits privately on the patch that asked until you add it here. Approving publishes it on every patch waiting on it; declining removes it from them and spends the word, though you can still add it yourself later.",
+      "words": 45,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 126,
+          "kind": "markup",
+          "raw": "Words patch admins asked for. A suggestion sits privately on the\n        patch that asked until you add it here. Approving publishes it on\n        every patch waiting on it; declining removes it from them and spends\n        the word, though you can still add it yourself later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "eb0231b1ba09",
+      "text": "Tag name, editable before approving",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 140,
+          "kind": "attr:aria-label",
+          "raw": "Tag name, editable before approving",
+          "quote": "\""
         }
       ]
     },
@@ -36266,7 +36880,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 93,
+          "line": 176,
           "kind": "attr:placeholder",
           "raw": "New tag name (e.g. music)",
           "quote": "\""
@@ -36284,7 +36898,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 107,
+          "line": 190,
           "kind": "markup",
           "raw": "No tags yet. Add the first one above.",
           "quote": null
@@ -36302,7 +36916,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 122,
+          "line": 205,
           "kind": "attr:title",
           "raw": "Change motif",
           "quote": "\""
@@ -38386,7 +39000,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 350,
+          "line": 358,
           "kind": "markup",
           "raw": "Create Patch",
           "quote": null
@@ -39638,7 +40252,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 426,
+          "line": 451,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -39713,7 +40327,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 412,
+          "line": 420,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -39727,21 +40341,21 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 563,
+          "line": 588,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 608,
+          "line": 633,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 659,
+          "line": 684,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -39869,7 +40483,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 610,
+          "line": 635,
           "kind": "attr:placeholder",
           "raw": "Describe the image",
           "quote": "\""
@@ -41281,7 +41895,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 527,
+          "line": 536,
           "kind": "markup",
           "raw": "The lining",
           "quote": null
@@ -43699,24 +44313,6 @@
       ]
     },
     {
-      "id": "8a52d2824570",
-      "text": "Suggestion declined",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 89,
-          "kind": "js-string",
-          "raw": "Suggestion declined",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "0defe006535a",
       "text": "Failed to review",
       "words": 3,
@@ -44155,7 +44751,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 226,
+          "line": 229,
           "kind": "js-string",
           "raw": "Arts districts, coalitions (100+ people)",
           "quote": "'"
@@ -44173,7 +44769,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 230,
+          "line": 233,
           "kind": "js-string",
           "raw": "Name is required",
           "quote": "'"
@@ -44198,7 +44794,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 231,
+          "line": 234,
           "kind": "js-string",
           "raw": "Choose who can join",
           "quote": "'"
@@ -44216,7 +44812,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 268,
+          "line": 271,
           "kind": "js-string",
           "raw": "Your setup window has expired. The patch is claimable again.",
           "quote": "'"
@@ -44234,7 +44830,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 271,
+          "line": 274,
           "kind": "js-string",
           "raw": "This patch is no longer claimable.",
           "quote": "'"
@@ -44252,7 +44848,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 274,
+          "line": 277,
           "kind": "js-string",
           "raw": "Failed to complete setup",
           "quote": "'"
@@ -44270,7 +44866,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 296,
+          "line": 300,
           "kind": "js-string",
           "raw": "This patch is yours",
           "quote": "'"
@@ -44288,7 +44884,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 298,
+          "line": 302,
           "kind": "js-string",
           "raw": "Patch set up. Finish edits in Patch Settings.",
           "quote": "'"
@@ -44306,7 +44902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 329,
+          "line": 337,
           "kind": "js-string",
           "raw": "Patch created",
           "quote": "'"
@@ -44324,7 +44920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 332,
+          "line": 340,
           "kind": "js-string",
           "raw": "Failed to create patch",
           "quote": "'"
@@ -44342,7 +44938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 344,
+          "line": 352,
           "kind": "markup",
           "raw": "Set up your patch",
           "quote": null
@@ -44360,7 +44956,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 345,
+          "line": 353,
           "kind": "markup",
           "raw": "Complete this patch's details to activate it.",
           "quote": null
@@ -44378,7 +44974,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 347,
+          "line": 355,
           "kind": "markup",
           "raw": "Approval expires {formatExpiry(expiresAt)}.",
           "quote": null
@@ -44396,7 +44992,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 351,
+          "line": 359,
           "kind": "markup",
           "raw": "Start a new community, collective, venue, or group.",
           "quote": null
@@ -44414,7 +45010,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 353,
+          "line": 361,
           "kind": "markup",
           "raw": "Creating a patch makes you its admin. Know a group that isn't yours to run?",
           "quote": null
@@ -44432,7 +45028,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 353,
+          "line": 361,
           "kind": "markup",
           "raw": "instead.",
           "quote": null
@@ -44450,14 +45046,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 360,
+          "line": 368,
           "kind": "markup",
           "raw": "Address",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 380,
+          "line": 388,
           "kind": "markup",
           "raw": "Address",
           "quote": null
@@ -44482,7 +45078,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 362,
+          "line": 370,
           "kind": "markup",
           "raw": "This is the patch's existing address.",
           "quote": null
@@ -44500,7 +45096,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 367,
+          "line": 375,
           "kind": "markup",
           "raw": "Name",
           "quote": null
@@ -44525,7 +45121,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 368,
+          "line": 376,
           "kind": "attr:placeholder",
           "raw": "e.g. Gallery Row, Lancaster Beats Lab",
           "quote": "\""
@@ -44543,7 +45139,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 373,
+          "line": 381,
           "kind": "attr:placeholder",
           "raw": "What is this patch about?",
           "quote": "\""
@@ -44561,7 +45157,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 386,
+          "line": 394,
           "kind": "attr:placeholder",
           "raw": "Where is this based?",
           "quote": "\""
@@ -44579,7 +45175,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 392,
+          "line": 400,
           "kind": "markup",
           "raw": "On the map.",
           "quote": null
@@ -44597,14 +45193,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 395,
+          "line": 403,
           "kind": "markup",
           "raw": "Looking for this address...",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 526,
+          "line": 551,
           "kind": "markup",
           "raw": "Looking for this address...",
           "quote": null
@@ -44622,7 +45218,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 411,
+          "line": 419,
           "kind": "markup",
           "raw": "Website",
           "quote": null
@@ -44637,19 +45233,19 @@
       ]
     },
     {
-      "id": "1a167911d32d",
-      "text": "What kind of patch is this? Tags help people find you, and new patches are placed near others with the same tags on the quilt. The first tag decides your default motif.",
-      "words": 32,
+      "id": "a0af8b3f34e1",
+      "text": "What kind of patch is this? Tags help people find you, and new patches are placed near others with the same tags on the quilt. The first tag decides your default motif. Missing a word? Suggest it, and an admin decides whether it joins the quilt's tags.",
+      "words": 47,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 418,
+          "line": 426,
           "kind": "markup",
-          "raw": "What kind of patch is this? Tags help people find you, and new\n            patches are placed near others with the same tags on the quilt.\n            The first tag decides your default motif.",
+          "raw": "What kind of patch is this? Tags help people find you, and new\n            patches are placed near others with the same tags on the quilt.\n            The first tag decides your default motif. Missing a word? Suggest\n            it, and an admin decides whether it joins the quilt's tags.",
           "quote": null
         }
       ]
@@ -44665,7 +45261,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 426,
+          "line": 435,
           "kind": "markup",
           "raw": "Tile",
           "quote": null
@@ -44683,7 +45279,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 428,
+          "line": 437,
           "kind": "markup",
           "raw": "How this patch looks on the quilt. You can change it anytime\n            in Patch Settings → Appearance, and draft your own block there too.",
           "quote": null
@@ -44701,7 +45297,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 440,
+          "line": 449,
           "kind": "attr:aria-label",
           "raw": "Tile preview",
           "quote": "\""
@@ -44726,7 +45322,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 447,
+          "line": 456,
           "kind": "attr:title",
           "raw": "Rotate 90°",
           "quote": "\""
@@ -44751,7 +45347,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 453,
+          "line": 462,
           "kind": "attr:aria-label",
           "raw": "Palette",
           "quote": "\""
@@ -44776,7 +45372,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 472,
+          "line": 481,
           "kind": "attr:aria-label",
           "raw": "Block",
           "quote": "\""
@@ -44801,7 +45397,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 500,
+          "line": 509,
           "kind": "markup",
           "raw": "Motif",
           "quote": null
@@ -44826,7 +45422,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 502,
+          "line": 511,
           "kind": "markup",
           "raw": "Optional. The mark that appears beside the name on the quilt.\n            Unset, it follows your first tag. You can change it later in\n            Patch Settings.",
           "quote": null
@@ -44844,7 +45440,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 529,
+          "line": 538,
           "kind": "markup",
           "raw": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
           "quote": null
@@ -44863,7 +45459,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 547,
+          "line": 556,
           "kind": "markup",
           "raw": "Who can join",
           "quote": null
@@ -44881,7 +45477,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 563,
+          "line": 572,
           "kind": "markup",
           "raw": "Governance Template",
           "quote": null
@@ -44899,7 +45495,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 564,
+          "line": 573,
           "kind": "markup",
           "raw": "How should this patch be organized? You can change this later.",
           "quote": null
@@ -45857,6 +46453,24 @@
       ]
     },
     {
+      "id": "a00bf005ee2a",
+      "text": "Tags saved, suggestions sent for review",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 155,
+          "kind": "js-string",
+          "raw": "Tags saved, suggestions sent for review",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "c0eb2c23aa70",
       "text": "Tags saved",
       "words": 2,
@@ -45867,7 +46481,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 144,
+          "line": 155,
           "kind": "js-string",
           "raw": "Tags saved",
           "quote": "'"
@@ -45885,7 +46499,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 148,
+          "line": 160,
           "kind": "js-string",
           "raw": "Failed to save tags",
           "quote": "'"
@@ -45903,14 +46517,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 185,
+          "line": 210,
           "kind": "js-string",
           "raw": "Failed to save the timezone",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 207,
+          "line": 232,
           "kind": "js-string",
           "raw": "Failed to save the timezone",
           "quote": "'"
@@ -45928,7 +46542,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 250,
+          "line": 275,
           "kind": "js-string",
           "raw": "Could not save the image",
           "quote": "'"
@@ -45946,7 +46560,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 263,
+          "line": 288,
           "kind": "js-string",
           "raw": "On the quilt. Anyone can find this patch through the quilt, search, the map, and public event feeds, and other quilts can follow it.",
           "quote": "'"
@@ -45964,7 +46578,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 269,
+          "line": 294,
           "kind": "js-string",
           "raw": "Off the quilt. Kept out of the quilt, search, the map, and public feeds, and it does not federate.",
           "quote": "'"
@@ -45982,7 +46596,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 281,
+          "line": 306,
           "kind": "js-string",
           "raw": "Failed to save visibility",
           "quote": "'"
@@ -46000,7 +46614,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 361,
+          "line": 386,
           "kind": "js-string",
           "raw": "Could not save that date",
           "quote": "'"
@@ -46018,7 +46632,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 373,
+          "line": 398,
           "kind": "js-string",
           "raw": "Link removed",
           "quote": "'"
@@ -46036,7 +46650,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 392,
+          "line": 417,
           "kind": "js-string",
           "raw": "Link added",
           "quote": "'"
@@ -46054,7 +46668,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 395,
+          "line": 420,
           "kind": "js-string",
           "raw": "Failed to add link",
           "quote": "'"
@@ -46072,7 +46686,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 408,
+          "line": 433,
           "kind": "attr:placeholder",
           "raw": "Patch name",
           "quote": "\""
@@ -46090,7 +46704,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 416,
+          "line": 441,
           "kind": "attr:placeholder",
           "raw": "Describe this patch",
           "quote": "\""
@@ -46108,7 +46722,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 433,
+          "line": 458,
           "kind": "attr:placeholder",
           "raw": "e.g. Lancaster, PA",
           "quote": "\""
@@ -46126,7 +46740,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 454,
+          "line": 479,
           "kind": "markup",
           "raw": "An IANA place name. Leave it empty to follow the quilt{instanceTimezone\n        ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`\n        : ''}.",
           "quote": null
@@ -46144,7 +46758,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 468,
+          "line": 493,
           "kind": "markup",
           "raw": "{zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}\n          follow{zoneChoice.events_affected === 1 ? 's' : ''} this patch's timezone.\n          Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}\n          changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.",
           "quote": null
@@ -46162,7 +46776,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 502,
+          "line": 527,
           "kind": "markup",
           "raw": "Keeping listed times moves each event to the new zone, so 7pm stays 7pm.\n          Leaving them where they are keeps the exact moment and changes the clock time shown.\n          Events with a timezone of their own, and events from a calendar feed, are not touched.",
           "quote": null
@@ -46180,7 +46794,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 512,
+          "line": 537,
           "kind": "markup",
           "raw": "Map location",
           "quote": null
@@ -46198,7 +46812,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 515,
+          "line": 540,
           "kind": "markup",
           "raw": "On the map at",
           "quote": null
@@ -46216,7 +46830,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 518,
+          "line": 543,
           "kind": "markup",
           "raw": "Not on the map.",
           "quote": null
@@ -46234,7 +46848,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 521,
+          "line": 546,
           "kind": "markup",
           "raw": "Placing a marker adds this patch to the map. The marker can be\n        approximate, and is separate from the address above.",
           "quote": null
@@ -46252,7 +46866,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 571,
+          "line": 596,
           "kind": "markup",
           "raw": "Founded",
           "quote": null
@@ -46270,7 +46884,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 581,
+          "line": 606,
           "kind": "markup",
           "raw": "When this group started, if it predates its patch. Voting tenure is never\n      required to be longer than the group has existed.",
           "quote": null
@@ -46288,7 +46902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 607,
+          "line": 632,
           "kind": "markup",
           "raw": "Image",
           "quote": null
@@ -46306,7 +46920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 613,
+          "line": 638,
           "kind": "markup",
           "raw": "Link a picture you already have online. Patchwork points at it and never\n      keeps a copy, so it stays yours.",
           "quote": null
@@ -46324,7 +46938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 651,
+          "line": 676,
           "kind": "markup",
           "raw": "No links added.",
           "quote": null
@@ -46332,19 +46946,19 @@
       ]
     },
     {
-      "id": "39390c4e13ed",
-      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
-      "words": 24,
+      "id": "1cdf91cedc2b",
+      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif. Missing a word? Suggest it, and an admin decides whether it joins the quilt's tags.",
+      "words": 39,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 690,
+          "line": 715,
           "kind": "markup",
-          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
+          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.\n      Missing a word? Suggest it, and an admin decides whether it joins the\n      quilt's tags.",
           "quote": null
         }
       ]
@@ -46360,7 +46974,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 712,
+          "line": 745,
           "kind": "markup",
           "raw": "Visibility",
           "quote": null
@@ -46378,7 +46992,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 715,
+          "line": 748,
           "kind": "markup",
           "raw": "Patch specific configuration. Events, members, and documents carry their own visibility.",
           "quote": null
@@ -46397,7 +47011,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 736,
+          "line": 769,
           "kind": "markup",
           "raw": "Either way, anyone holding a direct link can open this patch's page. Private\n      keeps it from being found, not from being visited.",
           "quote": null
@@ -46415,7 +47029,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 744,
+          "line": 777,
           "kind": "markup",
           "raw": "Event suggestions",
           "quote": null
@@ -46433,7 +47047,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 753,
+          "line": 786,
           "kind": "markup",
           "raw": "Let non-members suggest events to this patch",
           "quote": null
@@ -46451,7 +47065,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 756,
+          "line": 789,
           "kind": "markup",
           "raw": "Suggestions wait in your events queue until an admin approves them.",
           "quote": null
@@ -46469,7 +47083,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 764,
+          "line": 797,
           "kind": "markup",
           "raw": "We have moved",
           "quote": null
@@ -46487,7 +47101,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 767,
+          "line": 800,
           "kind": "markup",
           "raw": "Point this patch at its new home. The page here keeps working and stays\n      readable, with a banner saying where the patch went. New joins, new\n      follows and event suggestions from outside are turned away and sent to\n      the new address. Members and admins keep everything they had. Clear the\n      field to undo it.",
           "quote": null
@@ -46505,7 +47119,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 778,
+          "line": 811,
           "kind": "attr:placeholder",
           "raw": "https://their-quilt.example.com/patches/gallery-row",
           "quote": "\""
@@ -53998,6 +54612,60 @@
           "line": 685,
           "kind": "markup",
           "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds the patches, events, charters,\n        proposals and member lists that are already open to you. It does not\n        hold email addresses, contact cards, noticeboards, or anything from a\n        patch you are not in. Other people travel as a name and a picture,\n        so the new quilt invites everyone back and each person sets their own\n        visibility there.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "57aab4d833e7",
+      "text": "Claim requests, submissions",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 37,
+          "kind": "go-string",
+          "raw": "Claim requests, submissions",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "1a167911d32d",
+      "text": "What kind of patch is this? Tags help people find you, and new patches are placed near others with the same tags on the quilt. The first tag decides your default motif.",
+      "words": 32,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 418,
+          "kind": "markup",
+          "raw": "What kind of patch is this? Tags help people find you, and new\n            patches are placed near others with the same tags on the quilt.\n            The first tag decides your default motif.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "39390c4e13ed",
+      "text": "Tags help people find this patch, and the quilt places patches with shared tags near each other. The first tag decides the default motif.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 690,
+          "kind": "markup",
+          "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
           "quote": null
         }
       ]
