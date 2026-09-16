@@ -183,8 +183,25 @@ _Avoid_: quilt admin, moderator, owner (as a role name)
 
 **Instance admin**:
 A person with the site-wide admin role on an instance. Curates instance-wide
-options; does not override per-patch choices.
+options; does not override per-patch choices. Their reach into any individual
+patch is **custody**, never rank (docs/adr/115).
 _Avoid_: quilt admin, superadmin
+
+**Custody**:
+The standing an instance admin holds over a patch that has no admin of its own,
+and only for as long as that is true (docs/adr/115). A patch nobody has claimed
+is held for its calendar, so its events, feeds and submissions are the instance
+admin's to keep alive. A claimed patch whose seats were vacated for inactivity
+is held only to hand back: the one act is putting an admin in place, because its
+members are still there and running their patch was never the steward's job. A
+patch with an admin is held by nobody else at all. Distinct from the instance
+admin's own surfaces (tags, claims, legal documents, reports, archive, the
+quilt's identity), which were never a patch's to hold and so are not custody.
+The decided rule, not yet the running code: the handlers still grant an
+instance admin every patch-admin verb everywhere, deferred on purpose while the
+reference instance is young (docs/adr/115, "Deferred on purpose").
+_Avoid_: override, superadmin access, god mode, break-glass (deliberately not
+built)
 
 **Steward**:
 A person publicly accountable for how a quilt is run, named on its Label.
