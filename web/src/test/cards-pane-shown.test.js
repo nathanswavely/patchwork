@@ -79,7 +79,7 @@ describe('the width is one published fact', () => {
   it('sizes the pane, clears the chips and parks the control from one property', () => {
     const home = source('pages/SocialHome.svelte');
     expect(home).toContain('width: var(--pw-cards-pane-w');
-    expect(home).toContain('right: calc(var(--pw-cards-pane-w, 45%) + 12px)');
+    expect(home).toContain('right: var(--pw-cards-pane-w, 45%)');
     expect(source('components/SocialShell.svelte')).toContain('var(--pw-cards-pane-w');
   });
 

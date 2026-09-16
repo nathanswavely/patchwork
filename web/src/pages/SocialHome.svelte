@@ -862,7 +862,8 @@
   .pane-toggle {
     position: fixed;
     top: 68px;
-    right: calc(var(--pw-cards-pane-w, 45%) + 12px);
+    /* Hidden: 12px off the window's edge, like any floating chrome. */
+    right: 12px;
     z-index: 20;
     display: flex;
     align-items: center;
@@ -892,7 +893,12 @@
     color: var(--color-text);
   }
 
+  /* Shown: flush to the pane's box, so the only space between the button and
+     the cards is the pane's own 16px gutter — the same one the header card
+     and the scroll area are already inset by. Adding a gap on top of that
+     gutter read as a double margin, because it was one. */
   .pane-toggle.pane-shown {
+    right: var(--pw-cards-pane-w, 45%);
     color: var(--color-text);
   }
 
