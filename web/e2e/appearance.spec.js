@@ -27,7 +27,12 @@ test.describe('Patch Appearance — Picker', () => {
     expect(page.url()).toContain(`/patches/${PATCH}/settings/appearance`);
 
     await expect(page.locator('.preview-tile')).toBeVisible();
-    await expect(page.locator('.palette-swatch')).toHaveCount(8);
+    // PALETTE_KEYS.length: 8 album palettes plus 18 wall cuts (docs/adr/112
+    // widened this from the original 8, which clustered six primaries inside
+    // a 55 degree arc through red). A literal rather than an import, like the
+    // two counts below it — quiltTheme.js reaches a rune store, and Playwright
+    // runs specs through plain node with no Svelte compiler.
+    await expect(page.locator('.palette-swatch')).toHaveCount(26);
     await expect(page.locator('.block-thumb')).toHaveCount(12);
     await expect(page.locator('.motif-swatch')).toHaveCount(34);
     // Exactly one of each is selected (the effective appearance).

@@ -393,8 +393,8 @@ Registry JSON format:
 Federation is live at the protocol level: actor documents, outboxes,
 followers collections, WebFinger (`/.well-known/webfinger`), an inbox that
 handles `Follow`/`Undo(Follow)`, HTTP-signature signing on outbound
-deliveries and verification on inbound ones (with Date-skew replay window
-and remote key caching), and a retrying delivery worker — all in
+deliveries and verification on inbound ones (with a required signed-header
+set, a Date-skew replay window, and remote key caching), and a retrying delivery worker — all in
 `internal/ap` and mounted in `cmd/patchwork/main.go`. Keypairs and `ap_id`s
 are backfilled on startup, and stale-domain `ap_id`s are healed to the
 configured domain. `federation.enabled` in patchwork.yaml gates the AP,
