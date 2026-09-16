@@ -185,14 +185,18 @@
       <ul class="candidates">
         {#each candidates as c, i}
           <li class:seated={phase === 'closed' && !settledNothing && i < seats && c.approvals > 0}>
+            <!-- The name is not the control (docs/adr/109). It used to sit
+                 inside the checkbox's own <label>, so tapping it cast a vote:
+                 a member on a phone tapped a candidate's name to find out who
+                 he was and found she had approved him. "Same names, two
+                 pages, opposite behaviour." The box is the box; the name is a
+                 link to the person, which is what it is everywhere else. -->
             {#if phase === 'voting' && canVote}
-              <label>
+              <label class="tick" aria-label={`Approve ${c.display_name || c.username}`}>
                 <input type="checkbox" checked={approved.has(c.id)} onchange={() => toggle(c.id)} disabled={busy} />
-                <span class="who">{c.display_name || c.username}</span>
               </label>
-            {:else}
-              <span class="who">{c.display_name || c.username}</span>
             {/if}
+            <a class="who" href={`/users/${c.username}`}>{c.display_name || c.username}</a>
             {#if phase !== 'nominating'}
               <span class="count">{c.approvals} approval{c.approvals === 1 ? '' : 's'}</span>
             {/if}
@@ -287,6 +291,14 @@
     margin: -0.15rem 0 0.5rem;
   }
 
+  .tick {
+    display: inline-flex;
+    align-items: center;
+    /* A thumb-sized target of its own, now that the name is not part of it. */
+    padding: 0.25rem;
+    margin: -0.25rem 0 -0.25rem -0.25rem;
+  }
+
   .nominating-actions {
     display: flex;
     flex-direction: column;
@@ -376,6 +388,18 @@
     border-radius: var(--radius);
     background: color-mix(in srgb, var(--color-success) 18%, transparent);
     color: var(--color-text);
+  }
+
+  /* A link, but a quiet one: a ballot of six blue underlined names reads as
+     navigation rather than as a list of people to choose between. */
+  .who {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .who:hover,
+  .who:focus-visible {
+    text-decoration: underline;
   }
 
   .seated .who { font-weight: 600; }

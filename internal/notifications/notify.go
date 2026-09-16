@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
 // Event describes something that happened and should generate notifications.
@@ -162,15 +163,24 @@ func (n *Notifier) resolveRecipients(event Event, audience Audience) []string {
 			return nil
 		}
 		// Voters + commenters + proposal author.
+		//
+		// An election's ballots live in their own table (docs/adr/051), so a
+		// member who voted in a contest was not a participant in it and heard
+		// nothing about the discussion under it. And the author is skipped
+		// where it is the sentinel system user: a contest the calendar opened
+		// is signed by nobody (docs/adr/109), and a notification row for
+		// `_system` is one nobody will ever read.
 		return n.queryUserIDs(
 			`SELECT DISTINCT user_id FROM (
 				SELECT user_id FROM votes WHERE proposal_id = ?
 				UNION
+				SELECT voter_id AS user_id FROM election_ballots WHERE proposal_id = ?
+				UNION
 				SELECT author_id AS user_id FROM proposal_comments WHERE proposal_id = ?
 				UNION
 				SELECT author_id AS user_id FROM proposals WHERE id = ?
-			)`,
-			event.EntityID, event.EntityID, event.EntityID,
+			) WHERE user_id != ?`,
+			event.EntityID, event.EntityID, event.EntityID, event.EntityID, model.SystemUserID,
 		)
 
 	case AudienceNoticeParticipants:

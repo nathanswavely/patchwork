@@ -292,6 +292,18 @@
     {/if}
   </div>
 
+{:else if (effectiveState === 'in_effect' || effectiveState === 'passed') && electionPhase}
+  <!-- A settled election (docs/adr/109). It fell through to the amendment
+       branch below and read "Approved. This change is now in effect." over a
+       council: no winner, no chair, no term, and a community's leadership
+       called "this change". The `unsettled` sibling has had a sentence of its
+       own since docs/adr/097; the outcome a year of contests is actually for
+       had none. Who was seated is in the panel below, which is why this does
+       not repeat it. -->
+  <div class="status-banner in-effect">
+    <p>This election has closed and the council below is seated.</p>
+  </div>
+
 {:else if effectiveState === 'in_effect' || effectiveState === 'passed'}
   <div class="status-banner in-effect">
     <p>
