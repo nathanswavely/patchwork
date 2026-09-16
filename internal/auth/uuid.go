@@ -19,6 +19,12 @@ func NewUUIDv7() string {
 	binary.BigEndian.PutUint32(b[2:6], uint32(ms))
 
 	// Random: fill bytes 6-15.
+	//
+	// The error is deliberately not checked, and a guard for it would be a
+	// branch that cannot be taken: crypto/rand.Read never returns one. It
+	// always fills b, and crashes the program irrecoverably if the system
+	// source fails, so there is no path here that yields a low-entropy UUID.
+	// Raised by an outside review on 2026-09-16 and answered in docs/adr/113.
 	rand.Read(b[6:])
 
 	// Version 7: set bits in byte 6.

@@ -245,7 +245,7 @@
     <div class="picker-group">
       <span class="picker-label">Palette</span>
       <p class="picker-hint muted">
-        Pre-cut bundles from the record crate. Picking one fills your fabrics below.
+        Pre-cut bundles. Picking one fills your fabrics below.
       </p>
       <div class="palette-grid">
         {#each PALETTE_KEYS as key (key)}

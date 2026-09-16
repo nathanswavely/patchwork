@@ -5,20 +5,27 @@
   import { formatDay as formatDate } from '../lib/datetime.js';
 
   let claims = $state([]);
+  let awaitingSetup = $state([]);
   let loading = $state(true);
 
   $effect(() => { loadClaims(); });
 
+  // Two queues, because approval is not the end of a claim (docs/adr/039).
+  // Approving moves a claim out of review and hands the claimant a 14-day
+  // right to finish setup; until they do, the patch still reads unclaimed to
+  // everyone. This panel used to list 'pending' only, so an approval left no
+  // trace on any surface an admin could return to — the claim vanished from
+  // here, the patch page kept saying no one runs it, and the toast was the
+  // whole record. The second section is that missing trace.
   async function loadClaims() {
     loading = true;
-    try {
-      const data = await api('admin/claims');
-      claims = data.items || [];
-    } catch {
-      claims = [];
-    } finally {
-      loading = false;
-    }
+    const [pending, approved] = await Promise.all([
+      api('admin/claims').catch(() => null),
+      api('admin/claims?status=approved').catch(() => null),
+    ]);
+    claims = pending?.items || [];
+    awaitingSetup = approved?.items || [];
+    loading = false;
   }
 
   async function handleAction(id, action) {
@@ -42,9 +49,11 @@
 
   {#if loading}
     <Skeleton lines={4} height="1rem" />
-  {:else if claims.length === 0}
-    <p class="muted">No pending claims.</p>
+  {:else if claims.length === 0 && awaitingSetup.length === 0}
+    <p class="muted">No open claims.</p>
   {:else}
+    {#if claims.length > 0}
+    <h2 class="queue-heading">Awaiting review</h2>
     <div class="claim-list">
       {#each claims as claim (claim.id)}
         <div class="claim-card card">
@@ -71,6 +80,33 @@
         </div>
       {/each}
     </div>
+    {/if}
+
+    {#if awaitingSetup.length > 0}
+      <h2 class="queue-heading">Approved, awaiting setup</h2>
+      <p class="muted queue-note">
+        Cleared to claim. Each patch stays unclaimed until its claimant
+        submits setup, which is where it becomes active and they become
+        admin. An approval that runs out simply makes the patch claimable
+        again.
+      </p>
+      <div class="claim-list">
+        {#each awaitingSetup as claim (claim.id)}
+          <div class="claim-card card">
+            <div class="claim-header">
+              <h3>{claim.node_name}</h3>
+              <span class="badge">{claim.method}</span>
+            </div>
+            <div class="claim-meta muted">
+              Claimed by {claim.claimant_display_name || claim.claimant_username}
+              {#if claim.setup_expires_at}
+                {' · '}approval expires {formatDate(claim.setup_expires_at)}
+              {/if}
+            </div>
+          </div>
+        {/each}
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -84,6 +120,24 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+  }
+
+  .queue-heading {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .claim-list + .queue-heading {
+    margin-top: 1.5rem;
+  }
+
+  .queue-note {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
   }
 
   .claim-header {

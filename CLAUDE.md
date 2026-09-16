@@ -129,6 +129,31 @@ and run the suites after merging main**, before treating a quiet merge as
 a working one. Shared helper names, new columns on a table two branches
 both touched, and a route registered twice all fail this way.
 
+**And a third form, which announces itself by going quiet.**
+`copy/ledger.json` is generated: `copy-ledger sync` rewrites the recorded
+line number of every string in any file a branch touched. So two branches
+that share no source file at all still conflict there, and the more
+parallel work is in flight the more certain it is. What makes it worth its
+own paragraph is the symptom. A conflicted PR has no mergeable ref for
+GitHub to build, so **no workflow starts at all** — and `gh pr checks`
+answers `no checks reported`, which reads like a clean board rather than a
+blocked one. PR #253 sat that way twice, the second time 30 commits behind
+main. **When checks do not appear within a minute or two, check
+`gh pr view <n> --json mergeable` before assuming anything is passing.**
+
+Resolve it by regenerating, never by hand: take main's copy whole
+(`git checkout --theirs copy/ledger.json`), then re-run
+`node tools/copy-ledger/cli.js sync`, which rebuilds the line numbers from
+the merged source. Then confirm you clobbered nobody's decision —
+
+```sh
+git diff --cached origin/main -- copy/ledger.json | grep -cE '^[-+] *"status"'
+```
+
+should print `0`, since a correct resolution moves line numbers and nothing
+else. Hand-merging the hunks is how a reviewed string quietly reverts to
+`unreviewed`, and the ledger exists precisely to keep that record honest.
+
 ### Verifying frontend changes
 
 There is no Svelte render library in this project — every frontend test asserts against **source text**, so the suite cannot catch a rendering bug. Run the app and read the page for anything user-visible. In one session four of five browser checks found real defects the green suite had missed, including a page reciting a voting mechanic its patch does not run.
@@ -381,8 +406,8 @@ Registry JSON format:
 Federation is live at the protocol level: actor documents, outboxes,
 followers collections, WebFinger (`/.well-known/webfinger`), an inbox that
 handles `Follow`/`Undo(Follow)`, HTTP-signature signing on outbound
-deliveries and verification on inbound ones (with Date-skew replay window
-and remote key caching), and a retrying delivery worker — all in
+deliveries and verification on inbound ones (with a required signed-header
+set, a Date-skew replay window, and remote key caching), and a retrying delivery worker — all in
 `internal/ap` and mounted in `cmd/patchwork/main.go`. Keypairs and `ap_id`s
 are backfilled on startup, and stale-domain `ap_id`s are healed to the
 configured domain. `federation.enabled` in patchwork.yaml gates the AP,

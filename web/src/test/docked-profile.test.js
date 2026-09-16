@@ -112,7 +112,9 @@ describe("two heights on a phone, none in the pane's slot", () => {
     // The profile takes the list's box — same slot, same width — and the
     // list is back when it is dismissed. Nothing else on the surface moves.
     const src = home();
-    expect(src).toMatch(/<div class="cards-pane"[^>]*>\s*\{#if dockedSlug && dockForm === 'panel'\}\s*<DockedProfile/);
+    // The opening tag carries the pane's width stop too (docs/adr/111), so
+    // it wraps — match its attributes rather than their order on one line.
+    expect(src).toMatch(/<div\s+class="cards-pane"[^>]*>\s*\{#if dockedSlug && dockForm === 'panel'\}\s*<DockedProfile/);
     expect(src).toMatch(/\{#if dockedSlug && dockForm === 'sheet'\}\s*<DockedProfile/);
     // A card in the pane, not a box floating over it.
     expect(dock()).toMatch(/\.dock\.panel \{\s*position: relative;\s*flex: 1;/);

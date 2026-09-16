@@ -316,6 +316,11 @@ not travel with a person from surface to surface. Never addressable — quilt
 space is re-sewn as membership changes, so a saved viewport would come to
 mean other patches. Distinct from what the layout code calls visible, which
 is a patch passing the filter.
+
+It needs two panes on screen at once, so it is absent where there is only
+one: on a phone, where the panes toggle, and wherever the **cards pane**
+has been put away, since there is then no list to narrow. Absent, not off
+— the setting is kept and bites again when the second pane returns.
 _Avoid_: visible (that word belongs to the filter), viewport (in UI copy),
 bounds, this area
 
@@ -404,6 +409,36 @@ proposal in a list). Sections of a page are not cards: a settings section
 is the page, so it separates with a heading and a rule, not a box.
 _Avoid_: panel, box, tile (that is a patch on the quilt), section (a
 section may or may not be a card)
+
+**Cards pane**:
+The discovery surface's second half: the column beside the quilt or the
+map that holds the **patch cards**, and on a desktop the slot a **docked
+profile** takes. On a phone there is no beside — the panes toggle and this
+one fills the screen.
+
+A reader can **put it away**. Shown or hidden, one bit and nothing between:
+a narrower pane is a worse list and a barely better quilt, so the only
+choice worth offering is whether the list is there. Shown is the width it
+has always had; hidden gives the whole window to the canvas, which is the
+signature visual and was never something a reader could ask to see all of.
+An arrangement rather than a lens, so it persists, the way the collapsed
+rail and the collapsed chips do and the filter, the order and **in view**
+deliberately do not.
+
+It arranges the room, so the control is the shell's rather than the list's,
+and it never lives in the pane's own header: it parks against the pane's
+edge and travels with it, because a control that can delete its own
+container cannot live inside it. It is the rail's toggle mirrored — the two
+edges of one room, learned once. Hiding suspends the **in view** lens rather
+than clearing it: there is no list to narrow, and the reader's setting is
+not the app's to discard. A docked profile opens the pane for as long as it
+is docked, for the same reason — the room makes space for what was asked for
+without overwriting what was chosen.
+
+Not the list (a docked profile can occupy the pane and is not a list) and
+not a panel in the **Card** sense.
+_Avoid_: sidebar (the rail is the sidebar), drawer, list pane, results
+panel, collapse (the rail collapses; this one is hidden), minimize
 
 **Patch card**:
 A patch as rendered in a list — its cover, name, counts, a line of
@@ -1755,6 +1790,47 @@ tile (card banners, the motif corner mark's disc). Always the patch's
 palette primary.
 Distinct from tag colors, which color tags, not patches.
 _Avoid_: brand color, accent
+
+**Muted colors**:
+The second way a patch's colors are drawn: every fabric in its tile becomes
+that patch's identity color at a fixed lightness step, with chroma only ever
+capped, never added. The lightness ramp is shared by every tile, so a muted
+quilt varies by hue alone — and a patch that chose neutrals stays neutral,
+because nothing is invented for it. It reaches every colour that stands for
+something — tiles, card covers, map markers, profile banners, tag chips,
+neighbour-quilt sashing — with one exception: the **block drafter** always
+draws Default, because a tool for choosing fabric must show the fabric that
+was chosen. The block, the rotation and the stored bundle are untouched:
+what changes is how a viewer is shown them, never what the patch chose.
+Every instance opens in Default, and no instance setting moves that —
+Default is the intent, Muted is the accommodation.
+_Avoid_: theme (that is light/dark), appearance (that is the patch's own
+tile design), palette (that is a pre-cut bundle), quilt mode (a CSS class
+already means "on a quilt route"), calm/quiet/low-stimulation mode (they
+name a complaint rather than the colours), accessibility mode
+
+**Hover dim**:
+The scrim every tile *except* the hovered one takes while a pointer rests on
+the quilt, so the tile under the pointer is the one at full strength. A
+behaviour, not a preference — nothing to set and nothing to persist. It dims
+rather than mutes, deliberately: **Muted colors** owns chroma, so a hover
+that muted would do nothing at all for a reader already in Muted. It engages
+after a short dwell and holds while the pointer crosses between tiles, for
+the reason the name badges hold theirs — a whole-canvas scrim flipping at
+every tile boundary strobes. Desktop only; a touch reader gets the docked
+profile instead (docs/adr/094).
+_Avoid_: spotlight, focus mode, highlight (the hovered tile is not
+brightened — everything else is dimmed), muting (that is the standing
+colour choice)
+
+**Display menu**:
+The two standing choices a viewer makes about how Patchwork looks to them —
+**Theme** (light · dark · system) and **Colors** (default · muted). Held per
+browser, never on the account, so it reaches a reader with no account; it
+sits in the account menu in the global bar when signed in and in that same
+slot when signed out, so the control does not move when somebody joins.
+_Avoid_: settings (that is the Settings page), preferences, appearance,
+view options
 
 **Ink on fabric**:
 Anything drawn over a patch's own fabric rather than over a theme surface
