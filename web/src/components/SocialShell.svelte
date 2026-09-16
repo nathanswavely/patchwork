@@ -692,7 +692,12 @@
     position: fixed;
     bottom: 12px;
     left: 220px; /* clear the rail's floating glass card (8px + 200px + 12px gap) */
-    right: calc(45% + 16px); /* clear the cards pane */
+    /* Clear the cards pane, whatever width the reader has set it to
+       (docs/adr/111). This used to be a literal 45% — a third copy of a
+       number SocialHome wrote twice more, in a file that has no other reason
+       to know the pane exists. The fallback keeps the chips honest on any
+       route that renders before the surface publishes its width. */
+    right: calc(var(--pw-cards-pane-w, 45%) + 16px);
     z-index: 20; /* the canvas chrome layer — same as the view pill */
   }
 
