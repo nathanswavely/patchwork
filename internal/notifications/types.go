@@ -34,7 +34,7 @@ func AllCategories() []CategoryInfo {
 		// announces an event any more (docs/adr/093). What is left is an
 		// admin queue's duties and answers to something a person did.
 		{CategoryEvents, "Events", "Submissions, links, and program offers", true},
-		{CategoryAdmin, "Admin", "Claim requests, submissions", true},
+		{CategoryAdmin, "Admin", "Claim requests, submissions, suggested tags", true},
 		{CategoryNoticeboard, "Noticeboard", "A notice whose author chose to tell members, replies on notices you're in, and reports for admins", true},
 		{CategoryQuilt, "The quilt", "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.", false},
 	}
@@ -179,8 +179,17 @@ const (
 	// entries applied to programs.
 	ProgramOffer NotificationType = "program.offer"
 
+	// Suggested tags (docs/adr/114). A patch admin proposes a word for the
+	// vocabulary; the instance admin decides. The verdict goes to the admins
+	// of every patch wearing the word, not to the coiner alone: what changes
+	// is a chip on their patch, and one appearing or vanishing unexplained is
+	// what these prevent.
+	TagSuggestionApproved NotificationType = "tag.suggestion_approved"
+	TagSuggestionRejected NotificationType = "tag.suggestion_rejected"
+
 	AdminClaimRequest     NotificationType = "admin.claim_request"
 	AdminSubmission       NotificationType = "admin.submission"
+	AdminTagSuggestion    NotificationType = "admin.tag_suggestion"
 	AdminEventSubmission  NotificationType = "admin.event_submission"
 	AdminEventLinkRequest NotificationType = "admin.event_link_request"
 
@@ -284,6 +293,12 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	EventSubmissionApproved: {CategoryEvents, "Your event was approved", AudienceSpecificUser, PriorityHigh},
 	EventSubmissionRejected: {CategoryEvents, "Your event was declined", AudienceSpecificUser, PriorityNormal},
 
+	// AdminsOnly rather than SpecificUser: a suggested tag can be worn by
+	// more than one patch, and the decision lands on each of them
+	// (docs/adr/114).
+	TagSuggestionApproved: {CategoryAdmin, "A tag you suggested was approved", AudienceAdminsOnly, PriorityNormal},
+	TagSuggestionRejected: {CategoryAdmin, "A tag you suggested was declined", AudienceAdminsOnly, PriorityNormal},
+
 	EventLinkRequested: {CategoryEvents, "Event link request for your patch", AudienceAdminsOnly, PriorityHigh},
 	EventLinkConfirmed: {CategoryEvents, "Event link confirmed", AudienceAdminsOnly, PriorityNormal},
 
@@ -300,6 +315,7 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 
 	AdminClaimRequest:     {CategoryAdmin, "New patch claim request", AudienceSiteAdmins, PriorityHigh},
 	AdminSubmission:       {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
+	AdminTagSuggestion:    {CategoryAdmin, "A tag was suggested", AudienceSiteAdmins, PriorityNormal},
 	AdminEventSubmission:  {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventLinkRequest: {CategoryAdmin, "Event link request (unclaimed patch)", AudienceSiteAdmins, PriorityNormal},
 
@@ -369,6 +385,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed, ProgramOffer,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
+		AdminTagSuggestion, TagSuggestionApproved, TagSuggestionRejected,
 		GovernanceSuccessionNeeded,
 		ClaimApproved, ClaimSetupExpiring,
 		QuiltBulletin,

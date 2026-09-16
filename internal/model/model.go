@@ -261,6 +261,12 @@ type Node struct {
 	MembershipPolicy string      `json:"membership_policy"`
 	Appearance       *Appearance `json:"appearance,omitempty"`
 	Tags             []string    `json:"tags,omitempty"`
+	// PendingTags are suggested tags this patch wears provisionally
+	// (docs/adr/114). Sent only to the patch's own admins: a pending word is
+	// not vocabulary, so "tags" above means the approved, public list to
+	// every reader, and this stays a separate array rather than making one
+	// array mean different things to different viewers.
+	PendingTags      []string    `json:"pending_tags,omitempty"`
 	Status           string      `json:"status,omitempty"`
 	SubmittedBy      string      `json:"submitted_by,omitempty"`
 	SubmissionSource string      `json:"submission_source,omitempty"`
