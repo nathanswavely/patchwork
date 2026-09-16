@@ -3835,35 +3835,35 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 325,
+          "line": 339,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 629,
+          "line": 703,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 892,
+          "line": 976,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 948,
+          "line": 1032,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1179,
+          "line": 1263,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4455,28 +4455,28 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 291,
+          "line": 305,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 442,
+          "line": 456,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 960,
+          "line": 1044,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 998,
+          "line": 1082,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4870,7 +4870,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1010,
+          "line": 1094,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -6819,7 +6819,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 990,
+          "line": 1074,
           "kind": "go-error-body",
           "raw": "user_id is required",
           "quote": null
@@ -7472,7 +7472,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 295,
+          "line": 309,
           "kind": "go-error-body",
           "raw": "this patch is not available for claiming",
           "quote": null
@@ -7490,7 +7490,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 306,
+          "line": 320,
           "kind": "go-error-body",
           "raw": "this patch has an approved claim awaiting setup",
           "quote": null
@@ -7508,14 +7508,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 315,
+          "line": 329,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 391,
+          "line": 405,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
@@ -7533,7 +7533,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 331,
+          "line": 345,
           "kind": "go-error-body",
           "raw": "method must be dns, meta_tag, did, email, or admin",
           "quote": null
@@ -7551,7 +7551,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 338,
+          "line": 352,
           "kind": "go-error-body",
           "raw": "this patch has no verified domain. Choose admin review",
           "quote": null
@@ -7570,7 +7570,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 354,
+          "line": 368,
           "kind": "go-error-body",
           "raw": "a valid email address is required for email verification",
           "quote": null
@@ -7588,7 +7588,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 363,
+          "line": 377,
           "kind": "go-error-body",
           "raw": "the email must be at @%s",
           "quote": null
@@ -7606,7 +7606,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 394,
+          "line": 408,
           "kind": "go-error-body",
           "raw": "failed to create claim",
           "quote": null
@@ -7624,9 +7624,27 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 478,
+          "line": 492,
           "kind": "go-error-body",
           "raw": "failed to load claim",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "03d5b5894d3d",
+      "text": "failed to load claims",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/claims.go",
+          "line": 530,
+          "kind": "go-error-body",
+          "raw": "failed to load claims",
           "quote": null
         }
       ]
@@ -7642,35 +7660,35 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 500,
+          "line": 574,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 540,
+          "line": 614,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 672,
+          "line": 746,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 901,
+          "line": 985,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1204,
+          "line": 1288,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7688,28 +7706,28 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 504,
+          "line": 578,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 544,
+          "line": 618,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 677,
+          "line": 751,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1208,
+          "line": 1292,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7727,14 +7745,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 508,
+          "line": 582,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 681,
+          "line": 755,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
@@ -7752,7 +7770,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 548,
+          "line": 622,
           "kind": "go-error-body",
           "raw": "this claim has no email verification to resend",
           "quote": null
@@ -7770,7 +7788,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 565,
+          "line": 639,
           "kind": "go-error-body",
           "raw": "resend limit reached",
           "quote": null
@@ -7789,14 +7807,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 608,
+          "line": 682,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 634,
+          "line": 708,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
@@ -7814,7 +7832,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 638,
+          "line": 712,
           "kind": "go-error-body",
           "raw": "this verification link has expired. Request a new email from the claim page",
           "quote": null
@@ -7833,21 +7851,21 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 643,
+          "line": 717,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 761,
+          "line": 835,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 915,
+          "line": 999,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
@@ -7865,7 +7883,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 831,
+          "line": 914,
           "kind": "go-error-body",
           "raw": "failed to query claims",
           "quote": null
@@ -7883,7 +7901,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 905,
+          "line": 989,
           "kind": "go-error-body",
           "raw": "claim is not pending",
           "quote": null
@@ -7901,7 +7919,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 928,
+          "line": 1012,
           "kind": "go-error-body",
           "raw": "action must be 'approve' or 'reject'",
           "quote": null
@@ -7933,7 +7951,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 964,
+          "line": 1048,
           "kind": "go-error-body",
           "raw": "verification domains only apply to unclaimed patches",
           "quote": null
@@ -7951,7 +7969,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1002,
+          "line": 1086,
           "kind": "go-error-body",
           "raw": "patch is not unclaimed",
           "quote": null
@@ -7969,7 +7987,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1027,
+          "line": 1111,
           "kind": "go-error-body",
           "raw": "failed to assign owner",
           "quote": null
@@ -7987,7 +8005,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1191,
+          "line": 1275,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -8005,7 +8023,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1212,
+          "line": 1296,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -8023,7 +8041,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1221,
+          "line": 1305,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired. The patch is claimable again",
           "quote": null
@@ -8042,14 +8060,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1230,
+          "line": 1314,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1236,
+          "line": 1320,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -8067,7 +8085,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1239,
+          "line": 1323,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -21449,7 +21467,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 269,
+          "line": 287,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -23985,7 +24003,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 177,
+          "line": 195,
           "kind": "js-string",
           "raw": "Membership request sent",
           "quote": "'"
@@ -24017,7 +24035,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 177,
+          "line": 195,
           "kind": "js-string",
           "raw": "You are now a member",
           "quote": "'"
@@ -24042,7 +24060,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 179,
+          "line": 197,
           "kind": "js-string",
           "raw": "Could not join",
           "quote": "'"
@@ -24103,7 +24121,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 151,
+          "line": 169,
           "kind": "js-string",
           "raw": "Request withdrawn",
           "quote": "'"
@@ -24200,7 +24218,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 152,
+          "line": 170,
           "kind": "js-string",
           "raw": "Unfollowed patch",
           "quote": "'"
@@ -24225,7 +24243,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 152,
+          "line": 170,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
@@ -24408,7 +24426,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 116,
+          "line": 134,
           "kind": "js-string",
           "raw": "Become a member",
           "quote": "'"
@@ -33106,7 +33124,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 30,
+          "line": 37,
           "kind": "js-string",
           "raw": "Claim approved. The claimant can now complete setup.",
           "quote": "'"
@@ -33124,7 +33142,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 30,
+          "line": 37,
           "kind": "js-string",
           "raw": "Claim rejected",
           "quote": "'"
@@ -33142,7 +33160,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 40,
+          "line": 47,
           "kind": "markup",
           "raw": "Patch Claims",
           "quote": null
@@ -33160,7 +33178,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 41,
+          "line": 48,
           "kind": "markup",
           "raw": "Users requesting ownership of unclaimed patches.",
           "quote": null
@@ -33168,8 +33186,8 @@
       ]
     },
     {
-      "id": "4471eb3b80a8",
-      "text": "No pending claims.",
+      "id": "8390ae820036",
+      "text": "No open claims.",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
@@ -33178,9 +33196,41 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 46,
+          "line": 53,
           "kind": "markup",
-          "raw": "No pending claims.",
+          "raw": "No open claims.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsVerification.svelte",
+          "line": 120,
+          "kind": "markup",
+          "raw": "No open claims.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4848885e3fc4",
+      "text": "Awaiting review",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 56,
+          "kind": "markup",
+          "raw": "Awaiting review",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/EventDetail.svelte",
+          "line": 145,
+          "kind": "markup",
+          "raw": "Awaiting review",
           "quote": null
         }
       ]
@@ -33196,7 +33246,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 56,
+          "line": 65,
           "kind": "markup",
           "raw": "Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}",
           "quote": null
@@ -33214,7 +33264,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 58,
+          "line": 67,
           "kind": "markup",
           "raw": "&middot; verified domain: {claim.verification_domain}",
           "quote": null
@@ -33232,9 +33282,81 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 61,
+          "line": 70,
           "kind": "markup",
           "raw": "&middot; email: {claim.email}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f6ae3fed046c",
+      "text": "Approved, awaiting setup",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 86,
+          "kind": "markup",
+          "raw": "Approved, awaiting setup",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "854ad54fb068",
+      "text": "Cleared to claim. Each patch stays unclaimed until its claimant submits setup, which is where it becomes active and they become admin. An approval that runs out simply makes the patch claimable again.",
+      "words": 33,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 88,
+          "kind": "markup",
+          "raw": "Cleared to claim. Each patch stays unclaimed until its claimant\n        submits setup, which is where it becomes active and they become\n        admin. An approval that runs out simply makes the patch claimable\n        again.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7742db570133",
+      "text": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 101,
+          "kind": "markup",
+          "raw": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "17cd3138bc47",
+      "text": "{' · '}approval expires {formatDate(claim.setup_expires_at)}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 103,
+          "kind": "markup",
+          "raw": "{' · '}approval expires {formatDate(claim.setup_expires_at)}",
           "quote": null
         }
       ]
@@ -36709,7 +36831,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 317,
+          "line": 377,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -36741,7 +36863,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 293,
+          "line": 353,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -38429,7 +38551,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 285,
+          "line": 345,
           "kind": "markup",
           "raw": "Managing",
           "quote": null
@@ -38479,7 +38601,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 309,
+          "line": 369,
           "kind": "markup",
           "raw": "Member of",
           "quote": null
@@ -38529,7 +38651,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 356,
+          "line": 416,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -38554,7 +38676,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 273,
+          "line": 333,
           "kind": "markup",
           "raw": "You haven't joined any patches yet.",
           "quote": null
@@ -39085,24 +39207,6 @@
           "line": 131,
           "kind": "markup",
           "raw": "Loading event...",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "4848885e3fc4",
-      "text": "Awaiting review",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventDetail.svelte",
-          "line": 145,
-          "kind": "markup",
-          "raw": "Awaiting review",
           "quote": null
         }
       ]
@@ -48532,24 +48636,6 @@
       ]
     },
     {
-      "id": "8390ae820036",
-      "text": "No open claims.",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchSettingsVerification.svelte",
-          "line": 120,
-          "kind": "markup",
-          "raw": "No open claims.",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "45abe15467de",
       "text": "Failed to load setup",
       "words": 4,
@@ -50960,7 +51046,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 334,
+          "line": 394,
           "kind": "markup",
           "raw": "Requested",
           "quote": null
@@ -51465,7 +51551,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 26,
+          "line": 44,
           "kind": "js-string",
           "raw": "Failed to load patches",
           "quote": "'"
@@ -51483,7 +51569,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 62,
+          "line": 80,
           "kind": "js-string",
           "raw": "Failed to load contact sharing",
           "quote": "'"
@@ -51501,7 +51587,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 91,
+          "line": 109,
           "kind": "js-string",
           "raw": "Failed to update contact sharing",
           "quote": "'"
@@ -51519,7 +51605,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 116,
+          "line": 134,
           "kind": "js-string",
           "raw": "Send request",
           "quote": "'"
@@ -51537,7 +51623,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 122,
+          "line": 140,
           "kind": "js-string",
           "raw": "No one runs this patch yet. User can follow, but not join.",
           "quote": "'"
@@ -51556,7 +51642,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 126,
+          "line": 144,
           "kind": "js-string",
           "raw": "This patch adds members by invitation. An admin has to invite you.",
           "quote": "'"
@@ -51574,7 +51660,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 155,
+          "line": 173,
           "kind": "js-string",
           "raw": "Failed to withdraw request",
           "quote": "'"
@@ -51592,7 +51678,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 155,
+          "line": 173,
           "kind": "js-string",
           "raw": "Failed to leave",
           "quote": "'"
@@ -51610,7 +51696,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 196,
+          "line": 214,
           "kind": "js-string",
           "raw": "Membership visible to the public",
           "quote": "'"
@@ -51628,7 +51714,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 196,
+          "line": 214,
           "kind": "js-string",
           "raw": "Membership hidden from the public",
           "quote": "'"
@@ -51646,7 +51732,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 198,
+          "line": 216,
           "kind": "js-string",
           "raw": "Failed to update visibility",
           "quote": "'"
@@ -51664,7 +51750,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 215,
+          "line": 233,
           "kind": "markup",
           "raw": "Reachable by {m.contact_items_shared}",
           "quote": null
@@ -51682,7 +51768,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 217,
+          "line": 235,
           "kind": "markup",
           "raw": "Not reachable",
           "quote": null
@@ -51700,9 +51786,135 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 226,
+          "line": 244,
           "kind": "markup",
           "raw": "What {m.node_name || m.node_slug} can reach you by. Its admins and\n        members see whatever you tick here, including anyone who joins later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9928373127bf",
+      "text": "Claiming",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 293,
+          "kind": "markup",
+          "raw": "Claiming",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d0b43fb55a38",
+      "text": "Your claim cleared. Setup is where the patch becomes active and you become its admin. Until you submit it, the patch still reads as unclaimed to everyone else.",
+      "words": 28,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 307,
+          "kind": "attr:title",
+          "raw": "Your claim cleared. Setup is where the patch becomes active and you become its admin. Until you submit it, the patch still reads as unclaimed to everyone else.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "42873a0ef4bd",
+      "text": "ready to set up",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 308,
+          "kind": "markup",
+          "raw": "ready to set up",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2a6eb917674e",
+      "text": "claim under review",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 310,
+          "kind": "markup",
+          "raw": "claim under review",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7ac35b4b987a",
+      "text": "Nobody has answered this claim yet.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 310,
+          "kind": "attr:title",
+          "raw": "Nobody has answered this claim yet.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "f7229f4fc099",
+      "text": "expires {formatDate(c.setup_expires_at)}",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 314,
+          "kind": "markup",
+          "raw": "expires {formatDate(c.setup_expires_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d3d000a46dc5",
+      "text": "claimed {formatDate(c.created_at)}",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 316,
+          "kind": "markup",
+          "raw": "claimed {formatDate(c.created_at)}",
           "quote": null
         }
       ]
@@ -51718,7 +51930,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 277,
+          "line": 337,
           "kind": "markup",
           "raw": "Your contact card is empty. Add the ways you are willing to be reached\n        under",
           "quote": null
@@ -51736,7 +51948,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 279,
+          "line": 339,
           "kind": "markup",
           "raw": ",\n        then give them to patches one at a time here.",
           "quote": null
@@ -51754,7 +51966,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 341,
+          "line": 401,
           "kind": "markup",
           "raw": "awaiting approval",
           "quote": null
@@ -51772,7 +51984,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 342,
+          "line": 402,
           "kind": "markup",
           "raw": "asked {formatDate(m.joined_at)}",
           "quote": null
@@ -51790,7 +52002,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 365,
+          "line": 425,
           "kind": "markup",
           "raw": "following",
           "quote": null
@@ -54034,6 +54246,24 @@
           "line": 685,
           "kind": "markup",
           "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds the patches, events, charters,\n        proposals and member lists that are already open to you. It does not\n        hold email addresses, contact cards, noticeboards, or anything from a\n        patch you are not in. Other people travel as a name and a picture,\n        so the new quilt invites everyone back and each person sets their own\n        visibility there.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4471eb3b80a8",
+      "text": "No pending claims.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 46,
+          "kind": "markup",
+          "raw": "No pending claims.",
           "quote": null
         }
       ]

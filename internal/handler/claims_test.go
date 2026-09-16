@@ -956,6 +956,165 @@ func TestExpireStaleClaims(t *testing.T) {
 	}
 }
 
+// --- The claim's two standing surfaces (docs/adr/039) ---
+//
+// Approving a claim moves it out of the admin review queue and grants the
+// claimant a right they hold no membership for, so before these two listings
+// existed an approval left no trace on any surface either party could return
+// to: the admin's queue went quiet, the patch page kept reading unclaimed to
+// everybody (correctly), and the only record was a notification.
+
+func TestMyClaimsListsOpenClaimsAcrossPatches(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, bobToken := createTestUser(t, db, "bob", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	approvedID := createTestNode(t, db, owner.ID, "Approved Hall", "approved-hall", "open")
+	makeClaimable(t, db, approvedID, "")
+	pendingID := createTestNode(t, db, owner.ID, "Pending Hall", "pending-hall", "open")
+	makeClaimable(t, db, pendingID, "")
+	othersID := createTestNode(t, db, owner.ID, "Bobs Hall", "bobs-hall", "open")
+	makeClaimable(t, db, othersID, "")
+
+	approveAdminClaim(t, db, cfg, "approved-hall", aliceToken, adminToken)
+	openClaim(t, db, cfg, aliceToken, "pending-hall", map[string]interface{}{"method": "admin", "evidence": "mine too"})
+	// Somebody else's claim is nobody's business but theirs.
+	openClaim(t, db, cfg, bobToken, "bobs-hall", map[string]interface{}{"method": "admin", "evidence": "mine"})
+
+	r := authedRequest("GET", "/api/v1/users/me/claims", nil, aliceToken)
+	w := serveMux(t, db, "GET", "/api/v1/users/me/claims", handler.MyClaims(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("my claims: got %d %s", w.Code, w.Body.String())
+	}
+	var got struct {
+		Items []map[string]interface{} `json:"items"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &got)
+	if len(got.Items) != 2 {
+		t.Fatalf("got %d claims, want alice's 2: %s", len(got.Items), w.Body.String())
+	}
+
+	bySlug := map[string]map[string]interface{}{}
+	for _, it := range got.Items {
+		bySlug[it["node_slug"].(string)] = it
+	}
+	if _, ok := bySlug["bobs-hall"]; ok {
+		t.Fatal("my claims leaked another user's claim")
+	}
+
+	approved, ok := bySlug["approved-hall"]
+	if !ok {
+		t.Fatalf("approved claim missing: %s", w.Body.String())
+	}
+	if approved["status"] != "approved" {
+		t.Fatalf("status = %v, want approved", approved["status"])
+	}
+	// The whole point of the row: it says how long the right lasts.
+	if exp, _ := approved["setup_expires_at"].(string); exp == "" {
+		t.Fatalf("approved claim missing setup_expires_at: %s", w.Body.String())
+	}
+	// The name, so the row can be read without resolving a slug.
+	if approved["node_name"] != "Approved Hall" {
+		t.Fatalf("node_name = %v", approved["node_name"])
+	}
+
+	pending, ok := bySlug["pending-hall"]
+	if !ok {
+		t.Fatalf("pending claim missing: %s", w.Body.String())
+	}
+	if pending["status"] != "pending" {
+		t.Fatalf("status = %v, want pending", pending["status"])
+	}
+	if _, has := pending["setup_expires_at"]; has {
+		t.Fatal("a claim nobody has approved carries no setup window")
+	}
+}
+
+func TestMyClaimsDropsLapsedApproval(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Lapsed Hall", "lapsed-hall", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "lapsed-hall", aliceToken, adminToken)
+
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+
+	r := authedRequest("GET", "/api/v1/users/me/claims", nil, aliceToken)
+	w := serveMux(t, db, "GET", "/api/v1/users/me/claims", handler.MyClaims(db), r)
+	var got struct {
+		Items []map[string]interface{} `json:"items"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &got)
+	if len(got.Items) != 0 {
+		t.Fatalf("a lapsed approval is not a right still held: %s", w.Body.String())
+	}
+	// And reading it is what made the row honest.
+	if s := claimStatus(t, db, claimID); s != "expired" {
+		t.Fatalf("lapsed claim status = %s, want expired", s)
+	}
+}
+
+func TestAdminClaimsListsApprovedAwaitingSetup(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Awaiting Hall", "awaiting-hall", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "awaiting-hall", aliceToken, adminToken)
+
+	listClaims := func(query string) []map[string]interface{} {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/admin/claims"+query, nil, adminToken)
+		w := serveAdminMux(t, db, "GET", "/api/v1/admin/claims", handler.ListClaims(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("list%s: got %d %s", query, w.Code, w.Body.String())
+		}
+		var got struct {
+			Items []map[string]interface{} `json:"items"`
+		}
+		json.Unmarshal(w.Body.Bytes(), &got)
+		return got.Items
+	}
+
+	// Approving empties the review queue — that part was never the bug.
+	if items := listClaims(""); len(items) != 0 {
+		t.Fatalf("approved claim still in review queue: %d", len(items))
+	}
+
+	items := listClaims("?status=approved")
+	if len(items) != 1 {
+		t.Fatalf("got %d approved claims, want 1", len(items))
+	}
+	if items[0]["id"] != claimID {
+		t.Fatalf("id = %v, want %s", items[0]["id"], claimID)
+	}
+	if items[0]["claimant_username"] != "alice" {
+		t.Fatalf("claimant_username = %v", items[0]["claimant_username"])
+	}
+	// The admin is being asked to wait, so the panel has to say until when.
+	if exp, _ := items[0]["setup_expires_at"].(string); exp == "" {
+		t.Fatalf("approved claim missing setup_expires_at: %v", items[0])
+	}
+
+	// Once the window closes the claim is not awaiting anybody.
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+	if items := listClaims("?status=approved"); len(items) != 0 {
+		t.Fatalf("lapsed approval still listed as awaiting setup: %d", len(items))
+	}
+}
+
 // --- Verification domain provenance ---
 
 func TestAdminCreateDerivesVerificationDomain(t *testing.T) {
