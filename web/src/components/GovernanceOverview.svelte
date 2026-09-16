@@ -114,6 +114,17 @@
         ? `${how} Whoever takes it serves out the term, to ${formatDay(seat.term_ends_at)}.`
         : how;
     }
+    // Vacant, with nobody left to put a name forward (docs/adr/108). The
+    // nomination sentence below describes a person this patch does not have,
+    // and a member read it on a council with no admins at all: "don't tell me
+    // a vacant seat is filled by a nomination an admin raises. We have no
+    // admins."
+    if (seat.fill === 'contest_fills') {
+      const how = 'Vacant, and this patch has no admins to put a name forward.';
+      return seat.contest_due
+        ? `${how} The election that fills it is due now, and any member may stand.`
+        : `${how} The election that fills it opens ${formatDay(seat.contest_opens)}, and any member may stand.`;
+    }
     if (seat.fill === 'contest_scheduled') {
       return seat.contest_due
         ? `Term ended ${formatDay(seat.term_ends_at)}. The election for it is due now, and the holder serves until a successor is elected.`
@@ -138,6 +149,14 @@
       return 'The ballot is open. The members are choosing between the candidates.';
     }
     if (vacantSeats.length > 0) {
+      // With nobody in the role, "ask an admin to nominate you" names a
+      // person who does not exist here (docs/adr/108). The contest is the
+      // way back, and the seat rows carry its date.
+      if ((overview?.admins?.length ?? 0) === 0) {
+        return contestDue || !nextContestOpens
+          ? 'Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.'
+          : `Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats opens ${formatDay(nextContestOpens)}, and any member of this patch may stand.`;
+      }
       if (isPatchAdmin) {
         return 'You can nominate a member for a vacant seat today. The members ratify it, and the appointee serves out that seat\u2019s term.';
       }

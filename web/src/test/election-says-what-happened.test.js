@@ -123,3 +123,68 @@ describe('Putting somebody forward, and taking your own name back', () => {
     expect(page).toMatch(/proposal\?\.election_phase === 'nominating' && canNominate/);
   });
 });
+
+/**
+ * A chair nobody wins keeps the council's clock (docs/adr/108).
+ *
+ * An empty chair's term end never moved, so it was overdue on every pass and
+ * the calendar re-contested it after each breather for ever: six contests 56
+ * days apart under a page saying "Each term runs 12 months". And while the
+ * breather ran, the page said the next contest was due now, every day, for
+ * four weeks.
+ */
+describe('The council page tells the truth about its own calendar', () => {
+  const overview = source('components/GovernanceOverview.svelte');
+
+  it('has a sentence for a vacant chair nobody can nominate into', () => {
+    expect(overview).toMatch(/seat\.fill === 'contest_fills'/);
+    expect(overview).toMatch(/Vacant, and this patch has no admins to put a name forward\./);
+    expect(overview).toMatch(/The election that fills it opens \$\{formatDay\(seat\.contest_opens\)\}/);
+  });
+
+  it('stops telling an admin-less patch to ask an admin', () => {
+    expect(overview).toMatch(/\(overview\?\.admins\?\.length \?\? 0\) === 0/);
+    expect(overview).toMatch(
+      /Nobody holds the admin role here, so nobody can put a name forward\./
+    );
+  });
+});
+
+/**
+ * Whose contest it is, and what it says when it ends (docs/adr/109).
+ *
+ * A contest the calendar opened wore the longest-standing admin's name on a
+ * public page — "Proposed by Priya Natarajan" for something a timer started
+ * while she was nine months away. A settled election's banner read "Approved.
+ * This change is now in effect." over a council. And the candidate names on
+ * the ballot were inside the checkbox's own label, so tapping a name to find
+ * out who somebody was cast a vote for them.
+ */
+describe('An election nobody proposed', () => {
+  const page = source('pages/ProposalDetail.svelte');
+  const banner = source('components/ProposalStatusBanner.svelte');
+  const panel = source('components/ElectionPanel.svelte');
+
+  it('says the calendar opened it, not a member', () => {
+    expect(page).toMatch(/\{#if proposal\.election_phase\}/);
+    expect(page).toMatch(/Opened by this patch&rsquo;s election calendar/);
+    // Keyed on the election, not the author id, so contests raised before the
+    // calendar started signing them read right too.
+    expect(page).toMatch(/\{:else\}[\s\S]*?'Applied by' : 'Proposed by'/);
+  });
+
+  it('has a banner for a settled election, not an amendment’s', () => {
+    expect(banner).toMatch(
+      /effectiveState === 'in_effect' \|\| effectiveState === 'passed'\) && electionPhase/
+    );
+    expect(banner).toMatch(/This election has closed and the council below is seated\./);
+  });
+
+  it('gives a candidate a name to read and a box to press', () => {
+    // The name is a link to the person, which is what it is everywhere else.
+    expect(panel).toMatch(/<a class="who" href=\{`\/users\/\$\{c\.username\}`\}>/);
+    // And the label wraps the checkbox alone.
+    expect(panel).toMatch(/<label class="tick"[\s\S]*?<input type="checkbox"[\s\S]*?<\/label>/);
+    expect(panel).not.toMatch(/<label>\s*\n\s*<input type="checkbox"/);
+  });
+});

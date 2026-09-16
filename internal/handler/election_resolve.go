@@ -92,6 +92,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	}
 
 	seatWinners(db, nodeID, slug, nodeName, proposalID, winners, chairs, electionTermEnd(gc))
+	announceResult(db, nodeID, slug, nodeName, proposalID, winners, len(chairs))
 
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	db.Exec(`UPDATE proposals SET status = 'approved', state = 'in_effect', applied_at = ?, updated_at = ?
@@ -100,6 +101,40 @@ func resolveElection(db *database.DB, proposalID string) bool {
 		`{"node_id":"`+nodeID+`"}`, "")
 	log.Printf("election: %s seated %d of %d seat(s)", slug, len(winners), seats)
 	return true
+}
+
+// announceResult tells the patch that its election settled something
+// (docs/adr/109).
+//
+// A contest that settled *nothing* notified every member; a contest that
+// seated a council notified the winner and nobody else. So on the one
+// occasion a year of elections was actually for, the four people who voted
+// were told nothing, and the candidate who was not seated was told nothing —
+// her next line was "Nominations are open" for the follow-on contest, in the
+// same second. Losing is news too, and it should not be learned from the
+// silence after somebody else's good news.
+func announceResult(db *database.DB, nodeID, slug, nodeName, proposalID string, winners []electionTallyRow, chairs int) {
+	seated := len(winners)
+	body := "The votes are counted. " + strconv.Itoa(seated) + " of " +
+		strconv.Itoa(chairs) + " seat" + plural(chairs) + " " + wasWere(seated) + " filled."
+	if seated < chairs {
+		body += " The rest stay vacant until somebody is nominated or elected into them."
+	}
+	notify(notifications.Event{
+		Type: notifications.ProposalApplied, NodeID: nodeID, NodeSlug: slug, NodeName: nodeName,
+		EntityID: proposalID,
+		Title:    "The election in " + nodeName + " has closed",
+		Body:     body,
+		Link:     weblink.Proposal(slug, proposalID),
+	})
+}
+
+// wasWere agrees the verb with a count, so the copy does not have to.
+func wasWere(n int) string {
+	if n == 1 {
+		return "was"
+	}
+	return "were"
 }
 
 // closeElectionUnsettled ends an election that decided nothing. The council is
@@ -123,7 +158,11 @@ func closeElectionUnsettled(db *database.DB, proposalID, nodeID, slug, nodeName,
 	// The chairs go back to being ordinary chairs. Holdover means nothing
 	// happened to them, and a chair still marked as being decided would show
 	// a contest on the governance page that has already closed.
+	claimed := seatsMarked(db, proposalID)
 	db.Exec(`UPDATE seats SET contested_in = NULL WHERE contested_in = ?`, proposalID)
+	// And the empty ones rejoin the council's calendar rather than staying
+	// permanently overdue (docs/adr/108).
+	restVacantChairs(db, nodeID, claimed)
 	auth.LogAuditEvent(db, "", "election.unsettled", "proposal", proposalID,
 		`{"node_id":"`+nodeID+`"}`, "")
 	notify(notifications.Event{
@@ -172,6 +211,38 @@ func electionTermEnd(gc model.GovernanceConfig) string {
 		return ""
 	}
 	return time.Now().UTC().AddDate(0, gc.AdminTermMonths, 0).Format("2006-01-02")
+}
+
+// restVacantChairs puts the chairs a contest did not fill back on the
+// council's own calendar (docs/adr/108).
+//
+// A chair nobody wins keeps the term end of whoever sat in it last, which is
+// a date in the past. Nothing ever moved it, so the chair was due on every
+// pass: the calendar opened a contest, it settled nothing or filled only some
+// of the council, the breather ran, and it opened another — six times, 56
+// days apart, on a co-op whose page said terms run twelve months.
+//
+// So an unfilled chair takes the date the council is next contested on, and
+// waits its turn with the rest. In the meantime it is a vacancy, and a
+// vacancy is filled by nomination on any day (docs/adr/100) — which is what
+// the permanently-overdue calendar had been standing in for.
+//
+// **Only where somebody still holds a chair.** With the whole council empty
+// there is no admin to raise that nomination and no held term to borrow, and
+// the contest is the patch's only way back, so those chairs stay overdue and
+// the calendar keeps trying. That is the state docs/adr/102 leaves behind and
+// the one it relies on being retried.
+func restVacantChairs(db *database.DB, nodeID string, chairs []string) {
+	var termEnd string
+	db.QueryRow(`SELECT COALESCE(MIN(term_ends_at),'') FROM seats
+	             WHERE node_id = ? AND holder_id IS NOT NULL
+	               AND term_ends_at IS NOT NULL AND term_ends_at != ''`, nodeID).Scan(&termEnd)
+	if termEnd == "" {
+		return
+	}
+	for _, seatID := range chairs {
+		db.Exec(`UPDATE seats SET term_ends_at = ? WHERE id = ? AND holder_id IS NULL`, termEnd, seatID)
+	}
 }
 
 // contestedSeats is which chairs this contest decides, oldest chair first —
@@ -286,10 +357,18 @@ func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, win
 	}
 
 	// A contested chair beyond the ones just filled is vacant: it was put to
-	// the electorate and nobody won it. The chair stays for the next contest.
+	// the electorate and nobody won it. The chair stays for the next contest —
+	// on the council's calendar (docs/adr/108), not on the stale date of
+	// whoever sat in it last, which would bring it back round in eight weeks
+	// under a twelve-month term.
+	var unfilled []string
 	for i := len(winners); i < len(chairs); i++ {
 		db.Exec(`UPDATE seats SET holder_id = NULL, contested_in = NULL WHERE id = ?`, chairs[i])
+		unfilled = append(unfilled, chairs[i])
 	}
+	// The winners' chairs already carry their new term ends from the loop
+	// above, so this borrows a date the electorate just set.
+	restVacantChairs(db, nodeID, unfilled)
 
 	// Step down the incumbents the electorate did not return — and only them.
 	// An admin holding an uncontested chair was not on this ballot and keeps

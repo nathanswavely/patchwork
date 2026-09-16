@@ -298,18 +298,20 @@ func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, 
 	return id
 }
 
-// systemAuthorFor picks an author for a proposal nobody raised. The calendar
-// opened this one, not a person, so the longest-standing admin stands in as
-// the record's author rather than inventing a synthetic user.
+// systemAuthorFor picks an author for a proposal nobody raised: the sentinel
+// system user, the same one that owns an unclaimed patch (docs/adr/109).
+//
+// It used to be the longest-standing admin, on the reasoning that the record
+// needed a name and inventing a synthetic user was worse. Both halves were
+// wrong. The name is not a stand-in — every surface reads it as authorship,
+// so a contest a timer opened at four in the morning said "Proposed by Priya
+// Natarajan" on a public page while Priya was nine months away, and the two
+// comments members left on it rang *her* bell as the author. She said the
+// thing that settles it: "If a member asked me 'why did you call another one,
+// Priya', I would have no answer." And the synthetic user was never
+// invented — `_system` has been in the schema since migration 015.
 func systemAuthorFor(db *database.DB, nodeID string) string {
-	var id string
-	db.QueryRow(`SELECT user_id FROM memberships
-	             WHERE node_id = ? AND role = 'admin' AND status = 'active'
-	             ORDER BY joined_at ASC LIMIT 1`, nodeID).Scan(&id)
-	if id == "" {
-		db.QueryRow("SELECT owner_id FROM nodes WHERE id = ?", nodeID).Scan(&id)
-	}
-	return id
+	return model.SystemUserID
 }
 
 // AddCandidate handles POST /api/v1/proposals/{id}/candidates.

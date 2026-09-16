@@ -47,6 +47,14 @@ const (
 	// seatFillNomination — vacant, and fillable today: an admin puts a name
 	// forward and the members ratify (docs/adr/100, docs/adr/051).
 	seatFillNomination = "nomination"
+	// seatFillElection — vacant, and *not* fillable today, because this
+	// patch has no admins and a nomination is raised by one (docs/adr/108).
+	// The contest is the way back, so the row says when it opens instead of
+	// describing a person who does not exist here. A member read the
+	// nomination sentence on a council with nobody in it and said so: "don't
+	// tell me a vacant seat is filled by a nomination an admin raises. We
+	// have no admins."
+	seatFillElection = "contest_fills"
 	// seatFillScheduled — held, and contested at the election the calendar
 	// opens on ContestOpens. Where that date has arrived, ContestDue says so
 	// and holdover is carrying the holder until a successor is elected.
@@ -117,6 +125,15 @@ func seatsOf(db *database.DB, nodeID string, gc model.GovernanceConfig) []seatVi
 
 	contestID := openContestID(db, nodeID)
 	today := time.Now().UTC().Format("2006-01-02")
+	// What is holding the calendar back, so a chair's date is the day
+	// something happens rather than the day the arithmetic first said "now"
+	// (docs/adr/108).
+	notBefore := breatherUntil(db, nodeID, gc)
+	// Whether anybody is left to raise a nomination at all.
+	var admins int
+	db.QueryRow(`SELECT COUNT(*) FROM memberships
+	             WHERE node_id = ? AND role = 'admin' AND status = 'active'`, nodeID).Scan(&admins)
+	nextOpens := contestOpensFor(gc, nextTermEnd(db, nodeID), notBefore)
 	for i := range out {
 		out[i].Vacant = out[i].HolderID == ""
 		switch {
@@ -127,10 +144,21 @@ func seatsOf(db *database.DB, nodeID string, gc model.GovernanceConfig) []seatVi
 		case contestID != "" && contestedIn[i] == contestID:
 			out[i].Fill = seatFillContest
 			out[i].ContestID = contestID
-		case out[i].Vacant:
+		case out[i].Vacant && admins > 0:
 			out[i].Fill = seatFillNomination
+		case out[i].Vacant:
+			// Nobody to nominate, so the contest fills it. Its own stale term
+			// end says nothing useful — it belonged to whoever sat here last
+			// — so the date is the council's next contest (docs/adr/108).
+			if nextOpens == "" {
+				out[i].Fill = seatFillNone
+				continue
+			}
+			out[i].Fill = seatFillElection
+			out[i].ContestOpens = nextOpens
+			out[i].ContestDue = nextOpens <= today
 		default:
-			opens := contestOpensFor(gc, out[i].TermEndsAt)
+			opens := contestOpensFor(gc, out[i].TermEndsAt, notBefore)
 			if opens == "" {
 				out[i].Fill = seatFillNone
 				continue
