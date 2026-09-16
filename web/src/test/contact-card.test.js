@@ -133,14 +133,22 @@ describe('The profile is a window onto the room, never a wider one', () => {
     expect(src).not.toMatch(/api\(['`][^'`]*contact/);
   });
 
+  it('draws the items through the one rendering, not its own copy', () => {
+    // docs/adr/083 decision 7: the profile is the person card at full page
+    // size. It had grown a second copy of the kind map, the href builder and
+    // the markup, and the copies had already drifted.
+    expect(src).toContain('<ContactItems items={contact} />');
+    expect(src).not.toMatch(/href="tel:|href="mailto:|contactHref|CONTACT_KIND_WORD/);
+  });
+
   it('never names the patch an item came through', () => {
     // The granting membership may be private or hidden, and docs/adr/006
     // keeps those off this page — so the copy is audience-shaped, not
     // provenance-shaped.
-    const start = src.indexOf('<ul class="profile-contact">');
-    const section = src.slice(start, src.indexOf('</ul>', start));
+    const start = src.indexOf('{#if contact.length > 0}');
+    const section = src.slice(start, src.indexOf('</section>', start));
     expect(start).toBeGreaterThan(-1);
-    expect(section).not.toMatch(/node_slug|node_name|patch/i);
+    expect(section).not.toMatch(/node_slug|node_name/);
     expect(src).toContain('Shared with people they organize with');
   });
 
@@ -178,8 +186,42 @@ describe('The person card is one rendering, and follows the patch card', () => {
     expect(src).toContain('{#if items.length > 0}');
   });
 
-  it('never names the patch an item came through', () => {
-    const section = src.slice(src.indexOf('<ul class="person-contact">'), src.indexOf('</ul>'));
-    expect(section).not.toMatch(/node_slug|node_name|patch/i);
+  it('draws the items through the one rendering, not its own copy', () => {
+    expect(src).toContain('<ContactItems {items} compact />');
+    expect(src).not.toMatch(/href="tel:|href="mailto:|KIND_WORD|KIND_MARK/);
+  });
+});
+
+describe('ContactItems is the one rendering of a shared item', () => {
+  const src = source('components/ContactItems.svelte');
+  const lib = source('lib/contactItems.js');
+
+  it('takes no patch, so no surface can name one', () => {
+    // docs/adr/083 decision 4. The component cannot disclose provenance it
+    // is never handed — the invariant is structural, not a rule each caller
+    // has to remember.
+    expect(src).not.toMatch(/node_slug|node_name|node_id/);
+    expect(src).toMatch(/let \{ items = \[\], compact = false \} = \$props\(\);/);
+  });
+
+  it('names the kind in words, not by glyph alone', () => {
+    // The card used to word the icon sr-only, so a sighted low-vision reader
+    // on a touch device got a 14px glyph and no name for it.
+    expect(src).toContain('CONTACT_KIND_WORD[item.kind] || item.kind');
+    expect(src).not.toMatch(/class="sr-only"/);
+  });
+
+  it('keeps the kind map and the href builder in one module', () => {
+    expect(lib).toContain('export const CONTACT_KIND_WORD');
+    expect(lib).toContain('export const CONTACT_KIND_MARK');
+    expect(lib).toContain('export function contactHref');
+    // A handle and a note have no scheme to dial.
+    expect(lib).toMatch(/if \(item\.kind === 'phone'\)[\s\S]*if \(item\.kind === 'email'\)[\s\S]*return null;/);
+  });
+
+  it('is the only place these live', () => {
+    for (const f of ['components/PersonCard.svelte', 'pages/UserProfile.svelte', 'pages/UserSettingsPatches.svelte']) {
+      expect(source(f)).not.toMatch(/const (CONTACT_)?KIND_(WORD|MARK) =/);
+    }
   });
 });

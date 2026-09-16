@@ -77,3 +77,31 @@ state can't arise again, so no code should exist to clean it.
   dead cleanup machinery running on every boot of every instance is a
   worse cost than one manual `rm` on the one instance that has the
   orphans.
+
+## Addendum, 2026-09-16: the no-badge rule is about visitors
+
+"No 'awaiting setup' badge" above is a rule about **the patch**. It is what
+keeps an approved claim from becoming the reservation ADR 030 forbids: a
+visitor must not be able to read a patch as spoken for, because until setup
+is submitted nobody runs it and it is still claimable by anyone whose proof
+lands first.
+
+Read as a rule about *every* surface, it left the two parties to the claim
+with nowhere to see their own business. The admin panel listed `pending`
+only, so approving a claim removed it from the one page an admin could
+return to — the approval's only record was a toast. And My Patches is built
+from memberships, which an approved claimant does not hold until
+`activateClaimedNode` runs at setup, so the claimant's only trace was the
+notification announcing it. A 14-day window could close in silence at both
+ends. It read as a failed write, which is how this came up.
+
+So: the patch says nothing, and the two parties see their own. The admin
+panel gained an "Approved, awaiting setup" section with each claim's expiry;
+My Patches gained a "Claiming" section with the claimant's own claims,
+carrying the setup link and saying out loud that the patch still reads
+unclaimed to everyone else. Neither is reachable without being somebody —
+instance admin, or the claimant — and neither changes what the patch shows.
+
+`GET /api/v1/users/me/claims` serves the second. Both listings run the lazy
+expiry sweep first (`expireAllPastDueApprovedClaims`), because a right that
+has lapsed must not be listed as one still held.
