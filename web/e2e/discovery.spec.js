@@ -45,23 +45,54 @@ test.describe('Discovery — Quilt View', () => {
     await expect(page.locator('.finder-action')).toContainText('Show matches on the quilt');
   });
 
-  test('1.8 — theme toggle in user menu switches between light and dark', async ({ page }) => {
+  test('1.8 — the Display menu switches theme between light and dark', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
     await page.waitForTimeout(500);
 
-    const initialTheme = await page.locator('html').getAttribute('data-theme');
-
-    // Theme toggle lives in the user menu
+    // The lone Light/Dark toggle became the Display menu's Theme row when
+    // docs/adr/112 added Colors beside it. Three choices now, not a flip —
+    // `system` was always the store's default and no UI ever offered it back.
     await page.locator('.bar-avatar-btn').click();
-    await page.locator('.user-dropdown button', { hasText: /mode/i }).click();
-    const newTheme = await page.locator('html').getAttribute('data-theme');
-    expect(newTheme).not.toBe(initialTheme);
+    await expect(page.locator('.display-menu')).toBeVisible();
 
-    // Toggle back — the dropdown stays open after toggling
-    await page.locator('.user-dropdown button', { hasText: /mode/i }).click();
-    const revertedTheme = await page.locator('html').getAttribute('data-theme');
-    expect(revertedTheme).toBe(initialTheme);
+    await page.locator('.display-row', { hasText: 'Theme' }).getByText('Light', { exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+    // The dropdown stays open, so the next choice is one click away.
+    await page.locator('.display-row', { hasText: 'Theme' }).getByText('Dark', { exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  });
+
+  test('1.8b — the Display menu switches the quilt between default and muted', async ({ page }) => {
+    // docs/adr/112. Held per browser rather than on the account, so this
+    // asserts localStorage rather than anything the server knows.
+    await loginAsAdmin(page);
+    await page.goto('/');
+    await page.waitForTimeout(500);
+
+    await page.locator('.bar-avatar-btn').click();
+    const colors = page.locator('.display-row', { hasText: 'Colors' });
+    await expect(colors.getByText('Default', { exact: true })).toHaveAttribute('aria-pressed', 'true');
+
+    await colors.getByText('Muted', { exact: true }).click();
+    await expect(colors.getByText('Muted', { exact: true })).toHaveAttribute('aria-pressed', 'true');
+    expect(await page.evaluate(() => localStorage.getItem('patchwork-colors'))).toBe('muted');
+
+    await colors.getByText('Default', { exact: true }).click();
+    expect(await page.evaluate(() => localStorage.getItem('patchwork-colors'))).toBe('default');
+  });
+
+  test('1.8c — a signed-out reader gets the Display menu in the same slot', async ({ page }) => {
+    // docs/adr/112: the control must not move when somebody joins, and an
+    // anonymous reader previously had no theme control at all.
+    await page.goto('/');
+    await page.waitForTimeout(500);
+
+    await expect(page.locator('.bar-avatar-btn')).toHaveCount(0);
+    await page.locator('.bar-display-btn').click();
+    await expect(page.locator('.display-menu')).toBeVisible();
+    await expect(page.locator('.display-row', { hasText: 'Colors' })).toBeVisible();
   });
 });
 
