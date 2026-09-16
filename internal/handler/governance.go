@@ -69,6 +69,28 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 	return fp.Charters
 }
 
+// GovernanceRepoNodeID resolves a patch slug for the git transport
+// (internal/governance/http.go), and refuses anybody who may not read that
+// patch's whole shelf.
+//
+// The REST layer above can hand a visitor the published docs and keep the
+// rest back, because it filters row by row. A bare repository has no such
+// seam: a clone takes every document body, its whole history and its diffs,
+// and the commits carry their editors' names besides — which the
+// per-membership visibility switch (docs/adr/006) and the tombstone rule
+// (docs/adr/086) each exist to govern. So the transport asks the one question
+// it can answer honestly, and asks it with canReadPatchDocs: the same rule
+// that decides whether a viewer is handed the whole shelf (docs/adr/110).
+func GovernanceRepoNodeID(db *database.DB) func(*http.Request, string) string {
+	return func(r *http.Request, slug string) string {
+		nodeID := NodeIDFromSlug(db, slug)
+		if nodeID == "" || !canReadPatchDocs(db, r, nodeID) {
+			return ""
+		}
+		return nodeID
+	}
+}
+
 // followerMayJoinProposals reports whether this person may take part in a
 // patch's proposals — comment on them, and anything else participation comes
 // to mean. Admins and members always may; a follower may unless the patch has
