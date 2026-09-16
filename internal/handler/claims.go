@@ -277,6 +277,20 @@ func expirePastDueApprovedClaims(db *database.DB, nodeID string) {
 	)
 }
 
+// expireAllPastDueApprovedClaims is the same lazy sweep across every node,
+// for the two surfaces that list claims they did not arrive at through one
+// patch: the admin queue's awaiting-setup section and MyClaims. Those read
+// claims in bulk, so there is no single nodeID to scope to, and an approved
+// row whose window has closed must not be listed as still awaiting anybody.
+func expireAllPastDueApprovedClaims(db *database.DB) {
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec(
+		`UPDATE claim_requests SET status = 'expired', updated_at = ?
+		 WHERE status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?`,
+		now, now,
+	)
+}
+
 // RequestClaim handles POST /api/v1/nodes/{slug}/claim.
 func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -481,6 +495,66 @@ func MyClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
+	}
+}
+
+// MyClaims handles GET /api/v1/users/me/claims — every open claim the
+// caller holds, across patches. My Patches is built from memberships, and an
+// approved claimant holds none until setup activates the patch
+// (activateClaimedNode), so a claim waiting on its claimant had no standing
+// surface anywhere: the approval notification was push-only, and missing it
+// left the setup window closing in silence. This is the caller reading their
+// own claims, so it is not the "awaiting setup" badge docs/adr/039 forbids —
+// that rule is about what *visitors* see on the patch, which still reads
+// unclaimed to everyone including this person.
+//
+// Scoped like the expiry reminder (notifications/reminders.go): only claims
+// on a patch that is still unclaimed and present, because a claim on a patch
+// somebody else already activated is not something the claimant can act on.
+func MyClaims(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+
+		// Honest at the moment something reads it — a lapsed approval must
+		// never be listed as a right still held.
+		expireAllPastDueApprovedClaims(db)
+
+		rows, err := db.Query(
+			`SELECT cr.id, cr.method, cr.status, cr.created_at, cr.setup_expires_at, n.slug, n.name
+			 FROM claim_requests cr
+			 JOIN nodes n ON n.id = cr.node_id AND n.status = 'unclaimed' AND n.removed_at IS NULL
+			 WHERE cr.user_id = ? AND cr.status IN ('pending','approved')
+			 ORDER BY cr.created_at DESC`, user.ID,
+		)
+		if err != nil {
+			http.Error(w, `{"error":"failed to load claims"}`, http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		items := []map[string]interface{}{}
+		for rows.Next() {
+			var id, method, status, createdAt, slug, name string
+			var setupExpiresAt sql.NullString
+			if err := rows.Scan(&id, &method, &status, &createdAt, &setupExpiresAt, &slug, &name); err != nil {
+				continue
+			}
+			item := map[string]interface{}{
+				"id":         id,
+				"method":     method,
+				"status":     status,
+				"created_at": createdAt,
+				"node_slug":  slug,
+				"node_name":  name,
+			}
+			if setupExpiresAt.Valid && setupExpiresAt.String != "" {
+				item["setup_expires_at"] = setupExpiresAt.String
+			}
+			items = append(items, item)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{"items": items})
 	}
 }
 
@@ -802,17 +876,26 @@ func fetchClaimPage(pageURL string) (string, error) {
 	return string(body), nil
 }
 
-// ListClaims handles GET /api/v1/admin/claims.
+// ListClaims handles GET /api/v1/admin/claims. Filtered by ?status, which
+// defaults to the review queue. The panel also asks for 'approved' — the
+// claims that cleared review and are waiting on their claimant to finish
+// setup (docs/adr/039) — because approving used to drop a claim out of every
+// admin surface at once, leaving the approval visible only in a toast.
 func ListClaims(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		status := r.URL.Query().Get("status")
 		if status == "" {
 			status = "pending"
 		}
+		// A listed approval is a claim to be waited on, so it has to be one
+		// that is actually still live.
+		if status == "approved" {
+			expireAllPastDueApprovedClaims(db)
+		}
 		after, limit := parsePaginationParams(r)
 
 		query := `SELECT cr.id, cr.node_id, cr.user_id, cr.method, cr.evidence, cr.status, cr.created_at, COALESCE(cr.email,''),
-			n.name, n.slug, COALESCE(n.verification_domain,''), ` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
+			COALESCE(cr.setup_expires_at,''), n.name, n.slug, COALESCE(n.verification_domain,''), ` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
 			FROM claim_requests cr
 			JOIN nodes n ON cr.node_id = n.id
 			JOIN users u ON cr.user_id = u.id
@@ -842,6 +925,7 @@ func ListClaims(db *database.DB) http.HandlerFunc {
 			Status             string `json:"status"`
 			CreatedAt          string `json:"created_at"`
 			Email              string `json:"email"`
+			SetupExpiresAt     string `json:"setup_expires_at,omitempty"`
 			NodeName           string `json:"node_name"`
 			NodeSlug           string `json:"node_slug"`
 			VerificationDomain string `json:"verification_domain"`
@@ -853,7 +937,7 @@ func ListClaims(db *database.DB) http.HandlerFunc {
 		for rows.Next() {
 			var c claimItem
 			if err := rows.Scan(&c.ID, &c.NodeID, &c.UserID, &c.Method, &c.Evidence, &c.Status, &c.CreatedAt, &c.Email,
-				&c.NodeName, &c.NodeSlug, &c.VerificationDomain, &c.ClaimantName, &c.ClaimantDisplay); err != nil {
+				&c.SetupExpiresAt, &c.NodeName, &c.NodeSlug, &c.VerificationDomain, &c.ClaimantName, &c.ClaimantDisplay); err != nil {
 				continue
 			}
 			items = append(items, c)
