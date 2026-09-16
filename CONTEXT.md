@@ -302,9 +302,9 @@ mean other patches. Distinct from what the layout code calls visible, which
 is a patch passing the filter.
 
 It needs two panes on screen at once, so it is absent where there is only
-one: on a phone, where the panes toggle, and at the **cards pane**'s
-hidden stop, where there is no list to narrow. Absent, not off — the
-setting is kept and bites again when the second pane returns.
+one: on a phone, where the panes toggle, and wherever the **cards pane**
+has been put away, since there is then no list to narrow. Absent, not off
+— the setting is kept and bites again when the second pane returns.
 _Avoid_: visible (that word belongs to the filter), viewport (in UI copy),
 bounds, this area
 
@@ -400,29 +400,29 @@ map that holds the **patch cards**, and on a desktop the slot a **docked
 profile** takes. On a phone there is no beside — the panes toggle and this
 one fills the screen.
 
-Its **width** is the reader's, set at three stops: **two columns**, **one
-column**, and **hidden**. One fact, not two — hidden is the width's zero —
-and the stop names how many cards sit side by side rather than a
-percentage, because the pane exists to hold cards and that is the only
-unit a reader can see. Moving from two columns to one halves the pane and
-leaves the card exactly the size it was: what the reader gains is quilt,
-not a bigger card. An arrangement rather than a lens, so it persists, the
-way the collapsed rail and the collapsed chips do and the filter, the
-order and **in view** deliberately do not.
+A reader can **put it away**. Shown or hidden, one bit and nothing between:
+a narrower pane is a worse list and a barely better quilt, so the only
+choice worth offering is whether the list is there. Shown is the width it
+has always had; hidden gives the whole window to the canvas, which is the
+signature visual and was never something a reader could ask to see all of.
+An arrangement rather than a lens, so it persists, the way the collapsed
+rail and the collapsed chips do and the filter, the order and **in view**
+deliberately do not.
 
-It arranges the room, so the control is the shell's even while it sits in
-the pane's header — at the hidden stop it is canvas chrome, because a
-control that can delete its own container was never the container's.
-Hiding suspends the **in view** lens rather than clearing it: there is no
-list to narrow, and the reader's setting is not the app's to discard. A
-docked profile opens the pane to its last stop for as long as it is
-docked, for the same reason — the room makes space for what was asked for
+It arranges the room, so the control is the shell's rather than the list's,
+and it never lives in the pane's own header: it parks against the pane's
+edge and travels with it, because a control that can delete its own
+container cannot live inside it. It is the rail's toggle mirrored — the two
+edges of one room, learned once. Hiding suspends the **in view** lens rather
+than clearing it: there is no list to narrow, and the reader's setting is
+not the app's to discard. A docked profile opens the pane for as long as it
+is docked, for the same reason — the room makes space for what was asked for
 without overwriting what was chosen.
 
 Not the list (a docked profile can occupy the pane and is not a list) and
 not a panel in the **Card** sense.
 _Avoid_: sidebar (the rail is the sidebar), drawer, list pane, results
-panel, collapse (the stop is hidden; collapsing is what the rail does)
+panel, collapse (the rail collapses; this one is hidden), minimize
 
 **Patch card**:
 A patch as rendered in a list — its cover, name, counts, a line of
