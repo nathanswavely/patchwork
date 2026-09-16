@@ -1654,3 +1654,148 @@ func TestClaimEmailNormalizesBeforeDomainCheck(t *testing.T) {
 		t.Errorf("claim_requests.email = %q, want %q", stored, "booking@casevenue.example")
 	}
 }
+
+// Who can join is a question setup asks, not a value a claim inherits.
+//
+// Every unclaimed listing is written with a membership policy nobody chose
+// (unclaimed.go), and it means nothing while the patch is a listing: an
+// unclaimed patch takes followers only. A claim makes it the live door. The
+// first real claim on the Lancaster instance activated a patch that admitted
+// anyone, because the row said 'open' and nothing had ever asked.
+func TestSetupClaimAppliesChosenMembershipPolicy(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	tmp := t.TempDir()
+	governance.SetDataDir(tmp)
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	// The listing carries 'open', exactly as unclaimed.go used to write it.
+	nodeID := createTestNode(t, db, owner.ID, "Candy Factory", "candy-factory", "open")
+	db.Exec("UPDATE nodes SET membership_policy = 'open' WHERE id = ?", nodeID)
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "candy-factory", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", map[string]interface{}{
+		"template":          "casual",
+		"membership_policy": "invite_only",
+	}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+
+	var policy string
+	db.QueryRow("SELECT membership_policy FROM nodes WHERE id = ?", nodeID).Scan(&policy)
+	if policy != "invite_only" {
+		t.Errorf("node membership_policy = %q, want invite_only (the claimant's choice)", policy)
+	}
+
+	// And it reaches the rules file, which is the copy governance reads and
+	// a later amendment sync writes back from. A choice that lands only on
+	// the row is a choice the next rules sync undoes.
+	rules, err := governance.ReadRules(tmp, nodeID)
+	if err != nil {
+		t.Fatalf("read rules: %v", err)
+	}
+	if rules.MembershipPolicy != "invite_only" {
+		t.Errorf("rules membership_policy = %q, want invite_only", rules.MembershipPolicy)
+	}
+}
+
+// A client that sends no policy gets the template's own answer, never the
+// listing's. Picking Minimal is asking for an invite-only patch — its rules
+// file says so — and the absorb used to overwrite that with the row.
+func TestSetupClaimFallsBackToTemplatePolicyNotTheListing(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	tmp := t.TempDir()
+	governance.SetDataDir(tmp)
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	nodeID := createTestNode(t, db, owner.ID, "Minimal Venue", "minimal-venue", "open")
+	db.Exec("UPDATE nodes SET membership_policy = 'open' WHERE id = ?", nodeID)
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "minimal-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup",
+		map[string]interface{}{"template": "minimal"}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+
+	want, err := governance.TemplateRules("minimal")
+	if err != nil {
+		t.Fatalf("template rules: %v", err)
+	}
+	var policy string
+	db.QueryRow("SELECT membership_policy FROM nodes WHERE id = ?", nodeID).Scan(&policy)
+	if policy != want.MembershipPolicy {
+		t.Errorf("node membership_policy = %q, want %q (the minimal template's)", policy, want.MembershipPolicy)
+	}
+	if policy == "open" {
+		t.Error("a claim still opened the patch to anyone, chosen by nobody")
+	}
+}
+
+func TestSetupClaimRejectsUnknownMembershipPolicy(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Bad Policy Venue", "bad-policy-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "bad-policy-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", map[string]interface{}{
+		"membership_policy": "everyone-forever",
+	}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("bad policy: got %d, want 400: %s", w.Code, w.Body.String())
+	}
+	// Refused before anything happened, exactly as an unknown template is.
+	if status, _ := nodeState(t, db, nodeID); status != "unclaimed" {
+		t.Fatal("node activated despite rejected membership policy")
+	}
+}
+
+// A listing is born behind a closed door. The value decides nothing until a
+// claim lands, and setup overwrites it — so the only thing it can still do
+// is answer for a path that forgets to ask, and it answers 'no'.
+func TestSubmittedListingsAreNotBornOpen(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{Submissions: config.Submissions{Enabled: true, AutoApprove: true}}
+	_, token := createTestUser(t, db, "submitter", "member")
+
+	r := authedRequest("POST", "/api/v1/submissions", map[string]interface{}{
+		"name":        "Community Hall",
+		"description": "A hall.",
+	}, token)
+	w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("submit: got %d %s", w.Code, w.Body.String())
+	}
+
+	var policy string
+	if err := db.QueryRow(
+		"SELECT membership_policy FROM nodes WHERE slug = 'community-hall'",
+	).Scan(&policy); err != nil {
+		t.Fatalf("submitted listing not found: %v", err)
+	}
+	if policy == "open" {
+		t.Error("a listing is born open: a claim would activate a door nobody chose")
+	}
+}

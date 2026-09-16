@@ -50,6 +50,33 @@ address — bookmarked, followed, and minted into its AP id) and the
 verification domain (the trust anchor the claim just proved). Everything
 else creation allows, setup allows.
 
+**Amended 2026-09-16, on the reference instance's first real claim — "who
+can join" is one of the things creation allows.** Setup shipped without it,
+on the reasoning that the listing already carried a membership policy and
+setup could inherit it. Every listing is written `open` (`unclaimed.go`), the
+value decides nothing while the patch is a listing — an unclaimed patch takes
+followers only — and nobody has ever been asked: the submitter is not the
+patch, and at submission there is no patch to ask. The claim is where that
+value stops being inert. The Candy Factory went live admitting anyone, and
+its admin could not find the control, because membership policy is governance
+and lives in the rules file, not in Patch Settings.
+
+Worse, setup's own template picker was being overruled. The absorb step that
+copies the row's live membership settings into the freshly forked rules file
+was written for ordinary creation, where the row carries the creator's
+answer. On this path it carried the listing's, so a claimant who picked
+Minimal — whose rules say `invite_only` — got `open`.
+
+So setup asks, seeded from the chosen template rather than starting blank
+(the template already states a policy; a fourth opinion would be one too
+many), and the seed stops following the template the moment the claimant
+answers for themselves. `POST /claims/{id}/setup` takes `membership_policy`,
+validated like creation's, and falls back to the template's own value for a
+client that sends none — never to the row's. Listings are now written
+`invite_only` so that the one thing an unchosen value can still do is fail
+closed. Patch Settings → Info states the current policy and links to the
+rules editor: the control stays in one place, but it stops being unfindable.
+
 **Cleanup is one migration, no standing machinery.** Migration 039
 deletes lining docs on non-active patches unconditionally — whatever sits
 there is fabricated consent by definition, since no member could have

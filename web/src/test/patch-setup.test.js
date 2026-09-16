@@ -146,8 +146,19 @@ describe('PatchForm reuses one component for creation and setup (docs/adr/039)',
   });
 
   it('posts to the claim setup endpoint before patching the node', () => {
-    expect(src).toMatch(/api\(`claims\/\$\{claimId\}\/setup`, \{ method: 'POST', body: \{ template \} \}\)/);
+    expect(src).toMatch(/api\(`claims\/\$\{claimId\}\/setup`, \{[\s\S]*?method: 'POST'/);
     expect(src).toMatch(/api\(`nodes\/\$\{setupSlug\}`, \{[\s\S]*?method: 'PATCH'/);
+  });
+
+  // Who can join travels with the template, in the setup POST. It cannot
+  // ride the PATCH below: membership policy is governance, PATCH /nodes
+  // refuses the field outright (allowedFields, nodes.go), and setup is
+  // where the rules file is written from it.
+  it('sends the membership policy to setup, not to the node PATCH', () => {
+    expect(src).toMatch(/body: \{ template, membership_policy: membershipPolicy \}/);
+    const patchCall = src.match(/api\(`nodes\/\$\{setupSlug\}`, \{[\s\S]*?\n\s*\}\);/);
+    expect(patchCall, 'setup PATCH call not found').toBeTruthy();
+    expect(patchCall[0]).not.toContain('membership_policy');
   });
 
   it('handles the expired (410) and no-longer-claimable (409) responses', () => {

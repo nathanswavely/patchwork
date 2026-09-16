@@ -14,6 +14,7 @@
   import { MOTIFS, MOTIF_KEYS } from '../lib/patchIcons.js';
   import { PALETTES, PALETTE_KEYS, paletteForPatch } from '../lib/quiltTheme.js';
   import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
+  import { templateMembershipPolicy } from '../lib/governanceTemplates.js';
 
   // Patch setup (docs/adr/039) reuses this exact form: a claim is creation
   // with prepopulated fields, not a handoff. mode='setup' prepopulates
@@ -129,9 +130,16 @@
   // Who can join. The API defaults an omitted membership_policy to open,
   // and the create form never asked, so a patch meant to be invite-only was
   // public until its founder found the switch inside the rules editor. It
-  // starts unset: the person chooses. Setup mode (docs/adr/039) does not
-  // ask — the claimed listing keeps the policy it already carries, and the
-  // setup PATCH does not accept one.
+  // starts unset: the person chooses.
+  //
+  // Setup (docs/adr/039) asks too, because setup is the creation moment and
+  // this is a creation question. It used not to, on the reasoning that the
+  // listing already carried a policy — but a listing's policy is written by
+  // whoever submitted it, means nothing while it is a listing (an unclaimed
+  // patch takes followers only), and went live deciding the door the instant
+  // a claim landed. The first real claim on Lancaster opened its membership
+  // to anyone, chosen by nobody. The one difference from creation is that
+  // setup starts seeded rather than blank — see policySeeded below.
   let membershipPolicy = $state('');
   const membershipPolicies = [
     { id: 'open', name: 'Open', desc: 'Anyone can join.' },
@@ -141,6 +149,20 @@
   // Minimal is the default (docs/adr/041): the typical new patch is one
   // person running a listing; ceremony is opted into, not inherited.
   let template = $state('minimal');
+
+  // In setup mode the policy follows the template until the claimant answers
+  // the question themselves, after which it is theirs and nothing moves it.
+  // Each template's rules file already states a membership policy, so the
+  // seed is that template's own answer rather than a fourth opinion — and
+  // the server falls back to the same value when a client sends no policy,
+  // so the form and the API agree about what Minimal means. Creation is
+  // untouched: it starts blank and refuses to submit unanswered.
+  let policyAnswered = $state(false);
+  let seededPolicy = $derived(templateMembershipPolicy(template));
+  let policySeeded = $derived(mode === 'setup' && !policyAnswered && !!seededPolicy);
+  $effect(() => {
+    if (policySeeded) membershipPolicy = seededPolicy;
+  });
   // Tags, in priority order — the first motif-bearing tag derives the
   // motif, and shared tags place new patches near their kind on the quilt.
   let tags = $state(Array.isArray(initial?.tags) ? [...initial.tags] : []);
@@ -233,7 +255,7 @@
 
   function validate() {
     if (!name.trim()) return 'Name is required';
-    if (mode !== 'setup' && !membershipPolicy) return 'Choose who can join';
+    if (!membershipPolicy) return 'Choose who can join';
     return '';
   }
 
@@ -267,7 +289,14 @@
       // lands the claimant on their new patch — the edits just wait in
       // Settings.
       try {
-        await api(`claims/${claimId}/setup`, { method: 'POST', body: { template } });
+        // The policy travels with the template, not in the PATCH below:
+        // setup is where governance is forked, and the rules file is written
+        // from this answer. PATCH /nodes does not accept a membership policy
+        // at all — it is governance, and governance moves through the rules.
+        await api(`claims/${claimId}/setup`, {
+          method: 'POST',
+          body: { template, membership_policy: membershipPolicy },
+        });
       } catch (e) {
         if (e.status === 410) {
           showToast(e.message || 'Your setup window has expired. The patch is claimable again.', 'error');
@@ -553,22 +582,27 @@
           {/if}
         </div>
 
-        {#if mode !== 'setup'}
-          <fieldset class="field policy-field">
-            <legend>Who can join <span class="required">*</span></legend>
-            <div class="policy-grid">
-              {#each membershipPolicies as p (p.id)}
-                <label class="policy-card" class:selected={membershipPolicy === p.id}>
-                  <input type="radio" name="membership_policy" value={p.id} bind:group={membershipPolicy} disabled={submitting} required />
-                  <span class="policy-info">
-                    <strong>{p.name}</strong>
-                    <span class="policy-desc">{p.desc}</span>
-                  </span>
-                </label>
-              {/each}
-            </div>
-          </fieldset>
-        {/if}
+        <fieldset class="field policy-field">
+          <legend>Who can join <span class="required">*</span></legend>
+          {#if policySeeded}
+            <!-- What the control cannot show: that this answer came from the
+                 template below and will keep following it until it is
+                 answered here. Without the line, picking a template silently
+                 moves an answer further up the page. -->
+            <p class="field-hint muted">Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.</p>
+          {/if}
+          <div class="policy-grid">
+            {#each membershipPolicies as p (p.id)}
+              <label class="policy-card" class:selected={membershipPolicy === p.id}>
+                <input type="radio" name="membership_policy" value={p.id} bind:group={membershipPolicy} onchange={() => policyAnswered = true} disabled={submitting} required />
+                <span class="policy-info">
+                  <strong>{p.name}</strong>
+                  <span class="policy-desc">{p.desc}</span>
+                </span>
+              </label>
+            {/each}
+          </div>
+        </fieldset>
 
         <div class="field">
           <label>Governance Template</label>

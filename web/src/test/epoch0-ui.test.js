@@ -20,14 +20,15 @@ describe('F-008 — the create form asks who can join', () => {
 
   it('starts with nothing chosen and refuses to submit without a choice', () => {
     expect(src).toMatch(/let membershipPolicy = \$state\(''\)/);
-    expect(src).toMatch(/if \(mode !== 'setup' && !membershipPolicy\) return 'Choose who can join'/);
+    expect(src).toMatch(/if \(!membershipPolicy\) return 'Choose who can join'/);
   });
 
   it('offers the three policies the API accepts, each with one plain line', () => {
     expect(src).toMatch(/id: 'open', name: 'Open', desc: 'Anyone can join\.'/);
     expect(src).toMatch(/id: 'approval_required', name: 'Approval required', desc: '[^']+'/);
     expect(src).toMatch(/id: 'invite_only', name: 'Invite only', desc: '[^']+'/);
-    expect(src).toMatch(/<input type="radio" name="membership_policy" value=\{p\.id\} bind:group=\{membershipPolicy\}[^>]*required/);
+    // Not [^>]* — the onchange handler in this tag contains an arrow.
+    expect(src).toMatch(/<input type="radio" name="membership_policy" value=\{p\.id\} bind:group=\{membershipPolicy\}[\s\S]*?required/);
   });
 
   it('sits ahead of the template picker and sends the choice in the create payload', () => {
@@ -35,8 +36,19 @@ describe('F-008 — the create form asks who can join', () => {
     expect(src).toMatch(/membership_policy: membershipPolicy,\n\s*template,/);
   });
 
-  it('does not ask in setup mode, where the PATCH refuses the field', () => {
-    expect(src).toMatch(/\{#if mode !== 'setup'\}\s*\n\s*<fieldset class="field policy-field">/);
+  // This used to assert the opposite — that setup skipped the question,
+  // on the reasoning that a claimed listing already carried a policy. It
+  // did, and nobody had chosen it: every listing is written 'open', the
+  // value is inert while the patch is unclaimed, and a claim made it the
+  // live door. The first real claim on Lancaster admitted anyone. Setup is
+  // the creation moment (docs/adr/039), so it asks the creation question.
+  it('asks in setup mode too, seeded from the template', () => {
+    expect(src).not.toMatch(/\{#if mode !== 'setup'\}\s*\n\s*<fieldset class="field policy-field">/);
+    expect(src).toMatch(/let policySeeded = \$derived\(mode === 'setup' && !policyAnswered/);
+    expect(src).toMatch(/if \(policySeeded\) membershipPolicy = seededPolicy/);
+    // Answering it yourself ends the seeding — the template stops moving
+    // an answer the claimant has already given.
+    expect(src).toMatch(/onchange=\{\(\) => policyAnswered = true\}/);
   });
 });
 
