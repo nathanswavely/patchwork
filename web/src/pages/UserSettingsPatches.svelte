@@ -7,6 +7,7 @@
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import JoinSheet from '../components/JoinSheet.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { CONTACT_KIND_WORD } from '../lib/contactItems.js';
 
   let patches = $state([]);
   let loading = $state(true);
@@ -61,8 +62,6 @@
   let sharingFor = $state(null);
   let sharingIds = $state([]);
   let sharingBusy = $state(false);
-
-  const KIND_WORD = { phone: 'Phone', email: 'Email', handle: 'Handle', note: 'Note' };
 
   $effect(() => {
     api('users/me/contact-items')
@@ -254,7 +253,7 @@
                 disabled={sharingBusy}
                 onchange={() => toggleSharingId(it.id)}
               />
-              <span class="contact-picker-kind">{KIND_WORD[it.kind] || it.kind}</span>
+              <span class="contact-picker-kind">{CONTACT_KIND_WORD[it.kind] || it.kind}</span>
               <span class="contact-picker-value">{it.value}</span>
               {#if it.label}<span class="muted">{' · '}{it.label}</span>{/if}
             </label>

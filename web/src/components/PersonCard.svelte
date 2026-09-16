@@ -14,8 +14,9 @@
    * it is absent far more often than it is present, so everything above it
    * has to be worth opening on its own.
    */
-  import { Heart, UsersThree, Wrench, Phone, EnvelopeSimple, At, Note } from 'phosphor-svelte';
+  import { Heart, UsersThree, Wrench } from 'phosphor-svelte';
   import { navigate } from '../stores/router.svelte.js';
+  import ContactItems from './ContactItems.svelte';
 
   let { person, role = '' } = $props();
 
@@ -29,8 +30,6 @@
   // CONTEXT.md role marks: heart = follower, three users = member,
   // wrench = admin. Paired with the word, never standing alone.
   const ROLE_MARK = { follower: Heart, member: UsersThree, admin: Wrench };
-  const KIND_MARK = { phone: Phone, email: EnvelopeSimple, handle: At, note: Note };
-  const KIND_WORD = { phone: 'Phone', email: 'Email', handle: 'Handle', note: 'Note' };
 
   let items = $derived(person?.contact || []);
   let initial = $derived((person?.display_name || person?.username || '?')[0].toUpperCase());
@@ -68,12 +67,6 @@
     }
     if (open) hide();
     else show();
-  }
-
-  function href(item) {
-    if (item.kind === 'phone') return `tel:${item.value.replace(/[^+\d]/g, '')}`;
-    if (item.kind === 'email') return `mailto:${item.value}`;
-    return null;
   }
 
   function openProfile(e) {
@@ -134,21 +127,9 @@
         <!-- Shown only because the server sent it: this viewer is in a patch
              these items were shared into (docs/adr/083). The card never says
              which patch — that membership may be private or hidden. -->
-        <ul class="person-contact">
-          {#each items as item (item.id)}
-            {@const Mark = KIND_MARK[item.kind]}
-            <li>
-              {#if Mark}<Mark size={14} aria-hidden="true" />{/if}
-              <span class="sr-only">{KIND_WORD[item.kind] || item.kind}</span>
-              {#if href(item)}
-                <a href={href(item)}>{item.value}</a>
-              {:else}
-                <span>{item.value}</span>
-              {/if}
-              {#if item.label}<span class="muted">{' · '}{item.label}</span>{/if}
-            </li>
-          {/each}
-        </ul>
+        <div class="person-contact">
+          <ContactItems {items} compact />
+        </div>
       {/if}
 
       <a class="person-profile-link" href="/users/{person.username}" onclick={openProfile}>View profile</a>
@@ -233,32 +214,11 @@
   }
 
   .person-contact {
-    list-style: none;
-    margin: 0;
-    padding: 0.5rem 0 0;
+    padding-top: 0.5rem;
     border-top: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    font-size: 0.9rem;
-  }
-  .person-contact li {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
-    word-break: break-word;
   }
 
   .person-profile-link {
     font-size: 0.85rem;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
   }
 </style>
