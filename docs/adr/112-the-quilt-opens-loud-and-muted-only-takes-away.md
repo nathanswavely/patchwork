@@ -196,21 +196,42 @@ concluded that a patch's identity color "means nothing to a stranger" and
 kept it only for quilt↔map continuity — which normalized hue preserves
 exactly.
 
-**The eight hash-assigned palettes are clustered in hue, and Muted will
-expose it.** Their primaries sit at 1°, 5°, 13°, 17°, 323°, 338°, 86° and
-200° — **six of eight inside a 55° arc through red**. Default hides this,
-because the variety a reader sees comes from the secondaries and grounds;
-Muted strips exactly those and leaves hue as the only variable. On a
-mostly-unclaimed instance this predicts a heavily terracotta quilt.
+**The eight hash-assigned palettes are clustered in hue, and Muted exposes
+it.** Their primaries sit at 1°, 5°, 13°, 17°, 323°, 338°, 86° and 200° —
+**six of eight inside a 55° arc through red**. Default hides this, because
+the variety a reader sees comes from the secondaries and grounds; Muted
+strips exactly those and leaves hue as the only variable.
 
-**This is a measurement gate, not an accepted cost.** Before Muted ships,
-render the real instance in it and count distinct hue bins. If the
-clustering holds, widening hash assignment to draw from the 57-swatch
-fabric wall becomes a prerequisite — and it lands as **its own change**,
-because it alters what every unclaimed patch looks like in Default too,
-and a viewer-side mode must not smuggle that in. It self-corrects as
-patches are claimed and pick off the wall, the same shape as the
-unclaimed-mark density that thins out with claiming.
+**Measured on the live instance, 2026-09-16** — 58 patches off
+`/api/v1/nodes/tree`, each resolved through the real
+`identityColorForPatch` and muted:
+
+| | |
+|---|---|
+| Patches that chose their own colors | **4 of 58** |
+| Hash-assigned | **54 of 58** |
+| Distinct muted tile colors | **9 of 58** |
+| Inside the 320°–40° red arc | **39 = 67%** |
+| Largest single 30° bin | **17 = 29%** |
+
+**The gate fails, so the hash-assignment widening is a prerequisite.**
+Muted would draw a 58-patch quilt in nine colors, two thirds of them red.
+The blocks still differ, so tiles are not identical — but color would stop
+being an identifying channel almost entirely, which is the one thing this
+design promised it would preserve.
+
+Widening hash assignment to draw from the 57-swatch fabric wall lands as
+**its own change, first**, because it alters what every unclaimed patch
+looks like in Default too, and a viewer-side mode must not smuggle that
+in. It improves Default on its own merits: the clustering is there today,
+doing quieter damage.
+
+Note what the measurement also says about the shape of the problem — only
+4 of 58 patches have chosen anything. This thins out as patches are
+claimed and pick off the wall, the same way the unclaimed-mark density
+does. But "it gets better later" is not a reason to ship the accommodation
+in the state where it helps least, on the instance whose reader asked for
+it.
 
 **Hover-dim replaces shipped behavior**, rather than adding to it. The
 hovered tile cannot both be the one full-color tile and carry a darkening
