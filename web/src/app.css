@@ -167,6 +167,7 @@
   --color-glass-heavy: rgba(244, 240, 232, 0.95);
   --color-overlay: rgba(0, 0, 0, 0.06);
   --color-overlay-hover: rgba(0, 0, 0, 0.18);
+  --color-quilt-dim: rgba(244, 240, 232, 0.62);
   --color-shadow: rgba(0, 0, 0, 0.08);
   --color-scrim: rgba(0, 0, 0, 0.4);
   --color-btn-on-primary: #ffffff;
@@ -206,6 +207,7 @@
   --color-glass-heavy: rgba(21, 24, 32, 0.95);
   --color-overlay: rgba(255, 255, 255, 0.04);
   --color-overlay-hover: rgba(255, 255, 255, 0.1);
+  --color-quilt-dim: rgba(21, 24, 32, 0.62);
   --color-shadow: rgba(0, 0, 0, 0.3);
   --color-scrim: rgba(0, 0, 0, 0.6);
   --color-btn-on-primary: #151820;

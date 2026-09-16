@@ -166,7 +166,9 @@
       };
     }
     const ap = initial.appearance || null;
-    const pal = paletteForPatch(initial.id, ap);
+    // raw: see PatchSettingsAppearance — a fabric picker shows real fabric,
+    // whatever register the viewer reads the quilt in (docs/adr/112).
+    const pal = paletteForPatch(initial.id, ap, { raw: true });
     return {
       palette: pal.paletteKey || PALETTE_KEYS[0],
       blockKey: BLOCKS[getBlockIndex(initial.id, ap)].key,
