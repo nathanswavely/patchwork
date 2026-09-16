@@ -92,6 +92,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	}
 
 	seatWinners(db, nodeID, slug, nodeName, proposalID, winners, chairs, electionTermEnd(gc))
+	announceResult(db, nodeID, slug, nodeName, proposalID, winners, len(chairs))
 
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	db.Exec(`UPDATE proposals SET status = 'approved', state = 'in_effect', applied_at = ?, updated_at = ?
@@ -100,6 +101,40 @@ func resolveElection(db *database.DB, proposalID string) bool {
 		`{"node_id":"`+nodeID+`"}`, "")
 	log.Printf("election: %s seated %d of %d seat(s)", slug, len(winners), seats)
 	return true
+}
+
+// announceResult tells the patch that its election settled something
+// (docs/adr/109).
+//
+// A contest that settled *nothing* notified every member; a contest that
+// seated a council notified the winner and nobody else. So on the one
+// occasion a year of elections was actually for, the four people who voted
+// were told nothing, and the candidate who was not seated was told nothing —
+// her next line was "Nominations are open" for the follow-on contest, in the
+// same second. Losing is news too, and it should not be learned from the
+// silence after somebody else's good news.
+func announceResult(db *database.DB, nodeID, slug, nodeName, proposalID string, winners []electionTallyRow, chairs int) {
+	seated := len(winners)
+	body := "The votes are counted. " + strconv.Itoa(seated) + " of " +
+		strconv.Itoa(chairs) + " seat" + plural(chairs) + " " + wasWere(seated) + " filled."
+	if seated < chairs {
+		body += " The rest stay vacant until somebody is nominated or elected into them."
+	}
+	notify(notifications.Event{
+		Type: notifications.ProposalApplied, NodeID: nodeID, NodeSlug: slug, NodeName: nodeName,
+		EntityID: proposalID,
+		Title:    "The election in " + nodeName + " has closed",
+		Body:     body,
+		Link:     weblink.Proposal(slug, proposalID),
+	})
+}
+
+// wasWere agrees the verb with a count, so the copy does not have to.
+func wasWere(n int) string {
+	if n == 1 {
+		return "was"
+	}
+	return "were"
 }
 
 // closeElectionUnsettled ends an election that decided nothing. The council is
