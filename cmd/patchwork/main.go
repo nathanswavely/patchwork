@@ -674,6 +674,13 @@ func main() {
 	mux.HandleFunc("POST /api/v1/admin/tags", middleware.AdminRequired(db, handler.CreateTag(db)))
 	mux.HandleFunc("PATCH /api/v1/admin/tags/{id}", middleware.AdminRequired(db, handler.UpdateTag(db)))
 	mux.HandleFunc("DELETE /api/v1/admin/tags/{id}", middleware.AdminRequired(db, handler.DeleteTag(db)))
+	// The suggested-tag review queue (docs/adr/114). Approve and reject live
+	// here rather than on PATCH /admin/tags/{id}, which only sets a motif:
+	// approving can rename, and renaming can merge two rows and re-point
+	// every attachment.
+	mux.HandleFunc("GET /api/v1/admin/tag-suggestions", middleware.AdminRequired(db, handler.ListTagSuggestions(db)))
+	mux.HandleFunc("PATCH /api/v1/admin/tag-suggestions/{id}", middleware.AdminRequired(db, handler.DecideTagSuggestion(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/suggested-tags/{name}", middleware.AuthRequired(db, handler.WithdrawSuggestedTag(db)))
 	mux.HandleFunc("GET /api/v1/admin/reports", middleware.AdminRequired(db, handler.ListReports(db)))
 	mux.HandleFunc("PATCH /api/v1/admin/reports/{id}", middleware.AdminRequired(db, handler.UpdateReport(db)))
 	mux.HandleFunc("GET /api/v1/admin/users", middleware.AdminRequired(db, handler.ListUsers(db)))

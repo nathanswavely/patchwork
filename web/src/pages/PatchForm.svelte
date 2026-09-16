@@ -144,6 +144,9 @@
   // Tags, in priority order — the first motif-bearing tag derives the
   // motif, and shared tags place new patches near their kind on the quilt.
   let tags = $state(Array.isArray(initial?.tags) ? [...initial.tags] : []);
+  // Words that are not in the vocabulary yet (docs/adr/114). They travel in
+  // their own field so an unknown name in `tags` stays an error.
+  let suggestTags = $state([]);
 
   // Tile appearance. At creation the form always shows a concrete pick —
   // seeded randomly so every new patch starts somewhere real — and
@@ -291,6 +294,7 @@
             visibility,
             appearance,
             tags: tags.length > 0 ? tags : undefined,
+            suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
           },
         });
         showToast('This patch is yours', 'success');
@@ -319,8 +323,12 @@
         template,
         appearance,
         tags: tags.length > 0 ? tags : undefined,
+        suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
       };
       const result = await api('nodes', { method: 'POST', body });
+      // A word an admin already declined does not fail the creation; the
+      // patch exists and the person is told why the chip is missing.
+      if (result?.tag_warning) showToast(result.tag_warning, 'info');
       // Creating a patch makes you its admin, server-side. The memberships
       // store loaded before that row existed, and App.svelte's onboarding
       // redirect sends anyone with zero memberships to /welcome — which is
@@ -417,9 +425,10 @@
           <p class="field-hint muted">
             What kind of patch is this? Tags help people find you, and new
             patches are placed near others with the same tags on the quilt.
-            The first tag decides your default motif.
+            The first tag decides your default motif. Missing a word? Suggest
+            it, and an admin decides whether it joins the quilt's tags.
           </p>
-          <TagPicker bind:selected={tags} disabled={submitting} />
+          <TagPicker bind:selected={tags} bind:suggested={suggestTags} disabled={submitting} />
         </div>
 
         <div class="field">

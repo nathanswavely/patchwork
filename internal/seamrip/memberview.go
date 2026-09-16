@@ -185,8 +185,20 @@ func memberViews() map[string]MemberView {
 			},
 		},
 		"tags": {
-			Rule:  "all of them: a tag is the quilt's shared vocabulary and the tag list is a public read.",
-			Where: "",
+			// Approved only. The old rule here carried every row on the
+			// grounds that the tag list is a public read; that is true of the
+			// vocabulary and false of the two states docs/adr/114 added. A
+			// pending word is one patch admin's request and a rejected one is
+			// the instance's review record, neither of which is the quilt's
+			// language.
+			Rule:  "the approved vocabulary: the public tag list. A suggested or declined word is the instance's review record, not the quilt's language.",
+			Where: "status = 'approved'",
+			Cols: map[string]string{
+				// Who coined a word is attribution the coiner was never asked
+				// about, and the same stub-rule reasoning the users table
+				// gets applies here.
+				"suggested_by": "NULL",
+			},
 		},
 		"nodes": {
 			Rule:  "public patches, plus private ones the viewer holds an active membership on.",
@@ -199,8 +211,11 @@ func memberViews() map[string]MemberView {
 			},
 		},
 		"node_tags": {
-			Rule:  "the tags of a patch that travelled.",
-			Where: "node_id IN (" + sqlVisibleNodes + ")",
+			// Attachments to a suggested tag stay behind with the word
+			// (docs/adr/114): carrying one would point at a tag that did not
+			// travel, which is a dangling reference on import.
+			Rule:  "the approved tags of a patch that travelled.",
+			Where: "node_id IN (" + sqlVisibleNodes + ") AND tag_id IN (SELECT id FROM tags WHERE status = 'approved')",
 		},
 		"memberships": {
 			// The public member list rule of docs/adr/006, read as an

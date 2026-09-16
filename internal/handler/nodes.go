@@ -595,6 +595,15 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		// (tag-derived) motif, and order decides which tag derives it.
 		n.Tags = nodeTagNames(db, n.ID)
 
+		// Suggested tags go only to this patch's own admins (docs/adr/114):
+		// not to members, not to followers, and not to an instance admin
+		// holding no role here. A pending word is a request one of its admins
+		// filed, not a fact about the patch.
+		if viewer := middleware.UserFromContext(r.Context()); viewer != nil &&
+			userHasNodeRole(db, viewer.ID, n.ID, "admin") {
+			n.PendingTags = nodePendingTagNames(db, n.ID)
+		}
+
 		// Same counts the tree endpoint and ListMembers report, so the quilt
 		// tile, the card, the profile head and the members page all state one
 		// number: members are admins + members; followers are counted
@@ -712,6 +721,10 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			Template            string                     `json:"template"`
 			FollowerPermissions *model.FollowerPermissions `json:"follower_permissions"`
 			Tags                []string                   `json:"tags"`
+			// SuggestTags carries words that are not in the vocabulary yet
+			// (docs/adr/114). Separate from Tags on purpose: an unknown name
+			// in Tags stays a 400 everywhere, so a typo never coins a word.
+			SuggestTags         []string                   `json:"suggest_tags"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -772,7 +785,14 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Set when a suggestion could not be taken (an already-declined word).
+		// The patch itself is created regardless; this is reported alongside.
+		var suggestWarning string
+
 		// Tags come from the curated vocabulary only; validate before insert.
+		// A word that is not in it travels in suggest_tags instead, so a typo
+		// here stays an immediate error rather than quietly coining
+		// vocabulary (docs/adr/114).
 		tagIDs, unknownTag := resolveTagIDs(db, req.Tags)
 		if unknownTag != "" {
 			http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
@@ -801,6 +821,18 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// (first motif-bearing tag derives the motif; docs/adr/021).
 		if len(tagIDs) > 0 {
 			setNodeTags(db, id, tagIDs)
+		}
+
+		// Suggested tags are attached after the picked ones, so a word still
+		// awaiting review never wins motif derivation (docs/adr/114). The
+		// patch is already created at this point: a word an admin declined is
+		// reported, not a reason to fail the whole creation.
+		if len(req.SuggestTags) > 0 {
+			if coined, serr := suggestTagsForNode(db, id, user.ID, req.SuggestTags); serr != "" {
+				suggestWarning = serr
+			} else if coined > 0 {
+				notifyAdminsOfTagSuggestion(strings.Join(req.SuggestTags, ", "), user.ID)
+			}
 		}
 
 		// Auto-create admin membership for the creator.
@@ -876,9 +908,21 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		scanGovernanceConfig(gcJSON, &n)
 		scanAppearance(apJSON, &n)
 		n.Tags = nodeTagNames(db, id)
+		// The creator is this patch's admin by construction, so the chips
+		// they just proposed come straight back.
+		n.PendingTags = nodePendingTagNames(db, id)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
+		if suggestWarning != "" {
+			var payload map[string]interface{}
+			if b, err := json.Marshal(n); err == nil {
+				json.Unmarshal(b, &payload)
+				payload["tag_warning"] = suggestWarning
+				json.NewEncoder(w).Encode(payload)
+				return
+			}
+		}
 		json.NewEncoder(w).Encode(n)
 	}
 }
@@ -1105,9 +1149,38 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 					http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
 					return
 				}
+				// Scoped to approved tags, so this wholesale replace cannot
+				// delete a suggestion the form never knew about
+				// (docs/adr/114).
 				if err := setNodeTags(db, nodeID, tagIDs); err != nil {
 					http.Error(w, `{"error":"failed to update tags"}`, http.StatusInternalServerError)
 					return
+				}
+				tagsUpdated = true
+				continue
+			}
+			if field == "suggest_tags" {
+				rawList, ok := val.([]interface{})
+				if !ok {
+					http.Error(w, `{"error":"suggest_tags must be an array of tag names"}`, http.StatusBadRequest)
+					return
+				}
+				names := make([]string, 0, len(rawList))
+				for _, rv := range rawList {
+					name, ok := rv.(string)
+					if !ok {
+						http.Error(w, `{"error":"suggest_tags must be an array of tag names"}`, http.StatusBadRequest)
+						return
+					}
+					names = append(names, name)
+				}
+				coined, serr := suggestTagsForNode(db, nodeID, user.ID, names)
+				if serr != "" {
+					http.Error(w, fmt.Sprintf(`{"error":%q}`, serr), http.StatusBadRequest)
+					return
+				}
+				if coined > 0 {
+					notifyAdminsOfTagSuggestion(strings.Join(names, ", "), user.ID)
 				}
 				tagsUpdated = true
 				continue
@@ -1205,6 +1278,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		scanGovernanceConfig(gcJSON, &n)
 		scanAppearance(apJSON, &n)
 		n.Tags = nodeTagNames(db, nodeID)
+		n.PendingTags = nodePendingTagNames(db, nodeID)
 
 		w.Header().Set("Content-Type", "application/json")
 		if zonePlan == nil {

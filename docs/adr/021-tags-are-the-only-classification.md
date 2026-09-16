@@ -1,6 +1,10 @@
 # ADR 021: Tags are the only classification — placement affinity gains a tag term that is not a thread
 
-Date: 2026-07-20. Status: accepted. Decided while grilling issue #64.
+Date: 2026-07-20. Status: accepted, amended by docs/adr/114. Decided
+while grilling issue #64. The holding stands: one classification system,
+an instance-curated vocabulary, nothing auto-created. What ADR 114
+changes is the route, a patch admin may now propose a word into the
+vocabulary, which an instance admin approves before it is public.
 
 ## Context
 

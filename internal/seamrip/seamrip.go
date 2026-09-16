@@ -100,8 +100,19 @@ func Tables() []Table {
 		{
 			File:    "tags.json",
 			Name:    "tags",
-			Query:   `SELECT id, name, motif, created_at FROM tags`,
-			Columns: cols(id("id"), c("name"), c("motif"), c("created_at")),
+			// status and suggested_by travel: the review queue is instance
+			// state and the admin export is a custody transfer (docs/adr/114).
+			// Without status here every pending and rejected row would land on
+			// the fork as approved vocabulary.
+			Query:   `SELECT id, name, motif, status, suggested_by, decided_by, decided_at, created_at FROM tags`,
+			// status defaults to 'approved' so an archive written before
+			// docs/adr/114 imports as ordinary vocabulary, which is what it
+			// was. suggested_by and decided_by are user ids and so are
+			// remapped like any other.
+			Columns: cols(id("id"), c("name"), c("motif"), def("status", "approved"),
+				Column{Name: "suggested_by", Remap: true, Default: nil},
+				Column{Name: "decided_by", Remap: true, Default: nil},
+				def("decided_at", nil), c("created_at")),
 		},
 		{
 			File: "nodes.json",
