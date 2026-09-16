@@ -1173,10 +1173,16 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 		// setup allows everything creation allows (docs/adr/039). The body is
 		// optional; an empty one keeps the default template, same as before.
 		var req struct {
-			Template string `json:"template"`
+			Template         string `json:"template"`
+			MembershipPolicy string `json:"membership_policy"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil && err != io.EOF {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
+			return
+		}
+		if req.MembershipPolicy != "" && !oneOf(req.MembershipPolicy, membershipPolicies) {
+			http.Error(w, fmt.Sprintf(`{"error":"membership_policy must be one of %s"}`,
+				strings.Join(membershipPolicies, ", ")), http.StatusBadRequest)
 			return
 		}
 		if req.Template != "" {
@@ -1240,6 +1246,35 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Who can join, settled here rather than inherited. A listing carries
+		// a membership policy nobody picked — it is written at submission and
+		// means nothing while unclaimed, because an unclaimed patch takes
+		// followers only (memberships.go). The moment this claim activates it,
+		// that unchosen value goes live and decides the door. Creation refuses
+		// to proceed without an answer to this question and setup is the same
+		// moment (docs/adr/039), so it asks too; the fallback is the template's
+		// own policy, never the row's, because a claimant who picked Minimal
+		// asked for an invite-only patch even through a client that sends no
+		// policy of its own. Written before the absorb below, which reads the
+		// row back into the rules file.
+		policy := req.MembershipPolicy
+		if policy == "" {
+			// ForkForNode's own fallback for an unnamed template, so the
+			// policy and the documents come from one template.
+			tmpl := req.Template
+			if tmpl == "" {
+				tmpl = "casual"
+			}
+			if tr, terr := governance.TemplateRules(tmpl); terr == nil {
+				policy = tr.MembershipPolicy
+			}
+		}
+		if policy != "" {
+			if _, err := db.Exec("UPDATE nodes SET membership_policy = ? WHERE id = ?", policy, nodeID); err != nil {
+				log.Printf("claims: set membership policy for node %s: %v", nodeID, err)
+			}
+		}
+
 		// Governance is created here, not at claim approval — an unclaimed
 		// patch carries none (docs/adr/039). Best-effort like every other
 		// governance write; a missing data dir (gitless test/dev runs) is
@@ -1253,12 +1288,13 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 			}
 		}
 		if forked {
-			// Absorb the unclaimed row's live membership settings into the
-			// template's rules file, then sync the rules into the DB cache —
-			// the same treatment as ordinary creation (docs/adr/041). Without
-			// the absorb, the rules file holds the template's membership
-			// policy, and a later amendment sync would clobber the enforced
-			// value.
+			// Absorb the row's live membership settings into the template's
+			// rules file, then sync the rules into the DB cache — the same
+			// treatment as ordinary creation (docs/adr/041). Without the
+			// absorb, the rules file holds the template's membership policy,
+			// and a later amendment sync would clobber the enforced value.
+			// The row now carries the policy chosen just above, so what
+			// travels into the rules file is the claimant's answer.
 			dataDir := governance.GetDataDir()
 			var membershipPolicy, fpJSON string
 			db.QueryRow(`SELECT membership_policy, COALESCE(follower_permissions,'') FROM nodes WHERE id = ?`, nodeID).
