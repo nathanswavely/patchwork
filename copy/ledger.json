@@ -7636,9 +7636,9 @@
       "text": "failed to load claims",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
@@ -33294,9 +33294,9 @@
       "text": "Approved, awaiting setup",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
@@ -33312,9 +33312,9 @@
       "text": "Cleared to claim. Each patch stays unclaimed until its claimant submits setup, which is where it becomes active and they become admin. An approval that runs out simply makes the patch claimable again.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
@@ -33330,9 +33330,9 @@
       "text": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
@@ -33348,9 +33348,9 @@
       "text": "{' · '}approval expires {formatDate(claim.setup_expires_at)}",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
@@ -51798,9 +51798,9 @@
       "text": "Claiming",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
@@ -51816,9 +51816,9 @@
       "text": "Your claim cleared. Setup is where the patch becomes active and you become its admin. Until you submit it, the patch still reads as unclaimed to everyone else.",
       "words": 28,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
@@ -51834,9 +51834,9 @@
       "text": "ready to set up",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
@@ -51852,9 +51852,9 @@
       "text": "claim under review",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
@@ -51870,9 +51870,9 @@
       "text": "Nobody has answered this claim yet.",
       "words": 6,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
@@ -51888,9 +51888,9 @@
       "text": "expires {formatDate(c.setup_expires_at)}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
@@ -51906,9 +51906,9 @@
       "text": "claimed {formatDate(c.created_at)}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
