@@ -746,7 +746,13 @@
 
   .quilt-chips.rail-collapsed {
     /* The collapsed rail hugs at left 8px, 50px wide (its right edge is
-       58px) — keep the same 12px gap the expanded offset has. */
+       58px) — keep the same 12px gap the expanded offset has. The map's
+       zoom control lives in the column this leaves free (bottom-left,
+       12px in, 32px wide, so its right edge is 44px — MapView), so this
+       offset is also what keeps the chips off it. Both constraints are
+       read out of the source and checked against each other in
+       map-zoom-control.test.js, so moving the rail again fails there
+       rather than silently landing the chips on the zoom buttons. */
     left: 70px;
   }
 
