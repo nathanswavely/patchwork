@@ -23,7 +23,7 @@ func TestGitHTTPHandler_InfoRefs(t *testing.T) {
 	governance.SetDataDir(dir)
 	defer governance.SetDataDir("")
 
-	handler := governance.GitHTTPHandler(func(slug string) string {
+	handler := governance.GitHTTPHandler(func(_ *http.Request, slug string) string {
 		if slug == "test-patch" {
 			return nodeID
 		}
@@ -57,7 +57,7 @@ func TestGitHTTPHandler_InfoRefs_NotFound(t *testing.T) {
 	governance.SetDataDir(dir)
 	defer governance.SetDataDir("")
 
-	handler := governance.GitHTTPHandler(func(slug string) string {
+	handler := governance.GitHTTPHandler(func(_ *http.Request, _ string) string {
 		return "" // not found
 	})
 
@@ -80,7 +80,7 @@ func TestGitHTTPHandler_InfoRefs_WrongService(t *testing.T) {
 	governance.SetDataDir(dir)
 	defer governance.SetDataDir("")
 
-	handler := governance.GitHTTPHandler(func(slug string) string {
+	handler := governance.GitHTTPHandler(func(_ *http.Request, _ string) string {
 		return nodeID
 	})
 
@@ -94,7 +94,7 @@ func TestGitHTTPHandler_InfoRefs_WrongService(t *testing.T) {
 }
 
 func TestGitHTTPHandler_InvalidPath(t *testing.T) {
-	handler := governance.GitHTTPHandler(func(slug string) string { return "x" })
+	handler := governance.GitHTTPHandler(func(_ *http.Request, _ string) string { return "x" })
 
 	req := httptest.NewRequest("GET", "/api/v1/nodes/test/bad-path", nil)
 	w := httptest.NewRecorder()
@@ -106,3 +106,44 @@ func TestGitHTTPHandler_InvalidPath(t *testing.T) {
 }
 
 // tempDataDir is defined in governance_test.go (same package)
+
+// A caller the authorizer turns down gets the same 404 as a caller who named
+// a patch that does not exist — on both halves of the transport, since
+// git-upload-pack is reachable without ever asking for the ref advertisement
+// (docs/adr/110).
+func TestGitHTTPHandler_RefusedCallerGetsNothing(t *testing.T) {
+	dir := tempDataDir(t)
+	if err := governance.InitInstanceRepo(dir); err != nil {
+		t.Fatalf("init: %v", err)
+	}
+	nodeID := "test-node-refused"
+	if err := governance.ForkForNode(dir, nodeID, "casual"); err != nil {
+		t.Fatalf("fork: %v", err)
+	}
+	governance.SetDataDir(dir)
+	defer governance.SetDataDir("")
+
+	// The repo is right there on disk; the authorizer is the only thing
+	// standing between it and the caller.
+	handler := governance.GitHTTPHandler(func(_ *http.Request, _ string) string { return "" })
+
+	for _, probe := range []struct {
+		name   string
+		method string
+		path   string
+	}{
+		{"info/refs", "GET", "/api/v1/nodes/test-patch/governance.git/info/refs?service=git-upload-pack"},
+		{"git-upload-pack", "POST", "/api/v1/nodes/test-patch/governance.git/git-upload-pack"},
+	} {
+		req := httptest.NewRequest(probe.method, probe.path, strings.NewReader(""))
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("%s: expected 404 for a refused caller, got %d", probe.name, w.Code)
+		}
+		if strings.Contains(w.Body.String(), "refs/heads/") {
+			t.Errorf("%s: refused caller was handed refs: %s", probe.name, w.Body.String())
+		}
+	}
+}
