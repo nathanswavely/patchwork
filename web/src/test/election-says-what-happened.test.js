@@ -149,3 +149,42 @@ describe('The council page tells the truth about its own calendar', () => {
     );
   });
 });
+
+/**
+ * Whose contest it is, and what it says when it ends (docs/adr/109).
+ *
+ * A contest the calendar opened wore the longest-standing admin's name on a
+ * public page — "Proposed by Priya Natarajan" for something a timer started
+ * while she was nine months away. A settled election's banner read "Approved.
+ * This change is now in effect." over a council. And the candidate names on
+ * the ballot were inside the checkbox's own label, so tapping a name to find
+ * out who somebody was cast a vote for them.
+ */
+describe('An election nobody proposed', () => {
+  const page = source('pages/ProposalDetail.svelte');
+  const banner = source('components/ProposalStatusBanner.svelte');
+  const panel = source('components/ElectionPanel.svelte');
+
+  it('says the calendar opened it, not a member', () => {
+    expect(page).toMatch(/\{#if proposal\.election_phase\}/);
+    expect(page).toMatch(/Opened by this patch&rsquo;s election calendar/);
+    // Keyed on the election, not the author id, so contests raised before the
+    // calendar started signing them read right too.
+    expect(page).toMatch(/\{:else\}[\s\S]*?'Applied by' : 'Proposed by'/);
+  });
+
+  it('has a banner for a settled election, not an amendment’s', () => {
+    expect(banner).toMatch(
+      /effectiveState === 'in_effect' \|\| effectiveState === 'passed'\) && electionPhase/
+    );
+    expect(banner).toMatch(/This election has closed and the council below is seated\./);
+  });
+
+  it('gives a candidate a name to read and a box to press', () => {
+    // The name is a link to the person, which is what it is everywhere else.
+    expect(panel).toMatch(/<a class="who" href=\{`\/users\/\$\{c\.username\}`\}>/);
+    // And the label wraps the checkbox alone.
+    expect(panel).toMatch(/<label class="tick"[\s\S]*?<input type="checkbox"[\s\S]*?<\/label>/);
+    expect(panel).not.toMatch(/<label>\s*\n\s*<input type="checkbox"/);
+  });
+});

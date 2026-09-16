@@ -7,6 +7,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
 // Elections (docs/adr/051): the contest Patchwork runs itself.
@@ -389,12 +390,14 @@ func TestElection_CannotBeWithdrawn(t *testing.T) {
 
 	id := openElection(t, db, nodeID)
 
-	// The author is the admin the calendar stood in for, so this is the most
-	// privileged caller there is for this record.
+	// Nobody is the author: a contest the calendar opened is signed by the
+	// sentinel system user (docs/adr/109), not by whichever admin happened to
+	// have been here longest. The caller below is this patch's only admin,
+	// which is the most privileged there is for this record either way.
 	var authorID string
 	db.QueryRow("SELECT author_id FROM proposals WHERE id = ?", id).Scan(&authorID)
-	if authorID != admin.ID {
-		t.Fatalf("fixture: expected the sitting admin as stand-in author, got %q", authorID)
+	if authorID != model.SystemUserID {
+		t.Fatalf("fixture: expected the calendar to sign its own contest, got %q", authorID)
 	}
 
 	r := authedRequest("DELETE", "/api/v1/proposals/"+id, nil, adminToken)
