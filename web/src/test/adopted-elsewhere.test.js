@@ -264,10 +264,17 @@ describe('GovernanceRecord — what it claims', () => {
     expect(src).not.toMatch(/e\.approve/);
   });
 
-  it('says an election that settled nothing left the council in place', () => {
-    // Holdover removes nobody (docs/adr/051). "Rejected" would read as the
-    // community turning somebody down.
-    expect(src).toMatch(/Settled nothing\. The council kept serving\./);
+  it('says an election settled nothing without claiming a council carried on', () => {
+    // Holdover removes nobody (docs/adr/051), and "Rejected" would read as
+    // the community turning somebody down. But this line is read months
+    // later and cannot know what the council was on the day: five members of
+    // a co-op with no admins at all read "The council kept serving" five
+    // times down this page (docs/adr/106). What is always true is what the
+    // contest did.
+    expect(src).toMatch(/'Settled nothing\. Nobody was elected\.'/);
+    // The string, not the word — the comment above the line explains why it
+    // is gone and has to be allowed to name it.
+    expect(src).not.toMatch(/'Settled nothing\. The council kept serving\.'/);
   });
 
   it('names who applied a direct change, since no vote stands behind it', () => {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
 // Elections (docs/adr/051): the contest Patchwork runs itself.
@@ -116,12 +117,35 @@ func TestElection_AdoptionOpensOne(t *testing.T) {
 		t.Errorf("voting must not be open during nominations, got %q", votingEnds)
 	}
 
-	// Idempotent — a second rules edit must not open a rival contest.
+	// The sitting council is seated before it is contested (docs/adr/098):
+	// one seat per admin, term already ended. Holdover made literal — the
+	// council serves until a successor is elected, and an overdue seat is
+	// what "until" looks like to the calendar. Without these, a contest
+	// that settled nothing left no seat behind and nothing was ever due.
+	today := time.Now().UTC().Format("2006-01-02")
+	var overdue int
+	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ? AND term_ends_at = ? AND holder_id IN (?, ?)`,
+		nodeID, today, admin.ID, second.ID).Scan(&overdue)
+	if overdue != 2 {
+		t.Errorf("expected both sitting admins holding overdue seats, got %d", overdue)
+	}
+	var audited int
+	db.QueryRow(`SELECT COUNT(*) FROM audit_log WHERE action = 'seat.holdover' AND entity_type = 'seat' AND user_id IS NULL`).Scan(&audited)
+	if audited != 2 {
+		t.Errorf("expected two actorless seat.holdover audit entries, got %d", audited)
+	}
+
+	// Idempotent — a second rules edit must not open a rival contest, nor
+	// seat the council twice.
 	handler.StartElectionOnAdoption(db, nodeID)
 	var count int
 	db.QueryRow(`SELECT COUNT(*) FROM proposals WHERE node_id = ? AND seats_contested > 0`, nodeID).Scan(&count)
 	if count != 1 {
 		t.Errorf("expected exactly one election, got %d", count)
+	}
+	db.QueryRow(`SELECT COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&count)
+	if count != 2 {
+		t.Errorf("expected the two seats untouched, got %d", count)
 	}
 }
 
@@ -366,12 +390,14 @@ func TestElection_CannotBeWithdrawn(t *testing.T) {
 
 	id := openElection(t, db, nodeID)
 
-	// The author is the admin the calendar stood in for, so this is the most
-	// privileged caller there is for this record.
+	// Nobody is the author: a contest the calendar opened is signed by the
+	// sentinel system user (docs/adr/109), not by whichever admin happened to
+	// have been here longest. The caller below is this patch's only admin,
+	// which is the most privileged there is for this record either way.
 	var authorID string
 	db.QueryRow("SELECT author_id FROM proposals WHERE id = ?", id).Scan(&authorID)
-	if authorID != admin.ID {
-		t.Fatalf("fixture: expected the sitting admin as stand-in author, got %q", authorID)
+	if authorID != model.SystemUserID {
+		t.Fatalf("fixture: expected the calendar to sign its own contest, got %q", authorID)
 	}
 
 	r := authedRequest("DELETE", "/api/v1/proposals/"+id, nil, adminToken)
@@ -400,5 +426,110 @@ func TestElection_CannotBeWithdrawn(t *testing.T) {
 	dw := serveMux(t, db, "DELETE", "/api/v1/proposals/{id}", handler.WithdrawProposal(db), dr)
 	if dw.Code != http.StatusOK {
 		t.Errorf("an ordinary proposal is still withdrawable, got %d: %s", dw.Code, dw.Body.String())
+	}
+}
+
+// An election that seated nobody is not one the community turned down.
+//
+// `status` stays inside the schema's CHECK, so all three holdover paths write
+// 'rejected' there and the state column is the only place the difference can
+// live — the same split docs/adr/097 made for a lapse. Without it the proposal
+// banner read "This proposal did not pass. 0 approved, 0 rejected." over a
+// contest nobody voted in, beside a notice correctly saying it settled nothing.
+func TestElection_UnsettledCarriesItsOwnState(t *testing.T) {
+	// Every way an election can settle nothing (docs/adr/051): nobody stood,
+	// quorum unmet, and a slate nobody approved.
+	t.Run("no candidates", func(t *testing.T) {
+		db := setupTestDB(t)
+		admin, _ := createTestUser(t, db, "elecu1", "member")
+		nodeID := electedNode(t, db, admin.ID, "Elec U1", "elec-u1", 0, 12)
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+		id := openElection(t, db, nodeID)
+		closeNominations(t, db, id)
+		handler.OpenElectionVoting(db, id)
+		expireProposal(t, db, id)
+		handler.SweepElections(db)
+		assertUnsettled(t, db, id)
+	})
+
+	t.Run("quorum unmet", func(t *testing.T) {
+		db := setupTestDB(t)
+		admin, adminToken := createTestUser(t, db, "elecu2", "member")
+		nodeID := electedNode(t, db, admin.ID, "Elec U2", "elec-u2", 100, 12)
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		challenger, challengerToken := createTestUser(t, db, "elecu2c", "member")
+		createTestMembership(t, db, challenger.ID, nodeID, "member", "active")
+		bystander, _ := createTestUser(t, db, "elecu2b", "member")
+		createTestMembership(t, db, bystander.ID, nodeID, "member", "active")
+
+		id := openElection(t, db, nodeID)
+		standFor(t, db, id, challengerToken, "")
+		closeNominations(t, db, id)
+		handler.OpenElectionVoting(db, id)
+		castApprovals(t, db, id, adminToken, []string{candidateIDFor(t, db, id, challenger.ID)})
+		expireProposal(t, db, id)
+		handler.SweepElections(db)
+		assertUnsettled(t, db, id)
+	})
+
+	t.Run("nobody approved", func(t *testing.T) {
+		db := setupTestDB(t)
+		admin, _ := createTestUser(t, db, "elecu3", "member")
+		nodeID := electedNode(t, db, admin.ID, "Elec U3", "elec-u3", 0, 12)
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		challenger, challengerToken := createTestUser(t, db, "elecu3c", "member")
+		createTestMembership(t, db, challenger.ID, nodeID, "member", "active")
+
+		id := openElection(t, db, nodeID)
+		standFor(t, db, id, challengerToken, "")
+		closeNominations(t, db, id)
+		handler.OpenElectionVoting(db, id)
+		expireProposal(t, db, id)
+		handler.SweepElections(db)
+		assertUnsettled(t, db, id)
+	})
+}
+
+func assertUnsettled(t *testing.T, db *database.DB, proposalID string) {
+	t.Helper()
+	var status, state string
+	db.QueryRow(`SELECT status, COALESCE(state,'') FROM proposals WHERE id = ?`, proposalID).Scan(&status, &state)
+	// The status column is coarse on purpose (docs/adr/097): a fifth value
+	// would be a migration for a word, and the CHECK allows four.
+	if status != "rejected" {
+		t.Errorf("expected status to stay inside the schema's CHECK as 'rejected', got %q", status)
+	}
+	if state != "unsettled" {
+		t.Errorf("expected state 'unsettled' so the UI can tell holdover from a rejection, got %q", state)
+	}
+}
+
+// A resolved election is still 'closed' to the phase logic, which reads status
+// rather than state (election_view.go). Giving the unsettled close its own
+// state must not reopen a contest that has ended.
+func TestElection_UnsettledStaysClosedToThePhaseLogic(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "elecu4", "member")
+	nodeID := electedNode(t, db, admin.ID, "Elec U4", "elec-u4", 0, 12)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	id := openElection(t, db, nodeID)
+	closeNominations(t, db, id)
+	handler.OpenElectionVoting(db, id)
+	expireProposal(t, db, id)
+	handler.SweepElections(db)
+
+	r := authedRequest("GET", "/api/v1/proposals/"+id, nil, adminToken)
+	w := serveMux(t, db, "GET", "/api/v1/proposals/{id}", handler.GetProposal(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	body := decodeJSON(t, w)
+	if got := body["election_phase"]; got != "closed" {
+		t.Errorf("expected phase 'closed', got %v", got)
+	}
+	if got := body["state"]; got != "unsettled" {
+		t.Errorf("expected the page to be handed state 'unsettled', got %v", got)
 	}
 }

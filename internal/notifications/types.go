@@ -34,7 +34,7 @@ func AllCategories() []CategoryInfo {
 		// announces an event any more (docs/adr/093). What is left is an
 		// admin queue's duties and answers to something a person did.
 		{CategoryEvents, "Events", "Submissions, links, and program offers", true},
-		{CategoryAdmin, "Admin", "Claim requests, submissions", true},
+		{CategoryAdmin, "Admin", "Claim requests, submissions, suggested tags", true},
 		{CategoryNoticeboard, "Noticeboard", "A notice whose author chose to tell members, replies on notices you're in, and reports for admins", true},
 		{CategoryQuilt, "The quilt", "A monthly note naming the patches that joined. Off unless you ask for it, and the one notification here that is not about you.", false},
 	}
@@ -76,6 +76,24 @@ const (
 	ProposalApplied      NotificationType = "proposal.applied"
 	ProposalComment      NotificationType = "proposal.comment"
 	ProposalDeadline     NotificationType = "proposal.deadline"
+	// ProposalOpenToYou reaches one person who may vote on a proposal that
+	// was already open before they could: they joined after it was raised,
+	// or their voting tenure began while it ran (docs/adr/098, where
+	// eligibility can start with no membership event at all). An obligation
+	// arrives with membership, and ProposalNew above only ever reached
+	// whoever was in the room at the instant the question was asked — seven
+	// of a simulated co-op's eight members were never told their rules vote
+	// existed. Specific-user rather than all-members, because the people who
+	// already heard must not hear again.
+	ProposalOpenToYou NotificationType = "proposal.open_to_you"
+	// ProposalTurnout is the mid-window notice, sent once, only to someone
+	// who still owes a ballot and only while the vote is short of quorum —
+	// which is to say, only while turning up would change the outcome. The
+	// 24-hour notice below is the day before it is any use; this one names
+	// the turnout against what quorum needs, at a point where the patch can
+	// still act on it. Its own type so it can be muted on its own, and its
+	// own dedupe key, because the deadline notice has one already.
+	ProposalTurnout NotificationType = "proposal.turnout"
 
 	GovernanceDocUpdated   NotificationType = "governance.doc_updated"
 	GovernanceRulesChanged NotificationType = "governance.rules_changed"
@@ -94,9 +112,31 @@ const (
 	// it goes, which is the whole point of the warning: the shipped succession
 	// plan gives them the gap between day 30 and day 60 to answer.
 	GovernanceInactivityWarning NotificationType = "governance.inactivity_warning"
+	// GovernanceSeatUnavailable reaches an elected patch's admins when a
+	// ratified nomination could not be seated — the members approved
+	// somebody and every seat was held by the time the vote closed
+	// (docs/adr/100). Its own type because it is the one outcome where an
+	// approved proposal changes nothing, and because adding a chair is the
+	// admins' act: no other governance type reaches them alone.
+	GovernanceSeatUnavailable NotificationType = "governance.seat_unavailable"
+	// GovernanceCouncilEmpty reaches a patch's members when inactivity has
+	// vacated every admin seat (docs/adr/051). It says the patch has nobody
+	// running it and what fills it next, which differs by leadership model —
+	// a contest that is now due, a nomination nobody is left to raise, or an
+	// instance admin who has been told.
+	//
+	// It follows an obligation rather than reporting the world
+	// (docs/adr/093): who decides in a member's name is a term of that
+	// membership, and this is that term changing. The members are also the
+	// only people who can act on it — they are the electorate, and they are
+	// who a nomination names. High, because a member who does not hear it
+	// finds out by discovering that nothing works.
+	GovernanceCouncilEmpty NotificationType = "governance.council_empty"
 	// GovernanceSuccessionNeeded reaches instance admins on a patch whose
-	// succession policy asks them to step in — the one policy Patchwork
-	// cannot carry out on its own.
+	// succession policy asks them to step in, and on any patch inactivity
+	// has emptied that cannot refill itself — a meritocratic one with nobody
+	// left to raise a nomination, an elected one with no contest on its
+	// calendar, or one whose longest-standing members are all gone too.
 	GovernanceSuccessionNeeded NotificationType = "governance.succession_needed"
 
 	MembershipJoined      NotificationType = "membership.joined"
@@ -105,6 +145,11 @@ const (
 	MembershipRoleChanged NotificationType = "membership.role_changed"
 	MembershipBanned      NotificationType = "membership.banned"
 	MembershipReinstated  NotificationType = "membership.reinstated"
+	// MembershipInvited reaches the one person an admin invited by username
+	// (docs/adr/098). Consent stays with them: the row is 'invited' until
+	// they accept or decline, and this is how they learn there is anything
+	// to answer.
+	MembershipInvited NotificationType = "membership.invited"
 
 	// There is deliberately no type for an event being created, updated,
 	// cancelled or about to start (docs/adr/093). An event is a fact
@@ -134,8 +179,17 @@ const (
 	// entries applied to programs.
 	ProgramOffer NotificationType = "program.offer"
 
+	// Suggested tags (docs/adr/114). A patch admin proposes a word for the
+	// vocabulary; the instance admin decides. The verdict goes to the admins
+	// of every patch wearing the word, not to the coiner alone: what changes
+	// is a chip on their patch, and one appearing or vanishing unexplained is
+	// what these prevent.
+	TagSuggestionApproved NotificationType = "tag.suggestion_approved"
+	TagSuggestionRejected NotificationType = "tag.suggestion_rejected"
+
 	AdminClaimRequest     NotificationType = "admin.claim_request"
 	AdminSubmission       NotificationType = "admin.submission"
+	AdminTagSuggestion    NotificationType = "admin.tag_suggestion"
 	AdminEventSubmission  NotificationType = "admin.event_submission"
 	AdminEventLinkRequest NotificationType = "admin.event_link_request"
 
@@ -197,7 +251,22 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	ProposalRejected:     {CategoryProposals, "Proposal rejected", AudienceAllMembers, PriorityHigh},
 	ProposalApplied:      {CategoryProposals, "Amendment applied", AudienceAllMembers, PriorityHigh},
 	ProposalComment:      {CategoryProposals, "Comment on a proposal you're in", AudienceParticipants, PriorityNormal},
-	ProposalDeadline:     {CategoryProposals, "Voting ends in 24 hours", AudienceAllMembers, PriorityHigh},
+	// Addressed, not broadcast. This went to every member including the ones
+	// who had already voted and the person who wrote the proposal, and it is
+	// the one proposal type email is on for by default — so the mailing this
+	// system does about a vote was aimed at the people with nothing left to
+	// do about it. Specific-user now: handler.SweepVoteNotices sends one per
+	// person who is in the electorate and has not cast a ballot. Still High,
+	// and it now reaches strictly fewer mailboxes than before.
+	ProposalDeadline: {CategoryProposals, "Voting ends in 24 hours and you have not voted", AudienceSpecificUser, PriorityHigh},
+	// Normal, not High, for both of the below, and deliberately: ProposalNew
+	// is Normal, and these two carry the same news to people who could not
+	// have received it. Mailing a latecomer what an incumbent only got a bell
+	// for would be a stranger rule than the one it replaced, and the comment
+	// on GovernanceRulesChanged says what mailing every member about every
+	// stage of every vote does to a whole category.
+	ProposalOpenToYou: {CategoryProposals, "An open vote you can take part in", AudienceSpecificUser, PriorityNormal},
+	ProposalTurnout:   {CategoryProposals, "A vote you have not cast is short of quorum", AudienceSpecificUser, PriorityNormal},
 
 	GovernanceDocUpdated: {CategoryGovernance, "Document updated", AudienceAllMembers, PriorityNormal},
 	// Normal, not high: a patch tuning its own rules is significant but not
@@ -208,6 +277,8 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	GovernanceRulesChangedMidVote: {CategoryGovernance, "Rules changed while votes are open", AudienceAllMembers, PriorityHigh},
 	LiningUpdated:                 {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
 	GovernanceInactivityWarning:   {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
+	GovernanceSeatUnavailable:     {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
+	GovernanceCouncilEmpty:        {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
 	GovernanceSuccessionNeeded:    {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
@@ -216,10 +287,17 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	MembershipRoleChanged: {CategoryMembership, "Your role was changed", AudienceSpecificUser, PriorityHigh},
 	MembershipBanned:      {CategoryMembership, "You have been removed", AudienceSpecificUser, PriorityHigh},
 	MembershipReinstated:  {CategoryMembership, "You have been reinstated", AudienceSpecificUser, PriorityHigh},
+	MembershipInvited:     {CategoryMembership, "You're invited to join a patch", AudienceSpecificUser, PriorityHigh},
 
 	EventSuggested:          {CategoryEvents, "Event suggested to your patch", AudienceAdminsOnly, PriorityHigh},
 	EventSubmissionApproved: {CategoryEvents, "Your event was approved", AudienceSpecificUser, PriorityHigh},
 	EventSubmissionRejected: {CategoryEvents, "Your event was declined", AudienceSpecificUser, PriorityNormal},
+
+	// AdminsOnly rather than SpecificUser: a suggested tag can be worn by
+	// more than one patch, and the decision lands on each of them
+	// (docs/adr/114).
+	TagSuggestionApproved: {CategoryAdmin, "A tag you suggested was approved", AudienceAdminsOnly, PriorityNormal},
+	TagSuggestionRejected: {CategoryAdmin, "A tag you suggested was declined", AudienceAdminsOnly, PriorityNormal},
 
 	EventLinkRequested: {CategoryEvents, "Event link request for your patch", AudienceAdminsOnly, PriorityHigh},
 	EventLinkConfirmed: {CategoryEvents, "Event link confirmed", AudienceAdminsOnly, PriorityNormal},
@@ -237,6 +315,7 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 
 	AdminClaimRequest:     {CategoryAdmin, "New patch claim request", AudienceSiteAdmins, PriorityHigh},
 	AdminSubmission:       {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
+	AdminTagSuggestion:    {CategoryAdmin, "A tag was suggested", AudienceSiteAdmins, PriorityNormal},
 	AdminEventSubmission:  {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventLinkRequest: {CategoryAdmin, "Event link request (unclaimed patch)", AudienceSiteAdmins, PriorityNormal},
 
@@ -297,14 +376,16 @@ func TypesForCategory(cat Category) []NotificationType {
 	var types []NotificationType
 	// Maintain a stable order by iterating a known list.
 	allTypes := []NotificationType{
-		ProposalNew, ProposalVoting, ProposalVoteReceived, ProposalApproved,
-		ProposalRejected, ProposalApplied, ProposalComment, ProposalDeadline,
+		ProposalNew, ProposalVoting, ProposalOpenToYou, ProposalVoteReceived, ProposalApproved,
+		ProposalRejected, ProposalApplied, ProposalComment, ProposalTurnout, ProposalDeadline,
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
-		GovernanceInactivityWarning,
+		GovernanceInactivityWarning, GovernanceSeatUnavailable, GovernanceCouncilEmpty,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
+		MembershipInvited,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed, ProgramOffer,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
+		AdminTagSuggestion, TagSuggestionApproved, TagSuggestionRejected,
 		GovernanceSuccessionNeeded,
 		ClaimApproved, ClaimSetupExpiring,
 		QuiltBulletin,

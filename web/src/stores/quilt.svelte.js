@@ -178,6 +178,50 @@ export function setChipsCollapsed(collapsed) {
   localStorage.setItem(CHIPS_KEY, collapsed ? '1' : '0');
 }
 
+// --- Whether the cards pane is shown (docs/adr/111) ---
+// The list beside a discovery surface is either there or it is not. Shown is
+// the width it has always had; hidden gives the whole window to the canvas,
+// which is the signature visual and was never something a reader could ask
+// to see all of.
+//
+// One bit, not a width. Intermediate stops were built and thrown out on use
+// (see the ADR): a narrower pane is a worse list and a barely better quilt,
+// and the want the control answers turned out to be "get out of the way",
+// which has no middle.
+//
+// It sits here beside the chips rather than in the surface because the
+// *shell* needs it too: the filter chips clear the pane's right edge, and
+// they live in SocialShell, which has no other reason to know the pane
+// exists. Until this, 45% was a literal in three places across two files.
+//
+// An arrangement, not a lens: it persists, the way the collapsed rail and
+// the collapsed chips do and the way the filter, the order and the in-view
+// lens deliberately do not (docs/adr/022, docs/adr/074).
+const PANE_KEY = 'patchwork-cards-pane-hidden';
+
+// The width shown is the width it was before this control existed. Nothing
+// about the default moved, and nobody who never presses the button sees a
+// change.
+const PANE_WIDTH_CSS = '45%';
+const PANE_FRACTION = 0.45;
+
+let paneHidden = $state(localStorage.getItem(PANE_KEY) === '1');
+
+export function isPaneHidden() { return paneHidden; }
+export function paneWidthCSS(hidden) { return hidden ? '0px' : PANE_WIDTH_CSS; }
+
+// The fraction of the window the pane covers — what the canvases take as
+// `insetRight`. Derived from the same bit the CSS width is, so the two can
+// never drift.
+export function paneFraction(hidden) { return hidden ? 0 : PANE_FRACTION; }
+
+export function setPaneHidden(hidden) {
+  paneHidden = !!hidden;
+  localStorage.setItem(PANE_KEY, paneHidden ? '1' : '0');
+}
+
+export function togglePaneHidden() { setPaneHidden(!paneHidden); }
+
 // --- Loaders ---
 export async function loadInstance() {
   if (instanceLoaded) return;

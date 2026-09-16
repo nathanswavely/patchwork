@@ -12,6 +12,18 @@
   let followerPermissions = $derived(patch.value.followerPermissions);
   let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.members === false);
 
+  // What this patch publishes (docs/adr/095), straight from the listing
+  // that applied it — so the page can tell "no members yet" from "the list
+  // is not public", which want opposite copy. An outsider is anyone who is
+  // not in the room; a follower counts as one here, which is the single
+  // place this setting lands somewhere a reader might not expect, and the
+  // reason the withheld state says so rather than claiming the patch is
+  // empty.
+  let publicList = $state('everyone');
+  let insider = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
+  let rosterWithheld = $derived(!insider && publicList === 'nobody');
+  let adminsOnly = $derived(!insider && publicList === 'admins');
+
   let members = $state([]);
   let nextCursor = $state('');
   let loadingMore = $state(false);
@@ -19,7 +31,12 @@
 
   // The header's counts come from the server, never from the loaded array:
   // the listing is paged, so counting what happened to arrive would report
-  // the page size as the patch's size.
+  // the page size as the patch's size. They are also the ungated counts —
+  // the same numbers the profile head above this page and the patch's quilt
+  // tile state — so on a patch where somebody has hidden their membership
+  // (docs/adr/006) or the roster is withheld (docs/adr/095), the count sits
+  // above a shorter list on purpose. Do not derive it from `members`: that
+  // is the bug that had the head saying 40 and this page saying 37.
   let memberCount = $state(0);
   let followerCount = $state(0);
 
@@ -58,6 +75,7 @@
       // Sent only to a viewer in the room; absent means nothing to offer.
       viewerSharesContact = !!data.viewer_shares_contact;
       anyContact = !!data.any_contact_shared;
+      publicList = data.public_member_list || 'everyone';
     } catch {
       if (!after) {
         members = [];
@@ -66,6 +84,7 @@
         followerCount = 0;
         viewerSharesContact = false;
         anyContact = false;
+        publicList = 'everyone';
       }
     } finally {
       loading = false;
@@ -83,6 +102,14 @@
 <div class="members-page">
   {#if loading}
     <p class="muted">Loading members...</p>
+  {:else if rosterWithheld}
+    <!-- The count is deliberately still here (docs/adr/095 decision 3): the
+         quilt sizes this patch's tile by it, so withholding it on this one
+         page would hide nothing and only make the page read as evasive. -->
+    <div class="empty-state">
+      <p>This patch doesn't publish its member list.</p>
+      <p class="muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}.</p>
+    </div>
   {:else if members.length === 0}
     <div class="empty-state">
       <p>No members yet.</p>
@@ -91,6 +118,11 @@
   {:else}
     <div class="members-header">
       <span class="muted">{memberCount === 1 ? '1 member' : `${memberCount} members`}{#if followerCount > 0}{' · '}{followerCount === 1 ? '1 following' : `${followerCount} following`}{/if}</span>
+      {#if adminsOnly}
+        <!-- Said once, above the list, because a list of three under a
+             count of forty otherwise reads as a bug. -->
+        <span class="muted roster-note">Only this patch's admins are listed publicly.</span>
+      {/if}
     </div>
     {#if offerSharing}
       <p class="muted contact-offer">
@@ -153,8 +185,15 @@
   }
 
   .members-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
     margin-bottom: 0.75rem;
     font-size: 0.85rem;
+  }
+
+  .roster-note {
+    font-size: 0.8rem;
   }
 
   .member-list {

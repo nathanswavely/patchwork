@@ -1,5 +1,5 @@
 <script>
-  import { Heart, Wrench, UsersThree, LinkBreak, FrameCorners } from 'phosphor-svelte';
+  import { Heart, Wrench, UsersThree, LinkBreak, FrameCorners, SidebarSimple } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate, replaceRoute } from '../stores/router.svelte.js';
   import { scopedPath, surfaceForRoute } from '../lib/scope.js';
@@ -21,6 +21,11 @@
     getInViewOnly,
     setInViewOnly,
     toggleInViewOnly,
+    isPaneHidden,
+    setPaneHidden,
+    togglePaneHidden,
+    paneWidthCSS,
+    paneFraction,
   } from '../stores/quilt.svelte.js';
   import {
     getRemoteFollows, findRemoteFollow,
@@ -90,18 +95,58 @@
     return list;
   });
 
-  // On desktop the cards panel floats over the right 45% of the canvas, so
-  // the quilt centers itself in the remaining left portion. On mobile the
-  // panes toggle full-screen instead — no inset.
   let winW = $state(window.innerWidth);
-  let quiltInset = $derived(winW <= 768 ? 0 : 0.45);
 
   // Which form the dock takes is a fact about the room, and this surface
-  // measures the room already — the same width the inset above reads.
+  // measures the room already — the same width the inset below reads.
   // Below the breakpoint there is no room beside the canvas, so a profile
   // docks at its foot; above it, the cards pane's slot is a profile wide
   // (docs/adr/094).
   let dockForm = $derived(winW <= 768 ? 'sheet' : 'panel');
+
+  // --- Whether the cards pane is shown (docs/adr/111) ---
+  // The reader's bit, and the one actually in force. They differ in exactly
+  // one case: a docked profile takes the pane's slot (docs/adr/094), and a
+  // zero-width slot is no slot. So hidden yields while a profile is docked,
+  // and the stored bit is left alone — dismissing returns the pane to hidden.
+  // The room makes space for what was asked for without overwriting what was
+  // chosen.
+  let dockNeedsPane = $derived(!!dockedSlug && dockForm === 'panel');
+  let paneHidden = $derived(winW > 768 && isPaneHidden() && !dockNeedsPane);
+
+  // On desktop the cards pane floats over the right of the canvas, so the
+  // quilt centers itself in the remaining left portion. On mobile the panes
+  // toggle full-screen instead — no inset, and no control either.
+  let quiltInset = $derived(winW <= 768 ? 0 : paneFraction(paneHidden));
+
+  // The one published fact (docs/adr/111). `.cards-pane` sizes from it, the
+  // shell's filter chips clear their right edge with it, and the control
+  // parks against it — 45% used to be a literal in three places across two
+  // files, agreeing by luck. Set on the document element because the chips
+  // live in SocialShell, which is not this component's parent in any sense it
+  // could pass a prop through.
+  $effect(() => {
+    const w = winW <= 768 ? '100%' : paneWidthCSS(paneHidden);
+    document.documentElement.style.setProperty('--pw-cards-pane-w', w);
+  });
+
+  let paneButtonLabel = $derived(paneHidden ? 'Show the patch list' : 'Hide the patch list');
+
+  // The button means one thing in every state: the canvas alone, or something
+  // beside it. Pressing it while a profile is docked therefore dismisses the
+  // profile as well as putting the pane away — otherwise the two facts get
+  // out of step. With a profile docked over a pane the reader had hidden, the
+  // stored bit says hidden while the pane is visibly open, so a plain toggle
+  // would flip the bit to *shown*, destroy the setting, and change nothing on
+  // screen: a press that does the opposite of its label, invisibly.
+  function paneButtonPress() {
+    if (dockNeedsPane) {
+      onDockClose();
+      setPaneHidden(true);
+      return;
+    }
+    togglePaneHidden();
+  }
 
   // Mobile view toggle. 'main' shows the full-bleed background pane (quilt
   // OR map, per the route); 'list' shows the patch cards. Quilt-vs-map stays
@@ -265,7 +310,13 @@
   // nobody can see is the silent-lens failure docs/adr/022 exists to prevent.
   // This is an absence, not a second behaviour: the lens needs two visible
   // panes, and mobile has one.
-  let lensAvailable = $derived(winW > 768);
+  //
+  // The hidden stop is that same case at desktop width (docs/adr/111), so the
+  // gate grows a second term rather than a second behaviour: there is no list
+  // to narrow and no header for the toggle to live in. Suspended and not
+  // cleared — the store keeps the setting, exactly as the mobile gate does,
+  // because it is the reader's and not this surface's to discard.
+  let lensAvailable = $derived(winW > 768 && !paneHidden);
   let inViewActive = $derived(lensAvailable && getInViewOnly());
 
   let filtered = $derived.by(() => {
@@ -510,7 +561,7 @@
                    remote patch it comes from a cross-quilt snapshot that
                    carries no upcoming figure at all (CONTEXT.md
                    "Upcoming events"). -->
-              <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Members`} - {patch.event_count || 0} Events</p>
+              <p class="card-stats">{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Member${patch.member_count === 1 ? '' : 's'}`} - {patch.event_count || 0} Event{patch.event_count === 1 ? '' : 's'}</p>
               {#if patch.description}
                 <p class="card-desc">{patch.description}</p>
               {/if}
@@ -578,7 +629,12 @@
        the same width, the list back the moment it is dismissed. The pill,
        the chips and the canvas around it are untouched, and the card the
        reader clicked grows into it. -->
-  <div class="cards-pane" class:mobile-hidden={mobileView !== 'list'}>
+  <div
+    class="cards-pane"
+    class:mobile-hidden={mobileView !== 'list'}
+    class:pane-hidden={paneHidden}
+    inert={paneHidden || null}
+  >
     {#if dockedSlug && dockForm === 'panel'}
       <DockedProfile
         slug={dockedSlug}
@@ -685,6 +741,28 @@
     {/if}
   </div>
 
+  <!-- The show/hide control (docs/adr/111). One home, never the header: it
+       parks against the pane's left edge and travels with it, so it is in
+       the same place relative to the thing it moves whether that thing is
+       there or not. A control that can delete its own container cannot live
+       inside it, and a control that changes homes is two controls to learn.
+
+       The rail's toggle mirrored — same icon, same weights, flipped, because
+       these are the two edges of one room and a reader who has learned the
+       left one has learned this. -->
+  {#if winW > 768}
+    <button
+      class="pane-toggle"
+      class:pane-shown={!paneHidden}
+      onclick={paneButtonPress}
+      title={paneButtonLabel}
+      aria-label={paneButtonLabel}
+      aria-pressed={!paneHidden}
+    >
+      <SidebarSimple size={20} weight={paneHidden ? 'duotone' : 'fill'} />
+    </button>
+  {/if}
+
   <!-- The profile docked as a sheet (docs/adr/094): the patch a reader
        touched, shown over the surface they touched it from rather than a
        card about it. A sibling of the panes rather than a child of the
@@ -745,22 +823,104 @@
      CARDS PANE — floats over the right side of the canvas; the pane
      itself is transparent so the quilt pans behind the cards
      ================================================================ */
+  /* The width is the reader's, at three stops (docs/adr/111), published as
+     one custom property so the shell's filter chips can clear the same edge
+     the pane occupies. 45% used to be written here, in quiltInset, and again
+     in SocialShell's chip offset — three literals agreeing by luck.
+     The transition matches the sidebar rail's, and the canvas re-centres over
+     the same duration so the quilt and this edge move together. */
   .cards-pane {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-    width: 45%;
+    width: var(--pw-cards-pane-w, 45%);
     display: flex;
     flex-direction: column;
     padding-top: 56px; /* clear the glass top bar */
     min-height: 0;
     z-index: 10;
+    transition: width 150ms ease;
   }
 
+  /* At the hidden stop the pane is zero-width and its contents are clipped
+     rather than unmounted, so the width transition has something to carry
+     out. Nothing inside can be reached or tabbed to on the way. */
+  .cards-pane.pane-hidden {
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* Canvas chrome, on the same floating layer and with the same glass recipe
+     as the view switcher — and parked against the pane's own edge, which it
+     reads from the same published width the pane does. So it travels with
+     the pane and stays in one place relative to it, rather than being in the
+     header sometimes and on the canvas other times. Level with the view
+     switcher on the opposite edge: the two ends of the canvas's top line.
+     It rides the same 150ms as the pane so the button and the edge arrive
+     together. */
+  .pane-toggle {
+    position: fixed;
+    top: 68px;
+    /* Hidden: 12px off the window's edge, like any floating chrome. */
+    right: 12px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: var(--color-glass);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: 0 2px 12px var(--color-shadow);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: right 150ms ease, color 150ms ease;
+  }
+
+  /* The rail's icon points at a panel on the left; this one is the same room's
+     right edge, so the glyph is mirrored rather than redrawn. Same icon, same
+     two weights, so the pair reads as one idea seen from both sides. */
+  .pane-toggle :global(svg) {
+    transform: scaleX(-1);
+  }
+
+  .pane-toggle:hover {
+    color: var(--color-text);
+  }
+
+  /* Shown: flush to the pane's box, so the only space between the button and
+     the cards is the pane's own 16px gutter — the same one the header card
+     and the scroll area are already inset by. Adding a gap on top of that
+     gutter read as a double margin, because it was one. */
+  .pane-toggle.pane-shown {
+    right: var(--pw-cards-pane-w, 45%);
+    color: var(--color-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cards-pane,
+    .pane-toggle {
+      transition: none;
+    }
+  }
+
+  /* The header has to survive the one-column stop (docs/adr/111), where it
+     has roughly half the width it was drawn at. It wraps onto a second row
+     rather than squeezing: unwrapped, the count broke mid-phrase ("37 /
+     results"), "In view" broke across two lines, and the width control
+     itself was pushed off the end — a control that cannot be reached at one
+     of its own stops. `margin-left: auto` on the group keeps it right-
+     aligned on whichever row it lands on. */
   .cards-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
+    row-gap: 6px;
     gap: 8px;
     margin: 12px 16px 0;
     padding: 10px 14px;
@@ -780,6 +940,7 @@
   .cards-count {
     font-size: 0.8rem;
     color: var(--color-text-muted);
+    white-space: nowrap;
   }
 
   /* The list's own controls (docs/adr/074) — both change the list, so both
@@ -804,8 +965,16 @@
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-text-muted);
+    white-space: nowrap;
     cursor: pointer;
     transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  }
+
+  /* Icon only — the chevron's direction is the whole message, so the button
+     is square rather than a pill with a label that would not fit at the
+     stop it exists to reach. */
+  .list-control.pane-stop {
+    padding: 4px 7px;
   }
 
   .list-control:hover,
@@ -1171,6 +1340,15 @@
       flex: 1;
       padding-top: 68px;
       background: var(--color-bg);
+    }
+
+    /* Show/hide is desktop-only (docs/adr/111) — below the breakpoint the
+       panes toggle full-screen already, so there is nothing beside the
+       canvas to hide and the pill in the mobile header is the control that
+       answers this question. A pane hidden on a wide screen must not follow
+       a reader to their phone and leave them with no list at all. */
+    .pane-toggle {
+      display: none;
     }
 
     .cards-scroll {

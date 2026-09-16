@@ -34,11 +34,18 @@
   let {
     slug = '',
     node = null,
+    // Standing as the node payload reports it — true for followers too, which
+    // is why every gate below reads `membershipRole` instead. Kept in the
+    // bundle the containers hand over.
     isMember = false,
     isAdmin = false,
     isUnclaimed = false,
     isBanned = false,
     membershipRole = '',
+    // Taken, and deliberately not read for governance. Follower permissions
+    // set what a patch's *workspace* offers a follower (docs/adr/050); they
+    // never decide what the patch's public face shows, and the containers
+    // that mount this pass the whole standing bundle.
     followerPermissions = null,
     // Whether to go and ask the rooms. A sheet at rest mounts these so the
     // first section shows under the fold — the cut is what says there is
@@ -54,16 +61,34 @@
   let loaded = $state(false);
   let members = $state([]);
   let memberTotal = $state(0);
+  // What this patch publishes (docs/adr/095), read off the listing that
+  // applied it. Without it a follower — an outsider for this purpose — gets
+  // the standing clause below, an empty array, and a glimpse announcing
+  // "No members yet" about a patch with forty people in it.
+  let publicMemberList = $state('everyone');
   let recentProposals = $state([]);
   let governanceDocs = $state([]);
+  // Whether the governance list this viewer got held only what the patch
+  // published. Read off the listing that applied the rule, so the empty
+  // state can say which kind of empty it is without counting anything it
+  // was not shown.
+  let governancePublishedOnly = $state(false);
 
   // Standing is the membership relationship, never instance-admin power:
   // an instance admin can manage any patch without standing in it.
   let hasStanding = $derived(['follower', 'member', 'admin'].includes(membershipRole));
 
-  let canSeeGovernance = $derived(
-    !isUnclaimed && (isMember || isAdmin || followerPermissions?.proposals === true || followerPermissions?.charters === true)
-  );
+  // Governance is asked about on every claimed patch, for every viewer, and
+  // the server decides what comes back: a document published to everyone
+  // reaches everyone (docs/adr/036), and proposals are a public read
+  // (docs/adr/050). This used to require `followerPermissions.charters` or
+  // `.proposals`, which meant the Minimal template's two `false`s hid the
+  // whole section from a signed-out visitor — so a patch that had
+  // deliberately published its minutes showed a stranger nothing about
+  // documents, and the sentence promising "posted here" led nowhere (F-052).
+  // Unclaimed patches carry no governance at all (docs/adr/039): absence,
+  // not an empty room.
+  let canSeeGovernance = $derived(!isUnclaimed);
 
   // What posting an event here would actually do — see eventPostingRight.
   let postingRight = $derived(eventPostingRight({
@@ -86,7 +111,14 @@
    * brand-new patch renders zero doors and strands its own admin.
    */
   let showEvents = $derived(recentEvents.length > 0 || hasStanding || isAdmin || postingRight !== 'none');
-  let showMembers = $derived(!isUnclaimed && (members.length > 0 || hasStanding || isAdmin));
+  // Whoever is not in the room reads the patch's public answer, instance
+  // admins excepted — they see every room already, everywhere.
+  let rosterInsider = $derived(isAdmin || membershipRole === 'member' || membershipRole === 'admin');
+  let rosterWithheld = $derived(!rosterInsider && publicMemberList === 'nobody');
+  let rosterAdminsOnly = $derived(!rosterInsider && publicMemberList === 'admins');
+  // A withheld list collapses the glimpse rather than showing an empty one:
+  // the door it would be is the members page, and that page says why.
+  let showMembers = $derived(!isUnclaimed && !rosterWithheld && (members.length > 0 || hasStanding || isAdmin));
   let showGovernance = $derived(
     canSeeGovernance && (governanceDocs.length > 0 || recentProposals.length > 0 || hasStanding || isAdmin)
   );
@@ -95,6 +127,14 @@
   // toward About on its own: a patch whose only public fact is its handle
   // still has something to say about what it is.
   let atprotoHandle = $derived(handleFromDID(node?.did));
+
+  // What this capped list is not showing. Read off the server's count
+  // rather than off a second fetch: upcoming_event_count is counted under
+  // exactly the gates GET /api/v1/events applies, so the two can only
+  // disagree by the page size — which is the whole gap this reports.
+  let moreEvents = $derived(
+    Math.max(0, (node?.upcoming_event_count ?? recentEvents.length) - recentEvents.length)
+  );
   let showAbout = $derived(!!node?.website || (node?.links?.length ?? 0) > 0 || !!node?.address || !!node?.image_url || !!atprotoHandle);
 
   // Keyed on the slug and on whether governance is readable, because the
@@ -129,8 +169,10 @@
     // members room's own page, not to a glimpse headed "Members".
     members = (memberData.items || memberData || []).filter((m) => m.role !== 'follower');
     memberTotal = node?.member_count ?? members.length;
+    publicMemberList = memberData.public_member_list || 'everyone';
     recentProposals = proposalData.items || proposalData || [];
     governanceDocs = charterData.items || charterData || [];
+    governancePublishedOnly = charterData.published_only === true;
     loaded = true;
   }
 
@@ -141,6 +183,22 @@
   function extractDomain(url) {
     try { return new URL(url).hostname.replace(/^www\./, ''); }
     catch { return url; }
+  }
+
+  // What the pill calls a proposal's outcome, read off `state` before
+  // `status` the way the proposals list does.
+  //
+  // Two outcomes carry `status = 'rejected'` without anybody having rejected
+  // anything: a vote whose window closed under quorum (lapsed, docs/adr/097)
+  // and an election that seated nobody (unsettled, holdover — docs/adr/051).
+  // The schema's CHECK has no word for either, so printing the column put
+  // REJECTED in error red under the name of a candidate the patch had simply
+  // not voted on. The pill is the link's accessible name too, so the word is
+  // the whole fix on both counts.
+  function outcomeWord(p) {
+    if (p.state === 'lapsed') return 'lapsed';
+    if (p.state === 'unsettled') return 'unsettled';
+    return p.status;
   }
 </script>
 
@@ -231,6 +289,21 @@
             </a>
           {/each}
         </div>
+        {#if moreEvents > 0}
+          <!--
+            The head states the patch's whole upcoming count and this list
+            is capped at three, so a choir with four rehearsals read
+            "4 Upcoming Events" over three of them and said nothing about
+            the fourth. The count is the right number — a venue with forty
+            shows must not advertise three — so the glimpse is what has to
+            admit it is a glimpse.
+          -->
+          <a
+            class="glimpse-more"
+            href="/patches/{slug}/events"
+            onclick={go(`/patches/${slug}/events`)}
+          >{moreEvents} more upcoming</a>
+        {/if}
       {:else if loaded}
         <p class="glimpse-empty muted">No upcoming events.</p>
       {/if}
@@ -242,8 +315,10 @@
   {#if showMembers}
     <section class="profile-section">
       <div class="section-head">
-        <a class="section-title" href="/patches/{slug}/members" onclick={go(`/patches/${slug}/members`)}>Members</a>
-        {#if members.length > 0 && memberTotal > members.length}
+        <a class="section-title" href="/patches/{slug}/members" onclick={go(`/patches/${slug}/members`)}>{rosterAdminsOnly ? 'Admins' : 'Members'}</a>
+        <!-- The total belongs to a section headed Members. Beside "Admins"
+             it would count people the list below deliberately omits. -->
+        {#if !rosterAdminsOnly && members.length > 0 && memberTotal > members.length}
           <span class="section-meta muted">{memberTotal}</span>
         {/if}
       </div>
@@ -272,6 +347,18 @@
     <section class="profile-section">
       <div class="section-head">
         <a class="section-title" href="/patches/{slug}/governance" onclick={go(`/patches/${slug}/governance`)}>Governance</a>
+        <!-- The named door a patch's own blurb points at when it says the
+             minutes are posted here. It renders only when this viewer has at
+             least one document to open, so a patch that has published
+             nothing never grows a door onto an empty room (docs/adr/042:
+             every door names a room, and no false ones). -->
+        {#if governanceDocs.length > 0}
+          <a
+            class="section-action"
+            href="/patches/{slug}/governance/docs"
+            onclick={go(`/patches/${slug}/governance/docs`)}
+          >Documents</a>
+        {/if}
       </div>
       {#if governanceDocs.length > 0 || recentProposals.length > 0}
         <div class="doc-list">
@@ -286,23 +373,31 @@
             </a>
           {/each}
           {#each recentProposals as proposal (proposal.id)}
+            {@const outcome = outcomeWord(proposal)}
             <a
               class="row-item"
               href="/patches/{slug}/governance/{proposal.id}"
               onclick={go(`/patches/${slug}/governance/${proposal.id}`)}
             >
               <span class="row-title">{proposal.title}</span>
+              <!-- Red is for a decision the patch made. Lapsed and unsettled
+                   are absences, so they keep the pill's muted default. -->
               <span
                 class="proposal-status"
-                class:status-open={proposal.status === 'open'}
-                class:status-accepted={proposal.status === 'accepted'}
-                class:status-rejected={proposal.status === 'rejected'}
-              >{proposal.status}</span>
+                class:status-open={outcome === 'open'}
+                class:status-accepted={outcome === 'accepted'}
+                class:status-rejected={outcome === 'rejected'}
+              >{outcome}</span>
             </a>
           {/each}
         </div>
       {:else if loaded}
-        <p class="glimpse-empty muted">Nothing recorded yet.</p>
+        <!-- Two kinds of empty, two sentences. A viewer who is shown only
+             what the patch published must not read "nothing recorded" and
+             take it for the patch's whole record. -->
+        <p class="glimpse-empty muted">
+          {governancePublishedOnly ? 'Nothing published yet.' : 'Nothing recorded yet.'}
+        </p>
       {/if}
     </section>
   {/if}
@@ -359,6 +454,19 @@
   .glimpse-empty {
     font-size: 0.85rem;
     padding: 0.25rem 0;
+  }
+
+  .glimpse-more {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .glimpse-more:hover {
+    color: var(--color-text);
+    text-decoration: underline;
   }
 
   /* Events */

@@ -691,8 +691,13 @@
   .quilt-chips {
     position: fixed;
     bottom: 12px;
-    left: 224px; /* clear the rail's floating glass card (12px + 200px + gap) */
-    right: calc(45% + 16px); /* clear the cards pane */
+    left: 220px; /* clear the rail's floating glass card (8px + 200px + 12px gap) */
+    /* Clear the cards pane, whatever width the reader has set it to
+       (docs/adr/111). This used to be a literal 45% — a third copy of a
+       number SocialHome wrote twice more, in a file that has no other reason
+       to know the pane exists. The fallback keeps the chips honest on any
+       route that renders before the surface publishes its width. */
+    right: calc(var(--pw-cards-pane-w, 45%) + 16px);
     z-index: 20; /* the canvas chrome layer — same as the view pill */
   }
 
@@ -703,7 +708,7 @@
   .canvas-view {
     position: fixed;
     top: 68px; /* clear the glass top bar */
-    left: 224px;
+    left: 220px;
     z-index: 20;
     display: flex;
     gap: 3px;
@@ -716,7 +721,7 @@
   }
 
   .canvas-view.rail-collapsed {
-    left: 80px;
+    left: 70px;
   }
 
   .canvas-view a {
@@ -740,12 +745,15 @@
   }
 
   .quilt-chips.rail-collapsed {
-    /* The collapsed rail hugs at left 12px, 56px wide (its right edge is
-       68px) since the hover-flicker fix — keep the same 12px gap the
-       expanded offset has. The map's zoom control lives in the column
-       this leaves free (bottom-left, 12px in, 32px wide — MapView), so
-       this offset is also what keeps the chips off it. */
-    left: 80px;
+    /* The collapsed rail hugs at left 8px, 50px wide (its right edge is
+       58px) — keep the same 12px gap the expanded offset has. The map's
+       zoom control lives in the column this leaves free (bottom-left,
+       12px in, 32px wide, so its right edge is 44px — MapView), so this
+       offset is also what keeps the chips off it. Both constraints are
+       read out of the source and checked against each other in
+       map-zoom-control.test.js, so moving the rail again fails there
+       rather than silently landing the chips on the zoom buttons. */
+    left: 70px;
   }
 
   /* The FAB and sheet are the mobile canvas home — hidden on desktop. */
@@ -791,10 +799,13 @@
      nothing to butt against and reads as a stray panel. Inset from the left
      and sized to hug its items (bottom: auto), it reads as chrome floating
      over the canvas, like the view pill. Top stays at 56px so the items sit
-     at the same height they do collapsed — toggling must not shift them. */
+     at the same height they do collapsed — toggling must not shift them
+     vertically. The left inset is 8px, not a round 12: that is the bar's
+     own left padding, so the card's edge lines up under the sidebar toggle
+     that opened it instead of sitting a few pixels to its right. */
   .sidebar-rail.quilt-mode {
     top: 56px;
-    left: 12px;
+    left: 8px;
     bottom: auto;
     background: color-mix(in srgb, var(--color-bg) 78%, transparent);
     backdrop-filter: blur(12px);
@@ -810,11 +821,17 @@
      shrank the box, the cursor could land outside the new bounds, ending
      :hover and snapping the box back under the cursor — an open/close
      flicker loop. Height-hugging also keeps the quilt clickable below
-     the chips. */
+     the chips.
+
+     Collapsed there is no card edge, so the chip is the edge: it drops the
+     left padding and sits at 8px, the same column as the sidebar toggle
+     above it. Width hugs one chip (42px) plus the right padding. */
   .sidebar-rail.quilt-mode.collapsed {
     top: 56px;
-    left: 12px;
+    left: 8px;
     bottom: auto;
+    width: 50px;
+    padding-left: 0;
     background: transparent;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -867,6 +884,7 @@
      the handoff is invisible except for the widening. Width is the ONLY
      geometry hover may change (see the collapsed rule above). */
   .sidebar-rail.quilt-mode.collapsed:hover {
+    padding-left: 8px; /* the card is back, and its items keep off its edge */
     background: color-mix(in srgb, var(--color-bg) 78%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);

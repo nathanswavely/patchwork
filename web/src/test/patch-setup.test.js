@@ -164,7 +164,16 @@ describe('PatchForm reuses one component for creation and setup (docs/adr/039)',
 
   it('does not re-randomize appearance for setup — it seeds from the listing', () => {
     expect(src).toMatch(/mode !== 'setup' \|\| !initial/);
-    expect(src).toMatch(/paletteForPatch\(initial\.id, ap\)/);
+    expect(src).toMatch(/paletteForPatch\(initial\.id, ap, \{ raw: true \}\)/);
+  });
+
+  it('seeds setup from the fabric the listing really has, not the viewer register', () => {
+    // docs/adr/112: muted colors are a viewer-side register, and a fabric
+    // picker must show the fabric that was chosen — a claimant who is
+    // reading the quilt in muted would otherwise be seeded from, and then
+    // save, colors nobody picked. `raw` is the exemption, and it belongs
+    // here as much as in the block drafter.
+    expect(src).toMatch(/raw: true/);
   });
 });
 

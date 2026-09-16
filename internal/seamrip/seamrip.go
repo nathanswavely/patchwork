@@ -100,8 +100,19 @@ func Tables() []Table {
 		{
 			File:    "tags.json",
 			Name:    "tags",
-			Query:   `SELECT id, name, motif, created_at FROM tags`,
-			Columns: cols(id("id"), c("name"), c("motif"), c("created_at")),
+			// status and suggested_by travel: the review queue is instance
+			// state and the admin export is a custody transfer (docs/adr/114).
+			// Without status here every pending and rejected row would land on
+			// the fork as approved vocabulary.
+			Query:   `SELECT id, name, motif, status, suggested_by, decided_by, decided_at, created_at FROM tags`,
+			// status defaults to 'approved' so an archive written before
+			// docs/adr/114 imports as ordinary vocabulary, which is what it
+			// was. suggested_by and decided_by are user ids and so are
+			// remapped like any other.
+			Columns: cols(id("id"), c("name"), c("motif"), def("status", "approved"),
+				Column{Name: "suggested_by", Remap: true, Default: nil},
+				Column{Name: "decided_by", Remap: true, Default: nil},
+				def("decided_at", nil), c("created_at")),
 		},
 		{
 			File: "nodes.json",
@@ -111,7 +122,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, moved_to, created_at, updated_at
+				notice_posting, notice_replies_default, public_member_list, moved_to, founded_at, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -160,6 +171,13 @@ func Tables() []Table {
 				// Who may put up a notice, and whether notices take replies
 				// by default: rules the community set (docs/adr/081).
 				def("notice_posting", "members"), def("notice_replies_default", 1),
+				// Who the patch publishes (docs/adr/095). It travels because
+				// a fork that lost it would put back up a member list the
+				// original had deliberately taken down, which is the one
+				// direction this setting must never move on its own. def()
+				// so archives written before the column import as
+				// "everyone", the behaviour every patch in them had.
+				def("public_member_list", "everyone"),
 				// Where this patch says it went (docs/adr/090). It travels
 				// for the same reason a person's does: the fork is the thing
 				// somebody followed the pointer to, and a chain of moves that
@@ -167,6 +185,12 @@ func Tables() []Table {
 				// far end. def() so archives written before the column import
 				// as NULL, which is "hasn't moved".
 				def("moved_to", nil),
+				// When the group started (docs/adr/098). A fact about the
+				// community, like activated_at, and it decides who may vote:
+				// a fork that dropped it would drop the tenure bar a patch
+				// had deliberately kept. def() so archives written before the
+				// column import as NULL - "started with its row".
+				def("founded_at", nil),
 				c("created_at"), c("updated_at")),
 		},
 		{
@@ -178,7 +202,7 @@ func Tables() []Table {
 		{
 			File: "memberships.json",
 			Name: "memberships",
-			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at
+			Query: `SELECT id, user_id, node_id, role, status, visible, share_contact, joined_at, role_since
 				FROM memberships`,
 			// `visible` is the member's own switch (docs/adr/006), and it
 			// defaults to 1. Leaving it behind meant a fork re-exposed every
@@ -190,8 +214,16 @@ func Tables() []Table {
 			// (docs/adr/080) and defaults to 0, so leaving it behind would
 			// fail the other way: every card the person had chosen to
 			// share would go silent on the fork. It travels with the card.
+			// `role_since` travels because the inactivity clock hangs off it
+			// (docs/adr/051, migration 072). Left behind, every admin would
+			// arrive on the fork with their absence measured from when they
+			// joined the patch, which is the floor that made a freshly
+			// promoted admin vacatable on sight. NULL on archives older than
+			// the column, which reads as "measure from joining" — the same
+			// answer those archives already carried.
 			Columns: cols(id("id"), id("user_id"), id("node_id"), c("role"),
-				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at")),
+				c("status"), def("visible", 1), def("share_contact", 0), c("joined_at"),
+				def("role_since", nil)),
 		},
 		{
 			// The contact card in the shape docs/adr/083 gives it: an ordered
@@ -220,23 +252,6 @@ func Tables() []Table {
 			Name:    "contact_item_shares",
 			Query:   `SELECT item_id, node_id, created_at FROM contact_item_shares`,
 			Columns: cols(id("item_id"), id("node_id"), c("created_at")),
-		},
-		{
-			// The council's chairs (docs/adr/051). A seat outlives its holder,
-			// and `term_ends_at` is the patch's election calendar: dueness is
-			// derived from it rather than stored, so a fork arriving with no
-			// seats never schedules another election — the safety valve would
-			// have stripped the machinery that rotates leadership. Beside
-			// memberships because that is what a seat is a fact about.
-			//
-			// A vacant seat travels too: holder_id NULL is a chair waiting to
-			// be contested, which the next election needs to know about.
-			File: "seats.json",
-			Name: "seats",
-			Query: `SELECT id, node_id, holder_id, term_ends_at, created_at
-				FROM seats`,
-			Columns: cols(id("id"), id("node_id"), id("holder_id"),
-				c("term_ends_at"), c("created_at")),
 		},
 		{
 			File: "aggregators.json",
@@ -428,6 +443,32 @@ func Tables() []Table {
 				// (docs/adr/092, migration 067). Remapped like applied_by;
 				// NULL wherever the electorate decided.
 				id("declined_by"), c("created_at"), c("updated_at")),
+		},
+		{
+			// The council's chairs (docs/adr/051). A seat outlives its holder,
+			// and `term_ends_at` is the patch's election calendar: dueness is
+			// derived from it rather than stored, so a fork arriving with no
+			// seats never schedules another election — the safety valve would
+			// have stripped the machinery that rotates leadership.
+			//
+			// A vacant seat travels too: holder_id NULL is a chair waiting to
+			// be contested, which the next election needs to know about.
+			//
+			// After proposals, though a seat is a fact about a membership,
+			// because `contested_in` points at the contest deciding this
+			// chair (docs/adr/103) and Import retries only within a table —
+			// a seat landing before its contest would fail its foreign key on
+			// every pass and be dropped. The marking travels rather than being
+			// left to the importing instance to reconstruct: a fork taken
+			// mid-ballot has to empty exactly the chairs the electorate was
+			// asked about, and on a staggered council that is not derivable
+			// from the term ends alone.
+			File: "seats.json",
+			Name: "seats",
+			Query: `SELECT id, node_id, holder_id, term_ends_at, contested_in, created_at
+				FROM seats`,
+			Columns: cols(id("id"), id("node_id"), id("holder_id"),
+				c("term_ends_at"), id("contested_in"), c("created_at")),
 		},
 		{
 			// A community's record of what it decided elsewhere travels with

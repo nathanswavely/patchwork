@@ -1,19 +1,39 @@
 /**
- * Quilt palettes (inspired by punk rock album art).
+ * Quilt palettes.
  *
  * Each patch's tile is drawn with a palette: chosen by its admins via the
  * Patch Appearance settings (stored in node.appearance.palette), or
  * hash-assigned from the patch ID when unset. Unknown palette keys fall
  * back to hash assignment — see docs/adr/004.
  *
- * Palettes from: https://joetamponi.com/blog/8-awesome-inspirational-color-palettes-from-punk-rock-records
+ * Two kinds, one list. The **album palettes** came first, lifted from punk
+ * record sleeves:
+ * https://joetamponi.com/blog/8-awesome-inspirational-color-palettes-from-punk-rock-records
+ *
+ * The **wall cuts** below them exist because those eight are clustered in
+ * hue — six of the eight primaries sit inside a 55 degree arc through red.
+ * A quilt drawn from three fabrics per tile hides that, because the variety
+ * a reader sees comes from the secondaries and grounds. Measured on the
+ * live instance: 54 of 58 patches were hash-assigned, and they resolved to
+ * nine distinct identity colors, 67% of them red. See docs/adr/112, which
+ * found it, and could not ship the thing it was written for until this was
+ * fixed.
+ *
+ * So the hash draws from a set that covers the wheel. Every wall cut is
+ * three swatches off the fabric wall (docs/adr/029) and is named for the
+ * fabric it leads with, the way a quilter names a cut — no invented lore,
+ * and no pretending it came off a record sleeve.
  */
+
+import { WALL } from './fabricWall.js';
+import { getColorMode } from '../stores/colors.svelte.js';
+import { mutedColor, mutedSlots } from './mutedColors.js';
 
 // --- PALETTES ---
 // Each has 3 colors for quilt blocks: primary, secondary, bg.
 // Plus a `colors` array of all source colors for the appearance picker UI.
 
-export const PALETTES = {
+const ALBUM_PALETTES = {
   adolescents: {
     key: 'adolescents',
     name: 'Adolescents',
@@ -87,6 +107,84 @@ export const PALETTES = {
     colors: ['#952117', '#F4CD2E', '#5E8258', '#3A4E8A', '#7690C1', '#204B4B'],
   },
 };
+
+/**
+ * Wall cuts: [primary, secondary, ground], by fabric-wall key.
+ *
+ * Ordered by the primary's hue so the coverage is readable as a list, and
+ * chosen to put at least one primary in every 30 degree band the wall can
+ * reach. The wall has nothing between 270 and 300 degrees, so neither does
+ * this — that is a gap in the wall, and closing it means adding a swatch
+ * there rather than inventing one here.
+ *
+ * Grounds alternate dark and pale on purpose. A set that grounded every cut
+ * in Stage Black would spread the hues and flatten the quilt's value range
+ * instead, which is the same mistake in the other channel.
+ */
+const WALL_CUTS = [
+  ['punch', 'butterscotch', 'stage-black'],
+  ['brick', 'chambray', 'parchment'],
+  ['rust', 'seafoam', 'raw-cotton'],
+  ['amber', 'ink-blue', 'charcoal'],
+  ['mustard', 'petrol', 'flax'],
+  ['goldenrod', 'merlot', 'charcoal'],
+  ['moss', 'muslin-pink', 'espresso'],
+  ['fern', 'peach', 'oatmeal'],
+  ['bottle-green', 'lemon', 'aubergine'],
+  ['seafoam', 'mulberry', 'stage-black'],
+  ['spruce', 'coral', 'raw-cotton'],
+  ['petrol', 'butterscotch', 'parchment'],
+  ['workwear', 'safety-orange', 'oatmeal'],
+  ['sky', 'brick', 'stage-black'],
+  ['ink-blue', 'camel', 'dove'],
+  ['violet', 'hi-vis', 'stage-black'],
+  ['lilac', 'spruce', 'muslin-pink'],
+  ['mulberry', 'pistachio', 'raw-cotton'],
+];
+
+const wallIndex = new Map(WALL.map((sw) => [sw.key, sw]));
+
+/**
+ * Loud on a bad key rather than quiet. A typo here would otherwise paint
+ * `undefined` onto a tile, and the fabric wall's keys are the one thing
+ * these cuts depend on that lives in another file.
+ */
+function swatch(key) {
+  const sw = wallIndex.get(key);
+  if (!sw) throw new Error(`quiltTheme: no fabric on the wall called "${key}"`);
+  return sw;
+}
+
+/** camelCase key from the two fabrics that name the cut. Stored in
+ *  node.appearance.palette once a patch pins one, so it never changes. */
+function cutKey(primaryKey, secondaryKey) {
+  const camel = (k) =>
+    k.split('-').map((p, i) => (i ? p[0].toUpperCase() + p.slice(1) : p)).join('');
+  return camel(primaryKey) + camel(secondaryKey)[0].toUpperCase() + camel(secondaryKey).slice(1);
+}
+
+const WALL_PALETTES = Object.fromEntries(
+  WALL_CUTS.map(([p, s, b]) => {
+    const primary = swatch(p);
+    const secondary = swatch(s);
+    const bg = swatch(b);
+    const key = cutKey(p, s);
+    return [
+      key,
+      {
+        key,
+        name: primary.name,
+        subtitle: `${secondary.name} · ${bg.name}`,
+        primary: primary.hex,
+        secondary: secondary.hex,
+        bg: bg.hex,
+        colors: [primary.hex, secondary.hex, bg.hex],
+      },
+    ];
+  }),
+);
+
+export const PALETTES = { ...ALBUM_PALETTES, ...WALL_PALETTES };
 
 export const PALETTE_KEYS = Object.keys(PALETTES);
 
@@ -166,7 +264,26 @@ const bundleHexRe = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
  * @param {string} patchId
  * @param {object|null} appearance — node.appearance ({palette, block, rotation, bundle})
  */
-export function paletteForPatch(patchId, appearance) {
+export function paletteForPatch(patchId, appearance, { raw = false } = {}) {
+  const base = chosenPaletteForPatch(patchId, appearance);
+  if (raw || getColorMode() !== 'muted') return base;
+
+  // One hue, the shared ramp, chroma capped (docs/adr/112). The *count* of
+  // slots is carried over rather than filled out to six: muted may take
+  // color away and may not add structure, so a patch whose bundle is one
+  // fabric keeps drawing one flat fabric here too.
+  const slots = mutedSlots(base.primary, base.slots.length);
+  return {
+    primary: slots[0],
+    secondary: slots[1] || slots[0],
+    bg: slots[2] || darken(slots[0], 0.55),
+    slots,
+    paletteKey: base.paletteKey,
+  };
+}
+
+/** What the patch actually chose, before any viewer-side register. */
+function chosenPaletteForPatch(patchId, appearance) {
   const bundle = Array.isArray(appearance?.bundle)
     ? appearance.bundle.filter((c) => typeof c === 'string' && bundleHexRe.test(c)).slice(0, 6)
     : [];
@@ -204,6 +321,10 @@ export function identityColorForPatch(patch) {
  */
 export function ghostPalette(index) {
   const palette = PALETTES[PALETTE_KEYS[Math.abs(index * 7 + 3) % PALETTE_KEYS.length]];
+  if (getColorMode() === 'muted') {
+    const [primary, secondary, bg] = mutedSlots(palette.primary, 3);
+    return { primary, secondary, bg };
+  }
   return { primary: palette.primary, secondary: palette.secondary, bg: palette.bg };
 }
 
@@ -215,6 +336,9 @@ export function colorForTag(tag) {
   if (!tag) return '#7a7870';
   // Hash the tag to pick a palette, use its primary.
   const palette = PALETTES[PALETTE_KEYS[Math.abs(hashStr(tag)) % PALETTE_KEYS.length]];
-  return palette.primary;
+  // Muted reaches every color that stands for something, and a forty-chip
+  // tag cloud under a muted quilt is most of what a reader was looking at
+  // (docs/adr/112). Tags are not patches, but they are not decoration either.
+  return getColorMode() === 'muted' ? mutedColor(palette.primary) : palette.primary;
 }
 

@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
@@ -25,6 +26,13 @@ const (
 	// separates "rebuilt" (everything before is gone) from "restored" (the
 	// history is intact, one file was behind).
 	RebuildMessage = "Rebuilt from database; original history unavailable"
+
+	// ReconstructedBranchMessage is the message on an amendment branch tip
+	// re-derived from the canonical proposal row because the repo no longer
+	// carried the branch. It is repair-authored on purpose: the text is the
+	// proposer's, the commit is not, and the charter history must say so
+	// rather than mint a commit somebody never made (docs/adr/084).
+	ReconstructedBranchMessage = "Reconstructed the proposed text from the database; the amendment branch was missing"
 )
 
 // RepairKind classifies a commit written by the repair pass. It is empty for
@@ -167,6 +175,56 @@ func Repair(db *database.DB, dataDir string, opts RepairOptions) (*Report, error
 	}
 
 	return rep, nil
+}
+
+// EnsureBranch guarantees that an amendment's branch exists, re-deriving it
+// from canonical text when it does not.
+//
+// `Repair` rebuilds `main` and nothing else, because `main` is all the
+// database has rows for: a pending amendment's proposed text lives in
+// `proposals.proposed_body`, which no governance_docs row mirrors. So a
+// patch whose repo was rebuilt — a restore from the SQLite file alone, a
+// seamrip import, a repo that never reached this machine — carried an
+// approved amendment it could never apply, because the merge began at a ref
+// that was gone. docs/adr/011 says the row is canonical and the repo is a
+// derived mirror; a write path that cannot proceed without the mirror had
+// that backwards, and this is where it is put right.
+//
+// It only ever *creates*. A branch that is present is returned untouched —
+// never rewritten, never forced — so this cannot destroy a proposed text
+// that survived, and it keeps docs/adr/084's asymmetry: filling an absence
+// is safe, writing over what is there is somebody's decision.
+//
+// The commit is signed by the repair identity, so `GetHistory` marks it and
+// the charter history view shows it as reconstructed. Reports whether it had
+// to create one.
+func EnsureBranch(dataDir, nodeID, branchName, filename, content string) (bool, error) {
+	if dataDir == "" {
+		return false, fmt.Errorf("governance data dir not set")
+	}
+	if branchName == "" || filename == "" {
+		return false, fmt.Errorf("branch name and filename are both required")
+	}
+
+	repo, err := openBare(NodeRepoPath(dataDir, nodeID))
+	if err != nil {
+		return false, fmt.Errorf("open repo: %w", err)
+	}
+	if _, err := repo.Reference(plumbing.NewBranchReferenceName(branchName), true); err == nil {
+		return false, nil
+	}
+
+	// Nothing canonical to rebuild from. Better to say so than to commit an
+	// empty document over a charter and call it the amendment.
+	if content == "" {
+		return false, fmt.Errorf("branch %s is missing and the proposed text is not in the database", branchName)
+	}
+
+	if _, err := CreateBranch(dataDir, nodeID, branchName, filename, content,
+		RepairAuthorName, RepairAuthorEmail, ReconstructedBranchMessage); err != nil {
+		return false, fmt.Errorf("reconstruct branch %s: %w", branchName, err)
+	}
+	return true, nil
 }
 
 // --- Reading the canonical side ---

@@ -30,7 +30,7 @@
   import PatchRelationship from './PatchRelationship.svelte';
   import PatchOverflow from './PatchOverflow.svelte';
   import MovedNotice from './MovedNotice.svelte';
-  import { getPendingMembershipSlugs, getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
+  import { getPendingMembershipSlugs, getInvitedMembershipSlugs, getMembershipRoles, loadMemberships } from '../stores/memberships.svelte.js';
   import { GearSix } from 'phosphor-svelte';
   import { identityColorForPatch } from '../lib/quiltTheme.js';
 
@@ -70,6 +70,10 @@
   let isBanned = $derived(loaded ? loaded.isBanned : false);
   let hasStanding = $derived(['follower', 'member', 'admin'].includes(membershipRole));
   let requestPending = $derived(getPendingMembershipSlugs().has(slug));
+  // An unanswered invitation (docs/adr/098): like a request, it lives in
+  // the viewer's own store and never in the node payload, which reports
+  // standing only for an active row.
+  let invited = $derived(getInvitedMembershipSlugs().has(slug));
 
   $effect(() => {
     if (slug) loadNode();
@@ -162,7 +166,7 @@
                with each other's word — so it joins the line when the
                payload lands rather than arriving wrong and correcting
                itself. -->
-          {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Members`}{#if node.upcoming_event_count !== undefined}{` · ${node.upcoming_event_count} Upcoming Events`}{/if}
+          {isUnclaimed ? `${node.follower_count || 0} Following` : `${node.member_count || 0} Member${node.member_count === 1 ? '' : 's'}`}{#if node.upcoming_event_count !== undefined}{` · ${node.upcoming_event_count} Upcoming Event${node.upcoming_event_count === 1 ? '' : 's'}`}{/if}
         </p>
       </div>
       <div class="cover-actions">
@@ -245,6 +249,7 @@
       {isBanned}
       {membershipRole}
       {requestPending}
+      {invited}
       {liningStatus}
       onChanged={reloadStanding}
     />

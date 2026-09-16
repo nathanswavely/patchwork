@@ -137,8 +137,10 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 		}
 		var gc model.GovernanceConfig
 		json.Unmarshal([]byte(termsJSON), &gc)
-		if gc.MinVotingTenureDays > 0 {
-			if time.Since(joined) < time.Duration(gc.MinVotingTenureDays)*24*time.Hour {
+		// The tenure in force is capped at the patch's age (docs/adr/098),
+		// read through the same helper the gate uses.
+		if days := effectiveTenureDays(db, nodeID, gc); days > 0 {
+			if time.Since(joined) < time.Duration(days)*24*time.Hour {
 				continue
 			}
 		}
@@ -168,6 +170,8 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		// Get governance config from DB cache.
 		var gcJSON, membershipPolicy string
 		db.QueryRow("SELECT COALESCE(governance_config,'{}'), membership_policy FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON, &membershipPolicy)
+		var overviewGC model.GovernanceConfig
+		json.Unmarshal([]byte(gcJSON), &overviewGC)
 
 		// Get admin list.
 		type adminInfo struct {
@@ -250,8 +254,23 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// The contest this patch is running, and when its council next
 			// faces the electorate (docs/adr/051). Both nil/empty on a patch
 			// that does not elect, so the hub renders neither.
-			"election":           currentElection(db, nodeID),
-			"next_term_end":      nextTermEnd(db, nodeID),
+			"election":      currentElection(db, nodeID),
+			"next_term_end": nextTermEnd(db, nodeID),
+			// The council's chairs, held and vacant (docs/adr/100). The
+			// admin list above says who holds power; this says how many
+			// positions there are, which is the number the next contest
+			// contests and the number a member is asking about when they
+			// wonder how to get on the council. Empty on every patch that
+			// does not elect, so the hub renders nothing.
+			// Each chair carries its own answer to "what happens to this
+			// one" — vacant and fillable by nomination today, in the contest
+			// running now, contested when the calendar opens on a date, or
+			// held with no calendar at all. The page states that per row
+			// instead of three general facts about councils side by side.
+			"seats": seatsOf(db, nodeID, overviewGC),
+			// When the calendar next opens a contest. Derived from the
+			// seats' own term ends, never stored (see nextContestOpens).
+			"next_contest_opens": nextContestOpens(db, nodeID, overviewGC),
 			"membership_policy":  membershipPolicy,
 			"admins":             admins,
 			"successor":          successor,

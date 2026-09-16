@@ -17,6 +17,7 @@
     getRemoteFollows, fetchQuiltInfo, colorForQuilt, refreshFollowSnapshot,
   } from '../stores/multiQuilt.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
+  import { getColorMode } from '../stores/colors.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
 
   // A search that named a group the quilt doesn't have. The filter-miss case
@@ -485,6 +486,28 @@
       if (tileMap.size > 0) {
         relayout(ids);
       }
+    });
+  });
+
+  // Rebuild when the viewer changes register (docs/adr/112).
+  //
+  // A repaint would be the obvious move and is not available: the fabric is
+  // batched by paint within spatial chunks (docs/adr/066), the weave is baked
+  // per fabric, and the corner marks carry the identity color — so a colour
+  // change touches geometry that was merged on the way in. A rebuild is the
+  // honest answer, and this is a deliberate act a reader takes rarely, not
+  // something on a frame path.
+  let prevColorMode = getColorMode();
+  $effect(() => {
+    const mode = getColorMode();
+    untrack(() => {
+      if (mode === prevColorMode) return;
+      prevColorMode = mode;
+      if (!layoutBuilt) return;
+      resetDim();
+      layoutBuilt = false;
+      tileMap = new Map();
+      buildLayout();
     });
   });
 
@@ -1030,7 +1053,8 @@
           syncRoleMark(entry);
         }
 
-        // Hover overlay (starts transparent, darkens on hover).
+        // The scrim this tile takes while another tile is hovered
+        // (docs/adr/112). Transparent at rest; see the hover dim above.
         inner.append('rect').attr('class', 'overlay')
           .attr('width', s).attr('height', s)
           .attr('fill', 'transparent')
@@ -1056,7 +1080,7 @@
         if (interactive) {
           g.on('pointerenter', function(event) {
             if (!isHoverPointer(event)) return;
-            d3.select(this).select('.overlay').attr('fill', 'var(--color-overlay-hover)');
+            engageDim(tile.data.id);
             if (onPatchHover) onPatchHover(tile.data);
             if (!tipHeld(event)) showTooltip(tile.data, event.clientX, event.clientY);
           })
@@ -1068,7 +1092,7 @@
             }
           })
           .on('pointerleave', function() {
-            d3.select(this).select('.overlay').attr('fill', 'transparent');
+            releaseDim();
             if (onPatchHover) onPatchHover(null);
             hideTooltip();
           })
@@ -1227,6 +1251,76 @@
     if (standingIds.size !== allChildren.length) {
       relayout(standingIds);
     }
+  }
+
+  // --- Hover dim (docs/adr/112) ---
+  //
+  // Pointing at a tile scrims every *other* tile, rather than darkening the
+  // one under the pointer as this used to. Dim and mute are deliberately
+  // different channels: if hover muted, a reader already in muted colors
+  // would get nothing at all from hovering, which is the reader most likely
+  // to want it.
+  //
+  // Recolouring is not available here — the fabric is built once and batched
+  // by paint within spatial chunks (docs/adr/066), so a recolour invalidates
+  // every batch on every pointer move. Every tile already carries a
+  // transparent .overlay rect, so this is one attribute per tile.
+  //
+  // It engages on a dwell and releases on a delay, and crossing from tile to
+  // tile just moves the lit hole. Without that, panning across a dense quilt
+  // strobes the whole canvas — the same failure the name badges spent
+  // LABEL_KEEP and a ramp-not-a-cutoff avoiding for a single pill.
+  const DIM_DWELL_MS = 150;
+  const DIM_RELEASE_MS = 120;
+  let dimEngageTimer = null;
+  let dimReleaseTimer = null;
+  let dimLitPatchId = null;
+
+  function paintDim(litPatchId) {
+    if (!svgSelection) return;
+    svgSelection.selectAll('.overlay').attr('fill', 'var(--color-quilt-dim)');
+    const entry = litPatchId ? cornerMarks.get(litPatchId) : null;
+    if (entry) entry.inner.select('.overlay').attr('fill', 'transparent');
+    dimLitPatchId = litPatchId;
+  }
+
+  /** Drop the dim without touching the DOM — for a rebuild, which is about
+   *  to replace every overlay with a fresh transparent one anyway. */
+  function resetDim() {
+    clearTimeout(dimEngageTimer);
+    clearTimeout(dimReleaseTimer);
+    dimEngageTimer = null;
+    dimReleaseTimer = null;
+    dimLitPatchId = null;
+  }
+
+  function clearDim() {
+    dimReleaseTimer = null;
+    if (svgSelection) svgSelection.selectAll('.overlay').attr('fill', 'transparent');
+    dimLitPatchId = null;
+  }
+
+  function engageDim(patchId) {
+    clearTimeout(dimReleaseTimer);
+    dimReleaseTimer = null;
+    // Already dimmed: move the hole immediately, so crossing tiles reads as
+    // one continuous state rather than a flicker per boundary.
+    if (dimLitPatchId !== null) {
+      paintDim(patchId);
+      return;
+    }
+    clearTimeout(dimEngageTimer);
+    dimEngageTimer = setTimeout(() => {
+      dimEngageTimer = null;
+      paintDim(patchId);
+    }, DIM_DWELL_MS);
+  }
+
+  function releaseDim() {
+    clearTimeout(dimEngageTimer);
+    dimEngageTimer = null;
+    clearTimeout(dimReleaseTimer);
+    dimReleaseTimer = setTimeout(clearDim, DIM_RELEASE_MS);
   }
 
   // A pointer that hovers. Touch never does — a finger's pointerenter is
@@ -1500,6 +1594,7 @@
     const tileData = tile.data;
     label.addEventListener('pointerenter', (event) => {
       if (!isHoverPointer(event)) return;
+      engageDim(tileData.id);
       if (onPatchHover) onPatchHover(tileData);
       if (!tipHeld(event)) showTooltip(tileData, event.clientX, event.clientY);
     });
@@ -1511,6 +1606,7 @@
       }
     });
     label.addEventListener('pointerleave', () => {
+      releaseDim();
       if (onPatchHover) onPatchHover(null);
       hideTooltip();
     });
@@ -2215,6 +2311,41 @@
     };
   });
 
+  // The cards pane changing width (docs/adr/111). Nothing above catches it:
+  // the ResizeObserver watches .quilt-pane, which is `inset: 0` — full-bleed
+  // *behind* the pane — so the container's own size never moves when the
+  // pane's does. Every other consumer of insetRight reads it inside a pass
+  // something else triggers, which is why widening the pane used to leave the
+  // quilt centred for the old width.
+  //
+  // Re-centre, never re-zoom. The quilt is centred in [0, vw - padRight], so
+  // when padRight goes from P1 to P2 the centre moves by (P1 - P2)/2 — hiding
+  // the pane slides the quilt right into the room it just gained. A zoom-fit
+  // would have been consistent with "the canvas zoom-fits at rest"
+  // (docs/adr/074) and was rejected: moving a divider is not a request to be
+  // taken somewhere, and a reader zoomed into one corner stays there. 150ms
+  // is the pane's own width transition, so the two edges move together.
+  let lastInsetRight = null;
+  $effect(() => {
+    const inset = insetRight;
+    untrack(() => {
+      const prev = lastInsetRight;
+      lastInsetRight = inset;
+      // First read establishes the baseline; the opening layout centres
+      // itself from insetRight already.
+      if (prev === null || prev === inset) return;
+      if (!svgSelection || !zoomBehavior || !placedTiles.length) return;
+      const { vw } = getContainerSize();
+      if (!vw) return;
+      const dx = (Math.round(vw * prev) - Math.round(vw * inset)) / 2;
+      if (!dx) return;
+      const t = currentTransform;
+      svgSelection.transition('paneWidth').duration(150).ease(d3.easeCubicInOut)
+        .call(zoomBehavior.transform,
+          d3.zoomIdentity.translate(t.x + dx, t.y).scale(t.k));
+    });
+  });
+
   onMount(() => {
     loadData();
     // The tooltip lives on <body>, not in this component's markup:
@@ -2362,6 +2493,12 @@
     overflow: hidden;
     /* Touches here belong to the quilt's own pan/zoom, not to the page. */
     touch-action: none;
+  }
+
+  /* The hover dim moves fill on every tile at once; easing it is what makes
+     that read as the quilt settling rather than as a repaint. */
+  .canvas-container :global(rect.overlay) {
+    transition: fill 160ms ease;
   }
 
   .canvas-container :global(svg) {

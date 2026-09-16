@@ -29,10 +29,21 @@ func validDocVisibility(v string) bool {
 }
 
 // canReadPatchDocs reports whether the request's viewer may read this patch's
-// members-only charters (docs/adr/036). Instance admins and the patch's
+// *members-only* charters (docs/adr/036). Instance admins and the patch's
 // admins/members always may; a follower may when the patch's follower
-// permissions grant charters — the same knob the workspace UI reads, so the
-// two never disagree. Signed-out visitors never may.
+// permissions grant charters. Signed-out visitors never may.
+//
+// It is asked about nothing else. A charter the patch published to everyone
+// is readable by everyone, signed out included, and no path below consults
+// this before handing one over — `follower_permissions.charters` grants a
+// follower the members-only shelf and can never take away what the patch
+// published. That is the narrowing F-052 needed: the Minimal template ships
+// `charters: false`, and while that flag stood for "this patch has no
+// governance worth showing you", a document whose own visibility was `public`
+// was never linked from the patch's own page at all. docs/adr/036 makes
+// publishing a deliberate act whose whole point is that the public can read
+// the result, and docs/adr/050 leaves this the one follower key that gates a
+// read — of the one thing there is to withhold.
 func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 	user := middleware.UserFromContext(r.Context())
 	if user == nil {
@@ -56,6 +67,28 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 	var fp model.FollowerPermissions
 	json.Unmarshal([]byte(fpJSON), &fp)
 	return fp.Charters
+}
+
+// GovernanceRepoNodeID resolves a patch slug for the git transport
+// (internal/governance/http.go), and refuses anybody who may not read that
+// patch's whole shelf.
+//
+// The REST layer above can hand a visitor the published docs and keep the
+// rest back, because it filters row by row. A bare repository has no such
+// seam: a clone takes every document body, its whole history and its diffs,
+// and the commits carry their editors' names besides — which the
+// per-membership visibility switch (docs/adr/006) and the tombstone rule
+// (docs/adr/086) each exist to govern. So the transport asks the one question
+// it can answer honestly, and asks it with canReadPatchDocs: the same rule
+// that decides whether a viewer is handed the whole shelf (docs/adr/110).
+func GovernanceRepoNodeID(db *database.DB) func(*http.Request, string) string {
+	return func(r *http.Request, slug string) string {
+		nodeID := NodeIDFromSlug(db, slug)
+		if nodeID == "" || !canReadPatchDocs(db, r, nodeID) {
+			return ""
+		}
+		return nodeID
+	}
 }
 
 // followerMayJoinProposals reports whether this person may take part in a
@@ -227,8 +260,13 @@ func ListGovernanceDocs(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Whether this viewer is being handed the whole shelf or only what
+		// the patch published. The listing filter and the empty-state signal
+		// below are the same fact asked once.
+		readsAll := canReadPatchDocs(db, r, nodeID)
+
 		query := governanceDocColumns + ` WHERE node_id = ?`
-		if !canReadPatchDocs(db, r, nodeID) {
+		if !readsAll {
 			query += ` AND visibility = 'public'`
 		}
 		query += ` ORDER BY created_at ASC`
@@ -267,6 +305,14 @@ func ListGovernanceDocs(db *database.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"items": items,
+			// Which kind of empty an empty list is. Counting rows cannot tell
+			// "this patch has published nothing" from "you are not being shown
+			// what it has", and those are different sentences to the person
+			// reading the page (F-052). This states a fact about the *viewer* —
+			// true of every visitor to every patch, whether or not the patch is
+			// withholding a single thing — so it discloses neither the
+			// existence nor the count of anything hidden.
+			"published_only": !readsAll,
 		})
 	}
 }

@@ -15,6 +15,7 @@
   import BlockDrafter from '../components/BlockDrafter.svelte';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
+  import { isPlaceZone } from '../lib/datetime.js';
 
   let loading = $state(true);
   let error = $state('');
@@ -36,20 +37,27 @@
   let timezoneConfigured = $state('');
   let savingTimezone = $state(false);
 
+  // The question docs/adr/105 makes unavoidable here, the same one
+  // docs/adr/101 made unavoidable on a patch: moving this zone changes what
+  // every *inheriting* event on every patch says, and the people whose
+  // events those are are not in this room. Two answers, both defensible,
+  // neither a default.
+  let zoneChoice = $state(null);
+  let zoneSaving = $state('');
+
+  // `isPlaceZone`, not Intl: Intl resolves EST happily, and EST is not a
+  // place — it is an hour wrong from March to November, which is when a
+  // choir rehearses (docs/adr/101). The server is the authority and refuses
+  // it too; this is so a typo is visible where it was typed.
   function zoneIsKnown(tz) {
     if (!tz) return true; // empty clears the override
-    try {
-      new Intl.DateTimeFormat('en-US', { timeZone: tz });
-      return true;
-    } catch {
-      return false;
-    }
+    return isPlaceZone(tz);
   }
 
   async function saveTimezone() {
     const tz = timezone.trim();
     if (!zoneIsKnown(tz)) {
-      showToast('That is not a timezone this quilt knows', 'error');
+      showToast('That is not a place this quilt can keep time in. Try America/New_York.', 'error');
       return;
     }
     savingTimezone = true;
@@ -58,9 +66,38 @@
       timezone = saved?.timezone || tz || timezoneConfigured;
       showToast(tz ? 'Timezone saved' : 'Timezone reset to the configured default', 'success');
     } catch (e) {
+      if (e?.status === 409 && e?.data?.code === 'timezone_events_undecided') {
+        zoneChoice = { ...e.data, timezone: tz };
+        savingTimezone = false;
+        return;
+      }
       showToast(e.message || 'Failed to save', 'error');
     }
     savingTimezone = false;
+  }
+
+  async function resolveZoneChange(mode) {
+    zoneSaving = mode;
+    try {
+      const saved = await api('admin/settings', {
+        method: 'PATCH',
+        body: { timezone: zoneChoice.timezone, timezone_events: mode },
+      });
+      const moved = saved?.timezone_change?.events_moved ?? 0;
+      const affected = saved?.timezone_change?.events_affected ?? 0;
+      timezone = saved?.timezone || zoneChoice.timezone || timezoneConfigured;
+      showToast(
+        mode === 'keep_clock'
+          ? `Timezone saved. ${moved} event${moved === 1 ? '' : 's'} kept ${moved === 1 ? 'its' : 'their'} listed time.`
+          : `Timezone saved. ${affected} event${affected === 1 ? '' : 's'} stayed put and now read in ${zoneChoice.to.replace(/_/g, ' ')}.`,
+        'success'
+      );
+      zoneChoice = null;
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+    } finally {
+      zoneSaving = '';
+    }
   }
 
   async function savePolicy(value) {
@@ -441,12 +478,65 @@
             Clear it to go back to {timezoneConfigured.replace(/_/g, ' ')} from patchwork.yaml.
           {/if}
           {#if !zoneIsKnown(timezone.trim())}
-            <span class="zone-invalid">Not a timezone this quilt knows.</span>
+            <span class="zone-invalid">Not a place this quilt can keep time in.</span>
           {/if}
         </p>
-        <button class="btn btn-primary" onclick={saveTimezone} disabled={savingTimezone}>
+        <button class="btn btn-primary" onclick={saveTimezone} disabled={savingTimezone || !!zoneChoice}>
           {savingTimezone ? 'Saving...' : 'Save timezone'}
         </button>
+
+        <!--
+          The consent step (docs/adr/105). A patch that named its own zone is
+          not here at all, which is the point: a community that said where it
+          keeps time does not have its calendar moved by this box.
+        -->
+        {#if zoneChoice}
+          <div class="zone-choice">
+            <p class="zone-choice-lead">
+              {zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}
+              {#if zoneChoice.patches_affected}
+                across {zoneChoice.patches_affected} patch{zoneChoice.patches_affected === 1 ? '' : 'es'}
+              {/if}
+              inherit{zoneChoice.events_affected === 1 ? 's' : ''} this quilt's timezone.
+              Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}
+              changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.
+            </p>
+            <div class="zone-choice-actions">
+              <button
+                type="button"
+                class="btn btn-primary"
+                disabled={!!zoneSaving}
+                onclick={() => resolveZoneChange('keep_clock')}
+              >{zoneSaving === 'keep_clock'
+                  ? 'Moving...'
+                  : zoneChoice.events_affected === 1
+                    ? 'Keep the listed time'
+                    : 'Keep the listed times'}</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                disabled={!!zoneSaving}
+                onclick={() => resolveZoneChange('keep_instant')}
+              >{zoneSaving === 'keep_instant'
+                  ? 'Saving...'
+                  : zoneChoice.events_affected === 1
+                    ? 'Leave the event where it is'
+                    : 'Leave the events where they are'}</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                disabled={!!zoneSaving}
+                onclick={() => (zoneChoice = null)}
+              >Cancel</button>
+            </div>
+            <p class="section-desc zone-choice-hint">
+              Keeping listed times moves each event to the new zone, so 7pm stays 7pm.
+              Leaving them where they are keeps the exact moment and changes the clock time shown.
+              Patches with a timezone of their own, events with one, and events from
+              a calendar feed are not touched.
+            </p>
+          </div>
+        {/if}
       </div>
     </section>
 
@@ -534,6 +624,29 @@
 </div>
 
 <style>
+  .zone-choice {
+    margin-top: 1rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-subtle, rgba(0, 0, 0, 0.02));
+  }
+
+  .zone-choice-lead {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .zone-choice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .zone-choice-hint {
+    margin-top: 0.75rem;
+  }
+
   .zone-invalid {
     color: var(--color-danger, #e05252);
   }

@@ -482,6 +482,15 @@ func StepUpStatus(db *database.DB) http.HandlerFunc {
 			"active":      middleware.SudoSatisfied(db, r),
 			"window_secs": int(auth.SudoWindow.Seconds()),
 		}
+		// What this session could step up with instead of a passkey
+		// (docs/adr/099), so the dialog offers the code field only when a
+		// code would actually be taken. Codes minted during this session
+		// are not counted, and the page must not pretend otherwise.
+		if cookie, err := r.Cookie(auth.CookieName); err == nil {
+			resp["recovery_ready"] = auth.UsableStepUpCodes(db, user.ID, cookie.Value)
+		} else {
+			resp["recovery_ready"] = 0
+		}
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
@@ -550,6 +559,83 @@ func StepUpFinish(db *database.DB, wa *auth.WebAuthnService) http.HandlerFunc {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"active":     true,
 			"expires_at": until.Format(time.RFC3339),
+		})
+	}
+}
+
+// StepUpRecovery handles POST /api/v1/auth/step-up/recovery — burns one
+// recovery code to open the same five-minute window a passkey opens
+// (docs/adr/099).
+//
+// docs/adr/017 gated the irreversible on a WebAuthn assertion and said that
+// locked nobody out, because enrolling needs only the session you hold. It
+// does lock people out: a device with no authenticator cannot enrol, and
+// since then the gate spread from three instance-level acts to a patch's
+// monthly minute-taking (docs/adr/052). A coalition secretary on an office
+// desktop had no way to record what her meeting decided.
+func StepUpRecovery(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+
+		var req struct {
+			Code string `json:"code"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Code == "" {
+			http.Error(w, `{"error":"a recovery code is required"}`, http.StatusBadRequest)
+			return
+		}
+
+		ip := clientIP(r)
+		// The same tight limiter sign-in redemption uses: twelve characters
+		// of a 31-letter alphabet is a long way beyond an online guessing
+		// budget, but only while the budget stays small.
+		if err := middleware.CheckRecoveryRedeemRate(user.Username, ip); err != nil {
+			w.Header().Set("Retry-After", "120")
+			http.Error(w, `{"error":"too many attempts. Wait a couple of minutes"}`, http.StatusTooManyRequests)
+			return
+		}
+
+		cookie, err := r.Cookie(auth.CookieName)
+		if err != nil {
+			http.Error(w, `{"error":"no session"}`, http.StatusUnauthorized)
+			return
+		}
+
+		remaining, err := auth.StepUpWithRecoveryCode(db, user.ID, cookie.Value, req.Code)
+		if err != nil {
+			code := "invalid_code"
+			switch {
+			case errors.Is(err, auth.ErrNoRecoveryCodes):
+				code = "no_recovery_codes"
+			case errors.Is(err, auth.ErrRecoveryCodesTooNew):
+				code = "recovery_codes_too_new"
+			case errors.Is(err, auth.ErrInvalidRecoveryCode):
+				code = "invalid_code"
+			default:
+				http.Error(w, `{"error":"failed to check that code"}`, http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error(), "code": code})
+			return
+		}
+
+		until, err := auth.GrantSudo(db, cookie.Value)
+		if err != nil {
+			http.Error(w, `{"error":"failed to open confirmation window"}`, http.StatusInternalServerError)
+			return
+		}
+
+		auth.LogAuditEvent(db, user.ID, "auth.step_up", "user", user.ID,
+			fmt.Sprintf(`{"method":"recovery_code","codes_remaining":%d}`, remaining), ip)
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"active":             true,
+			"expires_at":         until.Format(time.RFC3339),
+			"codes_remaining":    remaining,
+			"used_recovery_code": true,
 		})
 	}
 }

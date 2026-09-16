@@ -9,7 +9,6 @@ package settings
 import (
 	"strings"
 	"sync/atomic"
-	"time"
 
 	// The distroless image ships no tzdata, and a configured zone name has
 	// to resolve wherever the binary runs.
@@ -122,10 +121,25 @@ func SetTimezoneDefault(name string) {
 // the configured default, else UTC. Never empty — a caller resolving an
 // event's zone needs a terminating rung, and "no answer" is not one.
 func EffectiveTimezone(db *database.DB) string {
+	stored := ""
 	if v, ok := Get(db, KeyTimezone); ok {
-		if v = strings.TrimSpace(v); v != "" {
-			return v
-		}
+		stored = v
+	}
+	return EffectiveTimezoneWith(stored)
+}
+
+// EffectiveTimezoneWith is what EffectiveTimezone would answer if the stored
+// override were this one — "" meaning none, which falls through to the
+// configured default.
+//
+// Asking that question of a value the database does not hold yet is what a
+// zone change has to do before it writes: the count of events whose reading
+// would move is the difference between the zone now and the zone after, and
+// the second is not readable anywhere until it is too late to refuse
+// (docs/adr/105).
+func EffectiveTimezoneWith(override string) string {
+	if v := strings.TrimSpace(override); v != "" {
+		return v
 	}
 	if p := timezoneDefault.Load(); p != nil && *p != "" {
 		return *p
@@ -133,10 +147,17 @@ func EffectiveTimezone(db *database.DB) string {
 	return "UTC"
 }
 
-// ValidTimezone reports whether name is a zone this binary can resolve.
-// The distroless image carries no tzdata, so the answer comes from the
-// embedded copy rather than the host.
+// ValidTimezone reports whether name is a zone a patch, an event or this
+// quilt may keep time in. The distroless image carries no tzdata, so the
+// answer comes from the embedded copy rather than the host.
+//
+// Delegated to config so the API write paths and patchwork.yaml refuse
+// the same names for the same reason — notably the fixed-offset
+// compatibility entries time.LoadLocation happily resolves. See
+// config.ValidTimezone for why "EST" is not a timezone.
 func ValidTimezone(name string) bool {
-	_, err := time.LoadLocation(strings.TrimSpace(name))
-	return err == nil
+	return config.ValidTimezone(name)
 }
+
+// BadTimezoneMessage is the correction every refusal carries.
+const BadTimezoneMessage = config.BadTimezoneMessage

@@ -141,15 +141,25 @@ export function passkeyErrorMessage(err, action = 'login') {
         return 'Passkey setup was cancelled or timed out. You can try again.';
       }
       if (action === 'stepup') {
-        return 'Passkey check was cancelled or timed out. You can try again.';
+        return 'Passkey check was cancelled or timed out. You can try again, or confirm with a recovery code.';
       }
-      return 'No passkey for this site was found on this device, or the prompt was dismissed. Sign in with an email link below, then add a passkey from Settings → Security.';
+      return 'No passkey for this site was found on this device, or the prompt was dismissed. Sign in with a recovery code or an email link below, then add a passkey from Settings → Security.';
     case 'InvalidStateError':
       // create() only: the authenticator already holds a credential we excluded.
       return 'This device already has a passkey for your account.';
     case 'NotSupportedError':
     case 'ConstraintError':
-      return 'This device cannot create the kind of passkey this site needs. Use an email link instead.';
+      // Never "use an email link instead": an email link signs you in and
+      // confirms nothing (docs/adr/099), and the instances most likely to
+      // hold this person have no SMTP at all. Enrolling and confirming are
+      // different acts, and only one of them has an alternative here.
+      if (action === 'stepup') {
+        return 'This device cannot produce the passkey check this site needs. Confirm with a recovery code instead.';
+      }
+      if (action === 'enroll') {
+        return 'This device cannot create the kind of passkey this site needs, so you cannot add one here. Recovery codes work instead — make a set at Settings → Security.';
+      }
+      return 'This device cannot use the kind of passkey this site needs. Sign in with a recovery code or an email link below.';
     case 'SecurityError':
       return 'This page address does not match the one your passkey was created for.';
     case 'AbortError':

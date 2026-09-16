@@ -91,6 +91,7 @@
   import Welcome from './pages/Welcome.svelte';
   import Discover from './pages/Discover.svelte';
   import Toast from './components/Toast.svelte';
+  import StepUpPrompt from './components/StepUpPrompt.svelte';
 
   // --- Routes ---
   // Home / discovery. Scope lives in the URL (docs/adr/035): the whole
@@ -738,6 +739,12 @@
 {/if}
 
 <Toast />
+
+<!-- Mounted once, for every surface (docs/adr/099). Registering it here is
+     what lets lib/stepUp.js ask for a recovery code without the seven
+     screens that confirm irreversible actions each carrying their own copy
+     of the flow. With it unmounted, withStepUp throws as it always did. -->
+<StepUpPrompt />
 
 <style>
   .takeover-gate {

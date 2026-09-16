@@ -234,21 +234,29 @@ func main() {
 	defer reminderCancel()
 	notifications.StartReminderWorker(reminderCtx, notifier)
 
-	// Elections move on a calendar, not on a person (docs/adr/051): nominations
-	// close and voting opens, voting ends and the council is seated. Hourly is
-	// plenty — the windows are days long.
-	electionCtx, electionCancel := context.WithCancel(context.Background())
-	defer electionCancel()
+	// Votes move on a calendar, not on a person: an election's nominations
+	// close and voting opens, voting ends and the council is seated
+	// (docs/adr/051); an ordinary proposal's window closes and it resolves
+	// or lapses (docs/adr/097). Hourly is plenty — the windows are days long.
+	sweepCtx, sweepCancel := context.WithCancel(context.Background())
+	defer sweepCancel()
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
 		defer ticker.Stop()
-		handler.SweepElections(db)
+		sweep := func() {
+			handler.SweepElections(db)
+			handler.SweepProposals(db)
+			// After the windows that closed have closed: the people a still-
+			// open vote is waiting on, told once each (docs/adr/093).
+			handler.SweepVoteNotices(db)
+		}
+		sweep()
 		for {
 			select {
-			case <-electionCtx.Done():
+			case <-sweepCtx.Done():
 				return
 			case <-ticker.C:
-				handler.SweepElections(db)
+				sweep()
 			}
 		}
 	}()
@@ -404,6 +412,9 @@ func main() {
 	mux.HandleFunc("GET /api/v1/auth/step-up", middleware.AuthRequired(db, handler.StepUpStatus(db)))
 	mux.HandleFunc("POST /api/v1/auth/step-up/begin", middleware.AuthRequired(db, handler.StepUpBegin(db, wa)))
 	mux.HandleFunc("POST /api/v1/auth/step-up/finish", middleware.AuthRequired(db, handler.StepUpFinish(db, wa)))
+	// The way through for a person whose device makes no passkey
+	// (docs/adr/099). Burns a recovery code that predates this session.
+	mux.HandleFunc("POST /api/v1/auth/step-up/recovery", middleware.AuthRequired(db, handler.StepUpRecovery(db)))
 
 	mux.HandleFunc("POST /api/v1/auth/webauthn/register/begin", middleware.AuthRequired(db, handler.WebAuthnRegisterBegin(db, wa)))
 	mux.HandleFunc("POST /api/v1/auth/webauthn/register/finish", middleware.AuthRequired(db, handler.WebAuthnRegisterFinish(db, wa)))
@@ -467,6 +478,13 @@ func main() {
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/leave", middleware.AuthRequired(db, handler.LeaveNode(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/withdraw", middleware.AuthRequired(db, handler.WithdrawMembershipRequest(db)))
+	// Membership invitations (docs/adr/098): an admin asks by username, the
+	// person answers. Accept and decline are the invitee's own row only.
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations", middleware.AuthRequired(db, handler.InviteMember(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations/accept", middleware.AuthRequired(db, handler.AcceptInvitation(db)))
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/invitations/decline", middleware.AuthRequired(db, handler.DeclineInvitation(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/invitations/{userId}", middleware.AuthRequired(db, handler.RescindInvitation(db)))
+	mux.HandleFunc("GET /api/v1/users/me/invitations", middleware.AuthRequired(db, handler.ListMyInvitations(db)))
 	// Maintainer succession (docs/adr/051). Naming a successor decides who
 	// inherits the patch, so it is step-up gated like the other power moves.
 	mux.HandleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.SetSuccessor(db))))
@@ -475,6 +493,20 @@ func main() {
 	// set of candidates one person approves, so it is a PUT of the whole set
 	// rather than an append.
 	mux.HandleFunc("POST /api/v1/proposals/{id}/candidates", middleware.AuthRequired(db, handler.AddCandidate(db)))
+	// Your own candidacy, and the route says so (docs/adr/107). Standing was
+	// irreversible, which is what made a mis-click on a public ballot a thing
+	// somebody had to write a comment to undo.
+	mux.HandleFunc("DELETE /api/v1/proposals/{id}/candidates/me", middleware.AuthRequired(db, handler.WithdrawCandidacy(db)))
+	// The council's size is its seats, added and removed explicitly by an
+	// admin of the patch (docs/adr/100). Neither act seats or unseats anybody
+	// — removal only ever touches an empty chair — so neither is step-up
+	// gated the way a power transfer is.
+	mux.HandleFunc("POST /api/v1/nodes/{slug}/seats", middleware.AuthRequired(db, handler.AddSeat(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/seats/{id}", middleware.AuthRequired(db, handler.RemoveSeat(db)))
+	// A seat's term end is the patch's election calendar (docs/adr/051 put the
+	// clock on the seat). An admin may bring a chair's date forward; pushing a
+	// held one back would hand out a term nobody voted for, and is refused.
+	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/seats/{id}", middleware.AuthRequired(db, handler.SetSeatTerm(db)))
 	mux.HandleFunc("PUT /api/v1/proposals/{id}/ballot", middleware.AuthRequired(db, handler.CastElectionBallot(db)))
 	// Attestations (docs/adr/052, docs/adr/053) — decisions a community made
 	// somewhere Patchwork was not. Public to read: the whole value is that the
@@ -565,6 +597,10 @@ func main() {
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/governance", middleware.AuthRequired(db, handler.CreateGovernanceDoc(db)))
 	mux.HandleFunc("PUT /api/v1/governance/{id}", middleware.AuthRequired(db, handler.UpdateGovernanceDoc(db)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/rules", handler.GetGovernanceRules(db))
+	// Beside the rules rather than part of them: the editor spreads what the
+	// rules endpoint sends back into its submission, so facts about the patch
+	// cannot travel in that payload (docs/adr/104).
+	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/electorate", middleware.AuthRequired(db, handler.GovernanceElectorate(db)))
 
 	// Comments.
 	mux.HandleFunc("GET /api/v1/proposals/{id}/comments", handler.ListComments(db))
@@ -638,6 +674,13 @@ func main() {
 	mux.HandleFunc("POST /api/v1/admin/tags", middleware.AdminRequired(db, handler.CreateTag(db)))
 	mux.HandleFunc("PATCH /api/v1/admin/tags/{id}", middleware.AdminRequired(db, handler.UpdateTag(db)))
 	mux.HandleFunc("DELETE /api/v1/admin/tags/{id}", middleware.AdminRequired(db, handler.DeleteTag(db)))
+	// The suggested-tag review queue (docs/adr/114). Approve and reject live
+	// here rather than on PATCH /admin/tags/{id}, which only sets a motif:
+	// approving can rename, and renaming can merge two rows and re-point
+	// every attachment.
+	mux.HandleFunc("GET /api/v1/admin/tag-suggestions", middleware.AdminRequired(db, handler.ListTagSuggestions(db)))
+	mux.HandleFunc("PATCH /api/v1/admin/tag-suggestions/{id}", middleware.AdminRequired(db, handler.DecideTagSuggestion(db)))
+	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/suggested-tags/{name}", middleware.AuthRequired(db, handler.WithdrawSuggestedTag(db)))
 	mux.HandleFunc("GET /api/v1/admin/reports", middleware.AdminRequired(db, handler.ListReports(db)))
 	mux.HandleFunc("PATCH /api/v1/admin/reports/{id}", middleware.AdminRequired(db, handler.UpdateReport(db)))
 	mux.HandleFunc("GET /api/v1/admin/users", middleware.AdminRequired(db, handler.ListUsers(db)))
@@ -695,6 +738,9 @@ func main() {
 	mux.HandleFunc("GET /api/v1/admin/event-submissions", middleware.AdminRequired(db, handler.ListAdminEventSubmissions(db)))
 	mux.HandleFunc("POST /api/v1/nodes/{slug}/claim", middleware.AuthRequired(db, handler.RequestClaim(db, cfg)))
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/claims/mine", middleware.AuthRequired(db, handler.MyClaim(db, cfg)))
+	// Every open claim the caller holds, across patches — My Patches is built
+	// from memberships and an approved claimant has none yet (docs/adr/039).
+	mux.HandleFunc("GET /api/v1/users/me/claims", middleware.AuthRequired(db, handler.MyClaims(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/verify", middleware.AuthRequired(db, handler.VerifyClaim(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/withdraw", middleware.AuthRequired(db, handler.WithdrawClaim(db)))
 	mux.HandleFunc("POST /api/v1/claims/{id}/resend-email", middleware.AuthRequired(db, handler.ResendClaimEmail(db, cfg)))
@@ -746,11 +792,13 @@ func main() {
 
 		// Git smart HTTP for governance repos (federation transport).
 		// Uses a wrapper that only handles /governance.git/ paths, passing through otherwise.
-		gitHandler := governance.GitHTTPHandler(func(slug string) string {
-			return handler.NodeIDFromSlug(db, slug)
-		})
-		mux.HandleFunc("GET /api/v1/nodes/{slug}/governance.git/info/refs", gitHandler.ServeHTTP)
-		mux.HandleFunc("POST /api/v1/nodes/{slug}/governance.git/git-upload-pack", gitHandler.ServeHTTP)
+		//
+		// AuthOptional, and not anonymous: a clone takes the whole repo,
+		// members-only charters included, so the transport carries the
+		// whole-shelf gate (docs/adr/110) and needs to know who is asking.
+		gitHandler := governance.GitHTTPHandler(handler.GovernanceRepoNodeID(db))
+		mux.HandleFunc("GET /api/v1/nodes/{slug}/governance.git/info/refs", middleware.AuthOptional(db, gitHandler.ServeHTTP))
+		mux.HandleFunc("POST /api/v1/nodes/{slug}/governance.git/git-upload-pack", middleware.AuthOptional(db, gitHandler.ServeHTTP))
 	} else {
 		log.Println("federation: disabled (federation.enabled=false) — AP, WebFinger, and git transport not mounted")
 	}
@@ -781,12 +829,15 @@ func main() {
 	seoWrapped := middleware.SEO(db, cfg, spaHTML)(spa)
 	mux.Handle("/", seoWrapped)
 
-	// Middleware stack: BlockAICrawlers → CORS → CSRF → routes.
+	// Middleware stack: BlockAICrawlers → Compress → CORS → CSRF → routes.
 	// BlockAICrawlers is outermost so matching crawlers are rejected before
 	// any other work; federation, preview, and search agents pass through.
+	// Compress sits above everything that writes a body — the SPA bundle and
+	// the JSON alike — and below the crawler gate, which writes none.
 	var root http.Handler = mux
 	root = middleware.CSRF(root)
 	root = middleware.CORS(cfg, root)
+	root = middleware.Compress(root)
 	root = middleware.BlockAICrawlers(root)
 
 	// Start server.
@@ -847,6 +898,16 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	f.Close()
+
+	// Everything under /assets/ carries a content hash in its name, so the
+	// bytes behind a given URL never change: a new build is a new name. That
+	// makes them cacheable for as long as a browser cares to, which is the
+	// difference between a returning visitor revalidating two megabytes and
+	// fetching nothing at all. index.html is deliberately not in here — it is
+	// the file that names the current hashes.
+	if strings.HasPrefix(path, "/assets/") {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	}
 
 	http.FileServer(h.fs).ServeHTTP(w, r)
 }

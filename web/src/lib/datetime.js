@@ -162,6 +162,37 @@ export function sameZoneAsViewer(tz, at = Date.now()) {
 }
 
 /**
+ * Whether a typed zone names a *place*, which is what docs/adr/045 and
+ * docs/adr/067 say an event's time belongs to.
+ *
+ * `new Intl.DateTimeFormat('en-US', { timeZone: tz })` is not that test.
+ * It resolves the tzdata's fixed-offset compatibility entries — "EST",
+ * "MST", "EST5EDT", "CET", "Etc/GMT+5" — without complaint, and every one
+ * of them is an offset rather than a place. A patch set to "EST" renders
+ * correctly all winter and an hour early from the second Sunday of March.
+ *
+ * "UTC" stays valid: it is the terminating rung of the resolution chain,
+ * and having no offset to get wrong is the point of it.
+ *
+ * The server is the authority and refuses the same names for the same
+ * reason (internal/config.ValidTimezone); this is so a typo is visible
+ * where it was typed rather than after a round trip.
+ */
+export function isPlaceZone(tz) {
+  const name = (tz || '').trim();
+  if (!name) return false;
+  if (name === 'UTC' || name === 'Etc/UTC') return true;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: name });
+  } catch {
+    return false;
+  }
+  if (!name.includes('/')) return false;
+  if (name.startsWith('Etc/')) return false;
+  return true;
+}
+
+/**
  * "just now" / "5m ago" / "3d ago" — elapsed time, not clock time. Named
  * apart from formatEventTime on purpose: the two were both called
  * `formatTime` in different files and mean entirely different things.
@@ -412,4 +443,46 @@ export function reinterpretUTCAsLocal(iso, tz) {
     `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}` +
     `T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
   return fromZonedInputValue(wall, tz) || iso;
+}
+
+// ---------------------------------------------------------------------------
+// How long a voting window has left.
+
+const DAY_MS = 86_400_000;
+const HOUR_MS = 3_600_000;
+const MINUTE_MS = 60_000;
+
+/**
+ * The time left before `endsAt`, in the one unit a person would say.
+ *
+ * Four surfaces each floored the days, so a 14-day window read "13 days
+ * left" the moment it opened and never once said "14". Days round up:
+ * with more than a day to go, the day the window closes on is a day that
+ * counts. Under a day the hours are floored, as before — "5 hours left"
+ * with 5h40m to go is the usual way to say it — and under an hour it says
+ * minutes rather than "0 hours".
+ *
+ * Returns null for no end at all, `{ ended: true }` once it has passed,
+ * otherwise `{ ended: false, unit: 'day' | 'hour' | 'minute', n }`.
+ */
+export function timeLeft(endsAt, now = new Date()) {
+  if (!endsAt) return null;
+  const ms = new Date(endsAt) - now;
+  if (Number.isNaN(ms)) return null;
+  if (ms <= 0) return { ended: true, unit: null, n: 0 };
+  if (ms >= DAY_MS) return { ended: false, unit: 'day', n: Math.ceil(ms / DAY_MS) };
+  if (ms >= HOUR_MS) return { ended: false, unit: 'hour', n: Math.floor(ms / HOUR_MS) };
+  return { ended: false, unit: 'minute', n: Math.max(1, Math.ceil(ms / MINUTE_MS)) };
+}
+
+/** "14 days", "5 hours", "1 minute" — for a sentence. */
+export function timeLeftPhrase(left) {
+  if (!left || left.ended || !left.unit) return '';
+  return `${left.n} ${left.unit}${left.n === 1 ? '' : 's'}`;
+}
+
+/** "14d", "5h", "12m" — for a chip. */
+export function timeLeftShort(left) {
+  if (!left || left.ended || !left.unit) return '';
+  return `${left.n}${left.unit[0]}`;
 }

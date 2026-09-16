@@ -71,7 +71,7 @@
   let showsTally = $derived(
     isVoting ||
       (effectiveState === 'awaiting_admin' && hasBallots) ||
-      (['approved', 'in_effect', 'rejected', 'passed'].includes(effectiveState) && (!advisory || hasBallots))
+      (['approved', 'in_effect', 'rejected', 'lapsed', 'passed'].includes(effectiveState) && (!advisory || hasBallots))
   );
 
   // An election is a proposal that carries candidates (docs/adr/051). Its
@@ -110,6 +110,11 @@
     return () => patch.value.setBreadcrumbExtra?.([]);
   });
 
+  // Everybody who could be put forward in this contest (docs/adr/107).
+  // Loaded only while nominations are open, and only for somebody who may
+  // nominate — the picker is the only thing that uses it.
+  let electionMembers = $state([]);
+
   async function loadProposal() {
     loading = true;
     error = '';
@@ -120,6 +125,37 @@
       proposal = null;
     } finally {
       loading = false;
+    }
+    if (proposal?.election_phase === 'nominating' && canNominate) {
+      loadElectionMembers();
+    } else {
+      electionMembers = [];
+    }
+  }
+
+  // Paged, because the members endpoint is (docs/adr/095) and a picker that
+  // stops at twenty silently hides the twenty-first person from nomination.
+  async function loadElectionMembers() {
+    const slug = patch.value.slug;
+    if (!slug) return;
+    const found = [];
+    let cursor = '';
+    try {
+      for (let page = 0; page < 20; page++) {
+        const q = cursor ? `?limit=100&cursor=${encodeURIComponent(cursor)}` : '?limit=100';
+        const data = await api(`nodes/${slug}/members${q}`);
+        for (const m of data.items || []) {
+          // Anyone the server would accept as a candidate: an active member
+          // or admin of this patch. A follower is not on the ladder.
+          if (m.role === 'member' || m.role === 'admin') found.push(m);
+        }
+        cursor = data.next_cursor || '';
+        if (!cursor) break;
+      }
+      electionMembers = found;
+    } catch {
+      // The picker is missing and nothing else is; standing still works.
+      electionMembers = [];
     }
   }
 
@@ -169,6 +205,7 @@
       {canDecide}
       declinedBy={proposal.declined_by || ''}
       electionPhase={proposal.election_phase || ''}
+      nominationsCloseAt={proposal.nominations_close_at || null}
       onStateChange={handleStateChange}
     />
 
@@ -182,7 +219,17 @@
         {#if proposal.target_doc}
           <span class="target-badge">to {docLabel(proposal.target_doc)}</span>
         {/if}
-        <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
+        <!-- An election has no proposer (docs/adr/109). It used to wear the
+             longest-standing admin's name, so a contest a timer opened at
+             four in the morning read "Proposed by Priya Natarajan" on a
+             public page while Priya was nine months away. Keyed on the
+             election itself rather than on the author id, so contests raised
+             before the calendar started signing them read right too. -->
+        {#if proposal.election_phase}
+          <span class="muted">Opened by this patch&rsquo;s election calendar</span>
+        {:else}
+          <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
+        {/if}
         <span class="muted">{new Date(proposal.created_at).toLocaleDateString()}</span>
       </div>
     </div>
@@ -258,6 +305,7 @@
             proposal={proposal}
             canVote={canVote}
             canNominate={canNominate}
+            members={electionMembers}
             onChanged={loadProposal}
           />
         {/if}
@@ -277,6 +325,8 @@
               abstainCount={proposal.abstain_count || 0}
               electorateSize={proposal.eligible_voters || 0}
               terms={proposal.voting_terms}
+              tenureDays={proposal.tenure_days || 0}
+              voteEligibleAt={proposal.vote_eligible_at || ''}
               openedAt={proposal.created_at}
               userVote={proposal.my_vote}
               votingEndsAt={proposal.voting_ends_at}

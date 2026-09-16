@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { timeLeft as timeLeftFor, timeLeftPhrase, formatDay } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from './ConfirmAction.svelte';
 
@@ -28,6 +29,9 @@
     // nomination window — over a panel correctly saying nominations close in
     // two weeks, and with an empty time-left leaving "Voting is open. .".
     electionPhase = '',
+    // When standing shuts. A different deadline from votingEndsAt, and the
+    // only one that matters while nominations are open (docs/adr/106).
+    nominationsCloseAt = null,
     onStateChange = () => {},
   } = $props();
 
@@ -50,13 +54,10 @@
   let effectiveState = $derived(propState || (status === 'open' ? 'voting' : status === 'passed' || status === 'approved' ? 'approved' : status));
 
   let timeLeft = $derived.by(() => {
-    if (!votingEndsAt) return '';
-    const ms = new Date(votingEndsAt) - new Date();
-    if (ms <= 0) return 'Voting ended';
-    const days = Math.floor(ms / 86400000);
-    const hours = Math.floor((ms % 86400000) / 3600000);
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
-    return `${hours} hour${hours > 1 ? 's' : ''} left`;
+    const left = timeLeftFor(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'Voting ended';
+    return `${timeLeftPhrase(left)} left`;
   });
 
   // "Cast your vote below" only when there is a vote below. A viewer outside
@@ -143,7 +144,18 @@
        no ballot and no clock, so the phase decides this branch, not the
        state. -->
   <div class="status-banner voting">
-    <p>Nominations are open. Voting starts when they close.</p>
+    <!-- With the date (docs/adr/106). This said only that nominations were
+         open; the one number on the page was the voting countdown, which is
+         a different deadline. Three members of a co-op arrived to stand after
+         the window had shut, and the person who told them when it shut had
+         read the wrong line. A window is its closing date. -->
+    <p>
+      {#if nominationsCloseAt}
+        Nominations are open until {formatDay(nominationsCloseAt)}. Voting starts then.
+      {:else}
+        Nominations are open. Voting starts when they close.
+      {/if}
+    </p>
     {#if mayWithdraw}
       <div class="banner-actions">
         <ConfirmAction
@@ -280,6 +292,18 @@
     {/if}
   </div>
 
+{:else if (effectiveState === 'in_effect' || effectiveState === 'passed') && electionPhase}
+  <!-- A settled election (docs/adr/109). It fell through to the amendment
+       branch below and read "Approved. This change is now in effect." over a
+       council: no winner, no chair, no term, and a community's leadership
+       called "this change". The `unsettled` sibling has had a sentence of its
+       own since docs/adr/097; the outcome a year of contests is actually for
+       had none. Who was seated is in the panel below, which is why this does
+       not repeat it. -->
+  <div class="status-banner in-effect">
+    <p>This election has closed and the council below is seated.</p>
+  </div>
+
 {:else if effectiveState === 'in_effect' || effectiveState === 'passed'}
   <div class="status-banner in-effect">
     <p>
@@ -293,6 +317,27 @@
     </p>
   </div>
 
+{:else if effectiveState === 'lapsed'}
+  <!-- The window closed under quorum (docs/adr/097). Nobody decided
+       anything, so this is worded as a vote that did not happen rather than
+       one that failed; the tally below is who turned up. -->
+  <div class="status-banner lapsed">
+    <p>Voting ended without reaching quorum. This proposal lapsed and was not decided.</p>
+  </div>
+
+{:else if effectiveState === 'unsettled'}
+  <!-- An election that seated nobody: no candidates, quorum unmet, or
+       nobody approved (docs/adr/051). The election-shaped sibling of a
+       lapse — holdover, not a rejection — so it never wears the tally
+       sentence below, which would read "0 approved, 0 rejected" over a
+       contest the community simply did not settle. -->
+  <div class="status-banner unsettled">
+    <!-- Not "the council continues" (docs/adr/106): this banner outlives the
+         council it would be describing, and on a patch with no admins it was
+         the same comfortable lie the record was telling. The seats it names
+         are the ones this contest was for (docs/adr/103). -->
+    <p>This election settled nothing; nobody was seated, and the seats it was for are unchanged.</p>
+  </div>
 {:else if effectiveState === 'rejected'}
   <div class="status-banner rejected">
     <!-- A decline is one person's decision (docs/adr/092), and the tally, if
@@ -367,7 +412,9 @@
     color: var(--color-text-muted);
   }
 
-  .withdrawn {
+  .withdrawn,
+  .lapsed,
+  .unsettled {
     background: var(--color-overlay);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);

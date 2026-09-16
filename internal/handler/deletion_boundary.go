@@ -106,6 +106,7 @@ func deletionRules() map[string]deletionRule {
 		"attestation_names":      {kept, "the names that statement carried."},
 		"amendment_attestations": {kept, "a text a meeting adopted."},
 		"audit_log":              {kept, "the record of what was done, including the deletion itself."},
+		"tags":                   {kept, "a coined word is a vocabulary act, not the person alone (docs/adr/114). By the time somebody leaves, a tag they suggested may be worn by a dozen patches, and a suggestion still waiting stays in the queue for an admin to decide, attributed to the tombstone."},
 		"content_reports":        {kept, "a report is a moderation record; the queue must not lose its history."},
 		"event_links":            {kept, "a link between an event and a patch, neither of which is the person."},
 		"election_ballots":       {kept, "an approval vote that stays counted."},
