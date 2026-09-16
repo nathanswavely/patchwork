@@ -26,6 +26,8 @@
  */
 
 import { WALL } from './fabricWall.js';
+import { getColorMode } from '../stores/colors.svelte.js';
+import { mutedColor, mutedSlots } from './mutedColors.js';
 
 // --- PALETTES ---
 // Each has 3 colors for quilt blocks: primary, secondary, bg.
@@ -262,7 +264,26 @@ const bundleHexRe = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
  * @param {string} patchId
  * @param {object|null} appearance — node.appearance ({palette, block, rotation, bundle})
  */
-export function paletteForPatch(patchId, appearance) {
+export function paletteForPatch(patchId, appearance, { raw = false } = {}) {
+  const base = chosenPaletteForPatch(patchId, appearance);
+  if (raw || getColorMode() !== 'muted') return base;
+
+  // One hue, the shared ramp, chroma capped (docs/adr/112). The *count* of
+  // slots is carried over rather than filled out to six: muted may take
+  // color away and may not add structure, so a patch whose bundle is one
+  // fabric keeps drawing one flat fabric here too.
+  const slots = mutedSlots(base.primary, base.slots.length);
+  return {
+    primary: slots[0],
+    secondary: slots[1] || slots[0],
+    bg: slots[2] || darken(slots[0], 0.55),
+    slots,
+    paletteKey: base.paletteKey,
+  };
+}
+
+/** What the patch actually chose, before any viewer-side register. */
+function chosenPaletteForPatch(patchId, appearance) {
   const bundle = Array.isArray(appearance?.bundle)
     ? appearance.bundle.filter((c) => typeof c === 'string' && bundleHexRe.test(c)).slice(0, 6)
     : [];
@@ -300,6 +321,10 @@ export function identityColorForPatch(patch) {
  */
 export function ghostPalette(index) {
   const palette = PALETTES[PALETTE_KEYS[Math.abs(index * 7 + 3) % PALETTE_KEYS.length]];
+  if (getColorMode() === 'muted') {
+    const [primary, secondary, bg] = mutedSlots(palette.primary, 3);
+    return { primary, secondary, bg };
+  }
   return { primary: palette.primary, secondary: palette.secondary, bg: palette.bg };
 }
 
@@ -311,6 +336,9 @@ export function colorForTag(tag) {
   if (!tag) return '#7a7870';
   // Hash the tag to pick a palette, use its primary.
   const palette = PALETTES[PALETTE_KEYS[Math.abs(hashStr(tag)) % PALETTE_KEYS.length]];
-  return palette.primary;
+  // Muted reaches every color that stands for something, and a forty-chip
+  // tag cloud under a muted quilt is most of what a reader was looking at
+  // (docs/adr/112). Tags are not patches, but they are not decoration either.
+  return getColorMode() === 'muted' ? mutedColor(palette.primary) : palette.primary;
 }
 

@@ -1,6 +1,6 @@
 # ADR 112: The quilt opens loud, and muted only ever takes away
 
-Date: 2026-09-16. Status: **proposed** — designed, not built. Builds on
+Date: 2026-09-16. Status: **accepted**, built 2026-09-16. The gate below ran and failed, so the hash-palette widening it names landed first, as its own change. Builds on
 ADR 004 (a patch chooses its appearance), ADR 029 (the fabric wall and the
 block drafter), ADR 066 (how a tile is drawn), ADR 074 (a control belongs
 to the surface it changes — and the limit of that rule), ADR 078 (why a
@@ -73,10 +73,15 @@ project's position than a knob would be.
 
 **4. It is a standing preference in the Display menu, held per browser.**
 Two rows: **Theme** (light · dark · system) and **Colors** (default ·
-muted). Signed in it lives in the account menu in the global bar, directly
-under the existing Light/Dark item; signed out it is that same slot,
-rendered as a Display button, so **the control does not move when somebody
-joins**.
+muted). Signed in it lives in the account menu in the global bar; signed
+out it is that same slot, rendered as a Display button, so **the control
+does not move when somebody joins**. One component in both homes
+(`DisplayMenu.svelte`) — written twice, the two would drift.
+
+The Theme row *replaces* the single Light/Dark toggle that was there, which
+is a small widening rather than a rewrite: the store has always held
+`system` as its default, and no UI ever offered it back. A reader who had
+never touched the toggle was on `system` and could only leave it.
 
 ADR 074 says a control belongs to the surface it changes, which argued for
 putting this on the canvas. That was the wrong reading: 074's controls
@@ -126,8 +131,9 @@ and the alternative is a server-side render variant for a per-browser
 choice.
 
 **6. Hover dims the rest; it does not mute them.** Pointing at a tile
-scrims every *other* tile, replacing today's behavior of darkening the
-hovered one (`QuiltCanvas.svelte:1034`, `:1059`). Dim and mute must stay
+scrims every *other* tile, replacing the previous behavior of darkening
+the hovered one (`QuiltCanvas.svelte`, the `.overlay` rect and its
+`pointerenter`). Dim and mute must stay
 on separate channels: if hover muted, then for a reader already in Muted
 mode hovering would do nothing at all — the two features would cancel
 exactly where they are most wanted.

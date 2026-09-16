@@ -39,6 +39,15 @@ export function getResolvedTheme() {
   return resolved;
 }
 
+/**
+ * What the reader *chose* — 'dark', 'light' or 'system' — as against what
+ * that currently resolves to. The Display menu shows the choice, so
+ * "System" can stay lit while the OS swings it between light and dark.
+ */
+export function getThemePreference() {
+  return preference;
+}
+
 export function setTheme(pref) {
   preference = pref;
   resolved = resolveTheme(pref);
