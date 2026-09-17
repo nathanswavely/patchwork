@@ -71,6 +71,11 @@
     // either surface (docs/adr/078) — a sheet you can only dismiss by
     // finding its one small button is a sheet in the reader's way.
     onBackgroundClick = null,
+    // A patch the *parent* is pointing at, from outside the canvas: hovering
+    // its card in the list beside the quilt (docs/adr/112). The canvas answers
+    // with the same hover dim a tile's own pointerenter engages, so the two
+    // surfaces cannot drift into two different ideas of "this one".
+    focusPatchId = null,
   } = $props();
 
   let containerEl = $state(null);
@@ -486,6 +491,29 @@
       if (tileMap.size > 0) {
         relayout(ids);
       }
+    });
+  });
+
+  // The card list pointing at a patch (docs/adr/112).
+  //
+  // Only when that patch's tile is actually on screen. Dimming every visible
+  // tile for one that is scrolled out of view leaves nothing lit, which reads
+  // as the quilt breaking rather than as an answer — the dim says "this one",
+  // and it cannot say it about something the reader cannot see.
+  $effect(() => {
+    const id = focusPatchId;
+    untrack(() => {
+      if (!interactive) return;
+      if (!id) {
+        releaseDim();
+        return;
+      }
+      const inView = computeInView();
+      if (inView && !inView.includes(id)) {
+        releaseDim();
+        return;
+      }
+      engageDim(id);
     });
   });
 
