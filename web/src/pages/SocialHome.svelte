@@ -992,6 +992,17 @@
     border-color: var(--color-primary);
   }
 
+  /* The option list is drawn by the browser, and it does not inherit this
+     control's transparent background — the popup lands on the UA's own
+     surface while the options keep our muted text, which in dark mode is
+     pale-on-pale. Every other select in the app sits on --color-surface and
+     never had the problem; this one absorbs into the toolbar, so its popup
+     has to be given the colours the control gave up. */
+  .list-order option {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
   .list-control.active {
     background: var(--color-primary);
     border-color: var(--color-primary);

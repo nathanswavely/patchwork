@@ -119,16 +119,22 @@
     Deleting a tag removes it from every patch wearing it.
   </p>
 
-  {#if suggestions.length > 0}
-    <section class="suggestions">
-      <h2>Suggested tags</h2>
-      <p class="muted intro">
-        Words patch admins asked for. A suggestion sits privately on the
-        patch that asked until you add it here. Approving publishes it on
-        every patch waiting on it; declining removes it from them and spends
-        the word, though you can still add it yourself later.
-      </p>
-      <ul class="suggestion-list">
+  <!-- Always rendered, empty or not (docs/adr/114). A queue that disappears
+       when nothing is in it leaves an admin no way to tell "nobody has asked"
+       from "this instance does not have the feature", and those want opposite
+       copy. -->
+  <section class="suggestions">
+    <h2>Suggested tags</h2>
+    <p class="muted intro">
+      Words patch admins asked for. A suggestion sits privately on the
+      patch that asked until you add it here. Approving publishes it on
+      every patch waiting on it; declining removes it from them and spends
+      the word, though you can still add it yourself later.
+    </p>
+    {#if suggestions.length === 0}
+      <p class="muted empty">Nothing waiting for review.</p>
+    {:else}
+    <ul class="suggestion-list">
         {#each suggestions as s (s.id)}
           <li class="suggestion-row">
             <div class="suggestion-main">
@@ -166,9 +172,9 @@
             </div>
           </li>
         {/each}
-      </ul>
-    </section>
-  {/if}
+    </ul>
+    {/if}
+  </section>
 
   <form class="create-row" onsubmit={(e) => { e.preventDefault(); createTag(); }}>
     <input
@@ -261,6 +267,11 @@
     border: 1px solid var(--color-border);
     border-radius: 8px;
     background: var(--color-surface);
+  }
+
+  .suggestions .empty {
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0;
   }
 
   .suggestions h2 {
