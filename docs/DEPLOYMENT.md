@@ -128,7 +128,7 @@ Every account after the first is a regular member.
 
 ## 4. Invite your community
 
-As admin, generate invite links from the admin dashboard (or
+As admin, generate invite links from the admin panel (or
 `POST /api/v1/auth/invite-link`). Each link can be single- or multi-use, with
 an optional expiry. Share them out-of-band: Signal, email, a QR code on a
 flyer. Whoever clicks one creates an account and enrolls a passkey, no email
