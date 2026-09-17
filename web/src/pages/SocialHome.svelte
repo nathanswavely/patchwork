@@ -628,6 +628,7 @@
         onBackgroundClick={backgroundClick}
         onInViewChange={reportInView}
         focusPatchId={hoveredCardId}
+        dockedPatchId={dockedSeed?.id || null}
       />
     {/if}
 
