@@ -50,6 +50,33 @@ address — bookmarked, followed, and minted into its AP id) and the
 verification domain (the trust anchor the claim just proved). Everything
 else creation allows, setup allows.
 
+**Amended 2026-09-16, on the reference instance's first real claim — "who
+can join" is one of the things creation allows.** Setup shipped without it,
+on the reasoning that the listing already carried a membership policy and
+setup could inherit it. Every listing is written `open` (`unclaimed.go`), the
+value decides nothing while the patch is a listing — an unclaimed patch takes
+followers only — and nobody has ever been asked: the submitter is not the
+patch, and at submission there is no patch to ask. The claim is where that
+value stops being inert. The Candy Factory went live admitting anyone, and
+its admin could not find the control, because membership policy is governance
+and lives in the rules file, not in Patch Settings.
+
+Worse, setup's own template picker was being overruled. The absorb step that
+copies the row's live membership settings into the freshly forked rules file
+was written for ordinary creation, where the row carries the creator's
+answer. On this path it carried the listing's, so a claimant who picked
+Minimal — whose rules say `invite_only` — got `open`.
+
+So setup asks, seeded from the chosen template rather than starting blank
+(the template already states a policy; a fourth opinion would be one too
+many), and the seed stops following the template the moment the claimant
+answers for themselves. `POST /claims/{id}/setup` takes `membership_policy`,
+validated like creation's, and falls back to the template's own value for a
+client that sends none — never to the row's. Listings are now written
+`invite_only` so that the one thing an unchosen value can still do is fail
+closed. Patch Settings → Info states the current policy and links to the
+rules editor: the control stays in one place, but it stops being unfindable.
+
 **Cleanup is one migration, no standing machinery.** Migration 039
 deletes lining docs on non-active patches unconditionally — whatever sits
 there is fabricated consent by definition, since no member could have
@@ -105,3 +132,24 @@ instance admin, or the claimant — and neither changes what the patch shows.
 `GET /api/v1/users/me/claims` serves the second. Both listings run the lazy
 expiry sweep first (`expireAllPastDueApprovedClaims`), because a right that
 has lapsed must not be listed as one still held.
+
+## Addendum, 2026-09-16: `approved` is not "awaiting setup"
+
+The claim row deliberately never changes when setup succeeds: a second
+attempt is refused because the patch is no longer unclaimed, not because the
+claim moved on (`SetupClaim`). So `status = 'approved'` records only that the
+claim cleared review. What says setup happened is the *node*, which is now
+`active`.
+
+The section added above asked the claim and not the node, so a claimant who
+finished setup stayed in "Approved, awaiting setup" forever, telling instance
+admins to keep waiting on a patch that was already live and run by the person
+named beside it. A claimed venue sat in that queue on the Lancaster instance.
+The lazy expiry sweeps had the same gap from the other side: once the window
+passed they would rewrite a claim that had *succeeded* into one that lapsed.
+
+The rule, then: any surface that means "awaiting setup" joins `nodes` and
+requires `status = 'unclaimed'`. `MyClaims` and the expiry reminder already
+did. `ListClaims` and both sweeps now do, via `claimNodeStillUnclaimed`.
+`RequestClaim`'s approved-claim block needs no join because it refuses
+anything but an unclaimed patch several lines earlier.

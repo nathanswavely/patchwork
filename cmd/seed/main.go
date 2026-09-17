@@ -1667,9 +1667,12 @@ func (s *seeder) seedUnclaimedPatches() {
 			submittedBy = s.userIDs[*u.submitterIdx]
 		}
 
+		// A listing's membership policy is inert until a claim activates it,
+		// and setup asks the claimant for one (claims.go). Seeded closed so
+		// the fixture matches what unclaimed.go writes.
 		_, err := s.db.Exec(
 			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, appearance, status, submitted_by, submission_source, ap_id, created_at, updated_at)
-			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'open', ?, 'unclaimed', ?, ?, ?, ?, ?)`,
+			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, 'unclaimed', ?, ?, ?, ?, ?)`,
 			id, u.name, nodeSlug, u.desc, u.lat, u.lng, u.address, u.website, linksJSON, nil, submittedBy, submissionSource, apID, createdAt, createdAt,
 		)
 		if err != nil {
@@ -1712,7 +1715,7 @@ func (s *seeder) seedUnclaimedPatches() {
 
 		s.db.Exec(
 			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, status, submitted_by, submission_source, created_at, updated_at)
-			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, '', 'public', 'open', 'pending_review', ?, 'community', ?, ?)`,
+			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, '', 'public', 'invite_only', 'pending_review', ?, 'community', ?, ?)`,
 			id, u.name, nodeSlug, u.desc, u.lat, u.lng, s.userIDs[submitterIdx], createdAt, createdAt,
 		)
 

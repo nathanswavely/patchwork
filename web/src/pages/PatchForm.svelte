@@ -14,6 +14,7 @@
   import { MOTIFS, MOTIF_KEYS } from '../lib/patchIcons.js';
   import { PALETTES, PALETTE_KEYS, paletteForPatch } from '../lib/quiltTheme.js';
   import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
+  import { templateMembershipPolicy } from '../lib/governanceTemplates.js';
 
   // Patch setup (docs/adr/039) reuses this exact form: a claim is creation
   // with prepopulated fields, not a handoff. mode='setup' prepopulates
@@ -126,21 +127,50 @@
     showPicker = false;
   }
   let visibility = $state(initial?.visibility || 'public');
-  // Who can join. The API defaults an omitted membership_policy to open,
-  // and the create form never asked, so a patch meant to be invite-only was
-  // public until its founder found the switch inside the rules editor. It
-  // starts unset: the person chooses. Setup mode (docs/adr/039) does not
-  // ask — the claimed listing keeps the policy it already carries, and the
-  // setup PATCH does not accept one.
-  let membershipPolicy = $state('');
+  // The membership policy, preselected to the closed option.
+  //
+  // This has been wrong twice in opposite directions. First the create form
+  // never asked at all, and the API's default made the patch open. F-008
+  // answered that by starting unset, so the person had to choose. That fixed
+  // the right bug the wrong way round: unset weights the three options
+  // equally and the first card reads as the ordinary pick, while the template
+  // list below *is* preselected, at Minimal, whose own rules say invite_only.
+  // So the form pre-answered one question and left the other looking like a
+  // choice between equals. On the reference instance a five-minute-old
+  // account took the first card and got a patch anyone could join.
+  //
+  // Preselected is not the same as unasked. The question is still on the
+  // screen, still required, and one click changes it. What moved is which way
+  // it fails when nobody engages with it, and closed is the safe direction: a
+  // patch that should have been open is a setting away, and a patch that
+  // should have been closed has already admitted people.
+  //
+  // Setup (docs/adr/039) asks the same question, seeded from the chosen
+  // template rather than fixed here, because a claimant picking a template is
+  // already saying what kind of patch this is. See policySeeded below.
+  let membershipPolicy = $state('invite_only');
   const membershipPolicies = [
-    { id: 'open', name: 'Open', desc: 'Anyone can join.' },
-    { id: 'approval_required', name: 'Approval required', desc: 'Anyone can ask to join; an admin approves each request.' },
     { id: 'invite_only', name: 'Invite only', desc: 'Only people an admin invites can join.' },
+    { id: 'approval_required', name: 'Approval required', desc: 'Anyone can ask to join; an admin approves each request.' },
+    { id: 'open', name: 'Open', desc: 'Anyone can join without approval.' },
   ];
   // Minimal is the default (docs/adr/041): the typical new patch is one
   // person running a listing; ceremony is opted into, not inherited.
   let template = $state('minimal');
+
+  // In setup mode the policy follows the template until the claimant answers
+  // the question themselves, after which it is theirs and nothing moves it.
+  // Each template's rules file already states a membership policy, so the
+  // seed is that template's own answer rather than a fourth opinion — and
+  // the server falls back to the same value when a client sends no policy,
+  // so the form and the API agree about what Minimal means. Creation is
+  // untouched: it starts blank and refuses to submit unanswered.
+  let policyAnswered = $state(false);
+  let seededPolicy = $derived(templateMembershipPolicy(template));
+  let policySeeded = $derived(mode === 'setup' && !policyAnswered && !!seededPolicy);
+  $effect(() => {
+    if (policySeeded) membershipPolicy = seededPolicy;
+  });
   // Tags, in priority order — the first motif-bearing tag derives the
   // motif, and shared tags place new patches near their kind on the quilt.
   let tags = $state(Array.isArray(initial?.tags) ? [...initial.tags] : []);
@@ -233,7 +263,7 @@
 
   function validate() {
     if (!name.trim()) return 'Name is required';
-    if (mode !== 'setup' && !membershipPolicy) return 'Choose who can join';
+    if (!membershipPolicy) return 'Choose a membership policy';
     return '';
   }
 
@@ -267,7 +297,14 @@
       // lands the claimant on their new patch — the edits just wait in
       // Settings.
       try {
-        await api(`claims/${claimId}/setup`, { method: 'POST', body: { template } });
+        // The policy travels with the template, not in the PATCH below:
+        // setup is where governance is forked, and the rules file is written
+        // from this answer. PATCH /nodes does not accept a membership policy
+        // at all — it is governance, and governance moves through the rules.
+        await api(`claims/${claimId}/setup`, {
+          method: 'POST',
+          body: { template, membership_policy: membershipPolicy },
+        });
       } catch (e) {
         if (e.status === 410) {
           showToast(e.message || 'Your setup window has expired. The patch is claimable again.', 'error');
@@ -553,22 +590,37 @@
           {/if}
         </div>
 
-        {#if mode !== 'setup'}
-          <fieldset class="field policy-field">
-            <legend>Who can join <span class="required">*</span></legend>
-            <div class="policy-grid">
-              {#each membershipPolicies as p (p.id)}
-                <label class="policy-card" class:selected={membershipPolicy === p.id}>
-                  <input type="radio" name="membership_policy" value={p.id} bind:group={membershipPolicy} disabled={submitting} required />
-                  <span class="policy-info">
-                    <strong>{p.name}</strong>
-                    <span class="policy-desc">{p.desc}</span>
-                  </span>
-                </label>
-              {/each}
-            </div>
-          </fieldset>
-        {/if}
+        <fieldset class="field policy-field">
+          <legend>Membership Policy <span class="required">*</span></legend>
+          <!-- The distinction the form otherwise never mentions. Joining and
+               following are different relationships, and only one of them is
+               what this setting governs — so somebody can pick Open reasoning
+               that people need it to see the patch at all, which is the one
+               thing it has nothing to do with. -->
+          <p class="field-hint muted">
+            Members vote on proposals and appear in the patch's member list.
+            Following is separate and always open: anyone can follow a public
+            patch and see its events.
+          </p>
+          {#if policySeeded}
+            <!-- What the control cannot show: that this answer came from the
+                 template below and will keep following it until it is
+                 answered here. Without the line, picking a template silently
+                 moves an answer further up the page. -->
+            <p class="field-hint muted">Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.</p>
+          {/if}
+          <div class="policy-grid">
+            {#each membershipPolicies as p (p.id)}
+              <label class="policy-card" class:selected={membershipPolicy === p.id}>
+                <input type="radio" name="membership_policy" value={p.id} bind:group={membershipPolicy} onchange={() => policyAnswered = true} disabled={submitting} required />
+                <span class="policy-info">
+                  <strong>{p.name}</strong>
+                  <span class="policy-desc">{p.desc}</span>
+                </span>
+              </label>
+            {/each}
+          </div>
+        </fieldset>
 
         <div class="field">
           <label>Governance Template</label>

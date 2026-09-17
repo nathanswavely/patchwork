@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import InlineEdit from '../components/InlineEdit.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
@@ -13,6 +14,26 @@
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let node = $derived(patch.value.node);
+
+  // The membership policy, stated here and changed elsewhere. It is governance — it
+  // lives in the patch's rules file and PATCH /nodes refuses it outright —
+  // so this page cannot hold the control without making the rules file and
+  // the row two sources for one fact. But an admin looking for it comes
+  // here first, and finding nothing reads as "there is no such setting":
+  // an open patch stayed open because its admin could not find the door.
+  // So the setting appears where it is looked for, says what it currently
+  // is, and hands over to the page that owns it.
+  const MEMBERSHIP_POLICY_LABEL = {
+    open: 'Open. Anyone can join without approval.',
+    approval_required: 'Approval required. Anyone can ask; an admin answers each request.',
+    invite_only: 'Invite only. Only people an admin invites can join.',
+  };
+  let membershipPolicyLabel = $derived(MEMBERSHIP_POLICY_LABEL[node?.membership_policy] || '');
+  // The rules editor is a member's page, gated on a role in this patch
+  // (RulesProposalEditor). An instance admin holding no role here reaches
+  // Settings but not that, so they are told where it is rather than sent
+  // to a refusal.
+  let isPatchAdmin = $derived(patch.value.membershipRole === 'admin');
 
   // Map location (issue #4): a placed marker, independent of the address
   // prose above. Placement is a deliberate, explicit-save flow — the picker
@@ -771,6 +792,34 @@
     </p>
   </div>
 
+  <!-- Membership policy. Stated, not set — the control belongs to the rules
+       (see MEMBERSHIP_POLICY_LABEL above). Sits under Visibility because
+       the two are the questions admins ask together: who can see this, and
+       who can get in. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Membership policy</span>
+    </div>
+    {#if membershipPolicyLabel}
+      <p class="muted tags-hint">{membershipPolicyLabel}</p>
+    {/if}
+    {#if isPatchAdmin}
+      <a
+        class="policy-link"
+        href="/patches/{slug}/governance/rules/propose"
+        onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}
+      >Change membership policy</a>
+      <p class="muted tags-hint caveat">
+        This is part of the patch's rules. Changing it applies immediately or
+        goes to a vote, depending on the patch's decision method.
+      </p>
+    {:else}
+      <p class="muted tags-hint caveat">
+        Changed in Governance, by an admin of this patch.
+      </p>
+    {/if}
+  </div>
+
   <!-- Event suggestions section (docs/adr/026) -->
   <div class="links-section">
     <div class="links-header">
@@ -1066,6 +1115,11 @@
 
   .caveat {
     margin-top: 0.5rem;
+  }
+
+  .policy-link {
+    font-size: 0.85rem;
+    font-weight: 500;
   }
 
   .tags-hint {

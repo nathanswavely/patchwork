@@ -18,25 +18,65 @@ function source(relPath) {
 describe('F-008 — the create form asks who can join', () => {
   const src = source('pages/PatchForm.svelte');
 
-  it('starts with nothing chosen and refuses to submit without a choice', () => {
-    expect(src).toMatch(/let membershipPolicy = \$state\(''\)/);
-    expect(src).toMatch(/if \(mode !== 'setup' && !membershipPolicy\) return 'Choose who can join'/);
+  // F-008's answer was to start unset, so that nobody got a policy they had
+  // not chosen. That fixed the right bug the wrong way round: unset weights
+  // the three options equally and the first card reads as the ordinary pick,
+  // while the template list below is preselected at Minimal — whose rules say
+  // invite_only. The form pre-answered one question and left the other
+  // looking like a choice between equals, and on the reference instance a
+  // five-minute-old account took the first card and got an open patch.
+  //
+  // So the default is back, pointing the other way. Still asked, still
+  // required, still one click to change; what moved is which way it fails
+  // when nobody engages, and closed is the safe direction.
+  it('defaults to the closed option rather than leaving the question unweighted', () => {
+    expect(src).toMatch(/let membershipPolicy = \$state\('invite_only'\)/);
+    expect(src).toMatch(/if \(!membershipPolicy\) return 'Choose a membership policy'/);
   });
 
-  it('offers the three policies the API accepts, each with one plain line', () => {
-    expect(src).toMatch(/id: 'open', name: 'Open', desc: 'Anyone can join\.'/);
-    expect(src).toMatch(/id: 'approval_required', name: 'Approval required', desc: '[^']+'/);
+  it('offers the three policies the API accepts, closed first, each with one plain line', () => {
     expect(src).toMatch(/id: 'invite_only', name: 'Invite only', desc: '[^']+'/);
-    expect(src).toMatch(/<input type="radio" name="membership_policy" value=\{p\.id\} bind:group=\{membershipPolicy\}[^>]*required/);
+    expect(src).toMatch(/id: 'approval_required', name: 'Approval required', desc: '[^']+'/);
+    expect(src).toMatch(/id: 'open', name: 'Open', desc: '[^']+'/);
+    // Order is the point, not just presence: the first card is the one a
+    // hurried reader takes.
+    expect(src.indexOf("id: 'invite_only'")).toBeLessThan(src.indexOf("id: 'approval_required'"));
+    expect(src.indexOf("id: 'approval_required'")).toBeLessThan(src.indexOf("id: 'open'"));
+    // Not [^>]* — the onchange handler in this tag contains an arrow.
+    expect(src).toMatch(/<input type="radio" name="membership_policy" value=\{p\.id\} bind:group=\{membershipPolicy\}[\s\S]*?required/);
+  });
+
+  // Joining and following are different relationships and the form never said
+  // so, which is how Open gets picked by somebody reasoning that people need
+  // it to see the patch — the one thing this setting does not govern.
+  it('contrasts joining with following, which the setting does not touch', () => {
+    expect(src).toMatch(/Members vote on proposals/);
+    expect(src).toMatch(/Following is separate and always open/);
+    // No em dashes in copy a reader sees. Scoped to the paragraph, not the
+    // surrounding markup: code comments are not copy and keep house style.
+    const hint = src.match(/<p class="field-hint muted">\s*Members vote[\s\S]*?<\/p>/);
+    expect(hint, 'who-can-join hint paragraph not found').toBeTruthy();
+    expect(hint[0]).not.toContain('—');
   });
 
   it('sits ahead of the template picker and sends the choice in the create payload', () => {
-    expect(src.indexOf('Who can join')).toBeLessThan(src.indexOf('Governance Template'));
+    expect(src.indexOf('<legend>Membership Policy')).toBeLessThan(src.indexOf('Governance Template'));
     expect(src).toMatch(/membership_policy: membershipPolicy,\n\s*template,/);
   });
 
-  it('does not ask in setup mode, where the PATCH refuses the field', () => {
-    expect(src).toMatch(/\{#if mode !== 'setup'\}\s*\n\s*<fieldset class="field policy-field">/);
+  // This used to assert the opposite — that setup skipped the question,
+  // on the reasoning that a claimed listing already carried a policy. It
+  // did, and nobody had chosen it: every listing is written 'open', the
+  // value is inert while the patch is unclaimed, and a claim made it the
+  // live door. The first real claim on Lancaster admitted anyone. Setup is
+  // the creation moment (docs/adr/039), so it asks the creation question.
+  it('asks in setup mode too, seeded from the template', () => {
+    expect(src).not.toMatch(/\{#if mode !== 'setup'\}\s*\n\s*<fieldset class="field policy-field">/);
+    expect(src).toMatch(/let policySeeded = \$derived\(mode === 'setup' && !policyAnswered/);
+    expect(src).toMatch(/if \(policySeeded\) membershipPolicy = seededPolicy/);
+    // Answering it yourself ends the seeding — the template stops moving
+    // an answer the claimant has already given.
+    expect(src).toMatch(/onchange=\{\(\) => policyAnswered = true\}/);
   });
 });
 

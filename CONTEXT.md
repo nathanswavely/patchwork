@@ -199,8 +199,25 @@ _Avoid_: quilt admin, moderator, owner (as a role name)
 
 **Instance admin**:
 A person with the site-wide admin role on an instance. Curates instance-wide
-options; does not override per-patch choices.
+options; does not override per-patch choices. Their reach into any individual
+patch is **custody**, never rank (docs/adr/115).
 _Avoid_: quilt admin, superadmin
+
+**Custody**:
+The standing an instance admin holds over a patch that has no admin of its own,
+and only for as long as that is true (docs/adr/115). A patch nobody has claimed
+is held for its calendar, so its events, feeds and submissions are the instance
+admin's to keep alive. A claimed patch whose seats were vacated for inactivity
+is held only to hand back: the one act is putting an admin in place, because its
+members are still there and running their patch was never the steward's job. A
+patch with an admin is held by nobody else at all. Distinct from the instance
+admin's own surfaces (tags, claims, legal documents, reports, archive, the
+quilt's identity), which were never a patch's to hold and so are not custody.
+The decided rule, not yet the running code: the handlers still grant an
+instance admin every patch-admin verb everywhere, deferred on purpose while the
+reference instance is young (docs/adr/115, "Deferred on purpose").
+_Avoid_: override, superadmin access, god mode, break-glass (deliberately not
+built)
 
 **Steward**:
 A person publicly accountable for how a quilt is run, named on its Label.
@@ -389,6 +406,21 @@ _Avoid_: patch finder, patch search, patch selector, autocomplete, typeahead
 The instance admin surface at /admin. Gets the same full-screen takeover
 treatment as a workspace.
 _Avoid_: admin area, dashboard (that is the user's personal page)
+
+**Overview**:
+The admin panel's landing page. It shows what is waiting on the instance
+admin's decision and what is unattended, and nothing else: no size, growth,
+or activity figures. Something is on it only when the next act is the
+instance admin's; what waits on somebody else (a claimant still setting up)
+is not. Decisions a person is waiting on come first; routing work nobody is
+waiting on (unrouted names) sits below them. Below that is what is broken or
+unattended and the instance admin's to mend, which under custody
+(docs/adr/115) means the instance's own machinery and patches held in
+custody; a claimed patch with no admin leads it, and a fault on a patch that
+has admins of its own never appears. Standing conditions (mail is off, the
+admin holds no passkey) are stated plainly, never nagged or dismissed. A
+quilt with nothing waiting shows a quiet page.
+_Avoid_: admin dashboard, stats, KPIs
 
 ## Layout & spacing
 

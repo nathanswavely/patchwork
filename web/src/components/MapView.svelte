@@ -83,9 +83,29 @@
     // Held locally as well as in state: reading the `map` rune back inside
     // the effect that wrote it would make this effect depend on itself and
     // tear the map down mid-setup.
-    const instance = L.map(mapContainer, { fadeAnimation: false, maxZoom: BASEMAP_MAX_ZOOM })
-      .setView(defaultCenter, 12);
+    const instance = L.map(mapContainer, {
+      fadeAnimation: false,
+      maxZoom: BASEMAP_MAX_ZOOM,
+      // Placed by hand below rather than at Leaflet's default corner.
+      zoomControl: false,
+    }).setView(defaultCenter, 12);
     map = instance;
+
+    // Where the zoom control lives is decided by what else stands at the
+    // map's corners, and that differs by breakpoint. On desktop the nav
+    // rail floats over the top-left (SocialShell's `.sidebar-rail.quilt-mode`,
+    // hugging its items from 56px down, open or collapsed) — Leaflet's
+    // default corner put the control straight under it, unreachable. The
+    // bottom-left is the one desktop corner nothing else claims: the filter
+    // chips start right of the collapsed rail's column, the cards pane owns
+    // the right, and the rail never reaches the foot. On mobile the rail is
+    // the bottom bar and the filter FAB stacks above it at the bottom-left,
+    // so there the control keeps the top-left, under the glass top bar.
+    const narrow = window.matchMedia('(max-width: 768px)');
+    const zoomCorner = (isNarrow) => (isNarrow ? 'topleft' : 'bottomleft');
+    const zoomControl = L.control.zoom({ position: zoomCorner(narrow.matches) }).addTo(instance);
+    const onBreakpoint = (e) => zoomControl.setPosition(zoomCorner(e.matches));
+    narrow.addEventListener('change', onBreakpoint);
 
     // The basemap loads its renderer on demand, so it lands a tick or two
     // after the map; the theme effect below picks it up when it does.
@@ -123,6 +143,7 @@
 
     return () => {
       ro.disconnect();
+      narrow.removeEventListener('change', onBreakpoint);
       unblockZoom();
       instance.off('zoomend', onZoom);
       if (map) {
@@ -440,9 +461,22 @@
   }
 
   /* The map sits full-bleed behind the fixed global bar (56px) — keep the
-     zoom controls clear of it. */
+     top corners clear of it. On desktop nothing of ours is up here any
+     more (the zoom control sits bottom-left, see the script); on mobile
+     the zoom control is, and this is what holds it under the bar. */
   .map-wrapper :global(.leaflet-top) {
     top: 64px;
+  }
+
+  /* Desktop home of the zoom control. 12px in from the corner so it
+     stands on the same inset the rail (left: 12px) and the filter chips
+     (bottom: 12px) do, rather than Leaflet's 10px. Its right edge lands at
+     44px, well left of where the chips begin even with the rail collapsed
+     (SocialShell keeps that offset at 80px) — a rule this control now
+     relies on, and says so beside it. */
+  .map-wrapper :global(.leaflet-bottom .leaflet-control-zoom) {
+    margin-bottom: 12px;
+    margin-left: 12px;
   }
 
   /* On mobile the bottom nav bar overlaps the map's lower edge — lift the
