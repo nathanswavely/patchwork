@@ -63,19 +63,30 @@ CI runs the same suites plus `go vet`, `govulncheck`, and npm audit.
 - The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be
   suspicious of dependencies.
 
-## ADR and migration numbers
+## Naming an ADR or a migration
 
-Both are sequentially numbered and both can be claimed by branches that
-can't see each other. Before claiming a number, check what's in flight,
-not just what's on disk:
+Take today's date and write a sentence. There is nothing to look up and
+nobody to ask:
 
-```sh
-git ls-tree --name-only origin/main docs/adr/   # or migrations/
-gh pr list --state open
+```
+docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md
+migrations/20260916T143207_suggested_tags.sql
 ```
 
-Numbers are never reused. A retired ADR keeps its number and gains a
+ADRs use `YYYY-MM-DD-slug.md`. Migrations use `YYYYMMDDTHHMMSS_slug.sql`,
+with seconds, because for a migration the timestamp decides what runs
+first.
+
+Both number spaces are closed: ADRs stopped at 115 and migrations at 074,
+and no new record is ever numbered. Those files keep their names and every
+citation to them keeps working. A retired ADR keeps its number and gains a
 status line; `migrations/006` is intentionally absent.
+
+Why, and why nothing was renamed, is
+[docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md](docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md).
+Short version: a sequential number is claimed from a counter whose real
+state is the union of every branch in flight, which no branch can see, so
+two branches pick the same one and both are right.
 
 ## AI-assisted contributions
 
