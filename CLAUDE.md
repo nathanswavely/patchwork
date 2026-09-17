@@ -299,7 +299,7 @@ Three auth paths, zero passwords:
 2. **Magic link** (requires SMTP): user enters email, receives link, clicks to auth.
 3. **Passkey** (returning users): WebAuthn ceremony, no network dependency.
 
-SMTP is optional. Without it, invite links + passkeys still work (magic links print to the server log for local dev). Patchwork warns in the dashboard but doesn't refuse to start.
+SMTP is optional. Without it, invite links + passkeys still work (magic links print to the server log for local dev). Patchwork states it plainly on the admin panel's Overview but doesn't refuse to start.
 
 Bootstrap: the first account created on a fresh instance automatically becomes the instance admin (`internal/auth/bootstrap.go`).
 
