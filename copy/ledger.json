@@ -3835,35 +3835,35 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 339,
+          "line": 353,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 703,
+          "line": 717,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 976,
+          "line": 999,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1032,
+          "line": 1055,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1264,
+          "line": 1287,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4462,28 +4462,28 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 305,
+          "line": 319,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 456,
+          "line": 470,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1044,
+          "line": 1067,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1082,
+          "line": 1105,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4877,7 +4877,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1094,
+          "line": 1117,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -6826,7 +6826,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1074,
+          "line": 1097,
           "kind": "go-error-body",
           "raw": "user_id is required",
           "quote": null
@@ -7479,7 +7479,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 309,
+          "line": 323,
           "kind": "go-error-body",
           "raw": "this patch is not available for claiming",
           "quote": null
@@ -7497,7 +7497,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 320,
+          "line": 334,
           "kind": "go-error-body",
           "raw": "this patch has an approved claim awaiting setup",
           "quote": null
@@ -7515,14 +7515,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 329,
+          "line": 343,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 405,
+          "line": 419,
           "kind": "go-error-body",
           "raw": "you already have an open claim for this patch",
           "quote": null
@@ -7540,7 +7540,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 345,
+          "line": 359,
           "kind": "go-error-body",
           "raw": "method must be dns, meta_tag, did, email, or admin",
           "quote": null
@@ -7558,7 +7558,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 352,
+          "line": 366,
           "kind": "go-error-body",
           "raw": "this patch has no verified domain. Choose admin review",
           "quote": null
@@ -7577,7 +7577,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 368,
+          "line": 382,
           "kind": "go-error-body",
           "raw": "a valid email address is required for email verification",
           "quote": null
@@ -7595,7 +7595,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 377,
+          "line": 391,
           "kind": "go-error-body",
           "raw": "the email must be at @%s",
           "quote": null
@@ -7613,7 +7613,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 408,
+          "line": 422,
           "kind": "go-error-body",
           "raw": "failed to create claim",
           "quote": null
@@ -7631,7 +7631,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 492,
+          "line": 506,
           "kind": "go-error-body",
           "raw": "failed to load claim",
           "quote": null
@@ -7649,7 +7649,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 530,
+          "line": 544,
           "kind": "go-error-body",
           "raw": "failed to load claims",
           "quote": null
@@ -7667,35 +7667,35 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 574,
+          "line": 588,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 614,
+          "line": 628,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 746,
+          "line": 760,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 985,
+          "line": 1008,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1294,
+          "line": 1317,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7713,28 +7713,28 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 578,
+          "line": 592,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 618,
+          "line": 632,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 751,
+          "line": 765,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1298,
+          "line": 1321,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7752,14 +7752,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 582,
+          "line": 596,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 755,
+          "line": 769,
           "kind": "go-error-body",
           "raw": "claim is already %s",
           "quote": null
@@ -7777,7 +7777,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 622,
+          "line": 636,
           "kind": "go-error-body",
           "raw": "this claim has no email verification to resend",
           "quote": null
@@ -7795,7 +7795,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 639,
+          "line": 653,
           "kind": "go-error-body",
           "raw": "resend limit reached",
           "quote": null
@@ -7814,14 +7814,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 682,
+          "line": 696,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 708,
+          "line": 722,
           "kind": "go-error-body",
           "raw": "invalid or already-used verification link",
           "quote": null
@@ -7839,7 +7839,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 712,
+          "line": 726,
           "kind": "go-error-body",
           "raw": "this verification link has expired. Request a new email from the claim page",
           "quote": null
@@ -7858,21 +7858,21 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 717,
+          "line": 731,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 835,
+          "line": 849,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 999,
+          "line": 1022,
           "kind": "go-error-body",
           "raw": "failed to approve claim",
           "quote": null
@@ -7890,7 +7890,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 914,
+          "line": 937,
           "kind": "go-error-body",
           "raw": "failed to query claims",
           "quote": null
@@ -7908,7 +7908,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 989,
+          "line": 1012,
           "kind": "go-error-body",
           "raw": "claim is not pending",
           "quote": null
@@ -7926,7 +7926,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1012,
+          "line": 1035,
           "kind": "go-error-body",
           "raw": "action must be 'approve' or 'reject'",
           "quote": null
@@ -7958,7 +7958,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1048,
+          "line": 1071,
           "kind": "go-error-body",
           "raw": "verification domains only apply to unclaimed patches",
           "quote": null
@@ -7976,7 +7976,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1086,
+          "line": 1109,
           "kind": "go-error-body",
           "raw": "patch is not unclaimed",
           "quote": null
@@ -7994,7 +7994,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1111,
+          "line": 1134,
           "kind": "go-error-body",
           "raw": "failed to assign owner",
           "quote": null
@@ -8012,7 +8012,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1268,
+          "line": 1291,
           "kind": "go-error-body",
           "raw": "membership_policy must be one of %s",
           "quote": null
@@ -8037,7 +8037,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1281,
+          "line": 1304,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -8055,7 +8055,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1302,
+          "line": 1325,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -8073,7 +8073,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1311,
+          "line": 1334,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired. The patch is claimable again",
           "quote": null
@@ -8092,14 +8092,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1320,
+          "line": 1343,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1326,
+          "line": 1349,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -8117,7 +8117,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1329,
+          "line": 1352,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -37045,7 +37045,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 124,
+          "line": 127,
           "kind": "markup",
           "raw": "Suggested tags",
           "quote": null
@@ -37063,9 +37063,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 126,
+          "line": 129,
           "kind": "markup",
-          "raw": "Words patch admins asked for. A suggestion sits privately on the\n        patch that asked until you add it here. Approving publishes it on\n        every patch waiting on it; declining removes it from them and spends\n        the word, though you can still add it yourself later.",
+          "raw": "Words patch admins asked for. A suggestion sits privately on the\n      patch that asked until you add it here. Approving publishes it on\n      every patch waiting on it; declining removes it from them and spends\n      the word, though you can still add it yourself later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "023fc95ff6c5",
+      "text": "Nothing waiting for review.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): empty-state line for the review queue. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "Nothing waiting for review.",
           "quote": null
         }
       ]
@@ -37081,7 +37099,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 140,
+          "line": 146,
           "kind": "attr:aria-label",
           "raw": "Tag name, editable before approving",
           "quote": "\""
@@ -37099,7 +37117,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 176,
+          "line": 182,
           "kind": "attr:placeholder",
           "raw": "New tag name (e.g. music)",
           "quote": "\""
@@ -37117,7 +37135,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 190,
+          "line": 196,
           "kind": "markup",
           "raw": "No tags yet. Add the first one above.",
           "quote": null
@@ -37135,7 +37153,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 205,
+          "line": 211,
           "kind": "attr:title",
           "raw": "Change motif",
           "quote": "\""
