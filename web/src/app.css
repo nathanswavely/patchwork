@@ -153,6 +153,11 @@
    text 13.4:1 · muted 5.1:1 · primary-as-text 4.5:1 ·
    white-on-primary 5.2:1 · success-as-text 5.1:1 · accent-as-text 4.6:1 */
 [data-theme="light"] {
+  /* Native widgets the page cannot paint — the option list a <select>
+     opens, scrollbars, date pickers — are drawn by the browser, and this
+     is the only thing that tells it which theme to draw them in. Without
+     it every one of them renders light while our text tokens flip. */
+  color-scheme: light;
   --color-bg: #f4f0e8;
   --color-surface: #faf6ee;
   --color-text: #2a2520;
@@ -193,6 +198,7 @@
    ink-on-primary 7.6:1 — bright fills take INK text in dark, not white
    (white on the dark-theme primary/success/accent fails AA badly). */
 [data-theme="dark"] {
+  color-scheme: dark;
   --color-bg: #151820;
   --color-surface: #1c2028;
   --color-text: #e0dbd4;
