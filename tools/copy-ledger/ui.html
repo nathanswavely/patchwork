@@ -147,6 +147,33 @@ const api = async (p, opts) => {
   return r.json();
 };
 
+// Copy is reviewed as a person reads it, not as the file spells it.
+//
+// Source holds `&mdash;`, `&middot;`, `&lt;` and friends, and every display
+// path here is textContent, so the reviewer was shown the entity rather than
+// the character. That is noise in the readout and a trap in the editor: you
+// cannot judge a sentence you are not being shown.
+//
+// Decoding happens at the glass only. The ledger's id is a hash of the stored
+// text (extract.js, idFor), so decoding at extraction would change the id of
+// all 35 entries carrying an entity and orphan the 24 already decided.
+//
+// A detached textarea is the safe decoder: its innerHTML parses as RCDATA, so
+// entities resolve and nothing else does.
+const decodeEntities = (str) => {
+  const t = document.createElement('textarea');
+  t.innerHTML = str ?? '';
+  return t.value;
+};
+
+// And the way back, on save. Only the two that carry meaning in markup: this
+// repo writes typographic characters literally (727 literal em dashes against
+// 8 `&mdash;`), so leaving those decoded matches house style, while `<` and
+// `>` must go back escaped. One entry is the ClaimPatch instruction to paste a
+// tag into your head element -- write that literally and it stops being copy
+// and becomes markup.
+const encodeMarkup = (str) => (str ?? '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 function flash(msg) {
   const f = $('#flash');
   f.textContent = msg; f.classList.add('on');
@@ -209,7 +236,7 @@ function refilter(keepId) {
     (!st || e.status === st) &&
     (!tier || e.tier === tier) &&
     (!file || e.occurrences.some((o) => o.file === file)) &&
-    (!q || e.text.toLowerCase().includes(q)));
+    (!q || decodeEntities(e.text).toLowerCase().includes(q)));
 
   // Paragraphs first: they carry the most voice per unit of effort.
   const rank = { prose: 0, helper: 1, label: 2 };
@@ -229,7 +256,7 @@ function renderQueue() {
   view.forEach((e, i) => {
     const b = document.createElement('button');
     b.setAttribute('aria-current', i === cursor);
-    const t = document.createElement('span'); t.className = 't'; t.textContent = e.text;
+    const t = document.createElement('span'); t.className = 't'; t.textContent = decodeEntities(e.text);
     const m = document.createElement('span'); m.className = 'm';
     m.textContent = `${e.tier} · ${e.words}w · ${e.occurrences[0].file.split('/').pop()}:${e.occurrences[0].line}` +
       (e.occurrences.length > 1 ? ` +${e.occurrences.length - 1}` : '');
@@ -256,7 +283,7 @@ async function renderDetail() {
   }
   d.append(head);
 
-  const bq = document.createElement('blockquote'); bq.textContent = e.text; d.append(bq);
+  const bq = document.createElement('blockquote'); bq.textContent = decodeEntities(e.text); d.append(bq);
 
   const heldIn = drafts.checkedOut[e.id];
   if (heldIn) {
@@ -272,14 +299,14 @@ async function renderDetail() {
   if (e.previous_ai_text) {
     const h = document.createElement('h3'); h.textContent = 'Replaced draft';
     const p = document.createElement('blockquote');
-    p.style.opacity = '.6'; p.textContent = e.previous_ai_text;
+    p.style.opacity = '.6'; p.textContent = decodeEntities(e.previous_ai_text);
     d.append(h, p);
   }
 
   const h1 = document.createElement('h3'); h1.textContent = 'Your version';
   const ta = document.createElement('textarea');
   ta.id = 'editor';
-  ta.value = e.replacement ?? e.text;
+  ta.value = decodeEntities(e.replacement ?? e.text);
   d.append(h1, ta);
 
   const warn = document.createElement('div'); warn.className = 'warn'; d.append(warn);
@@ -301,7 +328,7 @@ async function renderDetail() {
     if (key) { const k = document.createElement('kbd'); k.textContent = key; b.append(k); }
     b.onclick = fn; acts.append(b); return b;
   };
-  mk('Save my version', '⌘↵', 'primary', () => saveRewrite(e, ta.value));
+  mk('Save my version', '⌘↵', 'primary', () => saveRewrite(e, encodeMarkup(ta.value)));
   mk('Already mine', 'h', '', () => setStatus(e, 'human'));
   mk('Leave as drafted', 'a', '', () => setStatus(e, 'ai-fine'));
   mk('Skip', 'j', '', () => move(1));
