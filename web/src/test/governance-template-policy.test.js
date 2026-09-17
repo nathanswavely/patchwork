@@ -1,5 +1,5 @@
 /**
- * The setup form seeds "Who can join" from the chosen governance template
+ * The setup form seeds Membership Policy from the chosen governance template
  * (docs/adr/039), so the frontend carries a copy of each template's
  * membership_policy. The originals are Go string constants in
  * internal/governance/defaults.go, and a copy that drifts is worse than no

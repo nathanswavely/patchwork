@@ -15,7 +15,7 @@
   let slug = $derived(patch.value.slug);
   let node = $derived(patch.value.node);
 
-  // Who can join, stated here and changed elsewhere. It is governance — it
+  // The membership policy, stated here and changed elsewhere. It is governance — it
   // lives in the patch's rules file and PATCH /nodes refuses it outright —
   // so this page cannot hold the control without making the rules file and
   // the row two sources for one fact. But an admin looking for it comes
@@ -24,9 +24,9 @@
   // So the setting appears where it is looked for, says what it currently
   // is, and hands over to the page that owns it.
   const MEMBERSHIP_POLICY_LABEL = {
-    open: 'Open — anyone can join.',
-    approval_required: 'Approval required — anyone can ask; an admin answers each request.',
-    invite_only: 'Invite only — only people an admin invites can join.',
+    open: 'Open. Anyone can join without approval.',
+    approval_required: 'Approval required. Anyone can ask; an admin answers each request.',
+    invite_only: 'Invite only. Only people an admin invites can join.',
   };
   let membershipPolicyLabel = $derived(MEMBERSHIP_POLICY_LABEL[node?.membership_policy] || '');
   // The rules editor is a member's page, gated on a role in this patch
@@ -792,13 +792,13 @@
     </p>
   </div>
 
-  <!-- Who can join. Stated, not set — the control belongs to the rules
+  <!-- Membership policy. Stated, not set — the control belongs to the rules
        (see MEMBERSHIP_POLICY_LABEL above). Sits under Visibility because
        the two are the questions admins ask together: who can see this, and
        who can get in. -->
   <div class="links-section">
     <div class="links-header">
-      <span class="links-label">Who can join</span>
+      <span class="links-label">Membership policy</span>
     </div>
     {#if membershipPolicyLabel}
       <p class="muted tags-hint">{membershipPolicyLabel}</p>
@@ -808,11 +808,10 @@
         class="policy-link"
         href="/patches/{slug}/governance/rules/propose"
         onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}
-      >Change who can join</a>
+      >Change membership policy</a>
       <p class="muted tags-hint caveat">
-        This is one of the patch's rules, so it is changed with the rest of
-        them. Whether that takes effect at once or goes to the members
-        depends on how this patch decides things.
+        This is part of the patch's rules. Changing it applies immediately or
+        goes to a vote, depending on the patch's decision method.
       </p>
     {:else}
       <p class="muted tags-hint caveat">

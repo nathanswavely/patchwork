@@ -150,7 +150,7 @@ describe('PatchForm reuses one component for creation and setup (docs/adr/039)',
     expect(src).toMatch(/api\(`nodes\/\$\{setupSlug\}`, \{[\s\S]*?method: 'PATCH'/);
   });
 
-  // Who can join travels with the template, in the setup POST. It cannot
+  // The membership policy travels with the template, in the setup POST. It
   // ride the PATCH below: membership policy is governance, PATCH /nodes
   // refuses the field outright (allowedFields, nodes.go), and setup is
   // where the rules file is written from it.

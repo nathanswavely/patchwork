@@ -814,7 +814,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 250,
+          "line": 258,
           "kind": "js-string",
           "raw": "Bands, solo artists, pop-up projects",
           "quote": "'"
@@ -839,7 +839,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 251,
+          "line": 259,
           "kind": "js-string",
           "raw": "Small group. Majority rules.",
           "quote": "'"
@@ -901,7 +901,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 252,
+          "line": 260,
           "kind": "js-string",
           "raw": "Open community, structured process. Trust builds through contribution.",
           "quote": "'"
@@ -945,7 +945,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 253,
+          "line": 261,
           "kind": "js-string",
           "raw": "Coalition-scale governance. Elected council, term limits, full accountability.",
           "quote": "'"
@@ -977,7 +977,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 253,
+          "line": 261,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -21827,7 +21827,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 579,
+          "line": 587,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -26919,6 +26919,13 @@
           "kind": "markup",
           "raw": "Membership Policy",
           "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 594,
+          "kind": "markup",
+          "raw": "Membership Policy",
+          "quote": null
         }
       ]
     },
@@ -27225,7 +27232,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 146,
+          "line": 154,
           "kind": "js-string",
           "raw": "Approval required",
           "quote": "'"
@@ -27257,7 +27264,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 147,
+          "line": 153,
           "kind": "js-string",
           "raw": "Invite only",
           "quote": "'"
@@ -27947,7 +27954,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 431,
+          "line": 439,
           "kind": "markup",
           "raw": "Remove",
           "quote": null
@@ -30913,14 +30920,14 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 309,
+          "line": 317,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 372,
+          "line": 380,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -35758,7 +35765,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 411,
+          "line": 419,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -36694,7 +36701,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 455,
+          "line": 463,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -39195,7 +39202,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 389,
+          "line": 397,
           "kind": "markup",
           "raw": "Create Patch",
           "quote": null
@@ -40504,7 +40511,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 451,
+          "line": 459,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -42072,7 +42079,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 567,
+          "line": 575,
           "kind": "markup",
           "raw": "The lining",
           "quote": null
@@ -44864,19 +44871,19 @@
       ]
     },
     {
-      "id": "df7a1e4cf058",
-      "text": "Anyone can join.",
-      "words": 3,
-      "tier": "label",
+      "id": "e2f98efb5975",
+      "text": "Only people an admin invites can join.",
+      "words": 7,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
       "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 145,
+          "line": 153,
           "kind": "js-string",
-          "raw": "Anyone can join.",
+          "raw": "Only people an admin invites can join.",
           "quote": "'"
         }
       ]
@@ -44892,7 +44899,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 146,
+          "line": 154,
           "kind": "js-string",
           "raw": "Anyone can ask to join; an admin approves each request.",
           "quote": "'"
@@ -44900,19 +44907,19 @@
       ]
     },
     {
-      "id": "e2f98efb5975",
-      "text": "Only people an admin invites can join.",
-      "words": 7,
-      "tier": "helper",
+      "id": "5b881574e3b7",
+      "text": "Anyone can join without approval.",
+      "words": 5,
+      "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Membership option. Was 'Anyone can join.', which named the mechanism but not what distinguishes it: nobody reviews.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 147,
+          "line": 155,
           "kind": "js-string",
-          "raw": "Only people an admin invites can join.",
+          "raw": "Anyone can join without approval.",
           "quote": "'"
         }
       ]
@@ -44928,7 +44935,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 253,
+          "line": 261,
           "kind": "js-string",
           "raw": "Arts districts, coalitions (100+ people)",
           "quote": "'"
@@ -44946,7 +44953,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 257,
+          "line": 265,
           "kind": "js-string",
           "raw": "Name is required",
           "quote": "'"
@@ -44961,19 +44968,19 @@
       ]
     },
     {
-      "id": "b278f07925c5",
-      "text": "Choose who can join",
+      "id": "07321f2e637f",
+      "text": "Choose a membership policy",
       "words": 4,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Validation message, following the renamed label.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 258,
+          "line": 266,
           "kind": "js-string",
-          "raw": "Choose who can join",
+          "raw": "Choose a membership policy",
           "quote": "'"
         }
       ]
@@ -44989,7 +44996,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 302,
+          "line": 310,
           "kind": "js-string",
           "raw": "Your setup window has expired. The patch is claimable again.",
           "quote": "'"
@@ -45007,7 +45014,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 305,
+          "line": 313,
           "kind": "js-string",
           "raw": "This patch is no longer claimable.",
           "quote": "'"
@@ -45025,7 +45032,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 308,
+          "line": 316,
           "kind": "js-string",
           "raw": "Failed to complete setup",
           "quote": "'"
@@ -45043,7 +45050,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 331,
+          "line": 339,
           "kind": "js-string",
           "raw": "This patch is yours",
           "quote": "'"
@@ -45061,7 +45068,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 333,
+          "line": 341,
           "kind": "js-string",
           "raw": "Patch set up. Finish edits in Patch Settings.",
           "quote": "'"
@@ -45079,7 +45086,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 368,
+          "line": 376,
           "kind": "js-string",
           "raw": "Patch created",
           "quote": "'"
@@ -45097,7 +45104,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 371,
+          "line": 379,
           "kind": "js-string",
           "raw": "Failed to create patch",
           "quote": "'"
@@ -45115,7 +45122,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 383,
+          "line": 391,
           "kind": "markup",
           "raw": "Set up your patch",
           "quote": null
@@ -45133,7 +45140,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 384,
+          "line": 392,
           "kind": "markup",
           "raw": "Complete this patch's details to activate it.",
           "quote": null
@@ -45151,7 +45158,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 386,
+          "line": 394,
           "kind": "markup",
           "raw": "Approval expires {formatExpiry(expiresAt)}.",
           "quote": null
@@ -45169,7 +45176,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 390,
+          "line": 398,
           "kind": "markup",
           "raw": "Start a new community, collective, venue, or group.",
           "quote": null
@@ -45187,7 +45194,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 392,
+          "line": 400,
           "kind": "markup",
           "raw": "Creating a patch makes you its admin. Know a group that isn't yours to run?",
           "quote": null
@@ -45205,7 +45212,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 392,
+          "line": 400,
           "kind": "markup",
           "raw": "instead.",
           "quote": null
@@ -45223,14 +45230,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 399,
+          "line": 407,
           "kind": "markup",
           "raw": "Address",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 419,
+          "line": 427,
           "kind": "markup",
           "raw": "Address",
           "quote": null
@@ -45255,7 +45262,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 401,
+          "line": 409,
           "kind": "markup",
           "raw": "This is the patch's existing address.",
           "quote": null
@@ -45273,7 +45280,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 406,
+          "line": 414,
           "kind": "markup",
           "raw": "Name",
           "quote": null
@@ -45298,7 +45305,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 407,
+          "line": 415,
           "kind": "attr:placeholder",
           "raw": "e.g. Gallery Row, Lancaster Beats Lab",
           "quote": "\""
@@ -45316,7 +45323,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 412,
+          "line": 420,
           "kind": "attr:placeholder",
           "raw": "What is this patch about?",
           "quote": "\""
@@ -45334,7 +45341,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 425,
+          "line": 433,
           "kind": "attr:placeholder",
           "raw": "Where is this based?",
           "quote": "\""
@@ -45352,7 +45359,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 431,
+          "line": 439,
           "kind": "markup",
           "raw": "On the map.",
           "quote": null
@@ -45370,7 +45377,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 434,
+          "line": 442,
           "kind": "markup",
           "raw": "Looking for this address...",
           "quote": null
@@ -45395,7 +45402,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 450,
+          "line": 458,
           "kind": "markup",
           "raw": "Website",
           "quote": null
@@ -45420,7 +45427,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 457,
+          "line": 465,
           "kind": "markup",
           "raw": "What kind of patch is this? Tags help people find you, and new\n            patches are placed near others with the same tags on the quilt.\n            The first tag decides your default motif. Missing a word? Suggest\n            it, and an admin decides whether it joins the quilt's tags.",
           "quote": null
@@ -45438,7 +45445,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 466,
+          "line": 474,
           "kind": "markup",
           "raw": "Tile",
           "quote": null
@@ -45456,7 +45463,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 468,
+          "line": 476,
           "kind": "markup",
           "raw": "How this patch looks on the quilt. You can change it anytime\n            in Patch Settings → Appearance, and draft your own block there too.",
           "quote": null
@@ -45474,7 +45481,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 480,
+          "line": 488,
           "kind": "attr:aria-label",
           "raw": "Tile preview",
           "quote": "\""
@@ -45499,7 +45506,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 487,
+          "line": 495,
           "kind": "attr:title",
           "raw": "Rotate 90°",
           "quote": "\""
@@ -45524,7 +45531,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 493,
+          "line": 501,
           "kind": "attr:aria-label",
           "raw": "Palette",
           "quote": "\""
@@ -45549,7 +45556,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 512,
+          "line": 520,
           "kind": "attr:aria-label",
           "raw": "Block",
           "quote": "\""
@@ -45574,7 +45581,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 540,
+          "line": 548,
           "kind": "markup",
           "raw": "Motif",
           "quote": null
@@ -45599,7 +45606,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 542,
+          "line": 550,
           "kind": "markup",
           "raw": "Optional. The mark that appears beside the name on the quilt.\n            Unset, it follows your first tag. You can change it later in\n            Patch Settings.",
           "quote": null
@@ -45617,7 +45624,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 569,
+          "line": 577,
           "kind": "markup",
           "raw": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
           "quote": null
@@ -45626,26 +45633,19 @@
       "previous_ai_text": "Every patch starts with the lining — this quilt's shared community standards. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining."
     },
     {
-      "id": "35c685351e0d",
-      "text": "Who can join",
-      "words": 3,
-      "tier": "label",
+      "id": "d2382f12ab3e",
+      "text": "Members vote on proposals and appear in the patch's member list. Following is separate and always open: anyone can follow a public patch and see its events.",
+      "words": 27,
+      "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "The join/follow contrast the create form never drew. Open was picked by someone reasoning that visitors need it to see the patch, which this setting does not govern.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 586,
+          "line": 601,
           "kind": "markup",
-          "raw": "Who can join",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 801,
-          "kind": "markup",
-          "raw": "Who can join",
+          "raw": "Members vote on proposals and appear in the patch's member list.\n            Following is separate and always open: anyone can follow a public\n            patch and see its events.",
           "quote": null
         }
       ]
@@ -45661,7 +45661,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 592,
+          "line": 610,
           "kind": "markup",
           "raw": "Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.",
           "quote": null
@@ -45679,7 +45679,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 608,
+          "line": 626,
           "kind": "markup",
           "raw": "Governance Template",
           "quote": null
@@ -45697,7 +45697,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 609,
+          "line": 627,
           "kind": "markup",
           "raw": "How should this patch be organized? You can change this later.",
           "quote": null
@@ -46601,55 +46601,55 @@
       ]
     },
     {
-      "id": "19af33794680",
-      "text": "Open — anyone can join.",
-      "words": 5,
-      "tier": "label",
+      "id": "3a71d7fe982d",
+      "text": "Open. Anyone can join without approval.",
+      "words": 6,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reads back the patch's current membership policy in Patch Settings. Mirrors the create form's wording for the same option.",
+      "note": "Reads back the current policy in Patch Settings. Matches the create form wording.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 27,
           "kind": "js-string",
-          "raw": "Open — anyone can join.",
+          "raw": "Open. Anyone can join without approval.",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "ab498d94ce59",
-      "text": "Approval required — anyone can ask; an admin answers each request.",
-      "words": 11,
+      "id": "3c58277efad0",
+      "text": "Approval required. Anyone can ask; an admin answers each request.",
+      "words": 10,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reads back the patch's current membership policy in Patch Settings. Mirrors the create form's wording for the same option.",
+      "note": "Reads back the current policy in Patch Settings.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 28,
           "kind": "js-string",
-          "raw": "Approval required — anyone can ask; an admin answers each request.",
+          "raw": "Approval required. Anyone can ask; an admin answers each request.",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "09ac58f26d35",
-      "text": "Invite only — only people an admin invites can join.",
-      "words": 10,
+      "id": "4f08c715f504",
+      "text": "Invite only. Only people an admin invites can join.",
+      "words": 9,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reads back the patch's current membership policy in Patch Settings. Mirrors the create form's wording for the same option.",
+      "note": "Reads back the current policy in Patch Settings.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 29,
           "kind": "js-string",
-          "raw": "Invite only — only people an admin invites can join.",
+          "raw": "Invite only. Only people an admin invites can join.",
           "quote": "'"
         }
       ]
@@ -47293,19 +47293,37 @@
       ]
     },
     {
-      "id": "a07a7b97a3c3",
-      "text": "This is one of the patch's rules, so it is changed with the rest of them. Whether that takes effect at once or goes to the members depends on how this patch decides things.",
-      "words": 34,
+      "id": "28fdb18018ca",
+      "text": "Membership policy",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Patch Settings section label, sentence case like its siblings; the CSS uppercases it.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 801,
+          "kind": "markup",
+          "raw": "Membership policy",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "435720a1e6df",
+      "text": "This is part of the patch's rules. Changing it applies immediately or goes to a vote, depending on the patch's decision method.",
+      "words": 22,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Says why the control is elsewhere and that the outcome depends on the patch's decision method, without naming a mechanic this patch may not run.",
+      "note": "Says where the control lives and what pressing it does, without naming a mechanic this patch may not run.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
           "line": 813,
           "kind": "markup",
-          "raw": "This is one of the patch's rules, so it is changed with the rest of\n        them. Whether that takes effect at once or goes to the members\n        depends on how this patch decides things.",
+          "raw": "This is part of the patch's rules. Changing it applies immediately or\n        goes to a vote, depending on the patch's decision method.",
           "quote": null
         }
       ]
@@ -47321,7 +47339,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 819,
+          "line": 818,
           "kind": "markup",
           "raw": "Changed in Governance, by an admin of this patch.",
           "quote": null
@@ -47339,7 +47357,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 827,
+          "line": 826,
           "kind": "markup",
           "raw": "Event suggestions",
           "quote": null
@@ -47357,7 +47375,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 836,
+          "line": 835,
           "kind": "markup",
           "raw": "Let non-members suggest events to this patch",
           "quote": null
@@ -47375,7 +47393,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 839,
+          "line": 838,
           "kind": "markup",
           "raw": "Suggestions wait in your events queue until an admin approves them.",
           "quote": null
@@ -47393,7 +47411,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 847,
+          "line": 846,
           "kind": "markup",
           "raw": "We have moved",
           "quote": null
@@ -47411,7 +47429,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 850,
+          "line": 849,
           "kind": "markup",
           "raw": "Point this patch at its new home. The page here keeps working and stays\n      readable, with a banner saying where the patch went. New joins, new\n      follows and event suggestions from outside are turned away and sent to\n      the new address. Members and admins keep everything they had. Clear the\n      field to undo it.",
           "quote": null
@@ -47429,7 +47447,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsInfo.svelte",
-          "line": 861,
+          "line": 860,
           "kind": "attr:placeholder",
           "raw": "https://their-quilt.example.com/patches/gallery-row",
           "quote": "\""
@@ -55354,6 +55372,139 @@
           "line": 123,
           "kind": "markup",
           "raw": "Download all community data as a zip: patches, members, events, governance",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "df7a1e4cf058",
+      "text": "Anyone can join.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 145,
+          "kind": "js-string",
+          "raw": "Anyone can join.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b278f07925c5",
+      "text": "Choose who can join",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 258,
+          "kind": "js-string",
+          "raw": "Choose who can join",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "35c685351e0d",
+      "text": "Who can join",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 586,
+          "kind": "markup",
+          "raw": "Who can join",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 801,
+          "kind": "markup",
+          "raw": "Who can join",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "19af33794680",
+      "text": "Open — anyone can join.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reads back the patch's current membership policy in Patch Settings. Mirrors the create form's wording for the same option.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 27,
+          "kind": "js-string",
+          "raw": "Open — anyone can join.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ab498d94ce59",
+      "text": "Approval required — anyone can ask; an admin answers each request.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reads back the patch's current membership policy in Patch Settings. Mirrors the create form's wording for the same option.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 28,
+          "kind": "js-string",
+          "raw": "Approval required — anyone can ask; an admin answers each request.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "09ac58f26d35",
+      "text": "Invite only — only people an admin invites can join.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reads back the patch's current membership policy in Patch Settings. Mirrors the create form's wording for the same option.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 29,
+          "kind": "js-string",
+          "raw": "Invite only — only people an admin invites can join.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "a07a7b97a3c3",
+      "text": "This is one of the patch's rules, so it is changed with the rest of them. Whether that takes effect at once or goes to the members depends on how this patch decides things.",
+      "words": 34,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Says why the control is elsewhere and that the outcome depends on the patch's decision method, without naming a mechanic this patch may not run.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsInfo.svelte",
+          "line": 813,
+          "kind": "markup",
+          "raw": "This is one of the patch's rules, so it is changed with the rest of\n        them. Whether that takes effect at once or goes to the members\n        depends on how this patch decides things.",
           "quote": null
         }
       ]
