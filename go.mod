@@ -1,6 +1,6 @@
 module github.com/patchwork-toolkit/patchwork
 
-go 1.26.0
+go 1.26.6
 
 require (
 	github.com/emersion/go-ical v0.0.0-20250609112844-439c63cef608
