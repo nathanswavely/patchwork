@@ -23717,7 +23717,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 393,
+          "line": 414,
           "kind": "markup",
           "raw": "patch is outside this view",
           "quote": null
@@ -23735,7 +23735,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 395,
+          "line": 416,
           "kind": "markup",
           "raw": "patches are outside this view",
           "quote": null
