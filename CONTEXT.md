@@ -407,6 +407,21 @@ The instance admin surface at /admin. Gets the same full-screen takeover
 treatment as a workspace.
 _Avoid_: admin area, dashboard (that is the user's personal page)
 
+**Overview**:
+The admin panel's landing page. It shows what is waiting on the instance
+admin's decision and what is unattended, and nothing else: no size, growth,
+or activity figures. Something is on it only when the next act is the
+instance admin's; what waits on somebody else (a claimant still setting up)
+is not. Decisions a person is waiting on come first; routing work nobody is
+waiting on (unrouted names) sits below them. Below that is what is broken or
+unattended and the instance admin's to mend, which under custody
+(docs/adr/115) means the instance's own machinery and patches held in
+custody; a claimed patch with no admin leads it, and a fault on a patch that
+has admins of its own never appears. Standing conditions (mail is off, the
+admin holds no passkey) are stated plainly, never nagged or dismissed. A
+quilt with nothing waiting shows a quiet page.
+_Avoid_: admin dashboard, stats, KPIs
+
 ## Layout & spacing
 
 **Gutter**:

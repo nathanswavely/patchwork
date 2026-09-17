@@ -19073,13 +19073,6 @@
           "kind": "markup",
           "raw": "Audit Log",
           "quote": null
-        },
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 115,
-          "kind": "markup",
-          "raw": "Audit Log",
-          "quote": null
         }
       ]
     },
@@ -23996,13 +23989,6 @@
           "quote": null
         },
         {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 64,
-          "kind": "markup",
-          "raw": "Events",
-          "quote": null
-        },
-        {
           "file": "web/src/pages/EventsPage.svelte",
           "line": 224,
           "kind": "markup",
@@ -27729,13 +27715,6 @@
         {
           "file": "web/src/components/UnlockPanel.svelte",
           "line": 93,
-          "kind": "markup",
-          "raw": "Proposals",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 77,
           "kind": "markup",
           "raw": "Proposals",
           "quote": null
@@ -33940,328 +33919,307 @@
       ]
     },
     {
-      "id": "66d1605446f4",
-      "text": "Admin Dashboard",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 41,
-          "kind": "markup",
-          "raw": "Admin Dashboard",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "0ca3aa44a8c1",
-      "text": "Total Users",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 52,
-          "kind": "markup",
-          "raw": "Total Users",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "c4dc1dae9ffb",
-      "text": "Active (30d)",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 56,
-          "kind": "markup",
-          "raw": "Active (30d)",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "1c22815500b5",
-      "text": "Patches",
+      "id": "d4b1ea5708dd",
+      "text": "Overview",
       "words": 1,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 60,
+          "line": 74,
           "kind": "markup",
-          "raw": "Patches",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/SocialHome.svelte",
-          "line": 661,
-          "kind": "markup",
-          "raw": "Patches",
+          "raw": "Overview",
           "quote": null
         }
       ]
     },
     {
-      "id": "544172a42972",
-      "text": "Pending Reports",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 68,
-          "kind": "markup",
-          "raw": "Pending Reports",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ba3582d009f8",
-      "text": "Signups (7d)",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 72,
-          "kind": "markup",
-          "raw": "Signups (7d)",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ed077f3d8125",
-      "text": "Open",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 80,
-          "kind": "markup",
-          "raw": "Open",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "436fe71bb956",
-      "text": "Passed",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 87,
-          "kind": "markup",
-          "raw": "Passed",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "aea4a04a8042",
-      "text": "Rejected",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 94,
-          "kind": "markup",
-          "raw": "Rejected",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "62b34994944f",
-      "text": "Quick Links",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 104,
-          "kind": "markup",
-          "raw": "Quick Links",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ff18d1d5d9d7",
-      "text": "Reports Queue",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 107,
-          "kind": "markup",
-          "raw": "Reports Queue",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/AdminReports.svelte",
-          "line": 94,
-          "kind": "markup",
-          "raw": "Reports Queue",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d058f60d5bff",
-      "text": "Review and resolve content reports",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 108,
-          "kind": "markup",
-          "raw": "Review and resolve content reports",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "fe45f3a1addc",
-      "text": "User Management",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 111,
-          "kind": "markup",
-          "raw": "User Management",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 206,
-          "kind": "markup",
-          "raw": "User Management",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "bcdeb199869f",
-      "text": "Search, suspend, and manage roles",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 112,
-          "kind": "markup",
-          "raw": "Search, suspend, and manage roles",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d7db28363dad",
-      "text": "View system activity history",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 116,
-          "kind": "markup",
-          "raw": "View system activity history",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "e725a60e85da",
-      "text": "Export Data (Seamrip)",
+      "id": "57dccc5db9b0",
+      "text": "Waiting on you",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 83,
+          "kind": "markup",
+          "raw": "Waiting on you",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "966f3dee73a2",
+      "text": "Nothing is waiting on you.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 85,
+          "kind": "markup",
+          "raw": "Nothing is waiting on you.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5d9d65bd52c3",
+      "text": "oldest {formatRelative(q.oldest_at)}",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 93,
+          "kind": "markup",
+          "raw": "oldest {formatRelative(q.oldest_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3549be8ade7f",
+      "text": "{' '}across {plural(overview.unrouted_names.aggregators, 'aggregator', 'aggregators')}. Nobody is waiting on these.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 106,
+          "kind": "markup",
+          "raw": "{' '}across {plural(overview.unrouted_names.aggregators, 'aggregator', 'aggregators')}. Nobody is waiting on these.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c1ebc7817870",
+      "text": "Needs attention",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 113,
+          "kind": "markup",
+          "raw": "Needs attention",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e493f18ada6e",
+      "text": "{p.name} has no admin.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 118,
+          "kind": "markup",
+          "raw": "{p.name} has no admin.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9536910ff925",
+      "text": "{plural(p.member_count, 'member', 'members')} to hand it to.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 120,
+          "kind": "markup",
+          "raw": "{plural(p.member_count, 'member', 'members')} to hand it to.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1e5bc8a0d0b8",
+      "text": "No members to hand it to.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
           "line": 122,
           "kind": "markup",
-          "raw": "Export Data (Seamrip)",
+          "raw": "No members to hand it to.",
           "quote": null
         }
       ]
     },
     {
-      "id": "525f49f6cd35",
-      "text": "Download all community data as a zip: patches, members, events, governance",
-      "words": 11,
-      "tier": "helper",
+      "id": "9e05c04f0296",
+      "text": "{a.name} is not syncing.",
+      "words": 4,
+      "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 123,
+          "line": 130,
           "kind": "markup",
-          "raw": "Download all community data as a zip: patches, members, events, governance",
+          "raw": "{a.name} is not syncing.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d513a67cb4b0",
+      "text": "{' · '}last synced {formatRelative(a.last_success_at)}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 131,
+          "kind": "markup",
+          "raw": "{' · '}last synced {formatRelative(a.last_success_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "01925e2b55a8",
+      "text": "{s.node_name}'s feed is not syncing.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 138,
+          "kind": "markup",
+          "raw": "{s.node_name}'s feed is not syncing.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cd6a2b944fb6",
+      "text": "{' · '}last synced {formatRelative(s.last_success_at)}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 139,
+          "kind": "markup",
+          "raw": "{' · '}last synced {formatRelative(s.last_success_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "adf9a1124142",
+      "text": "{plural(care.failed_deliveries, 'federated activity', 'federated activities')} could not be delivered.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 146,
+          "kind": "markup",
+          "raw": "{plural(care.failed_deliveries, 'federated activity', 'federated activities')} could not be delivered.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a73b3376205d",
+      "text": "The delivery worker has given up on these.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 147,
+          "kind": "markup",
+          "raw": "The delivery worker has given up on these.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9a2394e7cc51",
+      "text": "Mail is off. Sign-in is by invite link and passkey, and magic links print to the server log.",
+      "words": 18,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 159,
+          "kind": "markup",
+          "raw": "Mail is off. Sign-in is by invite link and passkey, and magic links print to the server log.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6c058d97b743",
+      "text": "You have no passkey. Export, wipe, setting a person's email and proving admin each need one.",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "AI-drafted in the Overview rewrite; plain statements in the register CONTEXT.md sets for the page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 163,
+          "kind": "markup",
+          "raw": "You have no passkey. Export, wipe, setting a person's email and proving admin each need one.",
           "quote": null
         }
       ]
@@ -36406,6 +36364,24 @@
       ]
     },
     {
+      "id": "ff18d1d5d9d7",
+      "text": "Reports Queue",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminReports.svelte",
+          "line": 94,
+          "kind": "markup",
+          "raw": "Reports Queue",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "52ea49178e15",
       "text": "No {activeTab} reports.",
       "words": 3,
@@ -37229,6 +37205,24 @@
           "kind": "js-string",
           "raw": "Could not copy. Select the link and copy it manually.",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fe45f3a1addc",
+      "text": "User Management",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 206,
+          "kind": "markup",
+          "raw": "User Management",
+          "quote": null
         }
       ]
     },
@@ -51916,6 +51910,24 @@
       ]
     },
     {
+      "id": "1c22815500b5",
+      "text": "Patches",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SocialHome.svelte",
+          "line": 661,
+          "kind": "markup",
+          "raw": "Patches",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "13aa3b63db4c",
       "text": "{resultCount} of {ordered.length} in view",
       "words": 5,
@@ -55144,6 +55156,204 @@
           "line": 690,
           "kind": "markup",
           "raw": "Tags help people find this patch, and the quilt places patches with\n      shared tags near each other. The first tag decides the default motif.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "66d1605446f4",
+      "text": "Admin Dashboard",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 41,
+          "kind": "markup",
+          "raw": "Admin Dashboard",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0ca3aa44a8c1",
+      "text": "Total Users",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 52,
+          "kind": "markup",
+          "raw": "Total Users",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c4dc1dae9ffb",
+      "text": "Active (30d)",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 56,
+          "kind": "markup",
+          "raw": "Active (30d)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "544172a42972",
+      "text": "Pending Reports",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 68,
+          "kind": "markup",
+          "raw": "Pending Reports",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ba3582d009f8",
+      "text": "Signups (7d)",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 72,
+          "kind": "markup",
+          "raw": "Signups (7d)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ed077f3d8125",
+      "text": "Open",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "Open",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "436fe71bb956",
+      "text": "Passed",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 87,
+          "kind": "markup",
+          "raw": "Passed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aea4a04a8042",
+      "text": "Rejected",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 94,
+          "kind": "markup",
+          "raw": "Rejected",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "62b34994944f",
+      "text": "Quick Links",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 104,
+          "kind": "markup",
+          "raw": "Quick Links",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e725a60e85da",
+      "text": "Export Data (Seamrip)",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 122,
+          "kind": "markup",
+          "raw": "Export Data (Seamrip)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "525f49f6cd35",
+      "text": "Download all community data as a zip: patches, members, events, governance",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminDashboard.svelte",
+          "line": 123,
+          "kind": "markup",
+          "raw": "Download all community data as a zip: patches, members, events, governance",
           "quote": null
         }
       ]
