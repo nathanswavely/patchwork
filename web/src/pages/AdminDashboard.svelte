@@ -1,22 +1,36 @@
 <script>
+  /**
+   * The admin panel's Overview (CONTEXT.md): what is waiting on the
+   * instance admin and what is unattended, and nothing else. No size,
+   * growth or activity figures — a steward opens this page to act, and a
+   * quilt with nothing waiting shows a quiet page.
+   *
+   * Three regions, top to bottom: the inbox (decision queues a person is
+   * waiting on, each counting exactly what its tab lists, with the age of
+   * the oldest), routing work nobody is waiting on (unrouted names), and
+   * care — what is broken or unattended and the instance admin's to mend
+   * under custody (docs/adr/115). Standing conditions (mail off, no
+   * passkey) are stated plainly and never dismissed.
+   */
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { formatRelative } from '../lib/datetime.js';
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
 
-  let stats = $state(null);
+  let overview = $state(null);
   let loading = $state(true);
   let error = $state('');
 
   $effect(() => {
-    loadStats();
+    load();
   });
 
-  async function loadStats() {
+  async function load() {
     loading = true;
     error = '';
     try {
-      stats = await api('admin/stats');
+      overview = await api('admin/overview');
     } catch (e) {
       error = e.message;
     }
@@ -28,139 +42,137 @@
     navigate(path);
   }
 
-  function proposalBarWidth(count) {
-    if (!stats) return '0%';
-    const total = stats.open_proposals + stats.passed_proposals + stats.rejected_proposals;
-    if (total === 0) return '0%';
-    return Math.round((count / total) * 100) + '%';
+  // Each queue's tab, and how to say "3 of them" in the page's own words.
+  const QUEUES = {
+    reports: { one: 'report', many: 'reports', href: '/admin/reports' },
+    submissions: { one: 'patch submission', many: 'patch submissions', href: '/admin/submissions' },
+    event_submissions: { one: 'event submission', many: 'event submissions', href: '/admin/event-submissions' },
+    claims: { one: 'claim', many: 'claims', href: '/admin/claims' },
+    tag_suggestions: { one: 'suggested tag', many: 'suggested tags', href: '/admin/tags' },
+  };
+
+  function plural(n, one, many) {
+    return `${n} ${n === 1 ? one : many}`;
   }
+
+  let waiting = $derived(
+    (overview?.inbox || []).filter((q) => q.count > 0 && QUEUES[q.queue])
+  );
+  let care = $derived(overview?.care || null);
+  let hasCare = $derived(
+    !!care && (
+      care.adminless_patches.length > 0 ||
+      care.failing_aggregators.length > 0 ||
+      care.failing_unclaimed_sources.length > 0 ||
+      care.failed_deliveries > 0
+    )
+  );
 </script>
 
 <div class="page-fade">
   <div class="page-header">
-    <h1>Admin Dashboard</h1>
+    <h1>Overview</h1>
   </div>
 
   {#if loading}
     <Skeleton lines={5} />
   {:else if error}
-    <ErrorState message={error} retry={loadStats} />
-  {:else if stats}
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value">{stats.total_users}</div>
-        <div class="stat-label">Total Users</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">{stats.active_users_30d}</div>
-        <div class="stat-label">Active (30d)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">{stats.total_nodes}</div>
-        <div class="stat-label">Patches</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">{stats.total_events}</div>
-        <div class="stat-label">Events</div>
-      </div>
-      <div class="stat-card highlight">
-        <div class="stat-value">{stats.pending_reports}</div>
-        <div class="stat-label">Pending Reports</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">{stats.recent_signups_7d}</div>
-        <div class="stat-label">Signups (7d)</div>
-      </div>
-    </div>
+    <ErrorState message={error} retry={load} />
+  {:else if overview}
+    <section class="section">
+      <h2>Waiting on you</h2>
+      {#if waiting.length === 0}
+        <p class="muted">Nothing is waiting on you.</p>
+      {:else}
+        <ul class="lines">
+          {#each waiting as q (q.queue)}
+            <li>
+              <a href={QUEUES[q.queue].href} class="line card" onclick={(e) => handleNav(e, QUEUES[q.queue].href)}>
+                <strong>{plural(q.count, QUEUES[q.queue].one, QUEUES[q.queue].many)}</strong>
+                {#if q.oldest_at}
+                  <span class="muted">oldest {formatRelative(q.oldest_at)}</span>
+                {/if}
+              </a>
+            </li>
+          {/each}
+        </ul>
+      {/if}
 
-    <div class="section">
-      <h2>Proposals</h2>
-      <div class="proposal-bars">
-        <div class="bar-row">
-          <span class="bar-label">Open</span>
-          <div class="bar-track">
-            <div class="bar-fill bar-open" style="width: {proposalBarWidth(stats.open_proposals)}"></div>
-          </div>
-          <span class="bar-count">{stats.open_proposals}</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Passed</span>
-          <div class="bar-track">
-            <div class="bar-fill bar-passed" style="width: {proposalBarWidth(stats.passed_proposals)}"></div>
-          </div>
-          <span class="bar-count">{stats.passed_proposals}</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Rejected</span>
-          <div class="bar-track">
-            <div class="bar-fill bar-rejected" style="width: {proposalBarWidth(stats.rejected_proposals)}"></div>
-          </div>
-          <span class="bar-count">{stats.rejected_proposals}</span>
-        </div>
-      </div>
-    </div>
+      {#if overview.unrouted_names.count > 0}
+        <p class="lower">
+          <a href="/admin/aggregators" onclick={(e) => handleNav(e, '/admin/aggregators')}>
+            {plural(overview.unrouted_names.count, 'unrouted name', 'unrouted names')}
+          </a>
+          {' '}across {plural(overview.unrouted_names.aggregators, 'aggregator', 'aggregators')}. Nobody is waiting on these.
+        </p>
+      {/if}
+    </section>
 
-    <div class="section">
-      <h2>Quick Links</h2>
-      <div class="quick-links">
-        <a href="/admin/reports" class="quick-link card" onclick={(e) => handleNav(e, '/admin/reports')}>
-          <strong>Reports Queue</strong>
-          <span class="muted">Review and resolve content reports</span>
-        </a>
-        <a href="/admin/users" class="quick-link card" onclick={(e) => handleNav(e, '/admin/users')}>
-          <strong>User Management</strong>
-          <span class="muted">Search, suspend, and manage roles</span>
-        </a>
-        <a href="/admin/audit" class="quick-link card" onclick={(e) => handleNav(e, '/admin/audit')}>
-          <strong>Audit Log</strong>
-          <span class="muted">View system activity history</span>
-        </a>
-        <!-- Export is passkey-gated (docs/adr/017), so it lives on the Quilt
-             Settings page where the confirmation flow and the "you need a
-             passkey" notice are. A direct link here would just 403. -->
-        <a href="/admin/quilt" class="quick-link card" onclick={(e) => handleNav(e, '/admin/quilt')}>
-          <strong>Export Data (Seamrip)</strong>
-          <span class="muted">Download all community data as a zip: patches, members, events, governance</span>
-        </a>
-      </div>
-    </div>
+    {#if hasCare}
+      <section class="section">
+        <h2>Needs attention</h2>
+        <ul class="lines">
+          {#each care.adminless_patches as p (p.slug)}
+            <li>
+              <a href={`/patches/${p.slug}/settings/members`} class="line card" onclick={(e) => handleNav(e, `/patches/${p.slug}/settings/members`)}>
+                <strong>{p.name} has no admin.</strong>
+                {#if p.member_count > 0}
+                  <span class="muted">{plural(p.member_count, 'member', 'members')} to hand it to.</span>
+                {:else}
+                  <span class="muted">No members to hand it to.</span>
+                {/if}
+              </a>
+            </li>
+          {/each}
+          {#each care.failing_aggregators as a (a.id)}
+            <li>
+              <a href="/admin/aggregators" class="line card" onclick={(e) => handleNav(e, '/admin/aggregators')}>
+                <strong>{a.name} is not syncing.</strong>
+                <span class="muted">{a.last_error}{#if a.last_success_at}{' · '}last synced {formatRelative(a.last_success_at)}{/if}</span>
+              </a>
+            </li>
+          {/each}
+          {#each care.failing_unclaimed_sources as s (s.id)}
+            <li>
+              <a href={`/patches/${s.node_slug}/settings/sources`} class="line card" onclick={(e) => handleNav(e, `/patches/${s.node_slug}/settings/sources`)}>
+                <strong>{s.node_name}'s feed is not syncing.</strong>
+                <span class="muted">{s.last_error}{#if s.last_success_at}{' · '}last synced {formatRelative(s.last_success_at)}{/if}</span>
+              </a>
+            </li>
+          {/each}
+          {#if care.failed_deliveries > 0}
+            <li>
+              <div class="line card">
+                <strong>{plural(care.failed_deliveries, 'federated activity', 'federated activities')} could not be delivered.</strong>
+                <span class="muted">The delivery worker has given up on these.</span>
+              </div>
+            </li>
+          {/if}
+        </ul>
+      </section>
+    {/if}
+
+    {#if !overview.smtp_configured || !overview.has_passkey}
+      <section class="section">
+        <ul class="statements">
+          {#if !overview.smtp_configured}
+            <li>Mail is off. Sign-in is by invite link and passkey, and magic links print to the server log.</li>
+          {/if}
+          {#if !overview.has_passkey}
+            <li>
+              You have no passkey. Export, wipe, setting a person's email and proving admin each need one.
+              <a href="/settings/security" onclick={(e) => handleNav(e, '/settings/security')}>Add one in Security settings.</a>
+            </li>
+          {/if}
+        </ul>
+      </section>
+    {/if}
   {/if}
 </div>
 
 <style>
   .page-header {
     padding: 1.5rem 0 1rem;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
-
-  .stat-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .stat-card.highlight {
-    border-color: var(--color-accent);
-  }
-
-  .stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    margin-top: 0.25rem;
   }
 
   .section {
@@ -172,75 +184,44 @@
     margin-bottom: 0.75rem;
   }
 
-  .proposal-bars {
+  .lines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .bar-row {
+  .line {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .bar-label {
-    width: 70px;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-  }
-
-  .bar-track {
-    flex: 1;
-    height: 20px;
-    background: var(--color-bg);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: var(--radius);
-    transition: width 300ms ease;
-    min-width: 2px;
-  }
-
-  .bar-open {
-    background: var(--color-primary);
-  }
-
-  .bar-passed {
-    background: var(--color-success);
-  }
-
-  .bar-rejected {
-    background: var(--color-error);
-  }
-
-  .bar-count {
-    width: 30px;
-    text-align: right;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .quick-links {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.75rem;
-  }
-
-  .quick-link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
     text-decoration: none;
     color: var(--color-text);
     transition: border-color 150ms ease;
   }
 
-  .quick-link:hover {
+  a.line:hover {
     border-color: var(--color-primary);
     text-decoration: none;
+  }
+
+  .lower {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+
+  .statements {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
   }
 </style>
