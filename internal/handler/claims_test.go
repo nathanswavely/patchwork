@@ -1115,6 +1115,63 @@ func TestAdminClaimsListsApprovedAwaitingSetup(t *testing.T) {
 	}
 }
 
+// A finished claim is not one the panel should still be waiting on. The row
+// stays 'approved' forever by design (docs/adr/039) — the node is what says
+// setup happened — so the queue has to ask the node, and a live instance
+// showed an activated venue sitting under "Approved, awaiting setup".
+func TestAdminClaimsDropsClaimOnceSetupIsDone(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	governance.SetDataDir(t.TempDir())
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	nodeID := createTestNode(t, db, owner.ID, "Candy Factory", "candy-factory", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "candy-factory", aliceToken, adminToken)
+
+	listApproved := func() []map[string]interface{} {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/admin/claims?status=approved", nil, adminToken)
+		w := serveAdminMux(t, db, "GET", "/api/v1/admin/claims", handler.ListClaims(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("list: got %d %s", w.Code, w.Body.String())
+		}
+		var got struct {
+			Items []map[string]interface{} `json:"items"`
+		}
+		json.Unmarshal(w.Body.Bytes(), &got)
+		return got.Items
+	}
+
+	if len(listApproved()) != 1 {
+		t.Fatalf("approved claim should be awaiting setup before setup runs")
+	}
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+
+	if items := listApproved(); len(items) != 0 {
+		t.Fatalf("claim still listed as awaiting setup after setup: %v", items)
+	}
+
+	// And the window passing later must not rewrite a claim that succeeded
+	// into one that lapsed.
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+	listApproved()
+	if s := claimStatus(t, db, claimID); s != "approved" {
+		t.Fatalf("completed claim status = %s, want approved", s)
+	}
+}
+
 // --- Verification domain provenance ---
 
 func TestAdminCreateDerivesVerificationDomain(t *testing.T) {
