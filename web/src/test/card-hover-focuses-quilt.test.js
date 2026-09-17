@@ -31,15 +31,19 @@ describe('the card list can point at a tile', () => {
 
   it('dims nothing when the patch is scrolled out of view', () => {
     // Dimming every visible tile for one the reader cannot see leaves the
-    // whole quilt washed with nothing lit, which reads as a bug.
-    const effect = canvas.match(/const id = focusPatchId;[\s\S]*?\n  \}\);/)[0];
-    expect(effect).toMatch(/computeInView\(\)/);
-    expect(effect).toMatch(/!inView\.includes\(id\)/);
+    // whole quilt washed with nothing lit, which reads as a bug. The guard
+    // lives in canLight rather than at this call site, so the card hover and
+    // the docked profile (decision 6c) cannot disagree about it.
+    const guard = canvas.match(/function canLight\(patchId\) \{[\s\S]*?\n  \}/);
+    expect(guard, 'canLight not found').toBeTruthy();
+    expect(guard[0]).toMatch(/computeInView\(\)/);
+    expect(guard[0]).toMatch(/inView\.includes\(patchId\)/);
+    expect(canvas).toMatch(/if \(!canLight\(target\)\)/);
   });
 
   it('releases when the pointer leaves the card', () => {
     const effect = canvas.match(/const id = focusPatchId;[\s\S]*?\n  \}\);/)[0];
-    expect(effect).toMatch(/if \(!id\) \{\s*\n\s*releaseDim\(\);/);
+    expect(effect).toMatch(/else releaseDim\(\);/);
   });
 
   it('does nothing on a static hero, which has no pointer to answer', () => {

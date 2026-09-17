@@ -76,6 +76,9 @@
     // with the same hover dim a tile's own pointerenter engages, so the two
     // surfaces cannot drift into two different ideas of "this one".
     focusPatchId = null,
+    // A profile docked beside the quilt (docs/adr/094): its patch stays lit
+    // and the rest stay dimmed for as long as it is open (docs/adr/112).
+    dockedPatchId = null,
   } = $props();
 
   let containerEl = $state(null);
@@ -504,16 +507,17 @@
     const id = focusPatchId;
     untrack(() => {
       if (!interactive) return;
-      if (!id) {
-        releaseDim();
-        return;
-      }
-      const inView = computeInView();
-      if (inView && !inView.includes(id)) {
-        releaseDim();
-        return;
-      }
-      engageDim(id);
+      if (id) engageDim(id);
+      else releaseDim();
+    });
+  });
+
+  // A docked profile holds the light for as long as it is open.
+  $effect(() => {
+    const id = dockedPatchId;
+    untrack(() => {
+      if (!interactive) return;
+      setBaseFocus(id || null);
     });
   });
 
@@ -582,14 +586,19 @@
     const tiles = placedTiles;
     const inset = insetRight;
     untrack(() => {
-      if (!onInViewChange) return;
       void t; void tiles; void inset;
       const ids = computeInView();
       if (!ids) return;
       const key = ids.join(',');
       if (key === lastInView) return;
       lastInView = key;
-      onInViewChange(ids);
+      if (onInViewChange) onInViewChange(ids);
+      // What is on screen has changed, so the answer to "can this be lit"
+      // may have too. Only a sustained focus can go stale this way: a hover
+      // ends when the pointer moves, and a pan does that. Deliberately not
+      // behind the callback check above — a consumer that docks a profile
+      // without wanting the in-view lens would otherwise hold a stale dim.
+      if (baseFocusId) applyFocus({ immediate: true });
     });
   });
 
@@ -1304,6 +1313,16 @@
   let dimReleaseTimer = null;
   let dimLitPatchId = null;
 
+  // Two focuses, and the transient one wins while it lasts.
+  //
+  // `base` is sustained: a profile docked beside the quilt (docs/adr/094)
+  // keeps its patch lit for as long as it is open. `hover` is momentary: a
+  // pointer on a tile or on its card. Pointing somewhere else while a profile
+  // is docked moves the light and then gives it back, rather than clearing —
+  // the docked patch has not stopped being the one the reader opened.
+  let baseFocusId = null;
+  let hoverFocusId = null;
+
   function paintDim(litPatchId) {
     if (!svgSelection) return;
     svgSelection.selectAll('.overlay').attr('fill', 'var(--color-quilt-dim)');
@@ -1320,6 +1339,7 @@
     dimEngageTimer = null;
     dimReleaseTimer = null;
     dimLitPatchId = null;
+    hoverFocusId = null;
   }
 
   function clearDim() {
@@ -1328,27 +1348,75 @@
     dimLitPatchId = null;
   }
 
-  function engageDim(patchId) {
-    clearTimeout(dimReleaseTimer);
-    dimReleaseTimer = null;
+  /**
+   * Whether a patch can be the lit one: it has to be on screen.
+   *
+   * Dimming every visible tile for one the reader cannot see leaves the quilt
+   * washed with nothing lit, which reads as breakage rather than as an
+   * answer. The check lives here rather than at each caller so the hover and
+   * the docked profile cannot disagree about it — and so the *sustained* one
+   * is re-asked as the view moves, below.
+   */
+  function canLight(patchId) {
+    if (!patchId) return false;
+    const inView = computeInView();
+    return !inView || inView.includes(patchId);
+  }
+
+  /** Light whatever should be lit now, or clear if nothing can be. */
+  function applyFocus({ immediate = false } = {}) {
+    const target = hoverFocusId || baseFocusId;
+    if (!canLight(target)) {
+      if (dimLitPatchId !== null) clearDim();
+      return;
+    }
     // Already dimmed: move the hole immediately, so crossing tiles reads as
     // one continuous state rather than a flicker per boundary.
-    if (dimLitPatchId !== null) {
-      paintDim(patchId);
+    if (immediate || dimLitPatchId !== null) {
+      clearTimeout(dimEngageTimer);
+      dimEngageTimer = null;
+      paintDim(target);
       return;
     }
     clearTimeout(dimEngageTimer);
     dimEngageTimer = setTimeout(() => {
       dimEngageTimer = null;
-      paintDim(patchId);
+      paintDim(target);
     }, DIM_DWELL_MS);
+  }
+
+  function engageDim(patchId) {
+    clearTimeout(dimReleaseTimer);
+    dimReleaseTimer = null;
+    hoverFocusId = patchId;
+    applyFocus();
   }
 
   function releaseDim() {
     clearTimeout(dimEngageTimer);
     dimEngageTimer = null;
+    hoverFocusId = null;
     clearTimeout(dimReleaseTimer);
+    // Handing the light back to a docked patch is not a release, so it does
+    // not wait: the delay exists to ride out the gap between two tiles, and
+    // there is no gap here.
+    if (baseFocusId) {
+      applyFocus({ immediate: true });
+      return;
+    }
     dimReleaseTimer = setTimeout(clearDim, DIM_RELEASE_MS);
+  }
+
+  /**
+   * The sustained focus: a docked profile (docs/adr/112 decision 6c).
+   *
+   * No dwell. The dwell stops a pan across tiles from strobing; opening a
+   * profile is one deliberate act, and making it wait would only feel slow.
+   */
+  function setBaseFocus(patchId) {
+    if (baseFocusId === patchId) return;
+    baseFocusId = patchId;
+    applyFocus({ immediate: true });
   }
 
   // A pointer that hovers. Touch never does — a finger's pointerenter is

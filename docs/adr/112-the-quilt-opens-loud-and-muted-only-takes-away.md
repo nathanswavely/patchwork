@@ -176,6 +176,34 @@ quilt answers its own pointer itself. Feeding ADR 078's shared `previewing`
 id back in would have a hovered *tile* ask the canvas to focus the tile
 already under the pointer.
 
+**6c. A docked profile holds the light for as long as it is open** (added
+2026-09-16). Opening a patch beside the quilt (ADR 094) keeps its tile lit
+and the rest dimmed. Same scrim, same code path, a third trigger.
+
+It differs from a hover in three ways, and each one is a way it could go
+wrong:
+
+**It is a base, not an override.** Pointing at another tile while a profile
+is docked moves the light and then gives it back, rather than clearing: the
+docked patch has not stopped being the one the reader opened just because
+the pointer wandered. So the canvas holds two focuses, `baseFocusId` and
+`hoverFocusId`, and the transient one wins while it lasts.
+
+**It persists, so it can go stale.** Pan the docked tile off screen and a dim
+that never re-checks sits there with nothing lit, which is the exact failure
+the in-view guard exists to prevent. A hover cannot go stale that way,
+because moving the pointer is what ends it. So the in-view effect re-asks
+whenever the on-screen set changes, and the guard moved into one `canLight`
+that every trigger goes through rather than living at each call site.
+
+**It is deliberate, so it does not wait.** The dwell stops a pan across tiles
+from strobing. Opening a profile is one act, and making it wait would only
+read as lag.
+
+Handing the light back is likewise immediate: the release delay exists to
+ride out the gap between two tiles, and returning to a docked patch has no
+gap.
+
 ## Considered options
 
 - **Mute what the admin chose — clamp chroma, keep every slot.** Every
