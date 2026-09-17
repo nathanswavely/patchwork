@@ -686,7 +686,19 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			).Scan(&role, &memStatus)
 			if err == nil {
 				if memStatus == "active" {
-					resp["is_member"] = true
+					// is_member means the membership: admin or member, the
+					// two roles member_count counts (docs/adr/117). It used
+					// to mean "has an active row", followers included, which
+					// is a different question wearing the word for this one.
+					//
+					// Six components had written their own guard against it
+					// ("Not `isMember`: the node payload sets is_member for
+					// followers too") and one had not, so a follower-inclusive
+					// flag reached a gate that meant membership. A caller who
+					// wants "has any standing here" reads membership_role
+					// below, which is set for every active row and empty for
+					// everyone else.
+					resp["is_member"] = role == "admin" || role == "member"
 					resp["is_admin"] = role == "admin"
 					resp["membership_role"] = role
 				} else if memStatus == "banned" {

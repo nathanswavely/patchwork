@@ -94,16 +94,29 @@
   let inviteUsername = $state('');
   let inviting = $state(false);
 
+  // Followers are their own relationship, listed apart and with no role
+  // control (docs/adr/117). They used to arrive in the same array as the
+  // membership, under a heading that said Active Members, above a count that
+  // excluded them — and every row got a role dropdown, so a follower could
+  // be handed admin without ever passing through membership. The server
+  // refuses that now; this is the same rule where a person can see it.
+  let followers = $state([]);
+
   async function loadMembers() {
     loadingMembers = true;
     try {
-      const data = await api(`nodes/${slug}/members`);
+      const [data, followerData] = await Promise.all([
+        api(`nodes/${slug}/members`),
+        api(`nodes/${slug}/members?role=follower`),
+      ]);
       members = data.items || data || [];
       invited = data.invited || [];
+      followers = followerData.items || [];
       roleEdits = {};
     } catch {
       members = [];
       invited = [];
+      followers = [];
     } finally {
       loadingMembers = false;
     }
@@ -382,6 +395,9 @@
                 value={roleEdits[member.user_id] ?? member.role}
                 onchange={(e) => setRoleEdit(member.user_id, e.target.value)}
               >
+                <!-- Demotion, not a rung to climb: a follower is never
+                     promoted from here (docs/adr/117), so this option only
+                     ever moves somebody out of the membership. -->
                 <option value="follower">Follower</option>
                 <option value="member">Member</option>
                 <!-- Kept for somebody who already holds the seat, so the
@@ -401,6 +417,38 @@
                 confirmLabel="Remove"
                 variant="danger"
                 onConfirm={() => banMember(member.user_id)}
+              />
+            </div>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </section>
+
+  <section class="members-section">
+    <h3 class="section-heading">Followers</h3>
+    <p class="setting-desc muted">
+      Followers see this patch's events and public pages. They hold no vote and
+      no role here. To bring somebody into the membership, invite them above:
+      joining is theirs to accept, not yours to set.
+    </p>
+    {#if loadingMembers}
+      <Skeleton lines={2} height="0.9rem" />
+    {:else if followers.length === 0}
+      <p class="muted">No followers yet.</p>
+    {:else}
+      <ul class="member-list">
+        {#each followers as follower (follower.user_id)}
+          <li class="member-row">
+            <div class="member-info">
+              <span class="member-name">{follower.display_name || follower.username}</span>
+            </div>
+            <div class="member-actions">
+              <ConfirmAction
+                label="Remove"
+                confirmLabel="Remove"
+                variant="danger"
+                onConfirm={() => banMember(follower.user_id)}
               />
             </div>
           </li>

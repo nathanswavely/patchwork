@@ -970,7 +970,7 @@
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 379,
+          "line": 380,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -4003,21 +4003,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 850,
+          "line": 879,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 734,
+          "line": 746,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 967,
+          "line": 979,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4630,7 +4630,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 824,
+          "line": 853,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4644,14 +4644,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 955,
+          "line": 967,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1320,
+          "line": 1332,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5056,7 +5056,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1236,
+          "line": 1248,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5565,21 +5565,21 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 830,
+          "line": 859,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 961,
+          "line": 973,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1326,
+          "line": 1338,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -8019,7 +8019,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 753,
+          "line": 765,
           "kind": "go-error-body",
           "raw": "membership_policy must be one of %s",
           "quote": null
@@ -12702,14 +12702,14 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 578,
+          "line": 607,
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 680,
+          "line": 709,
           "kind": "go-error-body",
           "raw": "failed to list members",
           "quote": null
@@ -12727,7 +12727,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 744,
+          "line": 773,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -12745,7 +12745,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 841,
+          "line": 870,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -12770,7 +12770,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 860,
+          "line": 889,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -12788,7 +12788,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 865,
+          "line": 894,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -12806,7 +12806,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 888,
+          "line": 917,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -12824,7 +12824,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 893,
+          "line": 922,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -12842,7 +12842,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 901,
+          "line": 930,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -12860,7 +12860,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 907,
+          "line": 936,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -12878,7 +12878,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 936,
+          "line": 965,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -12896,7 +12896,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 944,
+          "line": 973,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -12914,7 +12914,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 964,
+          "line": 993,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -12932,7 +12932,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 969,
+          "line": 998,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -12950,7 +12950,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 978,
+          "line": 1007,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -12968,9 +12968,27 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 987,
+          "line": 1016,
           "kind": "go-error-body",
           "raw": "they have not accepted the invitation yet",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b0639a22cab4",
+      "text": "they follow this patch: invite them to join, or let them become a member themselves",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/memberships.go",
+          "line": 1043,
+          "kind": "go-error-body",
+          "raw": "they follow this patch: invite them to join, or let them become a member themselves",
           "quote": null
         }
       ]
@@ -12986,7 +13004,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 996,
+          "line": 1052,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -13004,7 +13022,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1028,
+          "line": 1084,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -13022,7 +13040,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1040,
+          "line": 1096,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -13040,7 +13058,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1077,
+          "line": 1133,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -13094,7 +13112,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 738,
+          "line": 750,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -13140,14 +13158,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 748,
+          "line": 760,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1087,
+          "line": 1099,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
@@ -13165,7 +13183,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 817,
+          "line": 829,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -13183,7 +13201,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1040,
+          "line": 1052,
           "kind": "go-error-body",
           "raw": "failed to read this patch's calendar",
           "quote": null
@@ -13201,7 +13219,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1098,
+          "line": 1110,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -13219,7 +13237,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1104,
+          "line": 1116,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -13237,7 +13255,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1116,
+          "line": 1128,
           "kind": "go-error-body",
           "raw": "public_member_list must be one of %s",
           "quote": null
@@ -13255,14 +13273,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1139,
+          "line": 1151,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1146,
+          "line": 1158,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -13280,7 +13298,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1160,
+          "line": 1172,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -13298,14 +13316,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1169,
+          "line": 1181,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1176,
+          "line": 1188,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
@@ -13323,7 +13341,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1248,
+          "line": 1260,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -13341,7 +13359,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1257,
+          "line": 1269,
           "kind": "go-error-body",
           "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
@@ -13359,7 +13377,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1334,
+          "line": 1346,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -21930,7 +21948,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 105,
+          "line": 106,
           "kind": "js-string",
           "raw": "In the contest running now. Whoever the members approve takes it.",
           "quote": "'"
@@ -21948,7 +21966,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 109,
+          "line": 110,
           "kind": "js-string",
           "raw": "Filled by nomination: an admin puts a member forward and the members ratify it. That can happen today.",
           "quote": "'"
@@ -21966,7 +21984,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 123,
+          "line": 124,
           "kind": "js-string",
           "raw": "Vacant, and this patch has no admins to put a name forward.",
           "quote": "'"
@@ -21984,7 +22002,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 136,
+          "line": 137,
           "kind": "js-string",
           "raw": "No term end, so nothing brings this seat up for election.",
           "quote": "'"
@@ -22002,7 +22020,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 145,
+          "line": 146,
           "kind": "js-string",
           "raw": "Nominations are open. You can stand, or put another member forward.",
           "quote": "'"
@@ -22020,7 +22038,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 146,
+          "line": 147,
           "kind": "js-string",
           "raw": "Nominations are open. Members of this patch can stand for a seat.",
           "quote": "'"
@@ -22038,7 +22056,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 149,
+          "line": 150,
           "kind": "js-string",
           "raw": "The ballot is open. The members are choosing between the candidates.",
           "quote": "'"
@@ -22056,7 +22074,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 157,
+          "line": 158,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.",
           "quote": "'"
@@ -22074,7 +22092,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 167,
+          "line": 168,
           "kind": "js-string",
           "raw": "Only an admin can put a name forward for a vacant seat. Ask one to nominate you.",
           "quote": "'"
@@ -22092,7 +22110,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 171,
+          "line": 172,
           "kind": "js-string",
           "raw": "Every seat is held and no election is scheduled. Nothing changes on this council until a seat is added or a term end is set.",
           "quote": "'"
@@ -22110,7 +22128,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 174,
+          "line": 175,
           "kind": "js-string",
           "raw": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
           "quote": "'"
@@ -22128,7 +22146,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 197,
+          "line": 198,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. This patch records its leadership decisions elsewhere, so a decision made there is what puts somebody back.",
           "quote": "'"
@@ -22146,7 +22164,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 198,
+          "line": 199,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. This council is filled by election.",
           "quote": "'"
@@ -22164,7 +22182,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 200,
+          "line": 201,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. An admin is nominated by an admin and ratified by the members, so this patch cannot start one on its own until an instance admin puts somebody back.",
           "quote": "'"
@@ -22182,7 +22200,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 201,
+          "line": 202,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here, so nobody can manage this patch until an instance admin puts somebody back.",
           "quote": "'"
@@ -22200,7 +22218,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 229,
+          "line": 230,
           "kind": "js-string",
           "raw": "Could not set the term end",
           "quote": "'"
@@ -22218,7 +22236,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 242,
+          "line": 243,
           "kind": "js-string",
           "raw": "Could not add a seat",
           "quote": "'"
@@ -22236,7 +22254,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 255,
+          "line": 256,
           "kind": "js-string",
           "raw": "Could not remove the seat",
           "quote": "'"
@@ -22254,7 +22272,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 318,
+          "line": 319,
           "kind": "js-string",
           "raw": "Naming a successor needs a passkey. Enroll one in Security settings first.",
           "quote": "'"
@@ -22272,7 +22290,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 319,
+          "line": 320,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -22402,7 +22420,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 336,
+          "line": 337,
           "kind": "js-string",
           "raw": "The maintainer makes all decisions for this patch, and may ask the members before deciding.",
           "quote": "'"
@@ -22420,7 +22438,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 337,
+          "line": 338,
           "kind": "js-string",
           "raw": "Your patch decides things by majority vote. More than half must agree.",
           "quote": "'"
@@ -22438,7 +22456,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 338,
+          "line": 339,
           "kind": "js-string",
           "raw": "Decisions require a supermajority: at least 2 out of 3 voters must agree.",
           "quote": "'"
@@ -22456,7 +22474,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 339,
+          "line": 340,
           "kind": "js-string",
           "raw": "Decisions require consensus. Everyone, or nearly everyone, must agree.",
           "quote": "'"
@@ -22474,7 +22492,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 346,
+          "line": 347,
           "kind": "js-string",
           "raw": " Any number of votes counts. No minimum participation required.",
           "quote": "'"
@@ -22492,7 +22510,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 365,
+          "line": 366,
           "kind": "js-string",
           "raw": "One person maintains this patch. They handle day-to-day decisions and can designate a successor.",
           "quote": "'"
@@ -22510,7 +22528,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 366,
+          "line": 367,
           "kind": "js-string",
           "raw": "Admins earn their role through sustained contribution. When a seat opens, existing admins nominate from active members and the community ratifies.",
           "quote": "'"
@@ -22528,7 +22546,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 367,
+          "line": 368,
           "kind": "js-string",
           "raw": "The community elects admins for fixed terms. Regular elections ensure power rotates.",
           "quote": "'"
@@ -22546,7 +22564,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 400,
+          "line": 401,
           "kind": "markup",
           "raw": "Failed to load governance overview.",
           "quote": null
@@ -22564,7 +22582,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 409,
+          "line": 410,
           "kind": "markup",
           "raw": "{overview.needs_vote} proposal{overview.needs_vote > 1 ? 's' : ''} need{overview.needs_vote === 1 ? 's' : ''} your vote",
           "quote": null
@@ -22582,7 +22600,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 428,
+          "line": 429,
           "kind": "markup",
           "raw": "Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}",
           "quote": null
@@ -22600,7 +22618,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 435,
+          "line": 436,
           "kind": "markup",
           "raw": "Closing {formatDay(election.nominations_close_at)}.",
           "quote": null
@@ -22618,7 +22636,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 447,
+          "line": 448,
           "kind": "markup",
           "raw": "How decisions are made",
           "quote": null
@@ -22636,7 +22654,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 453,
+          "line": 454,
           "kind": "markup",
           "raw": "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.",
           "quote": null
@@ -22655,7 +22673,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 460,
+          "line": 461,
           "kind": "markup",
           "raw": "An admin changes these rules directly.",
           "quote": null
@@ -22673,7 +22691,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 475,
+          "line": 476,
           "kind": "markup",
           "raw": "Leadership: {leadershipLabel(rules?.leadership_model)}",
           "quote": null
@@ -22691,7 +22709,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 510,
+          "line": 511,
           "kind": "markup",
           "raw": "Member since {formatDate(admin.joined_at)}",
           "quote": null
@@ -22709,7 +22727,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 531,
+          "line": 532,
           "kind": "markup",
           "raw": "This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.",
           "quote": null
@@ -22727,7 +22745,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 533,
+          "line": 534,
           "kind": "markup",
           "raw": "{seats.length} seat{seats.length === 1 ? '' : 's'} on the council,\n              {vacantSeats.length === 0\n                ? 'all held'\n                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.",
           "quote": null
@@ -22745,7 +22763,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 563,
+          "line": 564,
           "kind": "attr:aria-label",
           "raw": "Term end",
           "quote": "\""
@@ -22763,7 +22781,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 595,
+          "line": 596,
           "kind": "markup",
           "raw": "Add a seat",
           "quote": null
@@ -22781,7 +22799,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 597,
+          "line": 598,
           "kind": "markup",
           "raw": "Adding a seat does not make anybody an admin. The community fills it.",
           "quote": null
@@ -22799,7 +22817,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 601,
+          "line": 602,
           "kind": "markup",
           "raw": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought\n              forward, because pushing it back would extend a term nobody voted for. Nobody loses their seat when a term ends — the\n              holder serves until a successor is elected.",
           "quote": null
@@ -22817,7 +22835,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 620,
+          "line": 621,
           "kind": "markup",
           "raw": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
           "quote": null
@@ -22835,7 +22853,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 622,
+          "line": 623,
           "kind": "markup",
           "raw": "Next seat comes up {formatDay(nextTermEnd)}.",
           "quote": null
@@ -22853,7 +22871,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 633,
+          "line": 634,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -22871,7 +22889,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 645,
+          "line": 646,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -22889,7 +22907,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 659,
+          "line": 660,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -22907,7 +22925,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 659,
+          "line": 660,
           "kind": "markup",
           "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
@@ -22926,7 +22944,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 662,
+          "line": 663,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -22944,7 +22962,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 668,
+          "line": 669,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -22962,7 +22980,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 682,
+          "line": 683,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -22980,14 +22998,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 694,
+          "line": 695,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 698,
+          "line": 699,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -23075,7 +23093,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 699,
+          "line": 700,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -23100,7 +23118,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 349,
+          "line": 351,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -23965,7 +23983,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 215,
+          "line": 217,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -23983,7 +24001,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 244,
+          "line": 246,
           "kind": "markup",
           "raw": "atproto handle, proved when this patch was claimed",
           "quote": null
@@ -24001,7 +24019,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 253,
+          "line": 255,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -24040,7 +24058,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 265,
+          "line": 267,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -24079,7 +24097,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 305,
+          "line": 307,
           "kind": "markup",
           "raw": "{moreEvents} more upcoming",
           "quote": null
@@ -24097,7 +24115,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 308,
+          "line": 310,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -24115,7 +24133,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 341,
+          "line": 343,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -24129,7 +24147,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 370,
+          "line": 383,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -24147,7 +24165,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 360,
+          "line": 362,
           "kind": "markup",
           "raw": "Documents",
           "quote": null
@@ -29163,14 +29181,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 132,
+          "line": 133,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 141,
+          "line": 142,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
@@ -29188,14 +29206,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 134,
+          "line": 135,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 144,
+          "line": 145,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
@@ -29220,14 +29238,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 136,
+          "line": 137,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 147,
+          "line": 148,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
@@ -31077,7 +31095,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 314,
+          "line": 327,
           "kind": "attr:placeholder",
           "raw": "Username",
           "quote": "\""
@@ -47514,7 +47532,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 119,
+          "line": 132,
           "kind": "js-string",
           "raw": "Invitation sent",
           "quote": "'"
@@ -47532,7 +47550,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 123,
+          "line": 136,
           "kind": "js-string",
           "raw": "Could not invite",
           "quote": "'"
@@ -47550,7 +47568,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 132,
+          "line": 145,
           "kind": "js-string",
           "raw": "Invitation rescinded",
           "quote": "'"
@@ -47568,7 +47586,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 135,
+          "line": 148,
           "kind": "js-string",
           "raw": "Could not rescind invitation",
           "quote": "'"
@@ -47586,7 +47604,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 169,
+          "line": 182,
           "kind": "js-string",
           "raw": "Member removed",
           "quote": "'"
@@ -47604,7 +47622,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 172,
+          "line": 185,
           "kind": "js-string",
           "raw": "Failed to remove member",
           "quote": "'"
@@ -47622,7 +47640,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 182,
+          "line": 195,
           "kind": "js-string",
           "raw": "Member reinstated",
           "quote": "'"
@@ -47640,7 +47658,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 185,
+          "line": 198,
           "kind": "js-string",
           "raw": "Failed to reinstate",
           "quote": "'"
@@ -47658,7 +47676,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 195,
+          "line": 208,
           "kind": "js-string",
           "raw": "Member approved",
           "quote": "'"
@@ -47676,7 +47694,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 198,
+          "line": 211,
           "kind": "js-string",
           "raw": "Failed to approve member",
           "quote": "'"
@@ -47694,7 +47712,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 208,
+          "line": 221,
           "kind": "js-string",
           "raw": "Request rejected",
           "quote": "'"
@@ -47712,7 +47730,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 211,
+          "line": 224,
           "kind": "js-string",
           "raw": "Failed to reject member",
           "quote": "'"
@@ -47730,7 +47748,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 227,
+          "line": 240,
           "kind": "js-string",
           "raw": "Role updated",
           "quote": "'"
@@ -47748,7 +47766,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 232,
+          "line": 245,
           "kind": "js-string",
           "raw": "Failed to change role",
           "quote": "'"
@@ -47766,7 +47784,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 239,
+          "line": 252,
           "kind": "markup",
           "raw": "Public member list",
           "quote": null
@@ -47784,7 +47802,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 245,
+          "line": 258,
           "kind": "markup",
           "raw": "Who a visitor sees listed. Admins and members always see everyone. The member count\n          stays public either way, and this hides the list, not the people &mdash; anyone is\n          still named by what they do here in public, like a proposal they file.",
           "quote": null
@@ -47802,7 +47820,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 265,
+          "line": 278,
           "kind": "markup",
           "raw": "Pending Requests",
           "quote": null
@@ -47820,7 +47838,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 270,
+          "line": 283,
           "kind": "markup",
           "raw": "No pending requests.",
           "quote": null
@@ -47838,7 +47856,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 278,
+          "line": 291,
           "kind": "markup",
           "raw": "pending",
           "quote": null
@@ -47856,7 +47874,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 297,
+          "line": 310,
           "kind": "markup",
           "raw": "&ldquo;{member.join_message}&rdquo;",
           "quote": null
@@ -47874,7 +47892,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 309,
+          "line": 322,
           "kind": "markup",
           "raw": "Invite a member",
           "quote": null
@@ -47892,7 +47910,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 315,
+          "line": 328,
           "kind": "attr:aria-label",
           "raw": "Username to invite",
           "quote": "\""
@@ -47910,7 +47928,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 321,
+          "line": 334,
           "kind": "markup",
           "raw": "Invite",
           "quote": null
@@ -47928,7 +47946,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 326,
+          "line": 339,
           "kind": "markup",
           "raw": "They're notified and join only if they accept.",
           "quote": null
@@ -47946,7 +47964,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 329,
+          "line": 342,
           "kind": "markup",
           "raw": "Invited",
           "quote": null
@@ -47964,7 +47982,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 335,
+          "line": 348,
           "kind": "markup",
           "raw": "invited",
           "quote": null
@@ -47982,7 +48000,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 353,
+          "line": 366,
           "kind": "markup",
           "raw": "Active Members",
           "quote": null
@@ -48000,7 +48018,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 358,
+          "line": 371,
           "kind": "markup",
           "raw": "This patch elects its council, so admins are not made here. {vacantSeats} seat{vacantSeats === 1 ? ' is' : 's are'} vacant: an admin nominates a member on the Governance page and the members ratify it.",
           "quote": null
@@ -48018,7 +48036,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 360,
+          "line": 373,
           "kind": "markup",
           "raw": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
           "quote": null
@@ -48036,7 +48054,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 362,
+          "line": 375,
           "kind": "markup",
           "raw": "This patch elects its council, so admins are not made here. Every seat is held and no contest is scheduled. To make room, add a seat on the Governance page.",
           "quote": null
@@ -48054,7 +48072,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 385,
+          "line": 401,
           "kind": "markup",
           "raw": "Follower",
           "quote": null
@@ -48072,7 +48090,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 386,
+          "line": 402,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -48097,9 +48115,63 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 391,
+          "line": 407,
           "kind": "markup",
           "raw": "Admin",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a145ab342a4a",
+      "text": "Followers",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsMembers.svelte",
+          "line": 429,
+          "kind": "markup",
+          "raw": "Followers",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0862f8f0fc89",
+      "text": "Followers see this patch's events and public pages. They hold no vote and no role here. To bring somebody into the membership, invite them above: joining is theirs to accept, not yours to set.",
+      "words": 34,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsMembers.svelte",
+          "line": 431,
+          "kind": "markup",
+          "raw": "Followers see this patch's events and public pages. They hold no vote and\n      no role here. To bring somebody into the membership, invite them above:\n      joining is theirs to accept, not yours to set.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a69b9278afff",
+      "text": "No followers yet.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsMembers.svelte",
+          "line": 438,
+          "kind": "markup",
+          "raw": "No followers yet.",
           "quote": null
         }
       ]
@@ -48115,7 +48187,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 417,
+          "line": 465,
           "kind": "markup",
           "raw": "Removed Members ({bannedMembers.length})",
           "quote": null
@@ -48133,7 +48205,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 426,
+          "line": 474,
           "kind": "markup",
           "raw": "No removed members.",
           "quote": null
@@ -48151,7 +48223,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 433,
+          "line": 481,
           "kind": "markup",
           "raw": "removed",
           "quote": null
@@ -49490,7 +49562,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 43,
+          "line": 50,
           "kind": "js-string",
           "raw": "Governance Rules",
           "quote": "'"
@@ -49522,7 +49594,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 124,
+          "line": 131,
           "kind": "js-string",
           "raw": "Failed to load proposal",
           "quote": "'"
@@ -49540,7 +49612,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 229,
+          "line": 236,
           "kind": "markup",
           "raw": "Opened by this patch&rsquo;s election calendar",
           "quote": null
@@ -49558,7 +49630,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 258,
+          "line": 265,
           "kind": "markup",
           "raw": "Why this change",
           "quote": null
@@ -49576,7 +49648,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 273,
+          "line": 280,
           "kind": "markup",
           "raw": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},\n              after this was drafted. The changes below compare against the older text.",
           "quote": null
@@ -49594,7 +49666,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 283,
+          "line": 290,
           "kind": "markup",
           "raw": "This {isDirectChange ? 'change' : 'proposal'} modifies",
           "quote": null
@@ -49612,7 +49684,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 294,
+          "line": 301,
           "kind": "markup",
           "raw": "This proposal modifies a members-only document. The text of the\n                change is visible to members.",
           "quote": null
@@ -49630,7 +49702,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 319,
+          "line": 326,
           "kind": "markup",
           "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null

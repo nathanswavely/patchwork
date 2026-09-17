@@ -462,6 +462,29 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			statusFilter = "active"
 		}
 
+		// Which category this listing is about (docs/adr/117). "/members"
+		// means the membership: admins and members, the same two roles
+		// member_count counts and CONTEXT.md defines. A follower is a
+		// different relationship, not a quieter member, so followers are
+		// asked for by name.
+		//
+		// This used to be no filter at all, so an insider's listing mixed
+		// followers into a page headed by a count that excluded them: the
+		// roster said 2 and the count said 1. Patch Settings then rendered
+		// every row it got with a role dropdown, which is how a follower
+		// could be handed admin without ever passing through membership.
+		roleFilter := r.URL.Query().Get("role")
+		switch roleFilter {
+		case "follower", "member", "admin":
+			// An exact role, as asked for.
+		default:
+			// The membership. Unknown values land here rather than 400ing,
+			// matching how statusFilter treats a typo: a listing is a read,
+			// and the safe reading of a word we do not know is the narrower
+			// one.
+			roleFilter = ""
+		}
+
 		// The patch's admins and members see the full list, including hidden
 		// memberships and followers. Everyone else gets the public view:
 		// visible member/admin rows only — hidden memberships and follower
@@ -562,6 +585,12 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			FROM memberships m JOIN users u ON m.user_id = u.id
 			WHERE m.node_id = ? AND m.status = ?`
 		args := []interface{}{nodeID, statusFilter}
+		if roleFilter != "" {
+			query += " AND m.role = ?"
+			args = append(args, roleFilter)
+		} else {
+			query += " AND m.role IN ('member','admin')"
+		}
 		if !insider {
 			query += " AND m.visible = 1 AND m.role IN ('member','admin')" + rosterClause
 		}
@@ -985,6 +1014,33 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			// having asked them into that.
 			if currentStatus == "invited" {
 				http.Error(w, `{"error":"they have not accepted the invitation yet"}`, http.StatusBadRequest)
+				return
+			}
+
+			// A follower is not promoted; a follower joins (docs/adr/117).
+			// The sentence above is the whole argument, one relationship
+			// over: somebody who chose to observe has not asked to be in
+			// this patch, and a role set here is what they would become
+			// without anyone having asked them. The two paths that make a
+			// member both put the question to the person — "Become a
+			// member" is their own act, and an invitation (docs/adr/098) is
+			// an admin asking and the person answering. This control is the
+			// only one that skipped them.
+			//
+			// It also skipped the ladder. attestations.go refuses a follower
+			// a seat ("admin is a rung on the member ladder, not a role
+			// handed sideways to an observer") and validateNomination
+			// refuses one a nomination ("a nominee must be an active member
+			// of this patch"). Both check the person; this checked only that
+			// the word was one of three, so the dropdown outranked two rules
+			// stated elsewhere — docs/adr/100's failure exactly.
+			//
+			// Demotion is untouched, and deliberately: ending a relationship
+			// needs nobody's consent the way starting one does, which is the
+			// same asymmetry the last-admin floor and meritocratic demotion
+			// already run on. An admin may still drop somebody to follower.
+			if currentRole == "follower" && newRole != "follower" {
+				http.Error(w, `{"error":"they follow this patch: invite them to join, or let them become a member themselves"}`, http.StatusConflict)
 				return
 			}
 

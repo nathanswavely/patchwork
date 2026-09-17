@@ -115,8 +115,12 @@ func TestPublicMemberListHidesHiddenAndFollowers(t *testing.T) {
 	}{
 		{"anonymous gets public view", "", 2},
 		{"follower gets public view", followerToken, 2},
-		{"fellow member sees all", memberToken, 4},
-		{"node admin sees all", adminToken, 4},
+		// 3, not 4: an insider sees the hidden membership, which is the
+		// thing this test is about, but the follower is not in the
+		// membership at all (docs/adr/117). They are still visible to an
+		// insider, one listing over — asserted below.
+		{"fellow member sees the hidden membership", memberToken, 3},
+		{"node admin sees the hidden membership", adminToken, 3},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -128,6 +132,28 @@ func TestPublicMemberListHidesHiddenAndFollowers(t *testing.T) {
 			items, _ := decodeJSON(t, w)["items"].([]interface{})
 			if len(items) != c.want {
 				t.Errorf("expected %d members, got %d", c.want, len(items))
+			}
+		})
+	}
+
+	// The follower is not hidden from the room, only kept out of the
+	// membership. An insider asks for them by name; an outsider still gets
+	// nothing, because a follower relationship is never public
+	// (docs/adr/006).
+	for _, c := range []struct {
+		name  string
+		token string
+		want  int
+	}{
+		{"node admin lists followers", adminToken, 1},
+		{"anonymous lists no followers", "", 0},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			r := authedRequest("GET", "/api/v1/nodes/vis-node/members?role=follower", nil, c.token)
+			w := serveOptionalMux(t, db, "GET", "/api/v1/nodes/{slug}/members", handler.ListMembers(db), r)
+			items, _ := decodeJSON(t, w)["items"].([]interface{})
+			if len(items) != c.want {
+				t.Errorf("expected %d followers, got %d", c.want, len(items))
 			}
 		})
 	}

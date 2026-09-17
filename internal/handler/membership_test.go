@@ -255,17 +255,22 @@ func TestRoleChange(t *testing.T) {
 		t.Errorf("expected role=follower, got %v", result["role"])
 	}
 
-	// follower -> admin
+	// follower -> admin is refused, and this is the direction that moved
+	// (docs/adr/117). Demotion above still lands; the way back in is an
+	// invitation or the person's own "Become a member", because a follower
+	// has not asked to be in this patch and a role set here is what they
+	// would become without anyone having asked them.
 	body = map[string]string{"role": "admin"}
 	r = authedRequest("PATCH", "/api/v1/nodes/role-node/members/"+user.ID, body, adminToken)
 	w = serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), r)
 
-	if w.Code != http.StatusOK {
-		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	if w.Code != http.StatusConflict {
+		t.Fatalf("expected 409, got %d: %s", w.Code, w.Body.String())
 	}
-	result = decodeJSON(t, w)
-	if result["role"] != "admin" {
-		t.Errorf("expected role=admin, got %v", result["role"])
+	var roleNow string
+	db.QueryRow("SELECT role FROM memberships WHERE user_id = ? AND node_id = ?", user.ID, nodeID).Scan(&roleNow)
+	if roleNow != "follower" {
+		t.Errorf("expected them to stay a follower, got %q", roleNow)
 	}
 }
 
@@ -1291,8 +1296,12 @@ func TestListMembersCountsWholePatchNotJustThePage(t *testing.T) {
 		seen += len(items)
 		cursor, _ = page["next_cursor"].(string)
 	}
-	if seen != 28 {
-		t.Errorf("expected to page through all 28 rows, saw %d", seen)
+	// 25, not 28: the listing is the membership, and the three followers are
+	// their own relationship, asked for by ?role=follower (docs/adr/117).
+	// Which makes this the sharper assertion — paging reaches exactly as many
+	// rows as member_count claims, so the header and the list agree.
+	if seen != 25 {
+		t.Errorf("expected to page through all 25 members, saw %d", seen)
 	}
 }
 
