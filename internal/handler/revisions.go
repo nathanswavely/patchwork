@@ -162,7 +162,8 @@ func CreateRevision(db *database.DB) http.HandlerFunc {
 		// If this is an amendment with a git branch, update the branch.
 		if req.ProposedBody != nil && targetDoc != "" && proposedBranch != "" {
 			governance.DeleteBranch(governance.GetDataDir(), nodeID, proposedBranch)
-			governance.CreateBranch(governance.GetDataDir(), nodeID, proposedBranch, targetDoc, *req.ProposedBody, user.DisplayName, user.Email, req.ChangeNote)
+			revName, revEmail := commitIdentity(user)
+			governance.CreateBranch(governance.GetDataDir(), nodeID, proposedBranch, targetDoc, *req.ProposedBody, revName, revEmail, req.ChangeNote)
 		}
 
 		auth.LogAuditEvent(db, user.ID, "proposal.revise", "proposal", proposalID, `{"revision_number":`+json.Number(itoa(nextRevision)).String()+`}`, clientIP(r))

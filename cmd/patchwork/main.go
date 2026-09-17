@@ -230,6 +230,18 @@ func main() {
 	} else if created > 0 || updatedLinings > 0 {
 		log.Printf("lining: created %d, auto-updated %d to v%d", created, updatedLinings, governance.CurrentLiningVersion())
 	}
+	// Close the follower access to members-only charters that shipped on by
+	// default (docs/adr/116), in the rules file as well as the row, and tell
+	// each patch's admins. Same placement and same reasons as the lining pass
+	// above: after the repo backfill so the git write lands, after SetNotifier
+	// so the notice is not dropped. Idempotent, so it costs one query per boot
+	// once it has run.
+	if closed, err := handler.CloseFollowerChartersDefault(db); err != nil {
+		log.Fatalf("follower charters default: %v", err)
+	} else if closed > 0 {
+		log.Printf("follower charters: closed the shipped default on %d patch(es)", closed)
+	}
+
 	reminderCtx, reminderCancel := context.WithCancel(context.Background())
 	defer reminderCancel()
 	notifications.StartReminderWorker(reminderCtx, notifier)

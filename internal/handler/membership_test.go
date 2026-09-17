@@ -64,8 +64,13 @@ func createTestUser(t *testing.T, db *database.DB, username, role string) (*mode
 func createTestNode(t *testing.T, db *database.DB, ownerID, name, slug, policy string) string {
 	t.Helper()
 	id := auth.NewUUIDv7()
+	// follower_permissions is written explicitly, exactly as CreateNode writes
+	// it, because migration 012's column DEFAULT still says charters:true and
+	// a helper that inherits it does not test what the product does
+	// (docs/adr/116). This helper inheriting it is how a follower read an
+	// invite-only patch's private charters in a passing test suite.
 	_, err := db.Exec(
-		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status) VALUES (?, ?, ?, ?, '', 'leaf', 'public', ?, 'active')`,
+		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status, follower_permissions) VALUES (?, ?, ?, ?, '', 'leaf', 'public', ?, 'active', '{}')`,
 		id, ownerID, name, slug, policy,
 	)
 	if err != nil {

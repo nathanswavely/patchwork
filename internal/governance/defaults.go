@@ -167,7 +167,7 @@ const rulesCasual = `{
   "follower_permissions": {
     "events": true,
     "proposals": true,
-    "charters": true,
+    "charters": false,
     "members": true
   }
 }
@@ -190,7 +190,7 @@ const rulesCollaborative = `{
   "follower_permissions": {
     "events": true,
     "proposals": true,
-    "charters": true,
+    "charters": false,
     "members": true
   }
 }
@@ -213,7 +213,7 @@ const rulesFormal = `{
   "follower_permissions": {
     "events": true,
     "proposals": true,
-    "charters": true,
+    "charters": false,
     "members": true
   }
 }

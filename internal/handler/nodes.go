@@ -52,7 +52,11 @@ func scanNodeLinks(linksJSON string, n *model.Node) {
 
 // scanFollowerPermissions scans a JSON string into FollowerPermissions and assigns to node.
 func scanFollowerPermissions(fpJSON string, n *model.Node) {
-	fp := &model.FollowerPermissions{Events: true, Proposals: true, Charters: true, Members: true}
+	// Charters false, matching DefaultRules and what canReadPatchDocs already
+	// reads out of an empty object (docs/adr/116). These two disagreed: a
+	// patch created through the API stores "{}", so the gate said no while
+	// this said yes, and Patch Settings showed a grant the server refused.
+	fp := &model.FollowerPermissions{Events: true, Proposals: true, Charters: false, Members: true}
 	if fpJSON != "" && fpJSON != "{}" {
 		json.Unmarshal([]byte(fpJSON), fp)
 	}

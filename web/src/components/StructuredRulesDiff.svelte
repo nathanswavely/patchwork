@@ -53,7 +53,7 @@
       const perms = [];
       if (val.events !== false) perms.push('Events');
       if (val.proposals !== false) perms.push('Proposals');
-      if (val.charters !== false) perms.push('Charters');
+      if (val.charters === true) perms.push('Charters');
       if (val.members !== false) perms.push('Members');
       return perms.length ? perms.join(', ') : 'None';
     }
