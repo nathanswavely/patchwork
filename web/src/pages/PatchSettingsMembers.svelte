@@ -252,12 +252,12 @@
     <h3 class="section-heading">Public member list</h3>
     <div class="setting-row">
       <div class="setting-info">
-        <!-- Three things the control cannot show on its face, and each of
-             them changes whether an admin's choice does what they think. -->
+        <!-- Two things the control cannot show on its face, and each of
+             them changes whether an admin's choice does what they think. The
+             count one matters most against the "Nobody" label, which would
+             otherwise read as hiding the number too (docs/adr/095). -->
         <span class="setting-desc muted">
-          Who a visitor sees listed. Admins and members always see everyone. The member count
-          stays public either way, and this hides the list, not the people &mdash; anyone is
-          still named by what they do here in public, like a proposal they file.
+          Who a visitor sees listed. Admins and members always see everyone. The member count stays public either way.
         </span>
       </div>
       <SegmentedControl
@@ -428,9 +428,7 @@
   <section class="members-section">
     <h3 class="section-heading">Followers</h3>
     <p class="setting-desc muted">
-      Followers see this patch's events and public pages. They hold no vote and
-      no role here. To bring somebody into the membership, invite them above:
-      joining is theirs to accept, not yours to set.
+      Followers see only this patch's events and public pages.
     </p>
     {#if loadingMembers}
       <Skeleton lines={2} height="0.9rem" />

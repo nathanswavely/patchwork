@@ -112,10 +112,13 @@ func CloseFollowerChartersDefault(db *database.DB) (int, error) {
 			NodeID:   p.id,
 			NodeSlug: p.slug,
 			NodeName: p.name,
-			Title:    "Followers can no longer read " + p.name + "'s members-only charters",
-			Body: "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. " +
-				"That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
-			Link: weblink.PatchGovernance(p.slug),
+			// One literal each, not concatenated: the copy ledger reviews
+			// what it can see, and a title assembled from three pieces
+			// reviews as three fragments instead of the sentence somebody
+			// reads.
+			Title: fmt.Sprintf("Followers can no longer read %s's members-only charters", p.name),
+			Body:  "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
+			Link:  weblink.PatchGovernance(p.slug),
 		})
 	}
 

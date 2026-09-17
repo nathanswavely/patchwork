@@ -9898,6 +9898,78 @@
       ]
     },
     {
+      "id": "02c2dd5ceb11",
+      "text": "Followers no longer read members-only charters by default (shipped with Patchwork)",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 90,
+          "kind": "go-string",
+          "raw": "Followers no longer read members-only charters by default (shipped with Patchwork)",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "b61b533a0d5c",
+      "text": "Followers can no longer read %s's members-only charters",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 119,
+          "kind": "go-string",
+          "raw": "Followers can no longer read %s's members-only charters",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "de26a557dcaa",
+      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
+      "words": 43,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 120,
+          "kind": "go-string",
+          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "f80d890f9e40",
+      "text": "Followers can no longer read members-only charters in %d of your patches",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 141,
+          "kind": "go-string",
+          "raw": "Followers can no longer read members-only charters in %d of your patches",
+          "quote": "\""
+        }
+      ]
+    },
+    {
       "id": "1ef0b783ede4",
       "text": "only this patch's members can see who votes here",
       "words": 9,
@@ -12393,7 +12465,7 @@
       "text": "can only follow public patches",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12448,7 +12520,7 @@
       "text": "this node is invite only",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12527,7 +12599,7 @@
       "text": "failed to upgrade membership",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12545,7 +12617,7 @@
       "text": "membership request already pending",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12563,7 +12635,7 @@
       "text": "failed to rejoin node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12581,7 +12653,7 @@
       "text": "failed to join node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12678,7 +12750,7 @@
       "text": "failed to leave node",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12696,7 +12768,7 @@
       "text": "failed to list members",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12721,7 +12793,7 @@
       "text": "failed to list memberships",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12764,7 +12836,7 @@
       "text": "can only approve pending members",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12782,7 +12854,7 @@
       "text": "failed to approve member",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12800,7 +12872,7 @@
       "text": "can only ban active members",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12836,7 +12908,7 @@
       "text": "cannot ban the last admin",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12854,7 +12926,7 @@
       "text": "failed to ban member",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12872,7 +12944,7 @@
       "text": "failed to reject member",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12890,7 +12962,7 @@
       "text": "failed to reinstate member",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -12998,7 +13070,7 @@
       "text": "cannot demote the last admin",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -13052,7 +13124,7 @@
       "text": "failed to update role",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17436,7 +17508,7 @@
       "text": "New proposals, voting updates, deadlines",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17454,7 +17526,7 @@
       "text": "Document and rules changes",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17472,7 +17544,7 @@
       "text": "Join/leave notifications for admins",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17580,7 +17652,7 @@
       "text": "New proposal in your patch",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17616,7 +17688,7 @@
       "text": "Vote received on your proposal",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17814,7 +17886,7 @@
       "text": "The lining was updated",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17850,7 +17922,7 @@
       "text": "Your admin seat is inactive",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17958,7 +18030,7 @@
       "text": "Your membership was approved",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17976,7 +18048,7 @@
       "text": "Your role was changed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -17994,7 +18066,7 @@
       "text": "You have been removed",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18012,7 +18084,7 @@
       "text": "You have been reinstated",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18048,7 +18120,7 @@
       "text": "Event suggested to your patch",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18066,7 +18138,7 @@
       "text": "Your event was approved",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18084,7 +18156,7 @@
       "text": "Your event was declined",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18246,7 +18318,7 @@
       "text": "New patch claim request",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18318,7 +18390,7 @@
       "text": "Event link request (unclaimed patch)",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -18336,7 +18408,7 @@
       "text": "Your claim was approved",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47634,7 +47706,7 @@
       "text": "Failed to remove member",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47706,7 +47778,7 @@
       "text": "Failed to approve member",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47742,7 +47814,7 @@
       "text": "Failed to reject member",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47778,7 +47850,7 @@
       "text": "Failed to change role",
       "words": 4,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -47810,22 +47882,23 @@
       ]
     },
     {
-      "id": "ed1071a8f275",
-      "text": "Who a visitor sees listed. Admins and members always see everyone. The member count stays public either way, and this hides the list, not the people &mdash; anyone is still named by what they do here in public, like a proposal they file.",
-      "words": 43,
+      "id": "c7e02d055ba2",
+      "text": "Who a visitor sees listed. Admins and members always see everyone. The member count stays public either way.",
+      "words": 18,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "human",
       "replacement": null,
       "note": "docs/adr/095 — public member list control",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 258,
+          "line": 260,
           "kind": "markup",
-          "raw": "Who a visitor sees listed. Admins and members always see everyone. The member count\n          stays public either way, and this hides the list, not the people &mdash; anyone is\n          still named by what they do here in public, like a proposal they file.",
+          "raw": "Who a visitor sees listed. Admins and members always see everyone. The member count stays public either way.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Who a visitor sees listed. Admins and members always see everyone. The member count stays public either way, and this hides the list, not the people &mdash; anyone is still named by what they do here in public, like a proposal they file."
     },
     {
       "id": "87b179440858",
@@ -48159,11 +48232,11 @@
       ]
     },
     {
-      "id": "0862f8f0fc89",
-      "text": "Followers see this patch's events and public pages. They hold no vote and no role here. To bring somebody into the membership, invite them above: joining is theirs to accept, not yours to set.",
-      "words": 34,
-      "tier": "prose",
-      "status": "ai-fine",
+      "id": "f918a8de6ee6",
+      "text": "Followers see only this patch's events and public pages.",
+      "words": 9,
+      "tier": "helper",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -48171,10 +48244,11 @@
           "file": "web/src/pages/PatchSettingsMembers.svelte",
           "line": 431,
           "kind": "markup",
-          "raw": "Followers see this patch's events and public pages. They hold no vote and\n      no role here. To bring somebody into the membership, invite them above:\n      joining is theirs to accept, not yours to set.",
+          "raw": "Followers see only this patch's events and public pages.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "Followers see this patch's events and public pages. They hold no vote and no role here. To bring somebody into the membership, invite them above: joining is theirs to accept, not yours to set."
     },
     {
       "id": "a69b9278afff",
@@ -48187,7 +48261,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 438,
+          "line": 436,
           "kind": "markup",
           "raw": "No followers yet.",
           "quote": null
@@ -48205,7 +48279,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 465,
+          "line": 463,
           "kind": "markup",
           "raw": "Removed Members ({bannedMembers.length})",
           "quote": null
@@ -48223,7 +48297,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 474,
+          "line": 472,
           "kind": "markup",
           "raw": "No removed members.",
           "quote": null
@@ -48241,7 +48315,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
-          "line": 481,
+          "line": 479,
           "kind": "markup",
           "raw": "removed",
           "quote": null
