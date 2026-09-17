@@ -99,8 +99,8 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// patch went live admitting anyone, chosen by nobody. Same at the
 		// two admin-side listing inserts below.
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, ?, 'community', ?, ?, ?, ?)`,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, ?, 'community', ?, ?, ?, ?, '{}')`,
 			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, status, user.ID, verificationDomain, apID, now, now,
 		)
 		if err != nil {
@@ -192,8 +192,8 @@ func CreateUnclaimedPatch(db *database.DB) http.HandlerFunc {
 		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?)`,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?, '{}')`,
 			id, model.SystemUserID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, user.ID, verificationDomain, apID, now, now,
 		)
 		if err != nil {
@@ -273,8 +273,8 @@ func BulkCreateUnclaimed(db *database.DB) http.HandlerFunc {
 
 			apID := ap.NodeAPID(ap.GetDomain(), id)
 			_, err := db.Exec(
-				`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at)
-				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?)`,
+				`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions)
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', 'unclaimed', ?, 'admin', ?, ?, ?, ?, '{}')`,
 				id, model.SystemUserID, n.Name, slug, n.Description, n.Latitude, n.Longitude, n.Address, n.Website, linksStr, user.ID, verificationDomain, apID, now, now,
 			)
 			if err != nil {

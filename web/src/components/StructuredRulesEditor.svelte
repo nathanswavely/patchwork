@@ -180,7 +180,12 @@
       const fp = currentRules.follower_permissions || {};
       followerEvents = fp.events !== false;
       followerProposals = fp.proposals !== false;
-      followerCharters = fp.charters !== false;
+      // Charters alone reads `=== true`, matching the server's default
+      // (docs/adr/116): the other three are on unless a patch turned them
+      // off, this one is off unless a patch turned it on. Reading it the
+      // same way as its neighbours is what made a patch that had never
+      // chosen show the box ticked.
+      followerCharters = fp.charters === true;
       followerMembers = fp.members !== false;
     }
   });

@@ -19,9 +19,10 @@
   let membershipRole = $derived(patch.value.membershipRole);
   let nodeId = $derived(patch.value.node?.id);
 
-  // Not `isMember`: the node payload sets is_member for followers too, and
-  // proposing a rules change is a member act — following carries no
-  // governance rights.
+  // Proposing a rules change is a member act: following carries no
+  // governance rights. Read from membershipRole rather than isMember, which
+  // is the same answer since docs/adr/117 narrowed it but is derived here
+  // rather than trusted from a flag that once meant something wider.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
   // An admin *of this patch*. The node payload sets is_admin for instance
   // admins too, and arranging a patch's council is not theirs to do — the

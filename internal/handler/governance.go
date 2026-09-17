@@ -22,6 +22,31 @@ import (
 // so adding a column can't leave one read path scanning a stale order.
 const governanceDocColumns = `SELECT id, node_id, title, body, kind, visibility, version, created_by, created_at, updated_at FROM governance_docs`
 
+// commitIdentity is the name and address a person's governance commit is
+// authored with: what the patch would call them, and an address that is
+// derived rather than theirs.
+//
+// A governance repo has no seam and is handed over whole (docs/adr/110), so
+// everything in it is readable by everyone who may clone it, commit metadata
+// included. Four call sites used to pass user.Email straight into the
+// signature, which wrote members' real addresses into a file the transport
+// serves. Nothing else in Patchwork lets an address travel that way: the
+// personal export withholds authentication material, the member seamrip
+// travels people as stubs and never emails (docs/adr/089), and no API surface
+// hands one person another's email. A commit is the same kind of record and
+// gets the same answer.
+//
+// .local is reserved and can never resolve (RFC 6762), so the address stays a
+// stable per-person identity for git tooling and reaches nobody. Two call
+// sites already built it this way; this is that convention, stated once.
+func commitIdentity(user *model.User) (string, string) {
+	name := user.DisplayName
+	if name == "" {
+		name = user.Username
+	}
+	return name, user.Username + "@patchwork.local"
+}
+
 // validDocVisibility reports whether v is a governance doc visibility the API
 // accepts. Mirrors the CHECK constraint in migration 036.
 func validDocVisibility(v string) bool {
@@ -33,7 +58,11 @@ func validDocVisibility(v string) bool {
 // admins/members always may; a follower may when the patch's follower
 // permissions grant charters. Signed-out visitors never may.
 //
-// It is asked about nothing else. A charter the patch published to everyone
+// It is not what gates the git transport. A clone takes the whole repository
+// at once, so that door asks viewerIsInPatchRoom instead (docs/adr/116); this
+// rule governs REST reads of the members-only shelf, document by document.
+//
+// A charter the patch published to everyone
 // is readable by everyone, signed out included, and no path below consults
 // this before handing one over — `follower_permissions.charters` grants a
 // follower the members-only shelf and can never take away what the patch
@@ -70,8 +99,7 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 }
 
 // GovernanceRepoNodeID resolves a patch slug for the git transport
-// (internal/governance/http.go), and refuses anybody who may not read that
-// patch's whole shelf.
+// (internal/governance/http.go), and refuses anybody who is not in the patch.
 //
 // The REST layer above can hand a visitor the published docs and keep the
 // rest back, because it filters row by row. A bare repository has no such
@@ -79,12 +107,26 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 // and the commits carry their editors' names besides — which the
 // per-membership visibility switch (docs/adr/006) and the tombstone rule
 // (docs/adr/086) each exist to govern. So the transport asks the one question
-// it can answer honestly, and asks it with canReadPatchDocs: the same rule
-// that decides whether a viewer is handed the whole shelf (docs/adr/110).
+// it can answer honestly (docs/adr/110).
+//
+// It asks viewerIsInPatchRoom rather than canReadPatchDocs (docs/adr/116).
+// Those two looked interchangeable and are not. canReadPatchDocs admits a
+// follower holding `follower_permissions.charters`, which is a decision about
+// reading a page; this is a decision about being handed a repository, and the
+// difference is exactly the thing deleted_accounts.go already refuses to let
+// a follower have: "the people in a patch are not theirs to enumerate". Commit
+// metadata enumerates them. Following is frictionless and needs nobody's
+// approval, so wiring the two together meant anyone who clicked Follow on an
+// invite-only patch could clone its whole governance history.
+//
+// The charters key keeps its narrower job above: a follower the patch grants
+// it still reads the members-only shelf over REST, one document at a time,
+// with hidden memberships and tombstones still substituted the way every
+// other API surface substitutes them.
 func GovernanceRepoNodeID(db *database.DB) func(*http.Request, string) string {
 	return func(r *http.Request, slug string) string {
 		nodeID := NodeIDFromSlug(db, slug)
-		if nodeID == "" || !canReadPatchDocs(db, r, nodeID) {
+		if nodeID == "" || !viewerIsInPatchRoom(db, r, nodeID) {
 			return ""
 		}
 		return nodeID
@@ -464,12 +506,9 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		// history and diffs reflect edits made through this endpoint. Best
 		// effort: repos may not exist (tests, fresh instances).
 		if dataDir := governance.GetDataDir(); dataDir != "" && contentChanged {
-			author := user.DisplayName
-			if author == "" {
-				author = user.Username
-			}
+			author, authorEmail := commitIdentity(user)
 			if _, gitErr := governance.DirectEdit(dataDir, nodeID, governanceFilename(newTitle),
-				newBody, author, user.Username+"@patchwork.local",
+				newBody, author, authorEmail,
 				"Update "+newTitle+" (v"+strconv.Itoa(newVersion)+")"); gitErr != nil {
 				log.Printf("governance: git mirror of doc %s failed: %v", docID, gitErr)
 			}

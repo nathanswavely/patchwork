@@ -52,7 +52,11 @@ func scanNodeLinks(linksJSON string, n *model.Node) {
 
 // scanFollowerPermissions scans a JSON string into FollowerPermissions and assigns to node.
 func scanFollowerPermissions(fpJSON string, n *model.Node) {
-	fp := &model.FollowerPermissions{Events: true, Proposals: true, Charters: true, Members: true}
+	// Charters false, matching DefaultRules and what canReadPatchDocs already
+	// reads out of an empty object (docs/adr/116). These two disagreed: a
+	// patch created through the API stores "{}", so the gate said no while
+	// this said yes, and Patch Settings showed a grant the server refused.
+	fp := &model.FollowerPermissions{Events: true, Proposals: true, Charters: false, Members: true}
 	if fpJSON != "" && fpJSON != "{}" {
 		json.Unmarshal([]byte(fpJSON), fp)
 	}
@@ -682,7 +686,19 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			).Scan(&role, &memStatus)
 			if err == nil {
 				if memStatus == "active" {
-					resp["is_member"] = true
+					// is_member means the membership: admin or member, the
+					// two roles member_count counts (docs/adr/117). It used
+					// to mean "has an active row", followers included, which
+					// is a different question wearing the word for this one.
+					//
+					// Six components had written their own guard against it
+					// ("Not `isMember`: the node payload sets is_member for
+					// followers too") and one had not, so a follower-inclusive
+					// flag reached a gate that meant membership. A caller who
+					// wants "has any standing here" reads membership_role
+					// below, which is set for every active row and empty for
+					// everyone else.
+					resp["is_member"] = role == "admin" || role == "member"
 					resp["is_admin"] = role == "admin"
 					resp["membership_role"] = role
 				} else if memStatus == "banned" {

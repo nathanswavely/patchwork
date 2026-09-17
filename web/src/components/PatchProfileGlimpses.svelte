@@ -96,7 +96,9 @@
     isInstanceAdmin: isInstanceAdmin(),
     trustedContributor: !!getUser()?.trusted_contributor,
     isUnclaimed,
-    // Not `isMember`: the node payload sets is_member for followers too.
+    // The role test, stated here rather than taken from the isMember prop:
+    // it is the same answer since docs/adr/117, and the gate should not
+    // depend on which of the two a container happened to hand over.
     isMemberOrAdmin: membershipRole === 'member' || membershipRole === 'admin',
     isBanned,
     submissionsEnabled: getSubmissionsEnabled(),

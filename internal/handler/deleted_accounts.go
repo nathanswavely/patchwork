@@ -81,6 +81,11 @@ const HiddenMemberName = "Hidden member"
 // narrower than canReadPatchDocs, which admits a follower holding the
 // charters permission. A follower is an observer, not a member, and the
 // people in a patch are not theirs to enumerate.
+//
+// The git transport asks this too (docs/adr/116). A clone carries every
+// commit's author, which is that enumeration by another route, so the door
+// that hands over a whole repository draws the line here rather than at the
+// charters permission.
 func viewerIsInPatchRoom(db *database.DB, r *http.Request, nodeID string) bool {
 	user := middleware.UserFromContext(r.Context())
 	if user == nil {

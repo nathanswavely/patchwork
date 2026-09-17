@@ -308,7 +308,8 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			if commitMsg == "" {
 				commitMsg = fmt.Sprintf("Proposed amendment: %s", req.Title)
 			}
-			sha, branchErr := governance.CreateBranch(governance.GetDataDir(), nodeID, branchName, req.TargetDoc, req.ProposedBody, user.DisplayName, user.Email, commitMsg)
+			authorName, authorEmail := commitIdentity(user)
+			sha, branchErr := governance.CreateBranch(governance.GetDataDir(), nodeID, branchName, req.TargetDoc, req.ProposedBody, authorName, authorEmail, commitMsg)
 			if branchErr != nil {
 				http.Error(w, fmt.Sprintf(`{"error":"failed to create amendment branch: %s"}`, branchErr.Error()), http.StatusInternalServerError)
 				return
@@ -395,7 +396,8 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			applied := true
 			if req.ProposalType == "amendment" && branchName != "" {
 				dataDir := governance.GetDataDir()
-				sha, mergeErr := governance.MergeBranch(dataDir, nodeID, branchName, user.DisplayName, user.Email)
+				mergeName, mergeEmail := commitIdentity(user)
+				sha, mergeErr := governance.MergeBranch(dataDir, nodeID, branchName, mergeName, mergeEmail)
 				if mergeErr != nil {
 					log.Printf("proposal %s: direct-change merge failed: %v", id, mergeErr)
 					applied = false
@@ -1797,7 +1799,8 @@ func applyProposalChanges(db *database.DB, p model.Proposal, actor *model.User) 
 		if err := ensureAmendmentBranch(dataDir, p.NodeID, p.ProposedBranch, p.TargetDoc, p.ProposedBody); err != nil {
 			return err
 		}
-		sha, err := governance.MergeBranch(dataDir, p.NodeID, p.ProposedBranch, actor.DisplayName, actor.Email)
+		actorName, actorEmail := commitIdentity(actor)
+		sha, err := governance.MergeBranch(dataDir, p.NodeID, p.ProposedBranch, actorName, actorEmail)
 		if err != nil {
 			return err
 		}

@@ -78,8 +78,9 @@ export function workspaceTabs({
  *
  * `isMemberOrAdmin` is the role test, not "has a membership row": following
  * is frictionless and grants no write rights, so a follower suggests like
- * anyone else. Note the node payload's `is_member` is true for followers
- * too — pass the role, not that flag.
+ * anyone else. The node payload's `is_member` now answers the same question
+ * (docs/adr/117); before that it was true for followers too, which is why
+ * every caller passes the role.
  *
  * @returns {'direct'|'suggest'|'none'}
  */

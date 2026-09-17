@@ -190,14 +190,11 @@ func CreateAmendmentAttestation(db *database.DB) http.HandlerFunc {
 			db.QueryRow("SELECT version FROM governance_docs WHERE id = ?", docID).Scan(&version)
 			version++
 		}
-		author := user.DisplayName
-		if author == "" {
-			author = user.Username
-		}
+		author, authorEmail := commitIdentity(user)
 		gitSHA := ""
 		if dataDir := governance.GetDataDir(); dataDir != "" {
 			sha, gitErr := governance.DirectEdit(dataDir, nodeID, filename, req.AdoptedBody,
-				author, user.Username+"@patchwork.local",
+				author, authorEmail,
 				"Adopted "+strings.TrimSpace(req.DecidedAt)+": "+title)
 			if gitErr != nil {
 				log.Printf("attestation: git write of %s for node %s failed: %v", filename, nodeID, gitErr)

@@ -133,14 +133,21 @@ describe('the setting is edited where the roster is managed', () => {
     expect(src).toContain("body: { public_member_list: v }");
   });
 
-  // The three things the control cannot show on its face, each of which
+  // The two things the control cannot show on its face, each of which
   // changes whether an admin's choice does what they think it does. Matched
   // against collapsed whitespace, since the copy wraps in the markup.
-  it('says who always sees the room, that the count stays public, and that this hides the list rather than the people', () => {
+  //
+  // There used to be a third, "this hides the list, not the people", with an
+  // example trailing it. It went in copy review: it was a slogan rather than
+  // a fact, and the example invited the doubt the sentence was meant to
+  // close. The count promise stays, because the third option is labelled
+  // Nobody and the count is public at every setting (docs/adr/095 decision
+  // 3) — so without this line the label overpromises and the patch's own
+  // tile contradicts it.
+  it('says who always sees the room, and that the count stays public', () => {
     const copy = src.replace(/\s+/g, ' ');
     expect(copy).toContain('Admins and members always see everyone');
     expect(copy).toContain('The member count stays public either way');
-    expect(copy).toContain('this hides the list, not the people');
   });
 
   it('puts the setting back if the write fails, rather than lying about it', () => {

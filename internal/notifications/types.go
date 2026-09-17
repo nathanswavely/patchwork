@@ -108,6 +108,13 @@ const (
 	// LiningUpdated fires when a stale lining auto-updates to the current
 	// shipped text (docs/adr/037). Notified, never asked.
 	LiningUpdated NotificationType = "governance.lining_updated"
+	// GovernanceFollowerChartersClosed fires once, at the startup that closes
+	// a patch's follower access to its members-only charters (docs/adr/116).
+	// Its own type rather than GovernanceRulesChanged because nobody in the
+	// patch made this edit: Patchwork did, to a default that leaked, and the
+	// notice has to say so or it reads as an admin's change that no admin
+	// remembers making. Admins only — they are who can put it back.
+	GovernanceFollowerChartersClosed NotificationType = "governance.follower_charters_closed"
 	// GovernanceInactivityWarning tells an admin their seat is at risk before
 	// it goes, which is the whole point of the warning: the shipped succession
 	// plan gives them the gap between day 30 and day 60 to answer.
@@ -276,10 +283,15 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	GovernanceRulesChanged:        {CategoryGovernance, "Rules changed", AudienceAllMembers, PriorityNormal},
 	GovernanceRulesChangedMidVote: {CategoryGovernance, "Rules changed while votes are open", AudienceAllMembers, PriorityHigh},
 	LiningUpdated:                 {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
-	GovernanceInactivityWarning:   {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
-	GovernanceSeatUnavailable:     {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
-	GovernanceCouncilEmpty:        {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
-	GovernanceSuccessionNeeded:    {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
+	// High, unlike a routine rules edit: this one is time-sensitive in the way
+	// the mid-vote notice is. It changes who can read the patch's private
+	// charters, it happened without anybody asking, and an admin who disagrees
+	// should hear rather than find out.
+	GovernanceFollowerChartersClosed: {CategoryGovernance, "Followers can no longer read members-only charters", AudienceAdminsOnly, PriorityHigh},
+	GovernanceInactivityWarning:      {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
+	GovernanceSeatUnavailable:        {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
+	GovernanceCouncilEmpty:           {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
+	GovernanceSuccessionNeeded:       {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
 	MembershipRequest:     {CategoryMembership, "Membership request pending", AudienceAdminsOnly, PriorityHigh},
@@ -379,6 +391,7 @@ func TypesForCategory(cat Category) []NotificationType {
 		ProposalNew, ProposalVoting, ProposalOpenToYou, ProposalVoteReceived, ProposalApproved,
 		ProposalRejected, ProposalApplied, ProposalComment, ProposalTurnout, ProposalDeadline,
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
+		GovernanceFollowerChartersClosed,
 		GovernanceInactivityWarning, GovernanceSeatUnavailable, GovernanceCouncilEmpty,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		MembershipInvited,

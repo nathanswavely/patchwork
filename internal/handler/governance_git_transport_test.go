@@ -6,14 +6,16 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
 
 // The git transport hands over a whole bare repository — every charter body,
-// its revision history, its diffs — so it is gated on the whole-shelf rule and
-// not on the per-document one (docs/adr/110). These tests run the transport the
+// its revision history, its diffs, and every commit's author — so it is gated
+// on being in the patch, and not on the per-document rule nor on the follower
+// charters grant (docs/adr/110, narrowed by docs/adr/116). These tests run the transport the
 // way main.go mounts it: governance.GitHTTPHandler over
 // handler.GovernanceRepoNodeID, behind AuthOptional.
 //
@@ -116,10 +118,13 @@ func TestGovernanceCloneServesTheRoom(t *testing.T) {
 	}
 }
 
-// A follower is handed the whole shelf exactly when the patch grants it
-// (docs/adr/050), and the transport follows that grant rather than keeping a
-// second opinion about followers.
-func TestGovernanceCloneFollowsTheChartersGrant(t *testing.T) {
+// A follower is never handed the repository, whatever the patch says about
+// charters (docs/adr/116). The grant is about reading a page; a clone is being
+// handed a repository, and its commits enumerate the patch's people — which is
+// the thing docs/adr/006 keeps from followers by another route. Following
+// costs nothing and needs nobody's approval, so the two must not be the same
+// key: this used to be the way into an invite-only patch's whole history.
+func TestGovernanceCloneNeverFollowsTheChartersGrant(t *testing.T) {
 	db := setupTestDB(t)
 	harriet, _ := createTestUser(t, db, "harriet-adr110c", "member")
 	nodeID := govRepoPatch(t, db, harriet.ID, "Coalition Three", "coalition-three")
@@ -137,15 +142,35 @@ func TestGovernanceCloneFollowsTheChartersGrant(t *testing.T) {
 		}
 	}
 
-	setCharters("true")
-	if w := cloneProbe(t, db, "coalition-three", franToken); w.Code != http.StatusOK {
-		t.Errorf("a follower on a patch that shares its charters: expected 200, got %d", w.Code)
+	for _, shared := range []string{"true", "false"} {
+		setCharters(shared)
+		if w := cloneProbe(t, db, "coalition-three", franToken); w.Code != http.StatusNotFound {
+			t.Errorf("a follower on a patch with charters=%s: expected 404, got %d: %s",
+				shared, w.Code, w.Body.String())
+		}
 	}
 
-	setCharters("false")
-	if w := cloneProbe(t, db, "coalition-three", franToken); w.Code != http.StatusNotFound {
-		t.Errorf("a follower on a patch that withholds its charters: expected 404, got %d", w.Code)
+	// And the grant still does its own job: the members-only shelf is
+	// readable over REST, one document at a time.
+	setCharters("true")
+	docID := probeMembersOnlyDoc(t, db, nodeID, harriet.ID)
+	r := authedRequest("GET", "/api/v1/governance/"+docID, nil, franToken)
+	if w := serveMux(t, db, "GET", "/api/v1/governance/{id}", handler.GetGovernanceDoc(db), r); w.Code != http.StatusOK {
+		t.Errorf("a follower granted charters should still read one members-only doc: got %d: %s", w.Code, w.Body.String())
 	}
+}
+
+// probeMembersOnlyDoc inserts a charter the patch has not published.
+func probeMembersOnlyDoc(t *testing.T, db *database.DB, nodeID, authorID string) string {
+	t.Helper()
+	id := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO governance_docs (id, node_id, title, body, created_by, visibility) VALUES (?, ?, 'House Rules', 'members only body', ?, 'members')`,
+		id, nodeID, authorID,
+	); err != nil {
+		t.Fatalf("insert members-only doc: %v", err)
+	}
+	return id
 }
 
 // A private patch stays off every list while a direct link still opens its
