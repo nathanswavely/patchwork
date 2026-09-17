@@ -1,9 +1,19 @@
 # Architecture Decision Records
 
-One file per decision, numbered in the order they were claimed. Numbers are
-never reused; if an ADR is retired it keeps its number and gains a status
-line. See CLAUDE.md ("Claiming a number") for how numbers are claimed when
-several branches are in flight.
+One file per decision.
+
+**A new ADR is named `YYYY-MM-DD-slug.md`**, where the slug states the decision
+as a sentence. Take today's date and write the sentence; there is nothing to
+look up and nobody to ask. See
+[2026-09-16-a-name-nobody-has-to-ask-for.md](2026-09-16-a-name-nobody-has-to-ask-for.md).
+
+ADRs 001 through 115 keep the sequential numbers they were born with, and every
+citation to them keeps working. That number space is **closed**: 115 was the
+last one issued and 116 never will be. A retired ADR keeps its number and gains
+a status line.
+
+The first column below is how you cite a decision: a number for the legacy
+range, a date for everything after it.
 
 ## Adopted
 
@@ -129,6 +139,7 @@ several branches are in flight.
 | [079](079-an-event-keeps-the-door-it-came-through.md) | An event keeps the door it came through — every feed carries the event's own page and Patchwork dropped it; one `event_url`, filled by ingest and by the form *(fills a gap in 031, completes 056)* |
 | [080](080-a-contact-card-is-shared-patch-by-patch.md) | A contact card is shared patch by patch — one card on the account, one switch per membership, shown only in the room; a second axis beside 006's one switch, not a second visibility toggle *(superseded by 083)* |
 | [081](081-a-noticeboard-with-replies-not-a-feed.md) | A noticeboard with replies, not a feed — members-only, replies per notice, a closed moderation kit, quiet by default; travels in a seamrip; markdown with an image reference |
+| [2026-09-16](2026-09-16-a-name-nobody-has-to-ask-for.md) | A name nobody has to ask for: the ADR and migration number spaces close at 115 and 074; new records are named from the clock and a sentence, so no two worktrees ever claim the same one *(retires CLAUDE.md's "Claiming a number"; nothing existing is renamed)* |
 
 ## Proposed — designs on record, not built
 

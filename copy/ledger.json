@@ -241,55 +241,91 @@
       "previous_ai_text": "- Go stdlib router, no frameworks. SQLite with the PRAGMAs listed in\n  CLAUDE.md. Cursor pagination on all list endpoints. UUIDv7 IDs,\n  ISO 8601 TEXT timestamps.\n- Behavior changes come with tests. The e2e suite is the backbone —\n  regression tests reference the issue or ADR that motivated them.\n- The binary must stay comfortable on a Raspberry Pi 4 with 2GB RAM; be\n  suspicious of dependencies."
     },
     {
-      "id": "7ec757d00280",
-      "text": "## ADR and migration numbers",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
+      "id": "1d1fe698f0e8",
+      "text": "## Naming an ADR or a migration",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Naming rule for the number-space cutover; AI-drafted from the decision in docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md.",
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
           "line": 66,
           "kind": "md-block",
-          "raw": "## ADR and migration numbers",
+          "raw": "## Naming an ADR or a migration",
           "quote": null
         }
       ]
     },
     {
-      "id": "8af650267498",
-      "text": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
-      "words": 29,
+      "id": "1cec4de02894",
+      "text": "Take today's date and write a sentence. There is nothing to look up and\nnobody to ask:",
+      "words": 17,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Naming rule for the number-space cutover; AI-drafted from the decision in docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md.",
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
           "line": 68,
           "kind": "md-block",
-          "raw": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
+          "raw": "Take today's date and write a sentence. There is nothing to look up and\nnobody to ask:",
           "quote": null
         }
       ]
     },
     {
-      "id": "47c85b859e87",
-      "text": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
-      "words": 19,
+      "id": "ad8ae3e13051",
+      "text": "ADRs use `YYYY-MM-DD-slug.md`. Migrations use `YYYYMMDDTHHMMSS_slug.sql`,\nwith seconds, because for a migration the timestamp decides what runs\nfirst.",
+      "words": 18,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Naming rule for the number-space cutover; AI-drafted from the decision in docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md.",
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 77,
+          "line": 76,
           "kind": "md-block",
-          "raw": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
+          "raw": "ADRs use `YYYY-MM-DD-slug.md`. Migrations use `YYYYMMDDTHHMMSS_slug.sql`,\nwith seconds, because for a migration the timestamp decides what runs\nfirst.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1ea242998019",
+      "text": "Both number spaces are closed: ADRs stopped at 115 and migrations at 074,\nand no new record is ever numbered. Those files keep their names and every\ncitation to them keeps working. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
+      "words": 47,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Naming rule for the number-space cutover; AI-drafted from the decision in docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md.",
+      "occurrences": [
+        {
+          "file": "CONTRIBUTING.md",
+          "line": 80,
+          "kind": "md-block",
+          "raw": "Both number spaces are closed: ADRs stopped at 115 and migrations at 074,\nand no new record is ever numbered. Those files keep their names and every\ncitation to them keeps working. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aaf45b8d5928",
+      "text": "Why, and why nothing was renamed, is\n[docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md](docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md).\nShort version: a sequential number is claimed from a counter whose real\nstate is the union of every branch in flight, which no branch can see, so\ntwo branches pick the same one and both are right.",
+      "words": 45,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Naming rule for the number-space cutover; AI-drafted from the decision in docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md.",
+      "occurrences": [
+        {
+          "file": "CONTRIBUTING.md",
+          "line": 85,
+          "kind": "md-block",
+          "raw": "Why, and why nothing was renamed, is\n[docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md](docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md).\nShort version: a sequential number is claimed from a counter whose real\nstate is the union of every branch in flight, which no branch can see, so\ntwo branches pick the same one and both are right.",
           "quote": null
         }
       ]
@@ -305,7 +341,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 80,
+          "line": 91,
           "kind": "md-block",
           "raw": "## AI-assisted contributions",
           "quote": null
@@ -323,7 +359,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 82,
+          "line": 93,
           "kind": "md-block",
           "raw": "Acceptable. Much of Patchwork is built via AI coding. Two rules: disclose it\n(keep the `Co-Authored-By` trailer your tool adds), and review what you\nsubmit. You are the author of your PR; \"the model wrote it\" is not a\nreview process.",
           "quote": null
@@ -342,7 +378,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 87,
+          "line": 98,
           "kind": "md-block",
           "raw": "## Security issues",
           "quote": null
@@ -360,7 +396,7 @@
       "occurrences": [
         {
           "file": "CONTRIBUTING.md",
-          "line": 89,
+          "line": 100,
           "kind": "md-block",
           "raw": "Never through the public tracker. See [SECURITY.md](SECURITY.md).",
           "quote": null
@@ -55669,6 +55705,42 @@
           "line": 813,
           "kind": "markup",
           "raw": "This is one of the patch's rules, so it is changed with the rest of\n        them. Whether that takes effect at once or goes to the members\n        depends on how this patch decides things.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8af650267498",
+      "text": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
+      "words": 29,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "CONTRIBUTING.md",
+          "line": 68,
+          "kind": "md-block",
+          "raw": "Both are sequentially numbered and both can be claimed by branches that\ncan't see each other. Before claiming a number, check what's in flight,\nnot just what's on disk:",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "47c85b859e87",
+      "text": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
+      "words": 19,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "CONTRIBUTING.md",
+          "line": 77,
+          "kind": "md-block",
+          "raw": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
           "quote": null
         }
       ]
