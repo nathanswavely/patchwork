@@ -132,3 +132,24 @@ instance admin, or the claimant — and neither changes what the patch shows.
 `GET /api/v1/users/me/claims` serves the second. Both listings run the lazy
 expiry sweep first (`expireAllPastDueApprovedClaims`), because a right that
 has lapsed must not be listed as one still held.
+
+## Addendum, 2026-09-16: `approved` is not "awaiting setup"
+
+The claim row deliberately never changes when setup succeeds: a second
+attempt is refused because the patch is no longer unclaimed, not because the
+claim moved on (`SetupClaim`). So `status = 'approved'` records only that the
+claim cleared review. What says setup happened is the *node*, which is now
+`active`.
+
+The section added above asked the claim and not the node, so a claimant who
+finished setup stayed in "Approved, awaiting setup" forever, telling instance
+admins to keep waiting on a patch that was already live and run by the person
+named beside it. A claimed venue sat in that queue on the Lancaster instance.
+The lazy expiry sweeps had the same gap from the other side: once the window
+passed they would rewrite a claim that had *succeeded* into one that lapsed.
+
+The rule, then: any surface that means "awaiting setup" joins `nodes` and
+requires `status = 'unclaimed'`. `MyClaims` and the expiry reminder already
+did. `ListClaims` and both sweeps now do, via `claimNodeStillUnclaimed`.
+`RequestClaim`'s approved-claim block needs no join because it refuses
+anything but an unclaimed patch several lines earlier.
