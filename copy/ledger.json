@@ -23717,7 +23717,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 393,
+          "line": 414,
           "kind": "markup",
           "raw": "patch is outside this view",
           "quote": null
@@ -23735,7 +23735,7 @@
       "occurrences": [
         {
           "file": "web/src/components/MapView.svelte",
-          "line": 395,
+          "line": 416,
           "kind": "markup",
           "raw": "patches are outside this view",
           "quote": null
@@ -37009,7 +37009,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 124,
+          "line": 127,
           "kind": "markup",
           "raw": "Suggested tags",
           "quote": null
@@ -37027,9 +37027,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 126,
+          "line": 129,
           "kind": "markup",
-          "raw": "Words patch admins asked for. A suggestion sits privately on the\n        patch that asked until you add it here. Approving publishes it on\n        every patch waiting on it; declining removes it from them and spends\n        the word, though you can still add it yourself later.",
+          "raw": "Words patch admins asked for. A suggestion sits privately on the\n      patch that asked until you add it here. Approving publishes it on\n      every patch waiting on it; declining removes it from them and spends\n      the word, though you can still add it yourself later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "023fc95ff6c5",
+      "text": "Nothing waiting for review.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): empty-state line for the review queue. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "Nothing waiting for review.",
           "quote": null
         }
       ]
@@ -37045,7 +37063,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 140,
+          "line": 146,
           "kind": "attr:aria-label",
           "raw": "Tag name, editable before approving",
           "quote": "\""
@@ -37063,7 +37081,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 176,
+          "line": 182,
           "kind": "attr:placeholder",
           "raw": "New tag name (e.g. music)",
           "quote": "\""
@@ -37081,7 +37099,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 190,
+          "line": 196,
           "kind": "markup",
           "raw": "No tags yet. Add the first one above.",
           "quote": null
@@ -37099,7 +37117,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 205,
+          "line": 211,
           "kind": "attr:title",
           "raw": "Change motif",
           "quote": "\""
