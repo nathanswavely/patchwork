@@ -21090,7 +21090,7 @@
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2434,
+          "line": 2462,
           "kind": "markup",
           "raw": "Try Again",
           "quote": null
@@ -25450,7 +25450,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 626,
+          "line": 654,
           "kind": "js-string",
           "raw": "This quilt",
           "quote": "'"
@@ -25468,7 +25468,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 993,
+          "line": 1021,
           "kind": "js-string",
           "raw": "'Space Grotesk Variable', system-ui, sans-serif",
           "quote": "\""
@@ -25486,7 +25486,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2429,
+          "line": 2457,
           "kind": "markup",
           "raw": "Loading quilt...",
           "quote": null
@@ -25504,14 +25504,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2440,
+          "line": 2468,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2467,
+          "line": 2495,
           "kind": "markup",
           "raw": "No patches match your\n        {filterTags.length > 0 && searchQuery.trim() ? 'search and filter'\n          : filterTags.length > 0 ? 'filter' : 'search'}{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -25529,14 +25529,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2447,
+          "line": 2475,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2474,
+          "line": 2502,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -25550,7 +25550,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 713,
+          "line": 722,
           "kind": "markup",
           "raw": "Clear filter",
           "quote": null
@@ -25568,14 +25568,14 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2450,
+          "line": 2478,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
         },
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2477,
+          "line": 2505,
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
@@ -25593,7 +25593,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2455,
+          "line": 2483,
           "kind": "markup",
           "raw": "This quilt is empty.",
           "quote": null
@@ -25611,7 +25611,7 @@
       "occurrences": [
         {
           "file": "web/src/components/QuiltCanvas.svelte",
-          "line": 2456,
+          "line": 2484,
           "kind": "markup",
           "raw": "Create the first patch to get started.",
           "quote": null
@@ -39427,7 +39427,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 454,
+          "line": 462,
           "kind": "js-string",
           "raw": "Something went wrong",
           "quote": "'"
@@ -48073,7 +48073,7 @@
         },
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 501,
+          "line": 509,
           "kind": "markup",
           "raw": "Member",
           "quote": null
@@ -51823,7 +51823,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 494,
+          "line": 502,
           "kind": "attr:title",
           "raw": "You manage this patch",
           "quote": "\""
@@ -51841,7 +51841,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 496,
+          "line": 504,
           "kind": "markup",
           "raw": "Manage",
           "quote": null
@@ -51859,7 +51859,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 506,
+          "line": 514,
           "kind": "markup",
           "raw": "Requested",
           "quote": null
@@ -51884,7 +51884,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 541,
+          "line": 549,
           "kind": "attr:title",
           "raw": "Unclaimed",
           "quote": "\""
@@ -51902,7 +51902,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 564,
+          "line": 572,
           "kind": "markup",
           "raw": "{patch.is_unclaimed ? `${patch.follower_count || 0} Following` : `${patch.member_count || 0} Member${patch.member_count === 1 ? '' : 's'}`} - {patch.event_count || 0} Event{patch.event_count === 1 ? '' : 's'}",
           "quote": null
@@ -51920,7 +51920,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 652,
+          "line": 661,
           "kind": "markup",
           "raw": "Patches",
           "quote": null
@@ -51938,7 +51938,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 654,
+          "line": 663,
           "kind": "markup",
           "raw": "{resultCount} of {ordered.length} in view",
           "quote": null
@@ -51956,7 +51956,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 654,
+          "line": 663,
           "kind": "markup",
           "raw": "{resultCount} results",
           "quote": null
@@ -51974,7 +51974,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 668,
+          "line": 677,
           "kind": "markup",
           "raw": "In view",
           "quote": null
@@ -51992,7 +51992,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 673,
+          "line": 682,
           "kind": "attr:aria-label",
           "raw": "Order patches",
           "quote": "\""
@@ -52010,7 +52010,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 677,
+          "line": 686,
           "kind": "markup",
           "raw": "Quilt order",
           "quote": null
@@ -52028,7 +52028,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 678,
+          "line": 687,
           "kind": "markup",
           "raw": "Recently added",
           "quote": null
@@ -52046,7 +52046,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 701,
+          "line": 710,
           "kind": "markup",
           "raw": "No patches in view — {ordered.length} elsewhere on the quilt.",
           "quote": null
@@ -52064,7 +52064,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 710,
+          "line": 719,
           "kind": "markup",
           "raw": "No patches match your filter{quiltScope === 'my' ? ' in My Quilt' : ''}.",
           "quote": null
@@ -52082,7 +52082,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SocialHome.svelte",
-          "line": 722,
+          "line": 731,
           "kind": "markup",
           "raw": "No patches here yet.",
           "quote": null

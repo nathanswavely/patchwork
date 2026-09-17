@@ -397,6 +397,14 @@
   // a single fact about the page.
   let previewing = $state(null);
 
+  // The card the pointer is on, reported to the quilt so it dims the rest
+  // (docs/adr/112). Deliberately not `previewing`: that one is set by BOTH
+  // surfaces, so feeding it back to the canvas would mean a hovered tile
+  // asked the canvas to focus the tile already under the pointer. This is
+  // one-directional on purpose — the list points at the quilt, and the quilt
+  // answers its own pointer itself.
+  let hoveredCardId = $state(null);
+
   function preview(patch, fromMap = false) {
     previewing = patch?.id ?? null;
     // A preview that comes from the map brings its card to the reader; one
@@ -528,8 +536,8 @@
             class:previewing={previewing === patch.id}
             data-patch-id={patch.id}
             onclick={() => handlePatchCardClick(patch)}
-            onmouseenter={() => hasPointer && preview(patch)}
-            onmouseleave={() => hasPointer && preview(null)}
+            onmouseenter={() => { if (hasPointer) { preview(patch); hoveredCardId = patch.id; } }}
+            onmouseleave={() => { if (hasPointer) { preview(null); hoveredCardId = null; } }}
             role="button"
             tabindex="0"
           >
@@ -619,6 +627,7 @@
         onPatchHover={(patch) => hasPointer && preview(patch, true)}
         onBackgroundClick={backgroundClick}
         onInViewChange={reportInView}
+        focusPatchId={hoveredCardId}
       />
     {/if}
 
