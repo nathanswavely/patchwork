@@ -278,34 +278,3 @@ func AuditLog(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// AdminStats handles GET /api/v1/admin/stats.
-func AdminStats(db *database.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var totalUsers, activeUsers30d, totalNodes, totalEvents int
-		var openProposals, passedProposals, rejectedProposals int
-		var pendingReports, recentSignups7d int
-
-		db.QueryRow("SELECT COUNT(*) FROM users").Scan(&totalUsers)
-		db.QueryRow("SELECT COUNT(DISTINCT user_id) FROM sessions WHERE expires_at > strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-30 days')").Scan(&activeUsers30d)
-		db.QueryRow("SELECT COUNT(*) FROM nodes WHERE status = 'active' AND removed_at IS NULL").Scan(&totalNodes)
-		db.QueryRow("SELECT COUNT(*) FROM events WHERE removed_at IS NULL").Scan(&totalEvents)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE status = 'open'").Scan(&openProposals)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE status = 'approved'").Scan(&passedProposals)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE status = 'rejected'").Scan(&rejectedProposals)
-		db.QueryRow("SELECT COUNT(*) FROM content_reports WHERE status = 'pending'").Scan(&pendingReports)
-		db.QueryRow("SELECT COUNT(*) FROM users WHERE created_at >= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-7 days')").Scan(&recentSignups7d)
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]int{
-			"total_users":        totalUsers,
-			"active_users_30d":   activeUsers30d,
-			"total_nodes":        totalNodes,
-			"total_events":       totalEvents,
-			"open_proposals":     openProposals,
-			"passed_proposals":   passedProposals,
-			"rejected_proposals": rejectedProposals,
-			"pending_reports":    pendingReports,
-			"recent_signups_7d":  recentSignups7d,
-		})
-	}
-}

@@ -698,7 +698,9 @@ func main() {
 	// Archived patches: list + the only way back from archived (docs/adr/034).
 	mux.HandleFunc("GET /api/v1/admin/nodes", middleware.AdminRequired(db, handler.AdminListNodes(db)))
 	mux.HandleFunc("POST /api/v1/admin/nodes/{id}/restore", middleware.AdminRequired(db, handler.AdminRestoreNode(db)))
-	mux.HandleFunc("GET /api/v1/admin/stats", middleware.AdminRequired(db, handler.AdminStats(db)))
+	// Overview (CONTEXT.md, "Overview"): what waits on the instance admin and
+	// what is unattended. Never a size or growth figure.
+	mux.HandleFunc("GET /api/v1/admin/overview", middleware.AdminRequired(db, handler.AdminOverview(db, cfg)))
 
 	// Quilt settings (docs/adr/014): community identity + danger zone.
 	// Neighbor quilts: the instance's public adjacency list (docs/adr/024).
