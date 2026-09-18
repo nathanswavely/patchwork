@@ -117,20 +117,6 @@ var openToAnySignedInUser = map[string]string{
 	"POST /api/v1/claims/{id}/resend-email":         "same",
 	"POST /api/v1/claims/{id}/setup":                "same",
 	"DELETE /api/v1/proposals/{id}/candidates/me":   "withdrawing your own candidacy (docs/adr/107); scoped to the caller's row",
-
-	// These last two are not a decision anybody made, and they are the one
-	// thing this walk turned up. AddReaction checks that the comment exists
-	// and nothing else, while CreateComment two functions above it gates on
-	// standing and then on follower_permissions.proposals (docs/adr/044,
-	// docs/adr/050), so a stranger who may not say a word on a proposal may
-	// still put a thumb on it, on any patch, including one whose followers
-	// the patch has shut out of its proposals. They are listed so the rest of
-	// this walk can run, not because the behaviour is right; the fix is the
-	// gate CreateComment already uses, and it wants its own change.
-	// RemoveReaction is the milder half, since it deletes the caller's own
-	// row and so is a no-op for a stranger, but it is listed beside its twin.
-	"POST /api/v1/comments/{id}/reactions":           "reacting has no standing check: a gap, not a design. See the note above",
-	"DELETE /api/v1/comments/{id}/reactions/{emoji}": "unreacting has none either; scoped to the caller's own row, so it changes nothing for a stranger",
 }
 
 // ---------------------------------------------------------------------------

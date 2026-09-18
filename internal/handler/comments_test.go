@@ -335,6 +335,59 @@ func TestRemoveReaction(t *testing.T) {
 	}
 }
 
+// Reacting takes the same standing gate commenting does (docs/adr/044,
+// docs/adr/050): a signed-in caller with no role on the patch may not put a
+// thumb on a comment there, on either the add or the remove side, and a
+// member still may.
+func TestReactions_RequireStanding(t *testing.T) {
+	db := setupTestDB(t)
+	admin, adminToken := createTestUser(t, db, "c_react_admin", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Standing React Node", "standing-react-node", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	proposalID := createTestProposal(t, db, nodeID, admin.ID)
+
+	body := map[string]interface{}{"body": "React to me"}
+	r := authedRequest("POST", "/api/v1/proposals/"+proposalID+"/comments", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/proposals/{id}/comments", handler.CreateComment(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+	commentID := decodeJSON(t, w)["id"].(string)
+
+	// A signed-in stranger with no membership row at all is refused on both
+	// verbs.
+	_, strangerToken := createTestUser(t, db, "c_react_stranger", "member")
+	reactBody := map[string]interface{}{"emoji": "👍"}
+	r = authedRequest("POST", "/api/v1/comments/"+commentID+"/reactions", reactBody, strangerToken)
+	w = serveMux(t, db, "POST", "/api/v1/comments/{id}/reactions", handler.AddReaction(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("stranger add reaction: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+
+	r = authedRequest("DELETE", "/api/v1/comments/"+commentID+"/reactions/👍", nil, strangerToken)
+	w = serveMux(t, db, "DELETE", "/api/v1/comments/{id}/reactions/{emoji}", handler.RemoveReaction(db), r)
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("stranger remove reaction: expected 403, got %d: %s", w.Code, w.Body.String())
+	}
+
+	// A member of the patch still succeeds at both.
+	member, memberToken := createTestUser(t, db, "c_react_member", "member")
+	createTestMembership(t, db, member.ID, nodeID, "member", "active")
+
+	r = authedRequest("POST", "/api/v1/comments/"+commentID+"/reactions", reactBody, memberToken)
+	w = serveMux(t, db, "POST", "/api/v1/comments/{id}/reactions", handler.AddReaction(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("member add reaction: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	r = authedRequest("DELETE", "/api/v1/comments/"+commentID+"/reactions/👍", nil, memberToken)
+	w = serveMux(t, db, "DELETE", "/api/v1/comments/{id}/reactions/{emoji}", handler.RemoveReaction(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("member remove reaction: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 func TestAddReaction_InvalidEmoji(t *testing.T) {
 	db := setupTestDB(t)
 	user, userToken := createTestUser(t, db, "c_react8", "member")
