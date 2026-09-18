@@ -46,7 +46,7 @@ patchwork/
 │   ├── notifications/      # notification channels, email, reminder worker
 │   ├── weblink/            # the SPA paths Go emits (notification/email/feed links)
 │   └── seamrip/            # export/import portability boundary (docs/adr/002)
-├── migrations/             # SQL migration files (timestamped; 001-074 legacy numbered, 006 absent)
+├── migrations/             # SQL migration files (timestamped; 001-075 legacy numbered, 006 absent)
 ├── docs/                   # DEPLOYMENT.md, adr/ (decision records; adr/README.md is the index)
 ├── web/                    # Svelte project (npm, builds to web/dist/)
 ├── CONTEXT.md              # canonical vocabulary glossary (backend vs UI terms)
@@ -75,11 +75,13 @@ label, and two on the same day are told apart by their sentences.
 
 `date +%Y-%m-%d` and `date -u +%Y%m%dT%H%M%S` produce them.
 
-**Both number spaces are closed.** ADRs stopped at 115 and migrations at
-074. Those files keep their names forever, every `docs/adr/0NN` citation
-keeps resolving, and no new record is ever numbered.
+**Both number spaces are closed.** ADRs stopped at 117 and migrations at
+075 (the cutover ADR said 115 and 074; two branches in flight landed after
+it, and a merged migration is never renamed, so the line moved rather than
+the files). Those files keep their names forever, every `docs/adr/0NN`
+citation keeps resolving, and no new record is ever numbered.
 `TestNewRecordsAreNotNumbered` fails the build on a new `NNN-` or `NNN_`,
-because the realistic way this decays is mimicry: 115 numbered files are a
+because the realistic way this decays is mimicry: 117 numbered files are a
 strong pattern to copy. `migrations/006` is still intentionally absent and
 a retired ADR still keeps its number and its status line.
 
@@ -317,6 +319,8 @@ Key endpoints:
 - `POST /api/v1/events` — members/admins post directly; anyone else submits for review (`status: pending_review`) per docs/adr/026; trusted contributors (users flag) post directly to unclaimed patches. `event_url` is the event's **own page out on the web** (docs/adr/079) — tickets, the venue's listing — distinct from the Patchwork permalink and from an `event_link`. http(s) only, checked at every write path *and* at every parser, because it is rendered as an href and a feed is somebody else's input
 - `PATCH /api/v1/events/{id}/review` — approve/reject an event submission (instance admin for unclaimed patches, patch admins for active)
 - `GET /api/v1/admin/event-submissions`, `GET /api/v1/nodes/{slug}/event-submissions` — the two review queues
+- **The trusted-contributor grant has a scope** (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md): `users.trusted_contributor` is the quilt-wide grant and `node_trusted_contributors` the per-patch one, and every gate that is about one patch (event create/edit, CSV upload, the link handshake, event sources) reads `userTrustedOn`, never the flag. `GET /api/v1/nodes/{slug}` answers `viewer_trusted` beside `is_unclaimed`, at the top of the payload and not on the node. A quilt-wide grant also skips listing review: `POST /api/v1/submissions` publishes that person's suggestion as unclaimed at once. A suggestion may carry `feed_url`, probed synchronously and parked in `nodes.suggested_feed_url` until `PATCH /api/v1/admin/submissions/{id}` approves with `grant_trust` and `attach_feed` (both default true), which is where the per-patch grant is ordinarily given. Both outcomes notify the suggester
+- `GET|POST /api/v1/users/me/trust-request`, `GET|PATCH /api/v1/admin/trust-requests[/{id}]`, `POST|DELETE /api/v1/admin/users/{id}/trusted-patches[/{nodeId}]` — a **trust request** names a scope (patches, or `all`) and is answered at whatever scope the admin judges right, wider or narrower; requested and granted are two facts in the audit line. One open per person, a 30-day cooldown after a decline, moot when every named patch is claimed (swept lazily on read and before a new ask). `GET /api/v1/nodes?status=unclaimed` feeds the picker. None of the three tables travels in a seamrip
 - `POST /api/v1/nodes/{slug}/claim`, `GET /api/v1/nodes/{slug}/claims/mine`, `POST /api/v1/claims/{id}/{verify|withdraw|resend-email}`, `GET|POST /api/v1/claims/verify-email` — claiming an unclaimed patch (docs/adr/030): concurrent claims (one open per user per patch), self-verification (DNS / meta tag / email) anchored on the vetted `nodes.verification_domain`, admin review via `GET/PATCH /api/v1/admin/claims`
 - `GET|POST /api/v1/nodes/{slug}/event-sources`, `DELETE|POST .../{id}[/sync]`, `POST /api/v1/events/{id}/detach` — event sources (docs/adr/031): owner-attached calendar feeds (ICS; Squarespace and schema.org-marked events pages auto-detected), synced hourly; imported events publish directly, are read-only until detached. Every parser fills `Item.URL` and the reconciler diffs it, so **adding a field the feed is authoritative about needs no backfill migration** — the next sync sees every row as changed and fills it (docs/adr/079). Detach does not clear it: detach severs provenance, and the link is content
 - `POST /api/v1/nodes/{slug}/events/bulk` — event upload (CSV door): admin-only batch create, all-or-nothing validation, title+start dedup, silent (no notify/AP burst)

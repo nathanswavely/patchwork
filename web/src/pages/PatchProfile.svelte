@@ -39,6 +39,7 @@
       isMember={loaded?.isMember ?? false}
       isAdmin={loaded?.isAdmin ?? false}
       isUnclaimed={loaded?.isUnclaimed ?? false}
+      viewerTrusted={loaded?.viewerTrusted ?? false}
       isBanned={loaded?.isBanned ?? false}
       membershipRole={loaded?.membershipRole ?? ''}
       followerPermissions={loaded?.followerPermissions ?? null}

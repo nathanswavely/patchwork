@@ -7,9 +7,10 @@ as a sentence. Take today's date and write the sentence; there is nothing to
 look up and nobody to ask. See
 [2026-09-16-a-name-nobody-has-to-ask-for.md](2026-09-16-a-name-nobody-has-to-ask-for.md).
 
-ADRs 001 through 115 keep the sequential numbers they were born with, and every
-citation to them keeps working. That number space is **closed**: 115 was the
-last one issued and 116 never will be. A retired ADR keeps its number and gains
+ADRs 001 through 117 keep the sequential numbers they were born with, and every
+citation to them keeps working. That number space is **closed**: 117 was the
+last one issued and 118 never will be (the cutover said 115; 116 and 117 were
+in flight when it landed, and are kept rather than renamed). A retired ADR keeps its number and gains
 a status line.
 
 The first column below is how you cite a decision: a number for the legacy
@@ -139,8 +140,9 @@ range, a date for everything after it.
 | [079](079-an-event-keeps-the-door-it-came-through.md) | An event keeps the door it came through — every feed carries the event's own page and Patchwork dropped it; one `event_url`, filled by ingest and by the form *(fills a gap in 031, completes 056)* |
 | [080](080-a-contact-card-is-shared-patch-by-patch.md) | A contact card is shared patch by patch — one card on the account, one switch per membership, shown only in the room; a second axis beside 006's one switch, not a second visibility toggle *(superseded by 083)* |
 | [081](081-a-noticeboard-with-replies-not-a-feed.md) | A noticeboard with replies, not a feed — members-only, replies per notice, a closed moderation kit, quiet by default; travels in a seamrip; markdown with an image reference |
+| [2026-09-16](2026-09-16-a-name-nobody-has-to-ask-for.md) | A name nobody has to ask for: the ADR and migration number spaces close at 115 and 074; new records are named from the clock and a sentence, so no two worktrees ever claim the same one *(retires CLAUDE.md's "Claiming a number"; nothing existing is renamed; amended 2026-09-18: two in-flight branches landed 116, 117 and 075 after the cutover, so the spaces closed there)* |
+| [2026-09-18](2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md) | Trust has a scope, and a suggestion carries its calendar: creation opens on a fork; the trusted-contributor grant is quilt-wide or per-patch, offered checked at suggestion approval; trusted contributors may attach feeds where their grant reaches; a suggestion may carry a feed; a trust request is answered; the suggester is told *(amends 026, 031, 039)* |
 | [2026-09-18](2026-09-18-the-default-should-match-the-assumption.md) | The default should match the assumption: a patch is born with its member list and its governance record closed, and both open by an act; the deliberation was the leak, not the documents; existing patches are retracted rather than grandfathered because a wrong closure costs a click and a wrong exposure cannot be recalled *(extends 095 and corrects its decision 7 — a membership must not travel as an inference either; narrows the reach of 037 on the profile without weakening the pin; departs from 036 on grandfathering)* |
-| [2026-09-16](2026-09-16-a-name-nobody-has-to-ask-for.md) | A name nobody has to ask for: the ADR and migration number spaces close at 115 and 074; new records are named from the clock and a sentence, so no two worktrees ever claim the same one *(retires CLAUDE.md's "Claiming a number"; nothing existing is renamed)* |
 
 ## Proposed — designs on record, not built
 

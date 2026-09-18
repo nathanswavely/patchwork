@@ -18,9 +18,17 @@ import (
 // and a sentence instead, which every worktree can do alone.
 //
 // These are the last numbers ever issued. They are not "the highest so far".
+//
+// The cutover ADR closed the spaces at 115 and 074. Two branches were in
+// flight at that moment and landed 116, 117 and 075 afterwards, which is the
+// exact blind spot the ADR describes. They keep their names, because a
+// merged migration cannot be renamed without a permanent renamedMigrations
+// entry to rescue every database that already ran it, and the whole point of
+// the cutover was to stop paying that kind of cost. So the spaces closed one
+// step later than first written. See the 2026-09-18 addendum in that ADR.
 const (
-	lastNumberedADR       = 115
-	lastNumberedMigration = 74
+	lastNumberedADR       = 117
+	lastNumberedMigration = 75
 )
 
 var (

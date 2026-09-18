@@ -850,7 +850,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 258,
+          "line": 266,
           "kind": "js-string",
           "raw": "Bands, solo artists, pop-up projects",
           "quote": "'"
@@ -875,7 +875,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 259,
+          "line": 267,
           "kind": "js-string",
           "raw": "Small group. Majority rules.",
           "quote": "'"
@@ -937,7 +937,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 260,
+          "line": 268,
           "kind": "js-string",
           "raw": "Open community, structured process. Trust builds through contribution.",
           "quote": "'"
@@ -981,7 +981,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 261,
+          "line": 269,
           "kind": "js-string",
           "raw": "Coalition-scale governance. Elected council, term limits, full accountability.",
           "quote": "'"
@@ -1013,7 +1013,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 261,
+          "line": 269,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -3815,7 +3815,7 @@
         },
         {
           "file": "internal/handler/admin.go",
-          "line": 100,
+          "line": 129,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3857,14 +3857,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 754,
+          "line": 771,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 915,
+          "line": 932,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3899,7 +3899,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1287,
+          "line": 1307,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3948,7 +3948,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 429,
+          "line": 447,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3962,21 +3962,21 @@
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 70,
+          "line": 71,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 444,
+          "line": 455,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 642,
+          "line": 656,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4046,14 +4046,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 772,
+          "line": 808,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1026,
+          "line": 1062,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4220,29 +4220,50 @@
           "quote": null
         },
         {
-          "file": "internal/handler/unclaimed.go",
-          "line": 39,
+          "file": "internal/handler/trust_requests.go",
+          "line": 264,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 452,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 621,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 162,
+          "line": 101,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 241,
+          "line": 320,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 404,
+          "line": 399,
+          "kind": "go-error-body",
+          "raw": "invalid request body",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/unclaimed.go",
+          "line": 585,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4526,35 +4547,35 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 94,
+          "line": 112,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 119,
+          "line": 137,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 207,
+          "line": 225,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 244,
+          "line": 262,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 409,
+          "line": 427,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4568,14 +4589,14 @@
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 54,
+          "line": 55,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 482,
+          "line": 493,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4673,21 +4694,21 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 603,
+          "line": 620,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1014,
+          "line": 1050,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1391,
+          "line": 1427,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -4818,7 +4839,7 @@
         },
         {
           "file": "internal/handler/admin.go",
-          "line": 88,
+          "line": 117,
           "kind": "go-error-body",
           "raw": "user id required",
           "quote": null
@@ -4878,7 +4899,7 @@
         },
         {
           "file": "internal/handler/admin.go",
-          "line": 163,
+          "line": 192,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -4921,6 +4942,20 @@
         {
           "file": "internal/handler/inbox.go",
           "line": 155,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 625,
+          "kind": "go-error-body",
+          "raw": "user not found",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 659,
           "kind": "go-error-body",
           "raw": "user not found",
           "quote": null
@@ -5035,7 +5070,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 47,
+          "line": 56,
           "kind": "go-error-body",
           "raw": "failed to list users",
           "quote": null
@@ -5053,7 +5088,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 109,
+          "line": 138,
           "kind": "go-error-body",
           "raw": "role must be member or admin",
           "quote": null
@@ -5071,28 +5106,28 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 146,
+          "line": 175,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 433,
+          "line": 451,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 711,
+          "line": 725,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1307,
+          "line": 1343,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5117,7 +5152,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 158,
+          "line": 187,
           "kind": "go-error-body",
           "raw": "failed to update user",
           "quote": null
@@ -5135,7 +5170,7 @@
       "occurrences": [
         {
           "file": "internal/handler/admin.go",
-          "line": 246,
+          "line": 275,
           "kind": "go-error-body",
           "raw": "failed to list audit log",
           "quote": null
@@ -5210,7 +5245,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 152,
+          "line": 170,
           "kind": "go-error-body",
           "raw": "url must be http(s)",
           "quote": null
@@ -5235,7 +5270,7 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 173,
+          "line": 191,
           "kind": "go-error-body",
           "raw": "this feed is already attached",
           "quote": null
@@ -5524,42 +5559,42 @@
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 98,
+          "line": 116,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 123,
+          "line": 141,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 211,
+          "line": 229,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 248,
+          "line": 266,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 310,
+          "line": 328,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 413,
+          "line": 431,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5587,14 +5622,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 636,
+          "line": 650,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 790,
+          "line": 804,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5608,14 +5643,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1020,
+          "line": 1056,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1397,
+          "line": 1433,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -5973,7 +6008,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 531,
+          "line": 545,
           "kind": "go-error-body",
           "raw": "failed to create event",
           "quote": null
@@ -6167,7 +6202,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 592,
+          "line": 609,
           "kind": "go-error-body",
           "raw": "slug required",
           "quote": null
@@ -6256,7 +6291,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 769,
+          "line": 783,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
@@ -6281,21 +6316,21 @@
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 152,
+          "line": 154,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 364,
+          "line": 366,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 302,
+          "line": 320,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6309,42 +6344,42 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 346,
+          "line": 356,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 360,
+          "line": 370,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 373,
+          "line": 383,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 597,
+          "line": 611,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 782,
+          "line": 796,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 813,
+          "line": 827,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -6805,6 +6840,20 @@
         {
           "file": "internal/handler/attestations.go",
           "line": 238,
+          "kind": "go-error-body",
+          "raw": "failed to record the decision",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 486,
+          "kind": "go-error-body",
+          "raw": "failed to record the decision",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 556,
           "kind": "go-error-body",
           "raw": "failed to record the decision",
           "quote": null
@@ -7324,7 +7373,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 774,
+          "line": 791,
           "kind": "go-error-body",
           "raw": "failed to update where you moved to",
           "quote": null
@@ -7342,7 +7391,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 783,
+          "line": 800,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -7360,7 +7409,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 793,
+          "line": 810,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -7378,7 +7427,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 804,
+          "line": 821,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -7396,7 +7445,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 812,
+          "line": 829,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -7414,7 +7463,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 826,
+          "line": 843,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -7432,7 +7481,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 871,
+          "line": 888,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -7450,14 +7499,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 907,
+          "line": 924,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 948,
+          "line": 965,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -7475,7 +7524,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 927,
+          "line": 944,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -7493,14 +7542,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 931,
+          "line": 948,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 962,
+          "line": 979,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -7518,7 +7567,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 957,
+          "line": 974,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -7752,7 +7801,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1317,
+          "line": 1337,
           "kind": "go-error-body",
           "raw": "claim not found",
           "quote": null
@@ -7791,7 +7840,7 @@
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1321,
+          "line": 1341,
           "kind": "go-error-body",
           "raw": "not your claim",
           "quote": null
@@ -7997,7 +8046,7 @@
         },
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 441,
+          "line": 688,
           "kind": "go-error-body",
           "raw": "action must be 'approve' or 'reject'",
           "quote": null
@@ -8069,14 +8118,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1291,
+          "line": 1311,
           "kind": "go-error-body",
           "raw": "membership_policy must be one of %s",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 812,
+          "line": 848,
           "kind": "go-error-body",
           "raw": "membership_policy must be one of %s",
           "quote": null
@@ -8094,7 +8143,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1304,
+          "line": 1324,
           "kind": "go-error-body",
           "raw": "unknown governance template",
           "quote": null
@@ -8112,7 +8161,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1325,
+          "line": 1345,
           "kind": "go-error-body",
           "raw": "claim is %s, not approved",
           "quote": null
@@ -8130,7 +8179,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1334,
+          "line": 1354,
           "kind": "go-error-body",
           "raw": "this claim's setup window has expired. The patch is claimable again",
           "quote": null
@@ -8149,14 +8198,14 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1343,
+          "line": 1363,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
         },
         {
           "file": "internal/handler/claims.go",
-          "line": 1349,
+          "line": 1369,
           "kind": "go-error-body",
           "raw": "this patch is no longer unclaimed",
           "quote": null
@@ -8174,7 +8223,7 @@
       "occurrences": [
         {
           "file": "internal/handler/claims.go",
-          "line": 1352,
+          "line": 1372,
           "kind": "go-error-body",
           "raw": "failed to complete setup",
           "quote": null
@@ -8658,7 +8707,7 @@
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 187,
+          "line": 189,
           "kind": "go-error-body",
           "raw": "patch not found",
           "quote": null
@@ -9002,7 +9051,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 146,
+          "line": 148,
           "kind": "go-error-body",
           "raw": "target is required",
           "quote": null
@@ -9020,7 +9069,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 156,
+          "line": 158,
           "kind": "go-error-body",
           "raw": "only active events can be linked",
           "quote": null
@@ -9038,7 +9087,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 168,
+          "line": 170,
           "kind": "go-error-body",
           "raw": "only this patch's admins can add a mention",
           "quote": null
@@ -9056,7 +9105,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 176,
+          "line": 178,
           "kind": "go-error-body",
           "raw": "already mentioned",
           "quote": null
@@ -9074,7 +9123,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 191,
+          "line": 193,
           "kind": "go-error-body",
           "raw": "an event is already on its own patch",
           "quote": null
@@ -9092,7 +9141,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 197,
+          "line": 199,
           "kind": "go-error-body",
           "raw": "only admins of either patch can link",
           "quote": null
@@ -9110,14 +9159,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 216,
+          "line": 218,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 385,
+          "line": 387,
           "kind": "go-error-body",
           "raw": "only the linked patch's admins choose an event to absorb",
           "quote": null
@@ -9135,14 +9184,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 220,
+          "line": 222,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 389,
+          "line": 391,
           "kind": "go-error-body",
           "raw": "absorb_event_id must be an event on the linked patch",
           "quote": null
@@ -9160,7 +9209,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 242,
+          "line": 244,
           "kind": "go-error-body",
           "raw": "link already exists",
           "quote": null
@@ -9178,14 +9227,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 354,
+          "line": 356,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_links.go",
-          "line": 430,
+          "line": 432,
           "kind": "go-error-body",
           "raw": "link not found",
           "quote": null
@@ -9203,7 +9252,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 358,
+          "line": 360,
           "kind": "go-error-body",
           "raw": "link is already confirmed",
           "quote": null
@@ -9221,7 +9270,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 374,
+          "line": 376,
           "kind": "go-error-body",
           "raw": "only the other patch's admins can confirm",
           "quote": null
@@ -9239,7 +9288,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 400,
+          "line": 402,
           "kind": "go-error-body",
           "raw": "failed to confirm link",
           "quote": null
@@ -9257,7 +9306,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 435,
+          "line": 437,
           "kind": "go-error-body",
           "raw": "only admins of either patch can remove a link",
           "quote": null
@@ -9275,7 +9324,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 440,
+          "line": 442,
           "kind": "go-error-body",
           "raw": "failed to remove link",
           "quote": null
@@ -9293,7 +9342,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 465,
+          "line": 467,
           "kind": "go-error-body",
           "raw": "mention not found",
           "quote": null
@@ -9311,7 +9360,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_links.go",
-          "line": 469,
+          "line": 471,
           "kind": "go-error-body",
           "raw": "only this patch's admins can remove a mention",
           "quote": null
@@ -9329,14 +9378,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 103,
+          "line": 121,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 184,
+          "line": 202,
           "kind": "go-error-body",
           "raw": "failed to list event sources",
           "quote": null
@@ -9354,7 +9403,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 131,
+          "line": 149,
           "kind": "go-error-body",
           "raw": "url is required",
           "quote": null
@@ -9372,7 +9421,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 163,
+          "line": 181,
           "kind": "go-error-body",
           "raw": "this patch already has the maximum number of event sources",
           "quote": null
@@ -9390,7 +9439,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 195,
+          "line": 213,
           "kind": "go-error-body",
           "raw": "failed to create event source",
           "quote": null
@@ -9408,35 +9457,35 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 219,
+          "line": 237,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 256,
+          "line": 274,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 282,
+          "line": 300,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 421,
+          "line": 439,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 462,
+          "line": 480,
           "kind": "go-error-body",
           "raw": "event source not found",
           "quote": null
@@ -9454,7 +9503,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 227,
+          "line": 245,
           "kind": "go-error-body",
           "raw": "failed to remove event source",
           "quote": null
@@ -9472,7 +9521,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 261,
+          "line": 279,
           "kind": "go-error-body",
           "raw": "this source just synced, try again in a minute",
           "quote": null
@@ -9491,7 +9540,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 272,
+          "line": 290,
           "kind": "go-error-body",
           "raw": "failed to sync",
           "quote": null
@@ -9509,7 +9558,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 306,
+          "line": 324,
           "kind": "go-error-body",
           "raw": "this event is not attached to an event source",
           "quote": null
@@ -9527,14 +9576,14 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 319,
+          "line": 337,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
         },
         {
           "file": "internal/handler/event_sources.go",
-          "line": 327,
+          "line": 345,
           "kind": "go-error-body",
           "raw": "failed to detach event",
           "quote": null
@@ -9552,7 +9601,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 444,
+          "line": 462,
           "kind": "go-error-body",
           "raw": "failed to update event source",
           "quote": null
@@ -9570,7 +9619,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_sources.go",
-          "line": 452,
+          "line": 470,
           "kind": "go-error-body",
           "raw": "failed to load event sources",
           "quote": null
@@ -9674,7 +9723,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 62,
+          "line": 63,
           "kind": "go-error-body",
           "raw": "bulk upload is for patch admins",
           "quote": null
@@ -9692,7 +9741,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 74,
+          "line": 75,
           "kind": "go-error-body",
           "raw": "no events in upload",
           "quote": null
@@ -9710,7 +9759,7 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 78,
+          "line": 79,
           "kind": "go-error-body",
           "raw": "an upload is at most %d events",
           "quote": null
@@ -9728,42 +9777,42 @@
       "occurrences": [
         {
           "file": "internal/handler/event_upload.go",
-          "line": 130,
+          "line": 131,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 137,
+          "line": 138,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 144,
+          "line": 145,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 150,
+          "line": 151,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 173,
+          "line": 174,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
         },
         {
           "file": "internal/handler/event_upload.go",
-          "line": 179,
+          "line": 180,
           "kind": "go-error-body",
           "raw": "failed to upload events",
           "quote": null
@@ -9799,7 +9848,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 467,
+          "line": 478,
           "kind": "go-error-body",
           "raw": "node_id, title, and starts_at are required",
           "quote": null
@@ -9817,14 +9866,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 513,
+          "line": 527,
           "kind": "go-error-body",
           "raw": "community submissions are disabled on this instance",
           "quote": null
         },
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 23,
+          "line": 79,
           "kind": "go-error-body",
           "raw": "community submissions are disabled on this instance",
           "quote": null
@@ -9842,7 +9891,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 517,
+          "line": 531,
           "kind": "go-error-body",
           "raw": "this patch does not accept event suggestions",
           "quote": null
@@ -9860,7 +9909,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 605,
+          "line": 619,
           "kind": "go-error-body",
           "raw": "this event comes from an event source. Edit it in the source calendar, or detach it first",
           "quote": null
@@ -9879,7 +9928,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 726,
+          "line": 740,
           "kind": "go-error-body",
           "raw": "failed to update event",
           "quote": null
@@ -9897,14 +9946,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 801,
+          "line": 815,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 808,
+          "line": 822,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
@@ -12514,6 +12563,13 @@
           "kind": "go-error-body",
           "raw": "message must be 500 characters or fewer",
           "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 280,
+          "kind": "go-error-body",
+          "raw": "message must be 500 characters or fewer",
+          "quote": null
         }
       ]
     },
@@ -13213,6 +13269,24 @@
       ]
     },
     {
+      "id": "a9766f827400",
+      "text": "status must be active or unclaimed",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/nodes.go",
+          "line": 529,
+          "kind": "go-error-body",
+          "raw": "status must be active or unclaimed",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "fb56dddefc14",
       "text": "failed to list nodes",
       "words": 4,
@@ -13223,7 +13297,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 549,
+          "line": 566,
           "kind": "go-error-body",
           "raw": "failed to list nodes",
           "quote": null
@@ -13241,7 +13315,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 776,
+          "line": 812,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -13262,14 +13336,14 @@
         },
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 43,
+          "line": 105,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
         },
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 166,
+          "line": 324,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -13287,14 +13361,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 786,
+          "line": 822,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1147,
+          "line": 1183,
           "kind": "go-error-body",
           "raw": "visibility must be one of %s",
           "quote": null
@@ -13312,14 +13386,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 798,
+          "line": 834,
           "kind": "go-error-body",
           "raw": "public_member_list must be one of %s",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1176,
+          "line": 1212,
           "kind": "go-error-body",
           "raw": "public_member_list must be one of %s",
           "quote": null
@@ -13337,14 +13411,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 807,
+          "line": 843,
           "kind": "go-error-body",
           "raw": "public_governance_record must be one of %s",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1187,
+          "line": 1223,
           "kind": "go-error-body",
           "raw": "public_governance_record must be one of %s",
           "quote": null
@@ -13362,7 +13436,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 876,
+          "line": 912,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -13380,7 +13454,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1100,
+          "line": 1136,
           "kind": "go-error-body",
           "raw": "failed to read this patch's calendar",
           "quote": null
@@ -13398,7 +13472,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1158,
+          "line": 1194,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -13416,7 +13490,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1164,
+          "line": 1200,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -13434,14 +13508,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1210,
+          "line": 1246,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1217,
+          "line": 1253,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -13459,7 +13533,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1231,
+          "line": 1267,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -13477,14 +13551,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1240,
+          "line": 1276,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1247,
+          "line": 1283,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
@@ -13502,7 +13576,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1319,
+          "line": 1355,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -13520,7 +13594,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1328,
+          "line": 1364,
           "kind": "go-error-body",
           "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
@@ -13538,7 +13612,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1405,
+          "line": 1441,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -16866,6 +16940,311 @@
       ]
     },
     {
+      "id": "5b2bc78210c4",
+      "text": "you are already a trusted contributor",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 272,
+          "kind": "go-error-body",
+          "raw": "you are already a trusted contributor",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ec34215d0c2c",
+      "text": "scope must be all or patches",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 276,
+          "kind": "go-error-body",
+          "raw": "scope must be all or patches",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 512,
+          "kind": "go-error-body",
+          "raw": "scope must be all or patches",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "92e4138fa911",
+      "text": "you already have a request waiting",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 295,
+          "kind": "go-error-body",
+          "raw": "you already have a request waiting",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2449014300a5",
+      "text": "name at least one patch",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 318,
+          "kind": "go-error-body",
+          "raw": "name at least one patch",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 528,
+          "kind": "go-error-body",
+          "raw": "name at least one patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "642b19d519b8",
+      "text": "a trust request may only name unclaimed patches",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 324,
+          "kind": "go-error-body",
+          "raw": "a trust request may only name unclaimed patches",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bc84537c2770",
+      "text": "failed to record the request",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 336,
+          "kind": "go-error-body",
+          "raw": "failed to record the request",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 343,
+          "kind": "go-error-body",
+          "raw": "failed to record the request",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fcd6776f1453",
+      "text": "failed to list trust requests",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 401,
+          "kind": "go-error-body",
+          "raw": "failed to list trust requests",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "019974244e7f",
+      "text": "action must be approve or decline",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 456,
+          "kind": "go-error-body",
+          "raw": "action must be approve or decline",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0caa068869b9",
+      "text": "trust request not found",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 464,
+          "kind": "go-error-body",
+          "raw": "trust request not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bfdc320e8443",
+      "text": "failed to grant",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 522,
+          "kind": "go-error-body",
+          "raw": "failed to grant",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 542,
+          "kind": "go-error-body",
+          "raw": "failed to grant",
+          "quote": null
+        },
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 639,
+          "kind": "go-error-body",
+          "raw": "failed to grant",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7319453d64ab",
+      "text": "a grant may only name unclaimed patches",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 533,
+          "kind": "go-error-body",
+          "raw": "a grant may only name unclaimed patches",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "17aa61b7af67",
+      "text": "a grant may only name an unclaimed patch",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 630,
+          "kind": "go-error-body",
+          "raw": "a grant may only name an unclaimed patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7b3455b22281",
+      "text": "failed to revoke",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/trust_requests.go",
+          "line": 666,
+          "kind": "go-error-body",
+          "raw": "failed to revoke",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2606693d21cf",
+      "text": "feed url must be http(s)",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/unclaimed.go",
+          "line": 137,
+          "kind": "go-error-body",
+          "raw": "feed url must be http(s)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "897d67afe329",
+      "text": "could not read a calendar at that address",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/handler/unclaimed.go",
+          "line": 144,
+          "kind": "go-error-body",
+          "raw": "could not read a calendar at that address",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "16d2c02de78d",
       "text": "failed to create submission",
       "words": 4,
@@ -16876,7 +17255,7 @@
       "occurrences": [
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 107,
+          "line": 213,
           "kind": "go-error-body",
           "raw": "failed to create submission",
           "quote": null
@@ -16894,7 +17273,7 @@
       "occurrences": [
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 200,
+          "line": 358,
           "kind": "go-error-body",
           "raw": "failed to create unclaimed patch",
           "quote": null
@@ -16912,7 +17291,7 @@
       "occurrences": [
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 325,
+          "line": 484,
           "kind": "go-error-body",
           "raw": "failed to query submissions",
           "quote": null
@@ -16930,7 +17309,7 @@
       "occurrences": [
         {
           "file": "internal/handler/unclaimed.go",
-          "line": 412,
+          "line": 597,
           "kind": "go-error-body",
           "raw": "submission not found",
           "quote": null
@@ -17747,7 +18126,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 254,
+          "line": 281,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -17765,7 +18144,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 255,
+          "line": 282,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -17783,7 +18162,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 256,
+          "line": 283,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -17801,7 +18180,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 257,
+          "line": 284,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -17819,7 +18198,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 258,
+          "line": 285,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -17837,7 +18216,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 259,
+          "line": 286,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -17855,7 +18234,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 260,
+          "line": 287,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -17873,7 +18252,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 268,
+          "line": 295,
           "kind": "go-string",
           "raw": "Voting ends in 24 hours and you have not voted",
           "quote": "\""
@@ -17891,7 +18270,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 275,
+          "line": 302,
           "kind": "go-string",
           "raw": "An open vote you can take part in",
           "quote": "\""
@@ -17909,7 +18288,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 276,
+          "line": 303,
           "kind": "go-string",
           "raw": "A vote you have not cast is short of quorum",
           "quote": "\""
@@ -17927,7 +18306,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 278,
+          "line": 305,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -17945,7 +18324,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 283,
+          "line": 310,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -17963,7 +18342,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 284,
+          "line": 311,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -17981,7 +18360,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 285,
+          "line": 312,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -17999,7 +18378,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 290,
+          "line": 317,
           "kind": "go-string",
           "raw": "Followers can no longer read members-only charters",
           "quote": "\""
@@ -18017,7 +18396,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 291,
+          "line": 318,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -18035,7 +18414,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 292,
+          "line": 319,
           "kind": "go-string",
           "raw": "A ratified nomination had no seat",
           "quote": "\""
@@ -18053,7 +18432,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 293,
+          "line": 320,
           "kind": "go-string",
           "raw": "This patch has no admins",
           "quote": "\""
@@ -18071,7 +18450,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 294,
+          "line": 321,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -18089,7 +18468,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 296,
+          "line": 323,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -18107,7 +18486,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 297,
+          "line": 324,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -18125,7 +18504,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 298,
+          "line": 325,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -18143,7 +18522,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 299,
+          "line": 326,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -18161,7 +18540,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 300,
+          "line": 327,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -18179,7 +18558,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 301,
+          "line": 328,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -18197,7 +18576,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 302,
+          "line": 329,
           "kind": "go-string",
           "raw": "You're invited to join a patch",
           "quote": "\""
@@ -18215,7 +18594,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 304,
+          "line": 331,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -18233,7 +18612,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 305,
+          "line": 332,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -18251,7 +18630,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 306,
+          "line": 333,
           "kind": "go-string",
           "raw": "Your event was declined",
           "quote": "\""
@@ -18269,7 +18648,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 311,
+          "line": 338,
           "kind": "go-string",
           "raw": "A tag you suggested was approved",
           "quote": "\""
@@ -18287,7 +18666,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 312,
+          "line": 339,
           "kind": "go-string",
           "raw": "A tag you suggested was declined",
           "quote": "\""
@@ -18305,7 +18684,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 314,
+          "line": 341,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -18323,7 +18702,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 315,
+          "line": 342,
           "kind": "go-string",
           "raw": "Event link confirmed",
           "quote": "\""
@@ -18341,7 +18720,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 319,
+          "line": 346,
           "kind": "go-string",
           "raw": "A listing matched one of your programs",
           "quote": "\""
@@ -18359,7 +18738,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 324,
+          "line": 351,
           "kind": "go-string",
           "raw": "A notice for your patch",
           "quote": "\""
@@ -18377,7 +18756,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 325,
+          "line": 352,
           "kind": "go-string",
           "raw": "Reply on a notice you're in",
           "quote": "\""
@@ -18395,7 +18774,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 326,
+          "line": 353,
           "kind": "go-string",
           "raw": "A notice or reply was reported",
           "quote": "\""
@@ -18413,7 +18792,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 328,
+          "line": 355,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -18431,7 +18810,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 329,
+          "line": 356,
           "kind": "go-string",
           "raw": "New patch submission",
           "quote": "\""
@@ -18449,9 +18828,45 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 330,
+          "line": 357,
           "kind": "go-string",
           "raw": "A tag was suggested",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "b837ba016c1f",
+      "text": "Your patch suggestion was approved",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 363,
+          "kind": "go-string",
+          "raw": "Your patch suggestion was approved",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "e9236ffe663d",
+      "text": "Your patch suggestion was declined",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 364,
+          "kind": "go-string",
+          "raw": "Your patch suggestion was declined",
           "quote": "\""
         }
       ]
@@ -18467,7 +18882,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 331,
+          "line": 365,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -18485,9 +18900,81 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 332,
+          "line": 366,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "dec11a4fbb08",
+      "text": "Someone asked to be a trusted contributor",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 367,
+          "kind": "go-string",
+          "raw": "Someone asked to be a trusted contributor",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "d48f67f2dc61",
+      "text": "Your trust request was approved",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 375,
+          "kind": "go-string",
+          "raw": "Your trust request was approved",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "45b8a906dcc3",
+      "text": "Your trust request was declined",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 376,
+          "kind": "go-string",
+          "raw": "Your trust request was declined",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "34c8ea85aab6",
+      "text": "Your trust request no longer applies",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/types.go",
+          "line": 377,
+          "kind": "go-string",
+          "raw": "Your trust request no longer applies",
           "quote": "\""
         }
       ]
@@ -18503,7 +18990,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 334,
+          "line": 379,
           "kind": "go-string",
           "raw": "Your claim was approved",
           "quote": "\""
@@ -18521,7 +19008,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 339,
+          "line": 384,
           "kind": "go-string",
           "raw": "New patches this month",
           "quote": "\""
@@ -18539,7 +19026,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 340,
+          "line": 385,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -19463,7 +19950,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 435,
+          "line": 438,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -19897,7 +20384,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 378,
+          "line": 540,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -20682,7 +21169,7 @@
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 367,
+          "line": 401,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -20717,7 +21204,21 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 301,
+          "line": 479,
+          "kind": "markup",
+          "raw": "Cancel",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 553,
+          "kind": "markup",
+          "raw": "Cancel",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 453,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -21269,7 +21770,7 @@
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 57,
+          "line": 69,
           "kind": "js-string",
           "raw": "Something went wrong.",
           "quote": "'"
@@ -21312,14 +21813,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 92,
+          "line": 119,
           "kind": "js-string",
           "raw": "Unclaimed patches",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 195,
+          "line": 215,
           "kind": "js-string",
           "raw": "Unclaimed patches",
           "quote": "'"
@@ -21337,7 +21838,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 179,
+          "line": 206,
           "kind": "js-string",
           "raw": "Mention added",
           "quote": "'"
@@ -21355,7 +21856,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 179,
+          "line": 206,
           "kind": "js-string",
           "raw": "Link requested",
           "quote": "'"
@@ -21373,7 +21874,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 183,
+          "line": 210,
           "kind": "js-string",
           "raw": "Failed to request link",
           "quote": "'"
@@ -21391,7 +21892,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 219,
+          "line": 252,
           "kind": "js-string",
           "raw": "Failed to confirm link",
           "quote": "'"
@@ -21409,7 +21910,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 228,
+          "line": 261,
           "kind": "js-string",
           "raw": "Request removed",
           "quote": "'"
@@ -21427,7 +21928,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 231,
+          "line": 264,
           "kind": "js-string",
           "raw": "Failed to remove link",
           "quote": "'"
@@ -21452,7 +21953,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 240,
+          "line": 273,
           "kind": "js-string",
           "raw": "Failed to remove mention",
           "quote": "'"
@@ -21470,7 +21971,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 249,
+          "line": 282,
           "kind": "markup",
           "raw": "with",
           "quote": null
@@ -21488,7 +21989,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 257,
+          "line": 290,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -21513,7 +22014,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 271,
+          "line": 304,
           "kind": "attr:title",
           "raw": "Remove mention",
           "quote": "\""
@@ -21531,7 +22032,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 284,
+          "line": 317,
           "kind": "markup",
           "raw": "Waiting for",
           "quote": null
@@ -21549,7 +22050,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 284,
+          "line": 317,
           "kind": "markup",
           "raw": "to confirm this link",
           "quote": null
@@ -21567,7 +22068,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 286,
+          "line": 319,
           "kind": "markup",
           "raw": "asked to link to this event",
           "quote": null
@@ -21585,14 +22086,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 293,
+          "line": 326,
           "kind": "markup",
           "raw": "Keep all my events",
           "quote": null
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 330,
+          "line": 363,
           "kind": "markup",
           "raw": "Keep all my events",
           "quote": null
@@ -21610,14 +22111,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 295,
+          "line": 328,
           "kind": "markup",
           "raw": "Replace \"{d.title}\"",
           "quote": null
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 332,
+          "line": 365,
           "kind": "markup",
           "raw": "Replace \"{d.title}\"",
           "quote": null
@@ -21635,7 +22136,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 300,
+          "line": 333,
           "kind": "markup",
           "raw": "Confirm",
           "quote": null
@@ -21667,14 +22168,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 324,
+          "line": 357,
           "kind": "attr:title",
           "raw": "Choose a different patch",
           "quote": "\""
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 392,
+          "line": 554,
           "kind": "attr:title",
           "raw": "Choose a different patch",
           "quote": "\""
@@ -21692,7 +22193,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 343,
+          "line": 376,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -21706,7 +22207,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 405,
+          "line": 567,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -21724,7 +22225,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 372,
+          "line": 406,
           "kind": "markup",
           "raw": "Link a patch",
           "quote": null
@@ -21846,7 +22347,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 343,
+          "line": 504,
           "kind": "markup",
           "raw": "New",
           "quote": null
@@ -22031,7 +22532,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 587,
+          "line": 609,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -23304,7 +23805,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 380,
+          "line": 383,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -23336,7 +23837,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 340,
+          "line": 501,
           "kind": "markup",
           "raw": "Edit",
           "quote": null
@@ -24169,7 +24670,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 246,
+          "line": 249,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -24187,7 +24688,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 275,
+          "line": 278,
           "kind": "markup",
           "raw": "atproto handle, proved when this patch was claimed",
           "quote": null
@@ -24205,7 +24706,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 284,
+          "line": 287,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -24237,7 +24738,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 296,
+          "line": 299,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -24258,7 +24759,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 201,
+          "line": 208,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -24276,7 +24777,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 336,
+          "line": 339,
           "kind": "markup",
           "raw": "{moreEvents} more upcoming",
           "quote": null
@@ -24294,7 +24795,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 339,
+          "line": 342,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -24312,7 +24813,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 372,
+          "line": 375,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -24344,7 +24845,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 391,
+          "line": 394,
           "kind": "markup",
           "raw": "Documents",
           "quote": null
@@ -24369,7 +24870,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 431,
+          "line": 434,
           "kind": "markup",
           "raw": "Proposals and decisions here are not public.",
           "quote": null
@@ -24387,7 +24888,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 433,
+          "line": 436,
           "kind": "markup",
           "raw": "Nothing published yet.",
           "quote": null
@@ -24405,21 +24906,21 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 118,
+          "line": 119,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 87,
+          "line": 93,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 147,
+          "line": 159,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -24437,14 +24938,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 143,
+          "line": 144,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 195,
+          "line": 201,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -24462,7 +24963,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 145,
+          "line": 146,
           "kind": "markup",
           "raw": "Back to Quilt",
           "quote": null
@@ -24480,7 +24981,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 186,
+          "line": 187,
           "kind": "markup",
           "raw": "Settings",
           "quote": null
@@ -24505,7 +25006,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 217,
+          "line": 218,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
           "quote": null
@@ -24523,7 +25024,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 218,
+          "line": 219,
           "kind": "markup",
           "raw": "The community added it",
           "quote": null
@@ -24541,7 +25042,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 220,
+          "line": 221,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -24559,7 +25060,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 222,
+          "line": 223,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -24577,7 +25078,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 224,
+          "line": 225,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -24595,7 +25096,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 224,
+          "line": 225,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -24613,7 +25114,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 236,
+          "line": 237,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -24631,7 +25132,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 238,
+          "line": 239,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -25097,14 +25598,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 172,
+          "line": 178,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 173,
+          "line": 179,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -25122,7 +25623,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 180,
+          "line": 186,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -25140,7 +25641,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 198,
+          "line": 204,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -25844,6 +26345,13 @@
           "kind": "markup",
           "raw": "Suggest a patch",
           "quote": null
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "Suggest a patch",
+          "quote": null
         }
       ]
     },
@@ -26156,14 +26664,21 @@
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 100,
+          "line": 98,
           "kind": "markup",
           "raw": "(optional)",
           "quote": null
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 105,
+          "line": 118,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 123,
           "kind": "markup",
           "raw": "(optional)",
           "quote": null
@@ -27187,7 +27702,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 609,
+          "line": 631,
           "kind": "markup",
           "raw": "Membership Policy",
           "quote": null
@@ -27497,7 +28012,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 154,
+          "line": 162,
           "kind": "js-string",
           "raw": "Approval required",
           "quote": "'"
@@ -27529,7 +28044,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 153,
+          "line": 161,
           "kind": "js-string",
           "raw": "Invite only",
           "quote": "'"
@@ -28219,7 +28734,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 439,
+          "line": 461,
           "kind": "markup",
           "raw": "Remove",
           "quote": null
@@ -28708,6 +29223,153 @@
           "line": 137,
           "kind": "markup",
           "raw": "&rsaquo;",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "52462c4e16a5",
+      "text": "Every unclaimed patch",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 54,
+          "kind": "js-string",
+          "raw": "Every unclaimed patch",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 124,
+          "kind": "markup",
+          "raw": "Every unclaimed patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3e10f8472e7f",
+      "text": "No patch picked yet",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 55,
+          "kind": "js-string",
+          "raw": "No patch picked yet",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "74ff1221f874",
+      "text": "Add a patch",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 148,
+          "kind": "markup",
+          "raw": "Add a patch",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Dashboard.svelte",
+          "line": 157,
+          "kind": "markup",
+          "raw": "Add a patch",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 399,
+          "kind": "markup",
+          "raw": "Add a patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "596e0efeefca",
+      "text": "Search unclaimed patches",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 151,
+          "kind": "attr:placeholder",
+          "raw": "Search unclaimed patches",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "51561726d282",
+      "text": "Loading unclaimed patches...",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 160,
+          "kind": "markup",
+          "raw": "Loading unclaimed patches...",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dc52403ea6dc",
+      "text": "Could not load the unclaimed patches.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 163,
+          "kind": "markup",
+          "raw": "Could not load the unclaimed patches.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "03e96ec380ee",
+      "text": "No unclaimed patch by that name.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/components/TrustScopePicker.svelte",
+          "line": 168,
+          "kind": "markup",
+          "raw": "No unclaimed patch by that name.",
           "quote": null
         }
       ]
@@ -29396,14 +30058,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 133,
+          "line": 140,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 142,
+          "line": 149,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
@@ -29421,14 +30083,21 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 135,
+          "line": 142,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 145,
+          "line": 152,
+          "kind": "js-string",
+          "raw": "Event Sources",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchSettings.svelte",
+          "line": 50,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
@@ -29453,14 +30122,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 137,
+          "line": 144,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 148,
+          "line": 155,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
@@ -31178,21 +31847,21 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 298,
+          "line": 399,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 317,
+          "line": 325,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 380,
+          "line": 388,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -31296,7 +31965,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 260,
+          "line": 438,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -31360,7 +32029,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 261,
+          "line": 439,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -31424,7 +32093,7 @@
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 86,
+          "line": 104,
           "kind": "markup",
           "raw": "Links",
           "quote": null
@@ -31732,7 +32401,7 @@
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 90,
+          "line": 108,
           "kind": "attr:placeholder",
           "raw": "Label (optional)",
           "quote": "\""
@@ -32042,7 +32711,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 232,
+          "line": 410,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -34514,7 +35183,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 89,
+          "line": 90,
           "kind": "js-string",
           "raw": "Event approved",
           "quote": "'"
@@ -34593,7 +35262,7 @@
         },
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 65,
+          "line": 93,
           "kind": "markup",
           "raw": "No pending submissions.",
           "quote": null
@@ -34618,7 +35287,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 303,
+          "line": 321,
           "kind": "markup",
           "raw": "{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}",
           "quote": null
@@ -34643,7 +35312,7 @@
         },
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 86,
+          "line": 120,
           "kind": "markup",
           "raw": "Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
@@ -34668,7 +35337,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 317,
+          "line": 335,
           "kind": "attr:placeholder",
           "raw": "Note to the submitter (optional)",
           "quote": "\""
@@ -36023,14 +36692,14 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 367,
+          "line": 529,
           "kind": "markup",
           "raw": "Description",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 419,
+          "line": 441,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -36044,7 +36713,7 @@
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 76,
+          "line": 88,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -36303,7 +36972,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 483,
+          "line": 646,
           "kind": "markup",
           "raw": "Timezone",
           "quote": null
@@ -36880,7 +37549,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 49,
+          "line": 77,
           "kind": "js-string",
           "raw": "Submission approved",
           "quote": "'"
@@ -36898,7 +37567,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 49,
+          "line": 77,
           "kind": "js-string",
           "raw": "Submission rejected",
           "quote": "'"
@@ -36916,7 +37585,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 59,
+          "line": 87,
           "kind": "markup",
           "raw": "Patch Submissions",
           "quote": null
@@ -36934,9 +37603,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 60,
+          "line": 88,
           "kind": "markup",
           "raw": "Patches people have suggested.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fc0c3967fcee",
+      "text": "{sub.feed_upcoming_count} {sub.feed_upcoming_count === 1 ? 'upcoming event' : 'upcoming events'} found when it was suggested",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminSubmissions.svelte",
+          "line": 111,
+          "kind": "markup",
+          "raw": "{sub.feed_upcoming_count} {sub.feed_upcoming_count === 1 ? 'upcoming event' : 'upcoming events'} found when it was suggested",
           "quote": null
         }
       ]
@@ -36952,7 +37639,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 81,
+          "line": 115,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -36966,7 +37653,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 463,
+          "line": 485,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -36980,7 +37667,7 @@
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 105,
+          "line": 123,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -36998,7 +37685,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 83,
+          "line": 117,
           "kind": "markup",
           "raw": "The submitter's picks.",
           "quote": null
@@ -37016,7 +37703,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 89,
+          "line": 123,
           "kind": "markup",
           "raw": "Verified domain for claims",
           "quote": null
@@ -37034,7 +37721,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 93,
+          "line": 127,
           "kind": "attr:placeholder",
           "raw": "none (admin review only)",
           "quote": "\""
@@ -37052,9 +37739,99 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 96,
+          "line": 130,
           "kind": "markup",
           "raw": "Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a7f4161515b3",
+      "text": "Let {submitterName(sub)} add events here without review until it is claimed",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminSubmissions.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "Let {submitterName(sub)} add events here without review until it is claimed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "00c45bddcab4",
+      "text": "A per-patch trusted-contributor grant. Revocable from Users.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminSubmissions.svelte",
+          "line": 137,
+          "kind": "markup",
+          "raw": "A per-patch trusted-contributor grant. Revocable from Users.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "cc8730f3c90e",
+      "text": "Attach the events feed",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminSubmissions.svelte",
+          "line": 141,
+          "kind": "markup",
+          "raw": "Attach the events feed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e3dc0ce2e599",
+      "text": "Note to the suggester (optional)",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminSubmissions.svelte",
+          "line": 146,
+          "kind": "markup",
+          "raw": "Note to the suggester (optional)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "faa34e56551d",
+      "text": "Sent with a rejection. Approvals don't carry it.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminSubmissions.svelte",
+          "line": 153,
+          "kind": "markup",
+          "raw": "Sent with a rejection. Approvals don't carry it.",
           "quote": null
         }
       ]
@@ -37095,7 +37872,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 89,
+          "line": 90,
           "kind": "js-string",
           "raw": "Suggestion declined",
           "quote": "'"
@@ -37373,6 +38150,60 @@
       ]
     },
     {
+      "id": "04e9f8b4e144",
+      "text": "Pick at least one patch, or every unclaimed patch.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 78,
+          "kind": "js-string",
+          "raw": "Pick at least one patch, or every unclaimed patch.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "454ef6a0ee5f",
+      "text": "Trust granted",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 86,
+          "kind": "js-string",
+          "raw": "Trust granted",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "03940eb3dae5",
+      "text": "Trust request declined",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 103,
+          "kind": "js-string",
+          "raw": "Trust request declined",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "98af8fa8ca19",
       "text": "User unsuspended",
       "words": 2,
@@ -37383,7 +38214,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 81,
+          "line": 151,
           "kind": "js-string",
           "raw": "User unsuspended",
           "quote": "'"
@@ -37401,7 +38232,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 81,
+          "line": 151,
           "kind": "js-string",
           "raw": "User suspended",
           "quote": "'"
@@ -37419,7 +38250,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 97,
+          "line": 167,
           "kind": "js-string",
           "raw": "Trusted contributor revoked",
           "quote": "'"
@@ -37437,9 +38268,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 97,
+          "line": 167,
           "kind": "js-string",
           "raw": "Marked as trusted contributor",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "242ccd4092e1",
+      "text": "Pick at least one patch.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 195,
+          "kind": "js-string",
+          "raw": "Pick at least one patch.",
           "quote": "'"
         }
       ]
@@ -37455,7 +38304,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 197,
+          "line": 322,
           "kind": "js-string",
           "raw": "Invite link copied",
           "quote": "'"
@@ -37473,7 +38322,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 199,
+          "line": 324,
           "kind": "js-string",
           "raw": "Could not copy. Select the link and copy it manually.",
           "quote": "'"
@@ -37491,10 +38340,82 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 206,
+          "line": 331,
           "kind": "markup",
           "raw": "User Management",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b57d05e78e23",
+      "text": "Trust requests",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 338,
+          "kind": "markup",
+          "raw": "Trust requests",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "92b3b63dce23",
+      "text": "People asking to add events on unclaimed patches without review. Grant the scope you judge right, wider or narrower than the one asked for.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 340,
+          "kind": "markup",
+          "raw": "People asking to add events on unclaimed patches without review. Grant\n        the scope you judge right, wider or narrower than the one asked for.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7e251c560d15",
+      "text": "Note to the requester (optional)",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 364,
+          "kind": "markup",
+          "raw": "Note to the requester (optional)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b97664e850a7",
+      "text": "Sent with a decline",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 368,
+          "kind": "attr:placeholder",
+          "raw": "Sent with a decline",
+          "quote": "\""
         }
       ]
     },
@@ -37509,7 +38430,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 212,
+          "line": 390,
           "kind": "markup",
           "raw": "Invite Links",
           "quote": null
@@ -37527,7 +38448,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 214,
+          "line": 392,
           "kind": "markup",
           "raw": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
           "quote": null
@@ -37546,7 +38467,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 218,
+          "line": 396,
           "kind": "markup",
           "raw": "Max uses",
           "quote": null
@@ -37564,7 +38485,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 222,
+          "line": 400,
           "kind": "markup",
           "raw": "Expires in (hours, 0 = never)",
           "quote": null
@@ -37582,7 +38503,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 235,
+          "line": 413,
           "kind": "markup",
           "raw": "This link is shown once, so copy it now. Anyone with it can create an account.",
           "quote": null
@@ -37600,7 +38521,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 243,
+          "line": 421,
           "kind": "attr:placeholder",
           "raw": "Search by name or email...",
           "quote": "\""
@@ -37618,7 +38539,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 254,
+          "line": 432,
           "kind": "markup",
           "raw": "No users found.",
           "quote": null
@@ -37636,7 +38557,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 262,
+          "line": 440,
           "kind": "markup",
           "raw": "Email",
           "quote": null
@@ -37668,7 +38589,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 263,
+          "line": 441,
           "kind": "markup",
           "raw": "Role",
           "quote": null
@@ -37686,7 +38607,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 264,
+          "line": 442,
           "kind": "markup",
           "raw": "Trusted Contributor",
           "quote": null
@@ -37704,7 +38625,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 265,
+          "line": 443,
           "kind": "markup",
           "raw": "Joined",
           "quote": null
@@ -37722,7 +38643,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 266,
+          "line": 444,
           "kind": "markup",
           "raw": "Status",
           "quote": null
@@ -37740,7 +38661,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 267,
+          "line": 445,
           "kind": "markup",
           "raw": "Actions",
           "quote": null
@@ -37758,7 +38679,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 294,
+          "line": 472,
           "kind": "attr:placeholder",
           "raw": "name@example.com",
           "quote": "\""
@@ -37776,7 +38697,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 316,
+          "line": 494,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -37808,7 +38729,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 317,
+          "line": 495,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -37840,10 +38761,46 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 330,
+          "line": 508,
           "kind": "markup",
           "raw": "Trusted",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b93f446fccec",
+      "text": "Trusted on {node.name}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 527,
+          "kind": "markup",
+          "raw": "Trusted on {node.name}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "87e6d00bbf53",
+      "text": "Revoke",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 531,
+          "kind": "attr:title",
+          "raw": "Revoke",
+          "quote": "\""
         }
       ]
     },
@@ -37858,7 +38815,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 349,
+          "line": 565,
           "kind": "markup",
           "raw": "Suspended",
           "quote": null
@@ -37876,7 +38833,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 351,
+          "line": 567,
           "kind": "markup",
           "raw": "Active",
           "quote": null
@@ -37951,7 +38908,7 @@
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 243,
+          "line": 344,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -39450,31 +40407,6 @@
       ]
     },
     {
-      "id": "c2473c8d7b9d",
-      "text": "Create Patch",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Dashboard.svelte",
-          "line": 157,
-          "kind": "markup",
-          "raw": "Create Patch",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 397,
-          "kind": "markup",
-          "raw": "Create Patch",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "7a9f7d429145",
       "text": "Create Event",
       "words": 2,
@@ -39833,19 +40765,19 @@
       ]
     },
     {
-      "id": "4b74c99b8307",
-      "text": "No patches on this quilt so far. Make one for your group, and the next person who comes looking will have something to find.",
-      "words": 24,
+      "id": "e79d4cd93a00",
+      "text": "No patches on this quilt so far. Add one, and the next person who comes looking will have something to find.",
+      "words": 21,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Empty-quilt answer — the natural first act is making something for the next person to find.",
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
       "occurrences": [
         {
           "file": "web/src/pages/Discover.svelte",
           "line": 362,
           "kind": "markup",
-          "raw": "No patches on this quilt so far. Make one for your group, and the\n          next person who comes looking will have something to find.",
+          "raw": "No patches on this quilt so far. Add one, and the next person who\n          comes looking will have something to find.",
           "quote": null
         }
       ]
@@ -40289,9 +41221,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 126,
+          "line": 137,
           "kind": "js-string",
           "raw": "Failed to load event",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "92a137ff3785",
+      "text": "Failed to send that request",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 337,
+          "kind": "js-string",
+          "raw": "Failed to send that request",
           "quote": "'"
         }
       ]
@@ -40307,7 +41257,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 244,
+          "line": 345,
           "kind": "js-string",
           "raw": "Please select a patch",
           "quote": "'"
@@ -40325,7 +41275,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 245,
+          "line": 346,
           "kind": "js-string",
           "raw": "Start date/time is required",
           "quote": "'"
@@ -40343,21 +41293,21 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 281,
+          "line": 382,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 290,
+          "line": 391,
           "kind": "js-string",
           "raw": "Submitted for review",
           "quote": "'"
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 310,
+          "line": 471,
           "kind": "markup",
           "raw": "Submitted for review",
           "quote": null
@@ -40375,7 +41325,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 283,
+          "line": 384,
           "kind": "js-string",
           "raw": "Event updated",
           "quote": "'"
@@ -40393,7 +41343,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 292,
+          "line": 393,
           "kind": "js-string",
           "raw": "Event created",
           "quote": "'"
@@ -40411,7 +41361,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 297,
+          "line": 398,
           "kind": "js-string",
           "raw": "Failed to update event",
           "quote": "'"
@@ -40429,10 +41379,118 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 297,
+          "line": 398,
           "kind": "js-string",
           "raw": "Failed to create event",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "f0ca08a893d0",
+      "text": "Your request to be a trusted contributor is waiting for an admin.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 417,
+          "kind": "markup",
+          "raw": "Your request to be a trusted contributor is waiting for an admin.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9c51529668e2",
+      "text": "Your last request was declined. You can ask again on {formatDay(trustCanAskAgainAt)}.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 419,
+          "kind": "markup",
+          "raw": "Your last request was declined. You can ask again on {formatDay(trustCanAskAgainAt)}.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9947bcad16b4",
+      "text": "Why (optional)",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 429,
+          "kind": "markup",
+          "raw": "Why (optional)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "29b1f275c846",
+      "text": "I book shows at three venues here.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 433,
+          "kind": "attr:placeholder",
+          "raw": "I book shows at three venues here.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "3e5b661c7d11",
+      "text": "An instance admin reviews events on unclaimed patches. Add them often?",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 458,
+          "kind": "markup",
+          "raw": "An instance admin reviews events on unclaimed patches. Add them often?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a2927013bb9e",
+      "text": "Ask to be a trusted contributor.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 459,
+          "kind": "markup",
+          "raw": "Ask to be a trusted contributor.",
+          "quote": null
         }
       ]
     },
@@ -40447,7 +41505,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 312,
+          "line": 473,
           "kind": "markup",
           "raw": "The {pendingReviewers} will look at it. Your event will appear on\n            the calendar once it's approved.",
           "quote": null
@@ -40465,7 +41523,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 341,
+          "line": 502,
           "kind": "markup",
           "raw": "Update your event details.",
           "quote": null
@@ -40483,7 +41541,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 344,
+          "line": 505,
           "kind": "markup",
           "raw": "Loading patch...",
           "quote": null
@@ -40501,7 +41559,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 346,
+          "line": 507,
           "kind": "markup",
           "raw": "Suggest an",
           "quote": null
@@ -40519,7 +41577,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 348,
+          "line": 509,
           "kind": "markup",
           "raw": "Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.",
           "quote": null
@@ -40537,14 +41595,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 351,
+          "line": 513,
           "kind": "markup",
           "raw": "Create",
           "quote": null
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 356,
+          "line": 518,
           "kind": "markup",
           "raw": "Create",
           "quote": null
@@ -40562,7 +41620,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 353,
+          "line": 515,
           "kind": "markup",
           "raw": "Add an event for {hostingPatch?.name || 'this patch'}. It appears as soon as you save it.",
           "quote": null
@@ -40580,7 +41638,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 357,
+          "line": 519,
           "kind": "markup",
           "raw": "Schedule a new event for your community.",
           "quote": null
@@ -40598,7 +41656,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 362,
+          "line": 524,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -40619,7 +41677,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 248,
+          "line": 266,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -40651,7 +41709,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 372,
+          "line": 534,
           "kind": "markup",
           "raw": "Hosting Patch",
           "quote": null
@@ -40669,7 +41727,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 412,
+          "line": 574,
           "kind": "markup",
           "raw": "You aren't a member of this patch, so the {reviewers} will look\n              at your event before it appears.",
           "quote": null
@@ -40687,14 +41745,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 419,
+          "line": 582,
           "kind": "markup",
           "raw": "Location",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 248,
+          "line": 266,
           "kind": "markup",
           "raw": "Location",
           "quote": null
@@ -40719,7 +41777,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 420,
+          "line": 583,
           "kind": "attr:placeholder",
           "raw": "Where is this happening?",
           "quote": "\""
@@ -40737,7 +41795,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 427,
+          "line": 590,
           "kind": "markup",
           "raw": "Event page",
           "quote": null
@@ -40755,14 +41813,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 428,
+          "line": 591,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 437,
+          "line": 600,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -40776,7 +41834,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 459,
+          "line": 481,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -40811,14 +41869,21 @@
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 82,
+          "line": 94,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 89,
+          "line": 99,
+          "kind": "attr:placeholder",
+          "raw": "https://...",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 107,
           "kind": "attr:placeholder",
           "raw": "https://...",
           "quote": "\""
@@ -40836,7 +41901,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 430,
+          "line": 593,
           "kind": "markup",
           "raw": "Where to buy tickets or read more, if this event has a page\n            somewhere else.",
           "quote": null
@@ -40854,7 +41919,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 436,
+          "line": 599,
           "kind": "markup",
           "raw": "Image address",
           "quote": null
@@ -40886,7 +41951,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 439,
+          "line": 602,
           "kind": "markup",
           "raw": "Link a flyer or photo you already have online. Patchwork points at\n            it and never keeps a copy.",
           "quote": null
@@ -40911,7 +41976,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 449,
+          "line": 612,
           "kind": "markup",
           "raw": "Describe the image",
           "quote": null
@@ -40950,7 +42015,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 450,
+          "line": 613,
           "kind": "attr:placeholder",
           "raw": "Flyer for the March show",
           "quote": "\""
@@ -40968,7 +42033,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 452,
+          "line": 615,
           "kind": "markup",
           "raw": "Read aloud by screen readers, and shown if the image stops\n              loading.",
           "quote": null
@@ -40986,7 +42051,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 460,
+          "line": 623,
           "kind": "markup",
           "raw": "Starts At",
           "quote": null
@@ -41004,7 +42069,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 464,
+          "line": 627,
           "kind": "markup",
           "raw": "Ends At",
           "quote": null
@@ -41022,7 +42087,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 477,
+          "line": 640,
           "kind": "markup",
           "raw": "Times are in {timezone.replace(/_/g, ' ')}{zoneOverridden ? '' : \", this patch's timezone\"}.",
           "quote": null
@@ -41040,7 +42105,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 492,
+          "line": 655,
           "kind": "markup",
           "raw": "An IANA name. Clear it to go back to\n              {patchTimezone ? patchTimezone.replace(/_/g, ' ') : \"the patch's timezone\"}.",
           "quote": null
@@ -41058,7 +42123,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
-          "line": 495,
+          "line": 658,
           "kind": "markup",
           "raw": "Not a place this quilt keeps time in. Try America/New_York.",
           "quote": null
@@ -41276,7 +42341,7 @@
         },
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 338,
+          "line": 356,
           "kind": "markup",
           "raw": "Loading events...",
           "quote": null
@@ -42344,7 +43409,7 @@
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 575,
+          "line": 597,
           "kind": "markup",
           "raw": "The lining",
           "quote": null
@@ -44772,7 +45837,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 94,
+          "line": 95,
           "kind": "js-string",
           "raw": "Failed to review",
           "quote": "'"
@@ -44790,7 +45855,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 144,
+          "line": 151,
           "kind": "js-string",
           "raw": "Upload failed",
           "quote": "'"
@@ -44808,7 +45873,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 192,
+          "line": 199,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -44840,7 +45905,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 193,
+          "line": 200,
           "kind": "markup",
           "raw": "Become a member to access events.",
           "quote": null
@@ -44858,7 +45923,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 199,
+          "line": 206,
           "kind": "markup",
           "raw": "{events.length} events",
           "quote": null
@@ -44876,7 +45941,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 221,
+          "line": 239,
           "kind": "markup",
           "raw": "Become a member to create events.",
           "quote": null
@@ -44894,7 +45959,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 223,
+          "line": 241,
           "kind": "markup",
           "raw": "Join this patch to create events.",
           "quote": null
@@ -44912,7 +45977,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 232,
+          "line": 250,
           "kind": "markup",
           "raw": "Download template",
           "quote": null
@@ -44930,7 +45995,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 248,
+          "line": 266,
           "kind": "markup",
           "raw": "When",
           "quote": null
@@ -44948,7 +46013,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 249,
+          "line": 267,
           "kind": "markup",
           "raw": "Link",
           "quote": null
@@ -44966,7 +46031,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 264,
+          "line": 282,
           "kind": "markup",
           "raw": "…and {uploadEvents.length - 8} more",
           "quote": null
@@ -44984,7 +46049,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 275,
+          "line": 293,
           "kind": "markup",
           "raw": "Fix the rows above and re-pick the file.",
           "quote": null
@@ -45002,7 +46067,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 279,
+          "line": 297,
           "kind": "markup",
           "raw": "No events found in {uploadFileName}.",
           "quote": null
@@ -45020,7 +46085,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 283,
+          "line": 301,
           "kind": "markup",
           "raw": "Times are read in your timezone. Rows matching an event already on the\n        calendar are skipped, so re-uploading a corrected file is safe.",
           "quote": null
@@ -45038,7 +46103,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 297,
+          "line": 315,
           "kind": "markup",
           "raw": "Suggested events",
           "quote": null
@@ -45056,7 +46121,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 304,
+          "line": 322,
           "kind": "markup",
           "raw": "&middot; {sub.location}",
           "quote": null
@@ -45074,7 +46139,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 310,
+          "line": 328,
           "kind": "markup",
           "raw": "Suggested by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
@@ -45092,7 +46157,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 341,
+          "line": 359,
           "kind": "markup",
           "raw": "No events scheduled.",
           "quote": null
@@ -45110,7 +46175,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 342,
+          "line": 360,
           "kind": "markup",
           "raw": "Members can create events for meetups, shows, or gatherings.",
           "quote": null
@@ -45128,7 +46193,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchEvents.svelte",
-          "line": 358,
+          "line": 376,
           "kind": "markup",
           "raw": "&middot; {event.location}",
           "quote": null
@@ -45146,7 +46211,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 153,
+          "line": 161,
           "kind": "js-string",
           "raw": "Only people an admin invites can join.",
           "quote": "'"
@@ -45164,7 +46229,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 154,
+          "line": 162,
           "kind": "js-string",
           "raw": "Anyone can ask to join; an admin approves each request.",
           "quote": "'"
@@ -45182,7 +46247,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 155,
+          "line": 163,
           "kind": "js-string",
           "raw": "Anyone can join without approval.",
           "quote": "'"
@@ -45200,7 +46265,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 261,
+          "line": 269,
           "kind": "js-string",
           "raw": "Arts districts, coalitions (100+ people)",
           "quote": "'"
@@ -45218,14 +46283,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 265,
+          "line": 273,
           "kind": "js-string",
           "raw": "Name is required",
           "quote": "'"
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 29,
+          "line": 40,
           "kind": "js-string",
           "raw": "Name is required",
           "quote": "'"
@@ -45243,7 +46308,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 266,
+          "line": 274,
           "kind": "js-string",
           "raw": "Choose a membership policy",
           "quote": "'"
@@ -45261,7 +46326,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 310,
+          "line": 318,
           "kind": "js-string",
           "raw": "Your setup window has expired. The patch is claimable again.",
           "quote": "'"
@@ -45279,7 +46344,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 313,
+          "line": 321,
           "kind": "js-string",
           "raw": "This patch is no longer claimable.",
           "quote": "'"
@@ -45297,7 +46362,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 316,
+          "line": 324,
           "kind": "js-string",
           "raw": "Failed to complete setup",
           "quote": "'"
@@ -45315,7 +46380,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 339,
+          "line": 347,
           "kind": "js-string",
           "raw": "This patch is yours",
           "quote": "'"
@@ -45333,7 +46398,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 341,
+          "line": 349,
           "kind": "js-string",
           "raw": "Patch set up. Finish edits in Patch Settings.",
           "quote": "'"
@@ -45351,7 +46416,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 376,
+          "line": 384,
           "kind": "js-string",
           "raw": "Patch created",
           "quote": "'"
@@ -45369,10 +46434,100 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 379,
+          "line": 387,
           "kind": "js-string",
           "raw": "Failed to create patch",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7dbd067be3c4",
+      "text": "Is this your patch to run?",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 400,
+          "kind": "markup",
+          "raw": "Is this your patch to run?",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bb0433e5aea8",
+      "text": "I run this patch",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 403,
+          "kind": "markup",
+          "raw": "I run this patch",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0e4ab3952ff4",
+      "text": "You become its admin. Members, events and settings are yours from the start.",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 404,
+          "kind": "markup",
+          "raw": "You become its admin. Members, events and settings are yours from the start.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7613d6cf88f8",
+      "text": "Someone else runs it",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 407,
+          "kind": "markup",
+          "raw": "Someone else runs it",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "52bc471d4c5d",
+      "text": "It joins the quilt as an unclaimed patch. The people who run it can claim it later, and you can add its events once it's approved.",
+      "words": 26,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 408,
+          "kind": "markup",
+          "raw": "It joins the quilt as an unclaimed patch. The people who run it can claim it later, and you can add its events once it's approved.",
+          "quote": null
         }
       ]
     },
@@ -45387,7 +46542,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 391,
+          "line": 413,
           "kind": "markup",
           "raw": "Set up your patch",
           "quote": null
@@ -45405,7 +46560,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 392,
+          "line": 414,
           "kind": "markup",
           "raw": "Complete this patch's details to activate it.",
           "quote": null
@@ -45423,9 +46578,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 394,
+          "line": 416,
           "kind": "markup",
           "raw": "Approval expires {formatExpiry(expiresAt)}.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c2473c8d7b9d",
+      "text": "Create Patch",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 419,
+          "kind": "markup",
+          "raw": "Create Patch",
           "quote": null
         }
       ]
@@ -45441,7 +46614,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 398,
+          "line": 420,
           "kind": "markup",
           "raw": "Start a new community, collective, venue, or group.",
           "quote": null
@@ -45449,37 +46622,19 @@
       ]
     },
     {
-      "id": "95c76726e33c",
-      "text": "Creating a patch makes you its admin. Know a group that isn't yours to run?",
-      "words": 15,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/PatchForm.svelte",
-          "line": 400,
-          "kind": "markup",
-          "raw": "Creating a patch makes you its admin. Know a group that isn't yours to run?",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "90b5d13011f6",
-      "text": "instead.",
-      "words": 1,
+      "id": "9fc68e39cfe7",
+      "text": "Not yours to run?",
+      "words": 4,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 400,
+          "line": 422,
           "kind": "markup",
-          "raw": "instead.",
+          "raw": "Not yours to run?",
           "quote": null
         }
       ]
@@ -45495,21 +46650,21 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 407,
+          "line": 429,
           "kind": "markup",
           "raw": "Address",
           "quote": null
         },
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 427,
+          "line": 449,
           "kind": "markup",
           "raw": "Address",
           "quote": null
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 100,
+          "line": 118,
           "kind": "markup",
           "raw": "Address",
           "quote": null
@@ -45527,7 +46682,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 409,
+          "line": 431,
           "kind": "markup",
           "raw": "This is the patch's existing address.",
           "quote": null
@@ -45545,14 +46700,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 414,
+          "line": 436,
           "kind": "markup",
           "raw": "Name",
           "quote": null
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 71,
+          "line": 83,
           "kind": "markup",
           "raw": "Name",
           "quote": null
@@ -45570,7 +46725,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 415,
+          "line": 437,
           "kind": "attr:placeholder",
           "raw": "e.g. Gallery Row, Lancaster Beats Lab",
           "quote": "\""
@@ -45588,7 +46743,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 420,
+          "line": 442,
           "kind": "attr:placeholder",
           "raw": "What is this patch about?",
           "quote": "\""
@@ -45606,7 +46761,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 433,
+          "line": 455,
           "kind": "attr:placeholder",
           "raw": "Where is this based?",
           "quote": "\""
@@ -45624,7 +46779,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 439,
+          "line": 461,
           "kind": "markup",
           "raw": "On the map.",
           "quote": null
@@ -45642,7 +46797,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 442,
+          "line": 464,
           "kind": "markup",
           "raw": "Looking for this address...",
           "quote": null
@@ -45667,14 +46822,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 458,
+          "line": 480,
           "kind": "markup",
           "raw": "Website",
           "quote": null
         },
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 81,
+          "line": 93,
           "kind": "markup",
           "raw": "Website",
           "quote": null
@@ -45692,7 +46847,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 465,
+          "line": 487,
           "kind": "markup",
           "raw": "What kind of patch is this? Tags help people find you, and new\n            patches are placed near others with the same tags on the quilt.\n            The first tag decides your default motif. Missing a word? Suggest\n            it, and an admin decides whether it joins the quilt's tags.",
           "quote": null
@@ -45710,7 +46865,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 474,
+          "line": 496,
           "kind": "markup",
           "raw": "Tile",
           "quote": null
@@ -45728,7 +46883,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 476,
+          "line": 498,
           "kind": "markup",
           "raw": "How this patch looks on the quilt. You can change it anytime\n            in Patch Settings → Appearance, and draft your own block there too.",
           "quote": null
@@ -45746,7 +46901,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 488,
+          "line": 510,
           "kind": "attr:aria-label",
           "raw": "Tile preview",
           "quote": "\""
@@ -45771,7 +46926,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 495,
+          "line": 517,
           "kind": "attr:title",
           "raw": "Rotate 90°",
           "quote": "\""
@@ -45796,7 +46951,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 501,
+          "line": 523,
           "kind": "attr:aria-label",
           "raw": "Palette",
           "quote": "\""
@@ -45821,7 +46976,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 520,
+          "line": 542,
           "kind": "attr:aria-label",
           "raw": "Block",
           "quote": "\""
@@ -45846,7 +47001,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 548,
+          "line": 570,
           "kind": "markup",
           "raw": "Motif",
           "quote": null
@@ -45871,7 +47026,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 550,
+          "line": 572,
           "kind": "markup",
           "raw": "Optional. The mark that appears beside the name on the quilt.\n            Unset, it follows your first tag. You can change it later in\n            Patch Settings.",
           "quote": null
@@ -45889,7 +47044,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 577,
+          "line": 599,
           "kind": "markup",
           "raw": "Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.",
           "quote": null
@@ -45908,7 +47063,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 602,
+          "line": 624,
           "kind": "markup",
           "raw": "Members and governance",
           "quote": null
@@ -45926,7 +47081,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 604,
+          "line": 626,
           "kind": "markup",
           "raw": "Your member list and your proposals start out visible to members only. Events, your description and your tile are public. You can publish either one later in Patch Settings.",
           "quote": null
@@ -45944,7 +47099,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 616,
+          "line": 638,
           "kind": "markup",
           "raw": "Members vote on proposals and appear in the patch's member list.\n            Following is separate and always open: anyone can follow a public\n            patch and see its events.",
           "quote": null
@@ -45962,7 +47117,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 625,
+          "line": 647,
           "kind": "markup",
           "raw": "Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.",
           "quote": null
@@ -45980,7 +47135,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 641,
+          "line": 663,
           "kind": "markup",
           "raw": "Governance Template",
           "quote": null
@@ -45998,7 +47153,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchForm.svelte",
-          "line": 642,
+          "line": 664,
           "kind": "markup",
           "raw": "How should this patch be organized? You can change this later.",
           "quote": null
@@ -46570,7 +47725,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 71,
+          "line": 93,
           "kind": "markup",
           "raw": "You do not have permission to view settings.",
           "quote": null
@@ -46588,7 +47743,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 75,
+          "line": 97,
           "kind": "markup",
           "raw": "You are here as an admin of this quilt, not as an admin of this patch.\n      Changes you save are this patch's.",
           "quote": null
@@ -46606,7 +47761,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 79,
+          "line": 101,
           "kind": "attr:title",
           "raw": "Patch Settings",
           "quote": "\""
@@ -52547,7 +53702,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 47,
+          "line": 59,
           "kind": "js-string",
           "raw": "Patch added to the quilt!",
           "quote": "'"
@@ -52555,20 +53710,20 @@
       ]
     },
     {
-      "id": "773972d189ac",
-      "text": "Submitted for review. Thanks!",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
+      "id": "42a0269417ea",
+      "text": "Suggested. An admin will review it and you'll be notified.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 50,
+          "line": 62,
           "kind": "js-string",
-          "raw": "Submitted for review. Thanks!",
-          "quote": "'"
+          "raw": "Suggested. An admin will review it and you'll be notified.",
+          "quote": "\""
         }
       ]
     },
@@ -52583,28 +53738,10 @@
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 55,
+          "line": 67,
           "kind": "js-string",
           "raw": "A patch with a similar name already exists.",
           "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "77aefaea48c6",
-      "text": "Add a patch to the quilt",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 66,
-          "kind": "markup",
-          "raw": "Add a patch to the quilt",
-          "quote": null
         }
       ]
     },
@@ -52619,7 +53756,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 67,
+          "line": 79,
           "kind": "markup",
           "raw": "Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.",
           "quote": null
@@ -52638,7 +53775,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 72,
+          "line": 84,
           "kind": "attr:placeholder",
           "raw": "e.g. Gallery Row",
           "quote": "\""
@@ -52656,10 +53793,46 @@
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 77,
+          "line": 89,
           "kind": "attr:placeholder",
           "raw": "What is this place/group about?",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "9b7796ed81f1",
+      "text": "Events feed",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 98,
+          "kind": "markup",
+          "raw": "Events feed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d1098c0be604",
+      "text": "A calendar Patchwork can read: an ICS address, a Squarespace events page, or a page with event markup. Checked when you submit.",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 100,
+          "kind": "markup",
+          "raw": "A calendar Patchwork can read: an ICS address, a Squarespace events page, or a page with event markup. Checked when you submit.",
+          "quote": null
         }
       ]
     },
@@ -52674,7 +53847,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 96,
+          "line": 114,
           "kind": "markup",
           "raw": "+ Add link",
           "quote": null
@@ -52692,10 +53865,46 @@
       "occurrences": [
         {
           "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 101,
+          "line": 119,
           "kind": "attr:placeholder",
           "raw": "123 Main St, Lancaster, PA",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "2c29cfd27984",
+      "text": "As a trusted contributor, your suggestion joins the quilt at once.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 133,
+          "kind": "markup",
+          "raw": "As a trusted contributor, your suggestion joins the quilt at once.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dc68b946ce2a",
+      "text": "An instance admin reviews suggestions. Once it's approved, you can add its events without review until its owner claims it.",
+      "words": 20,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "An instance admin reviews suggestions. Once it's approved, you can add its events without review until its owner claims it.",
+          "quote": null
         }
       ]
     },
@@ -55970,6 +57179,60 @@
           "line": 77,
           "kind": "md-block",
           "raw": "Numbers are never reused. A retired ADR keeps its number and gains a\nstatus line; `migrations/006` is intentionally absent.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "4b74c99b8307",
+      "text": "No patches on this quilt so far. Make one for your group, and the next person who comes looking will have something to find.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Empty-quilt answer — the natural first act is making something for the next person to find.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/Discover.svelte",
+          "line": 362,
+          "kind": "markup",
+          "raw": "No patches on this quilt so far. Make one for your group, and the\n          next person who comes looking will have something to find.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "90b5d13011f6",
+      "text": "instead.",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchForm.svelte",
+          "line": 400,
+          "kind": "markup",
+          "raw": "instead.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "975ab3b994dd",
+      "text": "Know a place or group that should be on the quilt but isn't yours to run? Suggest it here. It joins as an unclaimed patch for its owner to claim.",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 79,
+          "kind": "markup",
+          "raw": "Know a place or group that should be on the quilt but isn't yours to run? Suggest it here. It joins as an unclaimed patch for its owner to claim.",
           "quote": null
         }
       ]

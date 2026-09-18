@@ -94,6 +94,13 @@ func PatchNoticeboardReports(slug string) string {
 	return Patch(slug) + "/settings/noticeboard"
 }
 
+// SubmitPatch is the suggest-a-patch form — /submit. Where a declined
+// suggestion points: the answer to "it was declined" is the form, not the
+// archived row, which its author can no longer see.
+func SubmitPatch() string {
+	return "/submit"
+}
+
 // RemotePatch is the read-only card for a patch on another quilt —
 // /quilts/:host/patches/:slug (docs/adr/024).
 func RemotePatch(host, slug string) string {
