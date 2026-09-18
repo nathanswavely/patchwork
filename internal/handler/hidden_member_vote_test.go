@@ -40,6 +40,12 @@ func seedHiddenVote(t *testing.T, db *database.DB, slug string) hiddenVoteFixtur
 	_, siteToken := createTestUser(t, db, slug+"-site", "admin")
 
 	nodeID := createTestNode(t, db, owner.ID, "Hidden Vote "+slug, slug, "open")
+	// The subject here is what a *public* voter list does and does not name,
+	// so the patch has to be one that publishes its record at all
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). On a
+	// closed patch every assertion below would pass for the wrong reason:
+	// nobody is named because nobody outside the room reads anything.
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, hidden.ID, nodeID, "member", "active")
 	createTestMembership(t, db, visible.ID, nodeID, "member", "active")

@@ -631,7 +631,7 @@ func main() {
 	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/electorate", middleware.AuthRequired(db, handler.GovernanceElectorate(db)))
 
 	// Comments.
-	mux.HandleFunc("GET /api/v1/proposals/{id}/comments", handler.ListComments(db))
+	mux.HandleFunc("GET /api/v1/proposals/{id}/comments", middleware.AuthOptional(db, handler.ListComments(db)))
 	mux.HandleFunc("POST /api/v1/proposals/{id}/comments", middleware.AuthRequired(db, handler.CreateComment(db)))
 	mux.HandleFunc("PATCH /api/v1/comments/{id}", middleware.AuthRequired(db, handler.UpdateComment(db)))
 	mux.HandleFunc("DELETE /api/v1/comments/{id}", middleware.AuthRequired(db, handler.DeleteComment(db)))

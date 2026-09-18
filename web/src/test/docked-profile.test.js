@@ -88,7 +88,9 @@ describe("two heights on a phone, none in the pane's slot", () => {
     expect(src).toMatch(/active=\{glimpsesActive\}/);
     expect(src).not.toMatch(/\{#if showGlimpses\}/);
     const glimpses = source('components/PatchProfileGlimpses.svelte');
-    expect(glimpses).toMatch(/if \(s && active\) loadActivity\(gov\);/);
+    // The lining state rides along as a second argument; what this asserts
+    // is the deferral, not the arity.
+    expect(glimpses).toMatch(/if \(s && active\) loadActivity\(gov, lining\);/);
     // And an empty state waits for the answer: "no events" about a patch
     // nobody has asked yet is a lie at the fold.
     expect(glimpses).not.toMatch(/\{:else\}\s*<p class="glimpse-empty/);

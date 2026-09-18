@@ -132,6 +132,7 @@ func TestListComments_Threaded(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "c_admin3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "ListThread Node", "listthread-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	proposalID := createTestProposal(t, db, nodeID, admin.ID)

@@ -16,7 +16,21 @@
   let proposals = $state([]);
   let loading = $state(true);
   let followerPermissions = $derived(patch.value.followerPermissions);
-  let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.proposals === false);
+  // Two different refusals that land on the same notice. The follower key is
+  // workspace tidiness over a read that used to stay public (docs/adr/095);
+  // the record setting is the read itself
+  // (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). The
+  // nav drops this section for an outsider on a closed record, so reaching
+  // here means a typed or shared URL — it still has to say why.
+  let recordInsider = $derived(
+    patch.value.isAdmin || membershipRole === 'member' || membershipRole === 'admin'
+  );
+  let recordWithheld = $derived(
+    !recordInsider && patch.value.node?.public_governance_record === 'nobody'
+  );
+  let permissionDenied = $derived(
+    recordWithheld || (membershipRole === 'follower' && followerPermissions?.proposals === false)
+  );
   let statusFilter = $state('open');
   // On an admin-decides patch an admin's new proposal is a change they
   // apply, and the button says so (docs/adr/041, docs/adr/092). The patch's

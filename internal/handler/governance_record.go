@@ -66,6 +66,18 @@ func GovernanceRecord(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// The record endpoint is the deliberation by name — every entry
+		// carries its author, and a settled one its applier or decliner
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		if !canReadGovernanceRecord(db, r, nodeID) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":                    []recordEntry{},
+				"public_governance_record": "nobody",
+			})
+			return
+		}
+
 		entries := []recordEntry{}
 		entries = append(entries, settledProposals(db, nodeID, slug)...)
 		entries = append(entries, recordedDecisions(db, nodeID)...)

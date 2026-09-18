@@ -46,6 +46,28 @@ func ListComments(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		proposalID := r.PathValue("id")
 
+		// The discussion under a proposal follows the proposal
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// This route was mounted bare — no auth wrapper, no viewer at all —
+		// which is how a thread nobody meant to publish became world-readable
+		// with every commenter named. It is AuthOptional now so there is
+		// somebody to check.
+		//
+		// 404 rather than an empty list, matching the single proposal: the
+		// thread is reached from a proposal that already answered 404, so an
+		// empty 200 here would only ever be read by somebody who guessed.
+		var commentNodeID string
+		if err := db.QueryRow(
+			"SELECT node_id FROM proposals WHERE id = ?", proposalID,
+		).Scan(&commentNodeID); err != nil {
+			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
+			return
+		}
+		if !canReadGovernanceRecord(db, r, commentNodeID) {
+			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
+			return
+		}
+
 		// Determine current user (optional, for reaction "me" flag).
 		var currentUserID string
 		cookie, _ := r.Cookie(auth.CookieName)

@@ -101,6 +101,7 @@ func TestPublicMemberListHidesHiddenAndFollowers(t *testing.T) {
 	hiddenUser, _ := createTestUser(t, db, "mlhidden", "member")
 	followerUser, followerToken := createTestUser(t, db, "mlfollower", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Vis Node", "vis-node", "open")
+	openMemberList(t, db, nodeID)
 
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, member.ID, nodeID, "member", "active")

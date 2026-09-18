@@ -76,6 +76,22 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// A closed record answers 200 with an empty list and its own setting
+		// beside it, never 404
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// A client seeing only an empty array cannot tell "no proposals yet"
+		// from "withheld", and those two want opposite copy — the same reason
+		// ListMembers states public_member_list back.
+		if !canReadGovernanceRecord(db, r, nodeID) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":                    []interface{}{},
+				"next_cursor":              "",
+				"public_governance_record": "nobody",
+			})
+			return
+		}
+
 		after, limit := parsePaginationParams(r)
 		status := r.URL.Query().Get("status")
 
@@ -157,8 +173,9 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"items":       proposals,
-			"next_cursor": nextCursor,
+			"items":                    proposals,
+			"next_cursor":              nextCursor,
+			"public_governance_record": "everyone",
 		})
 	}
 }
@@ -437,8 +454,12 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''), COALESCE(git_sha,''), COALESCE(state,'voting') FROM proposals WHERE id = ?`, id,
 		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.State)
 
-		// Broadcast to node followers. The patch is the actor; the author is
-		// named only where their membership of it is not switched out of
+		// Broadcast to node followers, behind two gates that answer different
+		// questions. Whether this patch publishes its deliberation at all
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md):
+		// without it the record is closed to a browser and delivered in full
+		// to every remote follower, in copies that never come back. And, if it
+		// does publish, whether the author's own membership is switched out of
 		// sight (docs/adr/006) — writing a proposal takes a membership, so
 		// attributing one asserts that membership to every remote reader.
 		//
@@ -446,12 +467,14 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		// writes rows to the outbox queue, and a goroutine racing the
 		// assertion leaves a test unable to tell "withheld" from "hasn't run
 		// yet".
-		ap.BroadcastToFollowers(db, "node", nodeID, map[string]interface{}{
-			"@context": ap.GovernanceContext(),
-			"type":     "Create",
-			"actor":    ap.NodeAPID(ap.GetDomain(), nodeID),
-			"object":   ap.ProposalToObject(p, ap.GetDomain(), !membershipHidden(db, nodeID, p.AuthorID)),
-		})
+		if governanceRecordIsPublic(db, nodeID) {
+			ap.BroadcastToFollowers(db, "node", nodeID, map[string]interface{}{
+				"@context": ap.GovernanceContext(),
+				"type":     "Create",
+				"actor":    ap.NodeAPID(ap.GetDomain(), nodeID),
+				"object":   ap.ProposalToObject(p, ap.GetDomain(), !membershipHidden(db, nodeID, p.AuthorID)),
+			})
+		}
 
 		// Write down who this announcement reaches with standing to vote, so
 		// the hourly pass can tell a person who was never told from one who
@@ -1041,6 +1064,9 @@ func resolveProposal(db *database.DB, proposalID string) string {
 
 	// Broadcast resolution
 	go func() {
+		if !governanceRecordIsPublic(db, p.NodeID) {
+			return
+		}
 		resolveActivity := ap.ProposalResolvedActivity(
 			ap.ProposalAPID(ap.GetDomain(), proposalID),
 			ap.NodeAPID(ap.GetDomain(), p.NodeID),
@@ -1133,6 +1159,16 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			 WHERE p.id = ?`, proposalID,
 		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.TargetUserID, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &seatsContested, &nominationsCloseAt, &authorName, &targetUserName)
 		if err != nil {
+			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// A single proposal on a closed record is a 404, not the list's
+		// 200-with-the-setting
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// Without the listing there is no legitimate way to be holding this
+		// id, and it matches how a members-only charter answers.
+		if !canReadGovernanceRecord(db, r, p.NodeID) {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
 		}
@@ -1521,6 +1557,11 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// lines up substitutes HiddenMemberName for precisely that reason,
 		// and the wire used to announce the name it had just withheld.
 		//
+		// The patch-level gate is the same statement drawn wider: where the
+		// record is not published, no ballot leaves at all, whoever cast it
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md,
+		// which corrects docs/adr/095 decision 7 on the same reasoning).
+		//
 		// Suppressed rather than anonymized. An activity with the actor
 		// stripped still says somebody in this patch voted approve at 14:03,
 		// which against the patch's own followers collection is often enough
@@ -1530,7 +1571,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 		// Synchronous for the same reason as the create broadcast above: a
 		// suppression that cannot be asserted on is a suppression that can be
 		// deleted without a test noticing.
-		if !membershipHidden(db, nodeID, user.ID) {
+		if governanceRecordIsPublic(db, nodeID) && !membershipHidden(db, nodeID, user.ID) {
 			var pAPID string
 			db.QueryRow("SELECT COALESCE(ap_id,'') FROM proposals WHERE id = ?", proposalID).Scan(&pAPID)
 			if pAPID != "" {

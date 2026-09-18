@@ -612,6 +612,21 @@
           {/if}
         </div>
 
+        <!-- One sentence, not a section
+             (docs/adr/2026-09-18-the-default-should-match-the-assumption.md
+             decision 10). docs/adr/037 earned the lining its own block above
+             because adopting it is a standing commitment a patch cannot undo;
+             a default that Patch Settings can flip does not deserve equal
+             weight, and this form is already long. It is here at all because
+             admins formed the opposite belief in silence, and a default
+             nobody is told about is how that happened the first time. -->
+        <div class="field">
+          <label>Members and governance</label>
+          <p class="field-hint muted">
+            Your member list and your proposals start out visible to members only. Events, your description and your tile are public. You can publish either one later in Patch Settings.
+          </p>
+        </div>
+
         <fieldset class="field policy-field">
           <legend>Membership Policy <span class="required">*</span></legend>
           <!-- The distinction the form otherwise never mentions. Joining and
