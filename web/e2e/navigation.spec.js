@@ -3,7 +3,7 @@
  * Tests that all critical routes render something and navigation works.
  */
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin } from './setup.js';
+import { loginAsAdmin, goto } from './setup.js';
 
 test.describe('Navigation — Public Routes', () => {
   test('/ renders quilt canvas', async ({ page }) => {
@@ -66,8 +66,7 @@ test.describe('Navigation — Authenticated Routes', () => {
   for (const route of authRoutes) {
     test(`${route} renders content or auth guard`, async ({ page }) => {
       await loginAsAdmin(page);
-      await page.goto(route);
-      await page.waitForTimeout(2000);
+      await goto(page, route);
       // Should show page content OR sign-in prompt — NOT "Page not found"
       const notFound = await page.getByText('Page not found').isVisible().catch(() => false);
       expect(notFound).toBe(false);
@@ -100,7 +99,6 @@ test.describe('Navigation — Discovery <> Work Mode', () => {
     const homeLink = page.locator('a[href="/"]').first();
     if (await homeLink.isVisible()) {
       await homeLink.click();
-      await page.waitForTimeout(1000);
       await expect(page.locator('.canvas-container')).toBeVisible();
     }
   });
@@ -112,8 +110,7 @@ test.describe('Navigation — PatchShell Tab Navigation', () => {
   });
 
   test('PatchShell renders tabs on patch detail page', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // The shell tabs container should be visible
     const tabsContainer = page.locator('.shell-tabs');
@@ -128,8 +125,7 @@ test.describe('Navigation — PatchShell Tab Navigation', () => {
   });
 
   test('PatchShell shows breadcrumb on patch detail page', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // Breadcrumb should be rendered
     const breadcrumb = page.locator('.breadcrumb, nav[aria-label="breadcrumb"]').first();
@@ -140,20 +136,18 @@ test.describe('Navigation — PatchShell Tab Navigation', () => {
   });
 
   test('PatchShell tab click navigates to sub-route', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     const membersTab = page.locator('.shell-tab', { hasText: 'Members' });
     if (await membersTab.isVisible()) {
       await membersTab.click();
-      await page.waitForTimeout(1000);
+      await page.waitForURL(/\/patches\/lancaster-arts-district\/members/);
       expect(page.url()).toContain('/patches/lancaster-arts-district/members');
     }
   });
 
   test('PatchShell Settings tab visible for admin', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // Admin should see the Settings tab
     const settingsTab = page.locator('.shell-tab', { hasText: 'Settings' });
@@ -161,14 +155,13 @@ test.describe('Navigation — PatchShell Tab Navigation', () => {
     // If the user is admin of this patch, Settings should appear
     if (isVisible) {
       await settingsTab.click();
-      await page.waitForTimeout(1000);
+      await page.waitForURL(/\/patches\/lancaster-arts-district\/settings/);
       expect(page.url()).toContain('/patches/lancaster-arts-district/settings');
     }
   });
 
   test('PatchShell shows active tab styling', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // The Overview tab should be active by default
     const overviewTab = page.locator('.shell-tab.active');
@@ -184,8 +177,7 @@ test.describe('Navigation — Admin Shell', () => {
   });
 
   test('Admin pages render inside AdminShell with sidebar', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForTimeout(2000);
+    await goto(page, '/admin');
 
     // AdminShell wraps content in SettingsShell with sidebar nav
     const sidebar = page.locator('.settings-sidebar');
@@ -198,13 +190,12 @@ test.describe('Navigation — Admin Shell', () => {
   });
 
   test('Admin shell sidebar navigation works', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForTimeout(2000);
+    await goto(page, '/admin');
 
     const usersLink = page.locator('.settings-nav-link', { hasText: 'Users' });
     if (await usersLink.isVisible()) {
       await usersLink.click();
-      await page.waitForTimeout(1000);
+      await page.waitForURL(/\/admin\/users/);
       expect(page.url()).toContain('/admin/users');
     }
   });
@@ -216,8 +207,7 @@ test.describe('Navigation — User Settings Shell', () => {
   });
 
   test('Settings pages render inside UserSettingsShell with sidebar', async ({ page }) => {
-    await page.goto('/settings');
-    await page.waitForTimeout(2000);
+    await goto(page, '/settings');
 
     const sidebar = page.locator('.settings-sidebar');
     if (await sidebar.isVisible()) {
@@ -229,13 +219,12 @@ test.describe('Navigation — User Settings Shell', () => {
   });
 
   test('Settings shell sidebar navigation to My Patches', async ({ page }) => {
-    await page.goto('/settings');
-    await page.waitForTimeout(2000);
+    await goto(page, '/settings');
 
     const patchesLink = page.locator('.settings-nav-link', { hasText: 'My Patches' });
     if (await patchesLink.isVisible()) {
       await patchesLink.click();
-      await page.waitForTimeout(1000);
+      await page.waitForURL(/\/settings\/patches/);
       expect(page.url()).toContain('/settings/patches');
     }
   });
@@ -248,8 +237,7 @@ test.describe('Navigation — Removed Routes Redirect', () => {
   });
 
   test('/patches/:slug/admin is no longer a valid route', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district/admin');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district/admin');
     // Should either redirect to /settings or show not found
     const url = page.url();
     const isRedirected = url.includes('/settings') || url.includes('/patches/lancaster-arts-district');
@@ -284,8 +272,7 @@ test.describe('Navigation — No 404s on Valid Routes', () => {
 
   for (const route of routes) {
     test(`${route} does not show "Page not found"`, async ({ page }) => {
-      await page.goto(route);
-      await page.waitForTimeout(500);
+      await goto(page, route);
       const notFound = await page.getByText('Page not found').isVisible().catch(() => false);
       expect(notFound).toBe(false);
     });

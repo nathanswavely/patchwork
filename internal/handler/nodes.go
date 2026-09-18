@@ -14,6 +14,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -678,7 +679,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			         AND el.node_id = ? AND el.status = 'confirmed'))
 			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 			   AND (n.visibility = 'public' OR e.node_id = ?)`,
-			time.Now().UTC().Format(time.RFC3339), n.ID, n.ID, n.ID,
+			clock.Now(), n.ID, n.ID, n.ID,
 		).Scan(&n.UpcomingEventCount)
 
 		isUnclaimed := n.Status == "unclaimed"
@@ -902,7 +903,7 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// A patch created here is active from the first moment, so this is
 		// when it joined the quilt (docs/adr/076). Submitted listings take a
 		// different path and stay NULL until a claim completes.
-		activatedAt := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		activatedAt := clock.Now()
 		_, err := db.Exec(
 			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record)
 			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

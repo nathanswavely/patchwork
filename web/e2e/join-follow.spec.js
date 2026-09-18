@@ -177,8 +177,8 @@ test.describe('Logged-Out User', () => {
     const joinBtn = page.getByRole('button', { name: 'Become a member' });
     if (await joinBtn.isVisible()) {
       await joinBtn.click();
-      await page.waitForTimeout(1000);
       // Should redirect to login
+      await page.waitForURL(/\/login/);
       expect(page.url()).toContain('/login');
     }
   });
@@ -189,7 +189,7 @@ test.describe('Logged-Out User', () => {
     const followBtn = page.getByRole('button', { name: 'Follow' });
     if (await followBtn.isVisible()) {
       await followBtn.click();
-      await page.waitForTimeout(1000);
+      await page.waitForURL(/\/login/);
       expect(page.url()).toContain('/login');
     }
   });
@@ -233,10 +233,11 @@ test.describe('PatchPanel — Quilt View Join/Follow', () => {
     const tile = page.locator('svg .tile').first();
     if (await tile.isVisible()) {
       await tile.click({ force: true });
-      await page.waitForTimeout(500);
       // PatchPanel should open with Join/Follow buttons
       const panel = page.locator('.preview-actions');
-      if (await panel.isVisible()) {
+      const panelOpened = await panel.waitFor({ state: 'visible', timeout: 3000 })
+        .then(() => true).catch(() => false);
+      if (panelOpened) {
         // Whichever tile the quilt put first, `joiner` may already belong to
         // it (yoga-in-the-park) — any relationship control counts.
         const buttons = ['Follow', 'Become a member'];
@@ -265,7 +266,7 @@ test.describe('Unclaimed Patches', () => {
     const unclaimedIndicator = page.locator('.unclaimed-indicator, .unclaimed-badge').first();
     if (await unclaimedIndicator.isVisible()) {
       await unclaimedIndicator.click();
-      await page.waitForTimeout(500);
+      await page.waitForLoadState('networkidle');
       // The claim is a link inside the header notice now, not a competing
       // primary button (docs/adr/042). Follow is the only control.
       const claimLink = page.getByRole('link', { name: /claim/i });

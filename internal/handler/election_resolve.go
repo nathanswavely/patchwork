@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
@@ -41,7 +42,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	if err != nil || votingEnds == "" {
 		return false
 	}
-	ends, perr := time.Parse("2006-01-02T15:04:05.000Z", votingEnds)
+	ends, perr := clock.Parse(votingEnds)
 	if perr != nil || time.Now().UTC().Before(ends) {
 		return false
 	}
@@ -94,7 +95,7 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	seatWinners(db, nodeID, slug, nodeName, proposalID, winners, chairs, electionTermEnd(gc))
 	announceResult(db, nodeID, slug, nodeName, proposalID, winners, len(chairs))
 
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	db.Exec(`UPDATE proposals SET status = 'approved', state = 'in_effect', applied_at = ?, updated_at = ?
 	         WHERE id = ?`, now, now, proposalID)
 	auth.LogAuditEvent(db, "", "election.resolved", "proposal", proposalID,
@@ -145,7 +146,7 @@ func wasWere(n int) string {
 // half about the council, and it is the half that can be false (docs/adr/106).
 func closeElectionUnsettled(db *database.DB, proposalID, nodeID, slug, nodeName, why string) {
 	why = why + " " + holdoverLine(db, nodeID)
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	// `status` stays inside the schema's CHECK (open/approved/rejected/
 	// withdrawn) and `state` carries the truth — the same split docs/adr/097
 	// made for a lapse, for the same reason: a fifth status would be a

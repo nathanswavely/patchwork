@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -202,7 +202,7 @@ func CreateNotice(db *database.DB) http.HandlerFunc {
 		}
 
 		id := auth.NewUUIDv7()
-		now := time.Now().UTC().Format(time.RFC3339)
+		now := clock.Now()
 		_, err := db.Exec(`INSERT INTO notices (id, node_id, author_id, title, body, image_url, image_alt, replies_open, members_told, created_at, updated_at)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			id, nodeID, user.ID, req.Title, req.Body, req.ImageURL, req.ImageAlt, repliesOpen, req.TellMembers, now, now)
@@ -308,7 +308,7 @@ func UpdateNotice(db *database.DB) http.HandlerFunc {
 				return
 			}
 			if _, err := db.Exec(`UPDATE notices SET title = ?, body = ?, image_url = ?, image_alt = ?, updated_at = ? WHERE id = ?`,
-				full.Title, full.Body, full.ImageURL, full.ImageAlt, time.Now().UTC().Format(time.RFC3339), n.ID); err != nil {
+				full.Title, full.Body, full.ImageURL, full.ImageAlt, clock.Now(), n.ID); err != nil {
 				http.Error(w, `{"error":"failed to update notice"}`, http.StatusInternalServerError)
 				return
 			}
@@ -443,7 +443,7 @@ func CreateReply(db *database.DB) http.HandlerFunc {
 		}
 
 		id := auth.NewUUIDv7()
-		now := time.Now().UTC().Format(time.RFC3339)
+		now := clock.Now()
 		if _, err := db.Exec(`INSERT INTO notice_replies (id, notice_id, author_id, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
 			id, n.ID, user.ID, req.Body, now, now); err != nil {
 			http.Error(w, `{"error":"failed to create reply"}`, http.StatusInternalServerError)
@@ -511,7 +511,7 @@ func UpdateReply(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if _, err := db.Exec("UPDATE notice_replies SET body = ?, updated_at = ? WHERE id = ?",
-			req.Body, time.Now().UTC().Format(time.RFC3339), x.ID); err != nil {
+			req.Body, clock.Now(), x.ID); err != nil {
 			http.Error(w, `{"error":"failed to update reply"}`, http.StatusInternalServerError)
 			return
 		}

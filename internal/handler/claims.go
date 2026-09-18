@@ -24,6 +24,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
@@ -281,7 +282,7 @@ const claimNodeStillUnclaimed = `EXISTS (SELECT 1 FROM nodes n2 WHERE n2.id = cl
 // lapsed, it succeeded, and relabelling it 'expired' once its window passes
 // would file a completed claim as a failed one.
 func expirePastDueApprovedClaims(db *database.DB, nodeID string) {
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	db.Exec(
 		`UPDATE claim_requests SET status = 'expired', updated_at = ?
 		 WHERE node_id = ? AND status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?
@@ -296,7 +297,7 @@ func expirePastDueApprovedClaims(db *database.DB, nodeID string) {
 // claims in bulk, so there is no single nodeID to scope to, and an approved
 // row whose window has closed must not be listed as still awaiting anybody.
 func expireAllPastDueApprovedClaims(db *database.DB) {
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	db.Exec(
 		`UPDATE claim_requests SET status = 'expired', updated_at = ?
 		 WHERE status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?
@@ -391,7 +392,7 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("the email must be at @%s", verificationDomain))
 				return
 			}
-			emailExpiry = time.Now().Add(claimEmailTokenTTL).UTC().Format("2006-01-02T15:04:05.000Z")
+			emailExpiry = clock.Format(time.Now().Add(claimEmailTokenTTL))
 		}
 
 		tokenBytes := make([]byte, 16)
@@ -399,7 +400,7 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		token := hex.EncodeToString(tokenBytes)
 
 		id := auth.NewUUIDv7()
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 
 		sendCount := 0
 		var windowStart interface{}
@@ -602,7 +603,7 @@ func WithdrawClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 		db.Exec("UPDATE claim_requests SET status = 'withdrawn', updated_at = ? WHERE id = ?", now, claimID)
 		auth.LogAuditEvent(db, user.ID, "node.claim_withdrawn", "node", nodeID, r.RemoteAddr, "")
 
@@ -646,7 +647,7 @@ func ResendClaimEmail(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		sendCount := claim.sendCount
 		windowStart := now
 		if claim.windowStart.Valid {
-			if ws, err := time.Parse("2006-01-02T15:04:05.000Z", claim.windowStart.String); err == nil && now.Sub(ws) < claimEmailSendWindow {
+			if ws, err := clock.Parse(claim.windowStart.String); err == nil && now.Sub(ws) < claimEmailSendWindow {
 				windowStart = ws
 			} else {
 				sendCount = 0
@@ -659,11 +660,11 @@ func ResendClaimEmail(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		nowStr := now.Format("2006-01-02T15:04:05.000Z")
-		expiry := now.Add(claimEmailTokenTTL).Format("2006-01-02T15:04:05.000Z")
+		nowStr := clock.Format(now)
+		expiry := clock.Format(now.Add(claimEmailTokenTTL))
 		db.Exec(
 			`UPDATE claim_requests SET email_token_expires_at = ?, email_send_count = ?, email_window_start = ?, updated_at = ? WHERE id = ?`,
-			expiry, sendCount+1, windowStart.Format("2006-01-02T15:04:05.000Z"), nowStr, claimID,
+			expiry, sendCount+1, clock.Format(windowStart), nowStr, claimID,
 		)
 
 		sendClaimEmail(cfg, claim.email, claim.nodeName, claim.token)
@@ -687,7 +688,7 @@ func lookupEmailClaim(db *database.DB, token string) (claimID, nodeID, userID, n
 }
 
 func emailClaimExpired(expiresAt string) bool {
-	exp, err := time.Parse("2006-01-02T15:04:05.000Z", expiresAt)
+	exp, err := clock.Parse(expiresAt)
 	return err != nil || time.Now().UTC().After(exp)
 }
 
@@ -1018,7 +1019,7 @@ func ReviewClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 		resp := map[string]interface{}{"status": "ok"}
 
 		switch req.Action {
@@ -1077,7 +1078,7 @@ func AdminSetVerificationDomain(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 		db.Exec("UPDATE nodes SET verification_domain = ?, updated_at = ? WHERE id = ?", domain, now, nodeID)
 		// Metadata/ip were swapped here; see the note on node.claim_requested above.
 		auth.LogAuditEventJSON(db, admin.ID, "node.verification_domain_set", "node", nodeID, map[string]any{"domain": domain}, r.RemoteAddr)
@@ -1126,8 +1127,8 @@ func AdminAssignOwner(db *database.DB) http.HandlerFunc {
 
 		claimID := auth.NewUUIDv7()
 		now := time.Now().UTC()
-		nowStr := now.Format("2006-01-02T15:04:05.000Z")
-		expiresAt := now.Add(setupWindow).Format("2006-01-02T15:04:05.000Z")
+		nowStr := clock.Format(now)
+		expiresAt := clock.Format(now.Add(setupWindow))
 		_, err = db.Exec(
 			// verification_token is unused for the admin method but given an
 			// empty string rather than left NULL: model.ClaimRequest scans it
@@ -1156,7 +1157,7 @@ func AdminAssignOwner(db *database.DB) http.HandlerFunc {
 // admin review, and admin assignment — after each has done its own status
 // update however it needed to.
 func finalizeClaimApproval(db *database.DB, claimID, nodeID, nodeSlug, nodeName, claimantID, expiresAt string) {
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	db.Exec(
 		"UPDATE claim_requests SET status = 'rejected', review_note = 'Another claim was approved', updated_at = ? WHERE node_id = ? AND status = 'pending' AND id != ?",
 		now, nodeID, claimID,
@@ -1179,7 +1180,7 @@ func finalizeClaimApproval(db *database.DB, claimID, nodeID, nodeSlug, nodeName,
 // ("expires August 7, 2026"). Falls back to the raw string if parsing ever
 // fails — never worth failing a notification over.
 func formatClaimDate(iso string) string {
-	t, err := time.Parse("2006-01-02T15:04:05.000Z", iso)
+	t, err := clock.Parse(iso)
 	if err != nil {
 		return iso
 	}
@@ -1200,10 +1201,10 @@ func markClaimApproved(db *database.DB, claimID string) (nodeID string, err erro
 	}
 
 	now := time.Now().UTC()
-	expiresAt := now.Add(setupWindow).Format("2006-01-02T15:04:05.000Z")
+	expiresAt := clock.Format(now.Add(setupWindow))
 	if _, err = db.Exec(
 		"UPDATE claim_requests SET status = 'approved', setup_expires_at = ?, updated_at = ? WHERE id = ?",
-		expiresAt, now.Format("2006-01-02T15:04:05.000Z"), claimID,
+		expiresAt, clock.Format(now), claimID,
 	); err != nil {
 		return "", err
 	}
@@ -1354,9 +1355,9 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 		}
 
 		now := time.Now().UTC()
-		nowStr := now.Format("2006-01-02T15:04:05.000Z")
+		nowStr := clock.Format(now)
 		if setupExpiresAt.Valid && setupExpiresAt.String != "" {
-			if exp, perr := time.Parse("2006-01-02T15:04:05.000Z", setupExpiresAt.String); perr == nil && now.After(exp) {
+			if exp, perr := clock.Parse(setupExpiresAt.String); perr == nil && now.After(exp) {
 				db.Exec("UPDATE claim_requests SET status = 'expired', updated_at = ? WHERE id = ?", nowStr, claimID)
 				http.Error(w, `{"error":"this claim's setup window has expired. The patch is claimable again"}`, http.StatusGone)
 				return

@@ -14,6 +14,7 @@ import (
 	"github.com/go-webauthn/webauthn/protocol"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -786,7 +787,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 				stored = moved
 			}
 			_, err := db.Exec("UPDATE users SET moved_to = ?, updated_at = ? WHERE id = ?",
-				stored, time.Now().UTC().Format(time.RFC3339), user.ID)
+				stored, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update where you moved to"}`, http.StatusInternalServerError)
 				return
@@ -795,7 +796,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 
 		if req.DisplayName != nil {
 			_, err := db.Exec("UPDATE users SET display_name = ?, updated_at = ? WHERE id = ?",
-				*req.DisplayName, time.Now().UTC().Format(time.RFC3339), user.ID)
+				*req.DisplayName, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update display name"}`, http.StatusInternalServerError)
 				return
@@ -805,7 +806,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 
 		if req.Bio != nil {
 			_, err := db.Exec("UPDATE users SET bio = ?, updated_at = ? WHERE id = ?",
-				*req.Bio, time.Now().UTC().Format(time.RFC3339), user.ID)
+				*req.Bio, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update bio"}`, http.StatusInternalServerError)
 				return
@@ -816,7 +817,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		if req.Links != nil {
 			lb, _ := json.Marshal(*req.Links)
 			_, err := db.Exec("UPDATE users SET links = ?, updated_at = ? WHERE id = ?",
-				string(lb), time.Now().UTC().Format(time.RFC3339), user.ID)
+				string(lb), clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update links"}`, http.StatusInternalServerError)
 				return
@@ -824,7 +825,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		}
 		if req.StartOnMyQuilt != nil {
 			_, err := db.Exec("UPDATE users SET start_on_my_quilt = ?, updated_at = ? WHERE id = ?",
-				*req.StartOnMyQuilt, time.Now().UTC().Format(time.RFC3339), user.ID)
+				*req.StartOnMyQuilt, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update landing preference"}`, http.StatusInternalServerError)
 				return
@@ -838,7 +839,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 				v = 1
 			}
 			_, err := db.Exec("UPDATE users SET hide_amended_linings = ?, updated_at = ? WHERE id = ?",
-				v, time.Now().UTC().Format(time.RFC3339), user.ID)
+				v, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update setting"}`, http.StatusInternalServerError)
 				return

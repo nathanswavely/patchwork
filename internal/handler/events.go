@@ -9,6 +9,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
@@ -150,7 +151,7 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		// workspace calendar, a "has this patch any events yet" probe, a
 		// scoped search that should find what already happened.
 		if from == "" && r.URL.Query().Get("include_past") != "true" {
-			from = time.Now().UTC().Format(time.RFC3339)
+			from = clock.Now()
 		}
 
 		// Resolve node_slug to node_id if provided.

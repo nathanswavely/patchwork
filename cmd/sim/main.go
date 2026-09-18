@@ -35,6 +35,7 @@ import (
 	patchwork "github.com/patchwork-toolkit/patchwork"
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
@@ -197,8 +198,8 @@ func cmdPersonas(dbPath, dir, file string) error {
 		return fmt.Errorf("refusing: %s holds %d accounts that are not simulation personas", dbPath, others)
 	}
 
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
-	expires := time.Now().Add(10 * 365 * 24 * time.Hour).UTC().Format(time.RFC3339)
+	now := clock.Now()
+	expires := clock.Format(time.Now().Add(10 * 365 * 24 * time.Hour))
 	var minted []mintedPersona
 	for _, p := range pf.Personas {
 		email := p.Email
