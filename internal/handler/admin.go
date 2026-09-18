@@ -13,6 +13,15 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
+// adminUserRow is a user as the admin screen reads them: the row itself plus
+// the listings they hold a per-patch trusted-contributor grant on. Embedded
+// rather than copied field by field, so a column added to model.User reaches
+// this screen without anybody remembering to add it here too.
+type adminUserRow struct {
+	model.User
+	TrustedNodes []trustNodeRef `json:"trusted_nodes"`
+}
+
 // ListUsers handles GET /api/v1/admin/users.
 //
 // Tombstones are not listed (docs/adr/086). A deleted account is not an
@@ -71,9 +80,29 @@ func ListUsers(db *database.DB) http.HandlerFunc {
 			users = []model.User{}
 		}
 
+		// The per-patch half of the trusted-contributor grant
+		// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md).
+		// The quilt-wide flag is a column on the row above; a per-patch grant
+		// is rows in its own table, and this screen is where both are given
+		// and taken away — so the listing has to carry both or the admin can
+		// only see half of what they granted.
+		ids := make([]string, 0, len(users))
+		for _, u := range users {
+			ids = append(ids, u.ID)
+		}
+		grants := trustedNodesByUser(db, ids)
+		items := make([]adminUserRow, 0, len(users))
+		for _, u := range users {
+			row := adminUserRow{User: u, TrustedNodes: grants[u.ID]}
+			if row.TrustedNodes == nil {
+				row.TrustedNodes = []trustNodeRef{}
+			}
+			items = append(items, row)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"items":       users,
+			"items":       items,
 			"next_cursor": nextCursor,
 		})
 	}
@@ -277,4 +306,3 @@ func AuditLog(db *database.DB) http.HandlerFunc {
 		})
 	}
 }
-

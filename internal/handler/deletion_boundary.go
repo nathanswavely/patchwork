@@ -73,6 +73,12 @@ func deletionRules() map[string]deletionRule {
 		"ap_followers":        {purged, "an inbox to deliver to, for an actor that is now gone."},
 		"contact_items":       {purged, "a contact card is the person, never an act. Ending the disclosure is not erasing the value, and CASCADE cannot fire against a tombstone (docs/adr/083)."},
 		"contact_item_shares": {purged, "with the items they disclose."},
+		"node_trusted_contributors": {purged, "standing on one patch's calendar, held by a person who is gone. It is the per-patch half of the grant the tombstone already clears " +
+			"on the users row (trusted_contributor = 0), and leaving it would let a tombstone post events unreviewed " +
+			"(docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md)."},
+		"trust_requests": {purged, "an ask to be trusted, made by somebody who will not be there to be trusted. Like a pending claim, it asks an admin to hand something to a person who cannot receive it; " +
+			"unlike a claim there is no settled half worth keeping, because what the answer produced is the grant, and the grant goes above."},
+		"trust_request_nodes": {purged, "the patches one of those asks named; the schema cascades them and this list says so out loud."},
 
 		// Curation and provenance: the row is an instance or patch record
 		// and the person is who did it, which is exactly what a record is
@@ -139,6 +145,17 @@ func deletionPurges() []string {
 		// schema to see that it goes.
 		`DELETE FROM contact_item_shares WHERE item_id IN (SELECT id FROM contact_items WHERE user_id = ?)`,
 		`DELETE FROM contact_items WHERE user_id = ?`,
+		// The trusted-contributor grant and the ask for it. Only the rows
+		// where this person is the one trusted: a row they granted or decided
+		// as an instance admin stays, attributed to the tombstone, because
+		// that is a decision they made and not a standing they held.
+		//
+		// Nodes before requests, though the FK would cascade them, for the
+		// same reason contact_item_shares is listed above its items: this
+		// list is the statement of what goes.
+		`DELETE FROM trust_request_nodes WHERE request_id IN (SELECT id FROM trust_requests WHERE user_id = ?)`,
+		`DELETE FROM trust_requests WHERE user_id = ?`,
+		`DELETE FROM node_trusted_contributors WHERE user_id = ?`,
 	}
 }
 

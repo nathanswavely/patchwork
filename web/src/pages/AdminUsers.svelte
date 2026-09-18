@@ -7,6 +7,7 @@
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import TrustScopePicker from '../components/TrustScopePicker.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
 
   let pendingRoles = $state({});
@@ -38,6 +39,75 @@
   $effect(() => {
     stepUpStatus().then((s) => { hasPasskey = s.has_passkey !== false; });
   });
+
+  // Trust requests (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+  // carries-its-calendar, decision 7). A request is answered, never merely
+  // seen: it arrives here with the scope that was asked for already in the
+  // picker, and the admin grants wider or narrower before clicking.
+  let trustRequests = $state([]);
+  let requestScopes = $state({});
+  let requestNotes = $state({});
+  let requestBusy = $state('');
+
+  $effect(() => { loadTrustRequests(); });
+
+  async function loadTrustRequests() {
+    try {
+      const data = await api('admin/trust-requests');
+      const items = data.items || [];
+      const scopes = {};
+      const notes = {};
+      for (const req of items) {
+        scopes[req.id] = {
+          all: req.scope === 'all',
+          selected: (req.nodes || []).map((n) => ({ id: n.id, slug: n.slug, name: n.name })),
+        };
+        notes[req.id] = '';
+      }
+      requestScopes = scopes;
+      requestNotes = notes;
+      trustRequests = items;
+    } catch {
+      trustRequests = [];
+    }
+  }
+
+  async function approveRequest(req) {
+    const scope = requestScopes[req.id];
+    if (!scope.all && scope.selected.length === 0) {
+      showToast('Pick at least one patch, or every unclaimed patch.', 'error');
+      return;
+    }
+    const body = { action: 'approve', scope: scope.all ? 'all' : 'patches' };
+    if (!scope.all) body.node_ids = scope.selected.map((n) => n.id);
+    requestBusy = req.id;
+    try {
+      await api(`admin/trust-requests/${req.id}`, { method: 'PATCH', body });
+      showToast('Trust granted', 'success');
+      await loadTrustRequests();
+      loadUsers();
+    } catch (e) {
+      showToast(e.message, 'error');
+    } finally {
+      requestBusy = '';
+    }
+  }
+
+  async function declineRequest(req) {
+    requestBusy = req.id;
+    try {
+      await api(`admin/trust-requests/${req.id}`, {
+        method: 'PATCH',
+        body: { action: 'decline', note: (requestNotes[req.id] || '').trim() },
+      });
+      showToast('Trust request declined', 'success');
+      await loadTrustRequests();
+    } catch (e) {
+      showToast(e.message, 'error');
+    } finally {
+      requestBusy = '';
+    }
+  }
 
   function handleSearch(e) {
     searchInput = e.target.value;
@@ -97,6 +167,61 @@
         user.trusted_contributor ? 'Trusted contributor revoked' : 'Marked as trusted contributor',
         'success'
       );
+      loadUsers();
+    } catch (e) {
+      showToast(e.message, 'error');
+    }
+  }
+
+  // The per-patch grant: the same standing on one unclaimed patch and
+  // nothing else. Granted and revoked here because this is where the
+  // quilt-wide toggle already lives.
+  let addingTrustFor = $state('');
+  let addTrustSelected = $state([]);
+  let savingTrustPatches = $state(false);
+
+  function startTrustPatches(user) {
+    addingTrustFor = user.id;
+    addTrustSelected = [];
+  }
+
+  function cancelTrustPatches() {
+    addingTrustFor = '';
+    addTrustSelected = [];
+  }
+
+  async function saveTrustPatches(user) {
+    if (addTrustSelected.length === 0) {
+      showToast('Pick at least one patch.', 'error');
+      return;
+    }
+    savingTrustPatches = true;
+    try {
+      for (const node of addTrustSelected) {
+        await api(`admin/users/${user.id}/trusted-patches`, {
+          method: 'POST',
+          body: { node_id: node.id },
+        });
+      }
+      showToast(
+        addTrustSelected.length === 1
+          ? `Trusted on ${addTrustSelected[0].name}`
+          : `Trusted on ${addTrustSelected.length} patches`,
+        'success'
+      );
+      cancelTrustPatches();
+      loadUsers();
+    } catch (e) {
+      showToast(e.message, 'error');
+    } finally {
+      savingTrustPatches = false;
+    }
+  }
+
+  async function revokeTrustedPatch(user, node) {
+    try {
+      await api(`admin/users/${user.id}/trusted-patches/${node.id}`, { method: 'DELETE' });
+      showToast(`Trust on ${node.name} revoked`, 'success');
       loadUsers();
     } catch (e) {
       showToast(e.message, 'error');
@@ -207,6 +332,59 @@
   </div>
 
   <PasskeyNotice show={!hasPasskey} action="promote someone to instance admin or set their email address" />
+
+  {#if trustRequests.length > 0}
+    <section class="requests-section card">
+      <h2>Trust requests</h2>
+      <p class="muted">
+        People asking to add events on unclaimed patches without review. Grant
+        the scope you judge right, wider or narrower than the one asked for.
+      </p>
+      <div class="request-list">
+        {#each trustRequests as req (req.id)}
+          <div class="request">
+            <div class="request-head">
+              <a
+                href="/users/{req.user.username}"
+                class="user-link"
+                onclick={(e) => { e.preventDefault(); navigate(`/users/${req.user.username}`); }}
+              >{req.user.display_name || req.user.username}</a>
+              <span class="muted">@{req.user.username}</span>
+              <span class="muted">{formatDate(req.created_at)}</span>
+            </div>
+            {#if req.message}
+              <p class="request-message">{req.message}</p>
+            {/if}
+            <TrustScopePicker
+              bind:all={requestScopes[req.id].all}
+              bind:selected={requestScopes[req.id].selected}
+              disabled={requestBusy === req.id}
+              label="Asked for"
+            />
+            <label class="request-note" for="trust-note-{req.id}">Note to the requester (optional)</label>
+            <textarea
+              id="trust-note-{req.id}"
+              rows="2"
+              placeholder="Sent with a decline"
+              bind:value={requestNotes[req.id]}
+            ></textarea>
+            <div class="request-actions">
+              <button
+                class="btn btn-primary btn-sm"
+                disabled={requestBusy === req.id}
+                onclick={() => approveRequest(req)}
+              >Approve</button>
+              <button
+                class="btn btn-secondary btn-sm"
+                disabled={requestBusy === req.id}
+                onclick={() => declineRequest(req)}
+              >Decline</button>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </section>
+  {/if}
 
   <section class="invite-section card">
     <h2>Invite Links</h2>
@@ -342,6 +520,44 @@
                     onConfirm={() => toggleTrusted(u)}
                   />
                 {/if}
+                {#if (u.trusted_nodes || []).length > 0}
+                  <div class="patch-grants">
+                    {#each u.trusted_nodes as node (node.id)}
+                      <span class="patch-grant">
+                        Trusted on {node.name}
+                        <button
+                          type="button"
+                          class="grant-remove"
+                          title="Revoke"
+                          aria-label="Revoke trust on {node.name}"
+                          onclick={() => revokeTrustedPatch(u, node)}
+                        >×</button>
+                      </span>
+                    {/each}
+                  </div>
+                {/if}
+                {#if addingTrustFor === u.id}
+                  <div class="patch-grant-add">
+                    <TrustScopePicker
+                      bind:selected={addTrustSelected}
+                      allowAll={false}
+                      disabled={savingTrustPatches}
+                      label="Patches"
+                    />
+                    <div class="grant-add-actions">
+                      <button
+                        class="btn btn-primary btn-sm"
+                        disabled={savingTrustPatches || addTrustSelected.length === 0}
+                        onclick={() => saveTrustPatches(u)}
+                      >{savingTrustPatches ? 'Saving...' : 'Grant'}</button>
+                      <button class="btn btn-secondary btn-sm" onclick={cancelTrustPatches}>Cancel</button>
+                    </div>
+                  </div>
+                {:else}
+                  <button class="btn btn-secondary btn-sm grant-add-btn" onclick={() => startTrustPatches(u)}>
+                    Add a patch
+                  </button>
+                {/if}
               </td>
               <td class="muted">{formatDate(u.created_at)}</td>
               <td>
@@ -387,9 +603,122 @@
     padding: 1.5rem 0 1rem;
   }
 
-  .invite-section {
+  .invite-section,
+  .requests-section {
     margin-bottom: 1.5rem;
     padding: 1.25rem;
+  }
+
+  .requests-section h2 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .requests-section .muted {
+    font-size: 0.82rem;
+  }
+
+  .request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: 0.9rem;
+  }
+
+  .request {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .request:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .request-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+  }
+
+  .request-head .muted {
+    font-size: 0.78rem;
+  }
+
+  .request-message {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .request-note {
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .request textarea {
+    max-width: 420px;
+    font-size: 0.85rem;
+  }
+
+  .request-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .patch-grants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.35rem;
+  }
+
+  .patch-grant {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.45rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .grant-remove {
+    border: none;
+    background: none;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1;
+    opacity: 0.75;
+  }
+
+  .grant-remove:hover {
+    opacity: 1;
+  }
+
+  .patch-grant-add {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    min-width: 16rem;
+  }
+
+  .grant-add-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .grant-add-btn {
+    margin-top: 0.35rem;
   }
 
   .invite-section h2 {

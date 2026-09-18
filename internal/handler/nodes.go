@@ -502,6 +502,23 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			args = append(args, s, s)
 		}
 
+		// ?status= narrows the listing to one of the two kinds this endpoint
+		// serves. The trust request needs it (docs/adr/2026-09-18-trust-has-a-
+		// scope-and-a-suggestion-carries-its-calendar.md, decision 7: "active
+		// patches are never askable"), so a picker of what a person may ask
+		// about can be filled from one query rather than by fetching
+		// everything and discarding most of it. An unknown value is refused
+		// rather than ignored: silently listing active patches to a picker
+		// that must not offer them is exactly the mistake to avoid.
+		if status := r.URL.Query().Get("status"); status != "" {
+			if status != "active" && status != "unclaimed" {
+				http.Error(w, `{"error":"status must be active or unclaimed"}`, http.StatusBadRequest)
+				return
+			}
+			conditions = append(conditions, "n.status = ?")
+			args = append(args, status)
+		}
+
 		if r.URL.Query().Get("has_location") == "true" {
 			conditions = append(conditions, "n.latitude IS NOT NULL AND n.longitude IS NOT NULL")
 		}
@@ -656,6 +673,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		resp := map[string]interface{}{
 			"node":         n,
 			"is_unclaimed": isUnclaimed,
+			// Always stated, so a client never has to read an absent key as
+			// "no". Set for real below when there is a viewer to ask about.
+			"viewer_trusted": false,
 		}
 		// Lining status is deliberately public (docs/adr/037): "amended
 		// lining" (diverged) is the badge state the whole design hangs on.
@@ -711,6 +731,22 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			if user.Role == "admin" {
 				resp["is_admin"] = true
 			}
+
+			// Does this viewer's trusted-contributor grant reach this patch
+			// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-
+			// its-calendar.md)? The event form's "post directly or submit for
+			// review" decision used to read the quilt-wide flag off the
+			// signed-in user, which cannot see a per-patch grant — so the
+			// patch payload has to answer it.
+			//
+			// Only on an unclaimed patch, because that is the only place
+			// either scope is worth anything, and the answer here is the same
+			// one CreateEvent's gate gives. Deliberately not set for an
+			// instance admin holding no grant: their reach is a different
+			// fact, already on `is_admin`, and folding the two together would
+			// make a UI that says "you are trusted here" to somebody who is
+			// not.
+			resp["viewer_trusted"] = isUnclaimed && userTrustedOn(db, user, n.ID)
 		}
 
 		w.Header().Set("Content-Type", "application/json")

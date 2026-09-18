@@ -581,6 +581,13 @@ func main() {
 	// needs nobody's permission. Rate-limited inside the handler, tighter
 	// than the personal export.
 	mux.HandleFunc("GET /api/v1/users/me/seamrip", middleware.AuthRequired(db, handler.MemberSeamrip(db, cfg)))
+	// The trust request
+	// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md,
+	// decision 7). One open ask per person, made from the event form and
+	// answered from Admin → Users. There is deliberately no navigation entry
+	// into these: nobody should go looking for a rank.
+	mux.HandleFunc("GET /api/v1/users/me/trust-request", middleware.AuthRequired(db, handler.GetMyTrustRequest(db)))
+	mux.HandleFunc("POST /api/v1/users/me/trust-request", middleware.AuthRequired(db, handler.CreateTrustRequest(db)))
 	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
 
 	// Proposal routes — public, but amendment text follows the target
@@ -697,6 +704,14 @@ func main() {
 	mux.HandleFunc("PATCH /api/v1/admin/reports/{id}", middleware.AdminRequired(db, handler.UpdateReport(db)))
 	mux.HandleFunc("GET /api/v1/admin/users", middleware.AdminRequired(db, handler.ListUsers(db)))
 	mux.HandleFunc("PATCH /api/v1/admin/users/{id}", middleware.AdminRequired(db, handler.UpdateUser(db)))
+	// The trust queue and the per-patch grant, beside the quilt-wide toggle
+	// the PATCH above carries — the two scopes of one grant, answered on one
+	// screen (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-
+	// its-calendar.md, decisions 2 and 7).
+	mux.HandleFunc("GET /api/v1/admin/trust-requests", middleware.AdminRequired(db, handler.ListTrustRequests(db)))
+	mux.HandleFunc("PATCH /api/v1/admin/trust-requests/{id}", middleware.AdminRequired(db, handler.DecideTrustRequest(db)))
+	mux.HandleFunc("POST /api/v1/admin/users/{id}/trusted-patches", middleware.AdminRequired(db, handler.GrantTrustedPatch(db)))
+	mux.HandleFunc("DELETE /api/v1/admin/users/{id}/trusted-patches/{nodeId}", middleware.AdminRequired(db, handler.RevokeTrustedPatch(db)))
 	// Setting an address points an account at a mailbox, and whoever holds
 	// that mailbox can magic-link into it — the same shape as promotion, so
 	// the same step-up gate (docs/adr/017), and its own route rather than a

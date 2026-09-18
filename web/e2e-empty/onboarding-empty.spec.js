@@ -79,9 +79,17 @@ test('empty instance steers the first user to create a patch', async ({ page }) 
   // Empty instance: no vocabulary, so there is no question to ask, and no
   // patches to answer with.
   await expect(page.getByRole('heading', { name: /nothing here yet/i })).toBeVisible();
-  await page.getByRole('button', { name: /create a patch/i }).click();
+  await page.getByRole('button', { name: /add a patch/i }).click();
 
   await expect(page).toHaveURL(/\/patches\/new/);
+  // Creation opens on a fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-
+  // suggestion-carries-its-calendar): "Is this your patch to run?" before
+  // any field, so nothing promises admin of a place nobody has admitted the
+  // visitor to yet.
+  await expect(page.getByRole('heading', { name: 'Add a patch' })).toBeVisible();
+  await expect(page.getByText('Is this your patch to run?')).toBeVisible();
+  await page.getByRole('button', { name: /^i run this patch/i }).click();
+
   await expect(page.getByRole('heading', { name: 'Create Patch' })).toBeVisible();
 
   // Filling the form must not get intercepted by the onboarding redirect.

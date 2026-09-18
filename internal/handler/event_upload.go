@@ -33,7 +33,8 @@ type bulkEventRow struct {
 // spreadsheet door. Bulk upload is an admin act, deliberately narrower
 // than single-event posting: patch admins on active patches, the
 // instance admin and trusted contributors on unclaimed ones (their
-// docs/adr/026 grant already lets them record events there directly).
+// docs/adr/026 grant already lets them record events there directly, at
+// either scope — quilt-wide, or this one patch).
 // Members still post one event at a time; suggesters go through review.
 //
 // The batch is all-or-nothing on validation (fix row 7 and retry beats
@@ -57,7 +58,7 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 
 		allowed := user.Role == "admin" ||
 			(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
-			(nodeStatus == "unclaimed" && user.TrustedContributor)
+			(nodeStatus == "unclaimed" && userTrustedOn(db, user, nodeID))
 		if !allowed {
 			http.Error(w, `{"error":"bulk upload is for patch admins"}`, http.StatusForbidden)
 			return

@@ -106,6 +106,7 @@
         isAdmin: data.is_admin || false,
         membershipRole: data.membership_role || '',
         isUnclaimed: data.is_unclaimed || false,
+        viewerTrusted: data.viewer_trusted === true,
         liningStatus: data.lining_status || '',
         isBanned: data.is_banned || false,
         followerPermissions: (data.node || data).follower_permissions || null,

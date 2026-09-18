@@ -127,6 +127,51 @@ describe('PatchProfile treats unclaimed governance/lining as absent, not empty',
   });
 });
 
+describe('PatchForm opens ordinary creation on a fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar)', () => {
+  const src = source('pages/PatchForm.svelte');
+
+  it('starts unanswered in create mode and pre-answered in setup mode', () => {
+    expect(src).toMatch(/let readyToCreate = \$state\(mode === 'setup'\)/);
+  });
+
+  it('asks the question before any field, gated on create mode and an unanswered fork', () => {
+    expect(src).toMatch(/\{#if mode === 'create' && !readyToCreate\}/);
+    expect(src).toContain('<h1>Add a patch</h1>');
+    expect(src).toContain('Is this your patch to run?');
+  });
+
+  it('shows two equal-weight cards with the decided copy', () => {
+    const forkBlock = src.match(/\{#if mode === 'create' && !readyToCreate\}([\s\S]*?)\{:else\}/);
+    expect(forkBlock, 'fork block not found').toBeTruthy();
+    const [, block] = forkBlock;
+    expect(block).toContain('I run this patch');
+    expect(block).toContain("You become its admin. Members, events and settings are yours from the start.");
+    expect(block).toContain('Someone else runs it');
+    expect(block).toContain("It joins the quilt as an unclaimed patch. The people who run it can claim it later, and you can add its events once it's approved.");
+    // Both are real buttons, so they're tab-reachable and enter-activatable
+    // without any extra keyboard plumbing.
+    expect(block.match(/<button type="button" class="fork-card"/g)?.length).toBe(2);
+  });
+
+  it('choosing "I run this patch" reveals the form; choosing the other card leaves for /submit', () => {
+    expect(src).toMatch(/onclick=\{\(\) => \{ readyToCreate = true; \}\}/);
+    expect(src).toMatch(/onclick=\{\(\) => navigate\('\/submit'\)\}/);
+  });
+
+  it('keeps a small step-back link under the revealed form heading, not the old muted sentence', () => {
+    expect(src).not.toContain("Creating a patch makes you its admin. Know a group that isn't yours to run?");
+    expect(src).toContain('Not yours to run?');
+    expect(src).toContain('Suggest it instead');
+  });
+
+  it('never shows the fork in setup mode', () => {
+    // readyToCreate seeds true for mode==='setup', so the fork's own
+    // condition can never be true there — asserted structurally above. This
+    // pins the seed itself against a future edit that only touches one side.
+    expect(src).toMatch(/mode === 'setup'\)/);
+  });
+});
+
 describe('PatchForm reuses one component for creation and setup (docs/adr/039)', () => {
   const src = source('pages/PatchForm.svelte');
 
@@ -170,7 +215,8 @@ describe('PatchForm reuses one component for creation and setup (docs/adr/039)',
   it('never shows the create-only submission suggestion in setup mode', () => {
     const setupBranch = src.match(/\{#if mode === 'setup'\}[\s\S]*?\{:else\}([\s\S]*?)\{\/if\}\s*\n\s*<form/);
     expect(setupBranch, 'heading branch not found').toBeTruthy();
-    expect(setupBranch[1]).toContain('Suggest a patch');
+    expect(setupBranch[1]).toContain('Suggest it instead');
+    expect(setupBranch[1]).not.toContain('Set up your patch');
   });
 
   it('does not re-randomize appearance for setup — it seeds from the listing', () => {

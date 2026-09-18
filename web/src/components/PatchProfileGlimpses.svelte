@@ -18,7 +18,7 @@
    */
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isLoggedIn, isAdmin as isInstanceAdmin, getUser } from '../stores/auth.svelte.js';
+  import { isLoggedIn, isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { handleFromDID } from '../lib/atproto.js';
@@ -40,6 +40,9 @@
     isMember = false,
     isAdmin = false,
     isUnclaimed = false,
+    // The viewer's trusted-contributor grant reaches this unclaimed patch
+    // (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar).
+    viewerTrusted = false,
     isBanned = false,
     membershipRole = '',
     // Taken, and deliberately not read for governance. Follower permissions
@@ -94,7 +97,7 @@
   let postingRight = $derived(eventPostingRight({
     signedIn: isLoggedIn(),
     isInstanceAdmin: isInstanceAdmin(),
-    trustedContributor: !!getUser()?.trusted_contributor,
+    viewerTrusted: viewerTrusted === true,
     isUnclaimed,
     // The role test, stated here rather than taken from the isMember prop:
     // it is the same answer since docs/adr/117, and the gate should not
