@@ -3,7 +3,7 @@
  * Tests login page, session management, logout.
  */
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin, logout } from './setup.js';
+import { loginAsAdmin, logout, goto } from './setup.js';
 
 test.describe('Auth — Login Page', () => {
   test('2.2 — login page renders signup-first with email input', async ({ page }) => {
@@ -106,8 +106,7 @@ test.describe('Auth — Session', () => {
       secure: false,
       sameSite: 'Lax',
     }]);
-    await page.goto('/dashboard');
-    await page.waitForTimeout(2000);
+    await goto(page, '/dashboard');
     // Should show sign-in prompt since the token is invalid
     const hasPrompt = await page.getByText(/sign in/i).isVisible().catch(() => false);
     const showsDashboard = await page.locator('h1').filter({ hasText: 'Dashboard' }).isVisible().catch(() => false);
@@ -126,10 +125,10 @@ test.describe('Auth — Session', () => {
       const logoutBtn = page.locator('.user-dropdown').getByText(/log ?out/i);
       if (await logoutBtn.isVisible()) {
         await logoutBtn.click();
-        await page.waitForTimeout(500);
+        // handleLogout awaits the API call before navigate('/') fires.
+        await page.waitForURL('/');
         // Should no longer be on dashboard
-        await page.goto('/dashboard');
-        await page.waitForTimeout(1000);
+        await goto(page, '/dashboard');
       }
     }
   });
@@ -138,8 +137,7 @@ test.describe('Auth — Session', () => {
 test.describe('Auth — Security Settings Page', () => {
   test('security settings page is accessible', async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto('/settings/security');
-    await page.waitForTimeout(2000);
+    await goto(page, '/settings/security');
 
     // Should not 404
     const notFound = await page.getByText('Page not found').isVisible().catch(() => false);
