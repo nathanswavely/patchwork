@@ -4032,7 +4032,7 @@
         },
         {
           "file": "internal/handler/legal.go",
-          "line": 117,
+          "line": 122,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4193,14 +4193,14 @@
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 115,
+          "line": 123,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/settings.go",
-          "line": 343,
+          "line": 363,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -11324,7 +11324,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 27,
+          "line": 30,
           "kind": "go-doc-block",
           "raw": "*This is the default privacy policy that ships with the Patchwork software. It describes what the software actually does. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
           "quote": null
@@ -11342,14 +11342,14 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 29,
+          "line": 32,
           "kind": "go-doc-block",
           "raw": "## The short version",
           "quote": null
         },
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 106,
+          "line": 125,
           "kind": "go-doc-block",
           "raw": "## The short version",
           "quote": null
@@ -11367,7 +11367,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 31,
+          "line": 34,
           "kind": "go-doc-block",
           "raw": "Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.",
           "quote": null
@@ -11385,7 +11385,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 33,
+          "line": 36,
           "kind": "go-doc-block",
           "raw": "## What this site collects",
           "quote": null
@@ -11403,7 +11403,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 35,
+          "line": 38,
           "kind": "go-doc-block",
           "raw": "**Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.",
           "quote": null
@@ -11422,7 +11422,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 37,
+          "line": 40,
           "kind": "go-doc-block",
           "raw": "**Activity.** The patches you join, follow, or administer, the proposals and votes you take part in, and anything you post or edit, events included. There is no RSVP on this site and no record of whether you went to anything.",
           "quote": null
@@ -11430,19 +11430,19 @@
       ]
     },
     {
-      "id": "061099a1efdf",
-      "text": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.",
-      "words": 49,
+      "id": "1d0586af5dfc",
+      "text": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address. The web server as shipped keeps no log of visits. All of this exists for security and troubleshooting. None of it is used for profiling.",
+      "words": 51,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 39,
+          "line": 42,
           "kind": "go-doc-block",
-          "raw": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.",
+          "raw": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address. The web server as shipped keeps no log of visits. All of this exists for security and troubleshooting. None of it is used for profiling.",
           "quote": null
         }
       ]
@@ -11458,7 +11458,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 41,
+          "line": 46,
           "kind": "go-doc-block",
           "raw": "## What other people can see",
           "quote": null
@@ -11476,7 +11476,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 43,
+          "line": 48,
           "kind": "go-doc-block",
           "raw": "Profiles are public pages showing your username, display name, bio, avatar, and whichever memberships you have chosen to show. Each membership has its own visibility switch, and you hold it. The same switch controls both your profile and the patch's public member list, so the two never disagree. A membership you hide stays visible to that patch's admins and members inside the patch workspace, since the people you organize with can already see you in the room. The list of patches you follow never appears on your profile.",
           "quote": null
@@ -11494,7 +11494,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 45,
+          "line": 50,
           "kind": "go-doc-block",
           "raw": "Your email address is never shown publicly. Only this site's administrators can see it.",
           "quote": null
@@ -11512,7 +11512,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 47,
+          "line": 52,
           "kind": "go-doc-block",
           "raw": "A patch's noticeboard, meaning its notices and the replies under them, is visible only to that patch's admins and members. Nothing on it appears publicly, reaches followers, or leaves this site. A report about a notice goes to that patch's admins, who are the only people besides its members who can read it.",
           "quote": null
@@ -11530,7 +11530,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 49,
+          "line": 54,
           "kind": "go-doc-block",
           "raw": "You can add a contact card (a phone number, an email address to reach you at, and a short note) and share it patch by patch. It is shown only to the admins and members of the patches you switch sharing on for, inside that patch's Members room. It never appears on your profile, in a public member list, or anywhere outside this site, and sharing is off for every patch until you turn it on.",
           "quote": null
@@ -11548,7 +11548,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 51,
+          "line": 56,
           "kind": "go-doc-block",
           "raw": "## Federation: where your public content travels",
           "quote": null
@@ -11566,7 +11566,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 53,
+          "line": 58,
           "kind": "go-doc-block",
           "raw": "This site can speak ActivityPub, the protocol behind Mastodon and similar networks. With federation enabled, public content can be copied to other servers when someone there follows a patch here. That covers patch profiles, public events, and public posts. Two things to understand:",
           "quote": null
@@ -11584,7 +11584,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 55,
+          "line": 60,
           "kind": "go-doc-block",
           "raw": "- Other servers keep their own copies under their own policies. Deleting something here sends a deletion notice, but this site cannot force another server to honor it.\n- When you follow a patch on another quilt, the follow is relayed through this site's shared service account rather than your own identity, so your name never appears in a remote follower list.",
           "quote": null
@@ -11602,9 +11602,45 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 58,
+          "line": 63,
           "kind": "go-doc-block",
           "raw": "Membership records never federate. What leaves this server is only what was already public on it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6edc7d562963",
+      "text": "## Maps",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 65,
+          "kind": "go-doc-block",
+          "raw": "## Maps",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aedaf71d11e4",
+      "text": "The map is drawn from tiles fetched from OpenFreeMap, or from OpenStreetMap's own tile server on a browser that cannot draw the vector kind. Opening a map page sends those servers your IP address, the way any server your browser fetches from receives it, and nothing else. Apart from map tiles, a page here fetches only from this site, unless you have connected another quilt in your settings, in which case your browser reads that quilt's public pages directly.",
+      "words": 79,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 67,
+          "kind": "go-doc-block",
+          "raw": "The map is drawn from tiles fetched from OpenFreeMap, or from OpenStreetMap's own tile server on a browser that cannot draw the vector kind. Opening a map page sends those servers your IP address, the way any server your browser fetches from receives it, and nothing else. Apart from map tiles, a page here fetches only from this site, unless you have connected another quilt in your settings, in which case your browser reads that quilt's public pages directly.",
           "quote": null
         }
       ]
@@ -11620,7 +11656,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 60,
+          "line": 69,
           "kind": "go-doc-block",
           "raw": "## Cookies",
           "quote": null
@@ -11628,19 +11664,37 @@
       ]
     },
     {
-      "id": "777bc1b3fa2e",
-      "text": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
-      "words": 32,
+      "id": "0a7a718be713",
+      "text": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind. There is no cookie banner because there is nothing to consent to.",
+      "words": 44,
       "tier": "prose",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 62,
+          "line": 71,
           "kind": "go-doc-block",
-          "raw": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
+          "raw": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind. There is no cookie banner because there is nothing to consent to.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "66ec6e4746c6",
+      "text": "A few conveniences are kept in your browser's own storage rather than on the server: whether you collapsed the sidebar, a draft you were writing, that you have seen the introduction. That storage never leaves your browser, nobody here reads it, and it is yours to clear.",
+      "words": 47,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 73,
+          "kind": "go-doc-block",
+          "raw": "A few conveniences are kept in your browser's own storage rather than on the server: whether you collapsed the sidebar, a draft you were writing, that you have seen the introduction. That storage never leaves your browser, nobody here reads it, and it is yours to clear.",
           "quote": null
         }
       ]
@@ -11656,7 +11710,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 64,
+          "line": 75,
           "kind": "go-doc-block",
           "raw": "## Email",
           "quote": null
@@ -11674,7 +11728,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 66,
+          "line": 77,
           "kind": "go-doc-block",
           "raw": "Sign-in links and any notifications you turn on go out through the email server this site's stewards configured. Email always passes through the providers involved on both ends, yours and this site's.",
           "quote": null
@@ -11692,7 +11746,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 68,
+          "line": 79,
           "kind": "go-doc-block",
           "raw": "## The seamrip: data portability",
           "quote": null
@@ -11710,7 +11764,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 70,
+          "line": 81,
           "kind": "go-doc-block",
           "raw": "Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. That is deliberate: it is the safety valve if this community's leadership goes sideways. The community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export. A deleted account travels as the emptied record it became, not as an account, so the successor site inherits the erasure along with everything else.",
           "quote": null
@@ -11728,7 +11782,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 72,
+          "line": 83,
           "kind": "go-doc-block",
           "raw": "You do not need an administrator to get your own copy. **Download my data** in your account settings hands you one file with everything this site holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, your settings and notifications, and the log of your own sign-ins. It contains nothing anyone else wrote and no sign-in secrets, so the file cannot be used to get into your account.",
           "quote": null
@@ -11746,7 +11800,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 74,
+          "line": 85,
           "kind": "go-doc-block",
           "raw": "The same goes for the quilt itself. **Member seamrip** in your account settings hands you this site as you can already see it, in the format a new Patchwork reads. It holds the patches, events, charters, proposals and member lists that are open to you. It holds no email addresses, no contact cards, no noticeboards, and nothing from a patch you are not in. Other people appear in it as a username, a display name and an avatar, which is enough for a new site to invite them back. Nobody can be signed in from that file either. Taking a copy is recorded in the audit log, and there is a limit of two a day.",
           "quote": null
@@ -11764,7 +11818,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 76,
+          "line": 87,
           "kind": "go-doc-block",
           "raw": "## How long things are kept, and deletion",
           "quote": null
@@ -11782,7 +11836,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 78,
+          "line": 89,
           "kind": "go-doc-block",
           "raw": "Your content and account stay until you delete the account yourself, from Settings. Deleting is immediate and cannot be undone. It asks you to confirm with a passkey and to type your username. It treats two kinds of data differently.",
           "quote": null
@@ -11800,7 +11854,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 80,
+          "line": 91,
           "kind": "go-doc-block",
           "raw": "**Erased.** Your email address, display name, bio, links, avatar, and contact card. Your passkeys, recovery codes, and sessions, so nobody can sign in as you again. Your personal calendar link, your notification settings, and any unread notifications. The quilts you had connected, the patches you followed on other quilts, and every membership you held here. Any claim on a patch still waiting for review, and any candidacy in an election that had not closed.",
           "quote": null
@@ -11818,7 +11872,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 82,
+          "line": 93,
           "kind": "go-doc-block",
           "raw": "**Kept, with your name removed.** The things you took part in: proposals you wrote, votes and ballots you cast, comments, notices and replies, events you posted, calendar feeds you attached, and decisions you recorded on a patch's behalf. This site exists to hold a community's record of what it decided. A tally that quietly loses a voter is not a record anyone can check. Those entries stay, and they now read as \"Deleted account\" with no name and no link. Your account row survives with nothing in it. Your username stays retired rather than freed, so no stranger inherits links that pointed at you. Your profile page stops existing.",
           "quote": null
@@ -11836,7 +11890,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 84,
+          "line": 95,
           "kind": "go-doc-block",
           "raw": "One consequence is worth stating plainly. A vote of yours on a proposal that is still open stops counting toward its result, because the tally counts current members and you are no longer one. This is exactly what happens when anybody leaves a patch. Anything already decided stays decided.",
           "quote": null
@@ -11854,7 +11908,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 86,
+          "line": 97,
           "kind": "go-doc-block",
           "raw": "**Two refusals.** You cannot delete your account while you are the only admin of a patch. The site names those patches and asks you to hand them over first, because the alternative is a community nobody can administer. The last remaining administrator of the whole site cannot delete their account either.",
           "quote": null
@@ -11872,7 +11926,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 88,
+          "line": 99,
           "kind": "go-doc-block",
           "raw": "Deletion cannot reach outside this server. Anything federation already copied elsewhere is held by those servers under their policies. This site sends a deletion notice for your account to every server known to follow it and stops answering for it afterwards, but it cannot make anyone honor that notice. Data that went out in an export made before you deleted is likewise a copy nobody here can reach.",
           "quote": null
@@ -11890,7 +11944,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 90,
+          "line": 101,
           "kind": "go-doc-block",
           "raw": "If you would rather have a steward do this, or want specific content removed without closing your account, the people on the [Label](/label) can help. Their tools can hide content and suspend an account. The erasure described above is the one you perform yourself.",
           "quote": null
@@ -11908,7 +11962,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 92,
+          "line": 103,
           "kind": "go-doc-block",
           "raw": "## Age",
           "quote": null
@@ -11926,7 +11980,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 94,
+          "line": 105,
           "kind": "go-doc-block",
           "raw": "This site is not directed at children under 13, and nobody under 13 may create an account.",
           "quote": null
@@ -11944,7 +11998,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 96,
+          "line": 107,
           "kind": "go-doc-block",
           "raw": "## Changes",
           "quote": null
@@ -11962,7 +12016,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 98,
+          "line": 109,
           "kind": "go-doc-block",
           "raw": "If this policy changes, the change shows up on this page. The software keeps no hidden version of it. What you read here is what the site operates under.",
           "quote": null
@@ -11980,7 +12034,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 100,
+          "line": 111,
           "kind": "go-doc-block",
           "raw": "## Who to talk to",
           "quote": null
@@ -11998,9 +12052,45 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 102,
+          "line": 113,
           "kind": "go-doc-block",
           "raw": "The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "289a01b1a612",
+      "text": "**Visitor counts.** The stewards have turned on visitor counting. The server counts how many times each kind of page was loaded on each day, and how many different browsers loaded any page that day. To tell browsers apart within a day it hashes your address and browser type with a secret it draws at random, keeps only in memory, and replaces every midnight, so the count cannot be turned back into you and no two days can be joined. No script runs in your browser for this, nothing is stored there, only daily totals are ever written down, and they are deleted after 13 months. Pages are counted by their shape, never with anything typed after a question mark.",
+      "words": 119,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 119,
+          "kind": "go-doc-block",
+          "raw": "**Visitor counts.** The stewards have turned on visitor counting. The server counts how many times each kind of page was loaded on each day, and how many different browsers loaded any page that day. To tell browsers apart within a day it hashes your address and browser type with a secret it draws at random, keeps only in memory, and replaces every midnight, so the count cannot be turned back into you and no two days can be joined. No script runs in your browser for this, nothing is stored there, only daily totals are ever written down, and they are deleted after 13 months. Pages are counted by their shape, never with anything typed after a question mark.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7f9e05f35b40",
+      "text": "**Visitor counts.** This site does not count its visitors. The software can keep daily page-view totals, computed on the server with no script and no cookie, but the stewards have not turned that on. If they do, this paragraph will say so.",
+      "words": 42,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 121,
+          "kind": "go-doc-block",
+          "raw": "**Visitor counts.** This site does not count its visitors. The software can keep daily page-view totals, computed on the server with no script and no cookie, but the stewards have not turned that on. If they do, this paragraph will say so.",
           "quote": null
         }
       ]
@@ -12016,7 +12106,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 104,
+          "line": 123,
           "kind": "go-doc-block",
           "raw": "*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*",
           "quote": null
@@ -12034,7 +12124,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 108,
+          "line": 127,
           "kind": "go-doc-block",
           "raw": "Be someone your community would vouch for. Your posts are yours, the stewards can moderate the site, and since this is run by your community, uptime may not be guaranteed. If you ever stop trusting how the place is run, the software guarantees your community the right to leave with its data.",
           "quote": null
@@ -12053,7 +12143,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 110,
+          "line": 129,
           "kind": "go-doc-block",
           "raw": "## What this is",
           "quote": null
@@ -12071,7 +12161,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 114,
+          "line": 133,
           "kind": "go-doc-block",
           "raw": "Every group here is a patch, and the patches govern themselves. People and shared events are the only thing connecting them: nothing on this site ranks what you (individually) see or competes for your attention. [What is Patchwork?](/about) explains how the place works.",
           "quote": null
@@ -12090,7 +12180,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 116,
+          "line": 135,
           "kind": "go-doc-block",
           "raw": "## Who can join",
           "quote": null
@@ -12108,7 +12198,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 118,
+          "line": 137,
           "kind": "go-doc-block",
           "raw": "You must be at least 13 years old to have an account. Accounts are for people. Bots and automated posters don't get one.",
           "quote": null
@@ -12126,7 +12216,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 120,
+          "line": 139,
           "kind": "go-doc-block",
           "raw": "## Your account",
           "quote": null
@@ -12144,7 +12234,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 122,
+          "line": 141,
           "kind": "go-doc-block",
           "raw": "Sign-in is by email links and passkeys, so there is no password to guard. The email account and devices you use to sign in are still your responsibility, and what happens through your account is yours to answer for. Don't share access to your account or use someone else's.",
           "quote": null
@@ -12162,7 +12252,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 124,
+          "line": 143,
           "kind": "go-doc-block",
           "raw": "## Your content",
           "quote": null
@@ -12180,7 +12270,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 126,
+          "line": 145,
           "kind": "go-doc-block",
           "raw": "What you post is yours, and you keep every right you already had. So the site can function, you give {quilt_name} permission to store your content, show it to the people it's addressed to, and, where federation applies to public content, pass it along to other servers that follow this one. The same permission covers the seamrip: if this community exports its data to continue elsewhere, public content and membership records go with it, as described in the privacy policy. Anything you post publicly can be seen, copied, and shared the way public things on the internet are, and you agree to that too.",
           "quote": null
@@ -12198,7 +12288,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 128,
+          "line": 147,
           "kind": "go-doc-block",
           "raw": "## Conduct",
           "quote": null
@@ -12216,7 +12306,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 130,
+          "line": 149,
           "kind": "go-doc-block",
           "raw": "These rules apply everywhere on this site:",
           "quote": null
@@ -12234,7 +12324,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 132,
+          "line": 151,
           "kind": "go-doc-block",
           "raw": "- No harassment, and no content that attacks people for who they are. Racism, antisemitism, misogyny, homophobia, transphobia, ableism, and fascist organizing are not welcome here. \n- No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.\n- Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.",
           "quote": null
@@ -12253,7 +12343,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 136,
+          "line": 155,
           "kind": "go-doc-block",
           "raw": "These expectations don't wait for you to join anything. They cover every way you use the site, from following and reading to commenting and voting, member of a patch or not.",
           "quote": null
@@ -12271,7 +12361,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 138,
+          "line": 157,
           "kind": "go-doc-block",
           "raw": "## Moderation",
           "quote": null
@@ -12289,7 +12379,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 140,
+          "line": 159,
           "kind": "go-doc-block",
           "raw": "The stewards can remove content, restrict accounts, or close accounts that violate this agreement, without prior notice where they judge that necessary to protect people or the site. Posting content that infringes someone else's copyright will, if repeated, cost you your account. To report copyright infringement or any other abuse, contact the stewards through the [Label](/label).",
           "quote": null
@@ -12307,7 +12397,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 142,
+          "line": 161,
           "kind": "go-doc-block",
           "raw": "## If you don't like how this place is run",
           "quote": null
@@ -12325,7 +12415,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 144,
+          "line": 163,
           "kind": "go-doc-block",
           "raw": "Disagreement is not a violation. Patchwork keeps governance visible and makes leaving real: any member can export what they can already see, and a community can seamrip itself to new stewards. The [Label](/label) explains how this site is run, what it costs, and where the exit is.",
           "quote": null
@@ -12343,7 +12433,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 146,
+          "line": 165,
           "kind": "go-doc-block",
           "raw": "## No warranty",
           "quote": null
@@ -12361,7 +12451,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 148,
+          "line": 167,
           "kind": "go-doc-block",
           "raw": "Volunteers run this site on real hardware, with no promise of uptime, availability, or permanence. It is provided **as is**, without warranty of any kind. To the fullest extent permitted by law, the stewards are not liable for damages arising from your use of the site or from content other people post, so back up anything you can't afford to lose.",
           "quote": null
@@ -12379,7 +12469,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 150,
+          "line": 169,
           "kind": "go-doc-block",
           "raw": "## Changes and ending",
           "quote": null
@@ -12397,7 +12487,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal_defaults.go",
-          "line": 152,
+          "line": 171,
           "kind": "go-doc-block",
           "raw": "This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and you can delete your account yourself from Settings. The privacy policy sets out exactly what that erases and what stays in the community's record. Two things it will not let you do: walk out as the only admin of a patch, or as the last administrator of the site. Hand those over first. The stewards can end the agreement on their side by closing your account, as described under Moderation.",
           "quote": null
@@ -12415,21 +12505,21 @@
       "occurrences": [
         {
           "file": "internal/handler/legal.go",
-          "line": 63,
+          "line": 68,
           "kind": "go-error-body",
           "raw": "unknown document",
           "quote": null
         },
         {
           "file": "internal/handler/legal.go",
-          "line": 109,
+          "line": 114,
           "kind": "go-error-body",
           "raw": "unknown document",
           "quote": null
         },
         {
           "file": "internal/handler/legal.go",
-          "line": 152,
+          "line": 157,
           "kind": "go-error-body",
           "raw": "unknown document",
           "quote": null
@@ -12447,7 +12537,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal.go",
-          "line": 124,
+          "line": 129,
           "kind": "go-error-body",
           "raw": "document cannot be empty, use reset to restore the default",
           "quote": null
@@ -12466,7 +12556,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal.go",
-          "line": 128,
+          "line": 133,
           "kind": "go-error-body",
           "raw": "document is too large",
           "quote": null
@@ -12484,7 +12574,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal.go",
-          "line": 133,
+          "line": 138,
           "kind": "go-error-body",
           "raw": "failed to save document",
           "quote": null
@@ -12502,7 +12592,7 @@
       "occurrences": [
         {
           "file": "internal/handler/legal.go",
-          "line": 156,
+          "line": 161,
           "kind": "go-error-body",
           "raw": "failed to reset document",
           "quote": null
@@ -16018,7 +16108,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 122,
+          "line": 130,
           "kind": "go-error-body",
           "raw": "failed to reset the name",
           "quote": null
@@ -16036,7 +16126,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 128,
+          "line": 136,
           "kind": "go-error-body",
           "raw": "invalid name",
           "quote": null
@@ -16054,7 +16144,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 133,
+          "line": 141,
           "kind": "go-error-body",
           "raw": "name cannot be empty",
           "quote": null
@@ -16072,7 +16162,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 137,
+          "line": 145,
           "kind": "go-error-body",
           "raw": "name must be 100 characters or fewer",
           "quote": null
@@ -16090,7 +16180,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 141,
+          "line": 149,
           "kind": "go-error-body",
           "raw": "failed to save name",
           "quote": null
@@ -16108,7 +16198,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 155,
+          "line": 163,
           "kind": "go-error-body",
           "raw": "invalid description",
           "quote": null
@@ -16126,7 +16216,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 161,
+          "line": 169,
           "kind": "go-error-body",
           "raw": "description must be 500 characters or fewer",
           "quote": null
@@ -16144,7 +16234,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 166,
+          "line": 174,
           "kind": "go-error-body",
           "raw": "failed to reset the description",
           "quote": null
@@ -16162,7 +16252,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 170,
+          "line": 178,
           "kind": "go-error-body",
           "raw": "failed to save description",
           "quote": null
@@ -16180,7 +16270,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 193,
+          "line": 201,
           "kind": "go-error-body",
           "raw": "failed to read this quilt's calendars",
           "quote": null
@@ -16198,7 +16288,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 224,
+          "line": 232,
           "kind": "go-error-body",
           "raw": "failed to clear the timezone",
           "quote": null
@@ -16216,7 +16306,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 228,
+          "line": 236,
           "kind": "go-error-body",
           "raw": "failed to save the timezone",
           "quote": null
@@ -16234,7 +16324,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 238,
+          "line": 246,
           "kind": "go-error-body",
           "raw": "the timezone was saved but its events could not all be moved",
           "quote": null
@@ -16252,7 +16342,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 251,
+          "line": 259,
           "kind": "go-error-body",
           "raw": "invalid icon_design",
           "quote": null
@@ -16270,7 +16360,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 256,
+          "line": 264,
           "kind": "go-error-body",
           "raw": "failed to clear the icon",
           "quote": null
@@ -16288,7 +16378,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 266,
+          "line": 274,
           "kind": "go-error-body",
           "raw": "failed to save the icon",
           "quote": null
@@ -16306,9 +16396,27 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 278,
+          "line": 286,
           "kind": "go-error-body",
           "raw": "failed to save policy",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0580436ed033",
+      "text": "failed to save usage setting",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "internal/handler/settings.go",
+          "line": 297,
+          "kind": "go-error-body",
+          "raw": "failed to save usage setting",
           "quote": null
         }
       ]
@@ -16324,7 +16432,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 349,
+          "line": 369,
           "kind": "go-error-body",
           "raw": "confirmation name does not match the quilt name",
           "quote": null
@@ -16342,7 +16450,7 @@
       "occurrences": [
         {
           "file": "internal/handler/settings.go",
-          "line": 360,
+          "line": 380,
           "kind": "go-error-body",
           "raw": "wipe failed, no data was deleted",
           "quote": null
@@ -17259,6 +17367,24 @@
           "line": 597,
           "kind": "go-error-body",
           "raw": "submission not found",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "443285483568",
+      "text": "failed to clear usage counts",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "internal/handler/usage.go",
+          "line": 161,
+          "kind": "go-error-body",
+          "raw": "failed to clear usage counts",
           "quote": null
         }
       ]
@@ -19575,21 +19701,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 520,
+          "line": 522,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 568,
+          "line": 572,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 629,
+          "line": 633,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -19607,21 +19733,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 521,
+          "line": 523,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 569,
+          "line": 573,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 630,
+          "line": 634,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -19639,7 +19765,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 732,
+          "line": 736,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -19657,7 +19783,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 733,
+          "line": 737,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -19718,14 +19844,14 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 32,
+          "line": 33,
           "kind": "js-string",
           "raw": "Prove admin",
           "quote": "'"
         },
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 120,
+          "line": 126,
           "kind": "js-string",
           "raw": "Prove admin",
           "quote": "'"
@@ -19743,7 +19869,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 55,
+          "line": 56,
           "kind": "attr:placeholder",
           "raw": "Search administration…",
           "quote": "\""
@@ -22970,6 +23096,13 @@
         {
           "file": "web/src/pages/AdminQuiltSettings.svelte",
           "line": 180,
+          "kind": "js-string",
+          "raw": "Failed to save",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 46,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -38025,6 +38158,546 @@
           "kind": "attr:title",
           "raw": "Change motif",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "b28c2ac1e64c",
+      "text": "Counting on. The privacy policy now says so.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 43,
+          "kind": "js-string",
+          "raw": "Counting on. The privacy policy now says so.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "ce178bc928c2",
+      "text": "Counting off. The privacy policy now says so.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 43,
+          "kind": "js-string",
+          "raw": "Counting off. The privacy policy now says so.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "f72a1c890f72",
+      "text": "Delete every daily count this quilt has kept? This cannot be undone.",
+      "words": 12,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 52,
+          "kind": "js-string",
+          "raw": "Delete every daily count this quilt has kept? This cannot be undone.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "d49702e47b62",
+      "text": "Counts cleared",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 56,
+          "kind": "js-string",
+          "raw": "Counts cleared",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "df51dc823e3c",
+      "text": "Failed to clear",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 59,
+          "kind": "js-string",
+          "raw": "Failed to clear",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8d59829c1e15",
+      "text": "Usage",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 76,
+          "kind": "markup",
+          "raw": "Usage",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c46b483be7d9",
+      "text": "How much this quilt is being read, counted on the server as daily totals. There is no script in the page, no cookie, and nothing kept that names a person, an address, or a moment.",
+      "words": 35,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 78,
+          "kind": "markup",
+          "raw": "How much this quilt is being read, counted on the server as daily totals. There is no script in the page, no cookie, and nothing kept that names a person, an address, or a moment.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d6cf5fd3e5eb",
+      "text": "Each page load adds one to that kind of page for today. A browser is counted once a day, from a hash of its address and type under a secret the server draws at random, keeps in memory, and replaces at midnight. Totals are kept for {data.retention_months} months. The privacy policy states all of this.",
+      "words": 55,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 93,
+          "kind": "markup",
+          "raw": "Each page load adds one to that kind of page for today. A browser is counted once a day, from a hash of its address and type under a secret the server draws at random, keeps in memory, and replaces at midnight. Totals are kept for {data.retention_months} months. The privacy policy states all of this.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ebe1c36c0976",
+      "text": "Nothing is being counted. Turning this on counts page loads per kind of page per day and distinct browsers per day, on the server, and the privacy policy changes to say so. It never counts API calls, assets, or anyone a browser announces as software.",
+      "words": 45,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 95,
+          "kind": "markup",
+          "raw": "Nothing is being counted. Turning this on counts page loads per kind of page per day and distinct browsers per day, on the server, and the privacy policy changes to say so. It never counts API calls, assets, or anyone a browser announces as software.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "19734a1b58ca",
+      "text": "Window",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 111,
+          "kind": "attr:aria-label",
+          "raw": "Window",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "199a89a97ea5",
+      "text": "Since {data.since}, in UTC days",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 124,
+          "kind": "markup",
+          "raw": "Since {data.since}, in UTC days",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f9180d6fa6f2",
+      "text": "page loads",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 130,
+          "kind": "markup",
+          "raw": "page loads",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8a4fe5d92ae1",
+      "text": "visitors on the busiest day",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 134,
+          "kind": "markup",
+          "raw": "visitors on the busiest day",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e4b476e763fe",
+      "text": "accounts created",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 138,
+          "kind": "markup",
+          "raw": "accounts created",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "23c0a4c5020c",
+      "text": "joins and follows",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 142,
+          "kind": "markup",
+          "raw": "joins and follows",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "aacf8e26b26b",
+      "text": "Page loads by day",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 147,
+          "kind": "markup",
+          "raw": "Page loads by day",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b0954fca4d9e",
+      "text": "Page loads per day",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 153,
+          "kind": "attr:aria-label",
+          "raw": "Page loads per day",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "5de5a08f4e79",
+      "text": "Visitors are distinct within one day only, so they are not added across days. Hover a bar for that day's two numbers.",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 164,
+          "kind": "markup",
+          "raw": "Visitors are distinct within one day only, so they are not added across days. Hover a bar for that day's two numbers.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9046da16aea9",
+      "text": "Pages",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 170,
+          "kind": "markup",
+          "raw": "Pages",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "61f5db8df82e",
+      "text": "Nothing counted in this window.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 172,
+          "kind": "markup",
+          "raw": "Nothing counted in this window.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "326f8c1606f9",
+      "text": "A page is counted by its shape. Which patch or person a load was for is never kept.",
+      "words": 18,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 185,
+          "kind": "markup",
+          "raw": "A page is counted by its shape. Which patch or person a load was for is never kept.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "38da1505ca83",
+      "text": "Activity",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 190,
+          "kind": "markup",
+          "raw": "Activity",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5f881a8eb281",
+      "text": "What people did in the same window, from the records the quilt keeps anyway. These are the same whether counting is on or off.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 191,
+          "kind": "markup",
+          "raw": "What people did in the same window, from the records the quilt keeps anyway. These are the same whether counting is on or off.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1fe0056d2bd1",
+      "text": "Accounts created",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 193,
+          "kind": "markup",
+          "raw": "Accounts created",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5ec18a71fbd5",
+      "text": "Patches joined",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 194,
+          "kind": "markup",
+          "raw": "Patches joined",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "04e9b0820bae",
+      "text": "Patches followed",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 195,
+          "kind": "markup",
+          "raw": "Patches followed",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f697f740bfaf",
+      "text": "Events posted",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 196,
+          "kind": "markup",
+          "raw": "Events posted",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0a97d98bfae1",
+      "text": "Proposals opened",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 197,
+          "kind": "markup",
+          "raw": "Proposals opened",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5d29e299e06b",
+      "text": "Clear counts",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 204,
+          "kind": "markup",
+          "raw": "Clear counts",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "83b819e2b834",
+      "text": "Deletes every daily total this quilt has kept. Counting continues if it is on. The deletion is recorded in the audit log.",
+      "words": 22,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI on the usage-counts branch (2026-09-18); kept as-is, rewrite in copy-review any time.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsage.svelte",
+          "line": 205,
+          "kind": "markup",
+          "raw": "Deletes every daily total this quilt has kept. Counting continues if it is on. The deletion is recorded in the audit log.",
+          "quote": null
         }
       ]
     },
@@ -57004,6 +57677,42 @@
           "line": 79,
           "kind": "markup",
           "raw": "Know a place or group that should be on the quilt but isn't yours to run? Suggest it here. It joins as an unclaimed patch for its owner to claim.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "061099a1efdf",
+      "text": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.",
+      "words": 49,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 39,
+          "kind": "go-doc-block",
+          "raw": "**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "777bc1b3fa2e",
+      "text": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
+      "words": 32,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/legal_defaults.go",
+          "line": 62,
+          "kind": "go-doc-block",
+          "raw": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
           "quote": null
         }
       ]

@@ -45,7 +45,19 @@ const (
 	// in yaml because getting it wrong is visible — every event renders
 	// hours off — and the fix should not need a redeploy.
 	KeyTimezone = "instance_timezone"
+
+	// Usage counts (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md):
+	// "true" counts page views per route per day and distinct visitors per
+	// day on the server. Off by default: the shipped privacy policy says
+	// what the switch says, and a fork starts by counting nothing.
+	KeyUsageStats = "usage_stats"
 )
+
+// UsageStatsEnabled reports whether the admin has turned visitor counting on.
+func UsageStatsEnabled(db *database.DB) bool {
+	v, _ := Get(db, KeyUsageStats)
+	return v == "true"
+}
 
 // Get returns the stored value for key and whether it exists.
 func Get(db *database.DB, key string) (string, bool) {
