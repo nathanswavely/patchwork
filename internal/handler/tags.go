@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 	"unicode"
 
 	"golang.org/x/text/unicode/norm"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
@@ -181,7 +181,7 @@ func CreateTag(db *database.DB) http.HandlerFunc {
 			motif = req.Motif
 		}
 
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 		if id, status, err := findTagByName(db, name); err == nil {
 			if status == tagApproved {
 				http.Error(w, `{"error":"tag already exists"}`, http.StatusConflict)
@@ -555,7 +555,7 @@ func DecideTagSuggestion(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 
 		switch req.Action {
 		case "reject":

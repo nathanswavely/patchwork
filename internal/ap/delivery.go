@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/safehttp"
 )
@@ -47,7 +48,7 @@ func deliverPending(ctx context.Context, db *database.DB) {
 		WHERE status = 'pending' AND (next_retry_at IS NULL OR next_retry_at <= ?)
 		ORDER BY created_at ASC
 		LIMIT 10
-	`, time.Now().UTC().Format(time.RFC3339))
+	`, clock.Now())
 	if err != nil {
 		log.Printf("delivery worker: query failed: %v", err)
 		return
@@ -87,7 +88,7 @@ func deliverPending(ctx context.Context, db *database.DB) {
 			} else {
 				// Exponential backoff: 30s, 60s, 120s, 240s.
 				backoff := time.Duration(30*(1<<uint(nextAttempt-1))) * time.Second
-				retryAt := time.Now().Add(backoff).UTC().Format(time.RFC3339)
+				retryAt := clock.Format(time.Now().Add(backoff))
 				db.Exec(`UPDATE ap_outbox_queue SET attempts = ?, last_error = ?, next_retry_at = ? WHERE id = ?`,
 					nextAttempt, err.Error(), retryAt, item.ID)
 			}

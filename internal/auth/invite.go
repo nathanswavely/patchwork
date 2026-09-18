@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
@@ -31,7 +32,7 @@ func GenerateInviteLink(db *database.DB, createdBy string, maxUses int, expiresA
 
 	var expStr *string
 	if expiresAt != nil {
-		s := expiresAt.UTC().Format(time.RFC3339)
+		s := clock.Format(*expiresAt)
 		expStr = &s
 	}
 
@@ -66,7 +67,7 @@ func ValidateInviteLink(db *database.DB, rawToken string) error {
 	}
 
 	if expiresAt.Valid {
-		exp, err := time.Parse(time.RFC3339, expiresAt.String)
+		exp, err := clock.Parse(expiresAt.String)
 		if err == nil && time.Now().After(exp) {
 			return fmt.Errorf("invite link has expired")
 		}
@@ -112,7 +113,7 @@ func RedeemInviteLink(db *database.DB, rawToken, username, displayName, email st
 
 	// Check expiry.
 	if expiresAt.Valid {
-		exp, err := time.Parse(time.RFC3339, expiresAt.String)
+		exp, err := clock.Parse(expiresAt.String)
 		if err == nil && time.Now().After(exp) {
 			return nil, fmt.Errorf("invite link has expired")
 		}
@@ -145,7 +146,7 @@ func RedeemInviteLink(db *database.DB, rawToken, username, displayName, email st
 	}
 
 	userID := NewUUIDv7()
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 	if displayName == "" {
 		displayName = username
 	}

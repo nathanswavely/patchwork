@@ -10,6 +10,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -309,8 +310,8 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 
 		id := auth.NewUUIDv7()
 		now := time.Now().UTC()
-		createdAt := now.Format("2006-01-02T15:04:05.000Z")
-		votingEndsAt := now.Add(time.Duration(req.DurationHours) * time.Hour).Format("2006-01-02T15:04:05.000Z")
+		createdAt := clock.Format(now)
+		votingEndsAt := clock.Format(now.Add(time.Duration(req.DurationHours) * time.Hour))
 
 		// Amendment-specific: create git branch with proposed changes
 		var branchName, gitSHA, baseSHA string
@@ -601,10 +602,7 @@ func patchAgeDays(db *database.DB, nodeID string) (int, bool) {
 // shapes the schema writes: with milliseconds (the strftime default) or
 // without.
 func parseStoredInstant(s string) (time.Time, error) {
-	if t, err := time.Parse("2006-01-02T15:04:05.000Z", s); err == nil {
-		return t, nil
-	}
-	return time.Parse(time.RFC3339, s)
+	return clock.Parse(s)
 }
 
 // electorateFilter is electorateMembership plus the minimum voting tenure in
@@ -1017,7 +1015,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	// ratification the admins themselves asked for.
 	if newStatus == "approved" && p.ProposalType == "membership" && p.TargetUserID != "" {
 		ratifyNomination(db, proposalID, p.NodeID, p.TargetUserID)
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 		// The promotion has already happened by here, so a failure to record
 		// it leaves a new admin whose proposal still reads as merely
 		// approved. Nothing can undo the promotion; the divergence gets said
@@ -1070,7 +1068,7 @@ func resolveProposal(db *database.DB, proposalID string) string {
 				// admin to make official — skip 'approved' and land where the
 				// manual apply path lands. applied_by stays NULL: no person
 				// applied this one.
-				now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+				now := clock.Now()
 				if err := settleApplied(db, proposalID, sha, "", now); err != nil {
 					applyIncomplete(db, proposalID, sha, "settle", err)
 				}
@@ -1203,10 +1201,7 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 
 		// Vote resolution: if voting_ends_at has passed and status is open, resolve.
 		if p.Status == "open" && p.VotingEndsAt != nil {
-			endsAt, parseErr := time.Parse("2006-01-02T15:04:05.000Z", *p.VotingEndsAt)
-			if parseErr != nil {
-				endsAt, parseErr = time.Parse(time.RFC3339, *p.VotingEndsAt)
-			}
+			endsAt, parseErr := clock.Parse(*p.VotingEndsAt)
 			if parseErr == nil && time.Now().UTC().After(endsAt) {
 				resolveProposal(db, proposalID)
 				// Re-read rather than patching Status alone: resolution
@@ -1479,10 +1474,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 
 		// Check if voting window has expired.
 		if votingEndsAt != nil && *votingEndsAt != "" {
-			endsAt, parseErr := time.Parse("2006-01-02T15:04:05.000Z", *votingEndsAt)
-			if parseErr != nil {
-				endsAt, parseErr = time.Parse(time.RFC3339, *votingEndsAt)
-			}
+			endsAt, parseErr := clock.Parse(*votingEndsAt)
 			if parseErr == nil && time.Now().UTC().After(endsAt) {
 				http.Error(w, `{"error":"voting period has ended"}`, http.StatusBadRequest)
 				return
@@ -1597,7 +1589,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 			db.QueryRow("SELECT COALESCE(ap_id,'') FROM proposals WHERE id = ?", proposalID).Scan(&pAPID)
 			if pAPID != "" {
 				voteActivity := ap.VoteToActivity(
-					model.Vote{Value: req.Value, CreatedAt: time.Now().Format("2006-01-02T15:04:05.000Z")},
+					model.Vote{Value: req.Value, CreatedAt: clock.Now()},
 					pAPID,
 					ap.UserAPID(ap.GetDomain(), user.ID),
 				)
@@ -1908,7 +1900,7 @@ func applyProposalChanges(db *database.DB, p model.Proposal, actor *model.User) 
 		governance.DeleteBranch(dataDir, p.NodeID, p.ProposedBranch)
 	}
 
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	if err := settleApplied(db, p.ID, sha, actor.ID, now); err != nil {
 		// The caller turns this into the admin's error message, which says
 		// nothing has changed yet. Where a merge did land that is no longer

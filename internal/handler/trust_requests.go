@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
@@ -45,7 +46,7 @@ type trustNodeRef struct {
 }
 
 func trustNow() string {
-	return time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	return clock.Now()
 }
 
 // requestNodes returns the patches a request named, in the order the asker
@@ -226,18 +227,15 @@ func canAskAgainAt(status string, decidedAt sql.NullString) string {
 	if status != "declined" || !decidedAt.Valid || decidedAt.String == "" {
 		return ""
 	}
-	decided, err := time.Parse("2006-01-02T15:04:05.000Z", decidedAt.String)
+	decided, err := clock.Parse(decidedAt.String)
 	if err != nil {
-		decided, err = time.Parse(time.RFC3339, decidedAt.String)
-		if err != nil {
-			return ""
-		}
+		return ""
 	}
 	until := decided.Add(trustRequestCooldown)
 	if !until.After(time.Now().UTC()) {
 		return ""
 	}
-	return until.UTC().Format("2006-01-02T15:04:05.000Z")
+	return clock.Format(until)
 }
 
 // GetMyTrustRequest handles GET /api/v1/users/me/trust-request.

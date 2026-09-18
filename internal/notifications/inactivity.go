@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -660,7 +661,7 @@ func forgetTold(db *database.DB, entityType, entityID, kind string) {
 
 // daysAgo is a stored timestamp that many days back.
 func daysAgo(days int) string {
-	return time.Now().UTC().AddDate(0, 0, -days).Format("2006-01-02T15:04:05.000Z")
+	return clock.Format(time.Now().AddDate(0, 0, -days))
 }
 
 // later is the newer of two stored timestamps. They are ISO, so a string
