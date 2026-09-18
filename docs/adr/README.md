@@ -13,7 +13,7 @@ several branches are in flight.
 | [002](002-seamrip-boundary.md) | The seamrip boundary — community data travels, instance identity does not |
 | [003](003-one-url-scheme-per-screen.md) | One URL scheme per screen; `/manage` removed |
 | [004](004-tile-appearance-storage-and-registry.md) | Tile appearance: one JSON column, frontend-owned registry *(amended by 029)* |
-| [005](005-one-global-bar-workspace-takeover.md) | One global bar; workspaces take over below it *(amended by 003)* |
+| [005](005-one-global-bar-workspace-takeover.md) | One global bar; workspaces take over below it *(amended by 003, 118)* |
 | [006](006-profile-privacy-one-switch-membership-visibility.md) | Profiles: public page, lean actor, one membership-visibility switch |
 | [009](009-seed-profiles-are-fiction.md) | Seed profiles are fiction |
 | [010](010-one-seed-graft-not-profiles.md) | One seed dataset — the music profile is grafted in |
@@ -95,6 +95,7 @@ several branches are in flight.
 | [112](112-the-quilt-opens-loud-and-muted-only-takes-away.md) | The quilt opens loud, and muted only ever takes away — a viewer-side Colors choice that caps chroma and never adds it, no instance default to move it, and the block drafter exempt *(its measurement gate failed and forced the hash-palette widening first)* |
 | [113](113-a-signature-says-what-it-covers.md) | A signature says what it covers, and the verifier names the set: an inbound HTTP Signature has to sign `(request-target)`, `host`, `date`, plus `digest` on any request with a body, rather than choosing its own coverage and leaving the skew window, the digest check and the inbox path resting on unsigned values *(found by the same outside review as 110; also records why the `rand.Read` note is a comment and not a guard)* |
 | [115](115-a-steward-holds-only-what-nobody-else-holds.md) | A steward holds only what nobody else holds: an instance admin's reach into a patch is custody, not rank, so it exists while the patch has no admin of its own and ends when somebody holds the role. Unclaimed keeps its calendar custody, a patch vacated for inactivity grants only putting an admin back, a held patch grants nothing. Archive and commenting stay as named exceptions, no break-glass is built, and a matrix test fails the build on the next copied bypass *(states what 026, 057 and CONTEXT.md already said; closes 110's transport to instance admins; **implementation deliberately deferred while the reference instance is young**, tracked as an issue)* |
+| [118](118-an-admin-tab-answers-one-question.md) | An admin tab answers one question: the admin panel is five tabs (Overview, Review, Users, Settings, Audit log), Review and Settings carry a sidebar of sections at `/admin/<tab>/<section>`, the Review tab wears the Overview's inbox count, the suggested-tag queue becomes a Review section with its own page, and the fifteen-tab flat scheme redirects *(amends 005; applies 003)* |
 
 ## Partly implemented
 

@@ -45,17 +45,17 @@ describe('Admin Overview', () => {
     expect(src).toContain('oldest {formatRelative(q.oldest_at)}');
   });
 
-  it('sends each inbox line to the tab where the decision is made', () => {
-    expect(src).toContain("reports: { one: 'report', many: 'reports', href: '/admin/reports' }");
-    expect(src).toContain("href: '/admin/submissions'");
-    expect(src).toContain("href: '/admin/event-submissions'");
-    expect(src).toContain("href: '/admin/claims'");
-    expect(src).toContain("href: '/admin/tags'");
+  it('sends each inbox line to the Review section where the decision is made (docs/adr/118)', () => {
+    expect(src).toContain("reports: { one: 'report', many: 'reports', href: '/admin/review/reports' }");
+    expect(src).toContain("href: '/admin/review/submissions'");
+    expect(src).toContain("href: '/admin/review/event-submissions'");
+    expect(src).toContain("href: '/admin/review/claims'");
+    expect(src).toContain("href: '/admin/review/tags'");
   });
 
   it('keeps unrouted names below the inbox as work nobody is waiting on', () => {
     expect(src).toContain('Nobody is waiting on these.');
-    expect(src).toContain("handleNav(e, '/admin/aggregators')");
+    expect(src).toContain("handleNav(e, '/admin/settings/aggregators')");
   });
 
   it('leads an adminless patch to its members settings, where promotion is permitted under custody', () => {

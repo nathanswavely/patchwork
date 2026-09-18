@@ -134,7 +134,7 @@ describe('PatchProfile', () => {
   });
 
   it('routes an instance admin to the claim queue rather than offering them a claim', () => {
-    expect(src).toMatch(/\{#if isAdmin\}[\s\S]{0,200}\/admin\/claims/);
+    expect(src).toMatch(/\{#if isAdmin\}[\s\S]{0,200}\/admin\/review\/claims/);
   });
 
   it('derives standing from the membership role, never from instance-admin power', () => {

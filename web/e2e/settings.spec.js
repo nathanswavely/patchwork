@@ -98,13 +98,16 @@ test.describe('Admin — Pages Load', () => {
     await loginAsAdmin(page);
   });
 
+  // Five tabs, two with sections (docs/adr/118).
   const adminPages = [
     { path: '/admin', title: 'Overview' },
     { path: '/admin/users', title: 'Users' },
-    { path: '/admin/reports', title: 'Reports' },
+    { path: '/admin/review/reports', title: 'Reports' },
     { path: '/admin/audit', title: 'Audit' },
-    { path: '/admin/submissions', title: 'Submissions' },
-    { path: '/admin/claims', title: 'Claims' },
+    { path: '/admin/review/submissions', title: 'Submissions' },
+    { path: '/admin/review/claims', title: 'Claims' },
+    { path: '/admin/review/tags', title: 'Suggested tags' },
+    { path: '/admin/settings/tags', title: 'Tags' },
   ];
 
   for (const p of adminPages) {
@@ -113,6 +116,32 @@ test.describe('Admin — Pages Load', () => {
       await expectNoError(page);
     });
   }
+
+  // The flat scheme this replaced lives on in old notification links and
+  // bookmarks; each lands on the section its page became.
+  const legacy = [
+    ['/admin/reports', '/admin/review/reports'],
+    ['/admin/claims', '/admin/review/claims'],
+    ['/admin/quilt', '/admin/settings/quilt'],
+    ['/admin/attestation', '/admin/settings/attestation'],
+    ['/admin/review', '/admin/review/reports'],
+    ['/admin/settings', '/admin/settings/quilt'],
+  ];
+
+  for (const [from, to] of legacy) {
+    test(`${from} redirects to ${to}`, async ({ page }) => {
+      await goto(page, from);
+      await expect(page).toHaveURL(new RegExp(`${to}$`));
+      await expectNoError(page);
+    });
+  }
+
+  test('a Review section shows the sidebar and the tab row', async ({ page }) => {
+    await goto(page, '/admin/review/claims');
+    await expect(page.locator('.workspace-tab.active')).toHaveText(/Review/);
+    await expect(page.locator('.settings-nav-link.active')).toHaveText(/Claims/);
+    await expect(page.locator('.settings-nav-link', { hasText: 'Suggested tags' })).toBeVisible();
+  });
 });
 
 /**
@@ -127,7 +156,7 @@ test.describe('Admin — Quilt Icon Designer', () => {
   });
 
   test('drafts the quilt icon from a starter block and resets it', async ({ page }) => {
-    await goto(page, '/admin/quilt');
+    await goto(page, '/admin/settings/quilt');
     await expectNoError(page);
 
     // No upload path survives (docs/adr/043).

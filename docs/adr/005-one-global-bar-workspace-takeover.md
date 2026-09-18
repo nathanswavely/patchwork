@@ -3,6 +3,10 @@
 > Amended by ADR 003: the `/patches/:slug/manage/*` URL family this ADR
 > mentions was retired — workspaces render (unchanged) at the canonical
 > `/patches/:slug/governance|members|events|settings` URLs.
+>
+> Amended by ADR 118: the admin panel's tab row is five tabs, two of which
+> carry a sidebar (Review and Settings), rather than one tab per admin
+> page. The single-tab-row rule stands; 118 says what the row holds.
 
 The app has three contexts: discovery (the quilt), patch workspaces
 (/patches/:slug/manage), and the admin panel (/admin). Previously a

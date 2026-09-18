@@ -706,6 +706,6 @@ func notifyAdminsOfTagSuggestion(name, byUserID string) {
 		ActorID: byUserID,
 		Title:   "Tag suggested: " + name,
 		Body:    "Someone asked for a tag that is not in the vocabulary yet.",
-		Link:    "/admin/tags",
+		Link:    "/admin/review/tags",
 	})
 }
