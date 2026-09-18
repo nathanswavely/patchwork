@@ -1,7 +1,8 @@
 # ADR: A name nobody has to ask for
 
 Date: 2026-09-16. Status: accepted. Closes the ADR number space at 115 and the
-migration number space at 074; new records in both directories are named from
+migration number space at 074 (amended 2026-09-18: at 117 and 075, see the
+addendum); new records in both directories are named from
 the clock and a sentence. This ADR is the first record to carry no number, and
 it is named under the rule it establishes.
 
@@ -70,7 +71,8 @@ that; any scheme that does not, does not.
 **Cut over. Do not migrate.**
 
 ADRs 001 through 115 and migrations 001 through 074 keep their names forever.
-Every existing citation keeps resolving. Nothing is swept.
+Every existing citation keeps resolving. Nothing is swept. (The addendum below
+extends this to 117 and 075.)
 
 From this record forward:
 
@@ -215,3 +217,23 @@ full on 2026-09-16: `origin/main` topped out at 115, no open PR added an ADR,
 and no local or remote branch held 116. The number was free, and by CLAUDE.md's
 own account that fact had a shelf life measured in hours. Declining it is the
 shortest available demonstration of the argument.
+
+## Addendum, 2026-09-18: the spaces closed one step later
+
+Two branches were in flight when this ADR merged, and both landed numbered
+records after it: ADR 116 and 117, and migration 075, in PR #297. That is the
+blind spot the Context section describes, arriving on schedule, and
+`TestNewRecordsAreNotNumbered` caught it, which is what the test is for. It
+also made CI on main red for every branch that followed.
+
+The repair is not a rename. Renaming a merged migration needs a permanent
+`renamedMigrations` entry in `database.go` to rescue every database that
+already recorded the old name, tested from a database carrying that name,
+and the two ADRs are cited from over thirty places in code comments. Paying
+that to defend a number is the cost this ADR exists to stop paying.
+
+So the line moved instead: the ADR space closed at 117 and the migration
+space at 075. The three files keep their names, `docs/adr/116` and
+`docs/adr/117` keep resolving, and the test's constants say so. Nothing about
+the rule changed. Anything numbered from here on is still mimicry and still
+fails the build.

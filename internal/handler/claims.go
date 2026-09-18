@@ -1263,6 +1263,26 @@ func activateClaimedNode(db *database.DB, nodeID, newOwnerID, now string) error 
 	if err != nil {
 		return fmt.Errorf("grant admin membership: %w", err)
 	}
+
+	// The per-patch trusted-contributor grant ends here
+	// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+	// calendar.md, decision 2). It was standing on a calendar nobody owned;
+	// the calendar now has an owner, and review is owed to whoever owns it
+	// (docs/adr/026). ADR 026 already says trusted contributors "become
+	// ordinary suggesters there" on claim — for the quilt-wide flag that is
+	// what the `status == 'unclaimed'` condition in every gate does, and for
+	// a per-patch row it is this delete, because the row would otherwise
+	// outlive the condition it was granted under.
+	//
+	// The patch also drops off any trust request that named it: an ask to
+	// keep this listing's calendar is answered by the claim, not by an
+	// admin, and a request left with nothing resolves itself as moot.
+	if _, err := db.Exec(`DELETE FROM node_trusted_contributors WHERE node_id = ?`, nodeID); err != nil {
+		return fmt.Errorf("clear per-patch trust: %w", err)
+	}
+	if _, err := db.Exec(`DELETE FROM trust_request_nodes WHERE node_id = ?`, nodeID); err != nil {
+		return fmt.Errorf("clear trust requests for node: %w", err)
+	}
 	return nil
 }
 

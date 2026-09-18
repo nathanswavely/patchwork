@@ -495,7 +495,10 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		case "active":
 			direct = direct || userHasNodeRole(db, user.ID, req.NodeID, "member", "admin")
 		case "unclaimed":
-			direct = direct || user.TrustedContributor
+			// Either scope of the trusted-contributor grant: quilt-wide, or
+			// this one patch (docs/adr/2026-09-18-trust-has-a-scope-and-a-
+			// suggestion-carries-its-calendar.md).
+			direct = direct || userTrustedOn(db, user, req.NodeID)
 		}
 
 		status := "active"
@@ -623,7 +626,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		direct := user.Role == "admin" ||
 			(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
 			(nodeStatus == "active" && isCreator && userHasNodeRole(db, user.ID, nodeID, "member")) ||
-			(nodeStatus == "unclaimed" && user.TrustedContributor && isCreator)
+			(nodeStatus == "unclaimed" && isCreator && userTrustedOn(db, user, nodeID))
 		reReview := false
 		switch {
 		case direct:

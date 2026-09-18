@@ -27,7 +27,9 @@ import (
 // patches' calendars in trust — docs/adr/031).
 //
 // Plus one seam (docs/adr/057): a trusted contributor speaks for a patch
-// while that patch is unclaimed. An unclaimed patch has no admins by
+// while that patch is unclaimed — at either scope of the grant, quilt-wide
+// or this one patch (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+// carries-its-calendar.md). An unclaimed patch has no admins by
 // definition, so without this the person who recorded a community event
 // is shown no link control at all — the events with the least
 // institutional attention would be the only ones that can never be
@@ -45,7 +47,7 @@ func userSpeaksForNode(db *database.DB, user *model.User, nodeID string) bool {
 	if userHasNodeRole(db, user.ID, nodeID, "admin") {
 		return true
 	}
-	return user.TrustedContributor && nodeIsUnclaimed(db, nodeID)
+	return nodeIsUnclaimed(db, nodeID) && userTrustedOn(db, user, nodeID)
 }
 
 // nodeIsUnclaimed reports whether a patch is still unclaimed — held in

@@ -82,12 +82,19 @@ export function workspaceTabs({
  * (docs/adr/117); before that it was true for followers too, which is why
  * every caller passes the role.
  *
+ * `viewerTrusted` reads the node payload's `viewer_trusted`
+ * (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar):
+ * true when this viewer's trusted-contributor grant — quilt-wide or scoped
+ * to this one patch — reaches this unclaimed patch. It is about one patch,
+ * unlike the signed-in user's own flag, which only ever meant "quilt-wide"
+ * and is kept for the one place that is about no patch (the suggest form).
+ *
  * @returns {'direct'|'suggest'|'none'}
  */
 export function eventPostingRight({
   signedIn = false,
   isInstanceAdmin = false,
-  trustedContributor = false,
+  viewerTrusted = false,
   isUnclaimed = false,
   isMemberOrAdmin = false,
   isBanned = false,
@@ -106,7 +113,7 @@ export function eventPostingRight({
   if (hasMoved && !isMemberOrAdmin) return 'none';
 
   if (isUnclaimed) {
-    if (trustedContributor) return 'direct';
+    if (viewerTrusted) return 'direct';
     return submissionsEnabled ? 'suggest' : 'none';
   }
 

@@ -24,6 +24,13 @@ test.describe('Patches — Create', () => {
   test('3.1 — create patch form has fields when authenticated', async ({ page }) => {
     await page.goto('/patches/new');
     await page.waitForTimeout(2000);
+    // Creation opens on a fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-
+    // suggestion-carries-its-calendar): "Is this your patch to run?" before
+    // any field. Answer it to reach the form.
+    const forkCard = page.getByRole('button', { name: /^i run this patch/i });
+    if (await forkCard.isVisible()) {
+      await forkCard.click();
+    }
     const nameInput = page.locator('input#name');
     if (await nameInput.isVisible()) {
       // Visibility/policy moved out of the create form (set in settings

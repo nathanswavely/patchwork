@@ -33,6 +33,10 @@
   let error = $state('');
 
   let isUnclaimed = $state(false);
+  // Whether this viewer's trusted-contributor grant reaches this patch
+  // (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar).
+  // Sent beside is_unclaimed, not on the node, so it lives beside it here.
+  let viewerTrusted = $state(false);
   let isBanned = $state(false);
   let breadcrumbExtra = $state([]);
 
@@ -45,6 +49,7 @@
     isMember,
     isAdmin,
     isUnclaimed,
+    viewerTrusted,
     isBanned,
     membershipRole,
     followerPermissions,
@@ -80,6 +85,7 @@
       membershipRole = data.membership_role || '';
       followerPermissions = (data.node || data).follower_permissions || null;
       isUnclaimed = data.is_unclaimed || false;
+      viewerTrusted = data.viewer_trusted === true;
       isBanned = data.is_banned || false;
       verificationDomain = data.verification_domain || '';
       setPatchName(node?.name || slug);

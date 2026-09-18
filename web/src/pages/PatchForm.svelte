@@ -30,6 +30,14 @@
     initial = null,
   } = $props();
 
+  // The fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar):
+  // ordinary creation opens on "Is this your patch to run?" before any
+  // field, so nothing promises admin of a place nobody has admitted the
+  // visitor to. Claim setup skips it — a claimant has already answered by
+  // claiming. Answered in component state only, never persisted: it is a
+  // question about this visit, not a standing preference.
+  let readyToCreate = $state(mode === 'setup');
+
   let name = $state(initial?.name || '');
   let description = $state(initial?.description || '');
   let address = $state(initial?.address || '');
@@ -387,6 +395,20 @@
 <div class="page-fade">
   <div class="container-narrow">
     <div>
+      {#if mode === 'create' && !readyToCreate}
+        <h1>Add a patch</h1>
+        <p class="fork-question">Is this your patch to run?</p>
+        <div class="fork-cards">
+          <button type="button" class="fork-card" onclick={() => { readyToCreate = true; }}>
+            <strong>I run this patch</strong>
+            <span>You become its admin. Members, events and settings are yours from the start.</span>
+          </button>
+          <button type="button" class="fork-card" onclick={() => navigate('/submit')}>
+            <strong>Someone else runs it</strong>
+            <span>It joins the quilt as an unclaimed patch. The people who run it can claim it later, and you can add its events once it's approved.</span>
+          </button>
+        </div>
+      {:else}
       {#if mode === 'setup'}
         <h1>Set up your patch</h1>
         <p class="muted" style="margin-bottom: 0.35rem;">Complete this patch's details to activate it.</p>
@@ -395,9 +417,9 @@
         {/if}
       {:else}
         <h1>Create Patch</h1>
-        <p class="muted" style="margin-bottom: {getSubmissionsEnabled() ? '0.35rem' : '1.5rem'};">Start a new community, collective, venue, or group.</p>
+        <p class="muted" style="margin-bottom: 1.5rem;">Start a new community, collective, venue, or group.</p>
         {#if getSubmissionsEnabled()}
-          <p class="muted" style="margin-bottom: 1.5rem;">Creating a patch makes you its admin. Know a group that isn't yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest a patch</a> instead.</p>
+          <p class="muted" style="margin-bottom: 1.5rem;">Not yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest it instead</a></p>
         {/if}
       {/if}
 
@@ -663,6 +685,7 @@
           </button>
         </div>
       </form>
+      {/if}
     </div>
   </div>
 </div>
@@ -676,6 +699,56 @@
 <style>
   h1 {
     margin-bottom: 0.25rem;
+  }
+
+  .fork-question {
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .fork-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .fork-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-start;
+    text-align: left;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+
+  .fork-card:hover,
+  .fork-card:focus-visible {
+    border-color: var(--color-primary);
+  }
+
+  .fork-card strong {
+    font-size: 0.95rem;
+  }
+
+  .fork-card span {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (min-width: 640px) {
+    .fork-cards {
+      flex-direction: row;
+    }
+
+    .fork-card {
+      flex: 1;
+    }
   }
 
   form {
