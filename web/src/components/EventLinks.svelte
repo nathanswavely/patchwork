@@ -5,7 +5,7 @@
   import { LinkSimple, ArrowSquareOut, X, Check } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isAdmin, isTrustedContributor } from '../stores/auth.svelte.js';
+  import { isAdmin, isTrustedContributor, getTrustedPatches } from '../stores/auth.svelte.js';
   import { getMembershipRoles, getMemberships } from '../stores/memberships.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
@@ -20,34 +20,61 @@
   let confirmed = $derived(links.filter((l) => l.status === 'confirmed'));
   let pending = $derived(links.filter((l) => l.status === 'pending'));
 
+  // The unclaimed patches a per-patch trust grant reaches, by slug. The
+  // session lists them (auth/me `trusted_patches`) because no membership
+  // can: an unclaimed patch admits nobody.
+  let trustedSlugs = $derived(new Set(getTrustedPatches().map((p) => p.slug)));
+
   // Mirrors the server's userSpeaksForNode. Standing attaches to the
   // patch, not the event: instance admins everywhere, patch admins on
   // their own, and a trusted contributor on any patch while it is
-  // unclaimed (docs/adr/057). Keeping the two in step is what stops the
-  // UI offering a control the API will 403.
-  function speaksFor(slug, status) {
+  // unclaimed (docs/adr/057) — at either scope of the grant
+  // (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+  // calendar). The quilt-wide flag is on the signed-in user; a per-patch
+  // grant is not, so it is read from wherever the payload in hand states
+  // it: `viewerTrusted` is the event's own answer for its own patch, and
+  // `trustedSlugs` is the session's list for everything else. The status
+  // check comes first and is not optional: on a claimed patch the grant
+  // is worth nothing, on either side of the handshake. Keeping this in
+  // step with the server is what stops the UI offering a control the API
+  // will 403.
+  function speaksFor(slug, status, viewerTrusted = false) {
     if (isAdmin()) return true;
     if (getMembershipRoles().get(slug) === 'admin') return true;
-    return isTrustedContributor() && status === 'unclaimed';
+    if (status !== 'unclaimed') return false;
+    return viewerTrusted || isTrustedContributor() || trustedSlugs.has(slug);
   }
 
-  let ownerAdmin = $derived(speaksFor(event?.node_slug, event?.node_status));
-  // Patches this person admins, minus the owner — the ones they could
-  // request a link for from this side of the handshake. Carries the name,
-  // because a slug is not what anyone calls their patch.
-  let adminPatches = $derived.by(() => {
+  let ownerAdmin = $derived(
+    speaksFor(event?.node_slug, event?.node_status, event?.viewer_trusted === true)
+  );
+  // Patches this person speaks for, minus the owner — the ones they could
+  // request a link for from this side of the handshake: the patches they
+  // admin, then the unclaimed patches a per-patch grant reaches, which no
+  // membership lists. Carries the name, because a slug is not what anyone
+  // calls their patch.
+  let spokenForPatches = $derived.by(() => {
     const out = [];
+    const seen = new Set();
     for (const m of getMemberships()) {
       if (m.role === 'admin' && m.status === 'active' && m.node_slug !== event?.node_slug) {
         out.push({ slug: m.node_slug, label: m.node_name || m.node_slug });
+        seen.add(m.node_slug);
+      }
+    }
+    for (const p of getTrustedPatches()) {
+      if (p.slug !== event?.node_slug && !seen.has(p.slug)) {
+        out.push({ slug: p.slug, label: p.name || p.slug });
       }
     }
     return out;
   });
-  // A trusted contributor may propose any unclaimed patch onto this
-  // event, so their reach isn't enumerable from memberships alone.
+  // A quilt-wide trusted contributor may propose any unclaimed patch onto
+  // this event, so their reach isn't enumerable from memberships alone and
+  // needs the picker. A per-patch grant is enumerable — it is the list
+  // above — so it gets buttons like an admin's own patches do.
   let reachesBeyondOwn = $derived(ownerAdmin || isTrustedContributor());
-  let canAct = $derived(reachesBeyondOwn || adminPatches.length > 0);
+  let canAct = $derived(reachesBeyondOwn || spokenForPatches.length > 0);
 
   let adding = $state(false);
   let busy = $state(false);
@@ -186,16 +213,22 @@
     }
   }
 
+  // The linked side of a row, by the same rule as the owner side: the
+  // server gates both on userSpeaksForNode, so a trusted contributor
+  // confirms or removes for an unclaimed linked patch too (docs/adr/057).
+  // The row carries its patch's status for exactly this.
+  function speaksForLinked(l) {
+    return speaksFor(l.node_slug, l.node_status);
+  }
+
   function canConfirm(l) {
     // The side that didn't initiate confirms.
-    if (l.initiated_by === 'owner') {
-      return isAdmin() || getMembershipRoles().get(l.node_slug) === 'admin';
-    }
+    if (l.initiated_by === 'owner') return speaksForLinked(l);
     return ownerAdmin;
   }
 
   function canRemove(l) {
-    return ownerAdmin || isAdmin() || getMembershipRoles().get(l.node_slug) === 'admin';
+    return ownerAdmin || speaksForLinked(l);
   }
 
   async function startConfirm(l) {
@@ -350,11 +383,12 @@
             </div>
           {:else}
             <!-- Not owner-side: the only patches this person may put on
-                 someone else's event are the ones they admin. That is a
-                 handful of known names, so it is buttons — a search field
-                 over two items, which reveals nothing until you type,
-                 would hide the whole choice behind a guess. -->
-            {#each adminPatches as patch (patch.slug)}
+                 someone else's event are the ones they admin or hold a
+                 per-patch trust grant on. That is a handful of known
+                 names, so it is buttons — a search field over two items,
+                 which reveals nothing until you type, would hide the
+                 whole choice behind a guess. -->
+            {#each spokenForPatches as patch (patch.slug)}
               <button
                 class="btn btn-sm btn-secondary"
                 disabled={busy || takenSlugs.has(patch.slug)}
