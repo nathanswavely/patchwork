@@ -150,6 +150,22 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			flat = kept
 		}
 
+		// The node set this response is actually going to return, fixed
+		// now so the affinity links built below (which run their own,
+		// broader queries over every membership/event row and are not
+		// scoped by visibility/status the way "flat" is) can be
+		// intersected against it before serialization -- otherwise a
+		// private, removed or suspended patch's id (a UUIDv7, so its
+		// creation time) and its overlap score with a public patch
+		// would leak through "affinity" even though the patch itself
+		// never appears in "tree". Applies to both scope=my and the
+		// default scope: they share one affinity map built after this
+		// point.
+		visibleIDs := make(map[string]bool, len(flat))
+		for _, fn := range flat {
+			visibleIDs[fn.ID] = true
+		}
+
 		// Fetch tags for all nodes, in stored (priority) order — the first
 		// motif-bearing tag derives the motif, so order must be stable.
 		tagMap := make(map[string][]string)
@@ -171,7 +187,14 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		// connection concept) are member-only. See docs/adr/021 and CLAUDE.md.
 		affinityMap := make(map[string]map[string]float64)
 
-		// Shared admins/members (weight 3 per shared person).
+		// Shared admins/members (weight 3 per shared person). Joined against
+		// nodes so the database does less work; the visibleIDs intersection
+		// below is what actually guarantees no other patch's id reaches the
+		// response, since a link needs both ends kept regardless of how it
+		// was scored. Deliberately unfiltered by memberships.visible (the
+		// per-membership visibility switch, docs/adr/006): a hidden
+		// membership still counts toward placement affinity today, and
+		// whether it should is a separate design call nobody has made yet.
 		memberRows, err := db.Query(`
 			SELECT m1.node_id, m2.node_id, COUNT(*) * 3 AS score
 			FROM memberships m1
@@ -179,6 +202,8 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				AND m1.node_id < m2.node_id
 				AND m1.status = 'active' AND m2.status = 'active'
 				AND m1.role IN ('admin', 'member') AND m2.role IN ('admin', 'member')
+			JOIN nodes n1 ON m1.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.removed_at IS NULL AND n1.visibility = 'public'
+			JOIN nodes n2 ON m2.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.removed_at IS NULL AND n2.visibility = 'public'
 			GROUP BY m1.node_id, m2.node_id
 		`)
 		if err == nil {
@@ -192,7 +217,8 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Shared followers (weight 1 per shared follower).
+		// Shared followers (weight 1 per shared follower). Same
+		// memberships.visible note as above applies here too.
 		followerRows, err := db.Query(`
 			SELECT m1.node_id, m2.node_id, COUNT(*) AS score
 			FROM memberships m1
@@ -200,6 +226,8 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				AND m1.node_id < m2.node_id
 				AND m1.status = 'active' AND m2.status = 'active'
 				AND m1.role = 'follower' AND m2.role = 'follower'
+			JOIN nodes n1 ON m1.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.removed_at IS NULL AND n1.visibility = 'public'
+			JOIN nodes n2 ON m2.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.removed_at IS NULL AND n2.visibility = 'public'
 			GROUP BY m1.node_id, m2.node_id
 		`)
 		if err == nil {
@@ -320,7 +348,17 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		var links []AffinityLink
 		seen := make(map[string]bool)
 		for a, targets := range affinityMap {
+			if !visibleIDs[a] {
+				// a's affinity queries aren't scoped by visibility/status
+				// the way "flat" is (event queries excepted), so a can
+				// name a private, removed or suspended patch here even
+				// though it never reached "tree" above.
+				continue
+			}
 			for b, strength := range targets {
+				if !visibleIDs[b] {
+					continue
+				}
 				key := a + ":" + b
 				if a > b {
 					key = b + ":" + a

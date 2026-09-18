@@ -111,10 +111,12 @@ func forEachLogAuditEvent(t *testing.T, visit func(action, entityType string)) {
 					return true
 				}
 				sel, ok := call.Fun.(*ast.SelectorExpr)
-				if !ok || sel.Sel.Name != "LogAuditEvent" || len(call.Args) < 4 {
+				if !ok || (sel.Sel.Name != "LogAuditEvent" && sel.Sel.Name != "LogAuditEventJSON") || len(call.Args) < 4 {
 					return true
 				}
-				// LogAuditEvent(db, userID, action, entityType, ...)
+				// LogAuditEvent(db, userID, action, entityType, entityID, metadata, ip) and
+				// LogAuditEventJSON(db, userID, action, entityType, entityID, payload, ip)
+				// agree on the position of action and entityType.
 				action, aok := stringLit(call.Args[2])
 				if !aok {
 					return true

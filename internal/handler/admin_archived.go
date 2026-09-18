@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -135,8 +134,8 @@ func AdminRestoreNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "node.restore", "node", nodeID,
-			fmt.Sprintf(`{"restored_to":%q}`, target), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "node.restore", "node", nodeID,
+			map[string]any{"restored_to": target}, clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": target})

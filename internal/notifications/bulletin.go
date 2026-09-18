@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/settings"
 )
 
@@ -43,7 +44,7 @@ const bulletinLastSentKey = "bulletin_last_sent_at"
 const bulletinInterval = 30 * 24 * time.Hour
 
 func bulletinStamp(t time.Time) string {
-	return t.UTC().Format("2006-01-02T15:04:05.000Z")
+	return clock.Format(t)
 }
 
 // sendBulletin runs on the hourly reminder pass and does nothing on all but
@@ -64,7 +65,7 @@ func sendBulletin(n *Notifier) {
 		return
 	}
 
-	lastAt, err := time.Parse("2006-01-02T15:04:05.000Z", last)
+	lastAt, err := clock.Parse(last)
 	if err != nil {
 		// An unreadable cursor would otherwise wedge the bulletin forever or
 		// send it every hour. Reset the window and skip this pass.

@@ -2,12 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -192,7 +191,7 @@ func CreateNotice(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if msg := req.validate(); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
@@ -203,7 +202,7 @@ func CreateNotice(db *database.DB) http.HandlerFunc {
 		}
 
 		id := auth.NewUUIDv7()
-		now := time.Now().UTC().Format(time.RFC3339)
+		now := clock.Now()
 		_, err := db.Exec(`INSERT INTO notices (id, node_id, author_id, title, body, image_url, image_alt, replies_open, members_told, created_at, updated_at)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			id, nodeID, user.ID, req.Title, req.Body, req.ImageURL, req.ImageAlt, repliesOpen, req.TellMembers, now, now)
@@ -211,8 +210,8 @@ func CreateNotice(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to create notice"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "notice.create", "notice", id,
-			fmt.Sprintf(`{"node_id":"%s","members_told":%t}`, nodeID, req.TellMembers), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "notice.create", "notice", id,
+			map[string]any{"node_id": nodeID, "members_told": req.TellMembers}, clientIP(r))
 
 		if req.TellMembers {
 			var nodeName string
@@ -305,11 +304,11 @@ func UpdateNotice(db *database.DB) http.HandlerFunc {
 				full.ImageAlt = *req.ImageAlt
 			}
 			if msg := full.validate(); msg != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
 			if _, err := db.Exec(`UPDATE notices SET title = ?, body = ?, image_url = ?, image_alt = ?, updated_at = ? WHERE id = ?`,
-				full.Title, full.Body, full.ImageURL, full.ImageAlt, time.Now().UTC().Format(time.RFC3339), n.ID); err != nil {
+				full.Title, full.Body, full.ImageURL, full.ImageAlt, clock.Now(), n.ID); err != nil {
 				http.Error(w, `{"error":"failed to update notice"}`, http.StatusInternalServerError)
 				return
 			}
@@ -325,8 +324,8 @@ func UpdateNotice(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to update notice"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "notice.replies", "notice", n.ID,
-				fmt.Sprintf(`{"replies_open":%t}`, *req.RepliesOpen), clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "notice.replies", "notice", n.ID,
+				map[string]any{"replies_open": *req.RepliesOpen}, clientIP(r))
 		}
 
 		out, _ := scanNotice(db.QueryRow(noticeSelect+" WHERE n.id = ?", n.ID))
@@ -352,8 +351,8 @@ func DeleteNotice(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to delete notice"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "notice.delete", "notice", n.ID,
-			fmt.Sprintf(`{"node_id":"%s","author_id":"%s"}`, n.NodeID, n.AuthorID), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "notice.delete", "notice", n.ID,
+			map[string]any{"node_id": n.NodeID, "author_id": n.AuthorID}, clientIP(r))
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "deleted"})
 	}
@@ -444,13 +443,13 @@ func CreateReply(db *database.DB) http.HandlerFunc {
 		}
 
 		id := auth.NewUUIDv7()
-		now := time.Now().UTC().Format(time.RFC3339)
+		now := clock.Now()
 		if _, err := db.Exec(`INSERT INTO notice_replies (id, notice_id, author_id, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
 			id, n.ID, user.ID, req.Body, now, now); err != nil {
 			http.Error(w, `{"error":"failed to create reply"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "notice.reply", "notice_reply", id, fmt.Sprintf(`{"notice_id":"%s"}`, n.ID), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "notice.reply", "notice_reply", id, map[string]any{"notice_id": n.ID}, clientIP(r))
 
 		// Participants only: the author and those who already replied —
 		// which, now, includes this replier, and the actor filter removes
@@ -512,7 +511,7 @@ func UpdateReply(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if _, err := db.Exec("UPDATE notice_replies SET body = ?, updated_at = ? WHERE id = ?",
-			req.Body, time.Now().UTC().Format(time.RFC3339), x.ID); err != nil {
+			req.Body, clock.Now(), x.ID); err != nil {
 			http.Error(w, `{"error":"failed to update reply"}`, http.StatusInternalServerError)
 			return
 		}
@@ -540,8 +539,8 @@ func DeleteReply(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to delete reply"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "notice.reply_delete", "notice_reply", x.ID,
-			fmt.Sprintf(`{"notice_id":"%s","author_id":"%s"}`, n.ID, x.AuthorID), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "notice.reply_delete", "notice_reply", x.ID,
+			map[string]any{"notice_id": n.ID, "author_id": x.AuthorID}, clientIP(r))
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "deleted"})
 	}

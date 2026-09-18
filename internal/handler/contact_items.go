@@ -2,12 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -113,7 +112,7 @@ func CreateMyContactItem(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if msg := validateContactValue(req.Kind, req.Value); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		if len(req.Label) > maxContactLabel {
@@ -194,13 +193,13 @@ func UpdateMyContactItem(db *database.DB) http.HandlerFunc {
 		// it arrived with: changing an item from note to email has to meet
 		// the email rule.
 		if msg := validateContactValue(cur.Kind, cur.Value); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
 		if _, err := db.Exec(
 			`UPDATE contact_items SET kind = ?, value = ?, label = ?, position = ?, updated_at = ? WHERE id = ?`,
-			cur.Kind, cur.Value, cur.Label, cur.Position, time.Now().UTC().Format(time.RFC3339), itemID,
+			cur.Kind, cur.Value, cur.Label, cur.Position, clock.Now(), itemID,
 		); err != nil {
 			http.Error(w, `{"error":"failed to update contact item"}`, http.StatusInternalServerError)
 			return
@@ -254,8 +253,8 @@ func UnshareMyContactItemEverywhere(db *database.DB) http.HandlerFunc {
 			return
 		}
 		n, _ := res.RowsAffected()
-		auth.LogAuditEvent(db, user.ID, "contact.unshare_all", "contact_item", itemID,
-			fmt.Sprintf(`{"patches":%d}`, n), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "contact.unshare_all", "contact_item", itemID,
+			map[string]any{"patches": n}, clientIP(r))
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{"unshared_from": n})
 	}
@@ -386,8 +385,8 @@ func PutMyContactSharesForNode(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "contact.shares_set", "node", nodeID,
-			fmt.Sprintf(`{"items":%d}`, len(req.ItemIDs)), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "contact.shares_set", "node", nodeID,
+			map[string]any{"items": len(req.ItemIDs)}, clientIP(r))
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"node_id":  nodeID,

@@ -12,6 +12,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
@@ -244,7 +245,7 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 }
 
 func nowStamp() string {
-	return time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	return clock.Now()
 }
 
 func recordFailure(db *database.DB, sourceID string, cause error) {
@@ -382,7 +383,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 	// bell either way since docs/adr/093, but these still federate and
 	// still match programs, and a backfill is not news to those either.
 	announce := src.LastSuccessAt.Valid
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 
 	// One transaction for the whole reconcile: a mid-sync failure must
 	// not leave half a calendar applied, and one fsync beats hundreds on
@@ -635,7 +636,7 @@ func Remove(db *database.DB, sourceID string) error {
 	}
 	defer tx.Rollback()
 
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 	if _, err := tx.Exec(
 		`DELETE FROM events WHERE source_id = ? AND removed_at IS NULL AND starts_at > ?`,
 		sourceID, now,

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -43,7 +44,7 @@ func electionNominating(nominationsCloseAt string) bool {
 	if nominationsCloseAt == "" {
 		return false
 	}
-	closes, err := time.Parse("2006-01-02T15:04:05.000Z", nominationsCloseAt)
+	closes, err := clock.Parse(nominationsCloseAt)
 	if err != nil {
 		return false
 	}
@@ -251,8 +252,8 @@ func openElectionFor(db *database.DB, nodeID string, gc model.GovernanceConfig, 
 	}
 
 	now := time.Now().UTC()
-	nominationsClose := now.AddDate(0, 0, nominationDays).Format("2006-01-02T15:04:05.000Z")
-	created := now.Format("2006-01-02T15:04:05.000Z")
+	nominationsClose := clock.Format(now.AddDate(0, 0, nominationDays))
+	created := clock.Format(now)
 
 	var nodeName, slug string
 	db.QueryRow("SELECT name, slug FROM nodes WHERE id = ?", nodeID).Scan(&nodeName, &slug)
@@ -481,7 +482,7 @@ func OpenElectionVoting(db *database.DB, proposalID string) bool {
 
 	var gcJSON string
 	db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
-	ends := time.Now().UTC().Add(time.Duration(duration) * time.Hour).Format("2006-01-02T15:04:05.000Z")
+	ends := clock.Format(time.Now().Add(time.Duration(duration) * time.Hour))
 	db.Exec(`UPDATE proposals SET voting_ends_at = ?, voting_terms = ?,
 	         updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id = ?`, ends, gcJSON, proposalID)
 
