@@ -48,6 +48,20 @@ export function isTrustedContributor() {
 }
 
 /**
+ * The per-patch scope of the same grant (docs/adr/2026-09-18-trust-has-a-
+ * scope-and-a-suggestion-carries-its-calendar): the unclaimed patches this
+ * person may speak for without holding the quilt-wide flag, as `auth/me`
+ * lists them — `{ id, slug, name }`, already filtered to patches still
+ * unclaimed. Memberships cannot carry this (an unclaimed patch admits
+ * nobody), so it is the one place a client can enumerate that reach. Like
+ * the flag, it widens nothing on a claimed patch; the server has already
+ * dropped those, and a caller still checks status before acting.
+ */
+export function getTrustedPatches() {
+  return user?.trusted_patches || [];
+}
+
+/**
  * Called after auth succeeds. Fetches user profile.
  */
 export async function login() {

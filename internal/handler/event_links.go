@@ -497,7 +497,7 @@ func loadEventLink(db *database.DB, eventID, nodeID string) model.EventLink {
 // side). Pending links are invisible to the public (docs/adr/032).
 func eventLinksForViewer(db *database.DB, user *model.User, eventID, ownerNodeID string) []model.EventLink {
 	rows, err := db.Query(
-		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.created_at, n.name, n.slug
+		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.created_at, n.name, n.slug, n.status
 		 FROM event_links l JOIN nodes n ON l.node_id = n.id
 		 WHERE l.event_id = ? AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 		 ORDER BY l.created_at`,
@@ -512,7 +512,7 @@ func eventLinksForViewer(db *database.DB, user *model.User, eventID, ownerNodeID
 	ownerSide := userSpeaksForNode(db, user, ownerNodeID)
 	for rows.Next() {
 		var l model.EventLink
-		if err := rows.Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CreatedAt, &l.NodeName, &l.NodeSlug); err != nil {
+		if err := rows.Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CreatedAt, &l.NodeName, &l.NodeSlug, &l.NodeStatus); err != nil {
 			continue
 		}
 		if l.Status != "confirmed" && !ownerSide && !userSpeaksForNode(db, user, l.NodeID) {

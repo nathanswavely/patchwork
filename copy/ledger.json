@@ -3857,14 +3857,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 754,
+          "line": 771,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 915,
+          "line": 932,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -3969,14 +3969,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 444,
+          "line": 455,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 645,
+          "line": 656,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4596,7 +4596,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 482,
+          "line": 493,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5120,7 +5120,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 714,
+          "line": 725,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5622,14 +5622,14 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 639,
+          "line": 650,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 793,
+          "line": 804,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6008,7 +6008,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 534,
+          "line": 545,
           "kind": "go-error-body",
           "raw": "failed to create event",
           "quote": null
@@ -6291,7 +6291,7 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 772,
+          "line": 783,
           "kind": "go-error-body",
           "raw": "event id required",
           "quote": null
@@ -6344,42 +6344,42 @@
         },
         {
           "file": "internal/handler/events.go",
-          "line": 346,
+          "line": 356,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 360,
+          "line": 370,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 373,
+          "line": 383,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 600,
+          "line": 611,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 785,
+          "line": 796,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 816,
+          "line": 827,
           "kind": "go-error-body",
           "raw": "event not found",
           "quote": null
@@ -7352,7 +7352,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 774,
+          "line": 791,
           "kind": "go-error-body",
           "raw": "failed to update where you moved to",
           "quote": null
@@ -7370,7 +7370,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 783,
+          "line": 800,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -7388,7 +7388,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 793,
+          "line": 810,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -7406,7 +7406,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 804,
+          "line": 821,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -7424,7 +7424,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 812,
+          "line": 829,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -7442,7 +7442,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 826,
+          "line": 843,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -7460,7 +7460,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 871,
+          "line": 888,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -7478,14 +7478,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 907,
+          "line": 924,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 948,
+          "line": 965,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -7503,7 +7503,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 927,
+          "line": 944,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -7521,14 +7521,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 931,
+          "line": 948,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 962,
+          "line": 979,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -7546,7 +7546,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 957,
+          "line": 974,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -9827,7 +9827,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 467,
+          "line": 478,
           "kind": "go-error-body",
           "raw": "node_id, title, and starts_at are required",
           "quote": null
@@ -9845,7 +9845,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 516,
+          "line": 527,
           "kind": "go-error-body",
           "raw": "community submissions are disabled on this instance",
           "quote": null
@@ -9870,7 +9870,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 520,
+          "line": 531,
           "kind": "go-error-body",
           "raw": "this patch does not accept event suggestions",
           "quote": null
@@ -9888,7 +9888,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 608,
+          "line": 619,
           "kind": "go-error-body",
           "raw": "this event comes from an event source. Edit it in the source calendar, or detach it first",
           "quote": null
@@ -9907,7 +9907,7 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 729,
+          "line": 740,
           "kind": "go-error-body",
           "raw": "failed to update event",
           "quote": null
@@ -9925,14 +9925,14 @@
       "occurrences": [
         {
           "file": "internal/handler/events.go",
-          "line": 804,
+          "line": 815,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
         },
         {
           "file": "internal/handler/events.go",
-          "line": 811,
+          "line": 822,
           "kind": "go-error-body",
           "raw": "failed to delete event",
           "quote": null
@@ -21109,7 +21109,7 @@
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 367,
+          "line": 401,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -21753,7 +21753,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 92,
+          "line": 119,
           "kind": "js-string",
           "raw": "Unclaimed patches",
           "quote": "'"
@@ -21778,7 +21778,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 179,
+          "line": 206,
           "kind": "js-string",
           "raw": "Mention added",
           "quote": "'"
@@ -21796,7 +21796,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 179,
+          "line": 206,
           "kind": "js-string",
           "raw": "Link requested",
           "quote": "'"
@@ -21814,7 +21814,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 183,
+          "line": 210,
           "kind": "js-string",
           "raw": "Failed to request link",
           "quote": "'"
@@ -21832,7 +21832,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 219,
+          "line": 252,
           "kind": "js-string",
           "raw": "Failed to confirm link",
           "quote": "'"
@@ -21850,7 +21850,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 228,
+          "line": 261,
           "kind": "js-string",
           "raw": "Request removed",
           "quote": "'"
@@ -21868,7 +21868,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 231,
+          "line": 264,
           "kind": "js-string",
           "raw": "Failed to remove link",
           "quote": "'"
@@ -21893,7 +21893,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 240,
+          "line": 273,
           "kind": "js-string",
           "raw": "Failed to remove mention",
           "quote": "'"
@@ -21911,7 +21911,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 249,
+          "line": 282,
           "kind": "markup",
           "raw": "with",
           "quote": null
@@ -21929,7 +21929,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 257,
+          "line": 290,
           "kind": "attr:title",
           "raw": "Remove link",
           "quote": "\""
@@ -21954,7 +21954,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 271,
+          "line": 304,
           "kind": "attr:title",
           "raw": "Remove mention",
           "quote": "\""
@@ -21972,7 +21972,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 284,
+          "line": 317,
           "kind": "markup",
           "raw": "Waiting for",
           "quote": null
@@ -21990,7 +21990,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 284,
+          "line": 317,
           "kind": "markup",
           "raw": "to confirm this link",
           "quote": null
@@ -22008,7 +22008,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 286,
+          "line": 319,
           "kind": "markup",
           "raw": "asked to link to this event",
           "quote": null
@@ -22026,14 +22026,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 293,
+          "line": 326,
           "kind": "markup",
           "raw": "Keep all my events",
           "quote": null
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 330,
+          "line": 363,
           "kind": "markup",
           "raw": "Keep all my events",
           "quote": null
@@ -22051,14 +22051,14 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 295,
+          "line": 328,
           "kind": "markup",
           "raw": "Replace \"{d.title}\"",
           "quote": null
         },
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 332,
+          "line": 365,
           "kind": "markup",
           "raw": "Replace \"{d.title}\"",
           "quote": null
@@ -22076,7 +22076,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 300,
+          "line": 333,
           "kind": "markup",
           "raw": "Confirm",
           "quote": null
@@ -22108,7 +22108,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 324,
+          "line": 357,
           "kind": "attr:title",
           "raw": "Choose a different patch",
           "quote": "\""
@@ -22133,7 +22133,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 343,
+          "line": 376,
           "kind": "attr:placeholder",
           "raw": "Find a patch…",
           "quote": "\""
@@ -22165,7 +22165,7 @@
       "occurrences": [
         {
           "file": "web/src/components/EventLinks.svelte",
-          "line": 372,
+          "line": 406,
           "kind": "markup",
           "raw": "Link a patch",
           "quote": null
