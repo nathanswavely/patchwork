@@ -16,6 +16,7 @@ import (
 	patchwork "github.com/patchwork-toolkit/patchwork"
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -92,7 +93,7 @@ func main() {
 		{"new@localhost", "dev-new-token"},
 		{"joiner@localhost", "dev-joiner-token"},
 	}
-	expiresAt := time.Now().Add(365 * 24 * time.Hour).Format(time.RFC3339)
+	expiresAt := clock.Format(time.Now().Add(365 * 24 * time.Hour))
 	for _, u := range devUsers {
 		var userID string
 		if err := db.QueryRow("SELECT id FROM users WHERE email = ?", u.email).Scan(&userID); err != nil {
@@ -230,7 +231,7 @@ func (s *seeder) ts(daysAgo int) string {
 	h := s.rng.Intn(14) + 8
 	m := s.rng.Intn(60)
 	t = time.Date(t.Year(), t.Month(), t.Day(), h, m, 0, 0, time.UTC)
-	return t.Format("2006-01-02T15:04:05.000Z")
+	return clock.Format(t)
 }
 
 func (s *seeder) futureTS(daysFromNow int) string {
@@ -238,7 +239,7 @@ func (s *seeder) futureTS(daysFromNow int) string {
 	h := s.rng.Intn(10) + 10
 	m := s.rng.Intn(60)
 	t = time.Date(t.Year(), t.Month(), t.Day(), h, m, 0, 0, time.UTC)
-	return t.Format("2006-01-02T15:04:05.000Z")
+	return clock.Format(t)
 }
 
 func (s *seeder) pick(items []string) string {
@@ -806,7 +807,7 @@ func (s *seeder) seedDevPersonas() {
 					continue
 				}
 				s.db.Exec("DELETE FROM memberships WHERE user_id = ? AND node_id = ?", userID, nodeID)
-				joinedAt := s.now.AddDate(0, 0, -45).Format("2006-01-02T15:04:05.000Z")
+				joinedAt := clock.Format(s.now.AddDate(0, 0, -45))
 				s.db.Exec(`INSERT INTO memberships (id, user_id, node_id, role, status, joined_at) VALUES (?, ?, ?, ?, 'active', ?)`,
 					auth.NewUUIDv7(), userID, nodeID, g.role, joinedAt)
 				s.stats.memberships++
@@ -826,8 +827,8 @@ func (s *seeder) seedJoinFlowPersona() {
 	// every random decision after this point (vote tallies, memberships, …)
 	// that other specs pin their assertions to.
 	userID := auth.NewUUIDv7()
-	createdAt := s.now.AddDate(0, 0, -30).Format("2006-01-02T15:04:05.000Z")
-	joinedAt := s.now.AddDate(0, 0, -20).Format("2006-01-02T15:04:05.000Z")
+	createdAt := clock.Format(s.now.AddDate(0, 0, -30))
+	joinedAt := clock.Format(s.now.AddDate(0, 0, -20))
 	apID := ap.UserAPID(ap.GetDomain(), userID)
 	_, err := s.db.Exec(`INSERT INTO users (id, email, username, display_name, bio, role, created_at, updated_at, ap_id)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -913,9 +914,9 @@ func (s *seeder) seedEvents() {
 		} else {
 			startsAt = s.futureTS(e.daysOffset)
 		}
-		st, _ := time.Parse("2006-01-02T15:04:05.000Z", startsAt)
+		st, _ := clock.Parse(startsAt)
 		et := st.Add(time.Duration(e.durationH) * time.Hour)
-		endsAt = et.Format("2006-01-02T15:04:05.000Z")
+		endsAt = clock.Format(et)
 
 		lat := geo.lat + (s.rng.Float64()-0.5)*0.001
 		lng := geo.lng + (s.rng.Float64()-0.5)*0.001
@@ -1518,10 +1519,10 @@ func (s *seeder) seedNotifications() {
 		}{string(notifications.GovernanceDocUpdated), "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
 	}
 	for i, n := range adminNotifs {
-		createdAt := s.now.AddDate(0, 0, -(i + 1)).Format("2006-01-02T15:04:05.000Z")
+		createdAt := clock.Format(s.now.AddDate(0, 0, -(i + 1)))
 		var readAt *string
 		if n.read {
-			r := s.now.Format("2006-01-02T15:04:05.000Z")
+			r := clock.Format(s.now)
 			readAt = &r
 		}
 		_, err := s.db.Exec(`INSERT INTO notifications (id, user_id, type, title, body, link, read_at, created_at)
@@ -1604,7 +1605,11 @@ func (s *seeder) seedAuditLog() {
 			entityID = auth.NewUUIDv7()
 		}
 
-		metadata := fmt.Sprintf(`{"action_detail":"%s"}`, a.desc)
+		metadataBytes, err := json.Marshal(map[string]any{"action_detail": a.desc})
+		if err != nil {
+			metadataBytes = []byte("{}")
+		}
+		metadata := string(metadataBytes)
 		createdAt := s.ts(s.rng.Intn(120) + 1)
 
 		s.db.Exec(`INSERT INTO audit_log (id, user_id, action, entity_type, entity_id, metadata, ip_address, created_at)

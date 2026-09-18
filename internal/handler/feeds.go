@@ -14,6 +14,7 @@ import (
 
 	"github.com/emersion/go-ical"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -122,20 +123,20 @@ func writeICS(w http.ResponseWriter, r *http.Request, cfg *config.Config, calNam
 	cal.Props.SetText("X-WR-CALNAME", calName)
 
 	for _, fe := range events {
-		start, err := time.Parse(time.RFC3339, fe.StartsAt)
+		start, err := clock.Parse(fe.StartsAt)
 		if err != nil {
 			continue // an event a calendar can't place has no feed row
 		}
 		ev := ical.NewEvent()
 		ev.Props.SetText(ical.PropUID, fe.ID+"@"+cfg.Instance.Domain)
-		if stamp, err := time.Parse(time.RFC3339, fe.UpdatedAt); err == nil {
+		if stamp, err := clock.Parse(fe.UpdatedAt); err == nil {
 			ev.Props.SetDateTime(ical.PropDateTimeStamp, stamp.UTC())
 		} else {
 			ev.Props.SetDateTime(ical.PropDateTimeStamp, start.UTC())
 		}
 		ev.Props.SetDateTime(ical.PropDateTimeStart, start.UTC())
 		if fe.EndsAt != nil {
-			if end, err := time.Parse(time.RFC3339, *fe.EndsAt); err == nil {
+			if end, err := clock.Parse(*fe.EndsAt); err == nil {
 				ev.Props.SetDateTime(ical.PropDateTimeEnd, end.UTC())
 			}
 		}
@@ -179,7 +180,7 @@ func publicNodeFeedEvents(db *database.DB, slug string) (nodeName string, events
 	if err != nil {
 		return "", nil, false
 	}
-	since := time.Now().Add(-feedWindowBack).UTC().Format(time.RFC3339)
+	since := clock.Format(time.Now().Add(-feedWindowBack))
 	// Own events plus confirmed event links (docs/adr/032) — a linked
 	// gig belongs on the patch's public calendar. The owner patch must
 	// itself be public and alive for its events to blend here.
@@ -319,7 +320,7 @@ func NodeRSSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		for _, e := range events {
 			desc := feedDescription(e)
-			if when, err := time.Parse(time.RFC3339, e.StartsAt); err == nil {
+			if when, err := clock.Parse(e.StartsAt); err == nil {
 				stamp := when.UTC().Format("Monday, January 2 2006, 15:04 MST")
 				if desc == "" {
 					desc = stamp
@@ -333,7 +334,7 @@ func NodeRSSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				GUID:        e.ID + "@" + cfg.Instance.Domain,
 				Description: desc,
 			}
-			if created, err := time.Parse(time.RFC3339, e.CreatedAt); err == nil {
+			if created, err := clock.Parse(e.CreatedAt); err == nil {
 				item.PubDate = created.UTC().Format(time.RFC1123Z)
 			}
 			doc.Channel.Items = append(doc.Channel.Items, item)
@@ -369,7 +370,7 @@ func PersonalICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		since := time.Now().Add(-feedWindowBack).UTC().Format(time.RFC3339)
+		since := clock.Format(time.Now().Add(-feedWindowBack))
 		// Public events from every patch the person has a relationship
 		// with — including confirmed event links (docs/adr/032), so a
 		// followed band's linked gig lands here too. Members-only

@@ -14,6 +14,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -678,7 +679,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			         AND el.node_id = ? AND el.status = 'confirmed'))
 			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 			   AND (n.visibility = 'public' OR e.node_id = ?)`,
-			time.Now().UTC().Format(time.RFC3339), n.ID, n.ID, n.ID,
+			clock.Now(), n.ID, n.ID, n.ID,
 		).Scan(&n.UpcomingEventCount)
 
 		isUnclaimed := n.Status == "unclaimed"
@@ -819,8 +820,8 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			req.MembershipPolicy = "open"
 		}
 		if !oneOf(req.Visibility, nodeVisibilities) {
-			http.Error(w, fmt.Sprintf(`{"error":"visibility must be one of %s"}`,
-				strings.Join(nodeVisibilities, ", ")), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("visibility must be one of %s",
+				strings.Join(nodeVisibilities, ", ")))
 			return
 		}
 		// Both default closed. The patch opens them by an act, which is the
@@ -831,8 +832,8 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			publicMemberList = *req.PublicMemberList
 		}
 		if !oneOf(publicMemberList, publicMemberListStates) {
-			http.Error(w, fmt.Sprintf(`{"error":"public_member_list must be one of %s"}`,
-				strings.Join(publicMemberListStates, ", ")), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("public_member_list must be one of %s",
+				strings.Join(publicMemberListStates, ", ")))
 			return
 		}
 		publicGovernanceRecord := defaultPublicGovernanceRecord
@@ -840,25 +841,25 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			publicGovernanceRecord = *req.PublicGovernanceRecord
 		}
 		if !oneOf(publicGovernanceRecord, publicGovernanceRecordStates) {
-			http.Error(w, fmt.Sprintf(`{"error":"public_governance_record must be one of %s"}`,
-				strings.Join(publicGovernanceRecordStates, ", ")), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("public_governance_record must be one of %s",
+				strings.Join(publicGovernanceRecordStates, ", ")))
 			return
 		}
 		if !oneOf(req.MembershipPolicy, membershipPolicies) {
-			http.Error(w, fmt.Sprintf(`{"error":"membership_policy must be one of %s"}`,
-				strings.Join(membershipPolicies, ", ")), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("membership_policy must be one of %s",
+				strings.Join(membershipPolicies, ", ")))
 			return
 		}
 
 		if req.Latitude != nil {
 			if _, err := validateCoordinate("latitude", *req.Latitude); err != nil {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, err.Error())
 				return
 			}
 		}
 		if req.Longitude != nil {
 			if _, err := validateCoordinate("longitude", *req.Longitude); err != nil {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, err.Error())
 				return
 			}
 		}
@@ -880,7 +881,7 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 
 		appearanceStr, apErr := normalizeAppearance(req.Appearance)
 		if apErr != nil {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, apErr.Error()), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, apErr.Error())
 			return
 		}
 
@@ -894,7 +895,7 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// vocabulary (docs/adr/114).
 		tagIDs, unknownTag := resolveTagIDs(db, req.Tags)
 		if unknownTag != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, "unknown tag: "+unknownTag)
 			return
 		}
 
@@ -902,7 +903,7 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// A patch created here is active from the first moment, so this is
 		// when it joined the quilt (docs/adr/076). Submitted listings take a
 		// different path and stay NULL until a claim completes.
-		activatedAt := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		activatedAt := clock.Now()
 		_, err := db.Exec(
 			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record)
 			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -1085,7 +1086,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			if v = strings.TrimSpace(v); v == "" {
 				req["founded_at"] = nil
 			} else if msg := validateFoundedAt(v); msg != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			} else {
 				req["founded_at"] = v
@@ -1100,7 +1101,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		if raw, present := req["moved_to"]; present {
 			v, _ := raw.(string)
 			if msg := validateMovedTo(v); msg != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
 			if v = strings.TrimSpace(v); v == "" {
@@ -1124,7 +1125,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			tz, _ := raw.(string)
 			tz = strings.TrimSpace(tz)
 			if tz != "" && !settings.ValidTimezone(tz) {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, settings.BadTimezoneMessage)
 				return
 			}
 
@@ -1180,8 +1181,8 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		if raw, present := req["visibility"]; present {
 			v, _ := raw.(string)
 			if !oneOf(v, nodeVisibilities) {
-				http.Error(w, fmt.Sprintf(`{"error":"visibility must be one of %s"}`,
-					strings.Join(nodeVisibilities, ", ")), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("visibility must be one of %s",
+					strings.Join(nodeVisibilities, ", ")))
 				return
 			}
 		}
@@ -1209,8 +1210,8 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		if raw, present := req["public_member_list"]; present {
 			v, _ := raw.(string)
 			if !oneOf(v, publicMemberListStates) {
-				http.Error(w, fmt.Sprintf(`{"error":"public_member_list must be one of %s"}`,
-					strings.Join(publicMemberListStates, ", ")), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("public_member_list must be one of %s",
+					strings.Join(publicMemberListStates, ", ")))
 				return
 			}
 		}
@@ -1220,14 +1221,14 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 		if raw, present := req["public_governance_record"]; present {
 			v, _ := raw.(string)
 			if !oneOf(v, publicGovernanceRecordStates) {
-				http.Error(w, fmt.Sprintf(`{"error":"public_governance_record must be one of %s"}`,
-					strings.Join(publicGovernanceRecordStates, ", ")), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("public_governance_record must be one of %s",
+					strings.Join(publicGovernanceRecordStates, ", ")))
 				return
 			}
 		}
 
 		if msg := checkPatchedImage(db, "nodes", nodeID, req); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
@@ -1257,7 +1258,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 				}
 				tagIDs, unknownTag := resolveTagIDs(db, names)
 				if unknownTag != "" {
-					http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
+					writeJSONError(w, http.StatusBadRequest, "unknown tag: "+unknownTag)
 					return
 				}
 				// Scoped to approved tags, so this wholesale replace cannot
@@ -1287,7 +1288,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 				}
 				coined, serr := suggestTagsForNode(db, nodeID, user.ID, names)
 				if serr != "" {
-					http.Error(w, fmt.Sprintf(`{"error":%q}`, serr), http.StatusBadRequest)
+					writeJSONError(w, http.StatusBadRequest, serr)
 					return
 				}
 				if coined > 0 {
@@ -1316,7 +1317,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			if field == "latitude" || field == "longitude" {
 				coord, err := validateCoordinate(field, val)
 				if err != nil {
-					http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+					writeJSONError(w, http.StatusBadRequest, err.Error())
 					return
 				}
 				setClauses = append(setClauses, field+" = ?")
@@ -1328,7 +1329,7 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			if field == "appearance" {
 				apStr, err := normalizeAppearance(val)
 				if err != nil {
-					http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+					writeJSONError(w, http.StatusBadRequest, err.Error())
 					return
 				}
 				setClauses = append(setClauses, field+" = ?")

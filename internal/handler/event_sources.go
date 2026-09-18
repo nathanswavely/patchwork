@@ -12,6 +12,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -275,7 +276,7 @@ func SyncEventSource(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if lastFetch != nil {
-			if t, err := time.Parse("2006-01-02T15:04:05.000Z", *lastFetch); err == nil && time.Since(t) < time.Minute {
+			if t, err := clock.Parse(*lastFetch); err == nil && time.Since(t) < time.Minute {
 				http.Error(w, `{"error":"this source just synced, try again in a minute"}`, http.StatusTooManyRequests)
 				return
 			}
@@ -462,8 +463,8 @@ func UpdateEventSource(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to update event source"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event_source.update", "event_source", sourceID,
-			fmt.Sprintf(`{"local_time_stamped_utc":%t}`, *req.LocalTimeStampedUTC), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event_source.update", "event_source", sourceID,
+			map[string]any{"local_time_stamped_utc": *req.LocalTimeStampedUTC}, clientIP(r))
 
 		sources, err := scanEventSources(db, nodeID)
 		if err != nil {

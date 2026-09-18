@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -89,7 +90,7 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	if err != nil || status != "active" || (role != "admin" && role != "member") {
 		return 0
 	}
-	joined, parseErr := time.Parse("2006-01-02T15:04:05.000Z", joinedAt)
+	joined, parseErr := clock.Parse(joinedAt)
 	if parseErr != nil {
 		// An unreadable joined_at can't be shown to clear any requirement.
 		// Only a patch with no tenure rule at all can still count.

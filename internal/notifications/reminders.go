@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
@@ -58,8 +59,8 @@ func RunReminders(n *Notifier) {
 // nobody but its author, and re-opening costs nothing. Exported so the
 // claim tests can trigger the sweep directly.
 func ExpireStaleClaims(db *database.DB) {
-	cutoff := time.Now().Add(-30 * 24 * time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	cutoff := clock.Format(time.Now().Add(-30 * 24 * time.Hour))
+	now := clock.Now()
 	result, err := db.Exec(
 		"UPDATE claim_requests SET status = 'expired', updated_at = ? WHERE status = 'pending' AND created_at < ?",
 		now, cutoff,
@@ -82,8 +83,8 @@ func ExpireStaleClaims(db *database.DB) {
 // send of this type to this user at this link, since the notifications
 // table carries no entity_id column of its own.
 func checkClaimSetupExpiring(n *Notifier) {
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
-	soon := time.Now().Add(3 * 24 * time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
+	soon := clock.Format(time.Now().Add(3 * 24 * time.Hour))
 
 	rows, err := n.DB.Query(
 		`SELECT cr.id, cr.user_id, cr.setup_expires_at, n.id, n.slug, n.name
@@ -134,7 +135,7 @@ func checkClaimSetupExpiring(n *Notifier) {
 // ("expires August 7, 2026"). Falls back to the raw string if parsing ever
 // fails — never worth failing a notification over.
 func formatClaimDate(iso string) string {
-	t, err := time.Parse("2006-01-02T15:04:05.000Z", iso)
+	t, err := clock.Parse(iso)
 	if err != nil {
 		return iso
 	}
@@ -143,7 +144,7 @@ func formatClaimDate(iso string) string {
 
 // cleanupOldNotifications deletes notifications older than 90 days to prevent unbounded growth.
 func cleanupOldNotifications(n *Notifier) {
-	cutoff := time.Now().Add(-90 * 24 * time.Hour).UTC().Format(time.RFC3339)
+	cutoff := clock.Format(time.Now().Add(-90 * 24 * time.Hour))
 	result, err := n.DB.Exec(`DELETE FROM notifications WHERE created_at < ?`, cutoff)
 	if err != nil {
 		log.Printf("reminders: cleanup: %v", err)

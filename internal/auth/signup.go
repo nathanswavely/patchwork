@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
@@ -39,7 +40,7 @@ func createSignupToken(tx *sql.Tx, email string) (string, error) {
 	tokenHash := hex.EncodeToString(hash[:])
 
 	id := NewUUIDv7()
-	expiresAt := time.Now().Add(signupTokenExpiry).UTC().Format(time.RFC3339)
+	expiresAt := clock.Format(time.Now().Add(signupTokenExpiry))
 
 	_, err = tx.Exec(
 		`INSERT INTO signup_tokens (id, email, token, expires_at) VALUES (?, ?, ?, ?)`,
@@ -74,7 +75,7 @@ func ValidateSignupToken(db *database.DB, rawToken string) (string, error) {
 	if used != 0 {
 		return "", fmt.Errorf("signup already completed")
 	}
-	exp, err := time.Parse(time.RFC3339, expiresAt)
+	exp, err := clock.Parse(expiresAt)
 	if err == nil && time.Now().After(exp) {
 		return "", fmt.Errorf("signup link has expired — request a new sign-in link")
 	}
@@ -111,7 +112,7 @@ func CompleteSignup(db *database.DB, rawToken, rawUsername, displayName, bootstr
 	if used != 0 {
 		return nil, fmt.Errorf("signup already completed")
 	}
-	exp, err := time.Parse(time.RFC3339, expiresAt)
+	exp, err := clock.Parse(expiresAt)
 	if err == nil && time.Now().After(exp) {
 		return nil, fmt.Errorf("signup link has expired — request a new sign-in link")
 	}
@@ -159,7 +160,7 @@ func CompleteSignup(db *database.DB, rawToken, rawUsername, displayName, bootstr
 	}
 
 	userID := NewUUIDv7()
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 	role := roleForNewUser(tx)
 
 	apID := ap.UserAPID(ap.GetDomain(), userID)
