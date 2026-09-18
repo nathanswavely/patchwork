@@ -1,4 +1,4 @@
-# 116. Following is not a key to the private shelf
+# ADR: Following is not a key to the private shelf
 
 **Status:** accepted, 2026-09-16
 

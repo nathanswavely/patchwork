@@ -109,7 +109,7 @@ const (
 	// shipped text (docs/adr/037). Notified, never asked.
 	LiningUpdated NotificationType = "governance.lining_updated"
 	// GovernanceFollowerChartersClosed fires once, at the startup that closes
-	// a patch's follower access to its members-only charters (docs/adr/116).
+	// a patch's follower access to its members-only charters (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md).
 	// Its own type rather than GovernanceRulesChanged because nobody in the
 	// patch made this edit: Patchwork did, to a default that leaked, and the
 	// notice has to say so or it reads as an admin's change that no admin

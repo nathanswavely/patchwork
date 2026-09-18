@@ -53,7 +53,7 @@ func scanNodeLinks(linksJSON string, n *model.Node) {
 // scanFollowerPermissions scans a JSON string into FollowerPermissions and assigns to node.
 func scanFollowerPermissions(fpJSON string, n *model.Node) {
 	// Charters false, matching DefaultRules and what canReadPatchDocs already
-	// reads out of an empty object (docs/adr/116). These two disagreed: a
+	// reads out of an empty object (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md). These two disagreed: a
 	// patch created through the API stores "{}", so the gate said no while
 	// this said yes, and Patch Settings showed a grant the server refused.
 	fp := &model.FollowerPermissions{Events: true, Proposals: true, Charters: false, Members: true}
@@ -687,7 +687,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			if err == nil {
 				if memStatus == "active" {
 					// is_member means the membership: admin or member, the
-					// two roles member_count counts (docs/adr/117). It used
+					// two roles member_count counts (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md). It used
 					// to mean "has an active row", followers included, which
 					// is a different question wearing the word for this one.
 					//

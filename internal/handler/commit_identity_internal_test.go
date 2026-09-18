@@ -12,7 +12,7 @@ import (
 )
 
 // A governance repo is handed over whole, so a commit's author travels with it
-// (docs/adr/110, docs/adr/116). Four call sites passed user.Email into the
+// (docs/adr/110, docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md). Four call sites passed user.Email into the
 // signature, which put members' real addresses in a file the transport serves —
 // the one thing the personal export, the member seamrip and every API surface
 // each refuse to hand over.
@@ -58,7 +58,7 @@ func TestNoGovernanceCommitIsAuthoredWithAUserEmail(t *testing.T) {
 		}
 		for _, stmt := range call.FindAllString(string(body), -1) {
 			if leak.MatchString(stmt) {
-				t.Errorf("%s: a governance commit is authored with a real address — use commitIdentity (docs/adr/116):\n  %s",
+				t.Errorf("%s: a governance commit is authored with a real address — use commitIdentity (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md):\n  %s",
 					filepath.ToSlash(path), strings.Join(strings.Fields(stmt), " "))
 			}
 		}

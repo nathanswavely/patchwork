@@ -95,7 +95,7 @@
   let inviting = $state(false);
 
   // Followers are their own relationship, listed apart and with no role
-  // control (docs/adr/117). They used to arrive in the same array as the
+  // control (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md). They used to arrive in the same array as the
   // membership, under a heading that said Active Members, above a count that
   // excluded them — and every row got a role dropdown, so a follower could
   // be handed admin without ever passing through membership. The server
@@ -396,7 +396,7 @@
                 onchange={(e) => setRoleEdit(member.user_id, e.target.value)}
               >
                 <!-- Demotion, not a rung to climb: a follower is never
-                     promoted from here (docs/adr/117), so this option only
+                     promoted from here (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md), so this option only
                      ever moves somebody out of the membership. -->
                 <option value="follower">Follower</option>
                 <option value="member">Member</option>

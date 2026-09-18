@@ -117,7 +117,7 @@ func TestPublicMemberListHidesHiddenAndFollowers(t *testing.T) {
 		{"follower gets public view", followerToken, 2},
 		// 3, not 4: an insider sees the hidden membership, which is the
 		// thing this test is about, but the follower is not in the
-		// membership at all (docs/adr/117). They are still visible to an
+		// membership at all (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md). They are still visible to an
 		// insider, one listing over — asserted below.
 		{"fellow member sees the hidden membership", memberToken, 3},
 		{"node admin sees the hidden membership", adminToken, 3},

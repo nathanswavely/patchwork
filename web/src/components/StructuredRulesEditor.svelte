@@ -181,7 +181,7 @@
       followerEvents = fp.events !== false;
       followerProposals = fp.proposals !== false;
       // Charters alone reads `=== true`, matching the server's default
-      // (docs/adr/116): the other three are on unless a patch turned them
+      // (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md): the other three are on unless a patch turned them
       // off, this one is off unless a patch turned it on. Reading it the
       // same way as its neighbours is what made a patch that had never
       // chosen show the box ticked.

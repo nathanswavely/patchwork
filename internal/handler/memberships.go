@@ -462,7 +462,7 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			statusFilter = "active"
 		}
 
-		// Which category this listing is about (docs/adr/117). "/members"
+		// Which category this listing is about (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md). "/members"
 		// means the membership: admins and members, the same two roles
 		// member_count counts and CONTEXT.md defines. A follower is a
 		// different relationship, not a quieter member, so followers are
@@ -1017,7 +1017,7 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				return
 			}
 
-			// A follower is not promoted; a follower joins (docs/adr/117).
+			// A follower is not promoted; a follower joins (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md).
 			// The sentence above is the whole argument, one relationship
 			// over: somebody who chose to observe has not asked to be in
 			// this patch, and a role set here is what they would become

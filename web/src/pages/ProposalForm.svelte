@@ -11,7 +11,7 @@
 
   // The New Proposal button on the proposals list is already gated, but this
   // route is reachable by URL, so the page states the rule itself. From
-  // the role: following carries no governance rights, and docs/adr/117 is
+  // the role: following carries no governance rights, and docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md is
   // why is_member now agrees.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 

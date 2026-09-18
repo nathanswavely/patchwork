@@ -123,6 +123,14 @@ var renamedMigrations = map[string]string{
 	// past the number. contact_items was renumbered to 068 afterwards, by which
 	// point instances had already recorded it under the old name.
 	"068_contact_items": "066_contact_items",
+
+	// 075_follower_charters_off_by_default.sql (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md)
+	// merged on 2026-09-16 with the next sequential number, after
+	// docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md had closed the
+	// space at 074, and ran on the reference instance under that name before
+	// TestNewRecordsAreNotNumbered caught it. Renamed to the stamp of the
+	// commit that shipped it.
+	"20260917T022312_follower_charters_off_by_default": "075_follower_charters_off_by_default",
 }
 
 // applyRenames rewrites schema_migrations rows recorded under a superseded

@@ -21,7 +21,7 @@
 
   // Proposing a rules change is a member act: following carries no
   // governance rights. Read from membershipRole rather than isMember, which
-  // is the same answer since docs/adr/117 narrowed it but is derived here
+  // is the same answer since docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md narrowed it but is derived here
   // rather than trusted from a flag that once meant something wider.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
   // An admin *of this patch*. The node payload sets is_admin for instance

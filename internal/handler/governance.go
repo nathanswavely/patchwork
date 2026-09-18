@@ -59,7 +59,7 @@ func validDocVisibility(v string) bool {
 // permissions grant charters. Signed-out visitors never may.
 //
 // It is not what gates the git transport. A clone takes the whole repository
-// at once, so that door asks viewerIsInPatchRoom instead (docs/adr/116); this
+// at once, so that door asks viewerIsInPatchRoom instead (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md); this
 // rule governs REST reads of the members-only shelf, document by document.
 //
 // A charter the patch published to everyone
@@ -109,7 +109,7 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 // (docs/adr/086) each exist to govern. So the transport asks the one question
 // it can answer honestly (docs/adr/110).
 //
-// It asks viewerIsInPatchRoom rather than canReadPatchDocs (docs/adr/116).
+// It asks viewerIsInPatchRoom rather than canReadPatchDocs (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md).
 // Those two looked interchangeable and are not. canReadPatchDocs admits a
 // follower holding `follower_permissions.charters`, which is a decision about
 // reading a page; this is a decision about being handed a repository, and the

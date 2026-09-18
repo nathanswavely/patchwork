@@ -1,4 +1,4 @@
-# 117. A follower is not a quieter member
+# ADR: A follower is not a quieter member
 
 **Status:** accepted, 2026-09-17
 

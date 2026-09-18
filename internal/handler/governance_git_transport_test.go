@@ -15,7 +15,7 @@ import (
 // The git transport hands over a whole bare repository — every charter body,
 // its revision history, its diffs, and every commit's author — so it is gated
 // on being in the patch, and not on the per-document rule nor on the follower
-// charters grant (docs/adr/110, narrowed by docs/adr/116). These tests run the transport the
+// charters grant (docs/adr/110, narrowed by docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md). These tests run the transport the
 // way main.go mounts it: governance.GitHTTPHandler over
 // handler.GovernanceRepoNodeID, behind AuthOptional.
 //
@@ -119,7 +119,7 @@ func TestGovernanceCloneServesTheRoom(t *testing.T) {
 }
 
 // A follower is never handed the repository, whatever the patch says about
-// charters (docs/adr/116). The grant is about reading a page; a clone is being
+// charters (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md). The grant is about reading a page; a clone is being
 // handed a repository, and its commits enumerate the patch's people — which is
 // the thing docs/adr/006 keeps from followers by another route. Following
 // costs nothing and needs nobody's approval, so the two must not be the same

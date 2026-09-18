@@ -8,7 +8,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
 
-// docs/adr/117. A follower is a different relationship from a member, not a
+// docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md. A follower is a different relationship from a member, not a
 // quieter kind of one. Three surfaces had it as the same thing, and together
 // they let an admin hand a follower the admin role without that person ever
 // asking to join.
@@ -134,7 +134,7 @@ func TestAMemberCannotChangeTheirOwnRole(t *testing.T) {
 	}
 }
 
-// is_member means the membership (docs/adr/117). Six components had written
+// is_member means the membership (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md). Six components had written
 // their own guard against it meaning otherwise.
 func TestIsMemberMeansTheMembership(t *testing.T) {
 	db := setupTestDB(t)

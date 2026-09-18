@@ -1,4 +1,4 @@
--- docs/adr/116: a follower no longer reads a patch's members-only charters
+-- docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md: a follower no longer reads a patch's members-only charters
 -- unless the patch says so.
 --
 -- `follower_permissions.charters` shipped true in migration 012's column

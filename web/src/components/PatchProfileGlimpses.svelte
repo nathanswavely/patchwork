@@ -97,7 +97,7 @@
     trustedContributor: !!getUser()?.trusted_contributor,
     isUnclaimed,
     // The role test, stated here rather than taken from the isMember prop:
-    // it is the same answer since docs/adr/117, and the gate should not
+    // it is the same answer since docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md, and the gate should not
     // depend on which of the two a container happened to hand over.
     isMemberOrAdmin: membershipRole === 'member' || membershipRole === 'admin',
     isBanned,

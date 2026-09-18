@@ -15,7 +15,7 @@
   // The entry point on the governance hub is gated, but the route is
   // reachable by URL, so the page states the rule itself rather than
   // trusting the button that sent you. Derived from the role: following
-  // carries no governance rights, and docs/adr/117 is why is_member now
+  // carries no governance rights, and docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md is why is_member now
   // agrees.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 

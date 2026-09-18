@@ -231,7 +231,7 @@ func main() {
 		log.Printf("lining: created %d, auto-updated %d to v%d", created, updatedLinings, governance.CurrentLiningVersion())
 	}
 	// Close the follower access to members-only charters that shipped on by
-	// default (docs/adr/116), in the rules file as well as the row, and tell
+	// default (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md), in the rules file as well as the row, and tell
 	// each patch's admins. Same placement and same reasons as the lining pass
 	// above: after the repo backfill so the git write lands, after SetNotifier
 	// so the notice is not dropped. Idempotent, so it costs one query per boot

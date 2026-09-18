@@ -67,7 +67,7 @@ func createTestNode(t *testing.T, db *database.DB, ownerID, name, slug, policy s
 	// follower_permissions is written explicitly, exactly as CreateNode writes
 	// it, because migration 012's column DEFAULT still says charters:true and
 	// a helper that inherits it does not test what the product does
-	// (docs/adr/116). This helper inheriting it is how a follower read an
+	// (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md). This helper inheriting it is how a follower read an
 	// invite-only patch's private charters in a passing test suite.
 	_, err := db.Exec(
 		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status, follower_permissions) VALUES (?, ?, ?, ?, '', 'leaf', 'public', ?, 'active', '{}')`,
@@ -256,7 +256,7 @@ func TestRoleChange(t *testing.T) {
 	}
 
 	// follower -> admin is refused, and this is the direction that moved
-	// (docs/adr/117). Demotion above still lands; the way back in is an
+	// (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md). Demotion above still lands; the way back in is an
 	// invitation or the person's own "Become a member", because a follower
 	// has not asked to be in this patch and a role set here is what they
 	// would become without anyone having asked them.
@@ -1297,7 +1297,7 @@ func TestListMembersCountsWholePatchNotJustThePage(t *testing.T) {
 		cursor, _ = page["next_cursor"].(string)
 	}
 	// 25, not 28: the listing is the membership, and the three followers are
-	// their own relationship, asked for by ?role=follower (docs/adr/117).
+	// their own relationship, asked for by ?role=follower (docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md).
 	// Which makes this the sharper assertion — paging reaches exactly as many
 	// rows as member_count claims, so the header and the list agree.
 	if seen != 25 {

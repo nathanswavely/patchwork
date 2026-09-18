@@ -18,7 +18,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
-// docs/adr/116. The charters key hands a follower the charters a patch chose
+// docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md. The charters key hands a follower the charters a patch chose
 // not to publish, and it shipped on: on by column default, by DefaultRules,
 // and by three of the four templates. Following costs nothing and asks nobody,
 // so on an invite-only patch that made the private shelf readable to anyone
@@ -65,20 +65,20 @@ func TestMigration075ClosesOnlyTheChartersGrant(t *testing.T) {
 		t.Fatalf("seed legacy row: %v", err)
 	}
 
-	sql, err := patchwork.MigrationsFS.ReadFile("migrations/075_follower_charters_off_by_default.sql")
+	sql, err := patchwork.MigrationsFS.ReadFile("migrations/20260917T022312_follower_charters_off_by_default.sql")
 	if err != nil {
 		t.Fatalf("read migration: %v", err)
 	}
 	run := func() {
 		t.Helper()
 		if _, err := db.Exec(string(sql)); err != nil {
-			t.Fatalf("run migration 075: %v", err)
+			t.Fatalf("run the follower_charters_off_by_default migration: %v", err)
 		}
 	}
 
 	run()
 	if chartersFromRow(t, db, nodeID) {
-		t.Error("migration 075 left the inherited grant in place")
+		t.Error("the follower_charters_off_by_default migration left the inherited grant in place")
 	}
 
 	var raw string
@@ -86,14 +86,14 @@ func TestMigration075ClosesOnlyTheChartersGrant(t *testing.T) {
 	var fp model.FollowerPermissions
 	json.Unmarshal([]byte(raw), &fp)
 	if !fp.Events || !fp.Proposals || !fp.Members {
-		t.Errorf("migration 075 touched a key that was not charters: %s", raw)
+		t.Errorf("the follower_charters_off_by_default migration touched a key that was not charters: %s", raw)
 	}
 
 	// Migrations run once, but a re-run must not be destructive: this one is
 	// a plain UPDATE and the suite asserts that rather than assuming it.
 	run()
 	if chartersFromRow(t, db, nodeID) {
-		t.Error("migration 075 is not idempotent")
+		t.Error("the follower_charters_off_by_default migration is not idempotent")
 	}
 }
 
@@ -208,7 +208,7 @@ func TestNoInsertIntoNodesInheritsTheColumnDefault(t *testing.T) {
 	}
 
 	for _, o := range offenders {
-		t.Errorf("INSERT INTO nodes without follower_permissions — it would inherit migration 012's charters:true (docs/adr/116):\n  %s", o)
+		t.Errorf("INSERT INTO nodes without follower_permissions — it would inherit migration 012's charters:true (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md):\n  %s", o)
 	}
 }
 

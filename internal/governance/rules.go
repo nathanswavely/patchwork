@@ -64,7 +64,7 @@ func DefaultRules() *GovernanceRules {
 		InactivityDays:   90,
 		MembershipPolicy: "open",
 		// Charters is the one of these four that is off by default
-		// (docs/adr/116). The other three govern what a follower sees of a
+		// (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md). The other three govern what a follower sees of a
 		// patch's public life; this one hands over the charters the patch
 		// chose not to publish, and following costs nothing and asks nobody.
 		// It shipped on, from a time when the key also gated published

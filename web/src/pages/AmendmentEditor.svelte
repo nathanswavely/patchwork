@@ -16,7 +16,7 @@
   // Amending a charter is a member act, and this route is reachable by URL,
   // so the page states the rule itself rather than trusting the link that
   // sent you. Derived from the role: following carries no governance
-  // rights, and docs/adr/117 is why is_member now agrees.
+  // rights, and docs/adr/2026-09-17-a-follower-is-not-a-quieter-member.md is why is_member now agrees.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
   // On an admin-decides patch an admin's amendment is a direct change, born

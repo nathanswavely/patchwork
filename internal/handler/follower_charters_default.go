@@ -14,9 +14,9 @@ import (
 
 // CloseFollowerChartersDefault turns off `follower_permissions.charters` on
 // every patch still carrying it from the shipped default, in the rules file
-// as well as the cache column, and tells each patch's admins (docs/adr/116).
+// as well as the cache column, and tells each patch's admins (docs/adr/2026-09-16-following-is-not-a-key-to-the-private-shelf.md).
 //
-// Why a startup pass and not migration 075 alone: nodes.follower_permissions
+// Why a startup pass and not migration 20260917T022312_follower_charters_off_by_default alone: nodes.follower_permissions
 // is a cache of governance-rules.json in the patch's own repo. SyncRulesToDB
 // rewrites the column from that file whenever a rules change lands, so a
 // migration that touched only the row would be quietly undone by the next
@@ -59,7 +59,7 @@ func CloseFollowerChartersDefault(db *database.DB) (int, error) {
 	closed := 0
 	var told []notifications.Event
 	for _, p := range all {
-		// The row and the rules file are checked separately: migration 075
+		// The row and the rules file are checked separately: the follower_charters_off_by_default migration
 		// has already fixed the rows, so on an upgraded instance the file is
 		// the one still saying true, and on a restored-from-SQLite instance
 		// (docs/adr/084) there may be no repo at all.
