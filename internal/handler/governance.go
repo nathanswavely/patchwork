@@ -546,7 +546,7 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		// members-only charter would publish the very thing it withholds.
 		if doc.Visibility == "public" && contentChanged {
 			go func() {
-				docObj := ap.GovernanceDocToObject(doc, ap.GetDomain())
+				docObj := ap.GovernanceDocToObject(doc, ap.GetDomain(), !membershipHidden(db, doc.NodeID, doc.CreatedBy))
 				activity := map[string]interface{}{
 					"@context": ap.GovernanceContext(),
 					"type":     "Update",

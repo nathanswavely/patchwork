@@ -379,3 +379,57 @@ func TestGovernanceOverview_CouncilFollowsTheRoster(t *testing.T) {
 		t.Errorf("the room stopped seeing a hidden admin (%d shown), want 1", n)
 	}
 }
+
+// The two federation gates are independent, and this is the case neither
+// side's own tests cover: a member who has hidden nothing, on a patch that
+// publishes nothing.
+//
+// docs/adr/006's gate asks whether this person's membership may be asserted;
+// this ADR's asks whether the patch's deliberation leaves at all. A merge
+// that kept only the first would federate every ballot from every visible
+// member of a closed patch.
+func TestGovernanceRecord_ClosedRecordSuppressesAVisibleMembersVote(t *testing.T) {
+	db := setupTestDB(t)
+
+	ap.SetDomain("closedvote.test.example.com")
+	t.Cleanup(func() { ap.SetDomain("") })
+
+	admin, _ := createTestUser(t, db, "cv_admin", "member")
+	voter, voterToken := createTestUser(t, db, "cv_voter", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Closed Vote", "closed-vote", "open")
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
+	// Deliberately visible, and deliberately no openGovernanceRecord.
+
+	proposalID := createTestProposal(t, db, nodeID, admin.ID)
+	if _, err := db.Exec(
+		`UPDATE proposals SET state = 'voting', voting_ends_at = ?, ap_id = ? WHERE id = ?`,
+		time.Now().UTC().Add(48*time.Hour).Format("2006-01-02T15:04:05.000Z"),
+		"https://closedvote.test.example.com/ap/proposals/"+proposalID, proposalID,
+	); err != nil {
+		t.Fatalf("open voting: %v", err)
+	}
+
+	followerID := auth.NewUUIDv7()
+	if _, err := db.Exec(
+		`INSERT INTO ap_followers (id, local_actor_type, local_actor_id, remote_actor_id, remote_inbox, accepted) VALUES (?, 'node', ?, 'https://remote.example.com/ap/users/cv', 'https://remote.example.com/inbox', 1)`,
+		followerID, nodeID,
+	); err != nil {
+		t.Fatalf("insert ap_follower: %v", err)
+	}
+
+	r := authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote",
+		map[string]interface{}{"value": "approve"}, voterToken)
+	w := serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+	if w.Code != http.StatusOK && w.Code != http.StatusCreated {
+		t.Fatalf("vote returned %d: %s", w.Code, w.Body.String())
+	}
+
+	var count int
+	db.QueryRow("SELECT COUNT(*) FROM ap_outbox_queue").Scan(&count)
+	if count != 0 {
+		var activityJSON string
+		db.QueryRow("SELECT activity_json FROM ap_outbox_queue LIMIT 1").Scan(&activityJSON)
+		t.Errorf("a closed patch federated %d activities for a visible member's ballot; first: %s", count, activityJSON)
+	}
+}

@@ -375,7 +375,7 @@ func broadcastDocUpdate(db *database.DB, docID string) {
 		"@context": ap.GovernanceContext(),
 		"type":     "Update",
 		"actor":    ap.NodeAPID(ap.GetDomain(), doc.NodeID),
-		"object":   ap.GovernanceDocToObject(doc, ap.GetDomain()),
+		"object":   ap.GovernanceDocToObject(doc, ap.GetDomain(), !membershipHidden(db, doc.NodeID, doc.CreatedBy)),
 	})
 }
 
