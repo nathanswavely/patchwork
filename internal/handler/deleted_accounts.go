@@ -103,3 +103,26 @@ func viewerIsInPatchRoom(db *database.DB, r *http.Request, nodeID string) bool {
 	}
 	return role != ""
 }
+
+// membershipHidden reports whether a person's membership of a patch is
+// switched out of sight (docs/adr/006).
+//
+// The companion to viewerIsInPatchRoom, for a reader who has no session to
+// check. Federation is that reader: there is no room for a remote follower to
+// be inside, so the viewer half of the question falls away and only the state
+// of the switch is left. A surface that cannot ask "is this viewer in the
+// room" must treat the answer as no.
+//
+// A missing row reads as not hidden, exactly as the voter roster's
+// COALESCE(m.visible, 1) does: somebody who left has no membership to hide,
+// and ADR 006 governs a switch on a row that exists.
+func membershipHidden(db *database.DB, nodeID, userID string) bool {
+	var visible int
+	if err := db.QueryRow(
+		"SELECT COALESCE(visible, 1) FROM memberships WHERE user_id = ? AND node_id = ?",
+		userID, nodeID,
+	).Scan(&visible); err != nil {
+		return false
+	}
+	return visible == 0
+}

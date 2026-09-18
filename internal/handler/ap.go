@@ -261,7 +261,6 @@ func APProposal(db *database.DB) http.HandlerFunc {
 			"id":            proposalAPID,
 			"name":          p.Title,
 			"content":       p.Body,
-			"attributedTo":  ap.UserAPID(domain, p.AuthorID),
 			"context":       ap.NodeAPID(domain, p.NodeID),
 			"status":        p.Status,
 			"proposalType":  p.ProposalType,
@@ -271,6 +270,13 @@ func APProposal(db *database.DB) http.HandlerFunc {
 		}
 		if p.VotingEndsAt != nil {
 			resp["votingEndsAt"] = *p.VotingEndsAt
+		}
+		// The push side of this object gates its attribution (docs/adr/006);
+		// the pull side is the same object served to an anonymous fetch, so it
+		// asks the same question. Only a member can author a proposal here, so
+		// naming one publishes a membership that may be switched out of sight.
+		if !membershipHidden(db, p.NodeID, p.AuthorID) {
+			resp["attributedTo"] = ap.UserAPID(domain, p.AuthorID)
 		}
 
 		writeAP(w, resp)
@@ -318,10 +324,14 @@ func APGovernanceDoc(db *database.DB) http.HandlerFunc {
 			"name":         doc.Title,
 			"content":      doc.Body,
 			"version":      doc.Version,
-			"attributedTo": ap.UserAPID(domain, doc.CreatedBy),
 			"context":      ap.NodeAPID(domain, doc.NodeID),
 			"published":    doc.CreatedAt,
 			"updated":      doc.UpdatedAt,
+		}
+		// As above: editing a charter takes a membership, so the editor is
+		// named only where that membership is not hidden (docs/adr/006).
+		if !membershipHidden(db, doc.NodeID, doc.CreatedBy) {
+			resp["attributedTo"] = ap.UserAPID(domain, doc.CreatedBy)
 		}
 
 		writeAP(w, resp)
