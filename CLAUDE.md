@@ -46,7 +46,7 @@ patchwork/
 │   ├── notifications/      # notification channels, email, reminder worker
 │   ├── weblink/            # the SPA paths Go emits (notification/email/feed links)
 │   └── seamrip/            # export/import portability boundary (docs/adr/002)
-├── migrations/             # SQL migration files (timestamped; 001-074 legacy numbered, 006 absent)
+├── migrations/             # SQL migration files (timestamped; 001-075 legacy numbered, 006 absent)
 ├── docs/                   # DEPLOYMENT.md, adr/ (decision records; adr/README.md is the index)
 ├── web/                    # Svelte project (npm, builds to web/dist/)
 ├── CONTEXT.md              # canonical vocabulary glossary (backend vs UI terms)
@@ -75,11 +75,13 @@ label, and two on the same day are told apart by their sentences.
 
 `date +%Y-%m-%d` and `date -u +%Y%m%dT%H%M%S` produce them.
 
-**Both number spaces are closed.** ADRs stopped at 115 and migrations at
-074. Those files keep their names forever, every `docs/adr/0NN` citation
-keeps resolving, and no new record is ever numbered.
+**Both number spaces are closed.** ADRs stopped at 117 and migrations at
+075 (the cutover ADR said 115 and 074; two branches in flight landed after
+it, and a merged migration is never renamed, so the line moved rather than
+the files). Those files keep their names forever, every `docs/adr/0NN`
+citation keeps resolving, and no new record is ever numbered.
 `TestNewRecordsAreNotNumbered` fails the build on a new `NNN-` or `NNN_`,
-because the realistic way this decays is mimicry: 115 numbered files are a
+because the realistic way this decays is mimicry: 117 numbered files are a
 strong pattern to copy. `migrations/006` is still intentionally absent and
 a retired ADR still keeps its number and its status line.
 
