@@ -147,8 +147,7 @@ func TestRemoteFollow_RelaysInstanceFollowOnce(t *testing.T) {
 	waitFor(t, "queued Follow", func() bool {
 		return countRows(db, `SELECT COUNT(*) FROM ap_outbox_queue WHERE activity_json LIKE '%"type":"Follow"%'`) == 1
 	})
-	var queuedActor int
-	queuedActor = countRows(db, `SELECT COUNT(*) FROM ap_outbox_queue WHERE activity_json LIKE '%/ap/instance%'`)
+	queuedActor := countRows(db, `SELECT COUNT(*) FROM ap_outbox_queue WHERE activity_json LIKE '%/ap/instance%'`)
 	if queuedActor != 1 {
 		t.Fatalf("Follow should be sent by the instance actor, found %d matching rows", queuedActor)
 	}

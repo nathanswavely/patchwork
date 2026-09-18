@@ -194,7 +194,7 @@ func signatureHeaderValue(req *http.Request, header string) string {
 		}
 		return req.URL.Host
 	}
-	return req.Header.Get(http.CanonicalHeaderKey(header))
+	return req.Header.Get(header)
 }
 
 // parseSignatureHeader parses the Signature header into key-value pairs.

@@ -103,6 +103,56 @@ jobs:
       - name: govulncheck
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
 
+      # Pinned the same way govulncheck is above: a step that silently starts
+      # running a newer analyzer version is not something a PR diff shows you.
+      # A first run (2026-09-18) found 15 findings, all fixed rather than
+      # silenced — nothing in the default SA/S/U/ST check set was a large
+      # enough backlog here to warrant a staticcheck.conf exclusion.
+      - name: staticcheck
+        run: go run honnef.co/go/tools/cmd/staticcheck@v0.8.1 ./...
+
+      # internal/ carries a large pre-existing backlog of discarded errors
+      # (253+ db.Exec( calls alone, per the review that opened #312) — see
+      # errcheck.baseline and scripts/errcheck-check.sh for how the gate
+      # only fails on a discard that isn't already in that file.
+      - name: errcheck (new discards only)
+        run: scripts/errcheck-check.sh
+
+  race:
+    # go test -race, scoped to the packages that actually hold shared,
+    # mutex-guarded state: the ICS sync worker and reconciler in
+    # internal/eventsource (docs/adr/031), the rate limiter in
+    # internal/middleware, the AP delivery worker in internal/ap, and the
+    # reminder worker in internal/notifications — named by the third-party
+    # review that opened #312. None of the four import the `web` package
+    # (go list -deps confirms it), so this job skips the frontend build
+    # entirely.
+    #
+    # -race roughly doubles compile+test time, because cgo (sqlite3) has to
+    # rebuild from a clean cache under the instrumentation — running the
+    # whole tree's worth of that on every PR would blow the `test` job's
+    # time budget (see the comment above `test`; CI is already at ~6:23 and
+    # there is no bigger runner available on a personal repo). The full
+    # `go test -race ./...` sweep runs nightly instead —
+    # .github/workflows/race-nightly.yaml — as the safety net over
+    # everything this subset doesn't cover.
+    #
+    # A separate job rather than a step inside `test`, for the same reason
+    # as `smoke` and `e2e` below: jobs with no `needs` between them run in
+    # parallel, so this costs wall-clock only if it turns out to be the
+    # slowest job, and it never lengthens what the `test` job reports.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+
+      - name: go test -race (mutex-guarded packages)
+        run: go test -race ./internal/eventsource/... ./internal/middleware/... ./internal/ap/... ./internal/notifications/...
+
   smoke:
     # Recreate-survival test: builds the real image, writes data through the
     # API, force-recreates the container, and checks the data is still there.
@@ -209,16 +259,21 @@ jobs:
     # makes, so the fix is to make multi-arch cheap, not optional.
     #
     # Hard-gated on the whole pipeline: nothing publishes — release tag or
-    # :latest — unless unit suites, the recreate-survival smoke test, the full
-    # e2e suites, AND the release-notes check are green. Production pulls these
-    # images; a red suite must mean no artifact. The cost is publish latency
-    # (e2e is the long pole); a genuinely flaky e2e test blocks releases and
-    # should be treated as a release blocker itself, not routed around.
+    # :latest — unless unit suites, the race-detector subset, the
+    # recreate-survival smoke test, the full e2e suites, AND the
+    # release-notes check are green. Production pulls these images; a red
+    # suite must mean no artifact. The cost is publish latency (e2e is the
+    # long pole); a genuinely flaky e2e test blocks releases and should be
+    # treated as a release blocker itself, not routed around.
+    #
+    # `race` is the per-PR subset (see its own comment above), not the
+    # nightly full sweep — the nightly job is a safety net that reports on
+    # its own schedule, not a release gate this job would have to wait on.
     #
     # `release-notes` belongs in this gate rather than beside the release job
     # further down, because the point is that an unannounced release produces
     # no image at all — not that it produces an image with no release page.
-    needs: [test, smoke, e2e, release-notes]
+    needs: [test, race, smoke, e2e, release-notes]
     # Publishes on pushes and on manual runs (workflow_dispatch only fires
     # from main, so a manual run republishes :latest).
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
