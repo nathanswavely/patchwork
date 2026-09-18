@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -230,5 +231,113 @@ func TestNodeTreeCarriesMembershipPolicy(t *testing.T) {
 	}
 	if got[closed] != "invite_only" {
 		t.Errorf("expected membership_policy=invite_only, got %q", got[closed])
+	}
+}
+
+// TestNodeTreeExcludesPrivatePatchAffinity is the regression test for the
+// affinity leak: the shared-member query behind the "affinity" array wasn't
+// scoped to public/active-or-unclaimed nodes the way the node list itself
+// is, and the links it produced were never intersected with the node set
+// the response actually returns. A private patch's id (and hence, since ids
+// are UUIDv7, its creation time) and its overlap score with a public patch
+// could reach an unauthenticated caller through "affinity" even though the
+// private patch never appeared in "tree". Asserting the raw body never
+// contains the private id covers both surfaces at once.
+func TestNodeTreeExcludesPrivatePatchAffinity(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "leak-admin-private", "member")
+
+	publicNode := createTestNode(t, db, admin.ID, "Leak Public", "leak-public", "open")
+	privateNode := createTestNode(t, db, admin.ID, "Leak Private", "leak-private", "open")
+	if _, err := db.Exec(`UPDATE nodes SET visibility = 'private' WHERE id = ?`, privateNode); err != nil {
+		t.Fatalf("make node private: %v", err)
+	}
+
+	// Same admin on both patches — before the fix this alone was enough to
+	// score and serialize a link naming the private patch.
+	createTestMembership(t, db, admin.ID, publicNode, "admin", "active")
+	createTestMembership(t, db, admin.ID, privateNode, "admin", "active")
+
+	r := httptest.NewRequest("GET", "/api/v1/nodes/tree", nil)
+	w := servePublicMux(t, "GET", "/api/v1/nodes/tree", handler.NodeTree(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	body := w.Body.String()
+	if strings.Contains(body, privateNode) {
+		t.Errorf("private patch id %s leaked into the public tree response: %s", privateNode, body)
+	}
+	if !strings.Contains(body, publicNode) {
+		t.Errorf("expected public patch id %s in response: %s", publicNode, body)
+	}
+}
+
+// TestNodeTreeExcludesRemovedPatchAffinity is the same leak, for a
+// soft-deleted patch (nodes.removed_at set) rather than a private one.
+func TestNodeTreeExcludesRemovedPatchAffinity(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "leak-admin-removed", "member")
+
+	publicNode := createTestNode(t, db, admin.ID, "Leak Public Two", "leak-public-2", "open")
+	removedNode := createTestNode(t, db, admin.ID, "Leak Removed", "leak-removed", "open")
+	if _, err := db.Exec(`UPDATE nodes SET removed_at = '2026-01-01T00:00:00Z' WHERE id = ?`, removedNode); err != nil {
+		t.Fatalf("mark node removed: %v", err)
+	}
+
+	createTestMembership(t, db, admin.ID, publicNode, "admin", "active")
+	createTestMembership(t, db, admin.ID, removedNode, "admin", "active")
+
+	r := httptest.NewRequest("GET", "/api/v1/nodes/tree", nil)
+	w := servePublicMux(t, "GET", "/api/v1/nodes/tree", handler.NodeTree(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	body := w.Body.String()
+	if strings.Contains(body, removedNode) {
+		t.Errorf("removed patch id %s leaked into the public tree response: %s", removedNode, body)
+	}
+	if !strings.Contains(body, publicNode) {
+		t.Errorf("expected public patch id %s in response: %s", publicNode, body)
+	}
+}
+
+// TestNodeTreePublicPublicAffinityStillLinks guards against an overcorrection:
+// two public, active patches sharing a member must still produce a link.
+func TestNodeTreePublicPublicAffinityStillLinks(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "leak-admin-both-public", "member")
+
+	nodeA := createTestNode(t, db, admin.ID, "Both Public A", "both-public-a", "open")
+	nodeB := createTestNode(t, db, admin.ID, "Both Public B", "both-public-b", "open")
+
+	createTestMembership(t, db, admin.ID, nodeA, "admin", "active")
+	createTestMembership(t, db, admin.ID, nodeB, "member", "active")
+
+	r := httptest.NewRequest("GET", "/api/v1/nodes/tree", nil)
+	w := servePublicMux(t, "GET", "/api/v1/nodes/tree", handler.NodeTree(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var resp struct {
+		Affinity []struct {
+			Source string `json:"source"`
+			Target string `json:"target"`
+		} `json:"affinity"`
+	}
+	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+
+	found := false
+	for _, l := range resp.Affinity {
+		if (l.Source == nodeA && l.Target == nodeB) || (l.Source == nodeB && l.Target == nodeA) {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected a public-public affinity link between %s and %s, got %+v", nodeA, nodeB, resp.Affinity)
 	}
 }
