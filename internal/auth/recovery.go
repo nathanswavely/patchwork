@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
-	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
@@ -180,7 +180,7 @@ func StepUpWithRecoveryCode(db *database.DB, userID, rawSessionToken, rawCode st
 		return 0, fmt.Errorf("query recovery code: %w", err)
 	}
 
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 	if _, err := tx.Exec(`UPDATE recovery_codes SET used = 1, used_at = ? WHERE id = ?`, now, codeID); err != nil {
 		return 0, fmt.Errorf("mark recovery code used: %w", err)
 	}
@@ -245,7 +245,7 @@ func RedeemRecoveryCode(db *database.DB, username, rawCode string) (*model.User,
 		return nil, fmt.Errorf("query recovery code: %w", err)
 	}
 
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 	if _, err := tx.Exec(`UPDATE recovery_codes SET used = 1, used_at = ? WHERE id = ?`, now, codeID); err != nil {
 		return nil, fmt.Errorf("mark recovery code used: %w", err)
 	}

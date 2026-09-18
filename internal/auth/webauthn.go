@@ -14,6 +14,7 @@ import (
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -376,7 +377,7 @@ func (s *WebAuthnService) FinishRegistration(user *model.User, response *protoco
 		ID:        credID,
 		UserID:    user.ID,
 		Name:      SanitizeCredentialName(name),
-		CreatedAt: time.Now().UTC().Format(time.RFC3339),
+		CreatedAt: clock.Now(),
 	}, nil
 }
 

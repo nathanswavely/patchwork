@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
@@ -62,7 +63,7 @@ const (
 // hourly loop, beside SweepProposals (docs/adr/097) — that one ends windows,
 // this one makes sure the people whose windows they are know about them.
 func SweepVoteNotices(db *database.DB) {
-	nowStr := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	nowStr := clock.Now()
 
 	rows, err := db.Query(`SELECT p.id, p.node_id, n.slug, n.name, p.title, p.voting_ends_at,
 	                              COALESCE(p.duration_hours, 0), COALESCE(p.target_user_id, '')

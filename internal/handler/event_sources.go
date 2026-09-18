@@ -12,6 +12,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -275,7 +276,7 @@ func SyncEventSource(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if lastFetch != nil {
-			if t, err := time.Parse("2006-01-02T15:04:05.000Z", *lastFetch); err == nil && time.Since(t) < time.Minute {
+			if t, err := clock.Parse(*lastFetch); err == nil && time.Since(t) < time.Minute {
 				http.Error(w, `{"error":"this source just synced, try again in a minute"}`, http.StatusTooManyRequests)
 				return
 			}

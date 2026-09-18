@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -200,7 +200,7 @@ func UpdateMyContactItem(db *database.DB) http.HandlerFunc {
 
 		if _, err := db.Exec(
 			`UPDATE contact_items SET kind = ?, value = ?, label = ?, position = ?, updated_at = ? WHERE id = ?`,
-			cur.Kind, cur.Value, cur.Label, cur.Position, time.Now().UTC().Format(time.RFC3339), itemID,
+			cur.Kind, cur.Value, cur.Label, cur.Position, clock.Now(), itemID,
 		); err != nil {
 			http.Error(w, `{"error":"failed to update contact item"}`, http.StatusInternalServerError)
 			return

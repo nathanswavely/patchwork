@@ -11,6 +11,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
@@ -184,7 +185,7 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 
 		apID := ap.NodeAPID(ap.GetDomain(), id)
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 
 		// The verification domain is a trust anchor (docs/adr/030): only a
 		// trusted contributor's website auto-derives one. Ordinary community
@@ -347,7 +348,7 @@ func CreateUnclaimedPatch(db *database.DB) http.HandlerFunc {
 		}
 
 		apID := ap.NodeAPID(ap.GetDomain(), id)
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 
 		_, err := db.Exec(
 			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, status, submitted_by, submission_source, verification_domain, ap_id, created_at, updated_at, follower_permissions)
@@ -402,7 +403,7 @@ func BulkCreateUnclaimed(db *database.DB) http.HandlerFunc {
 
 		created := 0
 		var errors []string
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 
 		for i, n := range req.Nodes {
 			if n.Name == "" {
@@ -598,7 +599,7 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 
 		switch req.Action {
 		case "approve":

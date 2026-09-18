@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -125,7 +126,7 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 		// tally reads as a vote that failed. The amendment branch is left
 		// in place, like a vote that failed leaves it — the proposal page
 		// still shows what was asked for.
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 		if _, err := db.Exec(
 			"UPDATE proposals SET status = 'rejected', state = 'rejected', declined_by = ?, updated_at = ? WHERE id = ?",
 			user.ID, now, proposalID,
@@ -188,10 +189,10 @@ func OpenAdvisoryVote(db *database.DB) http.HandlerFunc {
 			req.DurationHours = 72
 		}
 		now := time.Now().UTC()
-		endsAt := now.Add(time.Duration(req.DurationHours) * time.Hour).Format("2006-01-02T15:04:05.000Z")
+		endsAt := clock.Format(now.Add(time.Duration(req.DurationHours) * time.Hour))
 		if _, err := db.Exec(
 			"UPDATE proposals SET state = 'voting', voting_ends_at = ?, duration_hours = ?, updated_at = ? WHERE id = ?",
-			endsAt, req.DurationHours, now.Format("2006-01-02T15:04:05.000Z"), proposalID,
+			endsAt, req.DurationHours, clock.Format(now), proposalID,
 		); err != nil {
 			http.Error(w, `{"error":"failed to open vote"}`, http.StatusInternalServerError)
 			return
