@@ -184,7 +184,7 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		if req.Timezone != nil {
 			tz := strings.TrimSpace(*req.Timezone)
 			if tz != "" && !settings.ValidTimezone(tz) {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, settings.BadTimezoneMessage)
 				return
 			}
 
@@ -246,10 +246,15 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 					http.Error(w, `{"error":"the timezone was saved but its events could not all be moved"}`, http.StatusInternalServerError)
 					return
 				}
-				auth.LogAuditEvent(db, adminUser.ID, "admin.instance_timezone_changed", "instance", "",
-					fmt.Sprintf(`{"from":%q,"to":%q,"mode":%q,"events_affected":%d,"patches_affected":%d,"events_moved":%d}`,
-						zonePlan.From, zonePlan.To, zonePlan.Mode,
-						zonePlan.EventsAffected, zonePlan.PatchesAffected, zonePlan.EventsMoved), clientIP(r))
+				auth.LogAuditEventJSON(db, adminUser.ID, "admin.instance_timezone_changed", "instance", "",
+					map[string]any{
+						"from":             zonePlan.From,
+						"to":               zonePlan.To,
+						"mode":             zonePlan.Mode,
+						"events_affected":  zonePlan.EventsAffected,
+						"patches_affected": zonePlan.PatchesAffected,
+						"events_moved":     zonePlan.EventsMoved,
+					}, clientIP(r))
 			}
 		}
 
@@ -267,7 +272,7 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			} else {
 				stored, err := normalizeIconDesign(decoded)
 				if err != nil {
-					http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusBadRequest)
+					writeJSONError(w, http.StatusBadRequest, err.Error())
 					return
 				}
 				if err := settings.Set(db, settings.KeyIconDesign, stored); err != nil {

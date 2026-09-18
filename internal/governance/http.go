@@ -174,15 +174,9 @@ func handleUploadPack(w http.ResponseWriter, r *http.Request, nodeID string) {
 	storer := repo.Storer
 
 	// Collect the objects needed
-	var haves []plumbing.Hash
-	for _, h := range upr.Haves {
-		haves = append(haves, h)
-	}
+	haves := append([]plumbing.Hash(nil), upr.Haves...)
 
-	var wants []plumbing.Hash
-	for _, w := range upr.Wants {
-		wants = append(wants, w)
-	}
+	wants := append([]plumbing.Hash(nil), upr.Wants...)
 
 	if len(wants) == 0 {
 		// Nothing wanted — send empty response

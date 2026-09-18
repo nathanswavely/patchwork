@@ -55,7 +55,7 @@ func SetUserEmail(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// lookup is an exact match.
 		email, err := auth.NormalizeEmail(req.Email)
 		if err != nil {
-			http.Error(w, fmt.Sprintf(`{"error":%s}`, jsonString(err.Error())), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -101,10 +101,8 @@ func SetUserEmail(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			`SELECT username FROM users WHERE lower(email) = ? AND id != ?`, email, targetID,
 		).Scan(&holder); {
 		case err == nil:
-			http.Error(w, fmt.Sprintf(
-				`{"error":%s}`,
-				jsonString(fmt.Sprintf("%s already uses that address — an address belongs to one account", holder)),
-			), http.StatusConflict)
+			writeJSONError(w, http.StatusConflict,
+				fmt.Sprintf("%s already uses that address — an address belongs to one account", holder))
 			return
 		case err != sql.ErrNoRows:
 			http.Error(w, `{"error":"failed to check the address"}`, http.StatusInternalServerError)

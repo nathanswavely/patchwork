@@ -224,7 +224,7 @@ func signedWithHeaders(t *testing.T, req *http.Request, keyID, privPEM string, h
 			}
 			parts = append(parts, "host: "+host)
 		default:
-			parts = append(parts, fmt.Sprintf("%s: %s", h, req.Header.Get(http.CanonicalHeaderKey(h))))
+			parts = append(parts, fmt.Sprintf("%s: %s", h, req.Header.Get(h)))
 		}
 	}
 	sum := sha256.Sum256([]byte(strings.Join(parts, "\n")))

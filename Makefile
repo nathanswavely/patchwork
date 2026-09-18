@@ -1,7 +1,7 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate gazetteer \
         release-notes-check sim sim-personas sim-advance sim-sweep sim-status sim-now sim-reset \
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
-        copy-test copy-report
+        copy-test copy-report errcheck errcheck-baseline
 
 # Where `make build` writes the server binary. Override via the environment to
 # build every worktree to one stable path — on Windows the firewall keys its
@@ -49,6 +49,17 @@ test:
 
 test-e2e:
 	cd web && npx playwright test
+
+# CI runs this as scripts/errcheck-check.sh directly; the target exists so
+# the same check is one command to run locally.
+errcheck:
+	bash scripts/errcheck-check.sh
+
+# Regenerates errcheck.baseline from the current tree — the only way the
+# backlog it grandfathers ever shrinks. Review the diff before committing:
+# it should only remove lines (fixed discards) or add ones you meant to add.
+errcheck-baseline:
+	go run github.com/kisielk/errcheck@v1.20.0 ./... 2>&1 | grep -E '^[^:]+:[0-9]+:[0-9]+:' | sed -E 's/^([^:]+):[0-9]+:[0-9]+:/\1:/' | tr '\\' '/' | sort > errcheck.baseline
 
 # Prove instance data survives `docker compose up --force-recreate`
 # (i.e. an image update). Needs docker + curl. See docs/DEPLOYMENT.md.

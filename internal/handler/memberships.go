@@ -3,7 +3,6 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -894,8 +893,8 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 					http.Error(w, `{"error":"failed to approve member"}`, http.StatusInternalServerError)
 					return
 				}
-				auth.LogAuditEvent(db, user.ID, "membership.approve", "membership", memID,
-					fmt.Sprintf(`{"target_user_id":"%s"}`, targetUserID), clientIP(r))
+				auth.LogAuditEventJSON(db, user.ID, "membership.approve", "membership", memID,
+					map[string]any{"target_user_id": targetUserID}, clientIP(r))
 
 				// Notify the approved user.
 				var nodeSlugN, nodeNameN string
@@ -940,8 +939,8 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 				// being able to reach them (docs/adr/083).
 				DropContactSharesFor(db, targetUserID, nodeID)
 
-				auth.LogAuditEvent(db, user.ID, "membership.ban", "membership", memID,
-					fmt.Sprintf(`{"target_user_id":"%s"}`, targetUserID), clientIP(r))
+				auth.LogAuditEventJSON(db, user.ID, "membership.ban", "membership", memID,
+					map[string]any{"target_user_id": targetUserID}, clientIP(r))
 
 				var banSlug, banName string
 				db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&banSlug, &banName)
@@ -965,16 +964,16 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 						http.Error(w, `{"error":"failed to reject member"}`, http.StatusInternalServerError)
 						return
 					}
-					auth.LogAuditEvent(db, user.ID, "membership.reject", "membership", memID,
-						fmt.Sprintf(`{"target_user_id":"%s"}`, targetUserID), clientIP(r))
+					auth.LogAuditEventJSON(db, user.ID, "membership.reject", "membership", memID,
+						map[string]any{"target_user_id": targetUserID}, clientIP(r))
 				} else if currentStatus == "banned" {
 					_, err = db.Exec("UPDATE memberships SET status = 'left' WHERE id = ?", memID)
 					if err != nil {
 						http.Error(w, `{"error":"failed to reinstate member"}`, http.StatusInternalServerError)
 						return
 					}
-					auth.LogAuditEvent(db, user.ID, "membership.reinstate", "membership", memID,
-						fmt.Sprintf(`{"target_user_id":"%s"}`, targetUserID), clientIP(r))
+					auth.LogAuditEventJSON(db, user.ID, "membership.reinstate", "membership", memID,
+						map[string]any{"target_user_id": targetUserID}, clientIP(r))
 
 					var reinstateSlug, reinstateName string
 					db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&reinstateSlug, &reinstateName)
@@ -1141,17 +1140,21 @@ func UpdateMember(db *database.DB) http.HandlerFunc {
 			if restoringEmptyCouncil {
 				if seatID := vacantSeat(db, nodeID); seatID != "" {
 					db.Exec("UPDATE seats SET holder_id = ? WHERE id = ?", targetUserID, seatID)
-					auth.LogAuditEvent(db, user.ID, "seat.filled", "seat", seatID,
-						fmt.Sprintf(`{"node_id":"%s","holder_id":"%s","reason":"council_empty"}`, nodeID, targetUserID), clientIP(r))
+					auth.LogAuditEventJSON(db, user.ID, "seat.filled", "seat", seatID,
+						map[string]any{"node_id": nodeID, "holder_id": targetUserID, "reason": "council_empty"}, clientIP(r))
 				}
 			}
 
-			reason := ""
-			if restoringEmptyCouncil {
-				reason = `,"reason":"council_empty"`
+			roleChangePayload := map[string]any{
+				"target_user_id": targetUserID,
+				"old_role":       currentRole,
+				"new_role":       newRole,
 			}
-			auth.LogAuditEvent(db, user.ID, "membership.role_change", "membership", memID,
-				fmt.Sprintf(`{"target_user_id":"%s","old_role":"%s","new_role":"%s"%s}`, targetUserID, currentRole, newRole, reason), clientIP(r))
+			if restoringEmptyCouncil {
+				roleChangePayload["reason"] = "council_empty"
+			}
+			auth.LogAuditEventJSON(db, user.ID, "membership.role_change", "membership", memID,
+				roleChangePayload, clientIP(r))
 		}
 
 		// Return the updated membership.

@@ -76,7 +76,7 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if len(req.Events) > maxBulkEvents {
-			http.Error(w, fmt.Sprintf(`{"error":"an upload is at most %d events"}`, maxBulkEvents), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("an upload is at most %d events", maxBulkEvents))
 			return
 		}
 
@@ -181,8 +181,8 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "event.bulk_upload", "node", nodeID,
-			fmt.Sprintf(`{"created":%d,"skipped":%d}`, created, skipped), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.bulk_upload", "node", nodeID,
+			map[string]any{"created": created, "skipped": skipped}, clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]int{"created": created, "skipped": skipped})

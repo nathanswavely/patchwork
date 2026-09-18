@@ -1,7 +1,6 @@
 package patchwork
 
 import (
-	"fmt"
 	"os"
 	"regexp"
 	"strconv"
@@ -146,7 +145,7 @@ func dirEntries(t *testing.T, dir, suffix string) []string {
 		names = append(names, e.Name())
 	}
 	if len(names) == 0 {
-		t.Fatal(fmt.Sprintf("no %s files under %s", suffix, dir))
+		t.Fatalf("no %s files under %s", suffix, dir)
 	}
 	return names
 }
