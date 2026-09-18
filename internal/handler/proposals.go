@@ -437,17 +437,21 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''), COALESCE(git_sha,''), COALESCE(state,'voting') FROM proposals WHERE id = ?`, id,
 		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.State)
 
-		// Broadcast to node followers
-		go func() {
-			proposalObj := ap.ProposalToObject(p, ap.GetDomain())
-			activity := map[string]interface{}{
-				"@context": ap.GovernanceContext(),
-				"type":     "Create",
-				"actor":    ap.NodeAPID(ap.GetDomain(), nodeID),
-				"object":   proposalObj,
-			}
-			ap.BroadcastToFollowers(db, "node", nodeID, activity)
-		}()
+		// Broadcast to node followers. The patch is the actor; the author is
+		// named only where their membership of it is not switched out of
+		// sight (docs/adr/006) — writing a proposal takes a membership, so
+		// attributing one asserts that membership to every remote reader.
+		//
+		// Synchronous, for the reason broadcastDocUpdate gives: this only
+		// writes rows to the outbox queue, and a goroutine racing the
+		// assertion leaves a test unable to tell "withheld" from "hasn't run
+		// yet".
+		ap.BroadcastToFollowers(db, "node", nodeID, map[string]interface{}{
+			"@context": ap.GovernanceContext(),
+			"type":     "Create",
+			"actor":    ap.NodeAPID(ap.GetDomain(), nodeID),
+			"object":   ap.ProposalToObject(p, ap.GetDomain(), !membershipHidden(db, nodeID, p.AuthorID)),
+		})
 
 		// Write down who this announcement reaches with standing to vote, so
 		// the hourly pass can tell a person who was never told from one who
@@ -1508,8 +1512,25 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Broadcast vote (non-blocking)
-		go func() {
+		// Broadcast vote.
+		//
+		// A hidden membership must not travel as a fact *or as an inference*
+		// (docs/adr/006). Only a member of this patch may vote on its
+		// proposals, so a gv:Vote carrying an actor and a node is a
+		// membership assertion in all but name — the roster three hundred
+		// lines up substitutes HiddenMemberName for precisely that reason,
+		// and the wire used to announce the name it had just withheld.
+		//
+		// Suppressed rather than anonymized. An activity with the actor
+		// stripped still says somebody in this patch voted approve at 14:03,
+		// which against the patch's own followers collection is often enough
+		// to re-identify on a small patch; and the outcome federates anyway,
+		// as counts, when the proposal resolves. See VoteToActivity.
+		//
+		// Synchronous for the same reason as the create broadcast above: a
+		// suppression that cannot be asserted on is a suppression that can be
+		// deleted without a test noticing.
+		if !membershipHidden(db, nodeID, user.ID) {
 			var pAPID string
 			db.QueryRow("SELECT COALESCE(ap_id,'') FROM proposals WHERE id = ?", proposalID).Scan(&pAPID)
 			if pAPID != "" {
@@ -1520,7 +1541,7 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 				)
 				ap.BroadcastToFollowers(db, "node", nodeID, voteActivity)
 			}
-		}()
+		}
 
 		// Notify proposal author about the vote.
 		var authorID, proposalTitle, nodeSlug, nodeName string
