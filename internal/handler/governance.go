@@ -725,31 +725,33 @@ func governanceFilename(title string) string {
 // Git keeps history and diffs; the DB row is what the governance hub,
 // seamrip, and every other read path serve, so a merged amendment that
 // stays only in git is invisible to the community that just voted it in.
-// This is the symmetric inverse of UpdateGovernanceDoc's DB→git mirror,
-// and like it, best effort: it reads the merged file from git HEAD (the
-// merge is truth, not the proposal's proposed_body) and logs on failure.
+// This is the symmetric inverse of UpdateGovernanceDoc's DB→git mirror: it
+// reads the merged file from git HEAD (the merge is truth, not the
+// proposal's proposed_body). It cannot undo the merge that preceded it, so a
+// failure is returned rather than acted on — the apply paths record it as a
+// divergence between git and the database instead of dropping it.
 //
 // Rules files have their own sync (governance.SyncRulesToDB); only
 // markdown docs come through here.
-func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID string) {
+func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID string) error {
 	if targetDoc == "" || !strings.HasSuffix(targetDoc, ".md") {
-		return
+		return nil
 	}
 	dataDir := governance.GetDataDir()
 	if dataDir == "" {
-		return
+		return nil
 	}
 	content, err := governance.GetDocument(dataDir, nodeID, targetDoc)
 	if err != nil {
 		log.Printf("governance: DB sync of %s for node %s: read merged file: %v", targetDoc, nodeID, err)
-		return
+		return err
 	}
 
 	// Find the row this file mirrors, using the same identity rule as the
 	// DB→git direction: filename = governanceFilename(title).
 	rows, err := db.Query("SELECT id, title, version FROM governance_docs WHERE node_id = ?", nodeID)
 	if err != nil {
-		return
+		return err
 	}
 	var docID string
 	var version int
@@ -770,11 +772,11 @@ func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID 
 		// Body only — the title stays, because the title IS the filename
 		// identity linking this row to targetDoc; renaming here would orphan
 		// the git file for every future mirror write.
-		db.Exec(
+		_, err := db.Exec(
 			`UPDATE governance_docs SET body = ?, version = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
 			content, version+1, docID,
 		)
-		return
+		return err
 	}
 
 	// No row yet — a doc that until now lived only in git (pre-ADR-011
@@ -783,10 +785,11 @@ func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID 
 	if title == "" {
 		title = titleFromGovernanceFilename(targetDoc)
 	}
-	db.Exec(
+	_, err = db.Exec(
 		`INSERT INTO governance_docs (id, node_id, title, body, created_by) VALUES (?, ?, ?, ?, ?)`,
 		auth.NewUUIDv7(), nodeID, title, content, editorID,
 	)
+	return err
 }
 
 // titleFromGovernanceFilename inverts governanceFilename well enough for a
