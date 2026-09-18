@@ -240,9 +240,12 @@ test.describe('Notifications — Preferences', () => {
     await goto(page, '/settings/notifications');
     const firstToggle = page.locator('.prefs-toggle input').first();
     if (await firstToggle.isVisible()) {
+      // The save is debounced 500ms client-side; wait on the PUT it fires
+      // rather than the debounce delay itself.
+      const savePromise = page.waitForResponse((resp) =>
+        resp.url().includes('/api/v1/notifications/preferences') && resp.request().method() === 'PUT');
       await firstToggle.click();
-      // Wait for debounced save
-      await page.waitForTimeout(1000);
+      await savePromise;
       // Should not show any error toast
       const errorToast = page.locator('.toast-error');
       const hasError = await errorToast.isVisible().catch(() => false);
@@ -272,8 +275,12 @@ test.describe('Notifications — Patch Config', () => {
     await goto(page, `/patches/lancaster-arts-district/settings/notifications`);
     const firstToggle = page.locator('.toggle-label input').first();
     if (await firstToggle.isVisible()) {
+      // This save fires immediately on toggle, no debounce — wait on the
+      // PUT itself rather than a fixed delay.
+      const savePromise = page.waitForResponse((resp) =>
+        resp.url().includes('/notification-config') && resp.request().method() === 'PUT');
       await firstToggle.click();
-      await page.waitForTimeout(500);
+      await savePromise;
       await expectNoError(page);
     }
   });
