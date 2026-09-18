@@ -187,8 +187,8 @@ func DeleteMyAccount(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// (user.logout, membership.leave), with the acting user recorded:
 		// audit_log.user_id is ON DELETE SET NULL and the row is not deleted,
 		// so the entry keeps pointing at the tombstone it describes.
-		auth.LogAuditEvent(db, user.ID, "user.deleted", "user", user.ID,
-			fmt.Sprintf(`{"username":%s}`, jsonString(user.Username)), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "user.deleted", "user", user.ID,
+			map[string]any{"username": user.Username}, clientIP(r))
 
 		// Federation, after the erase so a delivery failure cannot leave a
 		// half-deleted account behind. Both directions: tell the servers that
@@ -220,6 +220,15 @@ func writeJSONStatus(w http.ResponseWriter, status int, body map[string]interfac
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(body)
+}
+
+// writeJSONError writes a JSON error body, marshaling msg rather than
+// splicing it into a hand-built `{"error":"..."}` literal. Every error
+// message here happens to be validated or fixed-set today, which is exactly
+// why a hand-built literal is a landmine: the first free-text value passed
+// through one produces an unescaped quote and a body that fails to parse.
+func writeJSONError(w http.ResponseWriter, status int, msg string) {
+	writeJSONStatus(w, status, map[string]interface{}{"error": msg})
 }
 
 // actorFollowerInboxes returns the remote inboxes that follow this person's

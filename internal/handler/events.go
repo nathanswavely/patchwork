@@ -458,20 +458,20 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// A flyer is a reference, and its description comes with it
 		// (docs/adr/007).
 		if msg := validateImageRef(req.ImageURL, req.ImageAlt); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		if msg := validateEventURL(req.EventURL); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		req.Timezone = strings.TrimSpace(req.Timezone)
 		if req.Timezone != "" && !settings.ValidTimezone(req.Timezone) {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, settings.BadTimezoneMessage)
 			return
 		}
 		if msg := validateRecurrence(req.Recurrence); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		if req.NodeID == "" || req.Title == "" || req.StartsAt == "" {
@@ -546,7 +546,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "event.create", "event", id, fmt.Sprintf(`{"status":"%s"}`, status), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.create", "event", id, map[string]any{"status": status}, clientIP(r))
 
 		var e model.Event
 		db.QueryRow(
@@ -673,7 +673,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			if tz = strings.TrimSpace(tz); tz == "" {
 				req["timezone"] = nil
 			} else if !settings.ValidTimezone(tz) {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, settings.BadTimezoneMessage), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, settings.BadTimezoneMessage)
 				return
 			} else {
 				req["timezone"] = tz
@@ -686,7 +686,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		if raw, present := req["recurrence"]; present {
 			v, _ := raw.(string)
 			if msg := validateRecurrence(v); msg != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
 			req["recurrence"] = ""
@@ -695,7 +695,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		// Same pairing rule as a patch's image: a PATCH carrying one half is
 		// judged against the stored other half (docs/adr/007).
 		if msg := checkPatchedImage(db, "events", eventID, req); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
@@ -705,7 +705,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			link, _ := raw.(string)
 			link = strings.TrimSpace(link)
 			if msg := validateEventURL(link); msg != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
 			req["event_url"] = link

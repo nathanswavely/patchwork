@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -160,12 +159,12 @@ func UpdatePatchReport(db *database.DB) http.HandlerFunc {
 			switch rpt.EntityType {
 			case "notice":
 				db.Exec("DELETE FROM notices WHERE id = ? AND node_id = ?", rpt.EntityID, nodeID)
-				auth.LogAuditEvent(db, user.ID, "notice.delete", "notice", rpt.EntityID,
-					fmt.Sprintf(`{"node_id":"%s","report_id":"%s"}`, nodeID, reportID), clientIP(r))
+				auth.LogAuditEventJSON(db, user.ID, "notice.delete", "notice", rpt.EntityID,
+					map[string]any{"node_id": nodeID, "report_id": reportID}, clientIP(r))
 			case "reply":
 				db.Exec("DELETE FROM notice_replies WHERE id = ? AND notice_id IN (SELECT id FROM notices WHERE node_id = ?)", rpt.EntityID, nodeID)
-				auth.LogAuditEvent(db, user.ID, "notice.reply_delete", "notice_reply", rpt.EntityID,
-					fmt.Sprintf(`{"node_id":"%s","report_id":"%s"}`, nodeID, reportID), clientIP(r))
+				auth.LogAuditEventJSON(db, user.ID, "notice.reply_delete", "notice_reply", rpt.EntityID,
+					map[string]any{"node_id": nodeID, "report_id": reportID}, clientIP(r))
 			}
 		case "close_replies":
 			noticeID := rpt.EntityID
@@ -173,8 +172,8 @@ func UpdatePatchReport(db *database.DB) http.HandlerFunc {
 				db.QueryRow("SELECT notice_id FROM notice_replies WHERE id = ?", rpt.EntityID).Scan(&noticeID)
 			}
 			db.Exec("UPDATE notices SET replies_open = 0 WHERE id = ? AND node_id = ?", noticeID, nodeID)
-			auth.LogAuditEvent(db, user.ID, "notice.replies", "notice", noticeID,
-				fmt.Sprintf(`{"replies_open":false,"report_id":"%s"}`, reportID), clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "notice.replies", "notice", noticeID,
+				map[string]any{"replies_open": false, "report_id": reportID}, clientIP(r))
 		default:
 			http.Error(w, `{"error":"action must be dismiss, remove, or close_replies"}`, http.StatusBadRequest)
 			return
@@ -192,8 +191,8 @@ func UpdatePatchReport(db *database.DB) http.HandlerFunc {
 		// panel: reviewed, and no more. What was decided is the room's.
 		CreateNotification(db, rpt.ReporterID, "report.resolved", "Report reviewed",
 			"Your report was reviewed by the patch's admins.", "")
-		auth.LogAuditEvent(db, user.ID, "report.resolve", "report", reportID,
-			fmt.Sprintf(`{"action":"%s","node_id":"%s"}`, req.Action, nodeID), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "report.resolve", "report", reportID,
+			map[string]any{"action": req.Action, "node_id": nodeID}, clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": newStatus})

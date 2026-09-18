@@ -462,8 +462,8 @@ func UpdateEventSource(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to update event source"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event_source.update", "event_source", sourceID,
-			fmt.Sprintf(`{"local_time_stamped_utc":%t}`, *req.LocalTimeStampedUTC), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event_source.update", "event_source", sourceID,
+			map[string]any{"local_time_stamped_utc": *req.LocalTimeStampedUTC}, clientIP(r))
 
 		sources, err := scanEventSources(db, nodeID)
 		if err != nil {

@@ -113,7 +113,7 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// vanishing.
 		tagIDs, unknownTag := resolveTagIDs(db, req.Tags)
 		if unknownTag != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, "unknown tag: "+unknownTag)
 			return
 		}
 
@@ -123,7 +123,10 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		var existingSlug string
 		db.QueryRow("SELECT slug FROM nodes WHERE slug = ? AND status IN ('active','unclaimed','pending_review')", baseSlug).Scan(&existingSlug)
 		if existingSlug != "" {
-			http.Error(w, fmt.Sprintf(`{"error":"a patch with a similar name already exists","existing_slug":"%s"}`, existingSlug), http.StatusConflict)
+			writeJSONStatus(w, http.StatusConflict, map[string]interface{}{
+				"error":         "a patch with a similar name already exists",
+				"existing_slug": existingSlug,
+			})
 			return
 		}
 
@@ -224,11 +227,11 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// this call had them the other way round, so every node.submit entry
 		// ever written filed its status as an address and the address as its
 		// metadata.
-		details := fmt.Sprintf(`{"status":%q}`, status)
+		details := map[string]any{"status": status}
 		if trusted {
-			details = fmt.Sprintf(`{"status":%q,"trusted":true}`, status)
+			details["trusted"] = true
 		}
-		auth.LogAuditEvent(db, user.ID, "node.submit", "node", id, details, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "node.submit", "node", id, details, clientIP(r))
 
 		if attachNow {
 			attachSuggestedFeed(db, r, id, feedURL, user.ID)
@@ -331,7 +334,7 @@ func CreateUnclaimedPatch(db *database.DB) http.HandlerFunc {
 		if req.VerificationDomain != "" {
 			d, err := validateExplicitDomain(req.VerificationDomain)
 			if err != nil {
-				http.Error(w, fmt.Sprintf(`{"error":"%s"}`, err.Error()), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, err.Error())
 				return
 			}
 			verificationDomain = d
@@ -449,7 +452,7 @@ func BulkCreateUnclaimed(db *database.DB) http.HandlerFunc {
 			created++
 		}
 
-		auth.LogAuditEvent(db, user.ID, "node.bulk_create_unclaimed", "", "", r.RemoteAddr, fmt.Sprintf(`{"created":%d}`, created))
+		auth.LogAuditEventJSON(db, user.ID, "node.bulk_create_unclaimed", "", "", map[string]any{"created": created}, r.RemoteAddr)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -604,14 +607,14 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 		case "approve":
 			verificationDomain, derr := validateExplicitDomain(req.VerificationDomain)
 			if derr != nil {
-				http.Error(w, fmt.Sprintf(`{"error":"%s"}`, derr.Error()), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, derr.Error())
 				return
 			}
 			// Validate the tag override before touching the node, so a typo
 			// rejects the request instead of half-approving.
 			tagIDs, unknownTag := resolveTagIDs(db, req.Tags)
 			if unknownTag != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, "unknown tag: "+unknownTag), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, "unknown tag: "+unknownTag)
 				return
 			}
 			// The review is over either way, so the parked feed goes either
@@ -646,8 +649,8 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 					granted = true
 					// On the person, not on the patch: what changed is what
 					// they may do, and Admin → Users is where it is revoked.
-					auth.LogAuditEvent(db, user.ID, "trust.granted", "user", *submittedBy,
-						fmt.Sprintf(`{"scope":"patch","node_id":%q,"source":"suggestion"}`, nodeID), clientIP(r))
+					auth.LogAuditEventJSON(db, user.ID, "trust.granted", "user", *submittedBy,
+						map[string]any{"scope": "patch", "node_id": nodeID, "source": "suggestion"}, clientIP(r))
 				}
 			}
 			holdsTrust := granted || quiltWide
@@ -668,7 +671,7 @@ func ReviewSubmission(db *database.DB) http.HandlerFunc {
 			notifySubmissionApproved(submittedBy, user.ID, nodeID, slug, name, holdsTrust, attached)
 		case "reject":
 			db.Exec("UPDATE nodes SET archived_from = status, status = 'archived', removed_at = ?, updated_at = ? WHERE id = ?", now, now, nodeID)
-			auth.LogAuditEvent(db, user.ID, "node.submission_rejected", "node", nodeID, fmt.Sprintf(`{"note":%q}`, req.Note), clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "node.submission_rejected", "node", nodeID, map[string]any{"note": req.Note}, clientIP(r))
 
 			// The note the review form already collected, said to the person
 			// it is about. Until now it only ever reached the audit log

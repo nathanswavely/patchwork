@@ -197,7 +197,10 @@ func CreateTag(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to create tag"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "tag.suggestion_approved", "tag", id, r.RemoteAddr, fmt.Sprintf(`{"name":%q,"via":"create"}`, name))
+			// metadata/ip were swapped here (the same class of bug node.submit
+			// had); LogAuditEventJSON's typed signature makes the swap
+			// impossible to reproduce, so this fixes it in passing.
+			auth.LogAuditEventJSON(db, user.ID, "tag.suggestion_approved", "tag", id, map[string]any{"name": name, "via": "create"}, r.RemoteAddr)
 			notifyTagDecision(tagWearers(db, id), name, name, true)
 			writeTagByID(w, db, id)
 			return
@@ -571,7 +574,8 @@ func DecideTagSuggestion(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to reject suggestion"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "tag.suggestion_rejected", "tag", id, r.RemoteAddr, fmt.Sprintf(`{"name":%q}`, originalName))
+			// metadata/ip were swapped here; see the note above tag.suggestion_approved.
+			auth.LogAuditEventJSON(db, user.ID, "tag.suggestion_rejected", "tag", id, map[string]any{"name": originalName}, r.RemoteAddr)
 			notifyTagDecision(wearers, originalName, originalName, false)
 
 		case "approve":
@@ -601,8 +605,9 @@ func DecideTagSuggestion(db *database.DB) http.HandlerFunc {
 					targetID = existingID
 					if existingStatus == tagApproved && req.Motif == "" {
 						// Already vocabulary; nothing to approve.
-						auth.LogAuditEvent(db, user.ID, "tag.suggestion_approved", "tag", targetID, r.RemoteAddr,
-							fmt.Sprintf(`{"name":%q,"suggested_as":%q,"merged":true}`, finalName, originalName))
+						// metadata/ip were swapped here; see the note above tag.suggestion_approved.
+						auth.LogAuditEventJSON(db, user.ID, "tag.suggestion_approved", "tag", targetID,
+							map[string]any{"name": finalName, "suggested_as": originalName, "merged": true}, r.RemoteAddr)
 						notifyTagDecision(tagWearers(db, targetID), originalName, finalName, true)
 						writeTagByID(w, db, targetID)
 						return
@@ -627,8 +632,9 @@ func DecideTagSuggestion(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to approve suggestion"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "tag.suggestion_approved", "tag", targetID, r.RemoteAddr,
-				fmt.Sprintf(`{"name":%q,"suggested_as":%q}`, finalName, originalName))
+			// metadata/ip were swapped here; see the note above tag.suggestion_approved.
+			auth.LogAuditEventJSON(db, user.ID, "tag.suggestion_approved", "tag", targetID,
+				map[string]any{"name": finalName, "suggested_as": originalName}, r.RemoteAddr)
 			notifyTagDecision(tagWearers(db, targetID), originalName, finalName, true)
 			writeTagByID(w, db, targetID)
 			return

@@ -328,7 +328,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			authorName, authorEmail := commitIdentity(user)
 			sha, branchErr := governance.CreateBranch(governance.GetDataDir(), nodeID, branchName, req.TargetDoc, req.ProposedBody, authorName, authorEmail, commitMsg)
 			if branchErr != nil {
-				http.Error(w, fmt.Sprintf(`{"error":"failed to create amendment branch: %s"}`, branchErr.Error()), http.StatusInternalServerError)
+				writeJSONError(w, http.StatusInternalServerError, "failed to create amendment branch: "+branchErr.Error())
 				return
 			}
 			gitSHA = sha
@@ -447,7 +447,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		auth.LogAuditEvent(db, user.ID, "proposal.create", "proposal", id, fmt.Sprintf(`{"state":"%s","auto_applied":%v}`, initialState, autoApplyNow), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "proposal.create", "proposal", id, map[string]any{"state": initialState, "auto_applied": autoApplyNow}, clientIP(r))
 
 		var p model.Proposal
 		db.QueryRow(
@@ -1057,8 +1057,14 @@ func resolveProposal(db *database.DB, proposalID string) string {
 		}
 	}
 
-	auth.LogAuditEvent(db, "", "proposal.resolved", "proposal", proposalID,
-		fmt.Sprintf(`{"result":"%s","approve":%d,"reject":%d,"abstain":%d,"quorum_met":true}`, newStatus, approveCount, rejectCount, abstainCount), "")
+	auth.LogAuditEventJSON(db, "", "proposal.resolved", "proposal", proposalID,
+		map[string]any{
+			"result":     newStatus,
+			"approve":    approveCount,
+			"reject":     rejectCount,
+			"abstain":    abstainCount,
+			"quorum_met": true,
+		}, "")
 
 	notifyProposalResolved(db, p, newStatus)
 

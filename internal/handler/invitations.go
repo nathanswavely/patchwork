@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -170,8 +169,8 @@ func InviteMember(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "membership.invite", "membership", memID,
-			fmt.Sprintf(`{"target_user_id":"%s"}`, targetID), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "membership.invite", "membership", memID,
+			map[string]any{"target_user_id": targetID}, clientIP(r))
 
 		notify(notifications.Event{
 			Type:     notifications.MembershipInvited,
@@ -312,8 +311,8 @@ func RescindInvitation(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to rescind invitation"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "membership.rescind_invite", "membership", memID,
-			fmt.Sprintf(`{"target_user_id":"%s"}`, targetID), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "membership.rescind_invite", "membership", memID,
+			map[string]any{"target_user_id": targetID}, clientIP(r))
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "rescinded"})
 	}

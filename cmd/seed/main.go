@@ -1604,7 +1604,11 @@ func (s *seeder) seedAuditLog() {
 			entityID = auth.NewUUIDv7()
 		}
 
-		metadata := fmt.Sprintf(`{"action_detail":"%s"}`, a.desc)
+		metadataBytes, err := json.Marshal(map[string]any{"action_detail": a.desc})
+		if err != nil {
+			metadataBytes = []byte("{}")
+		}
+		metadata := string(metadataBytes)
 		createdAt := s.ts(s.rng.Intn(120) + 1)
 
 		s.db.Exec(`INSERT INTO audit_log (id, user_id, action, entity_type, entity_id, metadata, ip_address, created_at)

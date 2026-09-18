@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -99,8 +98,15 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		approve, reject, abstain := tallyProposal(db, proposalID)
-		detail := fmt.Sprintf(`{"decision":"%s","from_state":"%s","advice":{"approve":%d,"reject":%d,"abstain":%d}}`,
-			req.Decision, p.State, approve, reject, abstain)
+		detail := map[string]any{
+			"decision":   req.Decision,
+			"from_state": p.State,
+			"advice": map[string]any{
+				"approve": approve,
+				"reject":  reject,
+				"abstain": abstain,
+			},
+		}
 
 		var nodeSlug, nodeName string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", p.NodeID).Scan(&nodeSlug, &nodeName)
@@ -113,7 +119,7 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
 			notifyProposalApplied(db, p.NodeID, proposalID, user.ID)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"status": "approved", "state": "in_effect"})
@@ -133,7 +139,7 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to decline proposal"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
 		notify(notifications.Event{
 			Type:     notifications.ProposalRejected,
 			NodeID:   p.NodeID,
@@ -196,8 +202,8 @@ func OpenAdvisoryVote(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to open vote"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "proposal.advisory_vote_opened", "proposal", proposalID,
-			fmt.Sprintf(`{"duration_hours":%d}`, req.DurationHours), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "proposal.advisory_vote_opened", "proposal", proposalID,
+			map[string]any{"duration_hours": req.DurationHours}, clientIP(r))
 
 		// The advisory ballot opens here rather than at creation, so this is
 		// where its electorate is written down as told (docs/adr/093).
