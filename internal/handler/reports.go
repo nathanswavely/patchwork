@@ -83,7 +83,7 @@ func CreateReport(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "report.create", "report", id, fmt.Sprintf(`{"entity_type":"%s","entity_id":"%s"}`, req.EntityType, req.EntityID), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "report.create", "report", id, map[string]any{"entity_type": req.EntityType, "entity_id": req.EntityID}, clientIP(r))
 
 		if roomNodeID != "" {
 			var slug, name string
@@ -278,8 +278,8 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 		// (notice_reports.go) never had this hole: it maps an action to a
 		// status itself and never takes one from the request.
 		if req.Status != nil && !oneOf(*req.Status, reportStatuses) {
-			http.Error(w, fmt.Sprintf(`{"error":"status must be one of %s"}`,
-				strings.Join(reportStatuses, ", ")), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("status must be one of %s",
+				strings.Join(reportStatuses, ", ")))
 			return
 		}
 
@@ -290,8 +290,8 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 		// and a refusal after that write would leave the half of the request
 		// that did land in place.
 		if req.Action != nil && !oneOf(*req.Action, reportActions) {
-			http.Error(w, fmt.Sprintf(`{"error":"action must be one of %s"}`,
-				strings.Join(reportActions, ", ")), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("action must be one of %s",
+				strings.Join(reportActions, ", ")))
 			return
 		}
 
@@ -344,8 +344,8 @@ func UpdateReport(db *database.DB) http.HandlerFunc {
 						"A moderator reviewed a report about "+what,
 						"An instance admin reviewed a report about "+what+" and issued a warning. "+
 							"Nothing was changed or removed.", link)
-					auth.LogAuditEvent(db, user.ID, "admin.user_warn", "user", warnedID,
-						fmt.Sprintf(`{"report_id":%q,"entity_type":%q}`, reportID, rpt.EntityType), clientIP(r))
+					auth.LogAuditEventJSON(db, user.ID, "admin.user_warn", "user", warnedID,
+						map[string]any{"report_id": reportID, "entity_type": rpt.EntityType}, clientIP(r))
 				}
 
 			case "suspend_user":

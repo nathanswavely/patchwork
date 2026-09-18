@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -86,8 +85,8 @@ func lapseProposal(db *database.DB, p model.Proposal, votes int) {
 	db.QueryRow(`SELECT slug, name FROM nodes WHERE id = ?`, p.NodeID).Scan(&slug, &name)
 
 	// No actor: the clock closed it, not a person.
-	auth.LogAuditEvent(db, "", "proposal.lapsed", "proposal", p.ID,
-		fmt.Sprintf(`{"node_id":%q,"votes":%d}`, p.NodeID, votes), "")
+	auth.LogAuditEventJSON(db, "", "proposal.lapsed", "proposal", p.ID,
+		map[string]any{"node_id": p.NodeID, "votes": votes}, "")
 	notify(notifications.Event{
 		Type:     notifications.ProposalRejected,
 		NodeID:   p.NodeID,

@@ -628,8 +628,8 @@ func StepUpRecovery(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "auth.step_up", "user", user.ID,
-			fmt.Sprintf(`{"method":"recovery_code","codes_remaining":%d}`, remaining), ip)
+		auth.LogAuditEventJSON(db, user.ID, "auth.step_up", "user", user.ID,
+			map[string]any{"method": "recovery_code", "codes_remaining": remaining}, ip)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -779,7 +779,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		if req.MovedTo != nil {
 			moved := strings.TrimSpace(*req.MovedTo)
 			if msg := validateMovedTo(moved); msg != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
 			var stored interface{}

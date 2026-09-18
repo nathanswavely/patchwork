@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -89,7 +88,7 @@ func IssueAttestation(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 		if err := attest.ValidateNonce(req.Nonce); err != nil {
-			http.Error(w, fmt.Sprintf(`{"error":%s}`, jsonString(err.Error())), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, err.Error())
 			return
 		}
 

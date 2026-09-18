@@ -389,7 +389,7 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// only part that proves anything.
 			at := strings.LastIndex(claimEmail, "@")
 			if claimEmail[at+1:] != verificationDomain {
-				http.Error(w, fmt.Sprintf(`{"error":"the email must be at @%s"}`, verificationDomain), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("the email must be at @%s", verificationDomain))
 				return
 			}
 			emailExpiry = clock.Format(time.Now().Add(claimEmailTokenTTL))
@@ -424,7 +424,12 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "node.claim_requested", "node", nodeID, r.RemoteAddr, fmt.Sprintf(`{"method":"%s"}`, req.Method))
+		// The metadata/ip arguments were swapped here (the IP landed in the
+		// metadata column and the payload landed in the ip column) — the
+		// same class of bug node.submit had. LogAuditEventJSON's typed
+		// signature makes that swap impossible to reproduce, so this fixes
+		// it in passing.
+		auth.LogAuditEventJSON(db, user.ID, "node.claim_requested", "node", nodeID, map[string]any{"method": req.Method}, r.RemoteAddr)
 
 		notify(notifications.Event{
 			Type:     notifications.AdminClaimRequest,
@@ -594,7 +599,7 @@ func WithdrawClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if claimStatus != "pending" {
-			http.Error(w, fmt.Sprintf(`{"error":"claim is already %s"}`, claimStatus), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("claim is already %s", claimStatus))
 			return
 		}
 
@@ -767,7 +772,7 @@ func VerifyClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if claim.Status != "pending" {
-			http.Error(w, fmt.Sprintf(`{"error":"claim is already %s"}`, claim.Status), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("claim is already %s", claim.Status))
 			return
 		}
 
@@ -1059,7 +1064,7 @@ func AdminSetVerificationDomain(db *database.DB) http.HandlerFunc {
 
 		domain, err := validateExplicitDomain(req.Domain)
 		if err != nil {
-			http.Error(w, fmt.Sprintf(`{"error":"%s"}`, err.Error()), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -1075,7 +1080,8 @@ func AdminSetVerificationDomain(db *database.DB) http.HandlerFunc {
 
 		now := clock.Now()
 		db.Exec("UPDATE nodes SET verification_domain = ?, updated_at = ? WHERE id = ?", domain, now, nodeID)
-		auth.LogAuditEvent(db, admin.ID, "node.verification_domain_set", "node", nodeID, r.RemoteAddr, fmt.Sprintf(`{"domain":"%s"}`, domain))
+		// Metadata/ip were swapped here; see the note on node.claim_requested above.
+		auth.LogAuditEventJSON(db, admin.ID, "node.verification_domain_set", "node", nodeID, map[string]any{"domain": domain}, r.RemoteAddr)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok", "verification_domain": domain})
@@ -1137,7 +1143,8 @@ func AdminAssignOwner(db *database.DB) http.HandlerFunc {
 		}
 		finalizeClaimApproval(db, claimID, nodeID, slug, nodeName, req.UserID, expiresAt)
 
-		auth.LogAuditEvent(db, admin.ID, "node.owner_assigned", "node", nodeID, r.RemoteAddr, fmt.Sprintf(`{"assigned_to":"%s"}`, req.UserID))
+		// Metadata/ip were swapped here; see the note on node.claim_requested above.
+		auth.LogAuditEventJSON(db, admin.ID, "node.owner_assigned", "node", nodeID, map[string]any{"assigned_to": req.UserID}, r.RemoteAddr)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{"status": "ok", "slug": slug, "setup_required": true})
@@ -1309,8 +1316,8 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if req.MembershipPolicy != "" && !oneOf(req.MembershipPolicy, membershipPolicies) {
-			http.Error(w, fmt.Sprintf(`{"error":"membership_policy must be one of %s"}`,
-				strings.Join(membershipPolicies, ", ")), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("membership_policy must be one of %s",
+				strings.Join(membershipPolicies, ", ")))
 			return
 		}
 		if req.Template != "" {
@@ -1343,7 +1350,7 @@ func SetupClaim(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if claimStatus != "approved" {
-			http.Error(w, fmt.Sprintf(`{"error":"claim is %s, not approved"}`, claimStatus), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("claim is %s, not approved", claimStatus))
 			return
 		}
 

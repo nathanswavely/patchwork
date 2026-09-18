@@ -343,8 +343,14 @@ func CreateTrustRequest(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		auth.LogAuditEvent(db, user.ID, "trust.requested", "trust_request", id,
-			fmt.Sprintf(`{"scope":%q,"node_ids":%s}`, req.Scope, jsonIDs(nodeIDs)), clientIP(r))
+		// Always an array, even for an empty/nil request, so the field has
+		// one type in the audit log.
+		auditNodeIDs := nodeIDs
+		if auditNodeIDs == nil {
+			auditNodeIDs = []string{}
+		}
+		auth.LogAuditEventJSON(db, user.ID, "trust.requested", "trust_request", id,
+			map[string]any{"scope": req.Scope, "node_ids": auditNodeIDs}, clientIP(r))
 
 		notify(notifications.Event{
 			Type:     notifications.AdminTrustRequest,
@@ -366,19 +372,6 @@ func trustAskerName(displayName, username string) string {
 		return displayName
 	}
 	return username
-}
-
-// jsonIDs renders a string slice as a JSON array for an audit metadata line,
-// always an array so the field has one type.
-func jsonIDs(ids []string) string {
-	if ids == nil {
-		ids = []string{}
-	}
-	b, err := json.Marshal(ids)
-	if err != nil {
-		return "[]"
-	}
-	return string(b)
 }
 
 // ListTrustRequests handles GET /api/v1/admin/trust-requests — the queue,
