@@ -10,9 +10,9 @@
   let membershipRole = $derived(patch.value.membershipRole);
 
   // The New Proposal button on the proposals list is already gated, but this
-  // route is reachable by URL, so the page states the rule itself. Not
-  // `isMember` — the node payload sets is_member for followers too, and
-  // following carries no governance rights.
+  // route is reachable by URL, so the page states the rule itself. From
+  // the role: following carries no governance rights, and docs/adr/117 is
+  // why is_member now agrees.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
   // The patch's decision method decides what this form is (docs/adr/092).

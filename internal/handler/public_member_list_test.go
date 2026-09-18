@@ -100,21 +100,49 @@ func rosterLists(names []string, want string) bool {
 	return false
 }
 
-func TestPublicMemberListDefaultsToEveryone(t *testing.T) {
+// A patch is born with its roster closed
+// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). This test
+// asserted the opposite until then, on docs/adr/095's reasoning that
+// 'everyone' was what every existing patch already did. It was, and admins
+// consistently believed otherwise — so the default moved to meet the belief
+// rather than the history.
+func TestPublicMemberListDefaultsToNobody(t *testing.T) {
 	db := setupTestDB(t)
 	f := newRosterFixture(t, db, "rosterdefault")
 	_ = f
 
 	names, count, setting := listRoster(t, db, "rosterdefault", "")
+	if setting != "nobody" {
+		t.Errorf("a patch that has never touched the setting should read as nobody, got %q", setting)
+	}
+	if len(names) != 0 {
+		t.Errorf("a closed roster names nobody to a visitor, got %v", names)
+	}
+	// The count is the one thing the control never withholds (docs/adr/095
+	// decision 3): the quilt sizes a patch's tile by it, so a visitor who is
+	// told no names is still told how many. Admin and member; the follower
+	// has never counted (CONTEXT.md "Member count").
+	if count != 2 {
+		t.Errorf("expected member_count 2 even with the list closed, got %d", count)
+	}
+}
+
+// And opening it is an act, which is the other half of the same rule.
+func TestPublicMemberListOpensWhenThePatchSaysSo(t *testing.T) {
+	db := setupTestDB(t)
+	f := newRosterFixture(t, db, "rosteropened")
+	openMemberList(t, db, f.nodeID)
+
+	names, count, setting := listRoster(t, db, "rosteropened", "")
 	if setting != "everyone" {
-		t.Errorf("a patch that has never touched the setting should read as everyone, got %q", setting)
+		t.Errorf("setting = %q, want everyone", setting)
 	}
 	if len(names) != 2 {
 		t.Errorf("expected the admin and the member, got %v", names)
 	}
 	// The follower is absent for the reason it always was (docs/adr/006),
 	// not because of anything this setting does.
-	if rosterLists(names, "rosterdefault-follower") {
+	if rosterLists(names, "rosteropened-follower") {
 		t.Error("follower rows are not public")
 	}
 	if count != 2 {
@@ -351,6 +379,9 @@ func TestPublicMemberListWriteIsValidatedAndReadBack(t *testing.T) {
 func TestPublicMemberListIsAdminOnly(t *testing.T) {
 	db := setupTestDB(t)
 	f := newRosterFixture(t, db, "rosterauthz")
+	// Opened first so the refusal below has something to fail to change: a
+	// PATCH to 'nobody' on a patch already closed proves nothing.
+	openMemberList(t, db, f.nodeID)
 
 	r := authedRequest("PATCH", "/api/v1/nodes/rosterauthz",
 		map[string]interface{}{"public_member_list": "nobody"}, f.memberToken)
@@ -360,7 +391,7 @@ func TestPublicMemberListIsAdminOnly(t *testing.T) {
 
 	var got string
 	db.QueryRow("SELECT public_member_list FROM nodes WHERE id = ?", f.nodeID).Scan(&got)
-	if got != "everyone" {
+	if got != "everyone" { // the fixture opened it; a refused PATCH left it alone
 		t.Errorf("expected the setting untouched, got %q", got)
 	}
 }

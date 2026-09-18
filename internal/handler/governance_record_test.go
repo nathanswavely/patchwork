@@ -55,6 +55,7 @@ func TestGovernanceRecord_OnlySettledThings(t *testing.T) {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, "rec1", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec One", "rec-one", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	seedSettled(t, db, nodeID, admin.ID, "Still arguing", "open", "voting", "2026-03-01T00:00:00.000Z", 0)
@@ -77,6 +78,7 @@ func TestGovernanceRecord_TellsTheKindsApart(t *testing.T) {
 	admin, _ := createTestUser(t, db, "rec2", "member")
 	voter, _ := createTestUser(t, db, "rec2v", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec Two", "rec-two", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -135,6 +137,7 @@ func TestGovernanceRecord_NewestFirstAcrossSources(t *testing.T) {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, "rec3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec Three", "rec-three", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	seedSettled(t, db, nodeID, admin.ID, "Older vote", "approved", "in_effect", "2026-01-05T00:00:00.000Z", 0)
@@ -167,6 +170,7 @@ func TestGovernanceRecord_SupersededCouncilsStayOut(t *testing.T) {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, "rec4", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec Four", "rec-four", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	first := auth.NewUUIDv7()
@@ -207,6 +211,7 @@ func TestGovernanceRecord_TellsAbsenceFromRejection(t *testing.T) {
 	admin, _ := createTestUser(t, db, "rec6", "member")
 	voter, _ := createTestUser(t, db, "rec6v", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec Six", "rec-six", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 

@@ -262,17 +262,30 @@ func escapeHTMLClaims(s string) string {
 	return s
 }
 
+// claimNodeStillUnclaimed scopes a claim row to a patch that has not been
+// activated yet. A claim row stays 'approved' after setup completes — the
+// node's status is what records that setup happened (docs/adr/039) — so
+// 'approved' on its own means "cleared review", never "still awaiting
+// setup". Every reader and every sweeper of the awaiting-setup state has to
+// ask the node, or a finished claim reads as one still owed.
+const claimNodeStillUnclaimed = `EXISTS (SELECT 1 FROM nodes n2 WHERE n2.id = claim_requests.node_id AND n2.status = 'unclaimed')`
+
 // expirePastDueApprovedClaims lazily moves any approved claim on a node
 // whose setup window has passed to 'expired' (docs/adr/039). There is no
 // standing worker for this — a claim only needs to be honest at the moments
 // something reads or acts on it, so this runs inline wherever that happens
 // (RequestClaim, MyClaim; SetupClaim does its own check so it can respond
 // with the specific 410).
+//
+// Scoped to a patch still unclaimed: a claim that already ran setup has not
+// lapsed, it succeeded, and relabelling it 'expired' once its window passes
+// would file a completed claim as a failed one.
 func expirePastDueApprovedClaims(db *database.DB, nodeID string) {
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	db.Exec(
 		`UPDATE claim_requests SET status = 'expired', updated_at = ?
-		 WHERE node_id = ? AND status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?`,
+		 WHERE node_id = ? AND status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?
+		   AND `+claimNodeStillUnclaimed,
 		now, nodeID, now,
 	)
 }
@@ -286,7 +299,8 @@ func expireAllPastDueApprovedClaims(db *database.DB) {
 	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	db.Exec(
 		`UPDATE claim_requests SET status = 'expired', updated_at = ?
-		 WHERE status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?`,
+		 WHERE status = 'approved' AND setup_expires_at IS NOT NULL AND setup_expires_at < ?
+		   AND `+claimNodeStillUnclaimed,
 		now, now,
 	)
 }
@@ -901,6 +915,15 @@ func ListClaims(db *database.DB) http.HandlerFunc {
 			JOIN users u ON cr.user_id = u.id
 			WHERE cr.status = ?`
 		args := []interface{}{status}
+		if status == "approved" {
+			// Cleared review is not the same as still awaiting setup: the
+			// claim row keeps saying 'approved' once the claimant has built
+			// the patch, and only the node records that they did. Without
+			// this the section asks admins to keep waiting on patches that
+			// are already live — a claimed venue sat in the queue that way
+			// on a running instance.
+			query += " AND n.status = 'unclaimed' AND n.removed_at IS NULL"
+		}
 
 		if sortKey, id, ok := decodeCursor(after); after != "" && ok {
 			query += " AND " + keysetCondition("cr.created_at", "cr.id", true)
@@ -1239,6 +1262,26 @@ func activateClaimedNode(db *database.DB, nodeID, newOwnerID, now string) error 
 	}
 	if err != nil {
 		return fmt.Errorf("grant admin membership: %w", err)
+	}
+
+	// The per-patch trusted-contributor grant ends here
+	// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+	// calendar.md, decision 2). It was standing on a calendar nobody owned;
+	// the calendar now has an owner, and review is owed to whoever owns it
+	// (docs/adr/026). ADR 026 already says trusted contributors "become
+	// ordinary suggesters there" on claim — for the quilt-wide flag that is
+	// what the `status == 'unclaimed'` condition in every gate does, and for
+	// a per-patch row it is this delete, because the row would otherwise
+	// outlive the condition it was granted under.
+	//
+	// The patch also drops off any trust request that named it: an ask to
+	// keep this listing's calendar is answered by the claim, not by an
+	// admin, and a request left with nothing resolves itself as moot.
+	if _, err := db.Exec(`DELETE FROM node_trusted_contributors WHERE node_id = ?`, nodeID); err != nil {
+		return fmt.Errorf("clear per-patch trust: %w", err)
+	}
+	if _, err := db.Exec(`DELETE FROM trust_request_nodes WHERE node_id = ?`, nodeID); err != nil {
+		return fmt.Errorf("clear trust requests for node: %w", err)
 	}
 	return nil
 }

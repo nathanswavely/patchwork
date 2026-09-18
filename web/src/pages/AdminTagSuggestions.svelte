@@ -1,7 +1,7 @@
 <script>
   /**
    * The suggested-tag queue (docs/adr/114), a Review section of the admin
-   * panel (docs/adr/118). It used to sit at the top of the Tags page;
+   * panel (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md). It used to sit at the top of the Tags page;
    * deciding a word is a queue's work, and curating the vocabulary is a
    * setting's, so the two now live under different tabs and link to each
    * other.

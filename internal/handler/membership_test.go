@@ -64,14 +64,50 @@ func createTestUser(t *testing.T, db *database.DB, username, role string) (*mode
 func createTestNode(t *testing.T, db *database.DB, ownerID, name, slug, policy string) string {
 	t.Helper()
 	id := auth.NewUUIDv7()
+	// follower_permissions is written explicitly, exactly as CreateNode writes
+	// it, because migration 012's column DEFAULT still says charters:true and
+	// a helper that inherits it does not test what the product does
+	// (docs/adr/116). This helper inheriting it is how a follower read an
+	// invite-only patch's private charters in a passing test suite.
+	//
+	// The two exposure controls are written explicitly for the same reason,
+	// and both closed, exactly as CreateNode writes them
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). A test
+	// that wants a public roster or a public record says so with
+	// openMemberList / openGovernanceRecord below — which is what a patch
+	// has to do too.
 	_, err := db.Exec(
-		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status) VALUES (?, ?, ?, ?, '', 'leaf', 'public', ?, 'active')`,
+		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status, follower_permissions, public_member_list, public_governance_record)
+		 VALUES (?, ?, ?, ?, '', 'leaf', 'public', ?, 'active', '{}', 'nobody', 'nobody')`,
 		id, ownerID, name, slug, policy,
 	)
 	if err != nil {
 		t.Fatalf("create node %s: %v", name, err)
 	}
 	return id
+}
+
+// openGovernanceRecord publishes a patch's deliberation, the way an admin
+// does at Patch Settings. Tests whose subject is a public read of proposals,
+// comments, attestations or the record call this first; without it the patch
+// is closed, which is what a patch created through the product is.
+func openGovernanceRecord(t *testing.T, db *database.DB, nodeID string) {
+	t.Helper()
+	if _, err := db.Exec(
+		`UPDATE nodes SET public_governance_record = 'everyone' WHERE id = ?`, nodeID,
+	); err != nil {
+		t.Fatalf("open governance record: %v", err)
+	}
+}
+
+// openMemberList is the same act for the roster.
+func openMemberList(t *testing.T, db *database.DB, nodeID string) {
+	t.Helper()
+	if _, err := db.Exec(
+		`UPDATE nodes SET public_member_list = 'everyone' WHERE id = ?`, nodeID,
+	); err != nil {
+		t.Fatalf("open member list: %v", err)
+	}
 }
 
 func createTestMembership(t *testing.T, db *database.DB, userID, nodeID, role, status string) string {
@@ -250,17 +286,22 @@ func TestRoleChange(t *testing.T) {
 		t.Errorf("expected role=follower, got %v", result["role"])
 	}
 
-	// follower -> admin
+	// follower -> admin is refused, and this is the direction that moved
+	// (docs/adr/117). Demotion above still lands; the way back in is an
+	// invitation or the person's own "Become a member", because a follower
+	// has not asked to be in this patch and a role set here is what they
+	// would become without anyone having asked them.
 	body = map[string]string{"role": "admin"}
 	r = authedRequest("PATCH", "/api/v1/nodes/role-node/members/"+user.ID, body, adminToken)
 	w = serveMux(t, db, "PATCH", "/api/v1/nodes/{slug}/members/{userId}", handler.UpdateMember(db), r)
 
-	if w.Code != http.StatusOK {
-		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	if w.Code != http.StatusConflict {
+		t.Fatalf("expected 409, got %d: %s", w.Code, w.Body.String())
 	}
-	result = decodeJSON(t, w)
-	if result["role"] != "admin" {
-		t.Errorf("expected role=admin, got %v", result["role"])
+	var roleNow string
+	db.QueryRow("SELECT role FROM memberships WHERE user_id = ? AND node_id = ?", user.ID, nodeID).Scan(&roleNow)
+	if roleNow != "follower" {
+		t.Errorf("expected them to stay a follower, got %q", roleNow)
 	}
 }
 
@@ -383,6 +424,7 @@ func TestListMembers(t *testing.T) {
 	admin, _ := createTestUser(t, db, "admin12", "member")
 	_, _ = createTestUser(t, db, "member12", "member")
 	nodeID := createTestNode(t, db, admin.ID, "List Node", "list-node", "open")
+	openMemberList(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Look up member12's ID from DB since createTestUser returns it.
@@ -1286,8 +1328,12 @@ func TestListMembersCountsWholePatchNotJustThePage(t *testing.T) {
 		seen += len(items)
 		cursor, _ = page["next_cursor"].(string)
 	}
-	if seen != 28 {
-		t.Errorf("expected to page through all 28 rows, saw %d", seen)
+	// 25, not 28: the listing is the membership, and the three followers are
+	// their own relationship, asked for by ?role=follower (docs/adr/117).
+	// Which makes this the sharper assertion — paging reaches exactly as many
+	// rows as member_count claims, so the header and the list agree.
+	if seen != 25 {
+		t.Errorf("expected to page through all 25 members, saw %d", seen)
 	}
 }
 
@@ -1304,6 +1350,7 @@ func TestListMembersCountsStateThePatchsSizeNotThePage(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "admin61", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Quiet Node", "quiet-node", "open")
+	openMemberList(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	hidden, _ := createTestUser(t, db, "hidden61", "member")

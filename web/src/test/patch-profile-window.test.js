@@ -27,7 +27,7 @@ describe('eventPostingRight names the outcome, not the patch state', () => {
   // review queue they bypass (events.go).
   it('lets the instance admin and trusted contributors post directly to an unclaimed patch', () => {
     expect(eventPostingRight({ ...unclaimed, isInstanceAdmin: true })).toBe('direct');
-    expect(eventPostingRight({ ...unclaimed, trustedContributor: true })).toBe('direct');
+    expect(eventPostingRight({ ...unclaimed, viewerTrusted: true })).toBe('direct');
   });
 
   it('sends everyone else on an unclaimed patch through review', () => {

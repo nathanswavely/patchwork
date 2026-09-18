@@ -669,6 +669,30 @@ notifications cost nothing and are the difference between minutes and hours of
 downtime. Don't route alerts to a shared inbox nobody owns — an alert everyone
 can see is an alert nobody acts on.
 
+## Visitor counts and access logs
+
+Patchwork ships counting nothing about its visitors, and the shipped privacy
+policy says so. Two things can change that, and each one changes the policy.
+
+**Visitor counts (in the app).** Administration → Usage has the switch. On,
+the server counts page loads per kind of page per day and distinct browsers
+per day, as daily totals only: a browser is told apart within one day by a
+hash of its address and type under a random secret the server keeps in memory
+and replaces at midnight, so nothing stored can be turned back into a person.
+No script runs in the page and no cookie is set. The privacy policy's
+"Visitor counts" paragraph reads the same switch, so turning it on is also
+disclosing it. Totals are deleted after 13 months; **Clear all counts** on the
+same tab deletes them now. Details are in
+`docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md`.
+
+**Access logs (in Caddy).** The bundled Caddyfile writes no access log. If you
+want one for troubleshooting, the Caddyfile carries a commented recipe that
+masks the client address to its /24 (or /48 for IPv6) and rolls the file
+after seven days. Turning it on is a change to what the site keeps about
+people, so edit the privacy policy's "Technical records" paragraph at
+Administration → Legal in the same sitting: the shipped text says the server
+keeps no log of visits, and once it does that sentence is false.
+
 ## Federation (ActivityPub)
 
 Off by default. Before enabling `federation.enabled: true`:

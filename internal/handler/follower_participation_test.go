@@ -77,11 +77,22 @@ func TestFollowerProposalParticipation(t *testing.T) {
 		}
 	})
 
-	t.Run("reading is untouched, because it was never private", func(t *testing.T) {
+	// The follower key does not decide whether the thread can be read — the
+	// patch's record setting does
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). These
+	// two cases are one pair on purpose: docs/adr/095 says the
+	// follower_permissions family is workspace tidiness and "must not be
+	// merged" with a privacy control, so `proposals: false` is held constant
+	// across both and the record setting is the only thing that moves.
+	//
+	// This replaces a case named "reading is untouched, because it was never
+	// private", whose premise the ADR overturned.
+	t.Run("the follower key still does not gate the read", func(t *testing.T) {
 		db := setupTestDB(t)
 		admin, _ := createTestUser(t, db, "fp_admin4", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Public Read", "public-read", "open")
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		openGovernanceRecord(t, db, nodeID)
 		if _, err := db.Exec(
 			`UPDATE nodes SET follower_permissions = ? WHERE id = ?`,
 			`{"events":true,"proposals":false,"charters":true,"members":true}`, nodeID,
@@ -90,12 +101,37 @@ func TestFollowerProposalParticipation(t *testing.T) {
 		}
 		proposalID := openProposal(t, db, nodeID, admin.ID, "Visible to anyone")
 
-		// Signed out entirely: the thread is a public read and stays one.
-		// Gating participation is not a claim that the data is hidden.
+		// Signed out entirely, on a patch that publishes its record: the
+		// thread reads, `proposals: false` notwithstanding. Gating
+		// participation is still not a claim that the data is hidden.
 		r := authedRequest("GET", "/api/v1/proposals/"+proposalID+"/comments", nil, "")
 		w := servePublicMux(t, "GET", "/api/v1/proposals/{id}/comments", handler.ListComments(db), r)
 		if w.Code != http.StatusOK {
 			t.Errorf("anonymous comment read returned %d, want 200", w.Code)
+		}
+	})
+
+	t.Run("a closed record does gate the read", func(t *testing.T) {
+		db := setupTestDB(t)
+		admin, _ := createTestUser(t, db, "fp_admin5", "member")
+		nodeID := createTestNode(t, db, admin.ID, "Closed Read", "closed-read", "open")
+		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+		// No openGovernanceRecord: a patch is born closed, which is the point.
+		if _, err := db.Exec(
+			`UPDATE nodes SET follower_permissions = ? WHERE id = ?`,
+			`{"events":true,"proposals":false,"charters":true,"members":true}`, nodeID,
+		); err != nil {
+			t.Fatalf("set follower permissions: %v", err)
+		}
+		proposalID := openProposal(t, db, nodeID, admin.ID, "Ours alone")
+
+		// 404 rather than an empty 200: the thread is reached from a proposal
+		// that already answered 404, so an empty list here would only ever be
+		// read by somebody who guessed the id.
+		r := authedRequest("GET", "/api/v1/proposals/"+proposalID+"/comments", nil, "")
+		w := servePublicMux(t, "GET", "/api/v1/proposals/{id}/comments", handler.ListComments(db), r)
+		if w.Code != http.StatusNotFound {
+			t.Errorf("anonymous comment read on a closed record returned %d, want 404", w.Code)
 		}
 	})
 }

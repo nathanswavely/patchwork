@@ -30,6 +30,14 @@
     initial = null,
   } = $props();
 
+  // The fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar):
+  // ordinary creation opens on "Is this your patch to run?" before any
+  // field, so nothing promises admin of a place nobody has admitted the
+  // visitor to. Claim setup skips it — a claimant has already answered by
+  // claiming. Answered in component state only, never persisted: it is a
+  // question about this visit, not a standing preference.
+  let readyToCreate = $state(mode === 'setup');
+
   let name = $state(initial?.name || '');
   let description = $state(initial?.description || '');
   let address = $state(initial?.address || '');
@@ -127,24 +135,32 @@
     showPicker = false;
   }
   let visibility = $state(initial?.visibility || 'public');
-  // Who can join. The API defaults an omitted membership_policy to open,
-  // and the create form never asked, so a patch meant to be invite-only was
-  // public until its founder found the switch inside the rules editor. It
-  // starts unset: the person chooses.
+  // The membership policy, preselected to the closed option.
   //
-  // Setup (docs/adr/039) asks too, because setup is the creation moment and
-  // this is a creation question. It used not to, on the reasoning that the
-  // listing already carried a policy — but a listing's policy is written by
-  // whoever submitted it, means nothing while it is a listing (an unclaimed
-  // patch takes followers only), and went live deciding the door the instant
-  // a claim landed. The first real claim on Lancaster opened its membership
-  // to anyone, chosen by nobody. The one difference from creation is that
-  // setup starts seeded rather than blank — see policySeeded below.
-  let membershipPolicy = $state('');
+  // This has been wrong twice in opposite directions. First the create form
+  // never asked at all, and the API's default made the patch open. F-008
+  // answered that by starting unset, so the person had to choose. That fixed
+  // the right bug the wrong way round: unset weights the three options
+  // equally and the first card reads as the ordinary pick, while the template
+  // list below *is* preselected, at Minimal, whose own rules say invite_only.
+  // So the form pre-answered one question and left the other looking like a
+  // choice between equals. On the reference instance a five-minute-old
+  // account took the first card and got a patch anyone could join.
+  //
+  // Preselected is not the same as unasked. The question is still on the
+  // screen, still required, and one click changes it. What moved is which way
+  // it fails when nobody engages with it, and closed is the safe direction: a
+  // patch that should have been open is a setting away, and a patch that
+  // should have been closed has already admitted people.
+  //
+  // Setup (docs/adr/039) asks the same question, seeded from the chosen
+  // template rather than fixed here, because a claimant picking a template is
+  // already saying what kind of patch this is. See policySeeded below.
+  let membershipPolicy = $state('invite_only');
   const membershipPolicies = [
-    { id: 'open', name: 'Open', desc: 'Anyone can join.' },
-    { id: 'approval_required', name: 'Approval required', desc: 'Anyone can ask to join; an admin approves each request.' },
     { id: 'invite_only', name: 'Invite only', desc: 'Only people an admin invites can join.' },
+    { id: 'approval_required', name: 'Approval required', desc: 'Anyone can ask to join; an admin approves each request.' },
+    { id: 'open', name: 'Open', desc: 'Anyone can join without approval.' },
   ];
   // Minimal is the default (docs/adr/041): the typical new patch is one
   // person running a listing; ceremony is opted into, not inherited.
@@ -255,7 +271,7 @@
 
   function validate() {
     if (!name.trim()) return 'Name is required';
-    if (!membershipPolicy) return 'Choose who can join';
+    if (!membershipPolicy) return 'Choose a membership policy';
     return '';
   }
 
@@ -379,6 +395,20 @@
 <div class="page-fade">
   <div class="container-narrow">
     <div>
+      {#if mode === 'create' && !readyToCreate}
+        <h1>Add a patch</h1>
+        <p class="fork-question">Is this your patch to run?</p>
+        <div class="fork-cards">
+          <button type="button" class="fork-card" onclick={() => { readyToCreate = true; }}>
+            <strong>I run this patch</strong>
+            <span>You become its admin. Members, events and settings are yours from the start.</span>
+          </button>
+          <button type="button" class="fork-card" onclick={() => navigate('/submit')}>
+            <strong>Someone else runs it</strong>
+            <span>It joins the quilt as an unclaimed patch. The people who run it can claim it later, and you can add its events once it's approved.</span>
+          </button>
+        </div>
+      {:else}
       {#if mode === 'setup'}
         <h1>Set up your patch</h1>
         <p class="muted" style="margin-bottom: 0.35rem;">Complete this patch's details to activate it.</p>
@@ -387,9 +417,9 @@
         {/if}
       {:else}
         <h1>Create Patch</h1>
-        <p class="muted" style="margin-bottom: {getSubmissionsEnabled() ? '0.35rem' : '1.5rem'};">Start a new community, collective, venue, or group.</p>
+        <p class="muted" style="margin-bottom: 1.5rem;">Start a new community, collective, venue, or group.</p>
         {#if getSubmissionsEnabled()}
-          <p class="muted" style="margin-bottom: 1.5rem;">Creating a patch makes you its admin. Know a group that isn't yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest a patch</a> instead.</p>
+          <p class="muted" style="margin-bottom: 1.5rem;">Not yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest it instead</a></p>
         {/if}
       {/if}
 
@@ -582,8 +612,33 @@
           {/if}
         </div>
 
+        <!-- One sentence, not a section
+             (docs/adr/2026-09-18-the-default-should-match-the-assumption.md
+             decision 10). docs/adr/037 earned the lining its own block above
+             because adopting it is a standing commitment a patch cannot undo;
+             a default that Patch Settings can flip does not deserve equal
+             weight, and this form is already long. It is here at all because
+             admins formed the opposite belief in silence, and a default
+             nobody is told about is how that happened the first time. -->
+        <div class="field">
+          <label>Members and governance</label>
+          <p class="field-hint muted">
+            Your member list and your proposals start out visible to members only. Events, your description and your tile are public. You can publish either one later in Patch Settings.
+          </p>
+        </div>
+
         <fieldset class="field policy-field">
-          <legend>Who can join <span class="required">*</span></legend>
+          <legend>Membership Policy <span class="required">*</span></legend>
+          <!-- The distinction the form otherwise never mentions. Joining and
+               following are different relationships, and only one of them is
+               what this setting governs — so somebody can pick Open reasoning
+               that people need it to see the patch at all, which is the one
+               thing it has nothing to do with. -->
+          <p class="field-hint muted">
+            Members vote on proposals and appear in the patch's member list.
+            Following is separate and always open: anyone can follow a public
+            patch and see its events.
+          </p>
           {#if policySeeded}
             <!-- What the control cannot show: that this answer came from the
                  template below and will keep following it until it is
@@ -645,6 +700,7 @@
           </button>
         </div>
       </form>
+      {/if}
     </div>
   </div>
 </div>
@@ -658,6 +714,56 @@
 <style>
   h1 {
     margin-bottom: 0.25rem;
+  }
+
+  .fork-question {
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .fork-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .fork-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-start;
+    text-align: left;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+
+  .fork-card:hover,
+  .fork-card:focus-visible {
+    border-color: var(--color-primary);
+  }
+
+  .fork-card strong {
+    font-size: 0.95rem;
+  }
+
+  .fork-card span {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (min-width: 640px) {
+    .fork-cards {
+      flex-direction: row;
+    }
+
+    .fork-card {
+      flex: 1;
+    }
   }
 
   form {

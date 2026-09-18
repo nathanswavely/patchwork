@@ -720,6 +720,22 @@ func loadMovedTo(db *database.DB, user *model.User) {
 	db.QueryRow("SELECT COALESCE(moved_to,'') FROM users WHERE id = ?", user.ID).Scan(&user.MovedTo)
 }
 
+// loadTrustedPatches fills the per-patch scope of the trusted-contributor
+// grant (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+// calendar.md) — only the patches still unclaimed, because trustedNodesByUser
+// filters by status and the grant is worth nothing once a patch is claimed.
+// The Me payload is the one place a client learns this reach: memberships
+// cannot carry it, since an unclaimed patch admits nobody, and without it a
+// person trusted on one patch would be shown no way to speak for it from
+// anywhere but that patch's own page.
+func loadTrustedPatches(db *database.DB, user *model.User) {
+	refs := trustedNodesByUser(db, []string{user.ID})[user.ID]
+	user.TrustedPatches = nil
+	for _, n := range refs {
+		user.TrustedPatches = append(user.TrustedPatches, model.TrustedPatch{ID: n.ID, Slug: n.Slug, Name: n.Name})
+	}
+}
+
 // Me handles GET /api/v1/auth/me.
 func Me(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -727,6 +743,7 @@ func Me(db *database.DB) http.HandlerFunc {
 		loadUserLinks(db, user)
 		loadContactCard(db, user)
 		loadMovedTo(db, user)
+		loadTrustedPatches(db, user)
 		var hide int
 		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
 		user.HideAmendedLinings = hide == 1

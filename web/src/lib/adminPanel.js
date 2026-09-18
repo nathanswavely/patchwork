@@ -1,5 +1,5 @@
 /**
- * The admin panel's shape (docs/adr/118): five tabs, two of which carry a
+ * The admin panel's shape (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md): five tabs, two of which carry a
  * sidebar. Kept as pure data and functions so the tab row, the sidebars,
  * the URL scheme and the redirects from the retired flat scheme can be
  * asserted without rendering — AdminShell and App.svelte only map what is
@@ -46,6 +46,9 @@ export const ADMIN_TABS = [
       { id: 'tags', label: 'Tags' },
       { id: 'neighbors', label: 'Neighbors' },
       { id: 'aggregators', label: 'Aggregators' },
+      // Visitor counting: the switch that turns it on lives on this page,
+      // which is what makes it a setting rather than a report.
+      { id: 'usage', label: 'Usage' },
       { id: 'archived', label: 'Archived patches' },
       { id: 'attestation', label: 'Prove admin' },
     ],
@@ -87,7 +90,7 @@ export function adminTabLanding(tabId) {
   return t.sections ? t.sections[0].href : t.href;
 }
 
-// The flat scheme the panel had before docs/adr/118, when every page was
+// The flat scheme the panel had before docs/adr/2026-09-17-an-admin-tab-answers-one-question.md, when every page was
 // a top-level tab. Each retired path maps onto the section that page
 // became; links in old notifications and bookmarks land where they meant
 // to. Tag suggestions were a section of the Tags page then, so the old
@@ -104,6 +107,7 @@ const LEGACY = {
   tags: '/admin/settings/tags',
   neighbors: '/admin/settings/neighbors',
   aggregators: '/admin/settings/aggregators',
+  usage: '/admin/settings/usage',
   archived: '/admin/settings/archived',
   attestation: '/admin/settings/attestation',
 };

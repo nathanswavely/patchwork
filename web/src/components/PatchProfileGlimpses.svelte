@@ -18,7 +18,7 @@
    */
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isLoggedIn, isAdmin as isInstanceAdmin, getUser } from '../stores/auth.svelte.js';
+  import { isLoggedIn, isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { handleFromDID } from '../lib/atproto.js';
@@ -40,6 +40,9 @@
     isMember = false,
     isAdmin = false,
     isUnclaimed = false,
+    // The viewer's trusted-contributor grant reaches this unclaimed patch
+    // (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar).
+    viewerTrusted = false,
     isBanned = false,
     membershipRole = '',
     // Taken, and deliberately not read for governance. Follower permissions
@@ -47,6 +50,12 @@
     // never decide what the patch's public face shows, and the containers
     // that mount this pass the whole standing bundle.
     followerPermissions = null,
+    // Whether this patch's lining is its own writing. It rides the node
+    // payload's *envelope* (`lining_status`), not the node object, so it
+    // arrives as a prop from the containers that already unpack it —
+    // `node.lining_status` is always undefined and silently dropped the row
+    // for a diverged patch too, which is the one case it must not.
+    liningStatus = '',
     // Whether to go and ask the rooms. A sheet at rest mounts these so the
     // first section shows under the fold — the cut is what says there is
     // more — but a tap on the quilt must stay one request (docs/adr/094
@@ -73,6 +82,12 @@
   // state can say which kind of empty it is without counting anything it
   // was not shown.
   let governancePublishedOnly = $state(false);
+  // Whether the proposals this viewer got were withheld rather than absent,
+  // read off the listing that applied the rule
+  // (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). Same
+  // reason the roster reads public_member_list: an empty array cannot tell
+  // "nothing decided yet" from "not published", and those want opposite copy.
+  let recordWithheld = $state(false);
 
   // Standing is the membership relationship, never instance-admin power:
   // an instance admin can manage any patch without standing in it.
@@ -94,9 +109,11 @@
   let postingRight = $derived(eventPostingRight({
     signedIn: isLoggedIn(),
     isInstanceAdmin: isInstanceAdmin(),
-    trustedContributor: !!getUser()?.trusted_contributor,
+    viewerTrusted: viewerTrusted === true,
     isUnclaimed,
-    // Not `isMember`: the node payload sets is_member for followers too.
+    // The role test, stated here rather than taken from the isMember prop:
+    // it is the same answer since docs/adr/117, and the gate should not
+    // depend on which of the two a container happened to hand over.
     isMemberOrAdmin: membershipRole === 'member' || membershipRole === 'admin',
     isBanned,
     submissionsEnabled: getSubmissionsEnabled(),
@@ -145,10 +162,14 @@
     // Read so the effect re-runs when standing arrives: the head's payload
     // can land after a pull has already mounted this.
     const gov = canSeeGovernance;
-    if (s && active) loadActivity(gov);
+    // Read so the effect re-runs when it lands, for the same reason `gov` is:
+    // a container may mount the glimpses before the head's payload resolves,
+    // and a lining filtered on a stale '' never un-filters.
+    const lining = liningStatus;
+    if (s && active) loadActivity(gov, lining);
   });
 
-  async function loadActivity(wantGovernance) {
+  async function loadActivity(wantGovernance, liningState) {
     // Unclaimed patches carry no governance and no membership (docs/adr/039)
     // — absence, not an empty state — so neither fetch runs for one.
     const asked = slug;
@@ -171,7 +192,20 @@
     memberTotal = node?.member_count ?? members.length;
     publicMemberList = memberData.public_member_list || 'everyone';
     recentProposals = proposalData.items || proposalData || [];
-    governanceDocs = charterData.items || charterData || [];
+    recordWithheld = proposalData.public_governance_record === 'nobody';
+    // A pristine or stale lining is the project's own text, shipped in the
+    // binary and byte-identical on every patch on the quilt, so a row for it
+    // says nothing and put an identical line on every profile
+    // (docs/adr/2026-09-18-the-default-should-match-the-assumption.md
+    // decision 8). A diverged one is the patch's own writing and stays: that
+    // is the fact docs/adr/037 wants legible, and it is what the "Amended
+    // lining" badge is pointing at.
+    //
+    // Presentation only. The lining is still publicly readable at its own
+    // URL in every case, which is the pin ADR 037 set and this does not move.
+    const liningDiverged = liningState === 'diverged';
+    governanceDocs = (charterData.items || charterData || [])
+      .filter((d) => liningDiverged || d.kind !== 'lining');
     governancePublishedOnly = charterData.published_only === true;
     loaded = true;
   }
@@ -396,7 +430,13 @@
              what the patch published must not read "nothing recorded" and
              take it for the patch's whole record. -->
         <p class="glimpse-empty muted">
-          {governancePublishedOnly ? 'Nothing published yet.' : 'Nothing recorded yet.'}
+          {#if recordWithheld}
+            Proposals and decisions here are not public.
+          {:else if governancePublishedOnly}
+            Nothing published yet.
+          {:else}
+            Nothing recorded yet.
+          {/if}
         </p>
       {/if}
     </section>

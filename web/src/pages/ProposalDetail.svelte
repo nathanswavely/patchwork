@@ -18,7 +18,14 @@
   import { formatDay } from '../lib/datetime.js';
   const patch = getContext('patch');
   let patchIsAdmin = $derived(patch.value.isAdmin);
-  let patchIsMember = $derived(patch.value.isMember);
+  // Commenting is the one governance act a follower holds (docs/adr/044), so
+  // its gate is standing, not membership: CreateComment names all three roles
+  // and admits `follower`. This used to read `isMember`, which happened to
+  // work only because the node payload set it for followers too; now that
+  // is_member means the membership (docs/adr/117), the gate has to say what
+  // it actually meant. membershipRole is set for every active row and empty
+  // for everyone else, so it is the standing test.
+  let hasStanding = $derived(!!patch.value.membershipRole);
   let proposalId = $derived(getParams().id || '');
 
   let proposal = $state(null);
@@ -362,7 +369,7 @@
 
       {:else if activeTab === 'discussion'}
         <section class="proposal-section">
-          <CommentThread proposalId={proposal.id} isMember={!!patchIsMember} isAdmin={!!patchIsAdmin} />
+          <CommentThread proposalId={proposal.id} isMember={hasStanding} isAdmin={!!patchIsAdmin} />
         </section>
 
       {:else if activeTab === 'history'}

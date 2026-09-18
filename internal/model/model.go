@@ -21,6 +21,16 @@ type User struct {
 	// events this person records on unclaimed patches skip review. It is
 	// orthogonal to patch roles and worth nothing on active patches.
 	TrustedContributor bool `json:"trusted_contributor"`
+	// TrustedPatches is the per-patch scope of the same grant
+	// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+	// calendar.md): the unclaimed patches this person may speak for without
+	// holding the quilt-wide flag. Populated by the Me handler only, and
+	// already filtered to patches still unclaimed, because the grant ends
+	// when the patch is claimed and a client must not be told otherwise.
+	// It is what lets the client enumerate a reach it could not otherwise
+	// know — memberships list nothing here, since an unclaimed patch admits
+	// nobody.
+	TrustedPatches []TrustedPatch `json:"trusted_patches,omitempty"`
 	// StartOnMyQuilt is the per-person landing preference (docs/adr/035):
 	// when true, a cold visit to "/" redirects once to "/my". Default false
 	// — the whole quilt is the shared default landing.
@@ -110,6 +120,16 @@ type Credential struct {
 type NodeLink struct {
 	URL   string `json:"url"`
 	Label string `json:"label"`
+}
+
+// TrustedPatch names one unclaimed patch a person's per-patch
+// trusted-contributor grant reaches (docs/adr/2026-09-18-trust-has-a-scope-
+// and-a-suggestion-carries-its-calendar.md). Identity only: the grant is
+// not a membership and carries no role.
+type TrustedPatch struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+	Name string `json:"name"`
 }
 
 // ContactCard is how a person can be reached, kept once on the account and
@@ -285,8 +305,19 @@ type Node struct {
 	// (docs/adr/006), so nothing here reveals somebody who chose to hide.
 	// Set on the detail response; the settings form and the member list's
 	// own copy both read it.
-	PublicMemberList    string               `json:"public_member_list,omitempty"`
-	FollowerPermissions *FollowerPermissions `json:"follower_permissions,omitempty"`
+	PublicMemberList string `json:"public_member_list,omitempty"`
+	// PublicGovernanceRecord is the sibling control over the patch's
+	// deliberation — proposals, the discussion under them, and attestations
+	// — "everyone" or "nobody", defaulting closed
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). Two
+	// rungs where PublicMemberList has three: a roster has a natural subset
+	// and a record that names people inside its own prose does not.
+	//
+	// It stops at charters, which carry their own per-document visibility
+	// (docs/adr/036), and at the lining, which is pinned public
+	// (docs/adr/037).
+	PublicGovernanceRecord string               `json:"public_governance_record,omitempty"`
+	FollowerPermissions    *FollowerPermissions `json:"follower_permissions,omitempty"`
 	GovernanceConfig    *GovernanceConfig    `json:"governance_config,omitempty"`
 	MemberCount         int                  `json:"member_count,omitempty"`
 	FollowerCount       int                  `json:"follower_count,omitempty"`
@@ -393,6 +424,12 @@ type EventLink struct {
 	// Display fields joined from nodes for rendering "with X".
 	NodeName string `json:"node_name,omitempty"`
 	NodeSlug string `json:"node_slug,omitempty"`
+	// NodeStatus lets a client decide the linked side of the handshake
+	// the way the server does (docs/adr/057): a trusted contributor
+	// confirms or removes for the linked patch only while it is unclaimed,
+	// and without the status here the UI could only ever offer that to
+	// its admins, which an unclaimed patch has none of.
+	NodeStatus string `json:"node_status,omitempty"`
 }
 
 // EventMention is a display-only doorway on an event page to a patch on

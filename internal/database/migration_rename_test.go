@@ -134,6 +134,12 @@ func TestRenamedMigrationAppliesOnFreshDatabase(t *testing.T) {
 // No two migrations share a number. The runner sorts by filename and records
 // the whole filename, so a collision applies cleanly and silently — nothing
 // but this test notices, and every "migration 0NN" citation goes ambiguous.
+//
+// The number space closed at 074 and new migrations are timestamped, so this
+// now guards a fixed range rather than a growing one: it can only fail if a
+// legacy file is renamed. The check that a *new* migration is not numbered
+// lives in the root package's TestNewRecordsAreNotNumbered. See
+// docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md.
 func TestMigrationNumbersAreUnique(t *testing.T) {
 	entries, err := os.ReadDir("../../migrations")
 	if err != nil {

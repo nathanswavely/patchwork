@@ -63,10 +63,18 @@ func DefaultRules() *GovernanceRules {
 		MaxAdmins:        3,
 		InactivityDays:   90,
 		MembershipPolicy: "open",
+		// Charters is the one of these four that is off by default
+		// (docs/adr/116). The other three govern what a follower sees of a
+		// patch's public life; this one hands over the charters the patch
+		// chose not to publish, and following costs nothing and asks nobody.
+		// It shipped on, from a time when the key also gated published
+		// charters, and stayed on after docs/adr/036 narrowed it to the
+		// members-only shelf — so every patch granted it without ever
+		// deciding to. A patch that wants it says so.
 		FollowerPermissions: model.FollowerPermissions{
 			Events:    true,
 			Proposals: true,
-			Charters:  true,
+			Charters:  false,
 			Members:   true,
 		},
 	}

@@ -153,6 +153,29 @@ dim flipping at every tile boundary is that same failure across fifty
 times the area. Desktop only; `isHoverPointer` gates it, and touch has its
 own answer in ADR 094.
 
+**6b. The card list is a second trigger for that same dim** (added
+2026-09-16). Hovering a patch's card in the list beside the quilt dims every
+other tile, exactly as hovering the tile does. The canvas takes a
+`focusPatchId` prop and answers it by calling the same `engageDim`, so the
+two surfaces cannot drift into two different ideas of what "this one" looks
+like, and the card inherits the dwell for free.
+
+It dims rather than mutes for the reason above, and the reason is sharper
+here: the card list is where a reader who finds the quilt hard to read
+spends their time, so a focus gesture that did nothing in Muted would be
+missing for exactly the person it is for.
+
+**It does nothing when that patch's tile is scrolled out of view.** Dimming
+every visible tile for one the reader cannot see leaves the whole quilt
+washed with nothing lit, which reads as the quilt breaking rather than as an
+answer. The canvas already computes the in-view set for ADR 074's lens, so
+it checks its own answer before engaging.
+
+The flow is one-directional on purpose. The list points at the quilt; the
+quilt answers its own pointer itself. Feeding ADR 078's shared `previewing`
+id back in would have a hovered *tile* ask the canvas to focus the tile
+already under the pointer.
+
 ## Considered options
 
 - **Mute what the admin chose — clamp chroma, keep every slot.** Every

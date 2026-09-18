@@ -45,7 +45,7 @@ describe('Admin Overview', () => {
     expect(src).toContain('oldest {formatRelative(q.oldest_at)}');
   });
 
-  it('sends each inbox line to the Review section where the decision is made (docs/adr/118)', () => {
+  it('sends each inbox line to the Review section where the decision is made (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md)', () => {
     expect(src).toContain("reports: { one: 'report', many: 'reports', href: '/admin/review/reports' }");
     expect(src).toContain("href: '/admin/review/submissions'");
     expect(src).toContain("href: '/admin/review/event-submissions'");

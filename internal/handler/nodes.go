@@ -52,7 +52,11 @@ func scanNodeLinks(linksJSON string, n *model.Node) {
 
 // scanFollowerPermissions scans a JSON string into FollowerPermissions and assigns to node.
 func scanFollowerPermissions(fpJSON string, n *model.Node) {
-	fp := &model.FollowerPermissions{Events: true, Proposals: true, Charters: true, Members: true}
+	// Charters false, matching DefaultRules and what canReadPatchDocs already
+	// reads out of an empty object (docs/adr/116). These two disagreed: a
+	// patch created through the API stores "{}", so the gate said no while
+	// this said yes, and Patch Settings showed a grant the server refused.
+	fp := &model.FollowerPermissions{Events: true, Proposals: true, Charters: false, Members: true}
 	if fpJSON != "" && fpJSON != "{}" {
 		json.Unmarshal([]byte(fpJSON), fp)
 	}
@@ -313,6 +317,20 @@ var (
 	// descending order of exposure. Each state shows a strict subset of the
 	// one before it, which is what lets the listing apply it as one clause.
 	publicMemberListStates = []string{"everyone", "admins", "nobody"}
+	// Whether the patch's deliberation can be read from outside the room
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). Two
+	// states, not three: the middle rung its sibling has would mean
+	// "proposals visible, authors hidden", and a nomination names its
+	// subject in its own title, so there is nothing coherent between them.
+	publicGovernanceRecordStates = []string{"everyone", "nobody"}
+)
+
+// The value both controls above are born with, and the value the retraction
+// migration wrote onto every patch that already existed. Named once because
+// the create path, the import fallbacks and the tests all have to agree.
+const (
+	defaultPublicMemberList       = "nobody"
+	defaultPublicGovernanceRecord = "nobody"
 )
 
 func oneOf(v string, allowed []string) bool {
@@ -498,6 +516,23 @@ func ListNodes(db *database.DB) http.HandlerFunc {
 			args = append(args, s, s)
 		}
 
+		// ?status= narrows the listing to one of the two kinds this endpoint
+		// serves. The trust request needs it (docs/adr/2026-09-18-trust-has-a-
+		// scope-and-a-suggestion-carries-its-calendar.md, decision 7: "active
+		// patches are never askable"), so a picker of what a person may ask
+		// about can be filled from one query rather than by fetching
+		// everything and discarding most of it. An unknown value is refused
+		// rather than ignored: silently listing active patches to a picker
+		// that must not offer them is exactly the mistake to avoid.
+		if status := r.URL.Query().Get("status"); status != "" {
+			if status != "active" && status != "unclaimed" {
+				http.Error(w, `{"error":"status must be active or unclaimed"}`, http.StatusBadRequest)
+				return
+			}
+			conditions = append(conditions, "n.status = ?")
+			args = append(args, status)
+		}
+
 		if r.URL.Query().Get("has_location") == "true" {
 			conditions = append(conditions, "n.latitude IS NOT NULL AND n.longitude IS NOT NULL")
 		}
@@ -578,9 +613,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, COALESCE(moved_to,''), founded_at, created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, public_governance_record, COALESCE(moved_to,''), founded_at, created_at, updated_at
 			 FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, slug,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.PublicGovernanceRecord, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -652,6 +687,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		resp := map[string]interface{}{
 			"node":         n,
 			"is_unclaimed": isUnclaimed,
+			// Always stated, so a client never has to read an absent key as
+			// "no". Set for real below when there is a viewer to ask about.
+			"viewer_trusted": false,
 		}
 		// Lining status is deliberately public (docs/adr/037): "amended
 		// lining" (diverged) is the badge state the whole design hangs on.
@@ -682,7 +720,19 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			).Scan(&role, &memStatus)
 			if err == nil {
 				if memStatus == "active" {
-					resp["is_member"] = true
+					// is_member means the membership: admin or member, the
+					// two roles member_count counts (docs/adr/117). It used
+					// to mean "has an active row", followers included, which
+					// is a different question wearing the word for this one.
+					//
+					// Six components had written their own guard against it
+					// ("Not `isMember`: the node payload sets is_member for
+					// followers too") and one had not, so a follower-inclusive
+					// flag reached a gate that meant membership. A caller who
+					// wants "has any standing here" reads membership_role
+					// below, which is set for every active row and empty for
+					// everyone else.
+					resp["is_member"] = role == "admin" || role == "member"
 					resp["is_admin"] = role == "admin"
 					resp["membership_role"] = role
 				} else if memStatus == "banned" {
@@ -695,6 +745,22 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			if user.Role == "admin" {
 				resp["is_admin"] = true
 			}
+
+			// Does this viewer's trusted-contributor grant reach this patch
+			// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-
+			// its-calendar.md)? The event form's "post directly or submit for
+			// review" decision used to read the quilt-wide flag off the
+			// signed-in user, which cannot see a per-patch grant — so the
+			// patch payload has to answer it.
+			//
+			// Only on an unclaimed patch, because that is the only place
+			// either scope is worth anything, and the answer here is the same
+			// one CreateEvent's gate gives. Deliberately not set for an
+			// instance admin holding no grant: their reach is a different
+			// fact, already on `is_admin`, and folding the two together would
+			// make a UI that says "you are trusted here" to somebody who is
+			// not.
+			resp["viewer_trusted"] = isUnclaimed && userTrustedOn(db, user, n.ID)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -724,7 +790,19 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			// SuggestTags carries words that are not in the vocabulary yet
 			// (docs/adr/114). Separate from Tags on purpose: an unknown name
 			// in Tags stays a 400 everywhere, so a typo never coins a word.
-			SuggestTags         []string                   `json:"suggest_tags"`
+			SuggestTags []string `json:"suggest_tags"`
+			// The two exposure controls, taken at creation rather than only
+			// from Patch Settings afterwards
+			// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+			// A control a patch can only reach after it exists is one most
+			// patches never reach, which is how rosters stayed public here
+			// without anybody deciding they should be.
+			//
+			// Pointers because "" and "absent" have to differ: an omitted
+			// field takes the closed default, and a client that sends a
+			// value gets it validated rather than silently replaced.
+			PublicMemberList       *string `json:"public_member_list"`
+			PublicGovernanceRecord *string `json:"public_governance_record"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -743,6 +821,27 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		if !oneOf(req.Visibility, nodeVisibilities) {
 			http.Error(w, fmt.Sprintf(`{"error":"visibility must be one of %s"}`,
 				strings.Join(nodeVisibilities, ", ")), http.StatusBadRequest)
+			return
+		}
+		// Both default closed. The patch opens them by an act, which is the
+		// whole point of the ADR: the default now matches what admins
+		// already assumed it was.
+		publicMemberList := defaultPublicMemberList
+		if req.PublicMemberList != nil {
+			publicMemberList = *req.PublicMemberList
+		}
+		if !oneOf(publicMemberList, publicMemberListStates) {
+			http.Error(w, fmt.Sprintf(`{"error":"public_member_list must be one of %s"}`,
+				strings.Join(publicMemberListStates, ", ")), http.StatusBadRequest)
+			return
+		}
+		publicGovernanceRecord := defaultPublicGovernanceRecord
+		if req.PublicGovernanceRecord != nil {
+			publicGovernanceRecord = *req.PublicGovernanceRecord
+		}
+		if !oneOf(publicGovernanceRecord, publicGovernanceRecordStates) {
+			http.Error(w, fmt.Sprintf(`{"error":"public_governance_record must be one of %s"}`,
+				strings.Join(publicGovernanceRecordStates, ", ")), http.StatusBadRequest)
 			return
 		}
 		if !oneOf(req.MembershipPolicy, membershipPolicies) {
@@ -805,9 +904,9 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// different path and stay NULL until a claim completes.
 		activatedAt := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt, publicMemberList, publicGovernanceRecord,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create node"}`, http.StatusInternalServerError)
@@ -971,7 +1070,8 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			"website":  true, "links": true, "visibility": true,
 			"appearance": true, "accept_event_suggestions": true,
 			"notice_posting": true, "notice_replies_default": true,
-			"public_member_list": true,
+			"public_member_list":        true,
+			"public_governance_record": true,
 			"image_url":          true, "image_alt": true,
 			"moved_to": true, "founded_at": true,
 		}
@@ -1111,6 +1211,17 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			if !oneOf(v, publicMemberListStates) {
 				http.Error(w, fmt.Sprintf(`{"error":"public_member_list must be one of %s"}`,
 					strings.Join(publicMemberListStates, ", ")), http.StatusBadRequest)
+				return
+			}
+		}
+
+		// The sibling control, checked in the same place and for the same
+		// reason (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		if raw, present := req["public_governance_record"]; present {
+			v, _ := raw.(string)
+			if !oneOf(v, publicGovernanceRecordStates) {
+				http.Error(w, fmt.Sprintf(`{"error":"public_governance_record must be one of %s"}`,
+					strings.Join(publicGovernanceRecordStates, ", ")), http.StatusBadRequest)
 				return
 			}
 		}

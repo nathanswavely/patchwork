@@ -333,6 +333,16 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 			NodeStatus string               `json:"node_status"`
 			Links      []model.EventLink    `json:"links"`
 			Mentions   []model.EventMention `json:"mentions"`
+			// ViewerTrusted: does this viewer's trusted-contributor grant,
+			// quilt-wide or scoped to this one patch, reach the event's own
+			// patch (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+			// carries-its-calendar.md)? Same answer GetNode gives beside
+			// is_unclaimed, carried here so the event page can decide the
+			// owner side of the link handshake (docs/adr/057) from the
+			// payload it already has, without a second fetch it would only
+			// make to read one bit. Always stated, never absent; false on
+			// an active patch, where either scope is worth nothing.
+			ViewerTrusted bool `json:"viewer_trusted"`
 		}
 		// An archived or removed patch takes its events with it — same gate
 		// as GetNode, so an event link doesn't outlive its patch page.
@@ -380,6 +390,7 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 		// admins who could act on them.
 		e.Links = eventLinksForViewer(db, user, e.ID, e.NodeID)
 		e.Mentions = eventMentions(db, e.ID)
+		e.ViewerTrusted = e.NodeStatus == "unclaimed" && userTrustedOn(db, user, e.NodeID)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
@@ -495,7 +506,10 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		case "active":
 			direct = direct || userHasNodeRole(db, user.ID, req.NodeID, "member", "admin")
 		case "unclaimed":
-			direct = direct || user.TrustedContributor
+			// Either scope of the trusted-contributor grant: quilt-wide, or
+			// this one patch (docs/adr/2026-09-18-trust-has-a-scope-and-a-
+			// suggestion-carries-its-calendar.md).
+			direct = direct || userTrustedOn(db, user, req.NodeID)
 		}
 
 		status := "active"
@@ -623,7 +637,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		direct := user.Role == "admin" ||
 			(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
 			(nodeStatus == "active" && isCreator && userHasNodeRole(db, user.ID, nodeID, "member")) ||
-			(nodeStatus == "unclaimed" && user.TrustedContributor && isCreator)
+			(nodeStatus == "unclaimed" && isCreator && userTrustedOn(db, user, nodeID))
 		reReview := false
 		switch {
 		case direct:

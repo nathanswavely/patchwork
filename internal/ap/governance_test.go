@@ -58,7 +58,7 @@ func TestProposalToObject(t *testing.T) {
 		UpdatedAt:     "2026-04-07T12:00:00Z",
 	}
 
-	obj := ap.ProposalToObject(p, "test.example.com")
+	obj := ap.ProposalToObject(p, "test.example.com", true)
 
 	if obj["type"] != "gv:Proposal" {
 		t.Errorf("expected type=gv:Proposal, got %v", obj["type"])
@@ -140,7 +140,7 @@ func TestProposalToObject_WithAmendment(t *testing.T) {
 		UpdatedAt:    "2026-04-07T12:00:00Z",
 	}
 
-	obj := ap.ProposalToObject(p, "test.example.com")
+	obj := ap.ProposalToObject(p, "test.example.com", true)
 
 	if obj["gv:targetDoc"] != "community-standards.md" {
 		t.Errorf("expected gv:targetDoc=community-standards.md, got %v", obj["gv:targetDoc"])
@@ -167,7 +167,7 @@ func TestGovernanceDocToObject(t *testing.T) {
 		UpdatedAt: "2026-03-15T10:00:00Z",
 	}
 
-	obj := ap.GovernanceDocToObject(doc, "test.example.com")
+	obj := ap.GovernanceDocToObject(doc, "test.example.com", true)
 
 	if obj["type"] != "gv:GovernanceDocument" {
 		t.Errorf("expected type=gv:GovernanceDocument, got %v", obj["type"])
@@ -262,5 +262,40 @@ func TestProposalResolvedActivity(t *testing.T) {
 	}
 	if len(ctx) != 2 {
 		t.Errorf("expected 2-element context, got %d", len(ctx))
+	}
+}
+
+// TestGovernanceObjects_WithheldAttribution: docs/adr/006's switch reaches the
+// wire. A proposal or charter still federates when its author's membership is
+// hidden — the text is the patch's — but no field names the author, because
+// writing either takes a membership and naming one publishes it.
+func TestGovernanceObjects_WithheldAttribution(t *testing.T) {
+	setTestDomain(t)
+
+	p := model.Proposal{
+		ID: "prop-hidden", NodeID: "node-001", AuthorID: "user-001",
+		Title: "Add weekly meetup", Body: "We should meet every Thursday.",
+		ProposalType: "action", Status: "open", DurationHours: 72,
+		CreatedAt: "2026-04-07T12:00:00Z", UpdatedAt: "2026-04-07T12:00:00Z",
+	}
+	obj := ap.ProposalToObject(p, "test.example.com", false)
+	if _, ok := obj["attributedTo"]; ok {
+		t.Errorf("hidden author still attributed: %v", obj["attributedTo"])
+	}
+	if obj["name"] != "Add weekly meetup" {
+		t.Errorf("the proposal itself should still federate, got name=%v", obj["name"])
+	}
+
+	doc := model.GovernanceDoc{
+		ID: "doc-hidden", NodeID: "node-002", Title: "Community Lining",
+		Body: "We are welcoming to all.", Version: 3, CreatedBy: "user-002",
+		CreatedAt: "2026-01-01T00:00:00Z", UpdatedAt: "2026-03-15T10:00:00Z",
+	}
+	docObj := ap.GovernanceDocToObject(doc, "test.example.com", false)
+	if _, ok := docObj["attributedTo"]; ok {
+		t.Errorf("hidden editor still attributed: %v", docObj["attributedTo"])
+	}
+	if docObj["content"] != "We are welcoming to all." {
+		t.Errorf("the charter itself should still federate, got content=%v", docObj["content"])
 	}
 }

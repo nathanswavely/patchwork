@@ -81,6 +81,11 @@ const HiddenMemberName = "Hidden member"
 // narrower than canReadPatchDocs, which admits a follower holding the
 // charters permission. A follower is an observer, not a member, and the
 // people in a patch are not theirs to enumerate.
+//
+// The git transport asks this too (docs/adr/116). A clone carries every
+// commit's author, which is that enumeration by another route, so the door
+// that hands over a whole repository draws the line here rather than at the
+// charters permission.
 func viewerIsInPatchRoom(db *database.DB, r *http.Request, nodeID string) bool {
 	user := middleware.UserFromContext(r.Context())
 	if user == nil {
@@ -97,4 +102,27 @@ func viewerIsInPatchRoom(db *database.DB, r *http.Request, nodeID string) bool {
 		return false
 	}
 	return role != ""
+}
+
+// membershipHidden reports whether a person's membership of a patch is
+// switched out of sight (docs/adr/006).
+//
+// The companion to viewerIsInPatchRoom, for a reader who has no session to
+// check. Federation is that reader: there is no room for a remote follower to
+// be inside, so the viewer half of the question falls away and only the state
+// of the switch is left. A surface that cannot ask "is this viewer in the
+// room" must treat the answer as no.
+//
+// A missing row reads as not hidden, exactly as the voter roster's
+// COALESCE(m.visible, 1) does: somebody who left has no membership to hide,
+// and ADR 006 governs a switch on a row that exists.
+func membershipHidden(db *database.DB, nodeID, userID string) bool {
+	var visible int
+	if err := db.QueryRow(
+		"SELECT COALESCE(visible, 1) FROM memberships WHERE user_id = ? AND node_id = ?",
+		userID, nodeID,
+	).Scan(&visible); err != nil {
+		return false
+	}
+	return visible == 0
 }

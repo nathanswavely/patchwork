@@ -99,11 +99,36 @@ const sqlVisibleEvents = `SELECT ve.id FROM events ve
 	AND ve.node_id IN (` + sqlVisibleNodes + `)
 	AND (ve.visibility = 'public' OR ve.node_id IN (` + sqlInsiderNodes + `))`
 
-// sqlVisibleProposals: proposals on a patch this viewer may carry. A
-// proposal is public deliberation; only the charter text mirrored into an
-// amendment follows the charter's own visibility (docs/adr/036).
+// sqlVisibleProposals: proposals on a patch this viewer may carry — from a
+// patch that publishes its deliberation, plus every patch the viewer is
+// actually inside
+// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+//
+// This used to read "a proposal is public deliberation", which was true when
+// every patch's record was world-readable and is the assumption that ADR
+// overturns. Left alone it would have been the seamrip's version of the
+// federation hole: a patch closes its record, and any member of any other
+// patch exports its proposals wholesale. Note that
+// TestEveryTableHasAMemberViewRule cannot catch that — `proposals` has a
+// rule; it would simply have been the wrong one.
+//
+// The charter text mirrored into an amendment still follows the charter's own
+// visibility on top of this (docs/adr/036): two gates, because a finished
+// statement and the argument about it are different things.
+const sqlOpenRecordNodes = `SELECT rec.id FROM nodes rec WHERE rec.public_governance_record = 'everyone'`
+
+// sqlRecordNodes: the patches whose deliberation this viewer may carry — one
+// that publishes its record, or one they are inside. Every table that IS the
+// deliberation composes this on top of sqlVisibleNodes: proposals, the
+// discussion under them, and both kinds of attestation. Seeing a patch and
+// reading what it argued about are two different permissions now.
+const sqlRecordNodes = `SELECT rn2.id FROM nodes rn2
+	WHERE rn2.id IN (` + sqlVisibleNodes + `)
+	AND (rn2.id IN (` + sqlOpenRecordNodes + `)
+		OR rn2.id IN (` + sqlInsiderNodes + `))`
+
 const sqlVisibleProposals = `SELECT vp.id FROM proposals vp
-	WHERE vp.node_id IN (` + sqlVisibleNodes + `)`
+	WHERE vp.node_id IN (` + sqlRecordNodes + `)`
 
 // sqlVisibleSources: the calendar feeds this viewer may carry — theirs to
 // see because they administer the patch, and never a crosswalk entry, whose
@@ -318,17 +343,17 @@ func memberViews() map[string]MemberView {
 			Where: "event_id IN (" + sqlVisibleEvents + ")",
 		},
 		"proposals": {
-			Rule:  "on a patch that travelled; the mirrored charter text follows the charter's visibility (docs/adr/036).",
-			Where: "node_id IN (" + sqlVisibleNodes + ")",
+			Rule:  "on a patch whose record this viewer may read; the mirrored charter text follows the charter's visibility (docs/adr/036).",
+			Where: "node_id IN (" + sqlRecordNodes + ")",
 			Cols:  map[string]string{"proposed_body": charterText("proposed_body")},
 		},
 		"attestations": {
-			Rule:  "on a patch that travelled: what a community decided elsewhere is a public read (docs/adr/052).",
-			Where: "node_id IN (" + sqlVisibleNodes + ")",
+			Rule:  "on a patch whose record this viewer may read: what a community decided elsewhere was a public read (docs/adr/052) until the record could be closed.",
+			Where: "node_id IN (" + sqlRecordNodes + ")",
 		},
 		"amendment_attestations": {
-			Rule:  "on a patch that travelled; the adopted text follows the charter's visibility.",
-			Where: "node_id IN (" + sqlVisibleNodes + ")",
+			Rule:  "on a patch whose record this viewer may read; the adopted text follows the charter's visibility.",
+			Where: "node_id IN (" + sqlRecordNodes + ")",
 			Cols: map[string]string{
 				"adopted_body": charterText("adopted_body"),
 				// The charter this adopted, when that charter travelled.

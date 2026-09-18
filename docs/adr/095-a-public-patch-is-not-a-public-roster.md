@@ -103,6 +103,19 @@ remote surface to gate. The column travels in a seamrip like every other
 patch setting: a fork that lost it would publish a roster the original
 had taken down.
 
+> **Corrected, 2026-09-18.** True of the actor document and false in
+> effect. Memberships were never a *field* on the wire, and this decision
+> stopped reading there — but a governance activity carrying a person's
+> actor and a patch's is a membership assertion in all but name, because
+> nobody outside a patch can vote in it or author its charters. The
+> `gv:Vote` broadcast announced by actor the ballot the REST roster on the
+> same request had just withheld. "No remote surface to gate" was the
+> wrong question; the right one is whether a membership can be *inferred*
+> from what travels, and it could. Fixed, with the reasoning, in
+> docs/adr/2026-09-18-a-vote-is-a-membership-said-out-loud.md. The rest of
+> this decision stands: `public_member_list` itself still federates
+> nothing, and it is a separate control from the member's own switch.
+
 ## Consequences
 
 An outsider on a `nobody` patch gets an empty listing, a hidden Members

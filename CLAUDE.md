@@ -46,7 +46,7 @@ patchwork/
 │   ├── notifications/      # notification channels, email, reminder worker
 │   ├── weblink/            # the SPA paths Go emits (notification/email/feed links)
 │   └── seamrip/            # export/import portability boundary (docs/adr/002)
-├── migrations/             # SQL migration files (sequential numbered; 006 intentionally absent)
+├── migrations/             # SQL migration files (timestamped; 001-075 legacy numbered, 006 absent)
 ├── docs/                   # DEPLOYMENT.md, adr/ (decision records; adr/README.md is the index)
 ├── web/                    # Svelte project (npm, builds to web/dist/)
 ├── CONTEXT.md              # canonical vocabulary glossary (backend vs UI terms)
@@ -58,70 +58,65 @@ patchwork/
 └── CLAUDE.md
 ```
 
-### Claiming a number (ADRs and migrations)
+### Naming a record (ADRs and migrations)
 
-Both `docs/adr/` and `migrations/` are sequentially numbered, and both are
-claimed by branches that can't see each other. Two branches each reading
-"the highest number on disk" will pick the same next one and both be right
-locally. **Both collide silently** — duplicate numbers merge clean and
-leave every `docs/adr/0NN` or `migrations/0NN` citation ambiguous. Two ADR
-017s reached main this way, and so did two migration 066s. (This paragraph
-used to say migrations collide loudly. They do not — `schema_migrations`
-keys on the whole filename and `fs.ReadDir` sorts by it, so both files
-apply, in a defined order, and nothing anywhere complains. Believing
-otherwise is how the second pair got in.)
+**Take today's date and write a sentence. There is nothing to look up and
+nobody to ask.**
 
-Before claiming a number, check what's in flight, not just what's on disk:
-
-```sh
-git ls-tree --name-only origin/main docs/adr/   # or migrations/
-gh pr list --state open                          # branches that haven't merged yet
-git branch --list                                # local branches, incl. other worktrees'
+```
+docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md
+migrations/20260916T143207_suggested_tags.sql
 ```
 
-Local branches matter as much as PRs: an unpushed worktree branch claimed
-ADR 038 invisibly to a session that checked only origin/main and open PRs.
+ADRs use `YYYY-MM-DD-slug.md`; migrations use `YYYYMMDDTHHMMSS_slug.sql`,
+with seconds because for a migration the timestamp is the *run order* and
+two on the same day need a determinate one. For an ADR the date is only a
+label, and two on the same day are told apart by their sentences.
 
-**That check has a shelf life.** It tells you the number was free when you
-claimed it, not that it still is. ADR 063 was claimed against a clean
-board — main topped out at 062, no open PRs, no other branches — and was
-wrong three hours later when another PR merged its own 063 while the first
-sat in review. **Re-check before merge, not only before claiming**, and
-re-check again after any merge of main into a long-lived branch.
+`date +%Y-%m-%d` and `date -u +%Y%m%dT%H%M%S` produce them.
 
-When running parallel agents or worktrees on one repo, **assign each its
-number up front** rather than letting each pick. If a collision does land,
-renumber the side with fewer inbound references — or, when one side has
-already merged, the unmerged one — and update every citation in the same
-commit: `git mv` so history survives, then sweep `*.md`, `*.go`,
-`*.svelte`, `*.js`, `*.sql` for the old number.
+**Both number spaces are closed.** ADRs stopped at 117 and migrations at
+075 (the cutover ADR said 115 and 074; two branches in flight landed after
+it, and a merged migration is never renamed, so the line moved rather than
+the files). Those files keep their names forever, every `docs/adr/0NN`
+citation keeps resolving, and no new record is ever numbered.
+`TestNewRecordsAreNotNumbered` fails the build on a new `NNN-` or `NNN_`,
+because the realistic way this decays is mimicry: 117 numbered files are a
+strong pattern to copy. `migrations/006` is still intentionally absent and
+a retired ADR still keeps its number and its status line.
 
-Sweeping is where this bites a second time. Once both ADRs exist in one
-tree, **a blanket find-and-replace is wrong**: files legitimately cite the
-other side's number too. Renumbering 063 → 064 meant 17 citations moved
-and two files kept theirs, because `internal/eventsource/sync.go` and
-`PatchSettingsSources.svelte` each cited *both* ADRs after the merge.
-Anchor those edits on the surrounding sentence, not on the number.
+Why this replaced sequential numbering is
+`docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md`. The short version:
+a number was claimed from a counter whose real state is the union of every
+branch in flight, which no branch can see. Two worktrees read "the highest
+number on disk", picked the same next one, and were both right locally.
+The ritual that guarded it (check `origin/main`, then open PRs, then local
+branches, then re-check before merge) asked a question whose answer
+expired, and its cost grew with exactly the parallelism this project runs
+on. Two ADR 017s and two migration 066s reached main anyway.
 
-**Renumbering a merged migration needs a guard, and the window to skip it
-is shorter than it looks.** Once a number is on a real database, renaming
-the file makes an applied migration look pending — and migrations are not
-idempotent (`CREATE TABLE`, `ALTER TABLE ... ADD COLUMN`), so the re-run
-errors and `database.Open`'s error is `log.Fatalf`. A bare `git mv` is a
-fleet that will not boot. The 066 renumber was argued safe because the merge
-was minutes old; it was verified from an *empty* database, which is the one
-database that cannot show the problem. Renumber only together with an entry
-in `renamedMigrations` (`internal/database/database.go`), which rewrites the
-recorded row in place — and test the upgrade path from a database carrying
-the old name, not just a fresh migrate. Those entries are permanent.
-`TestMigrationNumbersAreUnique` fails the build on a duplicate number, which
-is the check that should have existed first.
+**Never rename a migration that has merged.** The runner records the whole
+filename in `schema_migrations` and migrations are not idempotent
+(`CREATE TABLE`, `ALTER TABLE ... ADD COLUMN`), so a renamed file looks
+pending, re-runs, errors, and `database.Open`'s error is `log.Fatalf`. A
+bare `git mv` is a fleet that will not boot. The only safe rename pairs
+with an entry in `renamedMigrations` (`internal/database/database.go`),
+which rewrites the recorded row in place, and it must be tested from a
+database carrying the *old* name, never from a fresh migrate, which is the
+one database that cannot show the problem. Those entries are permanent.
+Timestamped names exist so you never need this.
 
-Numbers are never reused once merged: `migrations/006` is intentionally
-absent, and a retired ADR keeps its number and gets a status line.
+**A citation is a path now.** Cite a new ADR by its filename
+(`docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md`), which resolves,
+rather than by a bare number, which never did. Legacy ADRs keep being
+cited as `docs/adr/0NN`.
 
-**The same collision has a code form, and git is equally blind to it.**
-Two branches each added a `jsonString` helper — one in
+### When a clean merge is not a working merge
+
+The naming collision is gone. Two others are not, and git is equally blind
+to both.
+
+**The code form.** Two branches each added a `jsonString` helper — one in
 `internal/handler/programs.go`, one in `internal/handler/event_sources.go`
 — so the merge was clean and the package stopped compiling. A green PR
 does not stay green just because main merged without conflicts: **build
@@ -129,7 +124,7 @@ and run the suites after merging main**, before treating a quiet merge as
 a working one. Shared helper names, new columns on a table two branches
 both touched, and a route registered twice all fail this way.
 
-**And a third form, which announces itself by going quiet.**
+**The ledger form, which announces itself by going quiet.**
 `copy/ledger.json` is generated: `copy-ledger sync` rewrites the recorded
 line number of every string in any file a branch touched. So two branches
 that share no source file at all still conflict there, and the more
@@ -324,6 +319,8 @@ Key endpoints:
 - `POST /api/v1/events` — members/admins post directly; anyone else submits for review (`status: pending_review`) per docs/adr/026; trusted contributors (users flag) post directly to unclaimed patches. `event_url` is the event's **own page out on the web** (docs/adr/079) — tickets, the venue's listing — distinct from the Patchwork permalink and from an `event_link`. http(s) only, checked at every write path *and* at every parser, because it is rendered as an href and a feed is somebody else's input
 - `PATCH /api/v1/events/{id}/review` — approve/reject an event submission (instance admin for unclaimed patches, patch admins for active)
 - `GET /api/v1/admin/event-submissions`, `GET /api/v1/nodes/{slug}/event-submissions` — the two review queues
+- **The trusted-contributor grant has a scope** (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md): `users.trusted_contributor` is the quilt-wide grant and `node_trusted_contributors` the per-patch one, and every gate that is about one patch (event create/edit, CSV upload, the link handshake, event sources) reads `userTrustedOn`, never the flag. `GET /api/v1/nodes/{slug}` answers `viewer_trusted` beside `is_unclaimed`, at the top of the payload and not on the node. A quilt-wide grant also skips listing review: `POST /api/v1/submissions` publishes that person's suggestion as unclaimed at once. A suggestion may carry `feed_url`, probed synchronously and parked in `nodes.suggested_feed_url` until `PATCH /api/v1/admin/submissions/{id}` approves with `grant_trust` and `attach_feed` (both default true), which is where the per-patch grant is ordinarily given. Both outcomes notify the suggester
+- `GET|POST /api/v1/users/me/trust-request`, `GET|PATCH /api/v1/admin/trust-requests[/{id}]`, `POST|DELETE /api/v1/admin/users/{id}/trusted-patches[/{nodeId}]` — a **trust request** names a scope (patches, or `all`) and is answered at whatever scope the admin judges right, wider or narrower; requested and granted are two facts in the audit line. One open per person, a 30-day cooldown after a decline, moot when every named patch is claimed (swept lazily on read and before a new ask). `GET /api/v1/nodes?status=unclaimed` feeds the picker. None of the three tables travels in a seamrip
 - `POST /api/v1/nodes/{slug}/claim`, `GET /api/v1/nodes/{slug}/claims/mine`, `POST /api/v1/claims/{id}/{verify|withdraw|resend-email}`, `GET|POST /api/v1/claims/verify-email` — claiming an unclaimed patch (docs/adr/030): concurrent claims (one open per user per patch), self-verification (DNS / meta tag / email) anchored on the vetted `nodes.verification_domain`, admin review via `GET/PATCH /api/v1/admin/claims`
 - `GET|POST /api/v1/nodes/{slug}/event-sources`, `DELETE|POST .../{id}[/sync]`, `POST /api/v1/events/{id}/detach` — event sources (docs/adr/031): owner-attached calendar feeds (ICS; Squarespace and schema.org-marked events pages auto-detected), synced hourly; imported events publish directly, are read-only until detached. Every parser fills `Item.URL` and the reconciler diffs it, so **adding a field the feed is authoritative about needs no backfill migration** — the next sync sees every row as changed and fills it (docs/adr/079). Detach does not clear it: detach severs provenance, and the link is content
 - `POST /api/v1/nodes/{slug}/events/bulk` — event upload (CSV door): admin-only batch create, all-or-nothing validation, title+start dedup, silent (no notify/AP burst)
@@ -336,6 +333,7 @@ Key endpoints:
 - `GET /api/v1/gazetteer/suggest?q=` — one **suggested placement** for an address (docs/adr/082). Authed and rate-limited. A miss and an instance with no gazetteer both answer `200 {"found": false}` — not 404, because a miss is the ordinary answer for a valid prose address and an error code would put a red console line under a form that is working. The confirm step is the point: the create form sends `latitude`/`longitude` only once somebody has confirmed a marker, so submitting the form never accepts a guess by silence
 - `GET /api/v1/instance/icon` — the public quilt icon, rendered to SVG from the drafted design (docs/adr/043); an instance that has drafted none wears a starter block assigned from its name
 - `GET|PATCH /api/v1/admin/settings`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, the icon design (`icon_design`: a drafted block plus its fabrics; `null` clears it), danger-zone wipe (docs/adr/014, docs/adr/043)
+- `GET|DELETE /api/v1/admin/usage`, plus `usage_stats` on the settings endpoint — **visitor counts** (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md). Off by default. On, a middleware around the SPA handler alone counts page loads per *route pattern* per UTC day and distinct visitors per UTC day, the latter as `sha256(salt ‖ ip ‖ ua)` under a random in-memory salt replaced at midnight and on restart; only daily totals (`usage_days`, `usage_visitors`) are ever written, pruned after 13 months, and both tables stay behind in a seamrip. **There is no script in the page and must not be**: the shipped privacy policy says there are no analytics scripts, and its `{usage_stats}` placeholder is rendered from the switch so the text is true in both states. Every clause of that "on" paragraph is a property of `internal/middleware/usage.go`; change one and change the other. The shipped Caddyfile keeps no access log, and the policy says that too
 - `POST /api/v1/admin/attestation`, `GET /api/v1/instance/attestation-key` — proving the admin role to an outside party (docs/adr/087). The admin signs a verifier-supplied nonce; the blob is `base64url(payload).base64url(signature)`, RS256 over the *first segment's bytes*, signed with the instance service actor's key and good for 15 minutes. Instance-admin only and step-up gated (docs/adr/017), rate-limited, audited as `admin.attestation_issued` with the nonce. The statement names the domain, the claim and the times and **never a person** — no username, email or user id, because docs/adr/023's roster stays unpublished and a proof of the role must not become the roster by another route. The key endpoint is public, cacheable, and mounted **outside the federation gate** (unlike `/ap/instance`), so `EnsureInstanceActor` runs at startup regardless of `federation.enabled`. Verify with `patchwork -verify-attestation <blob>`, `internal/attest.Verify`, or the `openssl` recipe in docs/DEPLOYMENT.md — always against the key served at the domain you care about, never the one the blob names
 - `GET /api/v1/legal/{privacy|terms}` — public legal documents: shipped defaults or admin overrides, rendered at /privacy and /terms; admin editing via `GET /api/v1/admin/legal` + `PUT|DELETE /api/v1/admin/legal/{doc}` (docs/adr/028)
 - `PUT|DELETE /api/v1/nodes/{slug}/successor` — maintainer succession (docs/adr/051); step-up gated

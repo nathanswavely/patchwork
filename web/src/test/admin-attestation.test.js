@@ -68,7 +68,7 @@ describe('Admin attestation page', () => {
 });
 
 describe('Admin panel wiring', () => {
-  it('gives the page a section of the admin panel (docs/adr/118)', () => {
+  it('gives the page a section of the admin panel (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md)', () => {
     const registry = source('lib/adminPanel.js');
     expect(registry).toContain("{ id: 'attestation', label: 'Prove admin' }");
   });

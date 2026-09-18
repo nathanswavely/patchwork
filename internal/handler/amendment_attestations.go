@@ -95,6 +95,24 @@ func ListAmendmentAttestations(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+
+		// Attestations record what a patch decided at a venue Patchwork was
+		// not, so they are part of its deliberation and follow the record
+		// setting (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// They were a public read under docs/adr/052 and they name people —
+		// an attestation's whole payload is who a meeting seated.
+		//
+		// 200 with an empty list and the setting beside it, matching the
+		// proposals listing: "decided nothing elsewhere" and "withheld" want
+		// opposite copy.
+		if !canReadGovernanceRecord(db, r, nodeID) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":                    []interface{}{},
+				"public_governance_record": "nobody",
+			})
+			return
+		}
 		query := `SELECT a.id, a.node_id, COALESCE(a.doc_id,''), a.target_doc, a.doc_title,
 		                 a.decided_at, a.summary, a.adopted_body, a.git_sha, a.recorded_by,
 		                 `+displayNameExpr("u")+`, a.created_at
@@ -190,14 +208,11 @@ func CreateAmendmentAttestation(db *database.DB) http.HandlerFunc {
 			db.QueryRow("SELECT version FROM governance_docs WHERE id = ?", docID).Scan(&version)
 			version++
 		}
-		author := user.DisplayName
-		if author == "" {
-			author = user.Username
-		}
+		author, authorEmail := commitIdentity(user)
 		gitSHA := ""
 		if dataDir := governance.GetDataDir(); dataDir != "" {
 			sha, gitErr := governance.DirectEdit(dataDir, nodeID, filename, req.AdoptedBody,
-				author, user.Username+"@patchwork.local",
+				author, authorEmail,
 				"Adopted "+strings.TrimSpace(req.DecidedAt)+": "+title)
 			if gitErr != nil {
 				log.Printf("attestation: git write of %s for node %s failed: %v", filename, nodeID, gitErr)
@@ -360,7 +375,7 @@ func broadcastDocUpdate(db *database.DB, docID string) {
 		"@context": ap.GovernanceContext(),
 		"type":     "Update",
 		"actor":    ap.NodeAPID(ap.GetDomain(), doc.NodeID),
-		"object":   ap.GovernanceDocToObject(doc, ap.GetDomain()),
+		"object":   ap.GovernanceDocToObject(doc, ap.GetDomain(), !membershipHidden(db, doc.NodeID, doc.CreatedBy)),
 	})
 }
 

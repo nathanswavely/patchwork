@@ -1,9 +1,20 @@
 # Architecture Decision Records
 
-One file per decision, numbered in the order they were claimed. Numbers are
-never reused; if an ADR is retired it keeps its number and gains a status
-line. See CLAUDE.md ("Claiming a number") for how numbers are claimed when
-several branches are in flight.
+One file per decision.
+
+**A new ADR is named `YYYY-MM-DD-slug.md`**, where the slug states the decision
+as a sentence. Take today's date and write the sentence; there is nothing to
+look up and nobody to ask. See
+[2026-09-16-a-name-nobody-has-to-ask-for.md](2026-09-16-a-name-nobody-has-to-ask-for.md).
+
+ADRs 001 through 117 keep the sequential numbers they were born with, and every
+citation to them keeps working. That number space is **closed**: 117 was the
+last one issued and 118 never will be (the cutover said 115; 116 and 117 were
+in flight when it landed, and are kept rather than renamed). A retired ADR keeps its number and gains
+a status line.
+
+The first column below is how you cite a decision: a number for the legacy
+range, a date for everything after it.
 
 ## Adopted
 
@@ -13,7 +24,7 @@ several branches are in flight.
 | [002](002-seamrip-boundary.md) | The seamrip boundary — community data travels, instance identity does not |
 | [003](003-one-url-scheme-per-screen.md) | One URL scheme per screen; `/manage` removed |
 | [004](004-tile-appearance-storage-and-registry.md) | Tile appearance: one JSON column, frontend-owned registry *(amended by 029)* |
-| [005](005-one-global-bar-workspace-takeover.md) | One global bar; workspaces take over below it *(amended by 003, 118)* |
+| [005](005-one-global-bar-workspace-takeover.md) | One global bar; workspaces take over below it *(amended by 003, 2026-09-17)* |
 | [006](006-profile-privacy-one-switch-membership-visibility.md) | Profiles: public page, lean actor, one membership-visibility switch |
 | [009](009-seed-profiles-are-fiction.md) | Seed profiles are fiction |
 | [010](010-one-seed-graft-not-profiles.md) | One seed dataset — the music profile is grafted in |
@@ -95,7 +106,8 @@ several branches are in flight.
 | [112](112-the-quilt-opens-loud-and-muted-only-takes-away.md) | The quilt opens loud, and muted only ever takes away — a viewer-side Colors choice that caps chroma and never adds it, no instance default to move it, and the block drafter exempt *(its measurement gate failed and forced the hash-palette widening first)* |
 | [113](113-a-signature-says-what-it-covers.md) | A signature says what it covers, and the verifier names the set: an inbound HTTP Signature has to sign `(request-target)`, `host`, `date`, plus `digest` on any request with a body, rather than choosing its own coverage and leaving the skew window, the digest check and the inbox path resting on unsigned values *(found by the same outside review as 110; also records why the `rand.Read` note is a comment and not a guard)* |
 | [115](115-a-steward-holds-only-what-nobody-else-holds.md) | A steward holds only what nobody else holds: an instance admin's reach into a patch is custody, not rank, so it exists while the patch has no admin of its own and ends when somebody holds the role. Unclaimed keeps its calendar custody, a patch vacated for inactivity grants only putting an admin back, a held patch grants nothing. Archive and commenting stay as named exceptions, no break-glass is built, and a matrix test fails the build on the next copied bypass *(states what 026, 057 and CONTEXT.md already said; closes 110's transport to instance admins; **implementation deliberately deferred while the reference instance is young**, tracked as an issue)* |
-| [118](118-an-admin-tab-answers-one-question.md) | An admin tab answers one question: the admin panel is five tabs (Overview, Review, Users, Settings, Audit log), Review and Settings carry a sidebar of sections at `/admin/<tab>/<section>`, the Review tab wears the Overview's inbox count, the suggested-tag queue becomes a Review section with its own page, and the fifteen-tab flat scheme redirects *(amends 005; applies 003)* |
+| [116](116-following-is-not-a-key-to-the-private-shelf.md) | Following is not a key to the private shelf — `follower_permissions.charters` shipped on by column default, by `DefaultRules` and by three of four templates, and following needs nobody's approval, so any signed-in stranger read an invite-only patch's unpublished charters; the git transport asked the same key and so handed over the whole repository, whose commits were authoring with members' real email addresses rather than the derived ones 110 described. The clone door now asks `viewerIsInPatchRoom`, the key is off by default and closed on existing patches at startup with a notice to their admins, and `commitIdentity` is the one place a commit's author is decided *(narrows 110; applies 006, 036, 050, 086, 089; rollout modelled on 037)* |
+| [117](117-a-follower-is-not-a-quieter-member.md) | A follower is not a quieter member: `/members` returns the membership and followers are asked for by name, `is_member` stops being true for followers (six components had each written their own guard against it), and the role control refuses any promotion out of follower, because the two paths that make a member both ask the person and this one skipped them. Demotion is untouched, and Patch Settings lists the two apart *(found on the live build by clicking Follow, then finding the row promotable to admin; applies 006, 044, 098, 100; does not close 115's instance-admin bypass)* |
 
 ## Partly implemented
 
@@ -128,6 +140,12 @@ several branches are in flight.
 | [079](079-an-event-keeps-the-door-it-came-through.md) | An event keeps the door it came through — every feed carries the event's own page and Patchwork dropped it; one `event_url`, filled by ingest and by the form *(fills a gap in 031, completes 056)* |
 | [080](080-a-contact-card-is-shared-patch-by-patch.md) | A contact card is shared patch by patch — one card on the account, one switch per membership, shown only in the room; a second axis beside 006's one switch, not a second visibility toggle *(superseded by 083)* |
 | [081](081-a-noticeboard-with-replies-not-a-feed.md) | A noticeboard with replies, not a feed — members-only, replies per notice, a closed moderation kit, quiet by default; travels in a seamrip; markdown with an image reference |
+| [2026-09-16](2026-09-16-a-name-nobody-has-to-ask-for.md) | A name nobody has to ask for: the ADR and migration number spaces close at 115 and 074; new records are named from the clock and a sentence, so no two worktrees ever claim the same one *(retires CLAUDE.md's "Claiming a number"; nothing existing is renamed; amended 2026-09-18: two in-flight branches landed 116, 117 and 075 after the cutover, so the spaces closed there)* |
+| [2026-09-17](2026-09-17-an-admin-tab-answers-one-question.md) | An admin tab answers one question: the admin panel is five tabs (Overview, Review, Users, Settings, Audit log), Review and Settings carry a sidebar of sections at `/admin/<tab>/<section>`, the Review tab wears the Overview's inbox count, the suggested-tag queue becomes a Review section with its own page, and the fifteen-tab flat scheme redirects *(amends 005; applies 003)* |
+| [2026-09-18](2026-09-18-counting-visitors-without-watching-anyone.md) | Counting visitors without watching anyone: no cookie banner and no separate cookie policy; visitor counting is a server-side gauge, off by default, that keeps daily totals per route pattern and a per-day visitor count hashed under a salt that never leaves memory; no script in the page; the privacy policy renders its visitor-counts paragraph from the switch, corrects its request-log claim, and names the map tile servers *(amends 028)* |
+| [2026-09-18](2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md) | Trust has a scope, and a suggestion carries its calendar: creation opens on a fork; the trusted-contributor grant is quilt-wide or per-patch, offered checked at suggestion approval; trusted contributors may attach feeds where their grant reaches; a suggestion may carry a feed; a trust request is answered; the suggester is told *(amends 026, 031, 039)* |
+| [2026-09-18](2026-09-18-a-vote-is-a-membership-said-out-loud.md) | A vote is a membership said out loud: a governance activity carrying a person's actor and a patch's asserts the membership the ADR 006 switch took down, so a hidden member's vote is not broadcast at all and a proposal or charter federates unattributed; the builders take the decision as an argument and the pull side asks it too *(corrects 095 decision 7, closes a hole in 006)* |
+| [2026-09-18](2026-09-18-the-default-should-match-the-assumption.md) | The default should match the assumption: a patch is born with its member list and its governance record closed, and both open by an act; the deliberation was the leak, not the documents; existing patches are retracted rather than grandfathered because a wrong closure costs a click and a wrong exposure cannot be recalled *(extends 095 and corrects its decision 7 — a membership must not travel as an inference either; narrows the reach of 037 on the profile without weakening the pin; departs from 036 on grandfathering)* |
 
 ## Proposed — designs on record, not built
 

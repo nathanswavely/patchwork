@@ -19,9 +19,10 @@
   let membershipRole = $derived(patch.value.membershipRole);
   let nodeId = $derived(patch.value.node?.id);
 
-  // Not `isMember`: the node payload sets is_member for followers too, and
-  // proposing a rules change is a member act — following carries no
-  // governance rights.
+  // Proposing a rules change is a member act: following carries no
+  // governance rights. Read from membershipRole rather than isMember, which
+  // is the same answer since docs/adr/117 narrowed it but is derived here
+  // rather than trusted from a flag that once meant something wider.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
   // An admin *of this patch*. The node payload sets is_admin for instance
   // admins too, and arranging a patch's council is not theirs to do — the
@@ -152,7 +153,7 @@
       // With nobody in the role, "ask an admin to nominate you" names a
       // person who does not exist here (docs/adr/108). The contest is the
       // way back, and the seat rows carry its date.
-      if ((overview?.admins?.length ?? 0) === 0) {
+      if (!adminsWithheld && (overview?.admins?.length ?? 0) === 0) {
         return contestDue || !nextContestOpens
           ? 'Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.'
           : `Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats opens ${formatDay(nextContestOpens)}, and any member of this patch may stand.`;
@@ -189,8 +190,17 @@
   // PatchShell redirects the governance tab away from an unclaimed patch, so
   // this only covers the frame before that effect runs — but that frame would
   // otherwise carry the wrong answer.
+  //
+  // An empty `admins` can now mean two different things, and only one of them
+  // is a fact about the patch: the roster may simply not be public to this
+  // viewer (docs/adr/095,
+  // docs/adr/2026-09-18-the-default-should-match-the-assumption.md). Read
+  // before the length, because every sentence below is about a vacancy and a
+  // withheld list is not one — a patch with a full council was being reported
+  // as leaderless.
+  let adminsWithheld = $derived(overview?.admins_withheld === true);
   let noAdmins = $derived(
-    (overview?.admins?.length ?? 0) === 0 && !patch.value.isUnclaimed,
+    !adminsWithheld && (overview?.admins?.length ?? 0) === 0 && !patch.value.isUnclaimed,
   );
   let noAdminsLine = $derived.by(() => {
     if (leadershipElsewhere)
@@ -483,7 +493,15 @@
         <p class="overview-narrative">{describeLeadership(rules)}</p>
       {/if}
 
-      {#if !noAdmins}
+      <!-- Withheld is tested first. `noAdmins` is false when the list is
+           merely not public, so leaving this second rendered an empty
+           admin-list and said nothing at all. -->
+      {#if adminsWithheld}
+        <!-- Not a vacancy. This patch has a council and does not publish who
+             is on it, and saying so is the whole point: the vacancy sentence
+             would otherwise tell a visitor the patch is leaderless. -->
+        <p class="no-admins">This patch does not list its admins publicly.</p>
+      {:else if !noAdmins}
         <div class="admin-list">
           {#each overview.admins as admin}
             <div class="admin-item">

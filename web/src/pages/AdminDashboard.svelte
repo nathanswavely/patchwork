@@ -42,7 +42,7 @@
     navigate(path);
   }
 
-  // Each queue's Review section (docs/adr/118), and how to say "3 of
+  // Each queue's Review section (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md), and how to say "3 of
   // them" in the page's own words.
   const QUEUES = {
     reports: { one: 'report', many: 'reports', href: '/admin/review/reports' },

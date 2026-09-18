@@ -16,7 +16,7 @@ type fixture struct {
 	pubOwn, privOwn, pubOther, privOther           string
 	membersDocOwn, membersDocOther                 string
 	membersEventOwn, membersEventOther             string
-	proposalOwn                                    string
+	proposalOwn, proposalOther                     string
 }
 
 // seedTwoRooms builds a quilt with two rooms the viewer is in and two they
@@ -125,6 +125,7 @@ func seedTwoRooms(t *testing.T, db *database.DB) fixture {
 
 	// A proposal in the other room amending THEIR members-only charter.
 	otherProposal := nextID()
+	f.proposalOther = otherProposal
 	mustExec(t, db,
 		`INSERT INTO proposals (id, node_id, author_id, title, body, status, state, target_doc, proposed_body, created_at, updated_at)
 		 VALUES (?, ?, ?, 'Amend their house rules', '', 'open', 'voting', 'house-rules.md', 'THEIR SECRET TEXT', ?, ?)`,
@@ -510,5 +511,50 @@ func TestMemberExport_RoundTrip(t *testing.T) {
 	dst.QueryRow(`SELECT COUNT(*) FROM pragma_foreign_key_check`).Scan(&violations)
 	if violations != 0 {
 		t.Errorf("the fork has %d foreign key violations", violations)
+	}
+}
+
+// A proposal is not public deliberation any more — it is public only where
+// the patch says so
+// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+//
+// The member-view rule used to carry proposals from every visible node, on a
+// comment that said "a proposal is public deliberation". Left that way it
+// would have been the seamrip's version of the federation hole: a patch
+// closes its record, and any member of any other patch exports its proposals
+// wholesale. TestEveryTableHasAMemberViewRule cannot catch this, because
+// `proposals` has a rule — it would simply have been the wrong one.
+func TestMemberView_ProposalsFollowTheRecordSetting(t *testing.T) {
+	db := testDB(t)
+	f := seedTwoRooms(t, db)
+
+	// pubOther is a public patch the viewer is not in. Its record is closed,
+	// which is what a patch created through the product now is.
+	mine := memberFiles(t, db, f.viewer)
+	if has(mine["proposals.json"], "id", f.proposalOther) {
+		t.Error("a closed patch's proposal travelled to somebody who is not in it")
+	}
+	// Their own patch is unaffected: being inside the room is the other half
+	// of the predicate.
+	if !has(mine["proposals.json"], "id", f.proposalOwn) {
+		t.Error("the viewer's own patch's proposal stopped travelling")
+	}
+
+	// And a patch that publishes its record travels to anyone who can see the
+	// patch at all, exactly as before.
+	mustExec(t, db, `UPDATE nodes SET public_governance_record = 'everyone' WHERE id = ?`, f.pubOther)
+	mine = memberFiles(t, db, f.viewer)
+	if !has(mine["proposals.json"], "id", f.proposalOther) {
+		t.Error("an open patch's proposal did not travel")
+	}
+	// Opening the record does not open the charter: the mirrored amendment
+	// text still follows the document's own visibility (docs/adr/036), which
+	// is why these are two gates and not one.
+	for _, p := range mine["proposals.json"] {
+		if id, _ := p["id"].(string); id == f.proposalOther {
+			if body, _ := p["proposed_body"].(string); strings.Contains(body, "THEIR SECRET TEXT") {
+				t.Error("an open record leaked a members-only charter's mirrored text")
+			}
+		}
 	}
 }

@@ -359,12 +359,12 @@
              for the next person to find. -->
         <h1>Nothing here yet</h1>
         <p class="subtitle">
-          No patches on this quilt so far. Make one for your group, and the
-          next person who comes looking will have something to find.
+          No patches on this quilt so far. Add one, and the next person who
+          comes looking will have something to find.
         </p>
         <div class="bottom-bar">
           <button class="btn btn-primary cta-btn" onclick={() => navigate('/patches/new')}>
-            Create a patch
+            Add a patch
           </button>
         </div>
       {:else}

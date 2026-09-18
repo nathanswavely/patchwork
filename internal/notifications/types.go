@@ -108,6 +108,13 @@ const (
 	// LiningUpdated fires when a stale lining auto-updates to the current
 	// shipped text (docs/adr/037). Notified, never asked.
 	LiningUpdated NotificationType = "governance.lining_updated"
+	// GovernanceFollowerChartersClosed fires once, at the startup that closes
+	// a patch's follower access to its members-only charters (docs/adr/116).
+	// Its own type rather than GovernanceRulesChanged because nobody in the
+	// patch made this edit: Patchwork did, to a default that leaked, and the
+	// notice has to say so or it reads as an admin's change that no admin
+	// remembers making. Admins only — they are who can put it back.
+	GovernanceFollowerChartersClosed NotificationType = "governance.follower_charters_closed"
 	// GovernanceInactivityWarning tells an admin their seat is at risk before
 	// it goes, which is the whole point of the warning: the shipped succession
 	// plan gives them the gap between day 30 and day 60 to answer.
@@ -190,8 +197,35 @@ const (
 	AdminClaimRequest     NotificationType = "admin.claim_request"
 	AdminSubmission       NotificationType = "admin.submission"
 	AdminTagSuggestion    NotificationType = "admin.tag_suggestion"
+
+	// The verdict on a patch suggestion, to the suggester
+	// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md,
+	// decision 8). AdminSubmission above is the other half of the same
+	// event and goes the other way: it tells the instance admin a queue
+	// has something in it. Until these existed a suggester heard nothing
+	// either way, so the person who put a venue on the quilt had no signal
+	// to come back and add its events.
+	SubmissionApproved NotificationType = "submission.approved"
+	SubmissionRejected NotificationType = "submission.declined"
 	AdminEventSubmission  NotificationType = "admin.event_submission"
 	AdminEventLinkRequest NotificationType = "admin.event_link_request"
+
+	// A trust request
+	// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md,
+	// decision 7: "a trust request is answered, never merely seen"). The ask
+	// reaches the site admins who can answer it; the three below reach the one
+	// person who asked, because an ask that is never answered back is the
+	// silence the ADR was written about.
+	//
+	// Moot is its own outcome rather than a decline: nobody judged anybody.
+	// Every patch the request named was claimed before an admin got to it, so
+	// there is nothing left to grant, and telling a person they were declined
+	// when they were not is the kind of small lie that costs a community
+	// somebody.
+	AdminTrustRequest    NotificationType = "admin.trust_request"
+	TrustRequestApproved NotificationType = "trust_request.approved"
+	TrustRequestDeclined NotificationType = "trust_request.declined"
+	TrustRequestMoot     NotificationType = "trust_request.moot"
 
 	// Claim lifecycle (docs/adr/039): a verified or approved claim opens a
 	// 14-day, single-use window into patch setup — these are claimant-facing,
@@ -276,10 +310,15 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	GovernanceRulesChanged:        {CategoryGovernance, "Rules changed", AudienceAllMembers, PriorityNormal},
 	GovernanceRulesChangedMidVote: {CategoryGovernance, "Rules changed while votes are open", AudienceAllMembers, PriorityHigh},
 	LiningUpdated:                 {CategoryGovernance, "The lining was updated", AudienceAllMembers, PriorityNormal},
-	GovernanceInactivityWarning:   {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
-	GovernanceSeatUnavailable:     {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
-	GovernanceCouncilEmpty:        {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
-	GovernanceSuccessionNeeded:    {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
+	// High, unlike a routine rules edit: this one is time-sensitive in the way
+	// the mid-vote notice is. It changes who can read the patch's private
+	// charters, it happened without anybody asking, and an admin who disagrees
+	// should hear rather than find out.
+	GovernanceFollowerChartersClosed: {CategoryGovernance, "Followers can no longer read members-only charters", AudienceAdminsOnly, PriorityHigh},
+	GovernanceInactivityWarning:      {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
+	GovernanceSeatUnavailable:        {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
+	GovernanceCouncilEmpty:           {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
+	GovernanceSuccessionNeeded:       {CategoryAdmin, "A patch has no admins left", AudienceSiteAdmins, PriorityHigh},
 
 	MembershipJoined:      {CategoryMembership, "New member joined", AudienceAdminsOnly, PriorityNormal},
 	MembershipRequest:     {CategoryMembership, "Membership request pending", AudienceAdminsOnly, PriorityHigh},
@@ -316,8 +355,26 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	AdminClaimRequest:     {CategoryAdmin, "New patch claim request", AudienceSiteAdmins, PriorityHigh},
 	AdminSubmission:       {CategoryAdmin, "New patch submission", AudienceSiteAdmins, PriorityNormal},
 	AdminTagSuggestion:    {CategoryAdmin, "A tag was suggested", AudienceSiteAdmins, PriorityNormal},
+
+	// Events rather than Admin: these answer something the person did, and
+	// what the approval hands them is the patch's calendar. High priority
+	// on the approval so it can reach a mailbox — a suggester who never
+	// comes back is the failure this exists to fix.
+	SubmissionApproved: {CategoryEvents, "Your patch suggestion was approved", AudienceSpecificUser, PriorityHigh},
+	SubmissionRejected: {CategoryEvents, "Your patch suggestion was declined", AudienceSpecificUser, PriorityNormal},
 	AdminEventSubmission:  {CategoryAdmin, "New event submission", AudienceSiteAdmins, PriorityNormal},
 	AdminEventLinkRequest: {CategoryAdmin, "Event link request (unclaimed patch)", AudienceSiteAdmins, PriorityNormal},
+	AdminTrustRequest:     {CategoryAdmin, "Someone asked to be a trusted contributor", AudienceSiteAdmins, PriorityNormal},
+
+	// Events rather than Admin, because these are not a queue's state: they
+	// are the answer to something one person did, which is what the Events
+	// category holds since docs/adr/093 emptied it of announcements. Approval
+	// is High for the same reason an approved event submission is — it hands
+	// somebody standing they will act on, and finding out by accident is how
+	// the standing goes unused.
+	TrustRequestApproved: {CategoryEvents, "Your trust request was approved", AudienceSpecificUser, PriorityHigh},
+	TrustRequestDeclined: {CategoryEvents, "Your trust request was declined", AudienceSpecificUser, PriorityNormal},
+	TrustRequestMoot:     {CategoryEvents, "Your trust request no longer applies", AudienceSpecificUser, PriorityNormal},
 
 	ClaimApproved: {CategoryAdmin, "Your claim was approved", AudienceSpecificUser, PriorityHigh},
 
@@ -340,6 +397,7 @@ var selfNotifyingTypes = map[NotificationType]bool{
 	AdminSubmission:       true,
 	AdminEventSubmission:  true,
 	AdminEventLinkRequest: true,
+	AdminTrustRequest:     true,
 }
 
 // NotifiesSelf reports whether a type is delivered to its own actor.
@@ -379,13 +437,16 @@ func TypesForCategory(cat Category) []NotificationType {
 		ProposalNew, ProposalVoting, ProposalOpenToYou, ProposalVoteReceived, ProposalApproved,
 		ProposalRejected, ProposalApplied, ProposalComment, ProposalTurnout, ProposalDeadline,
 		GovernanceDocUpdated, GovernanceRulesChanged, GovernanceRulesChangedMidVote, LiningUpdated,
+		GovernanceFollowerChartersClosed,
 		GovernanceInactivityWarning, GovernanceSeatUnavailable, GovernanceCouncilEmpty,
 		MembershipJoined, MembershipRequest, MembershipApproved, MembershipRoleChanged, MembershipBanned, MembershipReinstated,
 		MembershipInvited,
 		EventSuggested, EventSubmissionApproved, EventSubmissionRejected,
+		SubmissionApproved, SubmissionRejected,
 		EventLinkRequested, EventLinkConfirmed, ProgramOffer,
 		AdminClaimRequest, AdminSubmission, AdminEventSubmission, AdminEventLinkRequest,
 		AdminTagSuggestion, TagSuggestionApproved, TagSuggestionRejected,
+		AdminTrustRequest, TrustRequestApproved, TrustRequestDeclined, TrustRequestMoot,
 		GovernanceSuccessionNeeded,
 		ClaimApproved, ClaimSetupExpiring,
 		QuiltBulletin,

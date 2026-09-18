@@ -183,7 +183,7 @@ test.describe('Navigation — Admin Shell', () => {
     await loginAsAdmin(page);
   });
 
-  // Five tabs; Review and Settings carry a sidebar (docs/adr/118).
+  // Five tabs; Review and Settings carry a sidebar (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md).
   test('Admin pages render inside AdminShell with five tabs', async ({ page }) => {
     await page.goto('/admin');
     await page.waitForTimeout(2000);

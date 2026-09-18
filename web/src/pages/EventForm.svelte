@@ -1,10 +1,11 @@
 <script>
   import { X } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
-  import { toZonedInputValue, fromZonedInputValue, sameZoneAsViewer, isPlaceZone } from '../lib/datetime.js';
+  import { toZonedInputValue, fromZonedInputValue, sameZoneAsViewer, isPlaceZone, formatDay } from '../lib/datetime.js';
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import VocabLabel from '../components/VocabLabel.svelte';
   import WorkspaceSearch from '../components/WorkspaceSearch.svelte';
+  import TrustScopePicker from '../components/TrustScopePicker.svelte';
   import { reachablePatchPickerProvider } from '../lib/finderProviders.js';
   import { isAdmin, isTrustedContributor } from '../stores/auth.svelte.js';
   import { getMemberships } from '../stores/memberships.svelte.js';
@@ -65,18 +66,28 @@
   // inheriting event and one pinning its patch's zone are indistinguishable
   // in it, and guessing the instance's here would make every save freeze a
   // copy of a zone the event was happily inheriting.
+  //
+  // The same fetch carries `viewer_trusted` — whether this viewer's
+  // trusted-contributor grant, quilt-wide or scoped to this one patch,
+  // reaches it (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+  // carries-its-calendar). It is read here rather than asked separately,
+  // since every path that sets the hosting patch already calls this.
+  let hostingViewerTrusted = $state(false);
   async function loadPatchZone(slug) {
     const fallback = getInstanceTimezone() || '';
     if (!slug) {
       patchTimezone = fallback;
+      hostingViewerTrusted = false;
       return;
     }
     try {
       const data = await api(`nodes/${slug}`);
       const node = data.node || data;
       patchTimezone = node.timezone || fallback;
+      hostingViewerTrusted = data.viewer_trusted === true;
     } catch {
       patchTimezone = fallback;
+      hostingViewerTrusted = false;
     }
   }
   // Set when a submit came back pending_review — the form is replaced by
@@ -141,6 +152,7 @@
         slug: node.slug,
         status: data.is_unclaimed ? 'unclaimed' : node.status || 'active',
       };
+      hostingViewerTrusted = data.viewer_trusted === true;
       patchTimezone = node.timezone || getInstanceTimezone() || '';
       if (!isEdit) timezone = patchTimezone;
     } catch (e) {
@@ -168,9 +180,17 @@
   // members and admins of an active patch, the instance admin anywhere, and
   // a trusted contributor on an unclaimed one. Everybody else may still
   // suggest, and the field says so rather than finding out on submit.
-  function postsDirectly(status, slug) {
+  //
+  // Trust is now scoped per patch (docs/adr/2026-09-18-trust-has-a-scope-
+  // and-a-suggestion-carries-its-calendar): `unclaimedTrusted` defaults to
+  // the signed-in flag, which only ever means quilt-wide, for the picker's
+  // bulk preview below, where most rows have never been fetched and so
+  // their own `viewer_trusted` is unknown. The one decision that actually
+  // gates the button and the review notice — the chosen patch — passes its
+  // own fetched value instead, so a per-patch grant is answered correctly.
+  function postsDirectly(status, slug, unclaimedTrusted = isTrustedContributor()) {
     if (isAdmin()) return true;
-    if (status === 'unclaimed') return isTrustedContributor();
+    if (status === 'unclaimed') return unclaimedTrusted;
     const role = activeRoles.get(slug);
     return role === 'member' || role === 'admin';
   }
@@ -233,11 +253,92 @@
   // A pick the server will hold for review. Drives the button, so the label
   // promises what the patch actually allows.
   let willReview = $derived(
-    !!hostingPatch && !postsDirectly(hostingPatch.status, hostingPatch.slug)
+    !!hostingPatch && !postsDirectly(hostingPatch.status, hostingPatch.slug, hostingViewerTrusted)
   );
   let reviewers = $derived(
     hostingPatch?.status === 'unclaimed' ? 'quilt admins' : 'patch admins'
   );
+
+  // The trust ask (docs/adr/2026-09-18-..., decision 7): offered exactly
+  // where the review cost is being paid — a new event about to queue on an
+  // unclaimed patch, with that patch preselected. Not on an edit: the ask is
+  // about the events this person hasn't posted yet, and an edit's own door
+  // is already fixed. Not for an instance admin or anyone whose grant
+  // already reaches this patch: willReview is false for both, same as the
+  // notice it sits under.
+  let showTrustAsk = $derived(
+    !isEdit && !!hostingPatch && hostingPatch.status === 'unclaimed' && willReview
+  );
+
+  // Fetched once, the first time the ask becomes relevant — not on every
+  // form load, since most events never touch this door.
+  let trustRequestChecked = $state(false);
+  let trustRequestStatus = $state(''); // '' | 'pending' | 'declined' | 'approved' | 'moot'
+  let trustCanAskAgainAt = $state(null);
+  let trustPanelOpen = $state(false);
+  let trustAll = $state(false);
+  let trustSelected = $state([]);
+  let trustMessage = $state('');
+  let trustSubmitting = $state(false);
+  let trustError = $state('');
+
+  // A declined request may be asked again once the cooldown passes
+  // (docs/adr/2026-09-18-..., decision 7: "a person is not a word to be
+  // spent"). No date at all reads as no cooldown standing in the way.
+  let trustCanAskAgain = $derived(
+    !trustCanAskAgainAt || new Date(trustCanAskAgainAt) <= new Date()
+  );
+
+  $effect(() => {
+    if (showTrustAsk && !trustRequestChecked) loadTrustRequest();
+  });
+
+  async function loadTrustRequest() {
+    trustRequestChecked = true;
+    try {
+      const data = await api('users/me/trust-request');
+      trustRequestStatus = data.request?.status || '';
+      trustCanAskAgainAt = data.can_ask_again_at || null;
+    } catch {
+      // Left at '' — the ask button still renders, which is the safe
+      // direction: worst case it offers an ask that 409s.
+    }
+  }
+
+  function openTrustPanel() {
+    trustSelected = hostingPatch
+      ? [{ id: hostingPatch.id, slug: hostingPatch.slug, name: hostingPatch.name }]
+      : [];
+    trustAll = false;
+    trustMessage = '';
+    trustError = '';
+    trustPanelOpen = true;
+  }
+
+  function cancelTrustPanel() {
+    trustPanelOpen = false;
+    trustError = '';
+  }
+
+  async function sendTrustRequest() {
+    trustSubmitting = true;
+    trustError = '';
+    try {
+      const body = {
+        scope: trustAll ? 'all' : 'patches',
+        node_ids: trustAll ? [] : trustSelected.map((n) => n.id),
+        message: trustMessage.trim() || undefined,
+      };
+      const res = await api('users/me/trust-request', { method: 'POST', body });
+      trustRequestStatus = res.request?.status || 'pending';
+      trustCanAskAgainAt = res.can_ask_again_at || null;
+      trustPanelOpen = false;
+    } catch (e) {
+      trustError = e.data?.error || e.message || 'Failed to send that request';
+    } finally {
+      trustSubmitting = false;
+    }
+  }
 
   function validate() {
     if (!title.trim()) return 'Title is required';
@@ -302,6 +403,66 @@
   }
 </script>
 
+<!-- The trust ask (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+     carries-its-calendar, decision 7): rendered under the two places this
+     form already tells someone their event will be reviewed — the locked
+     door's heading and the picker's field hint. A snippet rather than two
+     copies, since both spots gate on the same `showTrustAsk`, which already
+     rules out an active patch, an instance admin, and anyone whose grant
+     already reaches this patch. -->
+{#snippet trustAsk()}
+  {#if showTrustAsk && trustRequestChecked}
+    <div class="trust-ask">
+      {#if trustRequestStatus === 'pending'}
+        <p class="muted">Your request to be a trusted contributor is waiting for an admin.</p>
+      {:else if trustRequestStatus === 'declined' && !trustCanAskAgain}
+        <p class="muted">Your last request was declined. You can ask again on {formatDay(trustCanAskAgainAt)}.</p>
+      {:else if trustPanelOpen}
+        <div class="trust-panel">
+          <TrustScopePicker
+            bind:all={trustAll}
+            bind:selected={trustSelected}
+            disabled={trustSubmitting}
+            label="Where"
+          />
+          <div class="field">
+            <label for="trust-message">Why (optional)</label>
+            <textarea
+              id="trust-message"
+              rows="2"
+              placeholder="I book shows at three venues here."
+              bind:value={trustMessage}
+              disabled={trustSubmitting}
+            ></textarea>
+          </div>
+          {#if trustError}
+            <p class="error-text">{trustError}</p>
+          {/if}
+          <div class="field-actions">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              disabled={trustSubmitting}
+              onclick={sendTrustRequest}
+            >{trustSubmitting ? 'Sending…' : 'Send request'}</button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              disabled={trustSubmitting}
+              onclick={cancelTrustPanel}
+            >Cancel</button>
+          </div>
+        </div>
+      {:else}
+        <p class="muted trust-line">
+          An instance admin reviews events on unclaimed patches. Add them often?
+          <button type="button" class="link-button trust-ask-btn" onclick={openTrustPanel}>Ask to be a trusted contributor.</button>
+        </p>
+      {/if}
+    </div>
+  {/if}
+{/snippet}
+
 <div class="page-fade">
   <div class="container-narrow">
     <div>
@@ -347,6 +508,7 @@
         <p class="muted" style="margin-bottom: 1.5rem;">
           Suggest an event{hostingPatch ? ` for ${hostingPatch.name}` : ''}. It will be reviewed before it appears.
         </p>
+        {@render trustAsk()}
       {:else if lockSlug}
         <h1>Create <VocabLabel term="event" /></h1>
         <p class="muted" style="margin-bottom: 1.5rem;">
@@ -412,6 +574,7 @@
               You aren't a member of this patch, so the {reviewers} will look
               at your event before it appears.
             </p>
+            {@render trustAsk()}
           {/if}
         </div>
 
@@ -525,6 +688,38 @@
 </div>
 
 <style>
+  .trust-ask {
+    margin-top: 0.5rem;
+  }
+
+  .trust-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .trust-ask-btn {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: inherit;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .trust-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.75rem;
+    margin-top: 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
   .zone-note {
     margin: -0.25rem 0 0.75rem;
     font-size: 0.9rem;

@@ -154,7 +154,7 @@
     <div class="quick-actions">
       <a href="/patches/new" class="action-card" onclick={(e) => { e.preventDefault(); navigate('/patches/new'); }}>
         <span class="action-icon">+</span>
-        <span>Create Patch</span>
+        <span>Add a patch</span>
       </a>
       {#if adminPatches.length > 0}
         <a href="/events/new" class="action-card" onclick={(e) => { e.preventDefault(); navigate('/events/new'); }}>

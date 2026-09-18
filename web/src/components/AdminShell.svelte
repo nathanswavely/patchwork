@@ -2,7 +2,7 @@
   /**
    * The admin panel: instance administration as a full-screen takeover
    * (docs/adr/005) — global bar with the Administration crumb and admin
-   * finder, five tabs as the tab row (docs/adr/118), full-width content.
+   * finder, five tabs as the tab row (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md), full-width content.
    * No discovery chrome.
    *
    * Review and Settings carry a sidebar, the same SettingsShell a patch's

@@ -1,5 +1,5 @@
 /**
- * The admin panel's shape (docs/adr/118): five tabs, two of which carry a
+ * The admin panel's shape (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md): five tabs, two of which carry a
  * sidebar, in place of the fifteen-tab row that grew one tab per feature.
  *
  * The registry in lib/adminPanel.js is pure, so the tab row, the URL
@@ -16,7 +16,7 @@ function source(relPath) {
   return readFileSync(resolve(process.cwd(), 'src', relPath), 'utf8');
 }
 
-describe('docs/adr/118: the tab row', () => {
+describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the tab row', () => {
   it('is five tabs, each answering one question', () => {
     expect(adminTabs().map((t) => t.id)).toEqual(['overview', 'review', 'users', 'settings', 'audit']);
   });
@@ -34,7 +34,7 @@ describe('docs/adr/118: the tab row', () => {
 
   it('puts every configuration page under Settings, with the rare step-up tool last', () => {
     const settings = adminTabs().find((t) => t.id === 'settings');
-    expect(settings.sections.map((s) => s.id)).toEqual(['quilt', 'label', 'legal', 'tags', 'neighbors', 'aggregators', 'archived', 'attestation']);
+    expect(settings.sections.map((s) => s.id)).toEqual(['quilt', 'label', 'legal', 'tags', 'neighbors', 'aggregators', 'usage', 'archived', 'attestation']);
     expect(settings.sections.at(-1).label).toBe('Prove admin');
   });
 
@@ -51,7 +51,7 @@ describe('docs/adr/118: the tab row', () => {
   });
 });
 
-describe('docs/adr/118: which tab a path belongs to', () => {
+describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: which tab a path belongs to', () => {
   it('is Overview for /admin alone', () => {
     expect(adminTabForPath('/admin')).toBe('overview');
     expect(adminTabForPath('/admin/')).toBe('overview');
@@ -77,7 +77,7 @@ describe('docs/adr/118: which tab a path belongs to', () => {
   });
 });
 
-describe('docs/adr/118: the flat scheme redirects', () => {
+describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the flat scheme redirects', () => {
   it('maps every retired page onto the section it became', () => {
     expect(legacyAdminPath('reports')).toBe('/admin/review/reports');
     expect(legacyAdminPath('submissions')).toBe('/admin/review/submissions');
@@ -88,6 +88,7 @@ describe('docs/adr/118: the flat scheme redirects', () => {
     expect(legacyAdminPath('legal')).toBe('/admin/settings/legal');
     expect(legacyAdminPath('neighbors')).toBe('/admin/settings/neighbors');
     expect(legacyAdminPath('aggregators')).toBe('/admin/settings/aggregators');
+    expect(legacyAdminPath('usage')).toBe('/admin/settings/usage');
     expect(legacyAdminPath('archived')).toBe('/admin/settings/archived');
     expect(legacyAdminPath('attestation')).toBe('/admin/settings/attestation');
   });
@@ -110,7 +111,7 @@ describe('docs/adr/118: the flat scheme redirects', () => {
   });
 });
 
-describe('docs/adr/118: the shell', () => {
+describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the shell', () => {
   const shell = source('components/AdminShell.svelte');
 
   it('draws the tabs from the registry rather than its own list', () => {
@@ -133,7 +134,7 @@ describe('docs/adr/118: the shell', () => {
   });
 });
 
-describe('docs/adr/118: every route is registered and every page is in every list', () => {
+describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: every route is registered and every page is in every list', () => {
   const app = source('App.svelte');
   const routes = [
     ['/admin', 'adminDashboard'],
@@ -151,6 +152,7 @@ describe('docs/adr/118: every route is registered and every page is in every lis
     ['/admin/settings/tags', 'adminTags'],
     ['/admin/settings/neighbors', 'adminNeighbors'],
     ['/admin/settings/aggregators', 'adminAggregators'],
+    ['/admin/settings/usage', 'adminUsage'],
     ['/admin/settings/archived', 'adminArchived'],
     ['/admin/settings/attestation', 'adminAttestation'],
     ['/admin/audit', 'adminAudit'],
@@ -173,7 +175,7 @@ describe('docs/adr/118: every route is registered and every page is in every lis
   });
 });
 
-describe('docs/adr/118: the suggested-tag queue is a Review section, not a corner of Tags', () => {
+describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the suggested-tag queue is a Review section, not a corner of Tags', () => {
   it('has its own page that decides and links back to the vocabulary', () => {
     const page = source('pages/AdminTagSuggestions.svelte');
     expect(page).toContain("api('admin/tag-suggestions')");
@@ -189,7 +191,7 @@ describe('docs/adr/118: the suggested-tag queue is a Review section, not a corne
   });
 });
 
-describe('docs/adr/118: inbound links land on the nested paths', () => {
+describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: inbound links land on the nested paths', () => {
   it('from the Overview', () => {
     const src = source('pages/AdminDashboard.svelte');
     expect(src).not.toMatch(/'\/admin\/(reports|submissions|event-submissions|claims|tags|aggregators)'/);

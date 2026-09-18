@@ -181,6 +181,7 @@ func TestListProposals(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin2", "member")
 	nodeID := createTestNode(t, db, admin.ID, "List Prop", "list-prop", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Create a proposal.
@@ -214,6 +215,7 @@ func TestGetProposalWithTally(t *testing.T) {
 	admin, adminToken := createTestUser(t, db, "padmin3", "member")
 	voter, voterToken := createTestUser(t, db, "voter3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Tally Node", "tally-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -353,6 +355,7 @@ func TestTally_ExcludesVotersWhoLeftTheElectorate(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin21", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Tally Node", "tally-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	demoted, demotedToken := createTestUser(t, db, "pdemoted21", "member")
 	createTestMembership(t, db, demoted.ID, nodeID, "member", "active")
@@ -428,6 +431,7 @@ func TestVoterList_SurvivesEveryVoterLeaving(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin23", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Departed", "departed", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	voter, voterToken := createTestUser(t, db, "pvoter23", "member")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
@@ -589,6 +593,7 @@ func TestVoteResolutionOnExpiredProposal(t *testing.T) {
 	admin, adminToken := createTestUser(t, db, "padmin8", "member")
 	voter, voterToken := createTestUser(t, db, "voter8", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Resolve Node", "resolve-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -869,6 +874,7 @@ func TestGetAmendmentProposal_IncludesCurrentContent(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "amend_admin2", "member")
 	nodeID := createTestNode(t, db, admin.ID, "AmendGet Node", "amendget-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	setupGovernanceForNode(t, nodeID)
@@ -925,6 +931,7 @@ func TestProposalResolution_QuorumNotMet(t *testing.T) {
 	m2, _ := createTestUser(t, db, "quorum_m2", "member")
 	m3, _ := createTestUser(t, db, "quorum_m3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Quorum Node", "quorum-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Look up m1 ID.
@@ -977,6 +984,7 @@ func TestProposalResolution_QuorumMet_MajorityPasses(t *testing.T) {
 	m2, _ := createTestUser(t, db, "qpass_m2", "member")
 	m3, _ := createTestUser(t, db, "qpass_m3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "QPass Node", "qpass-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, m1.ID, nodeID, "member", "active")
 	createTestMembership(t, db, m2.ID, nodeID, "member", "active")
@@ -1028,6 +1036,7 @@ func TestProposalResolution_AmendmentAutoApply(t *testing.T) {
 	admin, _ := createTestUser(t, db, "auto_admin", "member")
 	voter, _ := createTestUser(t, db, "auto_voter", "member")
 	nodeID := createTestNode(t, db, admin.ID, "AutoApply Node", "autoapply-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -1179,6 +1188,7 @@ func TestCreateProposal_BroadcastsActivity(t *testing.T) {
 
 	admin, adminToken := createTestUser(t, db, "bc_admin", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Broadcast Node", "broadcast-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Add an ap_follower so BroadcastToFollowers has a target inbox.
@@ -1229,5 +1239,168 @@ func TestCreateProposal_BroadcastsActivity(t *testing.T) {
 	}
 	if !strings.Contains(activityJSON, "Broadcast Test Proposal") {
 		t.Errorf("expected activity_json to contain proposal title, got: %s", activityJSON)
+	}
+}
+
+// TestVote_HiddenMembershipDoesNotFederate: docs/adr/006's switch reaches the
+// federation wire (docs/adr/095 decision 7's correction).
+//
+// Only a member of a patch may vote on its proposals, so a gv:Vote naming an
+// actor and a node asserts that membership to every remote reader. The REST
+// roster already substitutes HiddenMemberName for a hidden member; before this
+// gate the same ballot went out by name on the same request.
+//
+// Suppression, not anonymization: the assertion is what the activity is, so
+// the test asserts an empty queue rather than an absent actor field. A
+// visible member's vote in the same shape proves the gate is the switch and
+// not a broken broadcast.
+func TestVote_HiddenMembershipDoesNotFederate(t *testing.T) {
+	db := setupTestDB(t)
+
+	ap.SetDomain("hidden.test.example.com")
+	t.Cleanup(func() { ap.SetDomain("") })
+
+	admin, _ := createTestUser(t, db, "hv_admin", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Hidden Vote Node", "hidden-vote-node", "open")
+	// Opened so the suppression under test is the membership one. A closed
+	// patch federates no ballot from anybody
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md),
+	// which would make this pass whether or not the hidden-membership
+	// gate existed.
+	openGovernanceRecord(t, db, nodeID)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+
+	hidden, hiddenToken := createTestUser(t, db, "hv_hidden", "member")
+	createTestMembership(t, db, hidden.ID, nodeID, "member", "active")
+	if _, err := db.Exec("UPDATE memberships SET visible = 0 WHERE user_id = ? AND node_id = ?", hidden.ID, nodeID); err != nil {
+		t.Fatalf("hide membership: %v", err)
+	}
+
+	seen, seenToken := createTestUser(t, db, "hv_seen", "member")
+	createTestMembership(t, db, seen.ID, nodeID, "member", "active")
+
+	// A remote follower, so BroadcastToFollowers has an inbox to queue for.
+	if _, err := db.Exec(
+		`INSERT INTO ap_followers (id, local_actor_type, local_actor_id, remote_actor_id, remote_inbox, accepted)
+		 VALUES (?, 'node', ?, 'https://remote.example.com/ap/users/remote1', 'https://remote.example.com/inbox', 1)`,
+		auth.NewUUIDv7(), nodeID,
+	); err != nil {
+		t.Fatalf("insert ap_follower: %v", err)
+	}
+
+	proposalID := auth.NewUUIDv7()
+	votingEnds := time.Now().Add(48 * time.Hour).Format("2006-01-02T15:04:05.000Z")
+	if _, err := db.Exec(
+		`INSERT INTO proposals (id, node_id, author_id, title, body, status, state, proposal_type, duration_hours, voting_ends_at, ap_id)
+		 VALUES (?, ?, ?, 'Hidden vote test', 'Body.', 'open', 'voting', 'action', 48, ?, ?)`,
+		proposalID, nodeID, admin.ID, votingEnds,
+		"https://hidden.test.example.com/ap/proposals/"+proposalID,
+	); err != nil {
+		t.Fatalf("insert proposal: %v", err)
+	}
+
+	castVote := func(token string) {
+		t.Helper()
+		r := authedRequest("POST", "/api/v1/proposals/"+proposalID+"/vote", map[string]string{"value": "approve"}, token)
+		w := serveMux(t, db, "POST", "/api/v1/proposals/{id}/vote", handler.VoteOnProposal(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected 200 for vote, got %d: %s", w.Code, w.Body.String())
+		}
+	}
+
+	// The hidden member's ballot counts and is announced to nobody. The
+	// broadcast is synchronous, so an empty queue here means withheld and
+	// never "hasn't run yet".
+	castVote(hiddenToken)
+
+	var queued int
+	if err := db.QueryRow("SELECT COUNT(*) FROM ap_outbox_queue").Scan(&queued); err != nil {
+		t.Fatalf("query outbox queue: %v", err)
+	}
+	if queued != 0 {
+		var activityJSON string
+		db.QueryRow("SELECT activity_json FROM ap_outbox_queue LIMIT 1").Scan(&activityJSON)
+		t.Fatalf("hidden member's vote federated (%d queued): %s", queued, activityJSON)
+	}
+
+	var votes int
+	db.QueryRow("SELECT COUNT(*) FROM votes WHERE proposal_id = ? AND user_id = ?", proposalID, hidden.ID).Scan(&votes)
+	if votes != 1 {
+		t.Fatalf("the ballot itself should still be recorded, got %d rows", votes)
+	}
+
+	// Same request shape from a visible member: this one does go out, which is
+	// what tells the assertion above from a broadcast that is simply broken.
+	castVote(seenToken)
+
+	var activityJSON string
+	if err := db.QueryRow("SELECT activity_json FROM ap_outbox_queue LIMIT 1").Scan(&activityJSON); err != nil {
+		t.Fatalf("visible member's vote did not federate: %v", err)
+	}
+	if !strings.Contains(activityJSON, `"type":"gv:Vote"`) {
+		t.Errorf("expected a gv:Vote activity, got: %s", activityJSON)
+	}
+	if !strings.Contains(activityJSON, "/ap/users/"+seen.ID) {
+		t.Errorf("expected the visible voter's actor, got: %s", activityJSON)
+	}
+	if strings.Contains(activityJSON, "/ap/users/"+hidden.ID) {
+		t.Errorf("hidden voter's actor appeared on the wire: %s", activityJSON)
+	}
+}
+
+// TestCreateProposal_HiddenAuthorIsNotAttributed: the same rule for the object
+// rather than the act. The proposal is the patch's own text and still
+// federates; the author is not named, because writing one takes a membership.
+func TestCreateProposal_HiddenAuthorIsNotAttributed(t *testing.T) {
+	db := setupTestDB(t)
+
+	ap.SetDomain("hiddenauthor.test.example.com")
+	t.Cleanup(func() { ap.SetDomain("") })
+
+	admin, adminToken := createTestUser(t, db, "ha_admin", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Hidden Author Node", "hidden-author-node", "open")
+	// A patch only federates its deliberation where it publishes it
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+	// Opened here so the assertion below is about attribution, which is
+	// this test's subject — on a closed patch nothing is broadcast at all
+	// and it would pass without testing anything.
+	openGovernanceRecord(t, db, nodeID)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	if _, err := db.Exec("UPDATE memberships SET visible = 0 WHERE user_id = ? AND node_id = ?", admin.ID, nodeID); err != nil {
+		t.Fatalf("hide membership: %v", err)
+	}
+
+	if _, err := db.Exec(
+		`INSERT INTO ap_followers (id, local_actor_type, local_actor_id, remote_actor_id, remote_inbox, accepted)
+		 VALUES (?, 'node', ?, 'https://remote.example.com/ap/users/remote1', 'https://remote.example.com/inbox', 1)`,
+		auth.NewUUIDv7(), nodeID,
+	); err != nil {
+		t.Fatalf("insert ap_follower: %v", err)
+	}
+
+	body := map[string]interface{}{
+		"title":          "Hidden Author Proposal",
+		"body":           "This proposal should federate without naming its author.",
+		"proposal_type":  "action",
+		"duration_hours": 48,
+	}
+	r := authedRequest("POST", "/api/v1/nodes/hidden-author-node/proposals", body, adminToken)
+	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/proposals", handler.CreateProposal(db), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var activityJSON string
+	if err := db.QueryRow("SELECT activity_json FROM ap_outbox_queue LIMIT 1").Scan(&activityJSON); err != nil {
+		t.Fatalf("proposal did not federate: %v", err)
+	}
+	if !strings.Contains(activityJSON, "Hidden Author Proposal") {
+		t.Errorf("expected the proposal itself to federate, got: %s", activityJSON)
+	}
+	if strings.Contains(activityJSON, "attributedTo") {
+		t.Errorf("hidden author attributed on the wire: %s", activityJSON)
+	}
+	if strings.Contains(activityJSON, "/ap/users/"+admin.ID) {
+		t.Errorf("hidden author's actor appeared on the wire: %s", activityJSON)
 	}
 }

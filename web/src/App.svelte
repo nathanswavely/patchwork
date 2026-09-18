@@ -76,6 +76,7 @@
   import Lining from './pages/Lining.svelte';
   import Governance from './pages/Governance.svelte';
   import AdminLegal from './pages/AdminLegal.svelte';
+  import AdminUsage from './pages/AdminUsage.svelte';
   import AdminAttestation from './pages/AdminAttestation.svelte';
   import LegalDoc from './pages/LegalDoc.svelte';
   import SubmitPatch from './pages/SubmitPatch.svelte';
@@ -214,7 +215,7 @@
   addRoute('/dashboard', 'dashboard');
 
   // Admin
-  // Admin panel — five tabs, two with sections (docs/adr/118). A section's
+  // Admin panel — five tabs, two with sections (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md). A section's
   // URL is its tab's plus one segment; a tab's bare URL lands on its first
   // section. The flat scheme this replaced (/admin/reports, /admin/quilt…)
   // survives as a redirect alias below, so old notification links land.
@@ -233,6 +234,7 @@
   addRoute('/admin/settings/tags', 'adminTags');
   addRoute('/admin/settings/neighbors', 'adminNeighbors');
   addRoute('/admin/settings/aggregators', 'adminAggregators');
+  addRoute('/admin/settings/usage', 'adminUsage');
   addRoute('/admin/settings/archived', 'adminArchived');
   addRoute('/admin/settings/attestation', 'adminAttestation');
   addRoute('/admin/audit', 'adminAudit');
@@ -299,7 +301,7 @@
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 
   const settingsRoutes = new Set(['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'quilts']);
-  const adminRoutes = new Set(['adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminAttestation']);
+  const adminRoutes = new Set(['adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation']);
   let isSettingsRoute = $derived(settingsRoutes.has(routeName));
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
@@ -333,7 +335,7 @@
     ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchSetup', 'patchNew', 'eventNew', 'eventEdit',
      'governanceProposalNew', 'governanceDocNew',
      'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
-     'adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminAttestation'].includes(routeName)
+     'adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation'].includes(routeName)
   );
 
   // The gate is a detour, not a destination, so it carries where the person
@@ -405,7 +407,7 @@
     redirectProposalDetail: (p) => `/patches/${p.slug}/governance/${p.id}`,
     redirectGovernanceSetup: (p) => `/patches/${p.slug}/governance`,
     redirectPatchScopedEvent: (p) => `/events/${p.id}`,
-    // A tab with sections has no page of its own (docs/adr/118).
+    // A tab with sections has no page of its own (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md).
     adminReviewIndex: () => adminTabLanding('review'),
     adminSettingsIndex: () => adminTabLanding('settings'),
     // The flat admin scheme, one level up from where each page now lives.
@@ -565,6 +567,8 @@
           <AdminLabel />
         {:else if routeName === 'adminLegal'}
           <AdminLegal />
+        {:else if routeName === 'adminUsage'}
+          <AdminUsage />
         {:else if routeName === 'adminQuilt'}
           <AdminQuiltSettings />
         {:else if routeName === 'adminNeighbors'}

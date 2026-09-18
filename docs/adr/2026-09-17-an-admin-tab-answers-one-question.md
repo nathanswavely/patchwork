@@ -1,4 +1,4 @@
-# ADR 118: An admin tab answers one question
+# ADR: An admin tab answers one question
 
 Date: 2026-09-17. Status: **accepted**. Amends ADR 005, which gave the admin
 panel its tab row and said nothing about how many tabs it could hold.
@@ -40,7 +40,7 @@ The admin panel has five tabs, and a tab answers one question:
 | Overview | none |
 | Review | Reports · Patch submissions · Event submissions · Claims · Suggested tags |
 | Users | none |
-| Settings | Quilt · Label · Legal · Tags · Neighbors · Aggregators · Archived patches · Prove admin |
+| Settings | Quilt · Label · Legal · Tags · Neighbors · Aggregators · Usage · Archived patches · Prove admin |
 | Audit log | none |
 
 Review and Settings render their sections in the same `SettingsShell` a

@@ -98,7 +98,7 @@ test.describe('Admin — Pages Load', () => {
     await loginAsAdmin(page);
   });
 
-  // Five tabs, two with sections (docs/adr/118).
+  // Five tabs, two with sections (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md).
   const adminPages = [
     { path: '/admin', title: 'Overview' },
     { path: '/admin/users', title: 'Users' },

@@ -404,18 +404,18 @@ _Avoid_: patch finder, patch search, patch selector, autocomplete, typeahead
 
 **Admin panel**:
 The instance admin surface at /admin. Gets the same full-screen takeover
-treatment as a workspace, and the same shape (docs/adr/118): five tabs,
+treatment as a workspace, and the same shape (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md): five tabs,
 each answering one question the admin arrived with. **Overview** (what is
 waiting on me, what is unattended), **Review** (the decision queues:
 reports, patch submissions, event submissions, claims, suggested tags),
 **Users**, **Settings** (how this quilt is configured: quilt settings, the
-Label, legal documents, the tag vocabulary, neighbors, aggregators, archived
-patches, proving admin) and **Audit log**. Review and Settings carry a
+Label, legal documents, the tag vocabulary, neighbors, aggregators, visitor
+counting, archived patches, proving admin) and **Audit log**. Review and Settings carry a
 sidebar, the same one a patch's Settings has; a section's URL is its tab's
 plus one segment (/admin/review/claims, /admin/settings/legal), and a tab's
 bare URL lands on its first section. The Review tab wears the count of
 what is waiting, read from the Overview's own inbox so the two never
-disagree. Before 118 every page was a top-level tab, fifteen across; those
+disagree. Before that record every page was a top-level tab, fifteen across; those
 flat paths redirect.
 _Avoid_: admin area, dashboard (that is the user's personal page), queue
 (as the tab's label: the tab is Review, and a queue is one section of it)
@@ -667,6 +667,26 @@ _Avoid_: private members, member privacy (the members are not what is
 private; the list is), roster (fine in an ADR, not a UI word), hidden
 members (that is membership visibility)
 
+**Public governance record**:
+Whether a patch's deliberation can be read from outside it: **everyone** or
+**nobody**. A patch-level setting owned by its admins, the sibling of the
+public member list and asked in the same grammar — "may this patch's
+decisions be read" beside "may this patch be enumerated". It covers what
+the patch argued and decided: proposals and their bodies, the discussion
+under them, attestations and the names they seat. It does not cover
+**charters**, which carry their own per-document visibility and are
+published one at a time; it does not cover the **lining**; and it does not
+cover counts.
+
+Two rungs, not three. The public member list has a middle rung because a
+roster is a list of names with a natural subset. A deliberation record is
+prose that names people inside itself — a nomination's subject is in its
+own title — so there is no state between open and closed that says what it
+means.
+_Avoid_: governance visibility (that is a charter's, per document),
+private governance (the governing is not private; the record of it is),
+anonymous proposals (there are none; the record is readable or it is not)
+
 **Contact card**:
 Every way a person is willing to be reached, kept once on the account. The
 card is a set of **contact items** — one phone number, one email address to
@@ -779,15 +799,41 @@ _Avoid_: pending (that is a request nobody answered), requested, pending
 invite, invitee (in UI copy — say "invited")
 
 **Trusted contributor**:
-An instance-level grant — given and revoked by the instance admin, never
-earned automatically — that lets a person record events on unclaimed patches
-without review. Orthogonal to patch roles: not a rung between member and
-admin, and worth nothing on active patches, where every suggestion still
-goes through that patch's admins. Review is owed to whoever owns the
-calendar; the grant only waives the instance admin's own queue. Trust is
-per-instance — standing on another quilt earns it nowhere.
-_Avoid_: correspondent, steward, moderator, contributor (alone),
-trusted user
+An instance admin's grant, given and revoked explicitly and never earned
+automatically, that lets a person record events on unclaimed patches
+without review. It has a scope: the whole quilt, or one patch. The
+quilt-wide grant waives every queue the instance admin holds alone: events
+on any unclaimed patch, and the review of a suggested listing, which lands
+as an unclaimed patch at once. The per-patch grant is the same
+standing on one unclaimed patch and nothing else, and the ordinary way it
+is given is at the moment an instance admin approves that person's patch
+suggestion, where it is offered as a checked line the admin may uncheck:
+approving a listing is a judgement about the place, and letting its
+suggester keep its calendar is a second judgement the admin should see
+before making. Either scope is orthogonal to patch roles: not a rung
+between member and admin, and worth nothing on active patches, where every
+suggestion still goes through that patch's admins. A per-patch grant ends
+when the patch is claimed, because the calendar it opened now has an owner.
+Review is owed to whoever owns the calendar; the grant only waives the
+instance admin's own queue. Trust is per-instance, and standing on another
+quilt earns it nowhere.
+_Avoid_: correspondent, steward, keeper, moderator, contributor (alone),
+trusted user, patch contributor, suggester's rights
+
+**Trust request**:
+A person's ask to become a trusted contributor, made from the one place
+the review cost is being paid: the event form, when the event is about to
+queue on an unclaimed patch. It names a scope, that patch by default, more
+unclaimed patches, or the whole quilt, and may carry a short message. One
+open request per person. It is answered, never merely seen: an instance
+admin approves it at whatever scope they judge right, wider or narrower
+than what was asked, or declines it, and the requester is told either way.
+A declined person may ask again after a while, because a person is not a
+word to be spent. A named patch that is claimed before the answer drops
+off the request, and a request with nothing left resolves itself as moot.
+Active patches are never askable, since the grant is worth nothing there.
+_Avoid_: application, apply (both read as a job posting), trust
+application, contributor request, promotion request
 
 **Community-submitted**:
 The label every event on an unclaimed patch wears: recorded by the
@@ -1243,9 +1289,12 @@ Calendar's secret address, a venue tool's calendar export), a Squarespace
 events page, or any page carrying schema.org Event markup (Humanitix host
 pages among them) — the kind is auto-detected from a pasted address.
 Attached by a
-patch admin to their own patch, or by an instance admin to an unclaimed
-patch, never by anyone else: attaching is vouching for the feed once, so
-imported events publish without per-event review (docs/adr/031). The
+patch admin to their own patch, or to an unclaimed patch by an instance
+admin or a trusted contributor whose grant reaches it, never by anyone
+else: attaching is vouching for the feed once, so imported events publish
+without per-event review (docs/adr/031). A patch suggestion may carry a
+feed, checked when it is offered and attached when the listing publishes,
+vouched for by whoever held standing at that moment. The
 source stays authoritative — its events are read-only and follow the feed
 until detached. An unreachable feed never removes anything; only a
 successful fetch that no longer carries an event cancels it. The UI may

@@ -99,10 +99,13 @@ func TestEventSources_MemberMayNot(t *testing.T) {
 	}
 }
 
-// On unclaimed patches only the instance admin manages sources. A
-// trusted contributor's grant delegates the review queue, never standing
-// feeds (docs/adr/031).
-func TestEventSources_UnclaimedIsInstanceAdminOnly(t *testing.T) {
+// On an unclaimed patch, the instance admin and a trusted contributor
+// both manage sources. ADR 031 excluded trusted contributors on purpose;
+// docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+// calendar.md reverses that (decision 5), because the same grant already
+// let them CSV-upload forty events onto the listing silently and a feed
+// is that batch kept current.
+func TestEventSources_UnclaimedReachesTrustedContributors(t *testing.T) {
 	db := setupTestDB(t)
 	instanceAdmin, adminToken := createTestUser(t, db, "instadmin", "admin")
 	trusted, trustedToken := createTestUser(t, db, "trusty", "member")
@@ -122,12 +125,26 @@ func TestEventSources_UnclaimedIsInstanceAdminOnly(t *testing.T) {
 	r := authedRequest("POST", "/api/v1/nodes/unclaimed-venue/event-sources",
 		map[string]string{"url": "https://127.0.0.1:9/cal.ics"}, trustedToken)
 	w := serveMux(t, db, "POST", "/api/v1/nodes/{slug}/event-sources", handler.CreateEventSource(db), r)
+	if w.Code != http.StatusCreated {
+		t.Errorf("trusted contributor attach on unclaimed: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	// And the grant stops at the claim, on this gate as on every other:
+	// an active patch runs its own feeds.
+	if _, err := db.Exec(`UPDATE nodes SET status = 'active' WHERE id = ?`, nodeID); err != nil {
+		t.Fatalf("activate node: %v", err)
+	}
+	r = authedRequest("GET", "/api/v1/nodes/unclaimed-venue/event-sources", nil, trustedToken)
+	w = serveMux(t, db, "GET", "/api/v1/nodes/{slug}/event-sources", handler.ListEventSources(db), r)
 	if w.Code != http.StatusForbidden {
-		t.Errorf("trusted contributor attach on unclaimed: expected 403, got %d", w.Code)
+		t.Errorf("trusted contributor on a claimed patch: expected 403, got %d", w.Code)
+	}
+	if _, err := db.Exec(`UPDATE nodes SET status = 'unclaimed' WHERE id = ?`, nodeID); err != nil {
+		t.Fatalf("restore node: %v", err)
 	}
 
 	r = authedRequest("POST", "/api/v1/nodes/unclaimed-venue/event-sources",
-		map[string]string{"url": "https://127.0.0.1:9/cal.ics"}, adminToken)
+		map[string]string{"url": "https://127.0.0.1:9/other.ics"}, adminToken)
 	w = serveMux(t, db, "POST", "/api/v1/nodes/{slug}/event-sources", handler.CreateEventSource(db), r)
 	if w.Code != http.StatusCreated {
 		t.Errorf("instance admin attach on unclaimed: expected 201, got %d: %s", w.Code, w.Body.String())

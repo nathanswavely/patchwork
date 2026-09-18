@@ -122,7 +122,7 @@ func Tables() []Table {
 				follower_permissions, governance_config, governance_setup_complete,
 				designated_successor_id, accept_event_suggestions,
 				submitted_by, submission_source, did, activated_at,
-				notice_posting, notice_replies_default, public_member_list, moved_to, founded_at, created_at, updated_at
+				notice_posting, notice_replies_default, public_member_list, public_governance_record, moved_to, founded_at, created_at, updated_at
 				FROM nodes WHERE removed_at IS NULL`,
 			Columns: cols(id("id"), id("owner_id"), c("name"), c("slug"),
 				c("description"), c("latitude"), c("longitude"),
@@ -175,9 +175,19 @@ func Tables() []Table {
 				// a fork that lost it would put back up a member list the
 				// original had deliberately taken down, which is the one
 				// direction this setting must never move on its own. def()
-				// so archives written before the column import as
-				// "everyone", the behaviour every patch in them had.
-				def("public_member_list", "everyone"),
+				// so archives written before the column have a value at all.
+				//
+				// That fallback was "everyone", the behaviour every patch in
+				// such an archive had. It is the closed value now
+				// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md):
+				// importing a pre-069 archive would otherwise restore every
+				// roster in it to public and undo the retraction with a file.
+				// An archive written before a privacy control existed cannot
+				// consent to the exposed side of it.
+				def("public_member_list", "nobody"),
+				// The deliberation control, closed for every archive that
+				// predates it — which is all of them.
+				def("public_governance_record", "nobody"),
 				// Where this patch says it went (docs/adr/090). It travels
 				// for the same reason a person's does: the fork is the thing
 				// somebody followed the pointer to, and a chain of moves that

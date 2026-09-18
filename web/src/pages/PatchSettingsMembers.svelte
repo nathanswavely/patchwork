@@ -16,14 +16,41 @@
   // says so once instead of asking every member to hide themselves one at
   // a time. It only ever subtracts: a member who hid stays hidden at
   // 'everyone' (docs/adr/006), and nothing here can put them back.
-  let publicList = $state('everyone');
+  //
+  // Defaulted to the closed value here as well as on the server
+  // (docs/adr/2026-09-18-the-default-should-match-the-assumption.md): a
+  // fallback of 'everyone' would show a patch its roster was public during
+  // the moment before the node payload lands, which is the exact false
+  // reassurance this whole change exists to remove.
+  let publicList = $state('nobody');
+  // The sibling control, over the patch's deliberation rather than its
+  // roster. Two options, not three: a nomination names its subject in its
+  // own title, so there is nothing coherent between open and closed.
+  let publicRecord = $state('nobody');
   let hydrated = false;
   $effect(() => {
     if (node && !hydrated) {
-      publicList = node.public_member_list || 'everyone';
+      publicList = node.public_member_list || 'nobody';
+      publicRecord = node.public_governance_record || 'nobody';
       hydrated = true;
     }
   });
+
+  async function setPublicRecord(v) {
+    const prev = publicRecord;
+    publicRecord = v;
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { public_governance_record: v } });
+      showToast({
+        everyone: 'Anyone can read the proposals and decisions here',
+        nobody: 'Proposals and decisions are no longer public',
+      }[v], 'success');
+      patch.value.reload();
+    } catch (e) {
+      publicRecord = prev;
+      showToast(e.message || 'Failed to save', 'error');
+    }
+  }
 
   async function setPublicList(v) {
     const prev = publicList;
@@ -94,16 +121,29 @@
   let inviteUsername = $state('');
   let inviting = $state(false);
 
+  // Followers are their own relationship, listed apart and with no role
+  // control (docs/adr/117). They used to arrive in the same array as the
+  // membership, under a heading that said Active Members, above a count that
+  // excluded them — and every row got a role dropdown, so a follower could
+  // be handed admin without ever passing through membership. The server
+  // refuses that now; this is the same rule where a person can see it.
+  let followers = $state([]);
+
   async function loadMembers() {
     loadingMembers = true;
     try {
-      const data = await api(`nodes/${slug}/members`);
+      const [data, followerData] = await Promise.all([
+        api(`nodes/${slug}/members`),
+        api(`nodes/${slug}/members?role=follower`),
+      ]);
       members = data.items || data || [];
       invited = data.invited || [];
+      followers = followerData.items || [];
       roleEdits = {};
     } catch {
       members = [];
       invited = [];
+      followers = [];
     } finally {
       loadingMembers = false;
     }
@@ -239,12 +279,12 @@
     <h3 class="section-heading">Public member list</h3>
     <div class="setting-row">
       <div class="setting-info">
-        <!-- Three things the control cannot show on its face, and each of
-             them changes whether an admin's choice does what they think. -->
+        <!-- Two things the control cannot show on its face, and each of
+             them changes whether an admin's choice does what they think. The
+             count one matters most against the "Nobody" label, which would
+             otherwise read as hiding the number too (docs/adr/095). -->
         <span class="setting-desc muted">
-          Who a visitor sees listed. Admins and members always see everyone. The member count
-          stays public either way, and this hides the list, not the people &mdash; anyone is
-          still named by what they do here in public, like a proposal they file.
+          Who a visitor sees listed. Admins and members always see everyone. The member count stays public either way.
         </span>
       </div>
       <SegmentedControl
@@ -256,6 +296,30 @@
         value={publicList}
         label="Who appears in the public member list"
         onchange={setPublicList}
+      />
+    </div>
+  </section>
+
+  <section class="members-section">
+    <h3 class="section-heading">Public governance record</h3>
+    <div class="setting-row">
+      <div class="setting-info">
+        <!-- Two sentences, matching the roster control beside it. A third
+             once named charters as out of scope; cut, because the control
+             sits under Members rather than Documents and the word
+             "proposals" is doing that work already. -->
+        <span class="setting-desc muted">
+          Who can read the proposals here, the discussion under them, and decisions recorded from meetings. Admins and members always can.
+        </span>
+      </div>
+      <SegmentedControl
+        options={[
+          { value: 'everyone', label: 'Everyone' },
+          { value: 'nobody', label: 'Members only' },
+        ]}
+        value={publicRecord}
+        label="Who can read the governance record"
+        onchange={setPublicRecord}
       />
     </div>
   </section>
@@ -382,6 +446,9 @@
                 value={roleEdits[member.user_id] ?? member.role}
                 onchange={(e) => setRoleEdit(member.user_id, e.target.value)}
               >
+                <!-- Demotion, not a rung to climb: a follower is never
+                     promoted from here (docs/adr/117), so this option only
+                     ever moves somebody out of the membership. -->
                 <option value="follower">Follower</option>
                 <option value="member">Member</option>
                 <!-- Kept for somebody who already holds the seat, so the
@@ -401,6 +468,36 @@
                 confirmLabel="Remove"
                 variant="danger"
                 onConfirm={() => banMember(member.user_id)}
+              />
+            </div>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </section>
+
+  <section class="members-section">
+    <h3 class="section-heading">Followers</h3>
+    <p class="setting-desc muted">
+      Followers see only this patch's events and public pages.
+    </p>
+    {#if loadingMembers}
+      <Skeleton lines={2} height="0.9rem" />
+    {:else if followers.length === 0}
+      <p class="muted">No followers yet.</p>
+    {:else}
+      <ul class="member-list">
+        {#each followers as follower (follower.user_id)}
+          <li class="member-row">
+            <div class="member-info">
+              <span class="member-name">{follower.display_name || follower.username}</span>
+            </div>
+            <div class="member-actions">
+              <ConfirmAction
+                label="Remove"
+                confirmLabel="Remove"
+                variant="danger"
+                onConfirm={() => banMember(follower.user_id)}
               />
             </div>
           </li>
