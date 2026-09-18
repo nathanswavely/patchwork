@@ -234,6 +234,7 @@ func TestContactItemsInTheMembersRoom(t *testing.T) {
 	_, siteAdminToken := createTestUser(t, db, "mrsiteadmin", "admin")
 
 	shared := createTestNode(t, db, owner.ID, "Shared Room", "mr-shared", "open")
+	openMemberList(t, db, shared)
 	other := createTestNode(t, db, owner.ID, "Other Room", "mr-other", "open")
 	createTestMembership(t, db, owner.ID, shared, "admin", "active")
 	createTestMembership(t, db, owner.ID, other, "admin", "active")

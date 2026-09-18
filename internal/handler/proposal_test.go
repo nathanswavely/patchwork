@@ -181,6 +181,7 @@ func TestListProposals(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin2", "member")
 	nodeID := createTestNode(t, db, admin.ID, "List Prop", "list-prop", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Create a proposal.
@@ -214,6 +215,7 @@ func TestGetProposalWithTally(t *testing.T) {
 	admin, adminToken := createTestUser(t, db, "padmin3", "member")
 	voter, voterToken := createTestUser(t, db, "voter3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Tally Node", "tally-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -353,6 +355,7 @@ func TestTally_ExcludesVotersWhoLeftTheElectorate(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin21", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Tally Node", "tally-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	demoted, demotedToken := createTestUser(t, db, "pdemoted21", "member")
 	createTestMembership(t, db, demoted.ID, nodeID, "member", "active")
@@ -428,6 +431,7 @@ func TestVoterList_SurvivesEveryVoterLeaving(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "padmin23", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Departed", "departed", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	voter, voterToken := createTestUser(t, db, "pvoter23", "member")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
@@ -589,6 +593,7 @@ func TestVoteResolutionOnExpiredProposal(t *testing.T) {
 	admin, adminToken := createTestUser(t, db, "padmin8", "member")
 	voter, voterToken := createTestUser(t, db, "voter8", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Resolve Node", "resolve-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -869,6 +874,7 @@ func TestGetAmendmentProposal_IncludesCurrentContent(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "amend_admin2", "member")
 	nodeID := createTestNode(t, db, admin.ID, "AmendGet Node", "amendget-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	setupGovernanceForNode(t, nodeID)
@@ -925,6 +931,7 @@ func TestProposalResolution_QuorumNotMet(t *testing.T) {
 	m2, _ := createTestUser(t, db, "quorum_m2", "member")
 	m3, _ := createTestUser(t, db, "quorum_m3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Quorum Node", "quorum-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Look up m1 ID.
@@ -977,6 +984,7 @@ func TestProposalResolution_QuorumMet_MajorityPasses(t *testing.T) {
 	m2, _ := createTestUser(t, db, "qpass_m2", "member")
 	m3, _ := createTestUser(t, db, "qpass_m3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "QPass Node", "qpass-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, m1.ID, nodeID, "member", "active")
 	createTestMembership(t, db, m2.ID, nodeID, "member", "active")
@@ -1028,6 +1036,7 @@ func TestProposalResolution_AmendmentAutoApply(t *testing.T) {
 	admin, _ := createTestUser(t, db, "auto_admin", "member")
 	voter, _ := createTestUser(t, db, "auto_voter", "member")
 	nodeID := createTestNode(t, db, admin.ID, "AutoApply Node", "autoapply-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -1179,6 +1188,7 @@ func TestCreateProposal_BroadcastsActivity(t *testing.T) {
 
 	admin, adminToken := createTestUser(t, db, "bc_admin", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Broadcast Node", "broadcast-node", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Add an ap_follower so BroadcastToFollowers has a target inbox.

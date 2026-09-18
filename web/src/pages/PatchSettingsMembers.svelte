@@ -16,14 +16,41 @@
   // says so once instead of asking every member to hide themselves one at
   // a time. It only ever subtracts: a member who hid stays hidden at
   // 'everyone' (docs/adr/006), and nothing here can put them back.
-  let publicList = $state('everyone');
+  //
+  // Defaulted to the closed value here as well as on the server
+  // (docs/adr/2026-09-18-the-default-should-match-the-assumption.md): a
+  // fallback of 'everyone' would show a patch its roster was public during
+  // the moment before the node payload lands, which is the exact false
+  // reassurance this whole change exists to remove.
+  let publicList = $state('nobody');
+  // The sibling control, over the patch's deliberation rather than its
+  // roster. Two options, not three: a nomination names its subject in its
+  // own title, so there is nothing coherent between open and closed.
+  let publicRecord = $state('nobody');
   let hydrated = false;
   $effect(() => {
     if (node && !hydrated) {
-      publicList = node.public_member_list || 'everyone';
+      publicList = node.public_member_list || 'nobody';
+      publicRecord = node.public_governance_record || 'nobody';
       hydrated = true;
     }
   });
+
+  async function setPublicRecord(v) {
+    const prev = publicRecord;
+    publicRecord = v;
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { public_governance_record: v } });
+      showToast({
+        everyone: 'Anyone can read the proposals and decisions here',
+        nobody: 'Proposals and decisions are no longer public',
+      }[v], 'success');
+      patch.value.reload();
+    } catch (e) {
+      publicRecord = prev;
+      showToast(e.message || 'Failed to save', 'error');
+    }
+  }
 
   async function setPublicList(v) {
     const prev = publicList;
@@ -269,6 +296,30 @@
         value={publicList}
         label="Who appears in the public member list"
         onchange={setPublicList}
+      />
+    </div>
+  </section>
+
+  <section class="members-section">
+    <h3 class="section-heading">Public governance record</h3>
+    <div class="setting-row">
+      <div class="setting-info">
+        <!-- Two sentences, matching the roster control beside it. A third
+             once named charters as out of scope; cut, because the control
+             sits under Members rather than Documents and the word
+             "proposals" is doing that work already. -->
+        <span class="setting-desc muted">
+          Who can read the proposals here, the discussion under them, and decisions recorded from meetings. Admins and members always can.
+        </span>
+      </div>
+      <SegmentedControl
+        options={[
+          { value: 'everyone', label: 'Everyone' },
+          { value: 'nobody', label: 'Members only' },
+        ]}
+        value={publicRecord}
+        label="Who can read the governance record"
+        onchange={setPublicRecord}
       />
     </div>
   </section>

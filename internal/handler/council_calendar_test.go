@@ -352,6 +352,7 @@ func TestListProposals_FilterByOutcomeNotByStatusColumn(t *testing.T) {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, "filteradmin", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Filter", "filter-patch", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	seed := func(id, title, status, state string) {

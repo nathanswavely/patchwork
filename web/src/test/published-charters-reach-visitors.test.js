@@ -71,8 +71,21 @@ describe('An empty list says which kind of empty it is', () => {
     expect(list).toMatch(/publishedOnly = data\.published_only === true/);
   });
 
-  it('gives the glimpse two sentences, not one', () => {
-    expect(glimpse).toContain("governancePublishedOnly ? 'Nothing published yet.' : 'Nothing recorded yet.'");
+  // Three now, not two
+  // (docs/adr/2026-09-18-the-default-should-match-the-assumption.md): a
+  // withheld record is a third kind of empty, and it has to be distinguished
+  // from "nothing decided yet" for the same reason the other two are
+  // distinguished from each other. A follower is the viewer who sees it —
+  // they have standing enough for the section to render, and are an outsider
+  // for the read.
+  it('gives the glimpse three sentences, not two', () => {
+    expect(glimpse).toMatch(/\{#if recordWithheld\}\s*Proposals and decisions here are not public\./);
+    expect(glimpse).toMatch(/\{:else if governancePublishedOnly\}\s*Nothing published yet\./);
+    expect(glimpse).toMatch(/\{:else\}\s*Nothing recorded yet\./);
+  });
+
+  it('reads the withheld signal off the listing that applied the rule', () => {
+    expect(glimpse).toMatch(/recordWithheld = proposalData\.public_governance_record === 'nobody'/);
   });
 
   it('gives the documents page two sentences, not one', () => {

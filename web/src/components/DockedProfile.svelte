@@ -286,6 +286,7 @@
             isBanned={loaded?.isBanned ?? false}
             membershipRole={loaded?.membershipRole ?? ''}
             followerPermissions={loaded?.followerPermissions ?? null}
+            liningStatus={loaded?.liningStatus ?? ''}
           />
       </div>
     {/if}

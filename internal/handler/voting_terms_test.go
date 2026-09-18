@@ -53,6 +53,7 @@ func TestVotingTerms_RulesEditDoesNotMoveARunningVote(t *testing.T) {
 		admin, adminToken := createTestUser(t, db, "vt_admin1", "member")
 		member, memberToken := createTestUser(t, db, "vt_member1", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Terms One", "terms-one", "open")
+		openGovernanceRecord(t, db, nodeID)
 		predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		createTestMembership(t, db, member.ID, nodeID, "member", "active")
@@ -99,6 +100,7 @@ func TestVotingTerms_RulesEditDoesNotMoveARunningVote(t *testing.T) {
 		db := setupTestDB(t)
 		admin, adminToken := createTestUser(t, db, "vt_admin3", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Terms Three", "terms-three", "open")
+		openGovernanceRecord(t, db, nodeID)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		for _, name := range []string{"vt_m3a", "vt_m3b", "vt_m3c"} {
 			u, _ := createTestUser(t, db, name, "member")
@@ -128,6 +130,7 @@ func TestVotingTerms_AutoApplyIsReadLive(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "vt_auto_admin", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Terms Auto", "terms-auto", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	setupGovernanceForNode(t, nodeID)
 

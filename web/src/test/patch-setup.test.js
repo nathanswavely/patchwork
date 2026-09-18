@@ -115,7 +115,7 @@ describe('PatchProfile treats unclaimed governance/lining as absent, not empty',
     // pass through it, and members has its own ternary.
     expect(src).toMatch(/wantGovernance \? api\(`nodes\/\$\{slug\}\/proposals/);
     expect(src).toMatch(/wantGovernance \? api\(`nodes\/\$\{slug\}\/governance`\)/);
-    expect(src).toMatch(/loadActivity\(gov\)/);
+    expect(src).toMatch(/loadActivity\(gov, lining\)/);
     expect(src).toMatch(/isUnclaimed \? Promise\.resolve\(\{ items: \[\] \}\) : api\(`nodes\/\$\{slug\}\/members/);
   });
 

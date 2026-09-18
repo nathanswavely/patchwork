@@ -69,14 +69,45 @@ func createTestNode(t *testing.T, db *database.DB, ownerID, name, slug, policy s
 	// a helper that inherits it does not test what the product does
 	// (docs/adr/116). This helper inheriting it is how a follower read an
 	// invite-only patch's private charters in a passing test suite.
+	//
+	// The two exposure controls are written explicitly for the same reason,
+	// and both closed, exactly as CreateNode writes them
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). A test
+	// that wants a public roster or a public record says so with
+	// openMemberList / openGovernanceRecord below — which is what a patch
+	// has to do too.
 	_, err := db.Exec(
-		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status, follower_permissions) VALUES (?, ?, ?, ?, '', 'leaf', 'public', ?, 'active', '{}')`,
+		`INSERT INTO nodes (id, owner_id, name, slug, description, node_type, visibility, membership_policy, status, follower_permissions, public_member_list, public_governance_record)
+		 VALUES (?, ?, ?, ?, '', 'leaf', 'public', ?, 'active', '{}', 'nobody', 'nobody')`,
 		id, ownerID, name, slug, policy,
 	)
 	if err != nil {
 		t.Fatalf("create node %s: %v", name, err)
 	}
 	return id
+}
+
+// openGovernanceRecord publishes a patch's deliberation, the way an admin
+// does at Patch Settings. Tests whose subject is a public read of proposals,
+// comments, attestations or the record call this first; without it the patch
+// is closed, which is what a patch created through the product is.
+func openGovernanceRecord(t *testing.T, db *database.DB, nodeID string) {
+	t.Helper()
+	if _, err := db.Exec(
+		`UPDATE nodes SET public_governance_record = 'everyone' WHERE id = ?`, nodeID,
+	); err != nil {
+		t.Fatalf("open governance record: %v", err)
+	}
+}
+
+// openMemberList is the same act for the roster.
+func openMemberList(t *testing.T, db *database.DB, nodeID string) {
+	t.Helper()
+	if _, err := db.Exec(
+		`UPDATE nodes SET public_member_list = 'everyone' WHERE id = ?`, nodeID,
+	); err != nil {
+		t.Fatalf("open member list: %v", err)
+	}
 }
 
 func createTestMembership(t *testing.T, db *database.DB, userID, nodeID, role, status string) string {
@@ -393,6 +424,7 @@ func TestListMembers(t *testing.T) {
 	admin, _ := createTestUser(t, db, "admin12", "member")
 	_, _ = createTestUser(t, db, "member12", "member")
 	nodeID := createTestNode(t, db, admin.ID, "List Node", "list-node", "open")
+	openMemberList(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	// Look up member12's ID from DB since createTestUser returns it.
@@ -1318,6 +1350,7 @@ func TestListMembersCountsStateThePatchsSizeNotThePage(t *testing.T) {
 	db := setupTestDB(t)
 	admin, adminToken := createTestUser(t, db, "admin61", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Quiet Node", "quiet-node", "open")
+	openMemberList(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	hidden, _ := createTestUser(t, db, "hidden61", "member")

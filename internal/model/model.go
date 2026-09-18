@@ -285,8 +285,19 @@ type Node struct {
 	// (docs/adr/006), so nothing here reveals somebody who chose to hide.
 	// Set on the detail response; the settings form and the member list's
 	// own copy both read it.
-	PublicMemberList    string               `json:"public_member_list,omitempty"`
-	FollowerPermissions *FollowerPermissions `json:"follower_permissions,omitempty"`
+	PublicMemberList string `json:"public_member_list,omitempty"`
+	// PublicGovernanceRecord is the sibling control over the patch's
+	// deliberation — proposals, the discussion under them, and attestations
+	// — "everyone" or "nobody", defaulting closed
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). Two
+	// rungs where PublicMemberList has three: a roster has a natural subset
+	// and a record that names people inside its own prose does not.
+	//
+	// It stops at charters, which carry their own per-document visibility
+	// (docs/adr/036), and at the lining, which is pinned public
+	// (docs/adr/037).
+	PublicGovernanceRecord string               `json:"public_governance_record,omitempty"`
+	FollowerPermissions    *FollowerPermissions `json:"follower_permissions,omitempty"`
 	GovernanceConfig    *GovernanceConfig    `json:"governance_config,omitempty"`
 	MemberCount         int                  `json:"member_count,omitempty"`
 	FollowerCount       int                  `json:"follower_count,omitempty"`

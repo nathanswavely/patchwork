@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -182,14 +183,37 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			JoinedAt    string `json:"joined_at"`
 		}
 
-		var admins []adminInfo
-		rows, err := db.Query(
-			`SELECT u.id, u.username, u.display_name, u.avatar_url, m.joined_at
+		// The council named here is a public member list by another route, and
+		// it used to run no gate at all: not the patch's public_member_list
+		// (docs/adr/095), not the member's own visible switch (docs/adr/006).
+		// So a patch that had taken its roster down published its admins here
+		// anyway, and a hidden admin was named to anyone — found by opening
+		// the page on a patch set to `nobody`
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		//
+		// The room always sees its own council. Outside it, `nobody` withholds
+		// the names and `everyone`/`admins` both show admins — this is the one
+		// listing where those two rungs agree, since admins are what it lists.
+		// The member's switch subtracts on top, the one direction no patch
+		// setting may overrule.
+		var rosterSetting string
+		db.QueryRow("SELECT public_member_list FROM nodes WHERE id = ?", nodeID).Scan(&rosterSetting)
+		adminInsider := viewerIsInPatchRoom(db, r, nodeID)
+		adminQuery := `SELECT u.id, u.username, u.display_name, u.avatar_url, m.joined_at
 			 FROM memberships m JOIN users u ON m.user_id = u.id
-			 WHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'
-			 ORDER BY m.joined_at ASC`, nodeID,
-		)
-		if err == nil {
+			 WHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'`
+		if !adminInsider {
+			adminQuery += ` AND COALESCE(m.visible, 1) = 1`
+		}
+		adminQuery += ` ORDER BY m.joined_at ASC`
+
+		var admins []adminInfo
+		var rows *sql.Rows
+		var err error
+		if adminInsider || rosterSetting != "nobody" {
+			rows, err = db.Query(adminQuery, nodeID)
+		}
+		if rows != nil && err == nil {
 			defer rows.Close()
 			for rows.Next() {
 				var a adminInfo
@@ -273,6 +297,13 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			"next_contest_opens": nextContestOpens(db, nodeID, overviewGC),
 			"membership_policy":  membershipPolicy,
 			"admins":             admins,
+			// Which kind of empty `admins` is. Withholding the names made the
+			// page report the patch as leaderless — "nobody holds the admin
+			// role here" over a patch with a council — which is worse than
+			// the leak it replaced, and is exactly what docs/adr/095 means by
+			// letting an empty list say something false. The client reads
+			// this before it reads the length.
+			"admins_withheld": !adminInsider && rosterSetting == "nobody",
 			"successor":          successor,
 			"member_count":       memberCount,
 			"document_count":     docCount,

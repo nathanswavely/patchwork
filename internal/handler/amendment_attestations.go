@@ -95,6 +95,24 @@ func ListAmendmentAttestations(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+
+		// Attestations record what a patch decided at a venue Patchwork was
+		// not, so they are part of its deliberation and follow the record
+		// setting (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// They were a public read under docs/adr/052 and they name people —
+		// an attestation's whole payload is who a meeting seated.
+		//
+		// 200 with an empty list and the setting beside it, matching the
+		// proposals listing: "decided nothing elsewhere" and "withheld" want
+		// opposite copy.
+		if !canReadGovernanceRecord(db, r, nodeID) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":                    []interface{}{},
+				"public_governance_record": "nobody",
+			})
+			return
+		}
 		query := `SELECT a.id, a.node_id, COALESCE(a.doc_id,''), a.target_doc, a.doc_title,
 		                 a.decided_at, a.summary, a.adopted_body, a.git_sha, a.recorded_by,
 		                 `+displayNameExpr("u")+`, a.created_at

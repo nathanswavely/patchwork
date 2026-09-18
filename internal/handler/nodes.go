@@ -317,6 +317,20 @@ var (
 	// descending order of exposure. Each state shows a strict subset of the
 	// one before it, which is what lets the listing apply it as one clause.
 	publicMemberListStates = []string{"everyone", "admins", "nobody"}
+	// Whether the patch's deliberation can be read from outside the room
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). Two
+	// states, not three: the middle rung its sibling has would mean
+	// "proposals visible, authors hidden", and a nomination names its
+	// subject in its own title, so there is nothing coherent between them.
+	publicGovernanceRecordStates = []string{"everyone", "nobody"}
+)
+
+// The value both controls above are born with, and the value the retraction
+// migration wrote onto every patch that already existed. Named once because
+// the create path, the import fallbacks and the tests all have to agree.
+const (
+	defaultPublicMemberList       = "nobody"
+	defaultPublicGovernanceRecord = "nobody"
 )
 
 func oneOf(v string, allowed []string) bool {
@@ -582,9 +596,9 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, COALESCE(moved_to,''), founded_at, created_at, updated_at
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, COALESCE(timezone,'') AS timezone, website, COALESCE(did,''), COALESCE(image_url,''), COALESCE(image_alt,''), COALESCE(links,'[]'), COALESCE(follower_permissions,'{}'), COALESCE(governance_config,'{}'), visibility, membership_policy, COALESCE(appearance,''), status, COALESCE(submission_source,'owner'), accept_event_suggestions, notice_posting, notice_replies_default, public_member_list, public_governance_record, COALESCE(moved_to,''), founded_at, created_at, updated_at
 			 FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, slug,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.PublicGovernanceRecord, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -740,7 +754,19 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 			// SuggestTags carries words that are not in the vocabulary yet
 			// (docs/adr/114). Separate from Tags on purpose: an unknown name
 			// in Tags stays a 400 everywhere, so a typo never coins a word.
-			SuggestTags         []string                   `json:"suggest_tags"`
+			SuggestTags []string `json:"suggest_tags"`
+			// The two exposure controls, taken at creation rather than only
+			// from Patch Settings afterwards
+			// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+			// A control a patch can only reach after it exists is one most
+			// patches never reach, which is how rosters stayed public here
+			// without anybody deciding they should be.
+			//
+			// Pointers because "" and "absent" have to differ: an omitted
+			// field takes the closed default, and a client that sends a
+			// value gets it validated rather than silently replaced.
+			PublicMemberList       *string `json:"public_member_list"`
+			PublicGovernanceRecord *string `json:"public_governance_record"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -759,6 +785,27 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		if !oneOf(req.Visibility, nodeVisibilities) {
 			http.Error(w, fmt.Sprintf(`{"error":"visibility must be one of %s"}`,
 				strings.Join(nodeVisibilities, ", ")), http.StatusBadRequest)
+			return
+		}
+		// Both default closed. The patch opens them by an act, which is the
+		// whole point of the ADR: the default now matches what admins
+		// already assumed it was.
+		publicMemberList := defaultPublicMemberList
+		if req.PublicMemberList != nil {
+			publicMemberList = *req.PublicMemberList
+		}
+		if !oneOf(publicMemberList, publicMemberListStates) {
+			http.Error(w, fmt.Sprintf(`{"error":"public_member_list must be one of %s"}`,
+				strings.Join(publicMemberListStates, ", ")), http.StatusBadRequest)
+			return
+		}
+		publicGovernanceRecord := defaultPublicGovernanceRecord
+		if req.PublicGovernanceRecord != nil {
+			publicGovernanceRecord = *req.PublicGovernanceRecord
+		}
+		if !oneOf(publicGovernanceRecord, publicGovernanceRecordStates) {
+			http.Error(w, fmt.Sprintf(`{"error":"public_governance_record must be one of %s"}`,
+				strings.Join(publicGovernanceRecordStates, ", ")), http.StatusBadRequest)
 			return
 		}
 		if !oneOf(req.MembershipPolicy, membershipPolicies) {
@@ -821,9 +868,9 @@ func CreateNode(db *database.DB) http.HandlerFunc {
 		// different path and stay NULL until a claim completes.
 		activatedAt := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 		_, err := db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, follower_permissions, visibility, membership_policy, appearance, ap_id, activated_at, public_member_list, public_governance_record)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, user.ID, req.Name, slug, req.Description, req.Latitude, req.Longitude, req.Address, req.Website, linksStr, fpStr, req.Visibility, req.MembershipPolicy, appearanceStr, apID, activatedAt, publicMemberList, publicGovernanceRecord,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"failed to create node"}`, http.StatusInternalServerError)
@@ -987,7 +1034,8 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			"website":  true, "links": true, "visibility": true,
 			"appearance": true, "accept_event_suggestions": true,
 			"notice_posting": true, "notice_replies_default": true,
-			"public_member_list": true,
+			"public_member_list":        true,
+			"public_governance_record": true,
 			"image_url":          true, "image_alt": true,
 			"moved_to": true, "founded_at": true,
 		}
@@ -1127,6 +1175,17 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			if !oneOf(v, publicMemberListStates) {
 				http.Error(w, fmt.Sprintf(`{"error":"public_member_list must be one of %s"}`,
 					strings.Join(publicMemberListStates, ", ")), http.StatusBadRequest)
+				return
+			}
+		}
+
+		// The sibling control, checked in the same place and for the same
+		// reason (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		if raw, present := req["public_governance_record"]; present {
+			v, _ := raw.(string)
+			if !oneOf(v, publicGovernanceRecordStates) {
+				http.Error(w, fmt.Sprintf(`{"error":"public_governance_record must be one of %s"}`,
+					strings.Join(publicGovernanceRecordStates, ", ")), http.StatusBadRequest)
 				return
 			}
 		}

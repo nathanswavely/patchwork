@@ -654,6 +654,26 @@ _Avoid_: private members, member privacy (the members are not what is
 private; the list is), roster (fine in an ADR, not a UI word), hidden
 members (that is membership visibility)
 
+**Public governance record**:
+Whether a patch's deliberation can be read from outside it: **everyone** or
+**nobody**. A patch-level setting owned by its admins, the sibling of the
+public member list and asked in the same grammar — "may this patch's
+decisions be read" beside "may this patch be enumerated". It covers what
+the patch argued and decided: proposals and their bodies, the discussion
+under them, attestations and the names they seat. It does not cover
+**charters**, which carry their own per-document visibility and are
+published one at a time; it does not cover the **lining**; and it does not
+cover counts.
+
+Two rungs, not three. The public member list has a middle rung because a
+roster is a list of names with a natural subset. A deliberation record is
+prose that names people inside itself — a nomination's subject is in its
+own title — so there is no state between open and closed that says what it
+means.
+_Avoid_: governance visibility (that is a charter's, per document),
+private governance (the governing is not private; the record of it is),
+anonymous proposals (there are none; the record is readable or it is not)
+
 **Contact card**:
 Every way a person is willing to be reached, kept once on the account. The
 card is a set of **contact items** — one phone number, one email address to

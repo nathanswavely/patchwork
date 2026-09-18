@@ -45,6 +45,9 @@ func newTenureRig(t *testing.T, slug string) tenureRig {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, slug+"_admin", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Tenure "+slug, slug, "open")
+	// The payload under test is read from a proposal by id, which a closed
+	// record answers 404.
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	member, memberToken := createTestUser(t, db, slug+"_member", "member")
 	createTestMembership(t, db, member.ID, nodeID, "member", "active")

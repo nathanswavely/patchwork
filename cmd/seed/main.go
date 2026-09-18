@@ -457,8 +457,16 @@ func (s *seeder) seedNodes() {
 		// forked said "admin" — so a seeded band's proposals waited out a
 		// voting window the rules editor never showed. The row briefly wears
 		// migration 013's column default, exactly as a row does in CreateNode.
-		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, website, links, follower_permissions)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?)`,
+		// The two exposure controls, stated rather than inherited
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// Both are 'everyone' here for docs/adr/036's reason: demo data
+		// exists to be read by a signed-out visitor, and a seeded quilt whose
+		// every roster and record is withheld demonstrates nothing. That is a
+		// choice this fiction makes out loud, not the default a real patch
+		// gets — migration 069's column DEFAULT still says 'everyone' and
+		// would have supplied one of these silently, which is the whole trap.
+		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, website, links, follower_permissions, public_member_list, public_governance_record)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, 'everyone', 'everyone')`,
 			id, s.userIDs[n.ownerIdx], n.name, n.slug, n.description,
 			n.lat, n.lng, n.address, n.membershipPolicy, appearanceJSON, createdAt, createdAt, createdAt, apID, n.website, linksJSON, fpJSON)
 		if err != nil {

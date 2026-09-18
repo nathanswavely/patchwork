@@ -76,6 +76,22 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// A closed record answers 200 with an empty list and its own setting
+		// beside it, never 404
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// A client seeing only an empty array cannot tell "no proposals yet"
+		// from "withheld", and those two want opposite copy — the same reason
+		// ListMembers states public_member_list back.
+		if !canReadGovernanceRecord(db, r, nodeID) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":                    []interface{}{},
+				"next_cursor":              "",
+				"public_governance_record": "nobody",
+			})
+			return
+		}
+
 		after, limit := parsePaginationParams(r)
 		status := r.URL.Query().Get("status")
 
@@ -157,8 +173,9 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"items":       proposals,
-			"next_cursor": nextCursor,
+			"items":                    proposals,
+			"next_cursor":              nextCursor,
+			"public_governance_record": "everyone",
 		})
 	}
 }
@@ -437,8 +454,16 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 			`SELECT id, node_id, author_id, title, body, status, proposal_type, duration_hours, voting_ends_at, created_at, updated_at, COALESCE(target_doc,''), COALESCE(proposed_branch,''), COALESCE(proposed_body,''), COALESCE(proposed_title,''), COALESCE(git_sha,''), COALESCE(state,'voting') FROM proposals WHERE id = ?`, id,
 		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &p.State)
 
-		// Broadcast to node followers
+		// Broadcast to node followers — only from a patch that publishes its
+		// deliberation
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// Without this the setting is a REST-only fiction: the record closed
+		// to a browser and delivered in full to every remote follower, over a
+		// wire with no session to check, in copies that never come back.
 		go func() {
+			if !governanceRecordIsPublic(db, nodeID) {
+				return
+			}
 			proposalObj := ap.ProposalToObject(p, ap.GetDomain())
 			activity := map[string]interface{}{
 				"@context": ap.GovernanceContext(),
@@ -1037,6 +1062,9 @@ func resolveProposal(db *database.DB, proposalID string) string {
 
 	// Broadcast resolution
 	go func() {
+		if !governanceRecordIsPublic(db, p.NodeID) {
+			return
+		}
 		resolveActivity := ap.ProposalResolvedActivity(
 			ap.ProposalAPID(ap.GetDomain(), proposalID),
 			ap.NodeAPID(ap.GetDomain(), p.NodeID),
@@ -1129,6 +1157,16 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			 WHERE p.id = ?`, proposalID,
 		).Scan(&p.ID, &p.NodeID, &p.AuthorID, &p.Title, &p.Body, &p.Status, &p.State, &appliedAt, &p.ProposalType, &p.DurationHours, &p.VotingEndsAt, &p.CreatedAt, &p.UpdatedAt, &p.TargetDoc, &p.TargetUserID, &p.ProposedBranch, &p.ProposedBody, &p.ProposedTitle, &p.GitSHA, &seatsContested, &nominationsCloseAt, &authorName, &targetUserName)
 		if err != nil {
+			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// A single proposal on a closed record is a 404, not the list's
+		// 200-with-the-setting
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// Without the listing there is no legitimate way to be holding this
+		// id, and it matches how a members-only charter answers.
+		if !canReadGovernanceRecord(db, r, p.NodeID) {
 			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
 			return
 		}
@@ -1510,6 +1548,16 @@ func VoteOnProposal(db *database.DB) http.HandlerFunc {
 
 		// Broadcast vote (non-blocking)
 		go func() {
+			// A gv:Vote carries the voter's actor id, and you cannot vote on a
+			// patch unless you are a member of it — so this activity is a
+			// membership assertion in all but name. docs/adr/095 decision 7
+			// said "nothing federates" on the grounds that memberships never
+			// travel on an actor document; true of the actor, false in effect.
+			// A membership must not travel as a fact or as an inference
+			// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+			if !governanceRecordIsPublic(db, nodeID) {
+				return
+			}
 			var pAPID string
 			db.QueryRow("SELECT COALESCE(ap_id,'') FROM proposals WHERE id = ?", proposalID).Scan(&pAPID)
 			if pAPID != "" {
