@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
 
@@ -231,6 +232,102 @@ func TestNodeTreeCarriesMembershipPolicy(t *testing.T) {
 	}
 	if got[closed] != "invite_only" {
 		t.Errorf("expected membership_policy=invite_only, got %q", got[closed])
+	}
+}
+
+// treeAffinity fetches the tree and returns the affinity strength between
+// two node ids (0 if no link exists).
+func treeAffinity(t *testing.T, db *database.DB, a, b string) float64 {
+	t.Helper()
+	r := httptest.NewRequest("GET", "/api/v1/nodes/tree", nil)
+	w := servePublicMux(t, "GET", "/api/v1/nodes/tree", handler.NodeTree(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+	var resp struct {
+		Affinity []struct {
+			Source   string  `json:"source"`
+			Target   string  `json:"target"`
+			Strength float64 `json:"strength"`
+		} `json:"affinity"`
+	}
+	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	for _, l := range resp.Affinity {
+		if (l.Source == a && l.Target == b) || (l.Source == b && l.Target == a) {
+			return l.Strength
+		}
+	}
+	return 0
+}
+
+// A membership the member has hidden (memberships.visible = 0, docs/adr/006)
+// must not count toward placement affinity
+// (docs/adr/2026-09-18-a-hidden-membership-does-not-place.md): an
+// unnormalized public score would otherwise move by a fixed, identifying
+// amount when a specific person's hidden row is the only thing that changed.
+func TestNodeTreeHiddenMembershipDoesNotAffinity(t *testing.T) {
+	db := setupTestDB(t)
+	ownerA, _ := createTestUser(t, db, "hidden-owner-a", "member")
+	ownerB, _ := createTestUser(t, db, "hidden-owner-b", "member")
+	shared, _ := createTestUser(t, db, "hidden-shared-member", "member")
+
+	nodeA := createTestNode(t, db, ownerA.ID, "Hidden A", "hidden-a", "open")
+	nodeB := createTestNode(t, db, ownerB.ID, "Hidden B", "hidden-b", "open")
+
+	createTestMembership(t, db, ownerA.ID, nodeA, "admin", "active")
+	createTestMembership(t, db, ownerB.ID, nodeB, "admin", "active")
+
+	// Shared member of both patches, hidden on A.
+	createTestMembership(t, db, shared.ID, nodeA, "member", "active")
+	createTestMembership(t, db, shared.ID, nodeB, "member", "active")
+	if _, err := db.Exec(`UPDATE memberships SET visible = 0 WHERE user_id = ? AND node_id = ?`, shared.ID, nodeA); err != nil {
+		t.Fatalf("hide membership: %v", err)
+	}
+
+	if got := treeAffinity(t, db, nodeA, nodeB); got != 0 {
+		t.Errorf("expected no member-affinity link while the shared membership is hidden on one side, got strength %v", got)
+	}
+
+	// Made visible again: the link reappears at full strength (3).
+	if _, err := db.Exec(`UPDATE memberships SET visible = 1 WHERE user_id = ? AND node_id = ?`, shared.ID, nodeA); err != nil {
+		t.Fatalf("show membership: %v", err)
+	}
+	if got := treeAffinity(t, db, nodeA, nodeB); got != 3 {
+		t.Errorf("expected member-affinity link of strength 3 once both memberships are visible, got %v", got)
+	}
+}
+
+// Same rule for a shared follower (weight 1): hidden on one side, the
+// follower-affinity term must not count it either.
+func TestNodeTreeHiddenFollowerDoesNotAffinity(t *testing.T) {
+	db := setupTestDB(t)
+	ownerA, _ := createTestUser(t, db, "hidden-fol-owner-a", "member")
+	ownerB, _ := createTestUser(t, db, "hidden-fol-owner-b", "member")
+	fan, _ := createTestUser(t, db, "hidden-fol-fan", "member")
+
+	nodeA := createTestNode(t, db, ownerA.ID, "Hidden Fol A", "hidden-fol-a", "open")
+	nodeB := createTestNode(t, db, ownerB.ID, "Hidden Fol B", "hidden-fol-b", "open")
+
+	createTestMembership(t, db, ownerA.ID, nodeA, "admin", "active")
+	createTestMembership(t, db, ownerB.ID, nodeB, "admin", "active")
+
+	createTestMembership(t, db, fan.ID, nodeA, "follower", "active")
+	createTestMembership(t, db, fan.ID, nodeB, "follower", "active")
+	if _, err := db.Exec(`UPDATE memberships SET visible = 0 WHERE user_id = ? AND node_id = ?`, fan.ID, nodeA); err != nil {
+		t.Fatalf("hide follower membership: %v", err)
+	}
+
+	if got := treeAffinity(t, db, nodeA, nodeB); got != 0 {
+		t.Errorf("expected no follower-affinity link while the shared follower is hidden on one side, got strength %v", got)
+	}
+
+	if _, err := db.Exec(`UPDATE memberships SET visible = 1 WHERE user_id = ? AND node_id = ?`, fan.ID, nodeA); err != nil {
+		t.Fatalf("show follower membership: %v", err)
+	}
+	if got := treeAffinity(t, db, nodeA, nodeB); got != 1 {
+		t.Errorf("expected follower-affinity link of strength 1 once both memberships are visible, got %v", got)
 	}
 }
 

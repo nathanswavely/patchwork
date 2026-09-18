@@ -191,16 +191,21 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		// nodes so the database does less work; the visibleIDs intersection
 		// below is what actually guarantees no other patch's id reaches the
 		// response, since a link needs both ends kept regardless of how it
-		// was scored. Deliberately unfiltered by memberships.visible (the
-		// per-membership visibility switch, docs/adr/006): a hidden
-		// membership still counts toward placement affinity today, and
-		// whether it should is a separate design call nobody has made yet.
+		// was scored. A membership either side has hidden
+		// (memberships.visible = 0, docs/adr/006) is excluded: affinity is
+		// an unnormalized public score, so one hidden person joining or
+		// leaving would move it by a fixed, identifying amount in a small
+		// patch. Decided in
+		// docs/adr/2026-09-18-a-hidden-membership-does-not-place.md;
+		// member_count stays unfiltered on purpose (docs/adr/095) — a count
+		// says how big a patch is, affinity says a specific overlap exists.
 		memberRows, err := db.Query(`
 			SELECT m1.node_id, m2.node_id, COUNT(*) * 3 AS score
 			FROM memberships m1
 			JOIN memberships m2 ON m1.user_id = m2.user_id
 				AND m1.node_id < m2.node_id
 				AND m1.status = 'active' AND m2.status = 'active'
+				AND m1.visible = 1 AND m2.visible = 1
 				AND m1.role IN ('admin', 'member') AND m2.role IN ('admin', 'member')
 			JOIN nodes n1 ON m1.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.removed_at IS NULL AND n1.visibility = 'public'
 			JOIN nodes n2 ON m2.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.removed_at IS NULL AND n2.visibility = 'public'
@@ -218,13 +223,15 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		}
 
 		// Shared followers (weight 1 per shared follower). Same
-		// memberships.visible note as above applies here too.
+		// memberships.visible rule as shared admins/members above
+		// (docs/adr/2026-09-18-a-hidden-membership-does-not-place.md).
 		followerRows, err := db.Query(`
 			SELECT m1.node_id, m2.node_id, COUNT(*) AS score
 			FROM memberships m1
 			JOIN memberships m2 ON m1.user_id = m2.user_id
 				AND m1.node_id < m2.node_id
 				AND m1.status = 'active' AND m2.status = 'active'
+				AND m1.visible = 1 AND m2.visible = 1
 				AND m1.role = 'follower' AND m2.role = 'follower'
 			JOIN nodes n1 ON m1.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.removed_at IS NULL AND n1.visibility = 'public'
 			JOIN nodes n2 ON m2.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.removed_at IS NULL AND n2.visibility = 'public'
@@ -243,12 +250,17 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 
 		// Shared event participation: patches whose members attend events at the other patch (weight 2).
 		// A user who is a member of patch A and has created an event at patch B creates affinity.
+		// m.visible = 1 for the same reason as the shared-member/follower
+		// queries above: this membership row is the one feeding the score,
+		// so a hidden one must not place either
+		// (docs/adr/2026-09-18-a-hidden-membership-does-not-place.md).
 		eventRows, err := db.Query(`
 			SELECT m.node_id, e.node_id, COUNT(DISTINCT m.user_id) * 2 AS score
 			FROM memberships m
 			JOIN events e ON m.user_id = e.created_by
 				AND m.node_id != e.node_id
 				AND m.status = 'active'
+				AND m.visible = 1
 				AND m.role IN ('admin', 'member')
 			JOIN nodes n1 ON m.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.visibility = 'public'
 			JOIN nodes n2 ON e.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.visibility = 'public'
