@@ -92,8 +92,7 @@ func TestSync_AutoDetectsSquarespace(t *testing.T) {
 	db := setupTestDB(t)
 	now := time.Now().UTC()
 
-	var srv *httptest.Server
-	srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Query().Get("format") == "json" {
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(ssFixture(now)))

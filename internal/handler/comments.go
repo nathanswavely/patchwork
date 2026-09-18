@@ -139,12 +139,9 @@ func ListComments(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Build threaded structure: top-level comments with nested replies.
-		var topLevel []commentItem
+		// Attach replies to their parent comment.
 		for i := range all {
-			if all[i].parentID == nil {
-				topLevel = append(topLevel, all[i].commentItem)
-			} else {
+			if all[i].parentID != nil {
 				parentIdx, ok := byID[*all[i].parentID]
 				if ok {
 					all[parentIdx].Replies = append(all[parentIdx].Replies, all[i].commentItem)
@@ -152,9 +149,8 @@ func ListComments(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Copy updated replies back into topLevel items.
-		// Since we modified all[parentIdx].Replies, rebuild topLevel from the flat list.
-		topLevel = nil
+		// Build the top-level list, now that every parent's Replies are filled in.
+		var topLevel []commentItem
 		for i := range all {
 			if all[i].parentID == nil {
 				item := all[i].commentItem

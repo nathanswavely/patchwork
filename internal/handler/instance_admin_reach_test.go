@@ -5,7 +5,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"io/fs"
+	"os"
 	"sort"
 	"strings"
 	"testing"
@@ -25,33 +25,33 @@ func findInstanceRoleChecks(t *testing.T) map[string]int {
 	t.Helper()
 
 	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, ".", func(fi fs.FileInfo) bool {
-		return !strings.HasSuffix(fi.Name(), "_test.go")
-	}, 0)
+	entries, err := os.ReadDir(".")
 	if err != nil {
-		t.Fatalf("parsing package handler: %v", err)
+		t.Fatalf("reading package handler: %v", err)
 	}
 
 	found := map[string]int{}
-	for _, pkg := range pkgs {
-		for path, file := range pkg.Files {
-			base := path
-			if i := strings.LastIndexAny(base, `/\`); i >= 0 {
-				base = base[i+1:]
+	for _, entry := range entries {
+		name := entry.Name()
+		if entry.IsDir() || !strings.HasSuffix(name, ".go") || strings.HasSuffix(name, "_test.go") {
+			continue
+		}
+		file, err := parser.ParseFile(fset, name, nil, 0)
+		if err != nil {
+			t.Fatalf("parsing %s: %v", name, err)
+		}
+		for _, decl := range file.Decls {
+			fn, ok := decl.(*ast.FuncDecl)
+			if !ok || fn.Body == nil {
+				continue
 			}
-			for _, decl := range file.Decls {
-				fn, ok := decl.(*ast.FuncDecl)
-				if !ok || fn.Body == nil {
-					continue
+			key := name + ":" + fn.Name.Name
+			ast.Inspect(fn.Body, func(n ast.Node) bool {
+				if isInstanceRoleCheck(n) {
+					found[key]++
 				}
-				key := base + ":" + fn.Name.Name
-				ast.Inspect(fn.Body, func(n ast.Node) bool {
-					if isInstanceRoleCheck(n) {
-						found[key]++
-					}
-					return true
-				})
-			}
+				return true
+			})
 		}
 	}
 	return found

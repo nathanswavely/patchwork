@@ -16,8 +16,10 @@ type rateLimiterEntry struct {
 }
 
 // RateLimiterStore manages per-key rate limiters with periodic cleanup.
+// limiters is a sync.Map (not a plain map behind mu) because Allow is called
+// on every request across every key: the read/write mix favors sync.Map's
+// lock-free reads over a mutex that every request would contend on.
 type RateLimiterStore struct {
-	mu       sync.Mutex
 	limiters sync.Map
 	r        rate.Limit
 	burst    int
