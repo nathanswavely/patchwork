@@ -412,6 +412,7 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 		// claiming an application that didn't happen.
 		if autoApplyNow {
 			applied := true
+			mergedSHA := ""
 			if req.ProposalType == "amendment" && branchName != "" {
 				dataDir := governance.GetDataDir()
 				mergeName, mergeEmail := commitIdentity(user)
@@ -420,31 +421,37 @@ func CreateProposal(db *database.DB) http.HandlerFunc {
 					log.Printf("proposal %s: direct-change merge failed: %v", id, mergeErr)
 					applied = false
 				} else {
-					if _, err := db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, id); err != nil {
-						log.Printf("proposal %s: direct-change sha update failed: %v", id, err)
-					}
+					mergedSHA = sha
 					governance.DeleteBranch(dataDir, nodeID, branchName)
 					// Same post-merge DB syncs as the other apply paths (docs/adr/011).
 					if req.TargetDoc == "governance-rules.json" || req.TargetDoc == "Governance Rules" {
-						syncRulesAndNotify(db, dataDir, nodeID, user.ID, id)
+						if err := syncRulesAndNotify(db, dataDir, nodeID, user.ID, id); err != nil {
+							applyIncomplete(db, id, mergedSHA, "rules sync", err)
+						}
 					}
-					syncLiningToDB(db, nodeID, req.TargetDoc, req.ProposedTitle, user.ID)
+					if err := syncLiningToDB(db, nodeID, req.TargetDoc, req.ProposedTitle, user.ID); err != nil {
+						applyIncomplete(db, id, mergedSHA, "charter mirror", err)
+					}
 				}
 			}
 			if applied {
 				// 'approved' is the terminal success status everywhere else
 				// (and the only one the schema CHECK allows — 'passed' was
 				// silently rejected, leaving fast-tracked amendments 'open').
-				if _, err := db.Exec("UPDATE proposals SET status = 'approved', applied_at = ?, applied_by = ? WHERE id = ?",
-					createdAt, user.ID, id); err != nil {
-					log.Printf("proposal %s: direct-change status update failed: %v", id, err)
+				// The sha travels with it: settleApplied writes both together.
+				if err := settleApplied(db, id, mergedSHA, user.ID, createdAt); err != nil {
+					applyIncomplete(db, id, mergedSHA, "settle", err)
 				}
 			} else {
 				// The INSERT above stamped state 'in_effect'; roll it back so
 				// the unapplied record reads as an open proposal, not an
 				// applied change. It gets the window it would have had, so
-				// the open proposal has a clock like every other.
-				db.Exec("UPDATE proposals SET state = 'voting', voting_ends_at = ? WHERE id = ?", votingEndsAt, id)
+				// the open proposal has a clock like every other. If even that
+				// write fails the row claims a change nothing made, which is
+				// the one thing this must not do quietly.
+				if _, err := db.Exec("UPDATE proposals SET state = 'voting', voting_ends_at = ? WHERE id = ?", votingEndsAt, id); err != nil {
+					applyIncomplete(db, id, "", "reopen after failed merge", err)
+				}
 			}
 		}
 
@@ -1009,7 +1016,13 @@ func resolveProposal(db *database.DB, proposalID string) string {
 	if newStatus == "approved" && p.ProposalType == "membership" && p.TargetUserID != "" {
 		ratifyNomination(db, proposalID, p.NodeID, p.TargetUserID)
 		now := clock.Now()
-		db.Exec("UPDATE proposals SET state = 'in_effect', applied_at = ?, updated_at = ? WHERE id = ?", now, now, proposalID)
+		// The promotion has already happened by here, so a failure to record
+		// it leaves a new admin whose proposal still reads as merely
+		// approved. Nothing can undo the promotion; the divergence gets said
+		// out loud instead.
+		if err := settleApplied(db, proposalID, "", "", now); err != nil {
+			applyIncomplete(db, proposalID, "", "ratified nomination settle", err)
+		}
 	}
 
 	// Auto-apply amendment if approved and configured
@@ -1035,22 +1048,30 @@ func resolveProposal(db *database.DB, proposalID string) string {
 				log.Printf("proposal %s: auto-apply merge failed, left approved for an admin: %v", proposalID, mergeErr)
 			}
 			if mergeErr == nil {
-				db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, proposalID)
 				// Same post-merge DB syncs as the manual ApplyProposal path
 				// (docs/adr/011): rules to governance config, markdown docs
-				// to governance_docs.
+				// to governance_docs. Neither can be rolled back once the
+				// merge is in, so a failure here is recorded rather than
+				// returned — the charter moved and somebody has to be able
+				// to find out that the mirror of it didn't.
 				if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
 					// No actor: resolution is the clock, not a person, so the
 					// notice reaches everyone including the proposal's author.
-					syncRulesAndNotify(db, governance.GetDataDir(), p.NodeID, "", proposalID)
+					if err := syncRulesAndNotify(db, governance.GetDataDir(), p.NodeID, "", proposalID); err != nil {
+						applyIncomplete(db, proposalID, sha, "rules sync", err)
+					}
 				}
-				syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
+				if err := syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID); err != nil {
+					applyIncomplete(db, proposalID, sha, "charter mirror", err)
+				}
 				// The merge already happened, so there is nothing left for an
 				// admin to make official — skip 'approved' and land where the
 				// manual apply path lands. applied_by stays NULL: no person
 				// applied this one.
 				now := clock.Now()
-				db.Exec("UPDATE proposals SET state = 'in_effect', applied_at = ?, updated_at = ? WHERE id = ?", now, now, proposalID)
+				if err := settleApplied(db, proposalID, sha, "", now); err != nil {
+					applyIncomplete(db, proposalID, sha, "settle", err)
+				}
 			}
 		}
 	}
@@ -1848,34 +1869,107 @@ func ApplyProposal(db *database.DB) http.HandlerFunc {
 // approved → in_effect step and the maintainer's approve (docs/adr/092) so
 // there is one apply path, not two that drift.
 func applyProposalChanges(db *database.DB, p model.Proposal, actor *model.User) error {
+	sha := ""
 	if p.ProposalType == "amendment" && p.ProposedBranch != "" {
 		dataDir := governance.GetDataDir()
 		if err := ensureAmendmentBranch(dataDir, p.NodeID, p.ProposedBranch, p.TargetDoc, p.ProposedBody); err != nil {
 			return err
 		}
 		actorName, actorEmail := commitIdentity(actor)
-		sha, err := governance.MergeBranch(dataDir, p.NodeID, p.ProposedBranch, actorName, actorEmail)
+		merged, err := governance.MergeBranch(dataDir, p.NodeID, p.ProposedBranch, actorName, actorEmail)
 		if err != nil {
 			return err
 		}
-		db.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, p.ID)
+		// From here the change is real and no database error can take it
+		// back. The sha is carried to settleApplied below rather than written
+		// on its own, so the row never holds a commit without the state that
+		// commit put the patch in.
+		sha = merged
 
 		if p.TargetDoc == "governance-rules.json" || p.TargetDoc == "Governance Rules" {
-			syncRulesAndNotify(db, dataDir, p.NodeID, actor.ID, p.ID)
+			if err := syncRulesAndNotify(db, dataDir, p.NodeID, actor.ID, p.ID); err != nil {
+				applyIncomplete(db, p.ID, sha, "rules sync", err)
+			}
 		}
 		// Mirror merged markdown docs into governance_docs — the DB is
 		// canonical for linings (docs/adr/011); without this the applied
 		// amendment never appears in the governance hub.
-		syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID)
+		if err := syncLiningToDB(db, p.NodeID, p.TargetDoc, p.ProposedTitle, p.AuthorID); err != nil {
+			applyIncomplete(db, p.ID, sha, "charter mirror", err)
+		}
 		governance.DeleteBranch(dataDir, p.NodeID, p.ProposedBranch)
 	}
 
 	now := clock.Now()
-	_, err := db.Exec(
-		"UPDATE proposals SET status = 'approved', state = 'in_effect', applied_at = ?, applied_by = ?, updated_at = ? WHERE id = ?",
-		now, actor.ID, now, p.ID,
-	)
-	return err
+	if err := settleApplied(db, p.ID, sha, actor.ID, now); err != nil {
+		// The caller turns this into the admin's error message, which says
+		// nothing has changed yet. Where a merge did land that is no longer
+		// true, so the divergence is recorded before the error goes back.
+		if sha != "" {
+			applyIncomplete(db, p.ID, sha, "settle", err)
+		}
+		return err
+	}
+	return nil
+}
+
+// settleApplied stamps a proposal the moment its change is real: the commit
+// the merge produced, and the row state that commit put the patch in, written
+// together in one transaction. Written separately they can disagree — a sha
+// with no state, a state with no sha — and every page renders from the row,
+// so a half-written settle shows an open vote over a charter that has already
+// been amended. Callers that merged nothing pass an empty sha and only the
+// row moves.
+//
+// `at` is the caller's timestamp rather than one taken here, because a direct
+// change stamps the row with the moment it was created.
+//
+// COALESCE leaves applied_by alone where no person applied it: an
+// auto-applied amendment and a ratified nomination were settled by the
+// electorate and the clock, and naming somebody would misstate who decided.
+func settleApplied(db *database.DB, proposalID, sha, appliedBy, at string) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if sha != "" {
+		if _, err := tx.Exec("UPDATE proposals SET git_sha = ? WHERE id = ?", sha, proposalID); err != nil {
+			return err
+		}
+	}
+	if _, err := tx.Exec(
+		"UPDATE proposals SET status = 'approved', state = 'in_effect', applied_at = ?, applied_by = COALESCE(?, applied_by), updated_at = ? WHERE id = ?",
+		at, nullIfEmpty(appliedBy), at, proposalID,
+	); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+// applyIncomplete records a write that failed after the change it was meant
+// to describe already landed — a merge that is in git, a member already
+// promoted. SQLite cannot roll git back and this does not try to. What it
+// must not do is go quiet: the divergence that follows is invisible from both
+// sides, with `proposals` still saying approved or open while the charter
+// reads amended, and an admin's next apply merging a branch that is already
+// in.
+//
+// So it is loud in the log and leaves an audit entry an operator can search
+// for, carrying the proposal and the commit the row does not.
+func applyIncomplete(db *database.DB, proposalID, sha, step string, cause error) {
+	merge := ""
+	if sha != "" {
+		merge = " (merge " + sha + ")"
+	}
+	log.Printf("proposal %s: %s failed after the change landed%s; the governance record and the proposal row now disagree: %v",
+		proposalID, step, merge, cause)
+	detail, err := json.Marshal(map[string]string{"step": step, "git_sha": sha, "error": cause.Error()})
+	if err != nil {
+		detail = []byte("{}")
+	}
+	auth.LogAuditEvent(db, "", "proposal.apply_incomplete", "proposal", proposalID, string(detail), "")
 }
 
 // ensureAmendmentBranch makes sure the branch an amendment merges from is

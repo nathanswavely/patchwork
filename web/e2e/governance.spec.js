@@ -147,7 +147,7 @@ test.describe('Governance — Proposal Detail', () => {
       if (await discussionTab.isVisible()) {
         await discussionTab.click();
         // Should show comment thread
-        await page.waitForTimeout(500);
+        await page.waitForLoadState('networkidle');
         await expectNoError(page);
       }
 
@@ -155,7 +155,7 @@ test.describe('Governance — Proposal Detail', () => {
       const historyTab = page.locator('.tab', { hasText: 'History' });
       if (await historyTab.isVisible()) {
         await historyTab.click();
-        await page.waitForTimeout(500);
+        await page.waitForLoadState('networkidle');
         await expectNoError(page);
       }
     }
@@ -279,7 +279,7 @@ test.describe('Governance — Diff View', () => {
       const changesTab = page.locator('.tab', { hasText: 'Changes' });
       if (await changesTab.isVisible()) {
         await changesTab.click();
-        await page.waitForTimeout(500);
+        await page.waitForLoadState('networkidle');
         const diffView = page.locator('.diff-view');
         if (await diffView.isVisible()) {
           // Should have mode toggle
