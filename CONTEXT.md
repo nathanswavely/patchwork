@@ -766,15 +766,41 @@ _Avoid_: pending (that is a request nobody answered), requested, pending
 invite, invitee (in UI copy — say "invited")
 
 **Trusted contributor**:
-An instance-level grant — given and revoked by the instance admin, never
-earned automatically — that lets a person record events on unclaimed patches
-without review. Orthogonal to patch roles: not a rung between member and
-admin, and worth nothing on active patches, where every suggestion still
-goes through that patch's admins. Review is owed to whoever owns the
-calendar; the grant only waives the instance admin's own queue. Trust is
-per-instance — standing on another quilt earns it nowhere.
-_Avoid_: correspondent, steward, moderator, contributor (alone),
-trusted user
+An instance admin's grant, given and revoked explicitly and never earned
+automatically, that lets a person record events on unclaimed patches
+without review. It has a scope: the whole quilt, or one patch. The
+quilt-wide grant waives every queue the instance admin holds alone: events
+on any unclaimed patch, and the review of a suggested listing, which lands
+as an unclaimed patch at once. The per-patch grant is the same
+standing on one unclaimed patch and nothing else, and the ordinary way it
+is given is at the moment an instance admin approves that person's patch
+suggestion, where it is offered as a checked line the admin may uncheck:
+approving a listing is a judgement about the place, and letting its
+suggester keep its calendar is a second judgement the admin should see
+before making. Either scope is orthogonal to patch roles: not a rung
+between member and admin, and worth nothing on active patches, where every
+suggestion still goes through that patch's admins. A per-patch grant ends
+when the patch is claimed, because the calendar it opened now has an owner.
+Review is owed to whoever owns the calendar; the grant only waives the
+instance admin's own queue. Trust is per-instance, and standing on another
+quilt earns it nowhere.
+_Avoid_: correspondent, steward, keeper, moderator, contributor (alone),
+trusted user, patch contributor, suggester's rights
+
+**Trust request**:
+A person's ask to become a trusted contributor, made from the one place
+the review cost is being paid: the event form, when the event is about to
+queue on an unclaimed patch. It names a scope, that patch by default, more
+unclaimed patches, or the whole quilt, and may carry a short message. One
+open request per person. It is answered, never merely seen: an instance
+admin approves it at whatever scope they judge right, wider or narrower
+than what was asked, or declines it, and the requester is told either way.
+A declined person may ask again after a while, because a person is not a
+word to be spent. A named patch that is claimed before the answer drops
+off the request, and a request with nothing left resolves itself as moot.
+Active patches are never askable, since the grant is worth nothing there.
+_Avoid_: application, apply (both read as a job posting), trust
+application, contributor request, promotion request
 
 **Community-submitted**:
 The label every event on an unclaimed patch wears: recorded by the
@@ -1230,9 +1256,12 @@ Calendar's secret address, a venue tool's calendar export), a Squarespace
 events page, or any page carrying schema.org Event markup (Humanitix host
 pages among them) — the kind is auto-detected from a pasted address.
 Attached by a
-patch admin to their own patch, or by an instance admin to an unclaimed
-patch, never by anyone else: attaching is vouching for the feed once, so
-imported events publish without per-event review (docs/adr/031). The
+patch admin to their own patch, or to an unclaimed patch by an instance
+admin or a trusted contributor whose grant reaches it, never by anyone
+else: attaching is vouching for the feed once, so imported events publish
+without per-event review (docs/adr/031). A patch suggestion may carry a
+feed, checked when it is offered and attached when the listing publishes,
+vouched for by whoever held standing at that moment. The
 source stays authoritative — its events are read-only and follow the feed
 until detached. An unreachable feed never removes anything; only a
 successful fetch that no longer carries an event cancels it. The UI may
