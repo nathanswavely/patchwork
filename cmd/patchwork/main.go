@@ -291,6 +291,15 @@ func main() {
 	defer sourceCancel()
 	eventsource.StartWorker(sourceCtx, db, notifier)
 
+	// Usage counts: in memory, written as daily totals once a minute
+	// (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+	// The switch is read per page load, so the admin's change needs no
+	// restart.
+	usage := middleware.NewUsageCounter(db, func() bool { return settings.UsageStatsEnabled(db) })
+	usageCtx, usageCancel := context.WithCancel(context.Background())
+	defer usageCancel()
+	usage.Start(usageCtx)
+
 	// First-run bootstrap notice: until an account exists there is no admin,
 	// so tell the operator how to claim the instance.
 	if auth.NoUsersExist(db) {
@@ -748,6 +757,9 @@ func main() {
 
 	mux.HandleFunc("GET /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminGetSettings(db, cfg)))
 	mux.HandleFunc("PATCH /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminUpdateSettings(db, cfg)))
+	// Usage counts (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+	mux.HandleFunc("GET /api/v1/admin/usage", middleware.AdminRequired(db, handler.AdminUsage(db)))
+	mux.HandleFunc("DELETE /api/v1/admin/usage", middleware.AdminRequired(db, handler.AdminClearUsage(db, usage)))
 	mux.HandleFunc("GET /api/v1/admin/legal", middleware.AdminRequired(db, handler.AdminGetLegal(db, cfg)))
 	mux.HandleFunc("PUT /api/v1/admin/legal/{doc}", middleware.AdminRequired(db, handler.AdminUpdateLegal(db)))
 	mux.HandleFunc("DELETE /api/v1/admin/legal/{doc}", middleware.AdminRequired(db, handler.AdminResetLegal(db)))
@@ -856,7 +868,10 @@ func main() {
 
 	spa := spaHandler{fs: http.FS(dist)}
 	seoWrapped := middleware.SEO(db, cfg, spaHTML)(spa)
-	mux.Handle("/", seoWrapped)
+	// Visitor counting wraps the SPA alone, so it sees a page being loaded
+	// and never an API call or an asset. It counts nothing until the admin
+	// turns it on (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+	mux.Handle("/", usage.Wrap(seoWrapped))
 
 	// Middleware stack: BlockAICrawlers → Compress → CORS → CSRF → routes.
 	// BlockAICrawlers is outermost so matching crawlers are rejected before

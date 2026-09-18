@@ -567,6 +567,8 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 		"sessions":                    "secrets",
 		"signup_tokens":               "single-use, domain-bound",
 		"user_quilts":                 "a person's own connected quilts",
+		"usage_days":                  "this deployment's traffic, not the community's record (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md)",
+		"usage_visitors":              "same",
 	}
 
 	exported := map[string]bool{}

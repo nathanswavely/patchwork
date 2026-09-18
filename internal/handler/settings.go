@@ -77,6 +77,9 @@ func AdminGetSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			"timezone_configured": cfg.Timezone(),
 			"icon":                currentIconState(db, cfg),
 			"icon_starters":       starters,
+			// Visitor counting (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+			// Off until an admin turns it on; the privacy policy says which.
+			"usage_stats": settings.UsageStatsEnabled(db),
 		})
 	}
 }
@@ -110,6 +113,11 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			// the answer to that refusal.
 			Timezone       *string `json:"timezone"`
 			TimezoneEvents string  `json:"timezone_events"`
+			// Count page views and daily visitors on the server
+			// (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+			// Audited on its own line: turning it on is the one act here
+			// that changes what the site keeps about people.
+			UsageStats *bool `json:"usage_stats"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
@@ -278,6 +286,18 @@ func AdminUpdateSettings(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to save policy"}`, http.StatusInternalServerError)
 				return
 			}
+		}
+
+		if req.UsageStats != nil {
+			v := "false"
+			if *req.UsageStats {
+				v = "true"
+			}
+			if err := settings.Set(db, settings.KeyUsageStats, v); err != nil {
+				http.Error(w, `{"error":"failed to save usage setting"}`, http.StatusInternalServerError)
+				return
+			}
+			auth.LogAuditEvent(db, adminUser.ID, "admin.usage_stats_set", "instance", "", `{"enabled":`+v+`}`, clientIP(r))
 		}
 
 		auth.LogAuditEvent(db, adminUser.ID, "admin.instance_settings_update", "instance", "", "{}", clientIP(r))

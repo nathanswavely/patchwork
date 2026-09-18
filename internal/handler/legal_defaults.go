@@ -19,6 +19,9 @@ package handler
 // {quilt_name} and {domain} are substituted at serve time with the
 // effective instance name (DB override or patchwork.yaml) and configured
 // domain, so a rename never strands a stale name inside a legal document.
+// {usage_stats} is substituted with whichever of the two paragraphs below
+// is true of this deployment right now, because visitor counting is a
+// switch and the policy has to say which way it is set.
 //
 // Formatting: one line per paragraph and per list item — the frontend
 // renders markdown with breaks:true (single newlines become <br>), so a
@@ -36,7 +39,9 @@ Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analy
 
 **Activity.** The patches you join, follow, or administer, the proposals and votes you take part in, and anything you post or edit, events included. There is no RSVP on this site and no record of whether you went to anything.
 
-**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.
+**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address. The web server as shipped keeps no log of visits. All of this exists for security and troubleshooting. None of it is used for profiling.
+
+{usage_stats}
 
 ## What other people can see
 
@@ -57,9 +62,15 @@ This site can speak ActivityPub, the protocol behind Mastodon and similar networ
 
 Membership records never federate. What leaves this server is only what was already public on it.
 
+## Maps
+
+The map is drawn from tiles fetched from OpenFreeMap, or from OpenStreetMap's own tile server on a browser that cannot draw the vector kind. Opening a map page sends those servers your IP address, the way any server your browser fetches from receives it, and nothing else. Apart from map tiles, a page here fetches only from this site, unless you have connected another quilt in your settings, in which case your browser reads that quilt's public pages directly.
+
 ## Cookies
 
-This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.
+This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind. There is no cookie banner because there is nothing to consent to.
+
+A few conveniences are kept in your browser's own storage rather than on the server: whether you collapsed the sidebar, a draft you were writing, that you have seen the introduction. That storage never leaves your browser, nobody here reads it, and it is yours to clear.
 
 ## Email
 
@@ -100,6 +111,14 @@ If this policy changes, the change shows up on this page. The software keeps no 
 ## Who to talk to
 
 The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.`
+
+// The two states of the visitor-counting paragraph
+// (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md). Every
+// clause of the "on" text is a property of internal/middleware/usage.go;
+// change one and change the other.
+const usageStatsOnText = `**Visitor counts.** The stewards have turned on visitor counting. The server counts how many times each kind of page was loaded on each day, and how many different browsers loaded any page that day. To tell browsers apart within a day it hashes your address and browser type with a secret it draws at random, keeps only in memory, and replaces every midnight, so the count cannot be turned back into you and no two days can be joined. No script runs in your browser for this, nothing is stored there, only daily totals are ever written down, and they are deleted after 13 months. Pages are counted by their shape, never with anything typed after a question mark.`
+
+const usageStatsOffText = `**Visitor counts.** This site does not count its visitors. The software can keep daily page-view totals, computed on the server with no script and no cookie, but the stewards have not turned that on. If they do, this paragraph will say so.`
 
 const defaultUserAgreement = `*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*
 
