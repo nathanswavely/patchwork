@@ -80,6 +80,26 @@ mainly in docs. A term nobody reaches for when building the thing isn't
 the thing's name.
 _Avoid_: pin (retired), happening, gathering
 
+**Event visibility** — **Public**, **Followers**, **Members only**:
+Who an event is for, named for the role it reaches
+(`events.visibility`, values `public` / `followers` / `members`,
+docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md).
+Public is anyone; Followers is the patch's followers, members and admins;
+Members only stops at members and admins. Set on the event form and as a
+default on an event source, shown as a chip wherever a non-public event is
+drawn, and enforced in Go on every read path rather than drawn in Svelte.
+The patch's **follower permissions** sit above it as a ceiling: where
+`events` is switched off, a Followers event is read down to Members only
+and the row is never rewritten.
+
+The event column and the node column no longer share a vocabulary.
+`nodes.visibility` keeps `public` / `private` / `unlisted` and its own
+meaning — a private patch is unlisted, not locked — and nothing above
+applies to it. When both are in play, say "the event's tier" and "the
+patch's visibility"; "private event" and "unlisted event" name nothing
+now, and a comment using either is about the node column or is stale.
+_Avoid_: private event, unlisted event, hidden event, secret event
+
 **Event page** (the field):
 The event's own page out on the web, where its publisher put it — the
 ticket page, the venue's listing, the RSVP form (`events.event_url`,
@@ -959,17 +979,22 @@ isn't the thing's name.
 _Avoid_: baste request (retired), motion, petition
 
 **Follower permissions**:
-What a patch offers its followers — which workspace tabs they get, and
-whether they may take part in proposals. Not access control: the events,
-proposals, and member lists behind those tabs are public reads, so
-switching one off hides a tab from a patch's own followers while leaving
-the same data readable by anyone signed out (docs/adr/050). The one
-exception is charters, which carry real per-document visibility and so
-can genuinely be withheld. A patch that switches proposals off is saying
+What a patch offers its followers — which workspace tabs they get, whether
+they may take part in proposals, and what its non-public events are worth
+to them. Three of the four switches are real. Charters carry per-document
+visibility and can genuinely be withheld. Proposals gates commenting and
+reacting. Events is a ceiling on an **event visibility** tier: switch it
+off and a Followers event reads as Members only on every surface, which is
+what makes the rules editor honest about it
+(docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md).
+Members is the roster gate. What none of them do is hide a *public* page:
+a patch's public events, proposals and roster stay readable by anyone
+signed out, so switching a tab off is a statement about followers rather
+than a wall (docs/adr/050). A patch that switches proposals off is saying
 followers are not part of its deliberation, and that is honoured where it
 can be — commenting — rather than pretended at by hiding public pages.
-_Avoid_: permissions (in prose about what followers can *see* — the word
-promises a boundary that is only there for charters), access level
+_Avoid_: permissions (in prose about what followers can *see* of a public
+page — the word promises a boundary that isn't there), access level
 
 **Electorate**:
 The people who may vote in a patch: active admins and members who have
