@@ -292,7 +292,10 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// running now, contested when the calendar opens on a date, or
 			// held with no calendar at all. The page states that per row
 			// instead of three general facts about councils side by side.
-			"seats": seatsOf(db, nodeID, overviewGC),
+			// Asked through the same gate the admin list above is asked
+			// through, because a chair's holder is an admin and this is the
+			// other place the page names one.
+			"seats": withholdSeatHolders(db, seatsOf(db, nodeID, overviewGC), nodeID, adminInsider, rosterSetting),
 			// When the calendar next opens a contest. Derived from the
 			// seats' own term ends, never stored (see nextContestOpens).
 			"next_contest_opens": nextContestOpens(db, nodeID, overviewGC),
