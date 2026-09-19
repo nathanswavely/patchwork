@@ -255,13 +255,14 @@ func EventICS(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 
 		// Members-only events are for a member or admin of the event's OWN
-		// patch, which is the rule ListEvents already applies — a confirmed
-		// link never widens visibility. A private patch is unlisted rather
-		// than locked, so its public events stay downloadable by anyone
-		// holding the link, exactly as its page stays readable.
+		// patch, which is the rule ListEvents and GetEvent already apply —
+		// a confirmed link never widens visibility. A private patch is
+		// unlisted rather than locked, so its public events stay
+		// downloadable by anyone holding the link, exactly as its page
+		// stays readable.
 		if visibility != "public" {
 			user := middleware.UserFromContext(r.Context())
-			if user == nil || !userHasNodeRole(db, user.ID, nodeID, "member", "admin") {
+			if !canReadNonPublicEvent(db, user, nodeID) {
 				http.Error(w, "not found", http.StatusNotFound)
 				return
 			}
