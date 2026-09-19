@@ -92,3 +92,54 @@ func IsNumber(tok string) bool {
 	}
 	return true
 }
+
+// streetTypes are the words that every street shares. They are the tail of a
+// street name rather than the name itself: "East King Street" and "North
+// Prince Street" have `street` in common and nothing else.
+//
+// These are the long forms only, because Tokenize has already folded the
+// abbreviations into them by the time anything reaches here.
+var streetTypes = map[string]bool{
+	"street": true, "avenue": true, "road": true, "drive": true,
+	"boulevard": true, "lane": true, "court": true, "place": true,
+	"square": true, "terrace": true, "parkway": true, "highway": true,
+	"circle": true, "alley": true, "way": true, "pike": true,
+	"trail": true, "path": true, "run": true, "loop": true, "row": true,
+}
+
+// directions are the prefixes people drop. "King St" is what somebody types
+// for West King Street far more often than they invent a direction that isn't
+// there, so a direction cannot be what decides whether two street names are
+// the same one.
+var directions = map[string]bool{
+	"north": true, "south": true, "east": true, "west": true,
+	"northeast": true, "northwest": true, "southeast": true, "southwest": true,
+}
+
+// streetCore reduces a street name to the words that tell it apart from every
+// other street — "East King Street" to `king`, "Old Philadelphia Pike" to
+// `old philadelphia`. It is how scoring asks whether a query named *this*
+// street rather than merely the word "street".
+//
+// A street whose whole name is a direction ("North Street") keeps the
+// direction, because dropping it would leave nothing at all; a street whose
+// whole name is a type word has no core and cannot be confirmed by name.
+func streetCore(street string) []string {
+	tokens := Tokenize(street)
+	core := make([]string, 0, len(tokens))
+	for _, t := range tokens {
+		if streetTypes[t] || directions[t] {
+			continue
+		}
+		core = append(core, t)
+	}
+	if len(core) > 0 {
+		return core
+	}
+	for _, t := range tokens {
+		if directions[t] {
+			core = append(core, t)
+		}
+	}
+	return core
+}

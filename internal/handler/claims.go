@@ -439,7 +439,7 @@ func RequestClaim(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			ActorID:  user.ID,
 			EntityID: id,
 			Title:    "New claim request for: " + nodeName,
-			Link:     "/admin/claims",
+			Link:     "/admin/review/claims",
 		})
 
 		if req.Method == "email" {

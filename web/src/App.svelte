@@ -59,6 +59,8 @@
   import AdminDashboard from './pages/AdminDashboard.svelte';
   import AdminReports from './pages/AdminReports.svelte';
   import AdminTags from './pages/AdminTags.svelte';
+  import AdminTagSuggestions from './pages/AdminTagSuggestions.svelte';
+  import { adminTabLanding, legacyAdminPath } from './lib/adminPanel.js';
   import AdminUsers from './pages/AdminUsers.svelte';
   import AdminAuditLog from './pages/AdminAuditLog.svelte';
   import AdminSubmissions from './pages/AdminSubmissions.svelte';
@@ -213,22 +215,30 @@
   addRoute('/dashboard', 'dashboard');
 
   // Admin
+  // Admin panel — five tabs, two with sections (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md). A section's
+  // URL is its tab's plus one segment; a tab's bare URL lands on its first
+  // section. The flat scheme this replaced (/admin/reports, /admin/quilt…)
+  // survives as a redirect alias below, so old notification links land.
   addRoute('/admin', 'adminDashboard');
-  addRoute('/admin/reports', 'adminReports');
-  addRoute('/admin/tags', 'adminTags');
+  addRoute('/admin/review', 'adminReviewIndex');
+  addRoute('/admin/review/reports', 'adminReports');
+  addRoute('/admin/review/submissions', 'adminSubmissions');
+  addRoute('/admin/review/event-submissions', 'adminEventSubmissions');
+  addRoute('/admin/review/claims', 'adminClaims');
+  addRoute('/admin/review/tags', 'adminTagSuggestions');
   addRoute('/admin/users', 'adminUsers');
+  addRoute('/admin/settings', 'adminSettingsIndex');
+  addRoute('/admin/settings/quilt', 'adminQuilt');
+  addRoute('/admin/settings/label', 'adminLabel');
+  addRoute('/admin/settings/legal', 'adminLegal');
+  addRoute('/admin/settings/tags', 'adminTags');
+  addRoute('/admin/settings/neighbors', 'adminNeighbors');
+  addRoute('/admin/settings/aggregators', 'adminAggregators');
+  addRoute('/admin/settings/usage', 'adminUsage');
+  addRoute('/admin/settings/archived', 'adminArchived');
+  addRoute('/admin/settings/attestation', 'adminAttestation');
   addRoute('/admin/audit', 'adminAudit');
-  addRoute('/admin/submissions', 'adminSubmissions');
-  addRoute('/admin/event-submissions', 'adminEventSubmissions');
-  addRoute('/admin/claims', 'adminClaims');
-  addRoute('/admin/archived', 'adminArchived');
-  addRoute('/admin/quilt', 'adminQuilt');
-  addRoute('/admin/neighbors', 'adminNeighbors');
-  addRoute('/admin/aggregators', 'adminAggregators');
-  addRoute('/admin/label', 'adminLabel');
-  addRoute('/admin/legal', 'adminLegal');
-  addRoute('/admin/usage', 'adminUsage');
-  addRoute('/admin/attestation', 'adminAttestation');
+  addRoute('/admin/*', 'redirectAdminLegacy');
 
   // --- Derived state ---
   let path = $derived(getPath());
@@ -291,7 +301,7 @@
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 
   const settingsRoutes = new Set(['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'quilts']);
-  const adminRoutes = new Set(['adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminUsage', 'adminAttestation']);
+  const adminRoutes = new Set(['adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation']);
   let isSettingsRoute = $derived(settingsRoutes.has(routeName));
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
@@ -325,7 +335,7 @@
     ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchSetup', 'patchNew', 'eventNew', 'eventEdit',
      'governanceProposalNew', 'governanceDocNew',
      'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
-     'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminUsage', 'adminAttestation'].includes(routeName)
+     'adminDashboard', 'adminReviewIndex', 'adminReports', 'adminTags', 'adminTagSuggestions', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminSettingsIndex', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminUsage', 'adminLabel', 'adminLegal', 'adminAttestation'].includes(routeName)
   );
 
   // The gate is a detour, not a destination, so it carries where the person
@@ -397,6 +407,12 @@
     redirectProposalDetail: (p) => `/patches/${p.slug}/governance/${p.id}`,
     redirectGovernanceSetup: (p) => `/patches/${p.slug}/governance`,
     redirectPatchScopedEvent: (p) => `/events/${p.id}`,
+    // A tab with sections has no page of its own (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md).
+    adminReviewIndex: () => adminTabLanding('review'),
+    adminSettingsIndex: () => adminTabLanding('settings'),
+    // The flat admin scheme, one level up from where each page now lives.
+    // Null for a path that never existed: that is a not-found, not a bounce.
+    redirectAdminLegacy: (p) => legacyAdminPath(p.rest),
   };
   $effect(() => {
     const target = REDIRECTS[routeName]?.(routeParams);
@@ -533,6 +549,8 @@
           <AdminReports />
         {:else if routeName === 'adminTags'}
           <AdminTags />
+        {:else if routeName === 'adminTagSuggestions'}
+          <AdminTagSuggestions />
         {:else if routeName === 'adminUsers'}
           <AdminUsers />
         {:else if routeName === 'adminAudit'}

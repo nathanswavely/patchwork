@@ -42,13 +42,14 @@
     navigate(path);
   }
 
-  // Each queue's tab, and how to say "3 of them" in the page's own words.
+  // Each queue's Review section (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md), and how to say "3 of
+  // them" in the page's own words.
   const QUEUES = {
-    reports: { one: 'report', many: 'reports', href: '/admin/reports' },
-    submissions: { one: 'patch submission', many: 'patch submissions', href: '/admin/submissions' },
-    event_submissions: { one: 'event submission', many: 'event submissions', href: '/admin/event-submissions' },
-    claims: { one: 'claim', many: 'claims', href: '/admin/claims' },
-    tag_suggestions: { one: 'suggested tag', many: 'suggested tags', href: '/admin/tags' },
+    reports: { one: 'report', many: 'reports', href: '/admin/review/reports' },
+    submissions: { one: 'patch submission', many: 'patch submissions', href: '/admin/review/submissions' },
+    event_submissions: { one: 'event submission', many: 'event submissions', href: '/admin/review/event-submissions' },
+    claims: { one: 'claim', many: 'claims', href: '/admin/review/claims' },
+    tag_suggestions: { one: 'suggested tag', many: 'suggested tags', href: '/admin/review/tags' },
   };
 
   function plural(n, one, many) {
@@ -100,7 +101,7 @@
 
       {#if overview.unrouted_names.count > 0}
         <p class="lower">
-          <a href="/admin/aggregators" onclick={(e) => handleNav(e, '/admin/aggregators')}>
+          <a href="/admin/settings/aggregators" onclick={(e) => handleNav(e, '/admin/settings/aggregators')}>
             {plural(overview.unrouted_names.count, 'unrouted name', 'unrouted names')}
           </a>
           {' '}across {plural(overview.unrouted_names.aggregators, 'aggregator', 'aggregators')}. Nobody is waiting on these.
@@ -126,7 +127,7 @@
           {/each}
           {#each care.failing_aggregators as a (a.id)}
             <li>
-              <a href="/admin/aggregators" class="line card" onclick={(e) => handleNav(e, '/admin/aggregators')}>
+              <a href="/admin/settings/aggregators" class="line card" onclick={(e) => handleNav(e, '/admin/settings/aggregators')}>
                 <strong>{a.name} is not syncing.</strong>
                 <span class="muted">{a.last_error}{#if a.last_success_at}{' · '}last synced {formatRelative(a.last_success_at)}{/if}</span>
               </a>

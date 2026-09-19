@@ -176,28 +176,30 @@ test.describe('Navigation — Admin Shell', () => {
     await loginAsAdmin(page);
   });
 
-  test('Admin pages render inside AdminShell with sidebar', async ({ page }) => {
+  // Five tabs; Review and Settings carry a sidebar (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md).
+  test('Admin pages render inside AdminShell with five tabs', async ({ page }) => {
     await goto(page, '/admin');
 
-    // AdminShell wraps content in SettingsShell with sidebar nav
-    const sidebar = page.locator('.settings-sidebar');
-    if (await sidebar.isVisible()) {
-      // Should have nav links for admin sections
-      await expect(page.locator('.settings-nav-link', { hasText: 'Overview' })).toBeVisible();
-      await expect(page.locator('.settings-nav-link', { hasText: 'Users' })).toBeVisible();
-      await expect(page.locator('.settings-nav-link', { hasText: 'Audit Log' })).toBeVisible();
+    const tabs = page.locator('.workspace-tab');
+    await expect(tabs).toHaveCount(5);
+    for (const label of ['Overview', 'Review', 'Users', 'Settings', 'Audit log']) {
+      await expect(page.locator('.workspace-tab', { hasText: label })).toBeVisible();
     }
+    // Overview has no sidebar of its own.
+    await expect(page.locator('.settings-sidebar')).toHaveCount(0);
   });
 
-  test('Admin shell sidebar navigation works', async ({ page }) => {
+  test('Admin shell tab and sidebar navigation works', async ({ page }) => {
     await goto(page, '/admin');
 
-    const usersLink = page.locator('.settings-nav-link', { hasText: 'Users' });
-    if (await usersLink.isVisible()) {
-      await usersLink.click();
-      await page.waitForURL(/\/admin\/users/);
-      expect(page.url()).toContain('/admin/users');
-    }
+    await page.locator('.workspace-tab', { hasText: 'Users' }).click();
+    await page.waitForURL(/\/admin\/users$/);
+
+    // A tab with sections lands on its first section and shows the rest.
+    await page.locator('.workspace-tab', { hasText: 'Settings' }).click();
+    await page.waitForURL(/\/admin\/settings\/quilt$/);
+    await page.locator('.settings-nav-link', { hasText: 'Legal' }).click();
+    await page.waitForURL(/\/admin\/settings\/legal$/);
   });
 });
 
@@ -265,7 +267,7 @@ test.describe('Navigation — No 404s on Valid Routes', () => {
     '/events/new',
     '/admin',
     '/admin/users',
-    '/admin/reports',
+    '/admin/review/reports',
     '/admin/audit',
     '/login',
   ];
