@@ -89,6 +89,25 @@ func BroadcastToFollowers(db *database.DB, localActorType, localActorID string, 
 	return rows.Err()
 }
 
+// BuildDeleteActor builds the Delete an actor sends about itself when the
+// account behind it goes away (docs/adr/086). The convention is a Delete
+// addressed to the public collection whose object is the actor's own id; a
+// receiving server takes that as instruction to drop its cached copy.
+//
+// Whether it honours it is that server's business, not ours — which is why
+// the privacy policy states the limit rather than promising an erasure
+// Patchwork cannot perform.
+func BuildDeleteActor(actorID string) map[string]interface{} {
+	return map[string]interface{}{
+		"@context": Context,
+		"type":     "Delete",
+		"id":       actorID + "#delete",
+		"actor":    actorID,
+		"to":       []string{"https://www.w3.org/ns/activitystreams#Public"},
+		"object":   actorID,
+	}
+}
+
 // BuildAcceptFollow builds an Accept(Follow) activity.
 func BuildAcceptFollow(localActorID string, followActivity map[string]interface{}) map[string]interface{} {
 	return map[string]interface{}{

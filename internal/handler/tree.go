@@ -23,23 +23,36 @@ type TreeNode struct {
 	// separately. A follower is an interested observer, not a member
 	// (CLAUDE.md roles); public counts must not conflate the two,
 	// especially on unclaimed patches where membership is impossible.
-	MemberCount   int `json:"member_count"`
-	FollowerCount int `json:"follower_count"`
-	EventCount    int `json:"event_count"`
+	MemberCount   int  `json:"member_count"`
+	FollowerCount int  `json:"follower_count"`
+	EventCount    int  `json:"event_count"`
 	IsUnclaimed   bool `json:"is_unclaimed,omitempty"`
 	// AmendedLining marks a patch whose lining diverged from every shipped
 	// version (docs/adr/037) — the badge state, deliberately public.
 	// When this patch joined the quilt (docs/adr/076) - the sort key behind
 	// the cards list's "Recently added" order (docs/adr/074). Absent on a
 	// patch that has not joined: an unclaimed listing is not an arrival.
-	ActivatedAt   *string    `json:"activated_at,omitempty"`
+	ActivatedAt *string `json:"activated_at,omitempty"`
 	// When the row was written — for an unclaimed listing, the day someone
 	// added it to the directory. Not an arrival (docs/adr/076), and never
 	// treated as one; the cards list falls back to it so "Recently added"
 	// can order the listings too, which have no arrival to order by.
-	CreatedAt     string     `json:"created_at,omitempty"`
-	AmendedLining bool       `json:"amended_lining,omitempty"`
-	Children      []TreeNode `json:"children"`
+	CreatedAt     string `json:"created_at,omitempty"`
+	AmendedLining bool   `json:"amended_lining,omitempty"`
+	// MovedTo is where this patch says it has gone (docs/adr/090). The
+	// discovery surfaces read the quilt (docs/adr/074), so a card can only
+	// wear the pointer if the tree carries it.
+	MovedTo string `json:"moved_to,omitempty"`
+	// MembershipPolicy is here for the same reason MovedTo is, and the rule
+	// is the one above: a docked profile's head renders from this row
+	// (docs/adr/094), and the relationship row offers the next rung only
+	// when the policy is not invite_only. Without it the head would offer
+	// "Become a member" on an invite-only patch while the same profile's
+	// page correctly offers nothing — the two heights of one sheet
+	// disagreeing about one patch. Public already: a reader learns it from
+	// the profile the moment they look.
+	MembershipPolicy string     `json:"membership_policy,omitempty"`
+	Children         []TreeNode `json:"children"`
 }
 
 // AffinityLink represents a weighted connection between two patches.
@@ -65,7 +78,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// Scoped to user's patches only (any active membership).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
@@ -79,7 +92,7 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			// All public patches (default).
 			query = `
 				SELECT
-					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at,
+					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
 					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
@@ -97,25 +110,27 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		defer rows.Close()
 
 		type flatNode struct {
-			ID            string
-			Name          string
-			Slug          string
-			Description   string
-			Appearance    string
-			Status        string
-			Latitude      *float64
-			Longitude     *float64
-			ActivatedAt   *string
-			CreatedAt     string
-			MemberCount   int
-			FollowerCount int
-			EventCount    int
+			ID               string
+			Name             string
+			Slug             string
+			Description      string
+			Appearance       string
+			Status           string
+			Latitude         *float64
+			Longitude        *float64
+			ActivatedAt      *string
+			CreatedAt        string
+			MovedTo          string
+			MembershipPolicy string
+			MemberCount      int
+			FollowerCount    int
+			EventCount       int
 		}
 
 		var flat []flatNode
 		for rows.Next() {
 			var fn flatNode
-			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
+			if err := rows.Scan(&fn.ID, &fn.Name, &fn.Slug, &fn.Description, &fn.Appearance, &fn.Status, &fn.Latitude, &fn.Longitude, &fn.ActivatedAt, &fn.CreatedAt, &fn.MovedTo, &fn.MembershipPolicy, &fn.MemberCount, &fn.FollowerCount, &fn.EventCount); err != nil {
 				continue
 			}
 			flat = append(flat, fn)
@@ -133,6 +148,22 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				}
 			}
 			flat = kept
+		}
+
+		// The node set this response is actually going to return, fixed
+		// now so the affinity links built below (which run their own,
+		// broader queries over every membership/event row and are not
+		// scoped by visibility/status the way "flat" is) can be
+		// intersected against it before serialization -- otherwise a
+		// private, removed or suspended patch's id (a UUIDv7, so its
+		// creation time) and its overlap score with a public patch
+		// would leak through "affinity" even though the patch itself
+		// never appears in "tree". Applies to both scope=my and the
+		// default scope: they share one affinity map built after this
+		// point.
+		visibleIDs := make(map[string]bool, len(flat))
+		for _, fn := range flat {
+			visibleIDs[fn.ID] = true
 		}
 
 		// Fetch tags for all nodes, in stored (priority) order — the first
@@ -156,14 +187,28 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		// connection concept) are member-only. See docs/adr/021 and CLAUDE.md.
 		affinityMap := make(map[string]map[string]float64)
 
-		// Shared admins/members (weight 3 per shared person).
+		// Shared admins/members (weight 3 per shared person). Joined against
+		// nodes so the database does less work; the visibleIDs intersection
+		// below is what actually guarantees no other patch's id reaches the
+		// response, since a link needs both ends kept regardless of how it
+		// was scored. A membership either side has hidden
+		// (memberships.visible = 0, docs/adr/006) is excluded: affinity is
+		// an unnormalized public score, so one hidden person joining or
+		// leaving would move it by a fixed, identifying amount in a small
+		// patch. Decided in
+		// docs/adr/2026-09-18-a-hidden-membership-does-not-place.md;
+		// member_count stays unfiltered on purpose (docs/adr/095) — a count
+		// says how big a patch is, affinity says a specific overlap exists.
 		memberRows, err := db.Query(`
 			SELECT m1.node_id, m2.node_id, COUNT(*) * 3 AS score
 			FROM memberships m1
 			JOIN memberships m2 ON m1.user_id = m2.user_id
 				AND m1.node_id < m2.node_id
 				AND m1.status = 'active' AND m2.status = 'active'
+				AND m1.visible = 1 AND m2.visible = 1
 				AND m1.role IN ('admin', 'member') AND m2.role IN ('admin', 'member')
+			JOIN nodes n1 ON m1.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.removed_at IS NULL AND n1.visibility = 'public'
+			JOIN nodes n2 ON m2.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.removed_at IS NULL AND n2.visibility = 'public'
 			GROUP BY m1.node_id, m2.node_id
 		`)
 		if err == nil {
@@ -177,14 +222,19 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Shared followers (weight 1 per shared follower).
+		// Shared followers (weight 1 per shared follower). Same
+		// memberships.visible rule as shared admins/members above
+		// (docs/adr/2026-09-18-a-hidden-membership-does-not-place.md).
 		followerRows, err := db.Query(`
 			SELECT m1.node_id, m2.node_id, COUNT(*) AS score
 			FROM memberships m1
 			JOIN memberships m2 ON m1.user_id = m2.user_id
 				AND m1.node_id < m2.node_id
 				AND m1.status = 'active' AND m2.status = 'active'
+				AND m1.visible = 1 AND m2.visible = 1
 				AND m1.role = 'follower' AND m2.role = 'follower'
+			JOIN nodes n1 ON m1.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.removed_at IS NULL AND n1.visibility = 'public'
+			JOIN nodes n2 ON m2.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.removed_at IS NULL AND n2.visibility = 'public'
 			GROUP BY m1.node_id, m2.node_id
 		`)
 		if err == nil {
@@ -200,12 +250,17 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 
 		// Shared event participation: patches whose members attend events at the other patch (weight 2).
 		// A user who is a member of patch A and has created an event at patch B creates affinity.
+		// m.visible = 1 for the same reason as the shared-member/follower
+		// queries above: this membership row is the one feeding the score,
+		// so a hidden one must not place either
+		// (docs/adr/2026-09-18-a-hidden-membership-does-not-place.md).
 		eventRows, err := db.Query(`
 			SELECT m.node_id, e.node_id, COUNT(DISTINCT m.user_id) * 2 AS score
 			FROM memberships m
 			JOIN events e ON m.user_id = e.created_by
 				AND m.node_id != e.node_id
 				AND m.status = 'active'
+				AND m.visible = 1
 				AND m.role IN ('admin', 'member')
 			JOIN nodes n1 ON m.node_id = n1.id AND n1.status IN ('active','unclaimed') AND n1.visibility = 'public'
 			JOIN nodes n2 ON e.node_id = n2.id AND n2.status IN ('active','unclaimed') AND n2.visibility = 'public'
@@ -305,7 +360,17 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		var links []AffinityLink
 		seen := make(map[string]bool)
 		for a, targets := range affinityMap {
+			if !visibleIDs[a] {
+				// a's affinity queries aren't scoped by visibility/status
+				// the way "flat" is (event queries excepted), so a can
+				// name a private, removed or suspended patch here even
+				// though it never reached "tree" above.
+				continue
+			}
 			for b, strength := range targets {
+				if !visibleIDs[b] {
+					continue
+				}
 				key := a + ":" + b
 				if a > b {
 					key = b + ":" + a
@@ -335,22 +400,24 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 				appearance = json.RawMessage(fn.Appearance)
 			}
 			children = append(children, TreeNode{
-				ID:            fn.ID,
-				Name:          fn.Name,
-				Slug:          fn.Slug,
-				Description:   fn.Description,
-				Tags:          tags,
-				Appearance:    appearance,
-				Latitude:      fn.Latitude,
-				Longitude:     fn.Longitude,
-				MemberCount:   fn.MemberCount,
-				FollowerCount: fn.FollowerCount,
-				EventCount:    fn.EventCount,
-				IsUnclaimed:   fn.Status == "unclaimed",
-				ActivatedAt:   fn.ActivatedAt,
-				CreatedAt:     fn.CreatedAt,
-				AmendedLining: liningStates[fn.ID] == governance.LiningDiverged,
-				Children:      []TreeNode{},
+				ID:               fn.ID,
+				Name:             fn.Name,
+				Slug:             fn.Slug,
+				Description:      fn.Description,
+				Tags:             tags,
+				Appearance:       appearance,
+				Latitude:         fn.Latitude,
+				Longitude:        fn.Longitude,
+				MemberCount:      fn.MemberCount,
+				FollowerCount:    fn.FollowerCount,
+				EventCount:       fn.EventCount,
+				IsUnclaimed:      fn.Status == "unclaimed",
+				ActivatedAt:      fn.ActivatedAt,
+				CreatedAt:        fn.CreatedAt,
+				MovedTo:          fn.MovedTo,
+				MembershipPolicy: fn.MembershipPolicy,
+				AmendedLining:    liningStates[fn.ID] == governance.LiningDiverged,
+				Children:         []TreeNode{},
 			})
 		}
 

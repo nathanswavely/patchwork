@@ -1,5 +1,6 @@
 <script>
   import { X } from 'phosphor-svelte';
+  import { portal } from '../lib/portal.js';
   let { open = false, onClose = () => {}, label = 'Dialog', children } = $props();
 
   let contentEl = $state(null);
@@ -49,8 +50,11 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
+<!-- Portaled to <body> (lib/portal.js): a scrim inside a positioned,
+     z-indexed box covers only what that box covers. The backdrop is the
+     block's only node, which is what makes moving it safe. -->
 {#if open}
-  <div class="modal-backdrop" onclick={handleBackdrop}>
+  <div class="modal-backdrop" use:portal onclick={handleBackdrop}>
     <div
       class="modal-content"
       role="dialog"

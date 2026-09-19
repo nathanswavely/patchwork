@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
+
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 )
 
 // Builder writes a gazetteer file. It lives beside the reader so the two
@@ -96,7 +97,7 @@ func (b *Builder) Skipped() int { return b.skipped }
 func (b *Builder) Finish(source string, lat, lon, radiusKM float64) error {
 	meta := map[string]string{
 		"schema_version": fmt.Sprint(SchemaVersion),
-		"built_at":       time.Now().UTC().Format(time.RFC3339),
+		"built_at":       clock.Now(),
 		"source":         source,
 		"center_lat":     fmt.Sprintf("%.6f", lat),
 		"center_lon":     fmt.Sprintf("%.6f", lon),

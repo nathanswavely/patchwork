@@ -70,7 +70,7 @@ func TestAPNodeInbox_ValidSignatureAccepted(t *testing.T) {
 	restore := ap.SetActorFetcher(func(_ context.Context, id string) (*ap.RemoteActor, error) {
 		return &ap.RemoteActor{ID: remoteActor, Inbox: remoteActor + "/inbox", PublicKey: pub}, nil
 	})
-	defer ap.SetActorFetcher(restore)
+	defer func() { ap.SetActorFetcher(restore) }()
 
 	r := signedFollowRequest(t, nodeID, remoteActor, keyID, priv)
 	w := servePublicMux(t, "POST", "/ap/nodes/{id}/inbox", handler.APNodeInbox(db), r)
@@ -123,7 +123,7 @@ func TestAPNodeInbox_StaleDateRejected(t *testing.T) {
 	restore := ap.SetActorFetcher(func(_ context.Context, id string) (*ap.RemoteActor, error) {
 		return &ap.RemoteActor{ID: remoteActor, Inbox: remoteActor + "/inbox", PublicKey: pub}, nil
 	})
-	defer ap.SetActorFetcher(restore)
+	defer func() { ap.SetActorFetcher(restore) }()
 
 	// Signature is valid, but the signed Date is well outside the skew window —
 	// the shape of a replayed POST. It must be rejected.
@@ -160,7 +160,7 @@ func TestAPNodeInbox_WrongKeyRejected(t *testing.T) {
 	restore := ap.SetActorFetcher(func(_ context.Context, id string) (*ap.RemoteActor, error) {
 		return &ap.RemoteActor{ID: remoteActor, PublicKey: otherPub}, nil
 	})
-	defer ap.SetActorFetcher(restore)
+	defer func() { ap.SetActorFetcher(restore) }()
 
 	r := signedFollowRequest(t, nodeID, remoteActor, keyID, signingPriv)
 	w := servePublicMux(t, "POST", "/ap/nodes/{id}/inbox", handler.APNodeInbox(db), r)

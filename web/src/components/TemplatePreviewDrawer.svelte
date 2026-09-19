@@ -35,7 +35,7 @@
     const explanations = [];
 
     const methods = {
-      admin: 'The maintainer makes all decisions.',
+      admin: 'The maintainer makes all decisions, and may ask the members first.',
       majority: 'Decisions pass when more than half of voters agree.',
       supermajority: 'Decisions require at least 2 out of 3 voters to agree.',
       consensus: 'Decisions require everyone (or nearly everyone) to agree.',

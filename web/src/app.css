@@ -153,6 +153,11 @@
    text 13.4:1 · muted 5.1:1 · primary-as-text 4.5:1 ·
    white-on-primary 5.2:1 · success-as-text 5.1:1 · accent-as-text 4.6:1 */
 [data-theme="light"] {
+  /* Native widgets the page cannot paint — the option list a <select>
+     opens, scrollbars, date pickers — are drawn by the browser, and this
+     is the only thing that tells it which theme to draw them in. Without
+     it every one of them renders light while our text tokens flip. */
+  color-scheme: light;
   --color-bg: #f4f0e8;
   --color-surface: #faf6ee;
   --color-text: #2a2520;
@@ -167,6 +172,7 @@
   --color-glass-heavy: rgba(244, 240, 232, 0.95);
   --color-overlay: rgba(0, 0, 0, 0.06);
   --color-overlay-hover: rgba(0, 0, 0, 0.18);
+  --color-quilt-dim: rgba(244, 240, 232, 0.62);
   --color-shadow: rgba(0, 0, 0, 0.08);
   --color-scrim: rgba(0, 0, 0, 0.4);
   --color-btn-on-primary: #ffffff;
@@ -192,6 +198,7 @@
    ink-on-primary 7.6:1 — bright fills take INK text in dark, not white
    (white on the dark-theme primary/success/accent fails AA badly). */
 [data-theme="dark"] {
+  color-scheme: dark;
   --color-bg: #151820;
   --color-surface: #1c2028;
   --color-text: #e0dbd4;
@@ -206,6 +213,7 @@
   --color-glass-heavy: rgba(21, 24, 32, 0.95);
   --color-overlay: rgba(255, 255, 255, 0.04);
   --color-overlay-hover: rgba(255, 255, 255, 0.1);
+  --color-quilt-dim: rgba(21, 24, 32, 0.62);
   --color-shadow: rgba(0, 0, 0, 0.3);
   --color-scrim: rgba(0, 0, 0, 0.6);
   --color-btn-on-primary: #151820;
@@ -315,7 +323,17 @@ button:disabled {
   align-items: center;
   gap: 0.5rem;
   padding: var(--btn-pad-y) var(--btn-pad-x);
-  border: 1px solid transparent;
+  /* A themed surface, not the browser's. `.btn` set no background and no
+     colour of its own, so a button wearing it without a variant fell through
+     to the user agent's ButtonFace — a pale grey pill with near-invisible
+     text in dark mode, ignoring the theme entirely. Sixteen buttons across
+     eight components are written that way ("Stand for election", "Record a
+     decision", "Link", "Review"), all of them meaning "the ordinary action
+     here". This is what that looks like; the variants below still override
+     it. */
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: var(--btn-font);
   /* Explicit: <a class="btn"> inherits the body's 1.5 while <button> uses
@@ -323,6 +341,10 @@ button:disabled {
   line-height: 1.2;
   font-weight: 500;
   transition: background 150ms ease, border-color 150ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
 }
 
 .btn-sm {

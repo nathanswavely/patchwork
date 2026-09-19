@@ -16,8 +16,11 @@ import (
 	patchwork "github.com/patchwork-toolkit/patchwork"
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
+	"github.com/patchwork-toolkit/patchwork/internal/notifications"
 	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
@@ -90,7 +93,7 @@ func main() {
 		{"new@localhost", "dev-new-token"},
 		{"joiner@localhost", "dev-joiner-token"},
 	}
-	expiresAt := time.Now().Add(365 * 24 * time.Hour).Format(time.RFC3339)
+	expiresAt := clock.Format(time.Now().Add(365 * 24 * time.Hour))
 	for _, u := range devUsers {
 		var userID string
 		if err := db.QueryRow("SELECT id FROM users WHERE email = ?", u.email).Scan(&userID); err != nil {
@@ -228,7 +231,7 @@ func (s *seeder) ts(daysAgo int) string {
 	h := s.rng.Intn(14) + 8
 	m := s.rng.Intn(60)
 	t = time.Date(t.Year(), t.Month(), t.Day(), h, m, 0, 0, time.UTC)
-	return t.Format("2006-01-02T15:04:05.000Z")
+	return clock.Format(t)
 }
 
 func (s *seeder) futureTS(daysFromNow int) string {
@@ -236,7 +239,7 @@ func (s *seeder) futureTS(daysFromNow int) string {
 	h := s.rng.Intn(10) + 10
 	m := s.rng.Intn(60)
 	t = time.Date(t.Year(), t.Month(), t.Day(), h, m, 0, 0, time.UTC)
-	return t.Format("2006-01-02T15:04:05.000Z")
+	return clock.Format(t)
 }
 
 func (s *seeder) pick(items []string) string {
@@ -399,11 +402,11 @@ type nodeDef struct {
 	block            string
 	// draftBlock is raw JSON for a drafted block (docs/adr/029); when set
 	// it replaces palette/block entirely and bundle supplies the fabrics.
-	draftBlock string
-	bundle     []string
-	website    string
-	links            []nodeLink
-	followerPerms    *followerPerms
+	draftBlock    string
+	bundle        []string
+	website       string
+	links         []nodeLink
+	followerPerms *followerPerms
 }
 
 type followerPerms struct {
@@ -421,51 +424,14 @@ type nodeLink struct {
 func (s *seeder) seedNodes() {
 	nodes := s.profile.nodes
 
-	// Available palettes for auto-assignment.
-	palettes := []string{
-		"adolescents", "pinkRazors", "greatestSongs", "allroysRevenge",
-		"anthem", "allTheShoes", "bottlesToTheGround", "liberalAnimation",
-	}
-
 	slugToID := make(map[string]string)
-	for i, n := range nodes {
+	for _, n := range nodes {
 		id := auth.NewUUIDv7()
 		slugToID[n.slug] = id
 
-		// Use explicit palette if set, otherwise cycle. Block stays unset
-		// (hash-assigned) unless the node def pins one.
-		palette := n.palette
-		if palette == "" {
-			palette = palettes[i%len(palettes)]
-		}
-		appearance := map[string]interface{}{"palette": palette}
-		if n.block != "" {
-			appearance["block"] = n.block
-		}
-		if n.draftBlock != "" {
-			// A drafted block (docs/adr/029) replaces the curated pick.
-			appearance = map[string]interface{}{"block": json.RawMessage(n.draftBlock)}
-			if len(n.bundle) > 0 {
-				appearance["bundle"] = n.bundle
-			}
-		}
-		appearanceJSON, _ := json.Marshal(appearance)
+		appearanceJSON := appearanceFor(n)
 
 		apID := ap.NodeAPID(ap.GetDomain(), id)
-
-		// Assign governance config based on membership policy. Leadership
-		// fields match the template forked below (seed runs after
-		// migrations, so an incomplete literal would recreate the gap
-		// migration 041 backfills).
-		var gcJSON string
-		switch n.membershipPolicy {
-		case "open":
-			gcJSON = `{"decision_method":"majority","quorum_percent":0,"default_vote_duration_hours":72,"amendment_threshold":"majority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":0,"leadership_model":"maintainer","succession_method":"admin_nominate","max_admins":3,"inactivity_days":90}`
-		case "approval_required":
-			gcJSON = `{"decision_method":"majority","quorum_percent":25,"default_vote_duration_hours":168,"amendment_threshold":"supermajority","amendment_auto_apply":true,"succession_policy":"longest_tenure","min_voting_tenure_days":7,"leadership_model":"meritocratic","succession_method":"admin_nominate","max_admins":5,"inactivity_days":60}`
-		case "invite_only":
-			gcJSON = `{"decision_method":"consensus","quorum_percent":50,"default_vote_duration_hours":336,"amendment_threshold":"consensus","amendment_auto_apply":false,"succession_policy":"longest_tenure","min_voting_tenure_days":30,"leadership_model":"maintainer","succession_method":"founder_designate","max_admins":1}`
-		}
 
 		createdAt := s.ts(s.rng.Intn(90) + 90)
 
@@ -485,24 +451,52 @@ func (s *seeder) seedNodes() {
 		// Seeded patches are active, so they joined when they were made
 		// (docs/adr/076). The unclaimed listings below stay NULL - a
 		// directory row is not an arrival.
-		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, governance_config, website, links, follower_permissions)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?)`,
+		// governance_config is deliberately absent from the INSERT: the cache
+		// is filled from the forked rules file below, never hand-written. The
+		// seed used to carry a JSON literal per membership policy, and the
+		// invite-only one said "consensus" while the minimal template it
+		// forked said "admin" — so a seeded band's proposals waited out a
+		// voting window the rules editor never showed. The row briefly wears
+		// migration 013's column default, exactly as a row does in CreateNode.
+		// The two exposure controls, stated rather than inherited
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// Both are 'everyone' here for docs/adr/036's reason: demo data
+		// exists to be read by a signed-out visitor, and a seeded quilt whose
+		// every roster and record is withheld demonstrates nothing. That is a
+		// choice this fiction makes out loud, not the default a real patch
+		// gets — migration 069's column DEFAULT still says 'everyone' and
+		// would have supplied one of these silently, which is the whole trap.
+		_, err := s.db.Exec(`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, appearance, created_at, updated_at, activated_at, status, ap_id, website, links, follower_permissions, public_member_list, public_governance_record)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, 'everyone', 'everyone')`,
 			id, s.userIDs[n.ownerIdx], n.name, n.slug, n.description,
-			n.lat, n.lng, n.address, n.membershipPolicy, string(appearanceJSON), createdAt, createdAt, createdAt, apID, gcJSON, n.website, linksJSON, fpJSON)
+			n.lat, n.lng, n.address, n.membershipPolicy, appearanceJSON, createdAt, createdAt, createdAt, apID, n.website, linksJSON, fpJSON)
 		if err != nil {
 			log.Fatalf("seed node %s: %v", n.slug, err)
 		}
 
-		// Fork governance repo for this node — map membership policy to template.
-		templateName := "casual"
-		switch n.membershipPolicy {
-		case "invite_only":
-			templateName = "minimal"
-		case "approval_required":
-			templateName = "collaborative"
-		}
+		// Fork the governance repo, absorb the seed's membership choices into
+		// the template's rules file, and sync the rules into the DB cache —
+		// the same three steps CreateNode takes, so a seeded patch and a
+		// patch made through the form agree with their own rules file in
+		// the same way (docs/adr/041). Fatal rather than a warning: a demo
+		// patch whose cache and rules file disagree is the bug this replaces.
+		templateName := templateForPolicy(n.membershipPolicy)
 		if err := governance.ForkForNode(s.dataDir, id, templateName); err != nil {
-			log.Printf("warning: governance fork for %s: %v", n.slug, err)
+			log.Fatalf("governance fork for %s: %v", n.slug, err)
+		}
+		rules, err := governance.ReadRules(s.dataDir, id)
+		if err != nil {
+			log.Fatalf("read governance rules for %s: %v", n.slug, err)
+		}
+		rules.MembershipPolicy = n.membershipPolicy
+		if n.followerPerms != nil {
+			rules.FollowerPermissions = model.FollowerPermissions(*n.followerPerms)
+		}
+		if _, err := governance.WriteRules(s.dataDir, id, rules, "Membership choices from patch creation"); err != nil {
+			log.Fatalf("absorb membership choices for %s: %v", n.slug, err)
+		}
+		if err := governance.SyncRulesToDB(s.db, s.dataDir, id); err != nil {
+			log.Fatalf("sync governance rules for %s: %v", n.slug, err)
 		}
 
 		s.db.Exec("UPDATE nodes SET governance_setup_complete = TRUE WHERE id = ?", id)
@@ -522,6 +516,61 @@ func (s *seeder) seedNodes() {
 		}
 	}
 	s.stats.nodes = len(nodes)
+}
+
+// appearanceFor renders a patch's chosen tile appearance, or nil when the
+// profile chose none for it.
+//
+// nil reaches the INSERT as SQL NULL, which is the unset state a patch made
+// through the form carries (docs/adr/004) and the state most real patches
+// stay in: Lancaster measured 54 of 58 patches unset on 2026-09-16. The
+// seeder used to cycle a palette onto every patch, so a seeded quilt was
+// 100% hand-styled and the hash-assignment branch of paletteForPatch
+// (web/src/lib/quiltTheme.js) never rendered in local dev — the one path
+// nobody could look at, in a frontend suite that asserts against source text
+// and so cannot catch a rendering bug. The profile still pins an appearance
+// on the handful of patches that exist to demonstrate one.
+func appearanceFor(n nodeDef) interface{} {
+	var appearance map[string]interface{}
+	switch {
+	case n.draftBlock != "":
+		// A drafted block (docs/adr/029) replaces the curated pick.
+		appearance = map[string]interface{}{"block": json.RawMessage(n.draftBlock)}
+	case n.palette != "" || n.block != "" || len(n.bundle) > 0:
+		appearance = map[string]interface{}{}
+		if n.palette != "" {
+			appearance["palette"] = n.palette
+		}
+		if n.block != "" {
+			appearance["block"] = n.block
+		}
+	default:
+		return nil
+	}
+	// A bundle rides with either kind of block: it names the fabrics, and a
+	// curated block wears a custom cut as readily as a drafted one.
+	if len(n.bundle) > 0 {
+		appearance["bundle"] = n.bundle
+	}
+	b, err := json.Marshal(appearance)
+	if err != nil {
+		log.Fatalf("seed appearance for %s: %v", n.slug, err)
+	}
+	return string(b)
+}
+
+// templateForPolicy maps a seeded patch's membership policy to the governance
+// template it forks. The mapping is the seed's own shorthand for "a band
+// forks minimal, a co-op forks collaborative, everything else casual"; the
+// rules in force come from the template, never from this file.
+func templateForPolicy(policy string) string {
+	switch policy {
+	case "invite_only":
+		return "minimal"
+	case "approval_required":
+		return "collaborative"
+	}
+	return "casual"
 }
 
 // ---------------------------------------------------------------------------
@@ -758,7 +807,7 @@ func (s *seeder) seedDevPersonas() {
 					continue
 				}
 				s.db.Exec("DELETE FROM memberships WHERE user_id = ? AND node_id = ?", userID, nodeID)
-				joinedAt := s.now.AddDate(0, 0, -45).Format("2006-01-02T15:04:05.000Z")
+				joinedAt := clock.Format(s.now.AddDate(0, 0, -45))
 				s.db.Exec(`INSERT INTO memberships (id, user_id, node_id, role, status, joined_at) VALUES (?, ?, ?, ?, 'active', ?)`,
 					auth.NewUUIDv7(), userID, nodeID, g.role, joinedAt)
 				s.stats.memberships++
@@ -778,8 +827,8 @@ func (s *seeder) seedJoinFlowPersona() {
 	// every random decision after this point (vote tallies, memberships, …)
 	// that other specs pin their assertions to.
 	userID := auth.NewUUIDv7()
-	createdAt := s.now.AddDate(0, 0, -30).Format("2006-01-02T15:04:05.000Z")
-	joinedAt := s.now.AddDate(0, 0, -20).Format("2006-01-02T15:04:05.000Z")
+	createdAt := clock.Format(s.now.AddDate(0, 0, -30))
+	joinedAt := clock.Format(s.now.AddDate(0, 0, -20))
 	apID := ap.UserAPID(ap.GetDomain(), userID)
 	_, err := s.db.Exec(`INSERT INTO users (id, email, username, display_name, bio, role, created_at, updated_at, ap_id)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -865,9 +914,9 @@ func (s *seeder) seedEvents() {
 		} else {
 			startsAt = s.futureTS(e.daysOffset)
 		}
-		st, _ := time.Parse("2006-01-02T15:04:05.000Z", startsAt)
+		st, _ := clock.Parse(startsAt)
 		et := st.Add(time.Duration(e.durationH) * time.Hour)
-		endsAt = et.Format("2006-01-02T15:04:05.000Z")
+		endsAt = clock.Format(et)
 
 		lat := geo.lat + (s.rng.Float64()-0.5)*0.001
 		lng := geo.lng + (s.rng.Float64()-0.5)*0.001
@@ -1442,9 +1491,15 @@ func (s *seeder) seedNotifications() {
 		nType, title, body, link string
 		read                     bool
 	}{
-		{"new_event", "New event: First Friday Gallery Walk", "A new event has been posted in the First Friday Collective.", "/events", false},
-		{"proposal_created", "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
-		{"new_member", "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
+		// Linked at the global events list rather than at its patch's own
+		// events page, which is where a real event.suggested points. The
+		// badge test below needs a target that stays inside the social
+		// shell: a workspace route remounts the bell, and the remount's
+		// refresh would supply the right count whether or not reading
+		// updated it.
+		{string(notifications.EventSuggested), "Event suggested: First Friday Gallery Walk", "Someone suggested an event for the First Friday Collective.", "/events", false},
+		{string(notifications.ProposalNew), "New proposal: Anti-harassment policy", "A new proposal has been created for the Lancaster Arts District.", "/patches/lancaster-arts-district/governance/proposals", false},
+		{string(notifications.MembershipJoined), "New member joined First Friday", "David Park has joined the First Friday Collective.", "/patches/first-friday-collective/members", true},
 	}
 	// Two deep links to single entities, the shapes issue #56 got wrong: an
 	// event (addressed globally) and a charter (needs its 'docs/' segment).
@@ -1455,19 +1510,19 @@ func (s *seeder) seedNotifications() {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{"event_reminder", "Tomorrow: " + eventTitle, "This event starts in less than 24 hours.", weblink.Event(eventID), false})
+		}{string(notifications.EventSubmissionApproved), "Your event was approved: " + eventTitle, "It is on the calendar now.", weblink.Event(eventID), false})
 	}
 	if slug, docID, docTitle, ok := s.firstGovernanceDoc(); ok {
 		adminNotifs = append(adminNotifs, struct {
 			nType, title, body, link string
 			read                     bool
-		}{"governance_doc_updated", "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
+		}{string(notifications.GovernanceDocUpdated), "Charter updated: " + docTitle, "The charter was amended.", weblink.GovernanceDoc(slug, docID), false})
 	}
 	for i, n := range adminNotifs {
-		createdAt := s.now.AddDate(0, 0, -(i + 1)).Format("2006-01-02T15:04:05.000Z")
+		createdAt := clock.Format(s.now.AddDate(0, 0, -(i + 1)))
 		var readAt *string
 		if n.read {
-			r := s.now.Format("2006-01-02T15:04:05.000Z")
+			r := clock.Format(s.now)
 			readAt = &r
 		}
 		_, err := s.db.Exec(`INSERT INTO notifications (id, user_id, type, title, body, link, read_at, created_at)
@@ -1503,28 +1558,40 @@ func (s *seeder) firstGovernanceDoc() (slug, id, title string, ok bool) {
 // Audit Log
 // ---------------------------------------------------------------------------
 
-func (s *seeder) seedAuditLog() {
-	type auditDef struct {
-		action     string
-		entityType string
-		desc       string
-	}
+type auditDef struct {
+	action     string
+	entityType string
+	desc       string
+}
 
-	actions := []auditDef{
-		{"create", "user", "user_registered"},
-		{"create", "node", "node_created"},
-		{"create", "node", "node_created"},
-		{"create", "event", "event_created"},
-		{"create", "event", "event_created"},
-		{"create", "membership", "membership_joined"},
-		{"create", "membership", "membership_joined"},
-		{"update", "membership", "membership_approved"},
-		{"create", "proposal", "proposal_created"},
-		{"update", "proposal", "proposal_approved"},
-		{"create", "governance_doc", "governance_doc_created"},
-		{"create", "report", "report_submitted"},
-		{"update", "report", "report_reviewed"},
-	}
+// The action column holds what LogAuditEvent writes — "node.create", not
+// "create". These seeded rows carried the bare verb, so the admin audit log's
+// Action filter, whose options are the real dotted actions, matched none of
+// them and every filter read empty on a demo instance. The entity types were
+// right all along; only the actions were not.
+//
+// Audit actions are string literals at their call sites rather than constants,
+// so nothing here can be compile-checked the way the notification fixtures now
+// are. TestSeededAuditActionsExist keeps them honest instead — which is why
+// this is a package-level var rather than a slice inside the function.
+var seededAuditActions = []auditDef{
+	{"user.create", "user", "user_registered"},
+	{"node.create", "node", "node_created"},
+	{"node.create", "node", "node_created"},
+	{"event.create", "event", "event_created"},
+	{"event.create", "event", "event_created"},
+	{"membership.join", "membership", "membership_joined"},
+	{"membership.join", "membership", "membership_joined"},
+	{"membership.approve", "membership", "membership_approved"},
+	{"proposal.create", "proposal", "proposal_created"},
+	{"proposal.resolved", "proposal", "proposal_approved"},
+	{"governance.create", "governance_doc", "governance_doc_created"},
+	{"report.create", "report", "report_submitted"},
+	{"report.resolve", "report", "report_reviewed"},
+}
+
+func (s *seeder) seedAuditLog() {
+	actions := seededAuditActions
 
 	for _, a := range actions {
 		id := auth.NewUUIDv7()
@@ -1538,7 +1605,11 @@ func (s *seeder) seedAuditLog() {
 			entityID = auth.NewUUIDv7()
 		}
 
-		metadata := fmt.Sprintf(`{"action_detail":"%s"}`, a.desc)
+		metadataBytes, err := json.Marshal(map[string]any{"action_detail": a.desc})
+		if err != nil {
+			metadataBytes = []byte("{}")
+		}
+		metadata := string(metadataBytes)
 		createdAt := s.ts(s.rng.Intn(120) + 1)
 
 		s.db.Exec(`INSERT INTO audit_log (id, user_id, action, entity_type, entity_id, metadata, ip_address, created_at)
@@ -1584,13 +1655,7 @@ func (s *seeder) seedUnclaimedPatches() {
 
 	unclaimed := s.profile.unclaimed
 
-	// Available palettes for unclaimed patches.
-	unclaimedPalettes := []string{
-		"adolescents", "pinkRazors", "greatestSongs", "allroysRevenge",
-		"anthem", "allTheShoes", "bottlesToTheGround", "liberalAnimation",
-	}
-
-	for i, u := range unclaimed {
+	for _, u := range unclaimed {
 		id := auth.NewUUIDv7()
 		nodeSlug := slug(u.name)
 
@@ -1600,7 +1665,9 @@ func (s *seeder) seedUnclaimedPatches() {
 			linksJSON = string(b)
 		}
 
-		appearanceJSON := fmt.Sprintf(`{"palette":%q}`, unclaimedPalettes[i%len(unclaimedPalettes)])
+		// Appearance stays NULL, and for an unclaimed patch that is not just
+		// the honest default (see appearanceFor) but the only truthful one:
+		// nobody has claimed it, so nobody has chosen how its tile looks.
 		apID := fmt.Sprintf("https://%s/ap/nodes/%s", "patchwork.local", id)
 		createdAt := s.ts(s.rng.Intn(60) + 30)
 
@@ -1613,10 +1680,13 @@ func (s *seeder) seedUnclaimedPatches() {
 			submittedBy = s.userIDs[*u.submitterIdx]
 		}
 
+		// A listing's membership policy is inert until a claim activates it,
+		// and setup asks the claimant for one (claims.go). Seeded closed so
+		// the fixture matches what unclaimed.go writes.
 		_, err := s.db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, appearance, status, submitted_by, submission_source, ap_id, created_at, updated_at)
-			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'open', ?, 'unclaimed', ?, ?, ?, ?, ?)`,
-			id, u.name, nodeSlug, u.desc, u.lat, u.lng, u.address, u.website, linksJSON, appearanceJSON, submittedBy, submissionSource, apID, createdAt, createdAt,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, website, links, visibility, membership_policy, appearance, status, submitted_by, submission_source, ap_id, created_at, updated_at, follower_permissions)
+			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, ?, ?, ?, 'public', 'invite_only', ?, 'unclaimed', ?, ?, ?, ?, ?, '{}')`,
+			id, u.name, nodeSlug, u.desc, u.lat, u.lng, u.address, u.website, linksJSON, nil, submittedBy, submissionSource, apID, createdAt, createdAt,
 		)
 		if err != nil {
 			log.Printf("warning: seed unclaimed %s: %v", u.name, err)
@@ -1657,8 +1727,8 @@ func (s *seeder) seedUnclaimedPatches() {
 		submitterIdx := s.rng.Intn(len(s.userIDs))
 
 		s.db.Exec(
-			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, status, submitted_by, submission_source, created_at, updated_at)
-			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, '', 'public', 'open', 'pending_review', ?, 'community', ?, ?)`,
+			`INSERT INTO nodes (id, owner_id, name, slug, description, latitude, longitude, address, visibility, membership_policy, status, submitted_by, submission_source, created_at, updated_at, follower_permissions)
+			 VALUES (?, '00000000-0000-0000-0000-000000000000', ?, ?, ?, ?, ?, '', 'public', 'invite_only', 'pending_review', ?, 'community', ?, ?, '{}')`,
 			id, u.name, nodeSlug, u.desc, u.lat, u.lng, s.userIDs[submitterIdx], createdAt, createdAt,
 		)
 

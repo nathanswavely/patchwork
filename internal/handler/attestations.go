@@ -91,9 +91,27 @@ func ListAttestations(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+
+		// Attestations record what a patch decided at a venue Patchwork was
+		// not, so they are part of its deliberation and follow the record
+		// setting (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// They were a public read under docs/adr/052 and they name people —
+		// an attestation's whole payload is who a meeting seated.
+		//
+		// 200 with an empty list and the setting beside it, matching the
+		// proposals listing: "decided nothing elsewhere" and "withheld" want
+		// opposite copy.
+		if !canReadGovernanceRecord(db, r, nodeID) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":                    []interface{}{},
+				"public_governance_record": "nobody",
+			})
+			return
+		}
 		rows, err := db.Query(
 			`SELECT a.id, a.node_id, a.kind, a.decided_at, COALESCE(a.term_ends_at,''), a.summary, a.recorded_by,
-			        COALESCE(u.display_name, u.username, ''), a.created_at,
+			        `+displayNameExpr("u")+`, a.created_at,
 			        COALESCE(a.supersedes_id,''),
 			        COALESCE((SELECT s.id FROM attestations s WHERE s.supersedes_id = a.id), '')
 			 FROM attestations a
@@ -125,7 +143,7 @@ func ListAttestations(db *database.DB) http.HandlerFunc {
 func attestationNames(db *database.DB, attestationID string) []attestationName {
 	names := []attestationName{}
 	rows, err := db.Query(
-		`SELECT n.id, COALESCE(n.user_id,''), COALESCE(u.username,''), n.display_name
+		`SELECT n.id, COALESCE(n.user_id,''), `+usernameExpr("u")+`, n.display_name
 		 FROM attestation_names n
 		 LEFT JOIN users u ON u.id = n.user_id
 		 WHERE n.attestation_id = ?
@@ -304,7 +322,7 @@ func applyAttestation(db *database.DB, nodeID, slug, attestationID string) {
 		if role == "admin" {
 			continue
 		}
-		if _, err := db.Exec("UPDATE memberships SET role = 'admin' WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
+		if _, err := db.Exec("UPDATE memberships SET role = 'admin', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
 			continue
 		}
 		notify(notifications.Event{
@@ -336,7 +354,7 @@ func applyAttestation(db *database.DB, nodeID, slug, attestationID string) {
 		if adminCount <= 1 {
 			break
 		}
-		if _, err := db.Exec("UPDATE memberships SET role = 'member' WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
+		if _, err := db.Exec("UPDATE memberships SET role = 'member', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'", uid, nodeID); err != nil {
 			continue
 		}
 		notify(notifications.Event{

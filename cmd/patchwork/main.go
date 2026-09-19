@@ -30,11 +30,28 @@ import (
 func main() {
 	configPath := flag.String("config", "patchwork.yaml", "path to config file")
 	healthcheck := flag.Bool("healthcheck", false, "probe the running instance's health endpoint and exit 0 (healthy) or 1")
+	verifyAttestation := flag.String("verify-attestation", "", "check an admin attestation blob (docs/adr/087) and exit 0 if it stands")
+	attestationKey := flag.String("attestation-key", "", "PEM public key file to check -verify-attestation against, instead of fetching it from the claimed domain")
+	repairGovernance := flag.Bool("repair-governance", false, "rebuild governance repos from the database, print a summary, and exit (run with the server stopped)")
 	flag.Parse()
 
 	// Probe mode: no database, no server. Used by the image's HEALTHCHECK.
 	if *healthcheck {
 		runHealthcheck(*configPath)
+		return
+	}
+
+	// Verifier mode: no config, no database, no server. This is the side of
+	// the exchange that does *not* run a quilt — a host or a directory that
+	// happens to have the binary.
+	if *verifyAttestation != "" {
+		runVerifyAttestation(*verifyAttestation, *attestationKey)
+		return
+	}
+
+	// Repair mode: database and repos, no server (docs/adr/084).
+	if *repairGovernance {
+		runGovernanceRepair(*configPath)
 		return
 	}
 
@@ -107,13 +124,20 @@ func main() {
 		} else if nu > 0 || nn > 0 {
 			log.Printf("federation: backfilled keypairs for %d users and %d nodes", nu, nn)
 		}
+	}
 
-		// The instance service actor relays remote-patch Follows for all
-		// local users (docs/adr/024) — ensure it exists and its ap_id
-		// matches the configured domain.
-		if err := ap.EnsureInstanceActor(db, ap.GetDomain()); err != nil {
-			log.Printf("warning: failed to ensure instance actor: %v", err)
-		}
+	// The instance service actor relays remote-patch Follows for all local
+	// users (docs/adr/024) — ensure it exists and its ap_id matches the
+	// configured domain.
+	//
+	// Outside the federation gate, unlike the AP-ID backfills above. Its
+	// keypair is also what signs an admin's proof of the role (docs/adr/087),
+	// and that has to work on a quilt that never federates: a key minted only
+	// when federation is on is a proof that disappears the day an instance
+	// turns federation off. Minting it costs one RSA keypair, once, on a
+	// database that has never had one.
+	if err := ap.EnsureInstanceActor(db, ap.GetDomain()); err != nil {
+		log.Printf("warning: failed to ensure instance actor: %v", err)
 	}
 
 	// Initialize instance governance repo. Repo creation is pure go-git, so
@@ -127,12 +151,29 @@ func main() {
 		log.Fatalf("governance init: %v", err)
 	}
 
-	// Heal nodes whose repo creation failed at runtime (e.g. instances that
-	// ran a pre-pure-go-git build in a container without a git binary).
+	// Move migration 062's contact cards into the item shape docs/adr/083
+	// gives them. Safe to clear the legacy columns as it reads them only
+	// because no handler reads them any more: the Me endpoints, the Members
+	// room and the profile all serve contact_items. Fatal rather than
+	// warn-and-continue — a half-converted card is a phone number in two
+	// places with two different audiences, and the conversion is one
+	// transaction, so failing here leaves the old shape intact.
+	if n, err := handler.BackfillContactItems(db); err != nil {
+		log.Fatalf("contact items backfill: %v", err)
+	} else if n > 0 {
+		log.Printf("contact: converted %d card fields into items", n)
+	}
+
+	// Create the repos that are absent, from the canonical DB rows — a patch
+	// whose repo creation failed at runtime, and every patch on an instance
+	// restored from a database backup alone, which carries no repos at all
+	// (docs/adr/084). Strictly create-missing: a repo that is already there is
+	// never written into on a boot. Repairing one that exists but has drifted
+	// is `patchwork -repair-governance`, an operator's decision.
 	if n, err := handler.BackfillNodeGovernanceRepos(db); err != nil {
 		log.Fatalf("governance backfill: %v", err)
 	} else if n > 0 {
-		log.Printf("governance: backfilled repos for %d nodes", n)
+		log.Printf("governance: rebuilt repos for %d patches from the database", n)
 	}
 
 	// Fill the governance_config cache for nodes created while CreateNode
@@ -189,25 +230,45 @@ func main() {
 	} else if created > 0 || updatedLinings > 0 {
 		log.Printf("lining: created %d, auto-updated %d to v%d", created, updatedLinings, governance.CurrentLiningVersion())
 	}
+	// Close the follower access to members-only charters that shipped on by
+	// default (docs/adr/116), in the rules file as well as the row, and tell
+	// each patch's admins. Same placement and same reasons as the lining pass
+	// above: after the repo backfill so the git write lands, after SetNotifier
+	// so the notice is not dropped. Idempotent, so it costs one query per boot
+	// once it has run.
+	if closed, err := handler.CloseFollowerChartersDefault(db); err != nil {
+		log.Fatalf("follower charters default: %v", err)
+	} else if closed > 0 {
+		log.Printf("follower charters: closed the shipped default on %d patch(es)", closed)
+	}
+
 	reminderCtx, reminderCancel := context.WithCancel(context.Background())
 	defer reminderCancel()
 	notifications.StartReminderWorker(reminderCtx, notifier)
 
-	// Elections move on a calendar, not on a person (docs/adr/051): nominations
-	// close and voting opens, voting ends and the council is seated. Hourly is
-	// plenty — the windows are days long.
-	electionCtx, electionCancel := context.WithCancel(context.Background())
-	defer electionCancel()
+	// Votes move on a calendar, not on a person: an election's nominations
+	// close and voting opens, voting ends and the council is seated
+	// (docs/adr/051); an ordinary proposal's window closes and it resolves
+	// or lapses (docs/adr/097). Hourly is plenty — the windows are days long.
+	sweepCtx, sweepCancel := context.WithCancel(context.Background())
+	defer sweepCancel()
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
 		defer ticker.Stop()
-		handler.SweepElections(db)
+		sweep := func() {
+			handler.SweepElections(db)
+			handler.SweepProposals(db)
+			// After the windows that closed have closed: the people a still-
+			// open vote is waiting on, told once each (docs/adr/093).
+			handler.SweepVoteNotices(db)
+		}
+		sweep()
 		for {
 			select {
-			case <-electionCtx.Done():
+			case <-sweepCtx.Done():
 				return
 			case <-ticker.C:
-				handler.SweepElections(db)
+				sweep()
 			}
 		}
 	}()
@@ -229,6 +290,15 @@ func main() {
 	sourceCtx, sourceCancel := context.WithCancel(context.Background())
 	defer sourceCancel()
 	eventsource.StartWorker(sourceCtx, db, notifier)
+
+	// Usage counts: in memory, written as daily totals once a minute
+	// (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+	// The switch is read per page load, so the admin's change needs no
+	// restart.
+	usage := middleware.NewUsageCounter(db, func() bool { return settings.UsageStatsEnabled(db) })
+	usageCtx, usageCancel := context.WithCancel(context.Background())
+	defer usageCancel()
+	usage.Start(usageCtx)
 
 	// First-run bootstrap notice: until an account exists there is no admin,
 	// so tell the operator how to claim the instance.
@@ -293,391 +363,6 @@ func main() {
 		gaz = nil
 	}
 
-	// Build router.
-	mux := http.NewServeMux()
-
-	// Public API routes.
-	mux.HandleFunc("GET /api/v1/health", handler.Health(db, cfg))
-	mux.HandleFunc("GET /api/v1/instance", handler.Instance(db, cfg))
-	mux.HandleFunc("GET /api/v1/instance/icon", handler.InstanceIcon(db, cfg))
-	mux.HandleFunc("GET /api/v1/instance/lining", handler.GetInstanceLining(db))
-
-	// Suggesting a placement from an address. Authenticated and throttled;
-	// answers "no suggestion" rather than an error when there is no index or
-	// no match, because both are ordinary.
-	mux.HandleFunc("GET /api/v1/gazetteer/suggest", middleware.AuthRequired(db, handler.SuggestPlace(gaz)))
-
-	// The Label (docs/adr/023) — public read: its most important reader
-	// has no account yet. Steward self-listing is the person's own switch.
-	mux.HandleFunc("GET /api/v1/label", handler.GetLabel(db, cfg))
-
-	// Legal documents (docs/adr/028) — public read, defaults ship in the
-	// binary so this never 404s on a fresh deployment.
-	mux.HandleFunc("GET /api/v1/legal/{doc}", handler.LegalDoc(db, cfg))
-	mux.HandleFunc("GET /api/v1/users/me/steward", middleware.AuthRequired(db, handler.GetMyStewardListing(db)))
-	mux.HandleFunc("PATCH /api/v1/users/me/steward", middleware.AuthRequired(db, handler.UpdateMyStewardListing(db)))
-	mux.HandleFunc("DELETE /api/v1/users/me/steward", middleware.AuthRequired(db, handler.DeleteMyStewardListing(db)))
-
-	// Auth routes — public. Everything unauthenticated here is rate limited
-	// per client IP and instance-wide: each request converts into retained
-	// server memory (most sharply the WebAuthn login challenge), and the host
-	// has no other throttle in front of it. Magic link routes keep their own
-	// per-email and per-IP limits inside the handlers.
-	rl := middleware.UnauthedAuthRateLimit
-	mux.HandleFunc("POST /api/v1/auth/invite", rl(handler.RedeemInviteLink(db, cfg)))
-	mux.HandleFunc("GET /api/v1/auth/invite/{token}/validate", rl(handler.ValidateInviteLink(db)))
-	mux.HandleFunc("POST /api/v1/auth/magic-link", handler.RequestMagicLink(db, cfg))
-	mux.HandleFunc("GET /api/v1/auth/verify/{token}", handler.VerifyMagicLink(db))
-	// Alias for magic links mailed before the link builder was fixed: they
-	// point at /auth/verify/{token}, which the SPA has no route for and would
-	// swallow into the home page. Keep it working.
-	mux.HandleFunc("GET /auth/verify/{token}", handler.VerifyMagicLink(db))
-	mux.HandleFunc("GET /api/v1/auth/signup/{token}/validate", rl(handler.ValidateSignupToken(db)))
-	mux.HandleFunc("POST /api/v1/auth/signup", rl(handler.CompleteSignup(db)))
-	mux.HandleFunc("POST /api/v1/auth/webauthn/login/begin", rl(handler.WebAuthnLoginBegin(wa)))
-	mux.HandleFunc("POST /api/v1/auth/webauthn/login/finish", rl(handler.WebAuthnLoginFinish(db, wa)))
-	mux.HandleFunc("POST /api/v1/auth/recovery", rl(handler.RedeemRecoveryCode(db)))
-
-	// Auth routes — require session.
-	mux.HandleFunc("GET /api/v1/auth/me", middleware.AuthRequired(db, handler.Me(db)))
-	mux.HandleFunc("PATCH /api/v1/auth/me", middleware.AuthRequired(db, handler.UpdateMe(db)))
-	mux.HandleFunc("POST /api/v1/auth/logout", middleware.AuthRequired(db, handler.Logout(db)))
-	mux.HandleFunc("GET /api/v1/auth/credentials", middleware.AuthRequired(db, handler.ListCredentials(db)))
-	mux.HandleFunc("GET /api/v1/auth/recovery-codes", middleware.AuthRequired(db, handler.RecoveryCodeStatus(db)))
-	mux.HandleFunc("POST /api/v1/auth/recovery-codes", middleware.AuthRequired(db, handler.GenerateRecoveryCodes(db)))
-	mux.HandleFunc("PATCH /api/v1/auth/credentials/{id}", middleware.AuthRequired(db, handler.RenameCredential(db)))
-	mux.HandleFunc("DELETE /api/v1/auth/credentials/{id}", middleware.AuthRequired(db, handler.DeleteCredential(db)))
-	// Session manager: a person sees and revokes only their own sessions
-	// (issue #3, follow-up to docs/adr/017).
-	mux.HandleFunc("GET /api/v1/auth/sessions", middleware.AuthRequired(db, handler.ListSessions(db)))
-	mux.HandleFunc("POST /api/v1/auth/sessions/revoke-others", middleware.AuthRequired(db, handler.RevokeOtherSessions(db)))
-	mux.HandleFunc("DELETE /api/v1/auth/sessions/{id}", middleware.AuthRequired(db, handler.RevokeSession(db)))
-	// Step-up: a fresh assertion from an already-signed-in person, opening a
-	// short window for the three irreversible instance actions.
-	mux.HandleFunc("GET /api/v1/auth/step-up", middleware.AuthRequired(db, handler.StepUpStatus(db)))
-	mux.HandleFunc("POST /api/v1/auth/step-up/begin", middleware.AuthRequired(db, handler.StepUpBegin(db, wa)))
-	mux.HandleFunc("POST /api/v1/auth/step-up/finish", middleware.AuthRequired(db, handler.StepUpFinish(db, wa)))
-
-	mux.HandleFunc("POST /api/v1/auth/webauthn/register/begin", middleware.AuthRequired(db, handler.WebAuthnRegisterBegin(db, wa)))
-	mux.HandleFunc("POST /api/v1/auth/webauthn/register/finish", middleware.AuthRequired(db, handler.WebAuthnRegisterFinish(db, wa)))
-
-	// Auth routes — admin only.
-	mux.HandleFunc("POST /api/v1/auth/invite-link", middleware.AdminRequired(db, handler.GenerateInviteLink(db, cfg)))
-
-	// Node routes — public.
-	// AuthOptional so ?scope=my can resolve the caller; anonymous reads are unaffected.
-	mux.HandleFunc("GET /api/v1/nodes", middleware.AuthOptional(db, handler.ListNodes(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}", middleware.AuthOptional(db, handler.GetNode(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/members", middleware.AuthOptional(db, handler.ListMembers(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/proposals", middleware.AuthOptional(db, handler.ListProposals(db)))
-
-	// User profiles — public (docs/adr/006).
-	mux.HandleFunc("GET /api/v1/users/{username}", handler.GetUserProfile(db))
-
-	// Node routes — auth required.
-	mux.HandleFunc("POST /api/v1/nodes", middleware.AuthRequired(db, handler.CreateNode(db)))
-	mux.HandleFunc("PATCH /api/v1/nodes/{slug}", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.UpdateNode(db))))
-	mux.HandleFunc("DELETE /api/v1/nodes/{slug}", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.DeleteNode(db))))
-
-	// Membership routes — auth required.
-	// Outbound calendar feeds (docs/adr/031): every public patch is
-	// subscribable; the personal feed's URL secret is its credential.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/events.ics", handler.NodeICSFeed(db, cfg))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/events.rss", handler.NodeRSSFeed(db, cfg))
-	mux.HandleFunc("GET /api/v1/feeds/{secret}/events.ics", rl(handler.PersonalICSFeed(db, cfg)))
-	mux.HandleFunc("GET /api/v1/users/me/feed-secret", middleware.AuthRequired(db, handler.FeedSecretStatus(db)))
-	mux.HandleFunc("POST /api/v1/users/me/feed-secret", middleware.AuthRequired(db, handler.GenerateFeedSecret(db, cfg)))
-	mux.HandleFunc("DELETE /api/v1/users/me/feed-secret", middleware.AuthRequired(db, handler.DeleteFeedSecret(db)))
-
-	// Event sources (docs/adr/031): owner-attached calendar feeds.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/event-sources", middleware.AuthRequired(db, handler.ListEventSources(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources", middleware.AuthRequired(db, handler.CreateEventSource(db)))
-	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/event-sources/{id}", middleware.AuthRequired(db, handler.UpdateEventSource(db)))
-	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/event-sources/{id}", middleware.AuthRequired(db, handler.DeleteEventSource(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/event-sources/{id}/sync", middleware.AuthRequired(db, handler.SyncEventSource(db)))
-	mux.HandleFunc("POST /api/v1/events/{id}/detach", middleware.AuthRequired(db, handler.DetachEvent(db)))
-
-	// Aggregators and the crosswalk (docs/adr/056). The node-scoped
-	// routes are the door for a patch's own admins; mapping an active
-	// patch is deliberately not an instance-admin power.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/aggregator-names", middleware.AuthRequired(db, handler.ListAggregatorNames(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/crosswalk", middleware.AuthRequired(db, handler.ListCrosswalk(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/crosswalk", middleware.AuthRequired(db, handler.CreateCrosswalkEntry(db)))
-	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/crosswalk/{id}", middleware.AuthRequired(db, handler.DeleteCrosswalkEntry(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/aggregator-holds", middleware.AuthRequired(db, handler.ListAggregatorHolds(db)))
-	mux.HandleFunc("POST /api/v1/aggregator-holds/{id}/decide", middleware.AuthRequired(db, handler.DecideAggregatorHold(db)))
-	// Programs and their offers (docs/adr/063). Node-scoped because
-	// standing is over the credited patch and nothing else — the venue
-	// whose event it is has no say and needs none.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/programs", middleware.AuthRequired(db, handler.ListPrograms(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/programs", middleware.AuthRequired(db, handler.CreateProgram(db)))
-	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/programs/{id}", middleware.AuthRequired(db, handler.DeleteProgram(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/offers/dismiss", middleware.AuthRequired(db, handler.DismissOffer(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/events/bulk", middleware.AuthRequired(db, handler.BulkCreateEvents(db)))
-
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/join", middleware.AuthRequired(db, handler.JoinNode(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/leave", middleware.AuthRequired(db, handler.LeaveNode(db)))
-	// Maintainer succession (docs/adr/051). Naming a successor decides who
-	// inherits the patch, so it is step-up gated like the other power moves.
-	mux.HandleFunc("PUT /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.SetSuccessor(db))))
-	mux.HandleFunc("DELETE /api/v1/nodes/{slug}/successor", middleware.AuthRequired(db, handler.ClearSuccessor(db)))
-	// Elections (docs/adr/051). Nominating is a member act; the ballot is the
-	// set of candidates one person approves, so it is a PUT of the whole set
-	// rather than an append.
-	mux.HandleFunc("POST /api/v1/proposals/{id}/candidates", middleware.AuthRequired(db, handler.AddCandidate(db)))
-	mux.HandleFunc("PUT /api/v1/proposals/{id}/ballot", middleware.AuthRequired(db, handler.CastElectionBallot(db)))
-	// Attestations (docs/adr/052, docs/adr/053) — decisions a community made
-	// somewhere Patchwork was not. Public to read: the whole value is that the
-	// people who were in the room can check it. Recording one moves who runs
-	// the patch or what its charter says, so both are step-up gated like every
-	// other power move.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/attestations", middleware.AuthOptional(db, handler.ListAttestations(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAttestation(db))))
-	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/attestation-names/{id}", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.LinkAttestationName(db))))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthOptional(db, handler.ListAmendmentAttestations(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/amendment-attestations", middleware.AuthRequired(db, middleware.SudoRequired(db, handler.CreateAmendmentAttestation(db))))
-	mux.HandleFunc("PATCH /api/v1/users/me/memberships/{nodeId}", middleware.AuthRequired(db, handler.UpdateMyMembership(db)))
-
-	// The noticeboard — members-only, the check in every handler (docs/adr/081).
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.ListNotices(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/notices", middleware.AuthRequired(db, handler.CreateNotice(db)))
-	mux.HandleFunc("GET /api/v1/notices/{id}", middleware.AuthRequired(db, handler.GetNotice(db)))
-	mux.HandleFunc("PATCH /api/v1/notices/{id}", middleware.AuthRequired(db, handler.UpdateNotice(db)))
-	mux.HandleFunc("DELETE /api/v1/notices/{id}", middleware.AuthRequired(db, handler.DeleteNotice(db)))
-	mux.HandleFunc("GET /api/v1/notices/{id}/replies", middleware.AuthRequired(db, handler.ListReplies(db)))
-	mux.HandleFunc("POST /api/v1/notices/{id}/replies", middleware.AuthRequired(db, handler.CreateReply(db)))
-	mux.HandleFunc("PATCH /api/v1/replies/{id}", middleware.AuthRequired(db, handler.UpdateReply(db)))
-	mux.HandleFunc("DELETE /api/v1/replies/{id}", middleware.AuthRequired(db, handler.DeleteReply(db)))
-	// The patch's own report queue for its noticeboard (docs/adr/081, tool 3).
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/reports", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.ListPatchReports(db))))
-	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/reports/{id}", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.UpdatePatchReport(db))))
-
-	// Cross-quilt following (docs/adr/024): remote follows and personal
-	// connected quilts live on the follower's home instance.
-	mux.HandleFunc("GET /api/v1/users/me/remote-follows", middleware.AuthRequired(db, handler.ListRemoteFollows(db)))
-	mux.HandleFunc("POST /api/v1/users/me/remote-follows", middleware.AuthRequired(db, handler.CreateRemoteFollow(db, cfg)))
-	mux.HandleFunc("PATCH /api/v1/users/me/remote-follows/{id}", middleware.AuthRequired(db, handler.UpdateRemoteFollow(db)))
-	mux.HandleFunc("DELETE /api/v1/users/me/remote-follows/{id}", middleware.AuthRequired(db, handler.DeleteRemoteFollow(db, cfg)))
-	mux.HandleFunc("GET /api/v1/users/me/quilts", middleware.AuthRequired(db, handler.ListUserQuilts(db)))
-	mux.HandleFunc("POST /api/v1/users/me/quilts", middleware.AuthRequired(db, handler.AddUserQuilt(db)))
-	mux.HandleFunc("DELETE /api/v1/users/me/quilts/{id}", middleware.AuthRequired(db, handler.DeleteUserQuilt(db)))
-	mux.HandleFunc("GET /api/v1/me/nodes", middleware.AuthRequired(db, handler.ListMyMemberships(db)))
-	mux.HandleFunc("PATCH /api/v1/nodes/{slug}/members/{userId}", middleware.AuthRequired(db, handler.UpdateMember(db)))
-
-	// Proposal routes — public, but amendment text follows the target
-	// charter's visibility, so the optional session is read (docs/adr/036).
-	mux.HandleFunc("GET /api/v1/proposals/{id}", middleware.AuthOptional(db, handler.GetProposal(db)))
-
-	// Proposal routes — auth required.
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/proposals", middleware.AuthRequired(db, handler.CreateProposal(db)))
-	mux.HandleFunc("PATCH /api/v1/proposals/{id}", middleware.AuthRequired(db, handler.UpdateProposal(db)))
-	mux.HandleFunc("DELETE /api/v1/proposals/{id}", middleware.AuthRequired(db, handler.WithdrawProposal(db)))
-	mux.HandleFunc("POST /api/v1/proposals/{id}/vote", middleware.AuthRequired(db, handler.VoteOnProposal(db)))
-	mux.HandleFunc("POST /api/v1/proposals/{id}/apply", middleware.AuthRequired(db, handler.ApplyProposal(db)))
-
-	// Governance reads — public docs for everyone, members-only docs for
-	// viewers the patch has admitted, so each needs the optional session
-	// (docs/adr/036).
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance", middleware.AuthOptional(db, handler.ListGovernanceDocs(db)))
-	mux.HandleFunc("GET /api/v1/governance/{id}/versions", middleware.AuthOptional(db, handler.GetGovernanceVersions(db)))
-	mux.HandleFunc("GET /api/v1/governance/{id}/diff", middleware.AuthOptional(db, handler.GetGovernanceDiff(db)))
-	mux.HandleFunc("GET /api/v1/governance/{id}", middleware.AuthOptional(db, handler.GetGovernanceDoc(db)))
-
-	// Governance routes — auth required.
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/governance", middleware.AuthRequired(db, handler.CreateGovernanceDoc(db)))
-	mux.HandleFunc("PUT /api/v1/governance/{id}", middleware.AuthRequired(db, handler.UpdateGovernanceDoc(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/rules", handler.GetGovernanceRules(db))
-
-	// Comments.
-	mux.HandleFunc("GET /api/v1/proposals/{id}/comments", handler.ListComments(db))
-	mux.HandleFunc("POST /api/v1/proposals/{id}/comments", middleware.AuthRequired(db, handler.CreateComment(db)))
-	mux.HandleFunc("PATCH /api/v1/comments/{id}", middleware.AuthRequired(db, handler.UpdateComment(db)))
-	mux.HandleFunc("DELETE /api/v1/comments/{id}", middleware.AuthRequired(db, handler.DeleteComment(db)))
-	mux.HandleFunc("POST /api/v1/comments/{id}/reactions", middleware.AuthRequired(db, handler.AddReaction(db)))
-	mux.HandleFunc("DELETE /api/v1/comments/{id}/reactions/{emoji}", middleware.AuthRequired(db, handler.RemoveReaction(db)))
-
-	// Revisions.
-	mux.HandleFunc("GET /api/v1/proposals/{id}/revisions", middleware.AuthOptional(db, handler.ListRevisions(db)))
-	mux.HandleFunc("POST /api/v1/proposals/{id}/revisions", middleware.AuthRequired(db, handler.CreateRevision(db)))
-
-	// Event routes — public. GetEvent is AuthOptional because a pending
-	// submission is visible only to its submitter and reviewers.
-	mux.HandleFunc("GET /api/v1/events", middleware.AuthOptional(db, handler.ListEvents(db)))
-	mux.HandleFunc("GET /api/v1/events/{id}", middleware.AuthOptional(db, handler.GetEvent(db)))
-
-	// Event routes — auth required. CreateEvent decides direct-post vs
-	// pending_review per docs/adr/026.
-	mux.HandleFunc("POST /api/v1/events", middleware.AuthRequired(db, handler.CreateEvent(db, cfg)))
-	mux.HandleFunc("PATCH /api/v1/events/{id}", middleware.AuthRequired(db, handler.UpdateEvent(db)))
-	mux.HandleFunc("DELETE /api/v1/events/{id}", middleware.AuthRequired(db, handler.DeleteEvent(db)))
-	mux.HandleFunc("PATCH /api/v1/events/{id}/review", middleware.AuthRequired(db, handler.ReviewEventSubmission(db)))
-	// Event links (docs/adr/032): one owner, two consents.
-	mux.HandleFunc("POST /api/v1/events/{id}/links", middleware.AuthRequired(db, handler.CreateEventLink(db, cfg)))
-	mux.HandleFunc("POST /api/v1/events/{id}/links/{nodeId}/confirm", middleware.AuthRequired(db, handler.ConfirmEventLink(db)))
-	mux.HandleFunc("DELETE /api/v1/events/{id}/links/{nodeId}", middleware.AuthRequired(db, handler.RemoveEventLink(db)))
-	mux.HandleFunc("DELETE /api/v1/events/{id}/mentions/{mentionId}", middleware.AuthRequired(db, handler.RemoveEventMention(db)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/event-submissions", middleware.AuthRequired(db, handler.ListNodeEventSubmissions(db)))
-
-	// Tree route — public, optionally personalized with scope=my.
-	mux.HandleFunc("GET /api/v1/nodes/tree", middleware.AuthOptional(db, handler.NodeTree(db)))
-
-	// Tag routes — public.
-	mux.HandleFunc("GET /api/v1/tags", handler.ListTags(db))
-
-	// Report routes — auth required.
-	mux.HandleFunc("POST /api/v1/reports", middleware.AuthRequired(db, handler.CreateReport(db)))
-
-	// Notification routes — auth required.
-	mux.HandleFunc("GET /api/v1/notifications", middleware.AuthRequired(db, handler.ListNotifications(db)))
-	mux.HandleFunc("GET /api/v1/notifications/count", middleware.AuthRequired(db, handler.NotificationCount(db)))
-	mux.HandleFunc("PATCH /api/v1/notifications/{id}/read", middleware.AuthRequired(db, handler.MarkNotificationRead(db)))
-	mux.HandleFunc("POST /api/v1/notifications/read-all", middleware.AuthRequired(db, handler.MarkAllNotificationsRead(db)))
-	mux.HandleFunc("DELETE /api/v1/notifications/{id}", middleware.AuthRequired(db, handler.DeleteNotification(db)))
-	mux.HandleFunc("DELETE /api/v1/notifications", middleware.AuthRequired(db, handler.ClearNotifications(db)))
-	mux.HandleFunc("GET /api/v1/notifications/preferences", middleware.AuthRequired(db, handler.GetNotificationPreferences(db, notifier)))
-	mux.HandleFunc("PUT /api/v1/notifications/preferences", middleware.AuthRequired(db, handler.UpdateNotificationPreferences(db)))
-
-	// Patch notification config — admin required on the patch.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/notification-config", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.GetPatchNotifConfig(db))))
-	mux.HandleFunc("PUT /api/v1/nodes/{slug}/notification-config", middleware.AuthRequired(db, middleware.RequireNodeRole(db, "admin")(handler.UpdatePatchNotifConfig(db))))
-
-	// Activity feed — auth required.
-	mux.HandleFunc("GET /api/v1/activity", middleware.AuthRequired(db, handler.UserActivityFeed(db)))
-
-	// AP preview — admin only.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/ap-preview", middleware.AdminRequired(db, handler.APPreview(db, cfg)))
-
-	// Admin routes.
-	// Export and wipe carry a step-up gate (docs/adr/017): export moves every
-	// member's email address, wipe erases the instance including its audit
-	// log. A month-old cookie is not sufficient proof of presence for either.
-	mux.HandleFunc("GET /api/v1/admin/export", middleware.AdminRequired(db, middleware.SudoRequired(db, handler.AdminExport(db, cfg))))
-	mux.HandleFunc("POST /api/v1/admin/tags", middleware.AdminRequired(db, handler.CreateTag(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/tags/{id}", middleware.AdminRequired(db, handler.UpdateTag(db)))
-	mux.HandleFunc("DELETE /api/v1/admin/tags/{id}", middleware.AdminRequired(db, handler.DeleteTag(db)))
-	mux.HandleFunc("GET /api/v1/admin/reports", middleware.AdminRequired(db, handler.ListReports(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/reports/{id}", middleware.AdminRequired(db, handler.UpdateReport(db)))
-	mux.HandleFunc("GET /api/v1/admin/users", middleware.AdminRequired(db, handler.ListUsers(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/users/{id}", middleware.AdminRequired(db, handler.UpdateUser(db)))
-	// Setting an address points an account at a mailbox, and whoever holds
-	// that mailbox can magic-link into it — the same shape as promotion, so
-	// the same step-up gate (docs/adr/017), and its own route rather than a
-	// field on the PATCH above (docs/adr/072).
-	mux.HandleFunc("PUT /api/v1/admin/users/{id}/email", middleware.AdminRequired(db, middleware.SudoRequired(db, handler.SetUserEmail(db, cfg))))
-	mux.HandleFunc("GET /api/v1/admin/audit-log", middleware.AdminRequired(db, handler.AuditLog(db)))
-	// Archived patches: list + the only way back from archived (docs/adr/034).
-	mux.HandleFunc("GET /api/v1/admin/nodes", middleware.AdminRequired(db, handler.AdminListNodes(db)))
-	mux.HandleFunc("POST /api/v1/admin/nodes/{id}/restore", middleware.AdminRequired(db, handler.AdminRestoreNode(db)))
-	mux.HandleFunc("GET /api/v1/admin/stats", middleware.AdminRequired(db, handler.AdminStats(db)))
-
-	// Quilt settings (docs/adr/014): community identity + danger zone.
-	// Neighbor quilts: the instance's public adjacency list (docs/adr/024).
-	mux.HandleFunc("GET /api/v1/admin/neighbor-quilts", middleware.AdminRequired(db, handler.AdminListNeighborQuilts(db)))
-	mux.HandleFunc("POST /api/v1/admin/neighbor-quilts", middleware.AdminRequired(db, handler.AdminAddNeighborQuilt(db)))
-	mux.HandleFunc("DELETE /api/v1/admin/neighbor-quilts/{id}", middleware.AdminRequired(db, handler.AdminDeleteNeighborQuilt(db)))
-
-	mux.HandleFunc("GET /api/v1/admin/aggregators", middleware.AdminRequired(db, handler.AdminListAggregators(db)))
-	mux.HandleFunc("POST /api/v1/admin/aggregators", middleware.AdminRequired(db, handler.AdminCreateAggregator(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/aggregators/{id}", middleware.AdminRequired(db, handler.AdminUpdateAggregator(db)))
-	mux.HandleFunc("DELETE /api/v1/admin/aggregators/{id}", middleware.AdminRequired(db, handler.AdminDeleteAggregator(db)))
-	mux.HandleFunc("POST /api/v1/admin/aggregators/{id}/sync", middleware.AdminRequired(db, handler.AdminSyncAggregator(db)))
-	mux.HandleFunc("GET /api/v1/admin/aggregator-names", middleware.AdminRequired(db, handler.AdminListUnroutedNames(db)))
-	mux.HandleFunc("POST /api/v1/admin/aggregator-names/ignore", middleware.AdminRequired(db, handler.AdminIgnoreName(db, true)))
-	mux.HandleFunc("POST /api/v1/admin/aggregator-names/unignore", middleware.AdminRequired(db, handler.AdminIgnoreName(db, false)))
-	mux.HandleFunc("GET /api/v1/admin/aggregator-listings", middleware.AdminRequired(db, handler.AdminListNameListings(db)))
-	mux.HandleFunc("GET /api/v1/admin/programs", middleware.AdminRequired(db, handler.AdminListPrograms(db)))
-
-	mux.HandleFunc("GET /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminGetSettings(db, cfg)))
-	mux.HandleFunc("PATCH /api/v1/admin/settings", middleware.AdminRequired(db, handler.AdminUpdateSettings(db, cfg)))
-	mux.HandleFunc("GET /api/v1/admin/legal", middleware.AdminRequired(db, handler.AdminGetLegal(db, cfg)))
-	mux.HandleFunc("PUT /api/v1/admin/legal/{doc}", middleware.AdminRequired(db, handler.AdminUpdateLegal(db)))
-	mux.HandleFunc("DELETE /api/v1/admin/legal/{doc}", middleware.AdminRequired(db, handler.AdminResetLegal(db)))
-	mux.HandleFunc("GET /api/v1/admin/label", middleware.AdminRequired(db, handler.AdminGetLabel(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/label", middleware.AdminRequired(db, handler.AdminUpdateLabel(db)))
-	mux.HandleFunc("PUT /api/v1/admin/label/costs", middleware.AdminRequired(db, handler.AdminPutLabelCosts(db)))
-	mux.HandleFunc("POST /api/v1/admin/label/stewards", middleware.AdminRequired(db, handler.AdminAddLabelSteward(db)))
-	mux.HandleFunc("DELETE /api/v1/admin/label/stewards/{id}", middleware.AdminRequired(db, handler.AdminRemoveLabelSteward(db)))
-	mux.HandleFunc("POST /api/v1/admin/wipe", middleware.AdminRequired(db, middleware.SudoRequired(db, handler.AdminWipe(db, cfg))))
-
-	// Unclaimed patches: community submissions + admin management.
-	mux.HandleFunc("POST /api/v1/submissions", middleware.AuthRequired(db, handler.SubmitPatch(db, cfg)))
-	mux.HandleFunc("POST /api/v1/admin/unclaimed", middleware.AdminRequired(db, handler.CreateUnclaimedPatch(db)))
-	mux.HandleFunc("POST /api/v1/admin/unclaimed/bulk", middleware.AdminRequired(db, handler.BulkCreateUnclaimed(db)))
-	mux.HandleFunc("GET /api/v1/admin/submissions", middleware.AdminRequired(db, handler.ListSubmissions(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/submissions/{id}", middleware.AdminRequired(db, handler.ReviewSubmission(db)))
-	mux.HandleFunc("GET /api/v1/admin/event-submissions", middleware.AdminRequired(db, handler.ListAdminEventSubmissions(db)))
-	mux.HandleFunc("POST /api/v1/nodes/{slug}/claim", middleware.AuthRequired(db, handler.RequestClaim(db, cfg)))
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/claims/mine", middleware.AuthRequired(db, handler.MyClaim(db, cfg)))
-	mux.HandleFunc("POST /api/v1/claims/{id}/verify", middleware.AuthRequired(db, handler.VerifyClaim(db)))
-	mux.HandleFunc("POST /api/v1/claims/{id}/withdraw", middleware.AuthRequired(db, handler.WithdrawClaim(db)))
-	mux.HandleFunc("POST /api/v1/claims/{id}/resend-email", middleware.AuthRequired(db, handler.ResendClaimEmail(db, cfg)))
-	mux.HandleFunc("POST /api/v1/claims/{id}/setup", middleware.AuthRequired(db, handler.SetupClaim(db)))
-	// Email-claim link landing: no auth — possessing the token is the proof
-	// (docs/adr/030). GET is read-only; completion requires the POST.
-	mux.HandleFunc("GET /api/v1/claims/verify-email", handler.EmailClaimInfo(db))
-	mux.HandleFunc("POST /api/v1/claims/verify-email", handler.CompleteEmailClaim(db))
-	mux.HandleFunc("GET /api/v1/admin/claims", middleware.AdminRequired(db, handler.ListClaims(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/claims/{id}", middleware.AdminRequired(db, handler.ReviewClaim(db)))
-	mux.HandleFunc("POST /api/v1/admin/nodes/{slug}/assign", middleware.AdminRequired(db, handler.AdminAssignOwner(db)))
-	mux.HandleFunc("PATCH /api/v1/admin/nodes/{slug}/verification-domain", middleware.AdminRequired(db, handler.AdminSetVerificationDomain(db)))
-
-	// Governance templates + overview.
-	mux.HandleFunc("GET /api/v1/templates/{id}", handler.GetTemplate())
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/overview", middleware.AuthOptional(db, handler.GovernanceOverview(db)))
-	// What the patch has decided, in order (docs/adr/055). Assembled from
-	// proposals and attestations rather than stored, so it needs no auth of
-	// its own beyond what those already carry.
-	mux.HandleFunc("GET /api/v1/nodes/{slug}/governance/record", middleware.AuthOptional(db, handler.GovernanceRecord(db)))
-
-	// Federation surface — honor the federation.enabled config toggle.
-	// Keypair/ap_id backfill above stays unconditional so enabling later
-	// is seamless.
-	if cfg.Federation.Enabled {
-		// ActivityPub endpoints.
-		mux.HandleFunc("GET /ap/users/{id}", handler.APUser(db))
-		mux.HandleFunc("GET /ap/users/{id}/outbox", handler.APUserOutbox(db))
-		mux.HandleFunc("GET /ap/users/{id}/followers", handler.APUserFollowers(db))
-		mux.HandleFunc("GET /ap/nodes/{id}", handler.APNode(db))
-		mux.HandleFunc("GET /ap/nodes/{id}/outbox", handler.APNodeOutbox(db))
-		mux.HandleFunc("GET /ap/nodes/{id}/followers", handler.APNodeFollowers(db))
-		mux.HandleFunc("GET /ap/events/{id}", handler.APEvent(db))
-		mux.HandleFunc("GET /ap/proposals/{id}", handler.APProposal(db))
-		mux.HandleFunc("GET /ap/governance/{id}", handler.APGovernanceDoc(db))
-
-		// AP Inbox endpoints (receive activities from remote instances).
-		mux.HandleFunc("POST /ap/users/{id}/inbox", handler.APUserInbox(db))
-		mux.HandleFunc("POST /ap/nodes/{id}/inbox", handler.APNodeInbox(db))
-
-		// Instance service actor (docs/adr/024): relays cross-quilt
-		// follows; its inbox receives Accepts and followed patches'
-		// broadcasts.
-		mux.HandleFunc("GET /ap/instance", handler.APInstanceActor(db, cfg))
-		mux.HandleFunc("POST /ap/instance/inbox", handler.APInstanceInbox(db))
-
-		// WebFinger.
-		mux.HandleFunc("GET /.well-known/webfinger", handler.WebFinger(db))
-
-		// Git smart HTTP for governance repos (federation transport).
-		// Uses a wrapper that only handles /governance.git/ paths, passing through otherwise.
-		gitHandler := governance.GitHTTPHandler(func(slug string) string {
-			return handler.NodeIDFromSlug(db, slug)
-		})
-		mux.HandleFunc("GET /api/v1/nodes/{slug}/governance.git/info/refs", gitHandler.ServeHTTP)
-		mux.HandleFunc("POST /api/v1/nodes/{slug}/governance.git/git-upload-pack", gitHandler.ServeHTTP)
-	} else {
-		log.Println("federation: disabled (federation.enabled=false) — AP, WebFinger, and git transport not mounted")
-	}
-
-	// robots.txt: opt out of AI training/scraping crawlers by name. Paired
-	// with the BlockAICrawlers middleware below for the ones that ignore it.
-	mux.HandleFunc("GET /robots.txt", middleware.RobotsTxt())
-
-	// Legacy /pins/{id} URLs (the retired UI word for events — docs/adr/027)
-	// were federated into other instances' timelines; redirect them forever.
-	mux.HandleFunc("GET /pins/{id}", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/events/"+r.PathValue("id"), http.StatusMovedPermanently)
-	})
-
 	// SPA: serve web/dist/ for everything else.
 	dist, err := fs.Sub(web.DistFS, "dist")
 	if err != nil {
@@ -692,14 +377,34 @@ func main() {
 
 	spa := spaHandler{fs: http.FS(dist)}
 	seoWrapped := middleware.SEO(db, cfg, spaHTML)(spa)
-	mux.Handle("/", seoWrapped)
 
-	// Middleware stack: BlockAICrawlers → CORS → CSRF → routes.
+	// Build router. The registrations live in routes.go, as a table a test
+	// can walk: authorization is decided inside the handlers, so enumerating
+	// the routes is the only way to ask every one of them whether it refuses
+	// a caller who holds nothing (routes_auth_test.go).
+	//
+	// Visitor counting wraps the SPA alone, so it sees a page being loaded
+	// and never an API call or an asset. It counts nothing until the admin
+	// turns it on (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+	mux, _ := buildRoutes(serverDeps{
+		db:       db,
+		cfg:      cfg,
+		wa:       wa,
+		gaz:      gaz,
+		notifier: notifier,
+		usage:    usage,
+		spa:      usage.Wrap(seoWrapped),
+	})
+
+	// Middleware stack: BlockAICrawlers → Compress → CORS → CSRF → routes.
 	// BlockAICrawlers is outermost so matching crawlers are rejected before
 	// any other work; federation, preview, and search agents pass through.
+	// Compress sits above everything that writes a body — the SPA bundle and
+	// the JSON alike — and below the crawler gate, which writes none.
 	var root http.Handler = mux
 	root = middleware.CSRF(root)
 	root = middleware.CORS(cfg, root)
+	root = middleware.Compress(root)
 	root = middleware.BlockAICrawlers(root)
 
 	// Start server.
@@ -760,6 +465,16 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	f.Close()
+
+	// Everything under /assets/ carries a content hash in its name, so the
+	// bytes behind a given URL never change: a new build is a new name. That
+	// makes them cacheable for as long as a browser cares to, which is the
+	// difference between a returning visitor revalidating two megabytes and
+	// fetching nothing at all. index.html is deliberately not in here — it is
+	// the file that names the current hashes.
+	if strings.HasPrefix(path, "/assets/") {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	}
 
 	http.FileServer(h.fs).ServeHTTP(w, r)
 }

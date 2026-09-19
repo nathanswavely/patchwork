@@ -7,13 +7,21 @@ package handler
 // These templates describe what the SOFTWARE actually does — every claim
 // here is checked against the codebase. If a feature changes in a way
 // that falsifies a sentence below (e.g. adding analytics, changing what
-// federates, adding self-serve account deletion), update the sentence in
-// the same PR. A privacy policy that drifts from the code is worse than
-// none.
+// federates, changing what account deletion erases), update the sentence
+// in the same PR. A privacy policy that drifts from the code is worse
+// than none.
+//
+// The deletion section is the sharpest case of that rule and the reason it
+// is written down: it enumerates what account_deletion.go erases, what it
+// keeps, and both refusals. Change that handler's lists and this text is
+// wrong the same day (docs/adr/086).
 //
 // {quilt_name} and {domain} are substituted at serve time with the
 // effective instance name (DB override or patchwork.yaml) and configured
 // domain, so a rename never strands a stale name inside a legal document.
+// {usage_stats} is substituted with whichever of the two paragraphs below
+// is true of this deployment right now, because visitor counting is a
+// switch and the policy has to say which way it is set.
 //
 // Formatting: one line per paragraph and per list item — the frontend
 // renders markdown with breaks:true (single newlines become <br>), so a
@@ -23,15 +31,17 @@ const defaultPrivacyPolicy = `*This is the default privacy policy that ships wit
 
 ## The short version
 
-Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and which events you RSVP to. Real people run this server. The [Label](/label) says who they are and how to reach them.
+Nobody runs {quilt_name} for profit. There are no ads or trackers here, no analytics scripts, and nothing about you gets sold or rented to anyone. The site keeps the minimum it needs to work: an email address to sign you in, the profile you choose to write, and a record of which patches you join and what you post there. Real people run this server. The [Label](/label) says who they are and how to reach them.
 
 ## What this site collects
 
 **Account information.** Your email address, if provided, which is used to send sign-in links and any notifications you turn on, plus your chosen username. A display name, bio, and avatar are stored only if you add them. Passkeys are stored as public keys. The private key never leaves your device, and there are no passwords anywhere in the system.
 
-**Activity.** The patches you join, follow, or administer, the events you RSVP to, the proposals and votes you take part in, and anything you post or edit.
+**Activity.** The patches you join, follow, or administer, the proposals and votes you take part in, and anything you post or edit, events included. There is no RSVP on this site and no record of whether you went to anything.
 
-**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address, and the web server keeps ordinary request logs. All of this exists for security and troubleshooting. None of it is used for profiling.
+**Technical records.** Signing in stamps your session with an IP address. Administrative actions go into an audit log along with the acting account and IP address. The web server as shipped keeps no log of visits. All of this exists for security and troubleshooting. None of it is used for profiling.
+
+{usage_stats}
 
 ## What other people can see
 
@@ -52,9 +62,15 @@ This site can speak ActivityPub, the protocol behind Mastodon and similar networ
 
 Membership records never federate. What leaves this server is only what was already public on it.
 
+## Maps
+
+The map is drawn from tiles fetched from OpenFreeMap, or from OpenStreetMap's own tile server on a browser that cannot draw the vector kind. Opening a map page sends those servers your IP address, the way any server your browser fetches from receives it, and nothing else. Apart from map tiles, a page here fetches only from this site, unless you have connected another quilt in your settings, in which case your browser reads that quilt's public pages directly.
+
 ## Cookies
 
-This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.
+This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind. There is no cookie banner because there is nothing to consent to.
+
+A few conveniences are kept in your browser's own storage rather than on the server: whether you collapsed the sidebar, a draft you were writing, that you have seen the introduction. That storage never leaves your browser, nobody here reads it, and it is yours to clear.
 
 ## Email
 
@@ -62,11 +78,27 @@ Sign-in links and any notifications you turn on go out through the email server 
 
 ## The seamrip: data portability
 
-Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. The software documents this on purpose as a governance safety valve. If this community's leadership goes sideways, the community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export.
+Patchwork is built so a community can pack up and leave. Site administrators can export the instance's data, membership records included, to start a successor site. That is deliberate: it is the safety valve if this community's leadership goes sideways. The community can fork itself under new stewards, and the connections between people and patches survive the move. Sessions, passkeys, email delivery settings, and federation keys never travel in an export. A deleted account travels as the emptied record it became, not as an account, so the successor site inherits the erasure along with everything else.
+
+You do not need an administrator to get your own copy. **Download my data** in your account settings hands you one file with everything this site holds about you: your profile and contact card, every membership including the ones you keep hidden, the proposals, votes, comments, notices and events you wrote, your settings and notifications, and the log of your own sign-ins. It contains nothing anyone else wrote and no sign-in secrets, so the file cannot be used to get into your account.
+
+The same goes for the quilt itself. **Member seamrip** in your account settings hands you this site as you can already see it, in the format a new Patchwork reads. It holds the patches, events, charters, proposals and member lists that are open to you. It holds no email addresses, no contact cards, no noticeboards, and nothing from a patch you are not in. Other people appear in it as a username, a display name and an avatar, which is enough for a new site to invite them back. Nobody can be signed in from that file either. Taking a copy is recorded in the audit log, and there is a limit of two a day.
 
 ## How long things are kept, and deletion
 
-Your content and account stay until removed. There is no self-serve deletion button yet. To have your account or specific content removed, contact the stewards listed on the [Label](/label), and they can remove it with the administrative tools. Content that federation already copied to other servers, or that went out in an export made before the removal, may persist outside this server's control.
+Your content and account stay until you delete the account yourself, from Settings. Deleting is immediate and cannot be undone. It asks you to confirm with a passkey and to type your username. It treats two kinds of data differently.
+
+**Erased.** Your email address, display name, bio, links, avatar, and contact card. Your passkeys, recovery codes, and sessions, so nobody can sign in as you again. Your personal calendar link, your notification settings, and any unread notifications. The quilts you had connected, the patches you followed on other quilts, and every membership you held here. Any claim on a patch still waiting for review, and any candidacy in an election that had not closed.
+
+**Kept, with your name removed.** The things you took part in: proposals you wrote, votes and ballots you cast, comments, notices and replies, events you posted, calendar feeds you attached, and decisions you recorded on a patch's behalf. This site exists to hold a community's record of what it decided. A tally that quietly loses a voter is not a record anyone can check. Those entries stay, and they now read as "Deleted account" with no name and no link. Your account row survives with nothing in it. Your username stays retired rather than freed, so no stranger inherits links that pointed at you. Your profile page stops existing.
+
+One consequence is worth stating plainly. A vote of yours on a proposal that is still open stops counting toward its result, because the tally counts current members and you are no longer one. This is exactly what happens when anybody leaves a patch. Anything already decided stays decided.
+
+**Two refusals.** You cannot delete your account while you are the only admin of a patch. The site names those patches and asks you to hand them over first, because the alternative is a community nobody can administer. The last remaining administrator of the whole site cannot delete their account either.
+
+Deletion cannot reach outside this server. Anything federation already copied elsewhere is held by those servers under their policies. This site sends a deletion notice for your account to every server known to follow it and stops answering for it afterwards, but it cannot make anyone honor that notice. Data that went out in an export made before you deleted is likewise a copy nobody here can reach.
+
+If you would rather have a steward do this, or want specific content removed without closing your account, the people on the [Label](/label) can help. Their tools can hide content and suspend an account. The erasure described above is the one you perform yourself.
 
 ## Age
 
@@ -79,6 +111,14 @@ If this policy changes, the change shows up on this page. The software keeps no 
 ## Who to talk to
 
 The stewards named on the [Label](/label) run {quilt_name}. For any question about your data, they are the people to ask.`
+
+// The two states of the visitor-counting paragraph
+// (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md). Every
+// clause of the "on" text is a property of internal/middleware/usage.go;
+// change one and change the other.
+const usageStatsOnText = `**Visitor counts.** The stewards have turned on visitor counting. The server counts how many times each kind of page was loaded on each day, and how many different browsers loaded any page that day. To tell browsers apart within a day it hashes your address and browser type with a secret it draws at random, keeps only in memory, and replaces every midnight, so the count cannot be turned back into you and no two days can be joined. No script runs in your browser for this, nothing is stored there, only daily totals are ever written down, and they are deleted after 13 months. Pages are counted by their shape, never with anything typed after a question mark.`
+
+const usageStatsOffText = `**Visitor counts.** This site does not count its visitors. The software can keep daily page-view totals, computed on the server with no script and no cookie, but the stewards have not turned that on. If they do, this paragraph will say so.`
 
 const defaultUserAgreement = `*This is the default user agreement that ships with the Patchwork software. The people who run {quilt_name} can replace it with their own, and if they have, this notice won't be here.*
 
@@ -112,7 +152,7 @@ These rules apply everywhere on this site:
 - No illegal content, no spam, no impersonation, and no attempts to break or abuse the platform or other people's accounts.
 - Every patch starts from [the lining](/lining), the shared community-standards baseline that ships with the software. A patch can amend its copy, but amendments are public and the patch is visibly marked as having changed them. Joining a patch means playing by its standards and published charters, whatever they currently say.
 
-These expectations don't wait for you to join anything. They cover every way you use the site, from following and RSVPing to commenting and voting, member of a patch or not.
+These expectations don't wait for you to join anything. They cover every way you use the site, from following and reading to commenting and voting, member of a patch or not.
 
 ## Moderation
 
@@ -128,4 +168,4 @@ Volunteers run this site on real hardware, with no promise of uptime, availabili
 
 ## Changes and ending
 
-This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and the stewards can end the agreement on their side by closing your account as described under Moderation.`
+This agreement can change, and the current version is always this page. Using the site after a change means accepting it. You can stop using the site whenever you like, and you can delete your account yourself from Settings. The privacy policy sets out exactly what that erases and what stays in the community's record. Two things it will not let you do: walk out as the only admin of a patch, or as the last administrator of the site. Hand those over first. The stewards can end the agreement on their side by closing your account, as described under Moderation.`

@@ -6,6 +6,7 @@ import (
 	"sort"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
 // What a patch has decided, in order (docs/adr/055).
@@ -65,6 +66,18 @@ func GovernanceRecord(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// The record endpoint is the deliberation by name — every entry
+		// carries its author, and a settled one its applier or decliner
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		if !canReadGovernanceRecord(db, r, nodeID) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"items":                    []recordEntry{},
+				"public_governance_record": "nobody",
+			})
+			return
+		}
+
 		entries := []recordEntry{}
 		entries = append(entries, settledProposals(db, nodeID, slug)...)
 		entries = append(entries, recordedDecisions(db, nodeID)...)
@@ -80,16 +93,22 @@ func GovernanceRecord(db *database.DB) http.HandlerFunc {
 }
 
 // settledProposals covers everything decided in Patchwork: votes that carried
-// or failed, direct changes, and elections.
+// or failed, direct changes, and elections — plus the two that decided nothing
+// and are here because their window closed, a lapse and an unsettled contest.
 func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 	out := []recordEntry{}
 	rows, err := db.Query(`
 		SELECT p.id, p.title, p.status, COALESCE(p.state,''), p.seats_contested,
 		       COALESCE(p.applied_at, p.updated_at) AS decided_at,
-		       COALESCE(u.display_name, u.username, '') AS author_name,
+		       `+displayNameExpr("u")+` AS author_name,
+		       COALESCE(`+displayNameExpr("ap")+`, '') AS applier_name,
+		       COALESCE(`+displayNameExpr("dc")+`, '') AS decliner_name,
+		       COALESCE(p.voting_terms,'') AS terms,
 		       (SELECT COUNT(*) FROM votes v WHERE v.proposal_id = p.id) AS any_votes
 		FROM proposals p
 		LEFT JOIN users u ON u.id = p.author_id
+		LEFT JOIN users ap ON ap.id = p.applied_by
+		LEFT JOIN users dc ON dc.id = p.declined_by
 		WHERE p.node_id = ? AND p.status IN ('approved','rejected')
 		ORDER BY decided_at DESC`, nodeID)
 	if err != nil {
@@ -98,11 +117,13 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id, title, status, state, decidedAt, author string
+		var id, title, status, state, decidedAt, author, applier, decliner, termsJSON string
 		var seats, anyVotes int
-		if rows.Scan(&id, &title, &status, &state, &seats, &decidedAt, &author, &anyVotes) != nil {
+		if rows.Scan(&id, &title, &status, &state, &seats, &decidedAt, &author, &applier, &decliner, &termsJSON, &anyVotes) != nil {
 			continue
 		}
+		var terms model.GovernanceConfig
+		json.Unmarshal([]byte(termsJSON), &terms)
 
 		e := recordEntry{At: decidedAt, Title: title, Link: "/patches/" + slug + "/governance/" + id}
 		switch {
@@ -116,17 +137,40 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 			} else {
 				e.Outcome = "unsettled"
 			}
-		case anyVotes == 0 && state == "in_effect":
-			// Born applied under admin-decides rules (docs/adr/041). No vote
-			// happened, so the record names who applied it instead of a tally.
+		case decliner != "":
+			// The maintainer said no (docs/adr/092). Never "failed": a
+			// tally, if there was one, was advice, and the record must not
+			// say the members turned it down when one person did.
+			e.Kind = "direct"
+			e.Outcome = "declined"
+			e.Actor = decliner
+		case terms.DecisionMethod == "admin" && state == "in_effect", anyVotes == 0 && state == "in_effect":
+			// Born applied under admin-decides rules (docs/adr/041), or
+			// approved by the maintainer after asking the members
+			// (docs/adr/092). Either way a person decided, and the record
+			// names them instead of a tally. Proposals from before terms
+			// were photographed carry none, so the vote-less in_effect
+			// case still recognises them.
 			e.Kind = "direct"
 			e.Outcome = "applied"
 			e.Actor = author
+			if applier != "" {
+				e.Actor = applier
+			}
 		default:
 			e.Kind = "vote"
-			if status == "approved" {
+			switch {
+			case status == "approved":
 				e.Outcome = "carried"
-			} else {
+			case state == "lapsed":
+				// The window closed under quorum (docs/adr/097). Nobody
+				// decided it either way, so it is not a vote that failed —
+				// and the `rejected` it carries is the schema's only
+				// terminal "no", not the community's answer. Read off the
+				// state for the same reason the election branch above reads
+				// off the seats: the status column cannot tell them apart.
+				e.Outcome = "lapsed"
+			default:
 				e.Outcome = "failed"
 			}
 		}
@@ -144,7 +188,7 @@ func recordedDecisions(db *database.DB, nodeID string) []recordEntry {
 	// the correction sits beside what it corrects; here they would read as two
 	// councils seated on one day.
 	rows, err := db.Query(`
-		SELECT a.id, a.decided_at, a.summary, COALESCE(u.display_name, u.username, '')
+		SELECT a.id, a.decided_at, a.summary, `+displayNameExpr("u")+`
 		FROM attestations a
 		LEFT JOIN users u ON u.id = a.recorded_by
 		WHERE a.node_id = ? AND a.kind = 'leadership'
@@ -177,7 +221,7 @@ func recordedDecisions(db *database.DB, nodeID string) []recordEntry {
 
 	// Texts a meeting adopted.
 	arows, aerr := db.Query(`
-		SELECT a.doc_title, a.decided_at, a.summary, COALESCE(u.display_name, u.username, '')
+		SELECT a.doc_title, a.decided_at, a.summary, `+displayNameExpr("u")+`
 		FROM amendment_attestations a
 		LEFT JOIN users u ON u.id = a.recorded_by
 		WHERE a.node_id = ?`, nodeID)

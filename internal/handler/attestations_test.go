@@ -18,6 +18,11 @@ import (
 func elsewhereNode(t *testing.T, db *database.DB, ownerID, name, slug string) string {
 	t.Helper()
 	nodeID := createTestNode(t, db, ownerID, name, slug, "open")
+	// An attestation is the deliberation of a patch that decides elsewhere,
+	// and these tests read one from outside the room, so the patch publishes
+	// its record
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+	openGovernanceRecord(t, db, nodeID)
 	db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,
 		`{"decision_method":"majority","quorum_percent":0,"leadership_model":"elected","leadership_venue":"elsewhere","min_voting_tenure_days":0}`,
 		nodeID)

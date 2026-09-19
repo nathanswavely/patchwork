@@ -8,6 +8,7 @@
     disconnectQuilt,
     normalizeOrigin,
   } from '../stores/multiQuilt.svelte.js';
+  import { patchLinkPath } from '../lib/patchLink.js';
 
   // Paste-a-link follow path (docs/adr/024): browsing other quilts
   // happens on their own site, so following starts from a copied link.
@@ -16,17 +17,12 @@
 
   function handleFollowLink() {
     followError = '';
-    const m = followUrl.trim().match(/^https?:\/\/([^/]+)\/patches\/([a-z0-9-]+)\/?$/);
-    if (!m) {
+    const path = patchLinkPath(followUrl, window.location.host);
+    if (!path) {
       followError = "That doesn't look like a patch link. Expected https://their-quilt/patches/patch-name.";
       return;
     }
-    const [, host, slug] = m;
-    if (host === window.location.host) {
-      navigate(`/patches/${slug}`);
-    } else {
-      navigate(`/quilts/${host}/patches/${slug}`);
-    }
+    navigate(path);
   }
 
   let newUrl = $state('');

@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
-  import { isLoggedIn, isAdmin as isInstanceAdmin, getUser } from '../stores/auth.svelte.js';
+  import { isLoggedIn, isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
   import { parseCsv, rowsToEvents, TEMPLATE_CSV } from '../lib/eventCsv.js';
   import { formatEventDate as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
@@ -14,6 +14,7 @@
   let slug = $derived(patch.value.slug);
   let membershipRole = $derived(patch.value.membershipRole);
   let isUnclaimed = $derived(patch.value.isUnclaimed);
+  let viewerTrusted = $derived(patch.value.viewerTrusted === true);
   let node = $derived(patch.value.node);
 
   let followerPermissions = $derived(patch.value.followerPermissions);
@@ -32,13 +33,14 @@
   let postingRight = $derived(eventPostingRight({
     signedIn: isLoggedIn(),
     isInstanceAdmin: isInstanceAdmin(),
-    trustedContributor: !!getUser()?.trusted_contributor,
+    viewerTrusted,
     isUnclaimed,
     isBanned: patch.value.isBanned,
     // Not `isMember`: the patch context sets it for followers too.
     isMemberOrAdmin: membershipRole === 'member' || membershipRole === 'admin',
     submissionsEnabled: getSubmissionsEnabled(),
     acceptSuggestions: node?.accept_event_suggestions === true,
+    hasMoved: !!node?.moved_to,
   }));
 
   let events = $state([]);
@@ -101,9 +103,15 @@
   // create events one at a time.
   let canBulkUpload = $derived(
     isUnclaimed
-      ? (isInstanceAdmin() || !!getUser()?.trusted_contributor)
+      ? (isInstanceAdmin() || viewerTrusted)
       : (patch.value.isAdmin || isInstanceAdmin())
   );
+
+  // A trusted contributor who is not a patch admin (there are none — this
+  // patch is unclaimed) or instance admin has no Settings tab at all
+  // (workspaceTabs only grants one to isAdmin), so the door to Event
+  // Sources lives here instead, beside the other calendar-owner controls.
+  let showSourcesLink = $derived(isUnclaimed && viewerTrusted && !patch.value.isAdmin);
 
   let showUpload = $state(false);
   let uploadFileName = $state('');
@@ -204,6 +212,17 @@
       {/if}
     </span>
     <span class="header-buttons">
+      {#if showSourcesLink}
+        <!-- The only door to Event Sources a trusted contributor has: the
+             Settings tab itself is admin-only (workspaceTabs), so this
+             patch has none to click. The route's own gate accepts
+             viewer_trusted, so this just needs to point there. -->
+        <a
+          href="/patches/{slug}/settings/sources"
+          class="btn btn-secondary btn-sm"
+          onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/settings/sources`); }}
+        >Sources</a>
+      {/if}
       {#if canBulkUpload}
         <button class="btn btn-secondary btn-sm" onclick={() => (showUpload = !showUpload)}>Upload events</button>
       {/if}

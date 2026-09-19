@@ -13,10 +13,23 @@
   let isAdmin = $derived(patch.value.isAdmin);
   let isUnclaimed = $derived(patch.value.isUnclaimed);
   let membershipRole = $derived(patch.value.membershipRole);
-  let followerPermissions = $derived(patch.value.followerPermissions);
-  let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.charters === false);
+  // `follower_permissions.charters` is deliberately not read on this page.
+  // It grants a follower this patch's *members-only* documents
+  // (docs/adr/036); it never withholds what the patch published. This page
+  // used to refuse a follower the whole room over it — so a follower, who
+  // has identified themselves, saw less than a passer-by, the exact
+  // inversion docs/adr/050 ruled out. The server filters the listing per
+  // document; the page shows whatever came back.
 
   let docs = $state([]);
+  // Whether this listing held only what the patch published to everyone.
+  // The server says it about the viewer, not about the documents, so it
+  // discloses nothing about what is being withheld.
+  let publishedOnly = $state(false);
+  // Whether this patch decides its proposals elsewhere (docs/adr/052).
+  // Only used to signpost: a patch that meets in a room has two doors here
+  // and no label saying which is which.
+  let decidesElsewhere = $state(false);
   let loading = $state(true);
   let error = $state('');
 
@@ -40,11 +53,18 @@
     try {
       const data = await api(`nodes/${slug}/governance`);
       docs = data.items || data || [];
+      publishedOnly = data.published_only === true;
     } catch (e) {
       error = e.message || 'Failed to load governance documents';
       docs = [];
     } finally {
       loading = false;
+    }
+    try {
+      const rules = await api(`nodes/${slug}/governance/rules`);
+      decidesElsewhere = (rules?.proposal_venue || 'patchwork') === 'elsewhere';
+    } catch {
+      decidesElsewhere = false;
     }
   }
 
@@ -70,12 +90,6 @@
 
 <GovernanceShell activeSection="documents">
   {#snippet children()}
-{#if permissionDenied}
-  <div class="permission-notice">
-    <p>This content is only visible to members.</p>
-    <p class="muted">Become a member to access documents.</p>
-  </div>
-{:else}
 <div class="page-fade">
   <div>
       <div class="page-header">
@@ -85,6 +99,24 @@
             <p class="muted section-hint">
               New documents start members only. Publish one to let visitors and
               other quilts read it.
+            </p>
+            <!-- Two doors on this page, and on a patch that decides in a
+                 room they are easy to mistake for each other (F-057): the
+                 minutes of a meeting are a document, while recording an
+                 adopted text replaces a charter with the version a meeting
+                 passed. Neither button can say that on its face. -->
+            {#if decidesElsewhere}
+              <p class="muted section-hint">
+                Minutes of a meeting go in a document. Recording an adopted
+                text, below, replaces a charter with the version a meeting
+                adopted.
+              </p>
+            {/if}
+          {:else if publishedOnly}
+            <!-- What this listing is, said once, so the empty state below
+                 only has to say which kind of empty it is. -->
+            <p class="muted section-hint">
+              Members-only documents are not listed here.
             </p>
           {/if}
         </div>
@@ -108,7 +140,14 @@
       {:else if error}
         <p class="error-text" style="padding: 2rem 0; text-align: center;">{error}</p>
       {:else if docs.length === 0}
-        <p class="muted" style="padding: 2rem 0; text-align: center;">No governance documents yet.</p>
+        <!-- "This patch has published nothing" and "you are not being shown
+             what it has" are different facts and a reader must be able to
+             tell which they are looking at. Neither sentence says whether
+             anything is being withheld — that would be the disclosure the
+             per-document choice exists to prevent (docs/adr/036). -->
+        <p class="muted" style="padding: 2rem 0; text-align: center;">
+          {publishedOnly ? 'Nothing published yet.' : 'No governance documents yet.'}
+        </p>
       {:else}
         <div class="doc-list">
           {#each docs as doc (doc.id)}
@@ -175,21 +214,10 @@
       <AdoptedElsewhere {slug} {isAdmin} onRecorded={loadDocs} />
     </div>
   </div>
-{/if}
   {/snippet}
 </GovernanceShell>
 
 <style>
-  .permission-notice {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .permission-notice p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
-
   .page-header {
     display: flex;
     justify-content: space-between;

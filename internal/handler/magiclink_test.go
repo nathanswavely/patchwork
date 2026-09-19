@@ -151,3 +151,52 @@ func TestRequestMagicLinkStoresNormalizedAddress(t *testing.T) {
 		t.Errorf("magic_links.email = %q, want %q", stored, "bob@example.com")
 	}
 }
+
+// A throttled request answers the same 200 as a sent one, by design, so the
+// server log has to be the place that says nothing was issued. Without it a
+// developer watching the log for the printed link reuses the previous one
+// and gets "already used" with no clue why (#222).
+func TestRequestMagicLinkThrottleIsLogged(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{}
+	cfg.Instance.Domain = "example.com"
+
+	var logBuf bytes.Buffer
+	log.SetOutput(&logBuf)
+	defer log.SetOutput(os.Stderr)
+
+	// The limiters are process-wide; a distinct client address keeps this
+	// test's four requests out of the per-IP bucket the other tests share.
+	send := func() *httptest.ResponseRecorder {
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/magic-link",
+			strings.NewReader(`{"email":"throttle-test@example.com"}`))
+		req.RemoteAddr = "203.0.113.7:4321"
+		w := httptest.NewRecorder()
+		handler.RequestMagicLink(db, cfg)(w, req)
+		return w
+	}
+	for i := 0; i < 3; i++ {
+		if w := send(); w.Code != http.StatusOK {
+			t.Fatalf("request %d: status = %d, want 200", i+1, w.Code)
+		}
+	}
+	if strings.Contains(logBuf.String(), "throttled") {
+		t.Fatalf("throttle logged before the limit was reached:\n%s", logBuf.String())
+	}
+	issuedBefore := strings.Count(logBuf.String(), "Magic link for")
+
+	w := send()
+	if w.Code != http.StatusOK {
+		t.Errorf("throttled status = %d, want the same 200 as a sent request", w.Code)
+	}
+	if body := w.Body.String(); !strings.Contains(body, `"ok"`) {
+		t.Errorf("throttled body = %q, want the generic ok response", body)
+	}
+	logged := logBuf.String()
+	if !strings.Contains(logged, "throttled") || !strings.Contains(logged, "throttle-test@example.com") {
+		t.Errorf("log should name the throttled address, got:\n%s", logged)
+	}
+	if got := strings.Count(logged, "Magic link for"); got != issuedBefore {
+		t.Errorf("a throttled request printed a link: %d before, %d after", issuedBefore, got)
+	}
+}

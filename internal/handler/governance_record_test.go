@@ -55,6 +55,7 @@ func TestGovernanceRecord_OnlySettledThings(t *testing.T) {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, "rec1", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec One", "rec-one", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	seedSettled(t, db, nodeID, admin.ID, "Still arguing", "open", "voting", "2026-03-01T00:00:00.000Z", 0)
@@ -77,6 +78,7 @@ func TestGovernanceRecord_TellsTheKindsApart(t *testing.T) {
 	admin, _ := createTestUser(t, db, "rec2", "member")
 	voter, _ := createTestUser(t, db, "rec2v", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec Two", "rec-two", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
 
@@ -135,6 +137,7 @@ func TestGovernanceRecord_NewestFirstAcrossSources(t *testing.T) {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, "rec3", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec Three", "rec-three", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	seedSettled(t, db, nodeID, admin.ID, "Older vote", "approved", "in_effect", "2026-01-05T00:00:00.000Z", 0)
@@ -167,6 +170,7 @@ func TestGovernanceRecord_SupersededCouncilsStayOut(t *testing.T) {
 	db := setupTestDB(t)
 	admin, _ := createTestUser(t, db, "rec4", "member")
 	nodeID := createTestNode(t, db, admin.ID, "Rec Four", "rec-four", "open")
+	openGovernanceRecord(t, db, nodeID)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 
 	first := auth.NewUUIDv7()
@@ -194,5 +198,52 @@ func TestGovernanceRecord_EmptyIsAnAnswer(t *testing.T) {
 
 	if entries := readRecord(t, db, "rec-five"); len(entries) != 0 {
 		t.Errorf("expected an empty record, got %d entries", len(entries))
+	}
+}
+
+// A vote nobody decided and an election that seated nobody both carry the
+// schema's terminal 'rejected' status (docs/adr/097, docs/adr/051). The record
+// is headed "everything this patch has settled", so each needs its own word —
+// left to the status column, both read as the community turning something
+// down, which is the one thing neither of them is.
+func TestGovernanceRecord_TellsAbsenceFromRejection(t *testing.T) {
+	db := setupTestDB(t)
+	admin, _ := createTestUser(t, db, "rec6", "member")
+	voter, _ := createTestUser(t, db, "rec6v", "member")
+	nodeID := createTestNode(t, db, admin.ID, "Rec Six", "rec-six", "open")
+	openGovernanceRecord(t, db, nodeID)
+	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
+	createTestMembership(t, db, voter.ID, nodeID, "member", "active")
+
+	// A vote the members answered no to: still "failed", and still red.
+	turnedDown := seedSettled(t, db, nodeID, admin.ID, "Turned down", "rejected", "rejected",
+		"2026-04-01T00:00:00.000Z", 0)
+	db.Exec(`INSERT INTO votes (id, proposal_id, user_id, value) VALUES (?, ?, ?, 'reject')`,
+		auth.NewUUIDv7(), turnedDown, voter.ID)
+
+	// A vote whose window closed under quorum.
+	seedSettled(t, db, nodeID, admin.ID, "Nobody decided", "rejected", "lapsed",
+		"2026-04-02T00:00:00.000Z", 0)
+
+	// An election that settled nothing; the council held over.
+	seedSettled(t, db, nodeID, admin.ID, "Council election", "rejected", "unsettled",
+		"2026-04-03T00:00:00.000Z", 2)
+
+	byTitle := map[string]map[string]interface{}{}
+	for _, e := range readRecord(t, db, "rec-six") {
+		byTitle[e["title"].(string)] = e
+	}
+
+	if got := byTitle["Turned down"]["outcome"]; got != "failed" {
+		t.Errorf("a vote the members rejected still reads as one, got %v", got)
+	}
+	if got := byTitle["Nobody decided"]["kind"]; got != "vote" {
+		t.Errorf("a lapse is still a vote that ran, got kind %v", got)
+	}
+	if got := byTitle["Nobody decided"]["outcome"]; got != "lapsed" {
+		t.Errorf("a lapse must not share the failed vote's word, got %v", got)
+	}
+	if got := byTitle["Council election"]["outcome"]; got != "unsettled" {
+		t.Errorf("an election that seated nobody reads as unsettled, got %v", got)
 	}
 }

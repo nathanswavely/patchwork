@@ -956,6 +956,222 @@ func TestExpireStaleClaims(t *testing.T) {
 	}
 }
 
+// --- The claim's two standing surfaces (docs/adr/039) ---
+//
+// Approving a claim moves it out of the admin review queue and grants the
+// claimant a right they hold no membership for, so before these two listings
+// existed an approval left no trace on any surface either party could return
+// to: the admin's queue went quiet, the patch page kept reading unclaimed to
+// everybody (correctly), and the only record was a notification.
+
+func TestMyClaimsListsOpenClaimsAcrossPatches(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, bobToken := createTestUser(t, db, "bob", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	approvedID := createTestNode(t, db, owner.ID, "Approved Hall", "approved-hall", "open")
+	makeClaimable(t, db, approvedID, "")
+	pendingID := createTestNode(t, db, owner.ID, "Pending Hall", "pending-hall", "open")
+	makeClaimable(t, db, pendingID, "")
+	othersID := createTestNode(t, db, owner.ID, "Bobs Hall", "bobs-hall", "open")
+	makeClaimable(t, db, othersID, "")
+
+	approveAdminClaim(t, db, cfg, "approved-hall", aliceToken, adminToken)
+	openClaim(t, db, cfg, aliceToken, "pending-hall", map[string]interface{}{"method": "admin", "evidence": "mine too"})
+	// Somebody else's claim is nobody's business but theirs.
+	openClaim(t, db, cfg, bobToken, "bobs-hall", map[string]interface{}{"method": "admin", "evidence": "mine"})
+
+	r := authedRequest("GET", "/api/v1/users/me/claims", nil, aliceToken)
+	w := serveMux(t, db, "GET", "/api/v1/users/me/claims", handler.MyClaims(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("my claims: got %d %s", w.Code, w.Body.String())
+	}
+	var got struct {
+		Items []map[string]interface{} `json:"items"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &got)
+	if len(got.Items) != 2 {
+		t.Fatalf("got %d claims, want alice's 2: %s", len(got.Items), w.Body.String())
+	}
+
+	bySlug := map[string]map[string]interface{}{}
+	for _, it := range got.Items {
+		bySlug[it["node_slug"].(string)] = it
+	}
+	if _, ok := bySlug["bobs-hall"]; ok {
+		t.Fatal("my claims leaked another user's claim")
+	}
+
+	approved, ok := bySlug["approved-hall"]
+	if !ok {
+		t.Fatalf("approved claim missing: %s", w.Body.String())
+	}
+	if approved["status"] != "approved" {
+		t.Fatalf("status = %v, want approved", approved["status"])
+	}
+	// The whole point of the row: it says how long the right lasts.
+	if exp, _ := approved["setup_expires_at"].(string); exp == "" {
+		t.Fatalf("approved claim missing setup_expires_at: %s", w.Body.String())
+	}
+	// The name, so the row can be read without resolving a slug.
+	if approved["node_name"] != "Approved Hall" {
+		t.Fatalf("node_name = %v", approved["node_name"])
+	}
+
+	pending, ok := bySlug["pending-hall"]
+	if !ok {
+		t.Fatalf("pending claim missing: %s", w.Body.String())
+	}
+	if pending["status"] != "pending" {
+		t.Fatalf("status = %v, want pending", pending["status"])
+	}
+	if _, has := pending["setup_expires_at"]; has {
+		t.Fatal("a claim nobody has approved carries no setup window")
+	}
+}
+
+func TestMyClaimsDropsLapsedApproval(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Lapsed Hall", "lapsed-hall", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "lapsed-hall", aliceToken, adminToken)
+
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+
+	r := authedRequest("GET", "/api/v1/users/me/claims", nil, aliceToken)
+	w := serveMux(t, db, "GET", "/api/v1/users/me/claims", handler.MyClaims(db), r)
+	var got struct {
+		Items []map[string]interface{} `json:"items"`
+	}
+	json.Unmarshal(w.Body.Bytes(), &got)
+	if len(got.Items) != 0 {
+		t.Fatalf("a lapsed approval is not a right still held: %s", w.Body.String())
+	}
+	// And reading it is what made the row honest.
+	if s := claimStatus(t, db, claimID); s != "expired" {
+		t.Fatalf("lapsed claim status = %s, want expired", s)
+	}
+}
+
+func TestAdminClaimsListsApprovedAwaitingSetup(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Awaiting Hall", "awaiting-hall", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "awaiting-hall", aliceToken, adminToken)
+
+	listClaims := func(query string) []map[string]interface{} {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/admin/claims"+query, nil, adminToken)
+		w := serveAdminMux(t, db, "GET", "/api/v1/admin/claims", handler.ListClaims(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("list%s: got %d %s", query, w.Code, w.Body.String())
+		}
+		var got struct {
+			Items []map[string]interface{} `json:"items"`
+		}
+		json.Unmarshal(w.Body.Bytes(), &got)
+		return got.Items
+	}
+
+	// Approving empties the review queue — that part was never the bug.
+	if items := listClaims(""); len(items) != 0 {
+		t.Fatalf("approved claim still in review queue: %d", len(items))
+	}
+
+	items := listClaims("?status=approved")
+	if len(items) != 1 {
+		t.Fatalf("got %d approved claims, want 1", len(items))
+	}
+	if items[0]["id"] != claimID {
+		t.Fatalf("id = %v, want %s", items[0]["id"], claimID)
+	}
+	if items[0]["claimant_username"] != "alice" {
+		t.Fatalf("claimant_username = %v", items[0]["claimant_username"])
+	}
+	// The admin is being asked to wait, so the panel has to say until when.
+	if exp, _ := items[0]["setup_expires_at"].(string); exp == "" {
+		t.Fatalf("approved claim missing setup_expires_at: %v", items[0])
+	}
+
+	// Once the window closes the claim is not awaiting anybody.
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+	if items := listClaims("?status=approved"); len(items) != 0 {
+		t.Fatalf("lapsed approval still listed as awaiting setup: %d", len(items))
+	}
+}
+
+// A finished claim is not one the panel should still be waiting on. The row
+// stays 'approved' forever by design (docs/adr/039) — the node is what says
+// setup happened — so the queue has to ask the node, and a live instance
+// showed an activated venue sitting under "Approved, awaiting setup".
+func TestAdminClaimsDropsClaimOnceSetupIsDone(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	governance.SetDataDir(t.TempDir())
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	nodeID := createTestNode(t, db, owner.ID, "Candy Factory", "candy-factory", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "candy-factory", aliceToken, adminToken)
+
+	listApproved := func() []map[string]interface{} {
+		t.Helper()
+		r := authedRequest("GET", "/api/v1/admin/claims?status=approved", nil, adminToken)
+		w := serveAdminMux(t, db, "GET", "/api/v1/admin/claims", handler.ListClaims(db), r)
+		if w.Code != http.StatusOK {
+			t.Fatalf("list: got %d %s", w.Code, w.Body.String())
+		}
+		var got struct {
+			Items []map[string]interface{} `json:"items"`
+		}
+		json.Unmarshal(w.Body.Bytes(), &got)
+		return got.Items
+	}
+
+	if len(listApproved()) != 1 {
+		t.Fatalf("approved claim should be awaiting setup before setup runs")
+	}
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", nil, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+
+	if items := listApproved(); len(items) != 0 {
+		t.Fatalf("claim still listed as awaiting setup after setup: %v", items)
+	}
+
+	// And the window passing later must not rewrite a claim that succeeded
+	// into one that lapsed.
+	past := time.Now().Add(-time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
+	db.Exec("UPDATE claim_requests SET setup_expires_at = ? WHERE id = ?", past, claimID)
+	listApproved()
+	if s := claimStatus(t, db, claimID); s != "approved" {
+		t.Fatalf("completed claim status = %s, want approved", s)
+	}
+}
+
 // --- Verification domain provenance ---
 
 func TestAdminCreateDerivesVerificationDomain(t *testing.T) {
@@ -1493,5 +1709,150 @@ func TestClaimEmailNormalizesBeforeDomainCheck(t *testing.T) {
 	db.QueryRow("SELECT email FROM claim_requests WHERE node_id = ?", nodeID).Scan(&stored)
 	if stored != "booking@casevenue.example" {
 		t.Errorf("claim_requests.email = %q, want %q", stored, "booking@casevenue.example")
+	}
+}
+
+// Who can join is a question setup asks, not a value a claim inherits.
+//
+// Every unclaimed listing is written with a membership policy nobody chose
+// (unclaimed.go), and it means nothing while the patch is a listing: an
+// unclaimed patch takes followers only. A claim makes it the live door. The
+// first real claim on the Lancaster instance activated a patch that admitted
+// anyone, because the row said 'open' and nothing had ever asked.
+func TestSetupClaimAppliesChosenMembershipPolicy(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	tmp := t.TempDir()
+	governance.SetDataDir(tmp)
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	// The listing carries 'open', exactly as unclaimed.go used to write it.
+	nodeID := createTestNode(t, db, owner.ID, "Candy Factory", "candy-factory", "open")
+	db.Exec("UPDATE nodes SET membership_policy = 'open' WHERE id = ?", nodeID)
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "candy-factory", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", map[string]interface{}{
+		"template":          "casual",
+		"membership_policy": "invite_only",
+	}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+
+	var policy string
+	db.QueryRow("SELECT membership_policy FROM nodes WHERE id = ?", nodeID).Scan(&policy)
+	if policy != "invite_only" {
+		t.Errorf("node membership_policy = %q, want invite_only (the claimant's choice)", policy)
+	}
+
+	// And it reaches the rules file, which is the copy governance reads and
+	// a later amendment sync writes back from. A choice that lands only on
+	// the row is a choice the next rules sync undoes.
+	rules, err := governance.ReadRules(tmp, nodeID)
+	if err != nil {
+		t.Fatalf("read rules: %v", err)
+	}
+	if rules.MembershipPolicy != "invite_only" {
+		t.Errorf("rules membership_policy = %q, want invite_only", rules.MembershipPolicy)
+	}
+}
+
+// A client that sends no policy gets the template's own answer, never the
+// listing's. Picking Minimal is asking for an invite-only patch — its rules
+// file says so — and the absorb used to overwrite that with the row.
+func TestSetupClaimFallsBackToTemplatePolicyNotTheListing(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	oldDir := governance.GetDataDir()
+	tmp := t.TempDir()
+	governance.SetDataDir(tmp)
+	t.Cleanup(func() { governance.SetDataDir(oldDir) })
+
+	nodeID := createTestNode(t, db, owner.ID, "Minimal Venue", "minimal-venue", "open")
+	db.Exec("UPDATE nodes SET membership_policy = 'open' WHERE id = ?", nodeID)
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "minimal-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup",
+		map[string]interface{}{"template": "minimal"}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("setup: got %d %s", w.Code, w.Body.String())
+	}
+
+	want, err := governance.TemplateRules("minimal")
+	if err != nil {
+		t.Fatalf("template rules: %v", err)
+	}
+	var policy string
+	db.QueryRow("SELECT membership_policy FROM nodes WHERE id = ?", nodeID).Scan(&policy)
+	if policy != want.MembershipPolicy {
+		t.Errorf("node membership_policy = %q, want %q (the minimal template's)", policy, want.MembershipPolicy)
+	}
+	if policy == "open" {
+		t.Error("a claim still opened the patch to anyone, chosen by nobody")
+	}
+}
+
+func TestSetupClaimRejectsUnknownMembershipPolicy(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := claimCfg(false)
+	owner, _ := createTestUser(t, db, "owner", "member")
+	_, aliceToken := createTestUser(t, db, "alice", "member")
+	_, adminToken := createTestUser(t, db, "siteadmin", "admin")
+
+	nodeID := createTestNode(t, db, owner.ID, "Bad Policy Venue", "bad-policy-venue", "open")
+	makeClaimable(t, db, nodeID, "")
+	claimID := approveAdminClaim(t, db, cfg, "bad-policy-venue", aliceToken, adminToken)
+
+	r := authedRequest("POST", "/api/v1/claims/"+claimID+"/setup", map[string]interface{}{
+		"membership_policy": "everyone-forever",
+	}, aliceToken)
+	w := serveMux(t, db, "POST", "/api/v1/claims/{id}/setup", handler.SetupClaim(db), r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("bad policy: got %d, want 400: %s", w.Code, w.Body.String())
+	}
+	// Refused before anything happened, exactly as an unknown template is.
+	if status, _ := nodeState(t, db, nodeID); status != "unclaimed" {
+		t.Fatal("node activated despite rejected membership policy")
+	}
+}
+
+// A listing is born behind a closed door. The value decides nothing until a
+// claim lands, and setup overwrites it — so the only thing it can still do
+// is answer for a path that forgets to ask, and it answers 'no'.
+func TestSubmittedListingsAreNotBornOpen(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := &config.Config{Submissions: config.Submissions{Enabled: true, AutoApprove: true}}
+	_, token := createTestUser(t, db, "submitter", "member")
+
+	r := authedRequest("POST", "/api/v1/submissions", map[string]interface{}{
+		"name":        "Community Hall",
+		"description": "A hall.",
+	}, token)
+	w := serveMux(t, db, "POST", "/api/v1/submissions", handler.SubmitPatch(db, cfg), r)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("submit: got %d %s", w.Code, w.Body.String())
+	}
+
+	var policy string
+	if err := db.QueryRow(
+		"SELECT membership_policy FROM nodes WHERE slug = 'community-hall'",
+	).Scan(&policy); err != nil {
+		t.Fatalf("submitted listing not found: %v", err)
+	}
+	if policy == "open" {
+		t.Error("a listing is born open: a claim would activate a door nobody chose")
 	}
 }

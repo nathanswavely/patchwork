@@ -67,6 +67,8 @@ func TestResolveProposal_QuorumDividesByElectorate(t *testing.T) {
 		db := setupTestDB(t)
 		admin, adminToken := createTestUser(t, db, "quorum_admin", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Quorum Node", "quorum-node", "open")
+		openGovernanceRecord(t, db, nodeID)
+		predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		backdateMembership(t, db, admin.ID, nodeID, 60)
 
@@ -98,6 +100,7 @@ func TestResolveProposal_QuorumDividesByElectorate(t *testing.T) {
 		db := setupTestDB(t)
 		admin, adminToken := createTestUser(t, db, "quorum2_admin", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Quorum2 Node", "quorum2-node", "open")
+		openGovernanceRecord(t, db, nodeID)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		backdateMembership(t, db, admin.ID, nodeID, 60)
 
@@ -118,8 +121,16 @@ func TestResolveProposal_QuorumDividesByElectorate(t *testing.T) {
 		proposalID := closedProposal(t, db, nodeID, admin.ID, "Short of quorum")
 		castBallot(t, db, proposalID, admin.ID, "approve")
 
-		if got := readProposalStatus(t, db, proposalID, adminToken); got != "open" {
-			t.Errorf("status = %q, want %q — one of four is below a 50%% quorum", got, "open")
+		// Below quorum at close the proposal lapses (docs/adr/097) rather
+		// than passing — the point here is that it did not pass on one
+		// ballot out of four.
+		if got := readProposalStatus(t, db, proposalID, adminToken); got != "rejected" {
+			t.Errorf("status = %q, want %q — one of four is below a 50%% quorum", got, "rejected")
+		}
+		var state string
+		db.QueryRow(`SELECT COALESCE(state,'') FROM proposals WHERE id = ?`, proposalID).Scan(&state)
+		if state != "lapsed" {
+			t.Errorf("state = %q, want lapsed — nobody decided it, the window ran out", state)
 		}
 	})
 }
@@ -134,6 +145,8 @@ func TestGetProposal_CanVoteFollowsElectorate(t *testing.T) {
 	newMember, newMemberToken := createTestUser(t, db, "cv_new_member", "member")
 	follower, followerToken := createTestUser(t, db, "cv_follower", "member")
 	nodeID := createTestNode(t, db, admin.ID, "CanVote Node", "canvote-node", "open")
+	openGovernanceRecord(t, db, nodeID)
+	predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 	createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 	createTestMembership(t, db, member.ID, nodeID, "member", "active")
 	createTestMembership(t, db, newMember.ID, nodeID, "member", "active")

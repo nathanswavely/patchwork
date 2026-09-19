@@ -33,4 +33,4 @@ UPDATE aggregators SET last_success_at = NULL;
 -- cycle. Emptying the cache instead would hand that entry a feed
 -- carrying nothing, and absence is how this reconciler spells removal —
 -- it would delete every future event it owns and re-create them minutes
--- later under new ids, losing their event links and RSVPs on the way.
+-- later under new ids, losing their event links on the way.

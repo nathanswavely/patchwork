@@ -18,7 +18,14 @@
   import { formatDay } from '../lib/datetime.js';
   const patch = getContext('patch');
   let patchIsAdmin = $derived(patch.value.isAdmin);
-  let patchIsMember = $derived(patch.value.isMember);
+  // Commenting is the one governance act a follower holds (docs/adr/044), so
+  // its gate is standing, not membership: CreateComment names all three roles
+  // and admits `follower`. This used to read `isMember`, which happened to
+  // work only because the node payload set it for followers too; now that
+  // is_member means the membership (docs/adr/117), the gate has to say what
+  // it actually meant. membershipRole is set for every active row and empty
+  // for everyone else, so it is the standing test.
+  let hasStanding = $derived(!!patch.value.membershipRole);
   let proposalId = $derived(getParams().id || '');
 
   let proposal = $state(null);
@@ -53,7 +60,26 @@
   let isDirectChange = $derived(
     effectiveState === 'in_effect' && (proposal?.voters || []).length === 0
   );
-  let soleVoter = $derived(isVoting && canVote && proposal?.eligible_voters === 1);
+  // The maintainer's patch (docs/adr/092): the server says whether this
+  // proposal's tally is advice, and whether this viewer is the one who
+  // decides. Neither is the client's to work out from a role.
+  let advisory = $derived(proposal?.advisory === true);
+  let canDecide = $derived(proposal?.can_decide === true);
+  let hasBallots = $derived(
+    (proposal?.approve_count || 0) + (proposal?.reject_count || 0) + (proposal?.abstain_count || 0) > 0
+  );
+  // A sole voter on an advisory vote decides nothing early — the vote is
+  // not what decides — so the notice that says otherwise stays off.
+  let soleVoter = $derived(isVoting && canVote && !advisory && proposal?.eligible_voters === 1);
+  // Where a tally is worth showing: any vote in progress, and any settled
+  // proposal that was actually voted on. A request the maintainer decided
+  // without asking anybody has no tally, and an empty one would read as a
+  // vote nobody turned up to.
+  let showsTally = $derived(
+    isVoting ||
+      (effectiveState === 'awaiting_admin' && hasBallots) ||
+      (['approved', 'in_effect', 'rejected', 'lapsed', 'passed'].includes(effectiveState) && (!advisory || hasBallots))
+  );
 
   // An election is a proposal that carries candidates (docs/adr/051). Its
   // ballot is approval over a slate, not approve/reject on a question, so the
@@ -91,6 +117,11 @@
     return () => patch.value.setBreadcrumbExtra?.([]);
   });
 
+  // Everybody who could be put forward in this contest (docs/adr/107).
+  // Loaded only while nominations are open, and only for somebody who may
+  // nominate — the picker is the only thing that uses it.
+  let electionMembers = $state([]);
+
   async function loadProposal() {
     loading = true;
     error = '';
@@ -101,6 +132,37 @@
       proposal = null;
     } finally {
       loading = false;
+    }
+    if (proposal?.election_phase === 'nominating' && canNominate) {
+      loadElectionMembers();
+    } else {
+      electionMembers = [];
+    }
+  }
+
+  // Paged, because the members endpoint is (docs/adr/095) and a picker that
+  // stops at twenty silently hides the twenty-first person from nomination.
+  async function loadElectionMembers() {
+    const slug = patch.value.slug;
+    if (!slug) return;
+    const found = [];
+    let cursor = '';
+    try {
+      for (let page = 0; page < 20; page++) {
+        const q = cursor ? `?limit=100&cursor=${encodeURIComponent(cursor)}` : '?limit=100';
+        const data = await api(`nodes/${slug}/members${q}`);
+        for (const m of data.items || []) {
+          // Anyone the server would accept as a candidate: an active member
+          // or admin of this patch. A follower is not on the ladder.
+          if (m.role === 'member' || m.role === 'admin') found.push(m);
+        }
+        cursor = data.next_cursor || '';
+        if (!cursor) break;
+      }
+      electionMembers = found;
+    } catch {
+      // The picker is missing and nothing else is; standing still works.
+      electionMembers = [];
     }
   }
 
@@ -143,9 +205,14 @@
       votingEndsAt={proposal.voting_ends_at}
       approveCount={proposal.approve_count || 0}
       rejectCount={proposal.reject_count || 0}
+      abstainCount={proposal.abstain_count || 0}
       directChange={isDirectChange}
       {canVote}
+      {advisory}
+      {canDecide}
+      declinedBy={proposal.declined_by || ''}
       electionPhase={proposal.election_phase || ''}
+      nominationsCloseAt={proposal.nominations_close_at || null}
       onStateChange={handleStateChange}
     />
 
@@ -159,7 +226,17 @@
         {#if proposal.target_doc}
           <span class="target-badge">to {docLabel(proposal.target_doc)}</span>
         {/if}
-        <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
+        <!-- An election has no proposer (docs/adr/109). It used to wear the
+             longest-standing admin's name, so a contest a timer opened at
+             four in the morning read "Proposed by Priya Natarajan" on a
+             public page while Priya was nine months away. Keyed on the
+             election itself rather than on the author id, so contests raised
+             before the calendar started signing them read right too. -->
+        {#if proposal.election_phase}
+          <span class="muted">Opened by this patch&rsquo;s election calendar</span>
+        {:else}
+          <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
+        {/if}
         <span class="muted">{new Date(proposal.created_at).toLocaleDateString()}</span>
       </div>
     </div>
@@ -235,17 +312,18 @@
             proposal={proposal}
             canVote={canVote}
             canNominate={canNominate}
+            members={electionMembers}
             onChanged={loadProposal}
           />
         {/if}
 
         <!-- Vote section — a direct change was never voted on, and an election
              counts approvals over a slate rather than yes/no on a question -->
-        {#if !isElection && !isDirectChange && (isVoting || effectiveState === 'approved' || effectiveState === 'in_effect' || effectiveState === 'rejected' || effectiveState === 'passed')}
+        {#if !isElection && !isDirectChange && showsTally}
           <section class="proposal-section">
-            <h2>Vote</h2>
+            <h2>{advisory ? 'Advisory vote' : 'Vote'}</h2>
             {#if soleVoter}
-              <p class="sole-voter-note">You're the only eligible voter — your vote decides this immediately.</p>
+              <p class="sole-voter-note">You're the only eligible voter, so your vote decides this immediately.</p>
             {/if}
             <VoteSection
               proposalId={proposal.id}
@@ -254,12 +332,16 @@
               abstainCount={proposal.abstain_count || 0}
               electorateSize={proposal.eligible_voters || 0}
               terms={proposal.voting_terms}
+              tenureDays={proposal.tenure_days || 0}
+              voteEligibleAt={proposal.vote_eligible_at || ''}
               openedAt={proposal.created_at}
               userVote={proposal.my_vote}
               votingEndsAt={proposal.voting_ends_at}
               state={effectiveState}
               voters={proposal.voters || []}
               {canVote}
+              {advisory}
+              proposalType={proposal.proposal_type || ''}
               onVote={handleVote}
             />
           </section>
@@ -287,7 +369,7 @@
 
       {:else if activeTab === 'discussion'}
         <section class="proposal-section">
-          <CommentThread proposalId={proposal.id} isMember={!!patchIsMember} isAdmin={!!patchIsAdmin} />
+          <CommentThread proposalId={proposal.id} isMember={hasStanding} isAdmin={!!patchIsAdmin} />
         </section>
 
       {:else if activeTab === 'history'}

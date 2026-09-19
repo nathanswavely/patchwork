@@ -41,6 +41,7 @@ func NodeToActor(node model.Node, domain string) Actor {
 		Outbox:            apID + "/outbox",
 		Followers:         apID + "/followers",
 		Following:         apID + "/following",
+		MovedTo:           node.MovedTo,
 	}
 }
 
@@ -98,5 +99,6 @@ func UserToActor(user model.User, domain string) Actor {
 		Outbox:            apID + "/outbox",
 		Followers:         apID + "/followers",
 		Following:         apID + "/following",
+		MovedTo:           user.MovedTo,
 	}
 }

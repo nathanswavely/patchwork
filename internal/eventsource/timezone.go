@@ -299,9 +299,9 @@ func ReinterpretUTCAsLocal(iso string, zone *time.Location) string {
 // the identity half of the reconciler's key (docs/adr/031), not a time
 // anybody reads, so shifting it would turn every recurring event into a
 // delete-and-reinsert the first time the switch is flipped — duplicate
-// notifications, and event_source_skips rows orphaned so events an admin
-// hid come back. Leaving it means the correction lands as an UPDATE in
-// place and the event keeps its id, its links and its RSVPs.
+// federation deliveries, and event_source_skips rows orphaned so events
+// an admin hid come back. Leaving it means the correction lands as an
+// UPDATE in place and the event keeps its id and its links.
 func correctStampedUTC(items []Item, zone *time.Location) []Item {
 	for i := range items {
 		items[i].StartsAt = ReinterpretUTCAsLocal(items[i].StartsAt, zone)

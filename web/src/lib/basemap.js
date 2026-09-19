@@ -51,12 +51,31 @@ export const BASEMAP_MAX_ZOOM = 20;
 // MapLibre is a quarter of the whole bundle and only the map surfaces need
 // it, so it arrives in its own chunk the first time a map is drawn — never
 // on the quilt, a patch page, or a feed.
+//
+// MapLibre parses vector tiles in a worker, and it finds that worker by
+// building a URL at runtime — `new URL('./maplibre-gl-worker.mjs',
+// import.meta.url)`, assembled from a variable. A bundler can only emit a
+// file it can see, and that expression is computed, so Vite emitted none:
+// in production the URL resolved against the app's own chunk, hit the SPA
+// fallback, and came back as index.html. The worker never started, no tile
+// was ever parsed, and the basemap stayed blank behind the markers — with
+// no error loud enough to reach the fallback below, because the style had
+// parsed and the first (empty) frame had painted, so `load` fired.
+//
+// `?worker&url` makes the worker a real build input, hashed like every
+// other asset, and `setWorkerUrl` hands MapLibre the address instead of
+// letting it guess one.
 let glModule;
 function loadGL() {
-  glModule ||= Promise.all([
-    import('maplibre-gl/dist/maplibre-gl.css'),
-    import('@maplibre/maplibre-gl-leaflet'),
-  ]);
+  glModule ||= (async () => {
+    const [maplibregl, worker] = await Promise.all([
+      import('maplibre-gl'),
+      import('maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'),
+      import('maplibre-gl/dist/maplibre-gl.css'),
+    ]);
+    maplibregl.setWorkerUrl(worker.default);
+    await import('@maplibre/maplibre-gl-leaflet');
+  })();
   return glModule;
 }
 
@@ -138,9 +157,16 @@ export async function addBasemap(map, theme = 'light') {
     glLayer = null;
     raster = addRasterLayer(map, current);
   };
-  // `load` — style parsed and the first frame drawn — is the signal that the
-  // map is alive. Not `loaded()`, which also waits on every tile in view and
-  // stays false for a long time on a slow link.
+  // One parsed tile is the signal that the map is alive — not `load`, and
+  // not `loaded()`. `loaded()` waits on every tile in view and stays false
+  // for a long time on a slow link, so it was never the right test. `load`
+  // is worse than it looks: it means the style parsed and a frame was
+  // drawn, and an empty frame counts. When the tile worker was missing in
+  // production the style parsed, `load` fired, this check declared the map
+  // healthy, and the raster fallback it exists to trigger never ran — the
+  // basemap was blank behind a timer reporting success, through a release.
+  // A tile reaching the map is the one thing that cannot be true unless the
+  // whole pipeline, worker included, is working.
   let painted = false;
   // A hidden tab throttles the animation frames MapLibre draws in, so a map
   // in the background hasn't failed — it just hasn't been asked to paint.
@@ -155,10 +181,13 @@ export async function addBasemap(map, theme = 'light') {
   };
   let timer = setTimeout(check, GL_LOAD_TIMEOUT_MS);
   if (gl) {
-    gl.once('load', () => {
+    const onTile = (e) => {
+      if (!e?.tile) return; // metadata for a source, not a tile of one
       painted = true;
       clearTimeout(timer);
-    });
+      gl.off('sourcedata', onTile);
+    };
+    gl.on('sourcedata', onTile);
     gl.getCanvas()?.addEventListener('webglcontextlost', fallBack);
   }
 

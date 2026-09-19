@@ -21,8 +21,17 @@ import (
 //   GET  /api/v1/nodes/{slug}/governance.git/info/refs?service=git-upload-pack
 //   POST /api/v1/nodes/{slug}/governance.git/git-upload-pack
 //
-// The caller must extract the nodeID from the URL and pass it.
-func GitHTTPHandler(resolveNodeID func(slug string) string) http.Handler {
+// What leaves here is the whole bare repository — every document body, its
+// full revision history and its diffs — so this route takes the whole-shelf
+// rule rather than the per-document one the REST layer applies (docs/adr/110).
+// A repo cannot be filtered row by row the way a listing can.
+//
+// authorize answers "may this caller have all of it" and resolves the slug in
+// the same breath, because both answers leave here as the same 404: a patch
+// that does not exist and a patch this caller may not clone are one response,
+// or the difference between them is an oracle for the existence of a private
+// patch.
+func GitHTTPHandler(authorize func(r *http.Request, slug string) string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Extract the slug and git path from the URL.
 		// Expected URL patterns:
@@ -46,8 +55,9 @@ func GitHTTPHandler(resolveNodeID func(slug string) string) http.Handler {
 		}
 		slug := parts[len(parts)-1]
 
-		// Resolve slug to nodeID
-		nodeID := resolveNodeID(slug)
+		// Resolve the slug and ask whether this caller may have the repo.
+		// "" is both refusals at once — see the note above.
+		nodeID := authorize(r, slug)
 		if nodeID == "" {
 			http.Error(w, "patch not found", http.StatusNotFound)
 			return
@@ -164,15 +174,9 @@ func handleUploadPack(w http.ResponseWriter, r *http.Request, nodeID string) {
 	storer := repo.Storer
 
 	// Collect the objects needed
-	var haves []plumbing.Hash
-	for _, h := range upr.Haves {
-		haves = append(haves, h)
-	}
+	haves := append([]plumbing.Hash(nil), upr.Haves...)
 
-	var wants []plumbing.Hash
-	for _, w := range upr.Wants {
-		wants = append(wants, w)
-	}
+	wants := append([]plumbing.Hash(nil), upr.Wants...)
 
 	if len(wants) == 0 {
 		// Nothing wanted — send empty response

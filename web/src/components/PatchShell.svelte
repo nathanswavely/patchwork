@@ -18,6 +18,7 @@
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
   import PatchRelationship from './PatchRelationship.svelte';
+  import { getPendingMembershipSlugs, getInvitedMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
   import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard } from 'phosphor-svelte';
 
   let { slug = '', activeTab = 'governance', children } = $props();
@@ -32,6 +33,10 @@
   let error = $state('');
 
   let isUnclaimed = $state(false);
+  // Whether this viewer's trusted-contributor grant reaches this patch
+  // (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar).
+  // Sent beside is_unclaimed, not on the node, so it lives beside it here.
+  let viewerTrusted = $state(false);
   let isBanned = $state(false);
   let breadcrumbExtra = $state([]);
 
@@ -44,6 +49,7 @@
     isMember,
     isAdmin,
     isUnclaimed,
+    viewerTrusted,
     isBanned,
     membershipRole,
     followerPermissions,
@@ -79,6 +85,7 @@
       membershipRole = data.membership_role || '';
       followerPermissions = (data.node || data).follower_permissions || null;
       isUnclaimed = data.is_unclaimed || false;
+      viewerTrusted = data.viewer_trusted === true;
       isBanned = data.is_banned || false;
       verificationDomain = data.verification_domain || '';
       setPatchName(node?.name || slug);
@@ -93,6 +100,21 @@
   // Join/follow/leave — including the join sheet (docs/adr/040) — belong to
   // PatchRelationship, mounted in the cluster below.
   let liningStatus = $state('');
+
+  // A join request nobody has answered. The node payload deliberately does
+  // not carry it — membership_role is set only for an active row — so it
+  // comes from the viewer's own memberships, which me/nodes does serve.
+  let requestPending = $derived(getPendingMembershipSlugs().has(slug));
+  // An unanswered invitation (docs/adr/098), from the same store for the
+  // same reason: the node payload states standing for an active row only.
+  let invited = $derived(getInvitedMembershipSlugs().has(slug));
+
+  // Joining or following changes two things: the node payload's
+  // membership_role and the store a pending request lives in. Refresh both,
+  // or asking to join leaves the row offering to join again.
+  async function reloadStanding() {
+    await Promise.all([loadNode(), loadMemberships()]);
+  }
 
   // --- Tabs (one URL scheme per screen — ADR 003) ---
   // The workspace is for everyone; role and claim state decide what shows.
@@ -110,7 +132,13 @@
   };
 
   const tabs = $derived.by(() =>
-    workspaceTabs({ isUnclaimed, isAdmin, membershipRole, followerPermissions }).map((t) => ({
+    workspaceTabs({
+      isUnclaimed,
+      isAdmin,
+      membershipRole,
+      followerPermissions,
+      publicMemberList: node?.public_member_list || 'everyone',
+    }).map((t) => ({
       ...t,
       href: `${basePath}/${t.id}`,
       icon: TAB_ICONS[t.id],
@@ -207,8 +235,10 @@
           {isUnclaimed}
           {isBanned}
           {membershipRole}
+          {requestPending}
+          {invited}
           {liningStatus}
-          onChanged={loadNode}
+          onChanged={reloadStanding}
           size="sm"
         />
       </div>

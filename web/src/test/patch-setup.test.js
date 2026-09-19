@@ -103,13 +103,19 @@ describe('GovernanceList bounces unclaimed patches instead of showing an empty l
 });
 
 describe('PatchProfile treats unclaimed governance/lining as absent, not empty', () => {
-  const src = source('pages/PatchProfile.svelte');
+  const src = ['components/PatchProfileHead.svelte', 'components/PatchProfileGlimpses.svelte'].map(source).join('\n');
 
   // The page became one glimpse per room (docs/adr/042); absence is now
   // expressed by the glimpse's visibility derivation rather than by an
   // {#if} per section, but the rule is unchanged.
   it('never fetches proposals, charters, or members for an unclaimed patch', () => {
-    expect(src).toMatch(/const wantGovernance = !isUnclaimed/);
+    // `wantGovernance` is the glimpses' own gate since docs/adr/094 split
+    // the fetches out of the page, and it is `canSeeGovernance`, which
+    // leads with !isUnclaimed (asserted below). Both governance fetches
+    // pass through it, and members has its own ternary.
+    expect(src).toMatch(/wantGovernance \? api\(`nodes\/\$\{slug\}\/proposals/);
+    expect(src).toMatch(/wantGovernance \? api\(`nodes\/\$\{slug\}\/governance`\)/);
+    expect(src).toMatch(/loadActivity\(gov, lining\)/);
     expect(src).toMatch(/isUnclaimed \? Promise\.resolve\(\{ items: \[\] \}\) : api\(`nodes\/\$\{slug\}\/members/);
   });
 
@@ -118,6 +124,51 @@ describe('PatchProfile treats unclaimed governance/lining as absent, not empty',
     expect(src).toMatch(/canSeeGovernance = \$derived\(\s*!isUnclaimed/);
     expect(src).toMatch(/showGovernance = \$derived\(\s*canSeeGovernance/);
     expect(src).toMatch(/showMembers = \$derived\(!isUnclaimed/);
+  });
+});
+
+describe('PatchForm opens ordinary creation on a fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar)', () => {
+  const src = source('pages/PatchForm.svelte');
+
+  it('starts unanswered in create mode and pre-answered in setup mode', () => {
+    expect(src).toMatch(/let readyToCreate = \$state\(mode === 'setup'\)/);
+  });
+
+  it('asks the question before any field, gated on create mode and an unanswered fork', () => {
+    expect(src).toMatch(/\{#if mode === 'create' && !readyToCreate\}/);
+    expect(src).toContain('<h1>Add a patch</h1>');
+    expect(src).toContain('Is this your patch to run?');
+  });
+
+  it('shows two equal-weight cards with the decided copy', () => {
+    const forkBlock = src.match(/\{#if mode === 'create' && !readyToCreate\}([\s\S]*?)\{:else\}/);
+    expect(forkBlock, 'fork block not found').toBeTruthy();
+    const [, block] = forkBlock;
+    expect(block).toContain('I run this patch');
+    expect(block).toContain("You become its admin. Members, events and settings are yours from the start.");
+    expect(block).toContain('Someone else runs it');
+    expect(block).toContain("It joins the quilt as an unclaimed patch. The people who run it can claim it later, and you can add its events once it's approved.");
+    // Both are real buttons, so they're tab-reachable and enter-activatable
+    // without any extra keyboard plumbing.
+    expect(block.match(/<button type="button" class="fork-card"/g)?.length).toBe(2);
+  });
+
+  it('choosing "I run this patch" reveals the form; choosing the other card leaves for /submit', () => {
+    expect(src).toMatch(/onclick=\{\(\) => \{ readyToCreate = true; \}\}/);
+    expect(src).toMatch(/onclick=\{\(\) => navigate\('\/submit'\)\}/);
+  });
+
+  it('keeps a small step-back link under the revealed form heading, not the old muted sentence', () => {
+    expect(src).not.toContain("Creating a patch makes you its admin. Know a group that isn't yours to run?");
+    expect(src).toContain('Not yours to run?');
+    expect(src).toContain('Suggest it instead');
+  });
+
+  it('never shows the fork in setup mode', () => {
+    // readyToCreate seeds true for mode==='setup', so the fork's own
+    // condition can never be true there — asserted structurally above. This
+    // pins the seed itself against a future edit that only touches one side.
+    expect(src).toMatch(/mode === 'setup'\)/);
   });
 });
 
@@ -140,8 +191,19 @@ describe('PatchForm reuses one component for creation and setup (docs/adr/039)',
   });
 
   it('posts to the claim setup endpoint before patching the node', () => {
-    expect(src).toMatch(/api\(`claims\/\$\{claimId\}\/setup`, \{ method: 'POST', body: \{ template \} \}\)/);
+    expect(src).toMatch(/api\(`claims\/\$\{claimId\}\/setup`, \{[\s\S]*?method: 'POST'/);
     expect(src).toMatch(/api\(`nodes\/\$\{setupSlug\}`, \{[\s\S]*?method: 'PATCH'/);
+  });
+
+  // The membership policy travels with the template, in the setup POST. It
+  // ride the PATCH below: membership policy is governance, PATCH /nodes
+  // refuses the field outright (allowedFields, nodes.go), and setup is
+  // where the rules file is written from it.
+  it('sends the membership policy to setup, not to the node PATCH', () => {
+    expect(src).toMatch(/body: \{ template, membership_policy: membershipPolicy \}/);
+    const patchCall = src.match(/api\(`nodes\/\$\{setupSlug\}`, \{[\s\S]*?\n\s*\}\);/);
+    expect(patchCall, 'setup PATCH call not found').toBeTruthy();
+    expect(patchCall[0]).not.toContain('membership_policy');
   });
 
   it('handles the expired (410) and no-longer-claimable (409) responses', () => {
@@ -153,12 +215,22 @@ describe('PatchForm reuses one component for creation and setup (docs/adr/039)',
   it('never shows the create-only submission suggestion in setup mode', () => {
     const setupBranch = src.match(/\{#if mode === 'setup'\}[\s\S]*?\{:else\}([\s\S]*?)\{\/if\}\s*\n\s*<form/);
     expect(setupBranch, 'heading branch not found').toBeTruthy();
-    expect(setupBranch[1]).toContain('Suggest a patch');
+    expect(setupBranch[1]).toContain('Suggest it instead');
+    expect(setupBranch[1]).not.toContain('Set up your patch');
   });
 
   it('does not re-randomize appearance for setup — it seeds from the listing', () => {
     expect(src).toMatch(/mode !== 'setup' \|\| !initial/);
-    expect(src).toMatch(/paletteForPatch\(initial\.id, ap\)/);
+    expect(src).toMatch(/paletteForPatch\(initial\.id, ap, \{ raw: true \}\)/);
+  });
+
+  it('seeds setup from the fabric the listing really has, not the viewer register', () => {
+    // docs/adr/112: muted colors are a viewer-side register, and a fabric
+    // picker must show the fabric that was chosen — a claimant who is
+    // reading the quilt in muted would otherwise be seeded from, and then
+    // save, colors nobody picked. `raw` is the exemption, and it belongs
+    // here as much as in the block drafter.
+    expect(src).toMatch(/raw: true/);
   });
 });
 

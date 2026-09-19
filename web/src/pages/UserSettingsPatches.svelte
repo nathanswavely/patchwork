@@ -5,15 +5,35 @@
   import { loadMemberships } from '../stores/memberships.svelte.js';
   import { getUser } from '../stores/auth.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import JoinSheet from '../components/JoinSheet.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { CONTACT_KIND_WORD } from '../lib/contactItems.js';
 
   let patches = $state([]);
   let loading = $state(true);
   let error = $state('');
 
+  // Claims the caller holds (docs/adr/039). Deliberately not part of
+  // me/nodes: an approved claimant holds no membership until setup activates
+  // the patch, so a claim is not a relationship to a patch — it is an act
+  // still owed on one. Until this section existed, the only trace of an
+  // approved claim was the notification that announced it, and the 14-day
+  // setup window could close without the claimant seeing a thing.
+  let myClaims = $state([]);
+
   $effect(() => {
     loadPatches();
+    loadClaims();
   });
+
+  async function loadClaims() {
+    try {
+      const data = await api('users/me/claims');
+      myClaims = data.items || [];
+    } catch {
+      myClaims = [];
+    }
+  }
 
   async function loadPatches() {
     loading = true;
@@ -29,34 +49,154 @@
     }
   }
 
-  // Whether there is anything on the contact card to share (docs/adr/080).
+  // The contact card (docs/adr/083). This page is where sharing happens,
+  // because granting is patch-first: you decide to be reachable standing in
+  // a room with people, not while editing a form. The items themselves are
+  // owned by Profile settings; here you only choose which of them a patch
+  // may read.
   let user = $derived(getUser());
-  let cardEmpty = $derived(!(user?.contact_card?.phone || user?.contact_card?.email || user?.contact_card?.note));
+  let myItems = $state([]);
+  let cardEmpty = $derived(myItems.length === 0);
+  // The patch whose picker is open, and the tentative set inside it. Held
+  // apart from the row so cancelling changes nothing.
+  let sharingFor = $state(null);
+  let sharingIds = $state([]);
+  let sharingBusy = $state(false);
 
-  let adminPatches = $derived(patches.filter(m => m.role === 'admin'));
-  let memberPatches = $derived(patches.filter(m => m.role === 'member'));
-  let followerPatches = $derived(patches.filter(m => m.role === 'follower'));
+  $effect(() => {
+    api('users/me/contact-items')
+      .then((data) => { myItems = data.items || []; })
+      .catch(() => { myItems = []; });
+  });
 
-
-  async function handleLeave(slug) {
+  async function openSharing(m) {
+    sharingFor = m.node_slug;
+    sharingIds = [];
     try {
-      await api(`nodes/${slug}/leave`, { method: 'POST' });
-      await loadMemberships();
-      await loadPatches();
-      showToast('Left patch', 'info');
+      const data = await api(`nodes/${m.node_slug}/contact-shares`);
+      sharingIds = (data.items || []).filter((it) => it.shared).map((it) => it.id);
     } catch (e) {
-      showToast(e.message || 'Failed to leave', 'error');
+      showToast(e.message || 'Failed to load contact sharing', 'error');
+      sharingFor = null;
     }
   }
 
-  async function handleBecomeMember(slug) {
+  function toggleSharingId(id) {
+    sharingIds = sharingIds.includes(id)
+      ? sharingIds.filter((x) => x !== id)
+      : [...sharingIds, id];
+  }
+
+  // The whole set, replaced: a partial update of a disclosure set is a
+  // request to get it half-applied.
+  async function saveSharing(m) {
+    sharingBusy = true;
     try {
-      await api(`nodes/${slug}/join`, { method: 'POST' });
+      await api(`nodes/${m.node_slug}/contact-shares`, {
+        method: 'PUT',
+        body: { item_ids: sharingIds },
+      });
+      m.contact_items_shared = sharingIds.length;
+      sharingFor = null;
+      showToast(
+        sharingIds.length === 0
+          ? `${m.node_name || m.node_slug} can no longer reach you`
+          : `${m.node_name || m.node_slug} can reach you by ${sharingIds.length === 1 ? '1 item' : `${sharingIds.length} items`}`,
+        'info',
+      );
+    } catch (e) {
+      showToast(e.message || 'Failed to update contact sharing', 'error');
+    } finally {
+      sharingBusy = false;
+    }
+  }
+
+  // me/nodes serves 'active' and 'pending', and a pending request is not a
+  // membership: sorting by role alone filed a request you had not been
+  // answered on under "Member of" and badged it 'member'.
+  let adminPatches = $derived(patches.filter(m => m.role === 'admin' && m.status === 'active'));
+  let memberPatches = $derived(patches.filter(m => m.role === 'member' && m.status === 'active'));
+  let pendingPatches = $derived(patches.filter(m => m.status === 'pending'));
+  let followerPatches = $derived(patches.filter(m => m.role === 'follower' && m.status === 'active'));
+
+  /**
+   * The member rung renders only where it can succeed (docs/adr/042), the
+   * same rule the relationship row runs: an unclaimed patch takes followers
+   * only and invite_only refuses the request outright (memberships.go), so
+   * this list wore a blue button that answered every click with a 403. The
+   * reason is worn as state on the row instead — a door that cannot open is
+   * worse than no door, and its error message is addressed to a reader who
+   * should never have been offered the click.
+   */
+  function rungFor(m) {
+    if (m.node_status === 'unclaimed' || m.membership_policy === 'invite_only') return null;
+    return m.membership_policy === 'approval_required' ? 'Send request' : 'Become a member';
+  }
+
+  const STATE_NOTE = {
+    unclaimed: {
+      label: 'unclaimed',
+      title: 'No one runs this patch yet. User can follow, but not join.',
+    },
+    invite_only: {
+      label: 'invite only',
+      title: 'This patch adds members by invitation. An admin has to invite you.',
+    },
+  };
+
+  function stateNote(m) {
+    if (m.node_status === 'unclaimed') return STATE_NOTE.unclaimed;
+    if (m.membership_policy === 'invite_only') return STATE_NOTE.invite_only;
+    return null;
+  }
+
+  // Two verbs, two routes (docs/adr/088). Leaving exits a relationship;
+  // withdrawing retracts a request that was never answered, and a
+  // requester holds no relationship to exit. Routing on the row's status
+  // is also what makes a stale page safe: if the request was approved
+  // between load and click, /withdraw refuses rather than quietly
+  // resigning a membership this person did not know they had.
+  async function handleLeave(m) {
+    const withdrawing = m.status === 'pending';
+    try {
+      await api(`nodes/${m.node_slug}/${withdrawing ? 'withdraw' : 'leave'}`, { method: 'POST' });
       await loadMemberships();
       await loadPatches();
-      showToast('Joined as member', 'success');
+      // One wording per event, matching the relationship row: unfollowing
+      // is not leaving, and withdrawing a request is neither.
+      const said = withdrawing
+        ? 'Request withdrawn'
+        : m.role === 'follower' ? 'Unfollowed patch' : 'Left patch';
+      showToast(said, 'info');
     } catch (e) {
-      showToast(e.message || 'Failed to join', 'error');
+      showToast(e.message || (withdrawing ? 'Failed to withdraw request' : 'Failed to leave'), 'error');
+    }
+  }
+
+  // The join ceremony is the join sheet (docs/adr/040), here as on the patch
+  // page — an approval-required patch gets its intro message either way,
+  // rather than a silent request from whichever surface you happened to
+  // start from.
+  let joinTarget = $state(null);
+  let joining = $state(false);
+
+  async function handleJoin(message) {
+    const target = joinTarget;
+    if (!target) return;
+    joining = true;
+    try {
+      const result = await api(`nodes/${target.node_slug}/join`, {
+        method: 'POST',
+        body: message ? { message } : undefined,
+      });
+      await loadMemberships();
+      await loadPatches();
+      showToast(result.status === 'pending' ? 'Membership request sent' : 'You are now a member', 'success');
+    } catch (e) {
+      showToast(e.message || 'Could not join', 'error');
+    } finally {
+      joining = false;
+      joinTarget = null;
     }
   }
 
@@ -76,35 +216,56 @@
     }
   }
 
-  // Contact sharing (docs/adr/080): the other switch a member owns. On,
-  // this patch's admins and members see your contact card in its Members
-  // room — including people who join later. Off for every patch until you
-  // turn it on.
-  async function toggleShareContact(m) {
-    try {
-      await api(`users/me/memberships/${m.node_id}`, {
-        method: 'PATCH',
-        body: { share_contact: !m.share_contact },
-      });
-      m.share_contact = !m.share_contact;
-      showToast(m.share_contact ? `Contact card shared with ${m.node_name || m.node_slug}` : `Contact card no longer shared with ${m.node_name || m.node_slug}`, 'info');
-    } catch (e) {
-      showToast(e.message || 'Failed to update contact sharing', 'error');
-    }
-  }
 </script>
 
 {#snippet contactToggle(m)}
   <button
     class="btn btn-sm vis-toggle"
-    class:contact-shared={m.share_contact}
-    title={m.share_contact
-      ? 'Your contact card is shown to this patch\'s admins and members in its Members room, including anyone who joins later. Click to stop sharing.'
-      : 'Your contact card is not shown to this patch. Click to share it with its admins and members.'}
-    onclick={() => toggleShareContact(m)}
+    class:contact-shared={m.contact_items_shared > 0}
+    disabled={cardEmpty}
+    title={cardEmpty
+      ? 'Add something to your contact card first, under Profile.'
+      : 'Choose which of your contact items this patch\'s admins and members can read. Its followers never can.'}
+    onclick={() => (sharingFor === m.node_slug ? (sharingFor = null) : openSharing(m))}
   >
-    {m.share_contact ? 'Contact shared' : 'Contact private'}
+    {#if m.contact_items_shared > 0}
+      Reachable by {m.contact_items_shared}
+    {:else}
+      Not reachable
+    {/if}
   </button>
+{/snippet}
+
+{#snippet contactPicker(m)}
+  {#if sharingFor === m.node_slug}
+    <div class="contact-picker">
+      <p class="muted contact-picker-hint">
+        What {m.node_name || m.node_slug} can reach you by. Its admins and
+        members see whatever you tick here, including anyone who joins later.
+      </p>
+      <ul class="contact-picker-list">
+        {#each myItems as it (it.id)}
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                checked={sharingIds.includes(it.id)}
+                disabled={sharingBusy}
+                onchange={() => toggleSharingId(it.id)}
+              />
+              <span class="contact-picker-kind">{CONTACT_KIND_WORD[it.kind] || it.kind}</span>
+              <span class="contact-picker-value">{it.value}</span>
+              {#if it.label}<span class="muted">{' · '}{it.label}</span>{/if}
+            </label>
+          </li>
+        {/each}
+      </ul>
+      <div class="contact-picker-actions">
+        <button class="btn btn-primary btn-sm" disabled={sharingBusy} onclick={() => saveSharing(m)}>Save</button>
+        <button class="btn btn-sm" disabled={sharingBusy} onclick={() => (sharingFor = null)}>Cancel</button>
+      </div>
+    </div>
+  {/if}
 {/snippet}
 
 {#snippet visibilityToggle(m)}
@@ -125,32 +286,78 @@
     <p class="muted">Loading...</p>
   {:else if error}
     <p class="error-text">{error}</p>
-  {:else if patches.length === 0}
-    <p class="muted">You haven't joined any patches yet.</p>
   {:else}
+    {#if myClaims.length > 0}
+      <section class="patch-section">
+        <h3 class="section-heading">Claiming</h3>
+        {#each myClaims as c (c.id)}
+          <div class="patch-row">
+            <div class="patch-info">
+              <a href="/patches/{c.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${c.node_slug}`); }}>
+                {c.node_name || c.node_slug}
+              </a>
+              {#if c.status === 'approved'}
+                <!-- The thing this section exists to say. Not a badge on the
+                     patch itself: docs/adr/039 keeps the patch reading
+                     unclaimed to every visitor, and this is the claimant
+                     reading their own claim. -->
+                <span
+                  class="badge ready-badge"
+                  title="Your claim cleared. Setup is where the patch becomes active and you become its admin. Until you submit it, the patch still reads as unclaimed to everyone else."
+                >ready to set up</span>
+              {:else}
+                <span class="badge state-badge" title="Nobody has answered this claim yet.">claim under review</span>
+              {/if}
+              <span class="muted joined-date">
+                {#if c.status === 'approved' && c.setup_expires_at}
+                  expires {formatDate(c.setup_expires_at)}
+                {:else}
+                  claimed {formatDate(c.created_at)}
+                {/if}
+              </span>
+            </div>
+            <div class="patch-actions">
+              {#if c.status === 'approved'}
+                <button class="btn btn-primary btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/setup`)}>Set up patch</button>
+              {:else}
+                <button class="btn btn-sm" onclick={() => navigate(`/patches/${c.node_slug}/claim`)}>View claim</button>
+              {/if}
+            </div>
+          </div>
+        {/each}
+      </section>
+    {/if}
+
+    {#if patches.length === 0 && myClaims.length === 0}
+    <p class="muted">You haven't joined any patches yet.</p>
+    {:else if patches.length > 0}
     {#if cardEmpty && (adminPatches.length > 0 || memberPatches.length > 0)}
       <p class="muted contact-hint">
-        Your contact card is empty. Fill it in under
-        <a href="/settings" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>Profile</a>
-        and share it patch by patch here.
+        Your contact card is empty. Add the ways you are willing to be reached
+        under
+        <a href="/settings" onclick={(e) => { e.preventDefault(); navigate('/settings'); }}>Profile</a>,
+        then give them to patches one at a time here.
       </p>
     {/if}
     {#if adminPatches.length > 0}
       <section class="patch-section">
         <h3 class="section-heading">Managing</h3>
         {#each adminPatches as m (m.node_slug)}
-          <div class="patch-row">
-            <div class="patch-info">
-              <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
-                {m.node_name || m.node_slug}
-              </a>
-              <span class="badge">admin</span>
-              <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+          <div class="patch-entry">
+            <div class="patch-row">
+              <div class="patch-info">
+                <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
+                  {m.node_name || m.node_slug}
+                </a>
+                <span class="badge">admin</span>
+                <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+              </div>
+              <div class="patch-actions">
+                {@render visibilityToggle(m)}
+                {@render contactToggle(m)}
+              </div>
             </div>
-            <div class="patch-actions">
-              {@render visibilityToggle(m)}
-              {@render contactToggle(m)}
-            </div>
+            {@render contactPicker(m)}
           </div>
         {/each}
       </section>
@@ -160,18 +367,43 @@
       <section class="patch-section">
         <h3 class="section-heading">Member of</h3>
         {#each memberPatches as m (m.node_slug)}
+          <div class="patch-entry">
+            <div class="patch-row">
+              <div class="patch-info">
+                <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
+                  {m.node_name || m.node_slug}
+                </a>
+                <span class="badge">member</span>
+                <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+              </div>
+              <div class="patch-actions">
+                {@render visibilityToggle(m)}
+                {@render contactToggle(m)}
+                <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m)} />
+              </div>
+            </div>
+            {@render contactPicker(m)}
+          </div>
+        {/each}
+      </section>
+    {/if}
+
+    {#if pendingPatches.length > 0}
+      <section class="patch-section">
+        <h3 class="section-heading">Requested</h3>
+        {#each pendingPatches as m (m.node_slug)}
           <div class="patch-row">
             <div class="patch-info">
               <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                 {m.node_name || m.node_slug}
               </a>
-              <span class="badge">member</span>
-              <span class="muted joined-date">{formatDate(m.joined_at)}</span>
+              <span class="badge" title="This patch's admins have not answered your request yet.">awaiting approval</span>
+              <span class="muted joined-date">asked {formatDate(m.joined_at)}</span>
             </div>
+            <!-- No contact control: a pending request is not standing in the
+                 room yet, so there is nothing to share into (docs/adr/083). -->
             <div class="patch-actions">
-              {@render visibilityToggle(m)}
-              {@render contactToggle(m)}
-              <ConfirmAction label="Leave" variant="warning" onConfirm={() => handleLeave(m.node_slug)} />
+              <ConfirmAction label="Withdraw" variant="default" onConfirm={() => handleLeave(m)} />
             </div>
           </div>
         {/each}
@@ -182,24 +414,42 @@
       <section class="patch-section">
         <h3 class="section-heading">Following</h3>
         {#each followerPatches as m (m.node_slug)}
+          {@const rung = rungFor(m)}
+          {@const note = stateNote(m)}
           <div class="patch-row">
             <div class="patch-info">
               <a href="/patches/{m.node_slug}" class="patch-name" onclick={(e) => { e.preventDefault(); navigate(`/patches/${m.node_slug}`); }}>
                 {m.node_name || m.node_slug}
               </a>
               <span class="badge">following</span>
+              {#if note}
+                <span class="badge state-badge" title={note.title}>{note.label}</span>
+              {/if}
               <span class="muted joined-date">{formatDate(m.joined_at)}</span>
             </div>
             <div class="patch-actions">
-              <button class="btn btn-primary btn-sm" onclick={() => handleBecomeMember(m.node_slug)}>Become a member</button>
-              <ConfirmAction label="Unfollow" variant="default" onConfirm={() => handleLeave(m.node_slug)} />
+              {#if rung}
+                <button class="btn btn-primary btn-sm" onclick={() => { joinTarget = m; }} disabled={joining}>{rung}</button>
+              {/if}
+              <ConfirmAction label="Unfollow" variant="default" onConfirm={() => handleLeave(m)} />
             </div>
           </div>
         {/each}
       </section>
     {/if}
+    {/if}
   {/if}
 </div>
+
+<JoinSheet
+  open={!!joinTarget}
+  onClose={() => { joinTarget = null; }}
+  onConfirm={handleJoin}
+  slug={joinTarget?.node_slug || ''}
+  patchName={joinTarget?.node_name || joinTarget?.node_slug || ''}
+  membershipPolicy={joinTarget?.membership_policy || 'open'}
+  submitting={joining}
+/>
 
 <style>
   .settings-patches {
@@ -283,8 +533,71 @@
     border-color: currentColor;
   }
 
+  /* State is not a role: the reason a rung is absent is worn quietly next
+     to the badge that says where you stand, never dressed as one. */
+  .state-badge {
+    background: transparent;
+    border: 1px dashed var(--color-border);
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  /* An act still owed, not a state being endured: this one is the only
+     badge on the page that asks for something, so it is the only one that
+     carries the page's own colour. */
+  .ready-badge {
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
   .contact-hint {
     font-size: 0.85rem;
     margin-bottom: 1rem;
   }
+
+  /* One patch and, when open, the picker for what it can reach you by
+     (docs/adr/083). The picker sits under its row rather than in a dialog:
+     the decision is about this patch, so it stays attached to it. */
+  .patch-entry {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .patch-entry .patch-row {
+    border-bottom: none;
+  }
+  .contact-picker {
+    padding: 0 0 0.75rem 0;
+  }
+  .contact-picker-hint {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+  }
+  .contact-picker-list {
+    list-style: none;
+    margin: 0 0 0.6rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .contact-picker-list label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .contact-picker-kind {
+    font-weight: 600;
+    min-width: 4.5rem;
+  }
+  .contact-picker-value {
+    word-break: break-word;
+  }
+  .contact-picker-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
 </style>

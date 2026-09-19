@@ -60,15 +60,34 @@
   // whole voter list and the frozen terms live.
   function outcomeLine(e) {
     if (e.kind === 'vote') {
-      return e.outcome === 'carried' ? 'Carried by a vote.' : 'Put to a vote and did not carry.';
+      if (e.outcome === 'carried') return 'Carried by a vote.';
+      // A lapse is not a vote that failed (docs/adr/097). The window closed
+      // under quorum, so "did not carry" — which says the members answered
+      // no — is the one thing the Record must not say about it.
+      if (e.outcome === 'lapsed') {
+        return 'Put to a vote. Nobody decided it either way; the proposal lapsed.';
+      }
+      return 'Put to a vote and did not carry.';
     }
     if (e.kind === 'direct') {
+      // A maintainer's decision either way (docs/adr/092). A decline is
+      // never "did not carry": the members' tally, if there was one, was
+      // advice, and one person said no.
+      if (e.outcome === 'declined') {
+        return e.actor ? `Declined by ${e.actor}.` : 'Declined by the maintainer.';
+      }
       return e.actor ? `Applied by ${e.actor}.` : 'Applied without a vote.';
     }
     if (e.kind === 'election') {
+      // Not "the council kept serving" (docs/adr/106). This line is read
+      // months later and cannot know what the council was on the day; five
+      // members of a co-op with no admins at all read it five times down one
+      // page, beside a council block saying nobody held the role. What the
+      // record can always say truthfully is what the *contest* did, and the
+      // council block two inches away says what the council is.
       return e.outcome === 'seated'
         ? 'The electorate seated a council.'
-        : 'Settled nothing. The council kept serving.';
+        : 'Settled nothing. Nobody was elected.';
     }
     if (e.kind === 'council') {
       const who = e.names?.length ? e.names.join(', ') : '';
@@ -101,7 +120,10 @@
       {:else}
         <ol class="entries">
           {#each entries as e}
-            <li class="entry" class:unsettled={e.outcome === 'unsettled' || e.outcome === 'failed'}>
+            <li
+              class="entry"
+              class:unsettled={e.outcome === 'unsettled' || e.outcome === 'failed' || e.outcome === 'lapsed'}
+            >
               <div class="entry-head">
                 <span class="kind">{KIND_LABEL[e.kind] || e.kind}</span>
                 <span class="when muted">{formatDay(e.at)}</span>

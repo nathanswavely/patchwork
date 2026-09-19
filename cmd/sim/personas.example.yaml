@@ -1,0 +1,82 @@
+# Personas for the governance simulation (docs/adr/096, docs/testing/governance-simulation.md).
+#
+# Every person here is fiction (docs/adr/009). Five organizations, chosen to
+# cover the leadership and venue matrix, with a few people who belong to two
+# — cross-membership is the thread the quilt is built on, so a simulation with
+# none would be testing a different product.
+#
+#   Tin Roof Choir             a band          maintainer, decides by admin, minimal template
+#   Bobbin Hall Co-op          a venue         elected, six-month staggered terms, elections in Patchwork
+#   Northwest Corridor Neighbors  a coalition  meets in person: both venues elsewhere, attestations only
+#   Loose Threads Press        a collective    meritocratic, nominate-and-ratify, charter amendments
+#   The Remnant Room           the chaos org   starts one way and changes its mind mid-term
+#
+# The tool mints `sim-<username>` as each person's session token.
+
+personas:
+  - username: mo
+    display_name: Mo Achebe
+    role: admin
+    bio: Keeps the quilt running. Set the instance up and would rather nobody needed them.
+
+  # Tin Roof Choir
+  - username: june
+    display_name: June Okafor
+    bio: Started the choir, books everything, has never read a settings page in her life.
+  - username: teo
+    display_name: Teo Marsh
+    bio: Sings bass, runs sound at Bobbin Hall on weekends, is in two places at once.
+  - username: wren
+    display_name: Wren Castillo
+    bio: Newest member of the choir. Joined a month ago and still asks before touching anything.
+
+  # Bobbin Hall Co-op
+  - username: priya
+    display_name: Priya Natarajan
+    bio: Co-op board chair. Wants the election to run itself so she can stop being the person who runs it.
+  - username: devon
+    display_name: Devon Hale
+    bio: Board member, term ending soon, unsure whether to stand again.
+  - username: ana
+    display_name: Ana Lindqvist
+    bio: Board member, the one who reads the bylaws.
+  - username: kofi
+    display_name: Kofi Mensah
+    bio: Member for years, never on the board, gets nominated anyway.
+  - username: rosa
+    display_name: Rosa Delgado
+    bio: Member. Votes late, votes from her phone, sometimes forgets.
+  - username: sam
+    display_name: Sam Pryor
+    bio: Member. Would like to be on the board and says so.
+  - username: lou
+    display_name: Lou Whitaker
+    bio: Member of the co-op and half the other rooms in town. Follows everything.
+
+  # Northwest Corridor Neighbors
+  - username: harriet
+    display_name: Harriet Boone
+    bio: Coalition secretary. Takes the minutes at the monthly meeting and types them up afterwards.
+  - username: omar
+    display_name: Omar Haddad
+    bio: Coalition co-chair. Decisions happen at the meeting; the website is where they are written down.
+  - username: bea
+    display_name: Bea Sunday
+    bio: Attends when she can. Wants to see what was decided without asking Harriet.
+  - username: clyde
+    display_name: Clyde Ferris
+    bio: Was co-chair until last spring. Still listed somewhere, probably.
+
+  # Loose Threads Press
+  - username: nell
+    display_name: Nell Abara
+    bio: Founded the press. Nominates people who show up and does the work.
+  - username: ivo
+    display_name: Ivo Petran
+    bio: Editor. Has strong opinions about the charter's wording and proposes changes to it.
+  - username: tam
+    display_name: Tam Nguyen
+    bio: Designer. Nominated for admin last month and unsure what it changes.
+  - username: gus
+    display_name: Gus Okonkwo
+    bio: Contributor. Joined recently, wants to vote, may not be allowed to yet.

@@ -1,0 +1,27 @@
+-- Which chairs a contest is for (docs/adr/103).
+--
+-- An election carried a *count* — `proposals.seats_contested` — and the
+-- resolution refilled the council's chairs in created order, vacated every
+-- chair past the winner count, and stepped down every admin it had not
+-- seated. All three are only correct when the contest covers the whole
+-- council. On a staggered council, where one chair's term ends in March and
+-- two more run to the following year, a one-seat contest took the March
+-- winner, sat them in the *oldest* chair, emptied the other two and removed
+-- two admins the electorate was never asked about.
+--
+-- Staggering is not an exotic configuration: docs/adr/051 put the clock on
+-- the seat precisely so a council could spread its cohort, and SetSeatTerm
+-- (docs/adr/100) is the box a founder uses to do it. The contest has to name
+-- its chairs.
+--
+-- NULL is the ordinary state: this chair is in no contest. It is set when a
+-- contest opens and cleared when that contest settles or fails, so a chair
+-- carrying one is a chair being decided right now.
+--
+-- No backfill. A contest that opened before this column exists names no
+-- chairs, and `contestedSeats` reconstructs the set the same way the calendar
+-- chose it — the chairs whose terms end soonest, as many as the contest
+-- counts — rather than a migration guessing at the intent of an election
+-- already in flight.
+ALTER TABLE seats ADD COLUMN contested_in TEXT REFERENCES proposals(id) ON DELETE SET NULL;
+CREATE INDEX idx_seats_contested_in ON seats(contested_in);

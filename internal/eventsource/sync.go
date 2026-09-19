@@ -12,6 +12,7 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
@@ -244,7 +245,7 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 }
 
 func nowStamp() string {
-	return time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	return clock.Now()
 }
 
 func recordFailure(db *database.DB, sourceID string, cause error) {
@@ -377,16 +378,12 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		desired[k] = it
 	}
 
-	var nodeSlug, nodeName string
-	if err := db.QueryRow(`SELECT slug, name FROM nodes WHERE id = ?`, src.NodeID).Scan(&nodeSlug, &nodeName); err != nil {
-		return fmt.Errorf("load node: %w", err)
-	}
-
-	// The first successful sync adopts the whole calendar quietly;
-	// announcing forty backfilled events would bury every follower's
-	// bell. From then on, new events are news.
+	// The first successful sync adopts the whole calendar quietly rather
+	// than treating forty backfilled events as arrivals. Nothing rings a
+	// bell either way since docs/adr/093, but these still federate and
+	// still match programs, and a backfill is not news to those either.
 	announce := src.LastSuccessAt.Valid
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 
 	// One transaction for the whole reconcile: a mid-sync failure must
 	// not leave half a calendar applied, and one fsync beats hundreds on
@@ -535,19 +532,10 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		return fmt.Errorf("commit reconcile: %w", err)
 	}
 
+	// An imported event announces to nobody (docs/adr/093). It is
+	// published: it appears on the patch's calendar feed, the quilt and
+	// the map, and federates to the patch's AP followers below.
 	for _, e := range announcements {
-		if notifier != nil {
-			go notifier.Notify(notifications.Event{
-				Type:     notifications.EventCreated,
-				NodeID:   src.NodeID,
-				NodeSlug: nodeSlug,
-				NodeName: nodeName,
-				ActorID:  src.AddedBy,
-				EntityID: e.ID,
-				Title:    "New event: " + e.Title,
-				Link:     weblink.Event(e.ID),
-			})
-		}
 		broadcastCreate(db, e, src.NodeID)
 	}
 	offerAnnouncements(db, notifier, src, announcements)
@@ -648,7 +636,7 @@ func Remove(db *database.DB, sourceID string) error {
 	}
 	defer tx.Rollback()
 
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 	if _, err := tx.Exec(
 		`DELETE FROM events WHERE source_id = ? AND removed_at IS NULL AND starts_at > ?`,
 		sourceID, now,

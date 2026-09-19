@@ -1,5 +1,5 @@
 <script>
-  import { CalendarBlank, MapPin, ArrowsClockwise, PencilSimple, ArrowSquareOut } from 'phosphor-svelte';
+  import { CalendarBlank, CalendarPlus, MapPin, ArrowsClockwise, PencilSimple, ArrowSquareOut } from 'phosphor-svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isAdmin, getUser } from '../stores/auth.svelte.js';
@@ -112,11 +112,17 @@
       : `${start} – ${formatDate(event.ends_at, event.timezone)} · ${formatTime(event.ends_at, event.timezone)}`;
   });
 
+  // Recurrence is no longer something an organizer can choose: the word
+  // was stored, displayed, and never expanded — one row, one date, and an
+  // ICS feed with no RRULE, so "Repeats weekly" promised a subscriber four
+  // Tuesdays and handed them one. Rows that already carry a word keep it,
+  // and this is where it is told the truth: the series is what the
+  // organizer said, and this page is one date of it.
   const RECURRENCE_LABELS = {
-    daily: 'Repeats daily',
-    weekly: 'Repeats weekly',
-    biweekly: 'Repeats every two weeks',
-    monthly: 'Repeats monthly',
+    daily: 'The organizer says this repeats daily',
+    weekly: 'The organizer says this repeats weekly',
+    biweekly: 'The organizer says this repeats every two weeks',
+    monthly: 'The organizer says this repeats monthly',
   };
 </script>
 
@@ -218,7 +224,7 @@
       {#if event.recurrence && RECURRENCE_LABELS[event.recurrence]}
         <div class="meta-row">
           <ArrowsClockwise size={16} weight="duotone" />
-          <span>{RECURRENCE_LABELS[event.recurrence]}</span>
+          <span>{RECURRENCE_LABELS[event.recurrence]}{' — only this date is on the calendar'}</span>
         </div>
       {/if}
       {#if eventLinkHost}
@@ -244,6 +250,21 @@
 
     {#if event.description}
       <p class="description">{event.description}</p>
+    {/if}
+
+    <!-- One night, in your own calendar (docs/adr/093). Patchwork tells
+         nobody an event is coming, so this and subscribing to the patch
+         are the whole of how one reaches a person who asked for it. A
+         plain href: the server sends the file as an attachment, and a
+         download needs no script. Withheld while an event is still in the
+         review queue, where the endpoint 404s and nothing exists to add. -->
+    {#if event.status !== 'pending_review'}
+      <div class="calendar-actions">
+        <a class="btn btn-sm btn-secondary" href="/api/v1/events/{event.id}/event.ics">
+          <CalendarPlus size={14} weight="duotone" />
+          Add to calendar
+        </a>
+      </div>
     {/if}
   {/if}
 </div>
@@ -298,6 +319,16 @@
     align-items: center;
     gap: 0.4rem;
     flex-shrink: 0;
+  }
+
+  .calendar-actions {
+    margin-top: 1rem;
+  }
+
+  .calendar-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .edit-btn {

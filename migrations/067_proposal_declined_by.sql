@@ -1,0 +1,12 @@
+-- Migration 067: who declined a proposal on an admin-decides patch.
+--
+-- docs/adr/092: on a patch whose decision method is admin-decides, a member's
+-- proposal waits on the maintainer, and a vote the maintainer opens is
+-- advisory. Either way the decision is a person's, not a tally's, and a
+-- declined proposal has to name who declined it the way an applied one
+-- names who applied it (applied_by). A rejected row with no tally and no
+-- name would read as a vote that failed, which is a different claim about
+-- what happened.
+--
+-- NULL everywhere the decision was the electorate's.
+ALTER TABLE proposals ADD COLUMN declined_by TEXT REFERENCES users(id);

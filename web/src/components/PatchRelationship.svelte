@@ -24,6 +24,8 @@
     isUnclaimed = false,
     isBanned = false,
     membershipRole = '',
+    requestPending = false,
+    invited = false,
     liningStatus = '',
     onChanged = () => {},
     size = 'md',
@@ -46,12 +48,48 @@
   };
   let standing = $derived(STANDING[membershipRole] || null);
 
+  /**
+   * A membership request nobody has answered yet. It is not standing —
+   * membershipRole is empty, because the server sets it only for an active
+   * row — so it gets its own resting state rather than a fourth entry in
+   * STANDING: there is nothing to exit, and the label reports a wait
+   * instead of a relationship.
+   *
+   * Without it this row would offer Follow and Become a member to someone
+   * who has already asked, and the server refuses both with a 409
+   * ("membership request already pending"). The person who asked five
+   * minutes ago would see the same page they saw before asking.
+   */
+  let awaiting = $derived(requestPending && !standing && !isBanned);
+
   // The rung renders only where it can succeed (docs/adr/042). Unclaimed
   // patches take followers only, and invite_only rejects the request
   // outright (memberships.go) — an absent door beats a 403 at the end of a
   // ceremony.
+  //
+  // A patch that has moved is the same rule again (docs/adr/090): the server
+  // declines both rungs and answers with the new address, and the banner
+  // directly above this row has already said so. Standing itself stays —
+  // somebody who is already in this patch keeps the control that lets them
+  // leave it.
+  let hasMoved = $derived(!!node?.moved_to);
+
+  /**
+   * An invitation nobody has answered (docs/adr/098). The requester's
+   * mirror image, and shaped the other way round: a request waits on the
+   * admin, so it rests behind a menu; an invitation waits on this person,
+   * so its two answers sit in the open where Follow would be. Not standing
+   * — no role mark, nothing to exit — and gone the moment either is
+   * pressed. Hidden on a moved patch for the reason the rungs are: accept
+   * is a join, and the server declines those there.
+   */
+  let invitedHere = $derived(invited && !standing && !isBanned && !hasMoved);
+
   let canBecomeMember = $derived(
+    !hasMoved &&
     !isUnclaimed &&
+    !awaiting &&
+    !invitedHere &&
     node?.membership_policy !== 'invite_only' &&
     membershipRole !== 'member' &&
     membershipRole !== 'admin'
@@ -93,6 +131,58 @@
       showToast('Following patch', 'success');
     } catch (e) {
       showToast(e.message || 'Could not follow', 'error');
+    } finally {
+      joining = false;
+    }
+  }
+
+  // Retracting a request nobody answered. Its own endpoint, not leave with
+  // a different label: leave takes active rows only, because nobody
+  // admitted this person and there is no community to exit
+  // (memberships.go, WithdrawMembershipRequest). It sits in the same menu
+  // as the exits for the same reason they do — one deliberate step.
+  async function handleWithdraw() {
+    menuOpen = false;
+    joining = true;
+    try {
+      await api(`nodes/${slug}/withdraw`, { method: 'POST' });
+      await onChanged();
+      showToast('Request withdrawn', 'info');
+    } catch (e) {
+      showToast(e.message || 'Could not withdraw request', 'error');
+    } finally {
+      joining = false;
+    }
+  }
+
+  // The two answers to an invitation (docs/adr/098). Their own endpoints,
+  // not join and leave: accept is the one write that makes a member out of
+  // an invited row, and decline deletes a row that was never a membership —
+  // leave would refuse it, and the audit log should say "declined", not
+  // "left". Pressing the ordinary Join would also accept (JoinNode), but
+  // this row never offers it to an invited person: the answer deserves its
+  // own word.
+  async function handleAccept() {
+    joining = true;
+    try {
+      await api(`nodes/${slug}/invitations/accept`, { method: 'POST' });
+      await onChanged();
+      showToast('You are now a member', 'success');
+    } catch (e) {
+      showToast(e.message || 'Could not accept invitation', 'error');
+    } finally {
+      joining = false;
+    }
+  }
+
+  async function handleDecline() {
+    joining = true;
+    try {
+      await api(`nodes/${slug}/invitations/decline`, { method: 'POST' });
+      await onChanged();
+      showToast('Invitation declined', 'info');
+    } catch (e) {
+      showToast(e.message || 'Could not decline invitation', 'error');
     } finally {
       joining = false;
     }
@@ -147,7 +237,38 @@
           </div>
         {/if}
       </div>
-    {:else}
+    {:else if awaiting}
+      <!-- Same shape as a standing control, and for the same reason: what
+           undoes this is one deliberate step behind a menu, not a button
+           sitting next to the thing it undoes. It is not standing, so it
+           wears no role mark and its own muted type. -->
+      <div class="standing-container">
+        <button
+          class="standing awaiting"
+          class:sm={size === 'sm'}
+          onclick={() => { menuOpen = !menuOpen; }}
+          disabled={joining}
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+        >
+          <span>Membership requested</span>
+          <span class="standing-mark" aria-hidden="true"><CaretDown size={11} weight="bold" /></span>
+        </button>
+        {#if menuOpen}
+          <div class="standing-menu" role="menu">
+            <button role="menuitem" onclick={handleWithdraw} disabled={joining}>Withdraw request</button>
+          </div>
+        {/if}
+      </div>
+    {:else if invitedHere}
+      <!-- Waiting on this person, not on an admin: both answers in the
+           open, where Follow would otherwise be. -->
+      <div class="invited-row">
+        <span class="invited-label">You've been invited to join</span>
+        <button class="btn btn-primary {btnSize}" onclick={handleAccept} disabled={joining}>Accept</button>
+        <button class="btn btn-secondary {btnSize}" onclick={handleDecline} disabled={joining}>Decline</button>
+      </div>
+    {:else if !hasMoved}
       <button class="btn btn-primary {btnSize}" onclick={handleFollow} disabled={joining}>Follow</button>
     {/if}
 
@@ -183,6 +304,30 @@
     font-size: 0.85rem;
     color: var(--color-error);
     font-weight: 500;
+  }
+
+  /* An invitation waiting on this person: the label is a state, in the
+     requester's muted register; the answers beside it are the row's
+     ordinary buttons. Wraps on a narrow container rather than squeezing. */
+  .invited-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .invited-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  /* Waiting on an answer: the standing control's shape, in the register of
+     a state rather than a standing — muted and italic, no role mark. */
+  .standing.awaiting {
+    font-weight: 500;
+    font-style: italic;
+    color: var(--color-text-muted);
   }
 
   /* --- Standing control: the resting form of where you stand --- */

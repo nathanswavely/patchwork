@@ -19,6 +19,7 @@
  * @param {boolean} opts.isAdmin
  * @param {string}  opts.membershipRole
  * @param {object|null} opts.followerPermissions
+ * @param {string} opts.publicMemberList
  * @returns {Array<{id: string, label: string}>}
  */
 export function workspaceTabs({
@@ -26,6 +27,7 @@ export function workspaceTabs({
   isAdmin = false,
   membershipRole = '',
   followerPermissions = null,
+  publicMemberList = 'everyone',
 } = {}) {
   if (isUnclaimed) {
     const t = [{ id: 'events', label: 'Events' }];
@@ -37,8 +39,18 @@ export function workspaceTabs({
   const fp = followerPermissions;
   const isFollower = membershipRole === 'follower';
 
-  if (!isFollower || fp?.members !== false)
-    t.push({ id: 'members', label: 'Members' });
+  // What the patch publishes (docs/adr/095) — a different question from
+  // the follower key beside it, which hides a tab over a read that stays
+  // public. This one is the read. Anyone outside the room gets the public
+  // answer; the room itself, and an instance admin, always get the tab.
+  const rosterInsider = isAdmin || membershipRole === 'member' || membershipRole === 'admin';
+  const rosterHidden = !rosterInsider && publicMemberList === 'nobody';
+  const rosterAdminsOnly = !rosterInsider && publicMemberList === 'admins';
+
+  // A tab naming what is behind it: "Members" over a list of three admins
+  // misreports the patch, and the page under it says the same word.
+  if ((!isFollower || fp?.members !== false) && !rosterHidden)
+    t.push({ id: 'members', label: rosterAdminsOnly ? 'Admins' : 'Members' });
   if (!isFollower || fp?.events !== false)
     t.push({ id: 'events', label: 'Events' });
   // The noticeboard is the room's, and only the room's (docs/adr/081): a
@@ -66,26 +78,42 @@ export function workspaceTabs({
  *
  * `isMemberOrAdmin` is the role test, not "has a membership row": following
  * is frictionless and grants no write rights, so a follower suggests like
- * anyone else. Note the node payload's `is_member` is true for followers
- * too — pass the role, not that flag.
+ * anyone else. The node payload's `is_member` now answers the same question
+ * (docs/adr/117); before that it was true for followers too, which is why
+ * every caller passes the role.
+ *
+ * `viewerTrusted` reads the node payload's `viewer_trusted`
+ * (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar):
+ * true when this viewer's trusted-contributor grant — quilt-wide or scoped
+ * to this one patch — reaches this unclaimed patch. It is about one patch,
+ * unlike the signed-in user's own flag, which only ever meant "quilt-wide"
+ * and is kept for the one place that is about no patch (the suggest form).
  *
  * @returns {'direct'|'suggest'|'none'}
  */
 export function eventPostingRight({
   signedIn = false,
   isInstanceAdmin = false,
-  trustedContributor = false,
+  viewerTrusted = false,
   isUnclaimed = false,
   isMemberOrAdmin = false,
   isBanned = false,
   submissionsEnabled = true,
   acceptSuggestions = false,
+  hasMoved = false,
 } = {}) {
   if (!signedIn || isBanned) return 'none';
   if (isInstanceAdmin) return 'direct';
 
+  // A patch that has moved takes no suggestions from outside (docs/adr/090),
+  // and the server says so. Its own members and admins still post, because
+  // the old home stays a record and a record can be corrected. This sits
+  // after the instance-admin line for the same reason the rest of the
+  // function does: it names the outcome, and that one is still 'direct'.
+  if (hasMoved && !isMemberOrAdmin) return 'none';
+
   if (isUnclaimed) {
-    if (trustedContributor) return 'direct';
+    if (viewerTrusted) return 'direct';
     return submissionsEnabled ? 'suggest' : 'none';
   }
 

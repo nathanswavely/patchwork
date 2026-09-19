@@ -84,7 +84,7 @@ test.describe('Notifications — Reading and navigating', () => {
   // event and a charter. Picking "whatever is unread first" is not enough —
   // that lands on a list link, which routed fine before the fix too.
   for (const { label, prefix } of [
-    { label: 'an event', prefix: 'Tomorrow: ' },
+    { label: 'an event', prefix: 'Your event was approved: ' },
     { label: 'a charter', prefix: 'Charter updated: ' },
   ]) {
     test(`clicking ${label} notification opens what it is about`, async ({ page }) => {
@@ -115,7 +115,7 @@ test.describe('Notifications — Reading and navigating', () => {
   // whether or not reading updates the count. Also a different notification
   // from the two above, which have already been read by the time this runs.
   test('reading a notification drops the badge without waiting for the poll', async ({ page }) => {
-    const { before } = await clickNotification(page, 'New event: ');
+    const { before } = await clickNotification(page, 'Event suggested: ');
     // The poll is 60s away, so anything visible this soon is the local update.
     await expect(page.locator('.badge-count')).toHaveText(String(before - 1), { timeout: 3000 });
   });
@@ -240,9 +240,12 @@ test.describe('Notifications — Preferences', () => {
     await goto(page, '/settings/notifications');
     const firstToggle = page.locator('.prefs-toggle input').first();
     if (await firstToggle.isVisible()) {
+      // The save is debounced 500ms client-side; wait on the PUT it fires
+      // rather than the debounce delay itself.
+      const savePromise = page.waitForResponse((resp) =>
+        resp.url().includes('/api/v1/notifications/preferences') && resp.request().method() === 'PUT');
       await firstToggle.click();
-      // Wait for debounced save
-      await page.waitForTimeout(1000);
+      await savePromise;
       // Should not show any error toast
       const errorToast = page.locator('.toast-error');
       const hasError = await errorToast.isVisible().catch(() => false);
@@ -272,8 +275,12 @@ test.describe('Notifications — Patch Config', () => {
     await goto(page, `/patches/lancaster-arts-district/settings/notifications`);
     const firstToggle = page.locator('.toggle-label input').first();
     if (await firstToggle.isVisible()) {
+      // This save fires immediately on toggle, no debounce — wait on the
+      // PUT itself rather than a fixed delay.
+      const savePromise = page.waitForResponse((resp) =>
+        resp.url().includes('/notification-config') && resp.request().method() === 'PUT');
       await firstToggle.click();
-      await page.waitForTimeout(500);
+      await savePromise;
       await expectNoError(page);
     }
   });

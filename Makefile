@@ -1,6 +1,7 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate gazetteer \
+        release-notes-check sim sim-personas sim-advance sim-sweep sim-status sim-now sim-reset \
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
-        copy-test copy-report
+        copy-test copy-report errcheck errcheck-baseline
 
 # Where `make build` writes the server binary. Override via the environment to
 # build every worktree to one stable path — on Windows the firewall keys its
@@ -49,10 +50,61 @@ test:
 test-e2e:
 	cd web && npx playwright test
 
+# CI runs this as scripts/errcheck-check.sh directly; the target exists so
+# the same check is one command to run locally.
+errcheck:
+	bash scripts/errcheck-check.sh
+
+# Regenerates errcheck.baseline from the current tree — the only way the
+# backlog it grandfathers ever shrinks. Review the diff before committing:
+# it should only remove lines (fixed discards) or add ones you meant to add.
+errcheck-baseline:
+	go run github.com/kisielk/errcheck@v1.20.0 ./... 2>&1 | grep -E '^[^:]+:[0-9]+:[0-9]+:' | sed -E 's/^([^:]+):[0-9]+:[0-9]+:/\1:/' | tr '\\' '/' | sort > errcheck.baseline
+
 # Prove instance data survives `docker compose up --force-recreate`
 # (i.e. an image update). Needs docker + curl. See docs/DEPLOYMENT.md.
 smoke-recreate:
 	bash scripts/smoke-recreate.sh
+
+# --- Governance simulation (docs/adr/096) ------------------------------------
+# A throwaway instance that cmd/sim can move through time. The product never
+# learns it is being simulated: `sim-advance` slides every stored instant into
+# the past and runs the server's own hourly passes once. See
+# docs/testing/governance-simulation.md.
+SIM_DB ?= data/sim/patchwork.db
+SIM_CONFIG ?= cmd/sim/patchwork.sim.yaml
+SIM_PERSONAS ?= cmd/sim/personas.example.yaml
+
+sim: build
+	$(PATCHWORK_BIN) -config $(SIM_CONFIG)
+
+sim-personas:
+	go run ./cmd/sim/ -db $(SIM_DB) personas $(SIM_PERSONAS)
+
+#   make sim-advance BY=30d
+sim-advance:
+	go run ./cmd/sim/ -db $(SIM_DB) advance $(BY)
+
+sim-sweep:
+	go run ./cmd/sim/ -db $(SIM_DB) sweep
+
+sim-status:
+	go run ./cmd/sim/ -db $(SIM_DB) status
+
+sim-now:
+	go run ./cmd/sim/ -db $(SIM_DB) now
+
+sim-reset:
+	rm -rf $(dir $(SIM_DB))
+
+# Validate release-notes/ before cutting a tag (docs/adr/085). Bare, it checks
+# every file parses; with TAG= it also insists that release exists, which is
+# exactly the check CI runs on a `v*` tag — run it before you push the tag,
+# because a tag with no notes publishes no image.
+#   make release-notes-check
+#   make release-notes-check TAG=v0.9.0
+release-notes-check:
+	go run ./cmd/releasenotes $(if $(TAG),-tag $(TAG),)
 
 # --- Copy ledger -----------------------------------------------------------
 # Who wrote the words a visitor reads. See tools/copy-ledger/README.md.

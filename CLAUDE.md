@@ -41,11 +41,12 @@ patchwork/
 │   ├── eventsource/        # event sources: ICS fetch/parse/expand, sync reconciler, worker (docs/adr/031)
 │   ├── gazetteer/          # optional local place index — reader + builder (docs/adr/082)
 │   ├── safehttp/           # SSRF-guarded HTTP client shared by ap and eventsource
-│   ├── governance/         # git-backed charter repos, templates, rules, defaults
+│   ├── governance/         # git-backed charter repos, templates, rules, defaults,
+│   │                       #   repo repair from the canonical rows (docs/adr/084)
 │   ├── notifications/      # notification channels, email, reminder worker
 │   ├── weblink/            # the SPA paths Go emits (notification/email/feed links)
 │   └── seamrip/            # export/import portability boundary (docs/adr/002)
-├── migrations/             # SQL migration files (sequential numbered; 006 intentionally absent)
+├── migrations/             # SQL migration files (timestamped; 001-075 legacy numbered, 006 absent)
 ├── docs/                   # DEPLOYMENT.md, adr/ (decision records; adr/README.md is the index)
 ├── web/                    # Svelte project (npm, builds to web/dist/)
 ├── CONTEXT.md              # canonical vocabulary glossary (backend vs UI terms)
@@ -57,58 +58,96 @@ patchwork/
 └── CLAUDE.md
 ```
 
-### Claiming a number (ADRs and migrations)
+### Naming a record (ADRs and migrations)
 
-Both `docs/adr/` and `migrations/` are sequentially numbered, and both are
-claimed by branches that can't see each other. Two branches each reading
-"the highest number on disk" will pick the same next one and both be right
-locally. Migrations collide loudly at merge; ADRs collide *silently* —
-duplicate numbers merge clean and leave every `docs/adr/0NN` citation
-ambiguous. Two ADR 017s reached main this way.
+**Take today's date and write a sentence. There is nothing to look up and
+nobody to ask.**
 
-Before claiming a number, check what's in flight, not just what's on disk:
-
-```sh
-git ls-tree --name-only origin/main docs/adr/   # or migrations/
-gh pr list --state open                          # branches that haven't merged yet
-git branch --list                                # local branches, incl. other worktrees'
+```
+docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md
+migrations/20260916T143207_suggested_tags.sql
 ```
 
-Local branches matter as much as PRs: an unpushed worktree branch claimed
-ADR 038 invisibly to a session that checked only origin/main and open PRs.
+ADRs use `YYYY-MM-DD-slug.md`; migrations use `YYYYMMDDTHHMMSS_slug.sql`,
+with seconds because for a migration the timestamp is the *run order* and
+two on the same day need a determinate one. For an ADR the date is only a
+label, and two on the same day are told apart by their sentences.
 
-**That check has a shelf life.** It tells you the number was free when you
-claimed it, not that it still is. ADR 063 was claimed against a clean
-board — main topped out at 062, no open PRs, no other branches — and was
-wrong three hours later when another PR merged its own 063 while the first
-sat in review. **Re-check before merge, not only before claiming**, and
-re-check again after any merge of main into a long-lived branch.
+`date +%Y-%m-%d` and `date -u +%Y%m%dT%H%M%S` produce them.
 
-When running parallel agents or worktrees on one repo, **assign each its
-number up front** rather than letting each pick. If a collision does land,
-renumber the side with fewer inbound references — or, when one side has
-already merged, the unmerged one — and update every citation in the same
-commit: `git mv` so history survives, then sweep `*.md`, `*.go`,
-`*.svelte`, `*.js`, `*.sql` for the old number.
+**Both number spaces are closed.** ADRs stopped at 117 and migrations at
+075 (the cutover ADR said 115 and 074; two branches in flight landed after
+it, and a merged migration is never renamed, so the line moved rather than
+the files). Those files keep their names forever, every `docs/adr/0NN`
+citation keeps resolving, and no new record is ever numbered.
+`TestNewRecordsAreNotNumbered` fails the build on a new `NNN-` or `NNN_`,
+because the realistic way this decays is mimicry: 117 numbered files are a
+strong pattern to copy. `migrations/006` is still intentionally absent and
+a retired ADR still keeps its number and its status line.
 
-Sweeping is where this bites a second time. Once both ADRs exist in one
-tree, **a blanket find-and-replace is wrong**: files legitimately cite the
-other side's number too. Renumbering 063 → 064 meant 17 citations moved
-and two files kept theirs, because `internal/eventsource/sync.go` and
-`PatchSettingsSources.svelte` each cited *both* ADRs after the merge.
-Anchor those edits on the surrounding sentence, not on the number.
+Why this replaced sequential numbering is
+`docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md`. The short version:
+a number was claimed from a counter whose real state is the union of every
+branch in flight, which no branch can see. Two worktrees read "the highest
+number on disk", picked the same next one, and were both right locally.
+The ritual that guarded it (check `origin/main`, then open PRs, then local
+branches, then re-check before merge) asked a question whose answer
+expired, and its cost grew with exactly the parallelism this project runs
+on. Two ADR 017s and two migration 066s reached main anyway.
 
-Numbers are never reused once merged: `migrations/006` is intentionally
-absent, and a retired ADR keeps its number and gets a status line.
+**Never rename a migration that has merged.** The runner records the whole
+filename in `schema_migrations` and migrations are not idempotent
+(`CREATE TABLE`, `ALTER TABLE ... ADD COLUMN`), so a renamed file looks
+pending, re-runs, errors, and `database.Open`'s error is `log.Fatalf`. A
+bare `git mv` is a fleet that will not boot. The only safe rename pairs
+with an entry in `renamedMigrations` (`internal/database/database.go`),
+which rewrites the recorded row in place, and it must be tested from a
+database carrying the *old* name, never from a fresh migrate, which is the
+one database that cannot show the problem. Those entries are permanent.
+Timestamped names exist so you never need this.
 
-**The same collision has a code form, and git is equally blind to it.**
-Two branches each added a `jsonString` helper — one in
+**A citation is a path now.** Cite a new ADR by its filename
+(`docs/adr/2026-09-16-a-name-nobody-has-to-ask-for.md`), which resolves,
+rather than by a bare number, which never did. Legacy ADRs keep being
+cited as `docs/adr/0NN`.
+
+### When a clean merge is not a working merge
+
+The naming collision is gone. Two others are not, and git is equally blind
+to both.
+
+**The code form.** Two branches each added a `jsonString` helper — one in
 `internal/handler/programs.go`, one in `internal/handler/event_sources.go`
 — so the merge was clean and the package stopped compiling. A green PR
 does not stay green just because main merged without conflicts: **build
 and run the suites after merging main**, before treating a quiet merge as
 a working one. Shared helper names, new columns on a table two branches
 both touched, and a route registered twice all fail this way.
+
+**The ledger form, which announces itself by going quiet.**
+`copy/ledger.json` is generated: `copy-ledger sync` rewrites the recorded
+line number of every string in any file a branch touched. So two branches
+that share no source file at all still conflict there, and the more
+parallel work is in flight the more certain it is. What makes it worth its
+own paragraph is the symptom. A conflicted PR has no mergeable ref for
+GitHub to build, so **no workflow starts at all** — and `gh pr checks`
+answers `no checks reported`, which reads like a clean board rather than a
+blocked one. PR #253 sat that way twice, the second time 30 commits behind
+main. **When checks do not appear within a minute or two, check
+`gh pr view <n> --json mergeable` before assuming anything is passing.**
+
+Resolve it by regenerating, never by hand: take main's copy whole
+(`git checkout --theirs copy/ledger.json`), then re-run
+`node tools/copy-ledger/cli.js sync`, which rebuilds the line numbers from
+the merged source. Then confirm you clobbered nobody's decision —
+
+```sh
+git diff --cached origin/main -- copy/ledger.json | grep -cE '^[-+] *"status"'
+```
+
+should print `0`, since a correct resolution moves line numbers and nothing
+else. Hand-merging the hunks is how a reviewed string quietly reverts to
+`unreviewed`, and the ledger exists precisely to keep that record honest.
 
 ### Verifying frontend changes
 
@@ -144,7 +183,7 @@ Three relationships a person can have with a patch:
 |------|--------------|--------|
 | **Admin** | Runs the patch | Edit profile, manage members, create events, proposals |
 | **Member** | Active participant | Vote on proposals, participate, listed publicly |
-| **Follower** | Interested observer | Sees events in feed, gets notified, no voting rights |
+| **Follower** | Interested observer | Sees events in feed, calendar and map, no voting rights |
 
 Following is frictionless: anyone can follow any public patch regardless of membership policy.
 
@@ -166,6 +205,8 @@ A **seat** (`seats` table) is a governed admin position that outlives its holder
 
 `proposal_venue: elsewhere` removes the ballot and keeps the discussion — a proposal is born `state = 'elsewhere'` with `voting_ends_at` NULL, so nothing resolves it on a clock. The two halves only work together: a patch with both a tally and an attestation would let an admin who disliked where a tally was heading record a meeting result instead.
 
+**How a proposal is decided** follows `decision_method`, and on `admin` the maintainer decides every one and may consult first (docs/adr/092). An admin's proposal is a direct change unless created with `put_to_vote: true`; a member's is born `state = 'awaiting_admin'` with no ballot and no clock; any vote held there is **advisory** — its window closing hands the proposal back to the admin with the tally, and sole-voter early close never fires. `POST /api/v1/proposals/{id}/decide` (`approve` | `decline`, stamps `applied_by` / `declined_by`) and `POST .../open-vote` are the maintainer's verbs, gated on the proposal's *frozen* terms (docs/adr/047), never on the patch's live rules. `POST .../apply` accepts an open proposal only there; on every voting patch the tally is the decision and an admin waits like everyone else. The who-decides matrix in `internal/handler/proposal_admin_decides_test.go` runs every template × every role and is where a template edit that moves power has to say so.
+
 **Never attestable:** the lining (docs/adr/037 — checked by `kind`, not by title) and `governance-rules.json`, which is machine configuration rather than a text anyone adopts. Excluding the rules file closes a two-step route around the leadership gate. On an elsewhere patch a rules change is a **direct change** an admin applies.
 
 ### Where a patch is (docs/adr/082)
@@ -184,13 +225,25 @@ creation and reach settings only for a patch that is not yet placed: proposing
 over a marker a human chose is the inversion the confirm step exists to
 prevent.
 
+### Suggested tags (docs/adr/114)
+
+A patch admin may propose a word the vocabulary does not have, from patch
+creation and from Patch Settings. It is a `pending` row in `tags`: the patch
+wears it at once and only that patch's admins can see it, so nothing filters,
+derives a motif, attracts patches on the quilt or federates until an instance
+admin approves. Approving publishes it on every patch waiting on it, since
+what is reviewed is a word and not whether one patch describes itself
+honestly. Declining spends the word, and an admin can still create it outright
+later. This amends ADR 021, which held that only instance admins change the
+list; the curation stays theirs, and a suggestion is how a word reaches them.
+
 ### Inferred Threads & Placement Affinity
 
-A **thread** — the user-facing connection concept — is inferred from shared admin/member overlap only; followers don't create threads. **Placement affinity**, the internal weight table the quilt layout runs on (`internal/handler/tree.go`), is broader: shared admins/members ×3, shared event participation ×2, shared followers ×1, plus a weak shared-tag term (mass-scaled toward the larger patch's member count, capped below one shared member) so brand-new patches with no people-overlap still land near their kind. Tag attraction is a placement detail, never a thread. The tree endpoint returns these links and the frontend layout engine places strongly connected patches adjacently in the quilt treemap.
+A **thread** — the user-facing connection concept — is inferred from shared admin/member overlap only; followers don't create threads. **Placement affinity**, the internal weight table the quilt layout runs on (`internal/handler/tree.go`), is broader: shared admins/members ×3, shared event participation ×2, shared followers ×1, plus a weak shared-tag term (mass-scaled toward the larger patch's member count, capped below one shared member) so brand-new patches with no people-overlap still land near their kind. Tag attraction is a placement detail, never a thread. A membership its holder has hidden (`memberships.visible = 0`, docs/adr/006) counts toward none of the people-derived terms: the shared-member, shared-follower and shared-event-participation queries all exclude a hidden row on either side, so a public, unnormalized score can't move by a fixed amount when someone hides themselves (docs/adr/2026-09-18-a-hidden-membership-does-not-place.md). `member_count`/`follower_count` stay unfiltered on purpose (docs/adr/095): a count says how big a patch is, affinity says a specific overlap exists. The tree endpoint returns these links and the frontend layout engine places strongly connected patches adjacently in the quilt treemap.
 
 ### User Profiles & Membership Visibility (ADR 006)
 
-People have public profile pages at `/users/{username}` — name, avatar, bio, and visible memberships with role chips (the contributor ladder made legible). Follows never appear on profiles. Each membership has a per-membership visibility switch owned by the member: one switch controls both whether the membership shows on the profile and whether the person shows in the patch's public member list — the two surfaces never disagree. Hidden memberships remain visible to that patch's admins/members inside the workspace. Memberships never federate (AP actors carry identity only). There is deliberately no instance-wide people search — people are discovered through patches.
+People have public profile pages at `/users/{username}` — name, avatar, bio, and visible memberships with role chips (the contributor ladder made legible). Follows never appear on profiles. Each membership has a per-membership visibility switch owned by the member: one switch controls both whether the membership shows on the profile and whether the person shows in the patch's public member list — the two surfaces never disagree. The patch has a switch of its own (docs/adr/095), and the two answer different questions: "may this patch be enumerated" belongs to the patch's admins, "what am I in" belongs to the person, so the patch's setting governs its own list, glimpse and tab and stops at `/users/{username}`. It subtracts only. Hidden memberships remain visible to that patch's admins/members inside the workspace. Memberships never federate (AP actors carry identity only). There is deliberately no instance-wide people search — people are discovered through patches.
 
 ### Patch Appearance (ADR 004, ADR 029) and how a tile is drawn (ADR 066)
 
@@ -241,35 +294,52 @@ Three auth paths, zero passwords:
 2. **Magic link** (requires SMTP): user enters email, receives link, clicks to auth.
 3. **Passkey** (returning users): WebAuthn ceremony, no network dependency.
 
-SMTP is optional. Without it, invite links + passkeys still work (magic links print to the server log for local dev). Patchwork warns in the dashboard but doesn't refuse to start.
+SMTP is optional. Without it, invite links + passkeys still work (magic links print to the server log for local dev). Patchwork states it plainly on the admin panel's Overview but doesn't refuse to start.
 
 Bootstrap: the first account created on a fresh instance automatically becomes the instance admin (`internal/auth/bootstrap.go`).
+
+Deletion leaves a **tombstone** (docs/adr/086): an account is never removed from `users`, because a community's record cannot lose the voter behind a vote or the author behind a proposal. `deleted_at` marks the row, identity is emptied, the username is retired rather than freed, and anything that joins `users` for a display name must substitute through `displayNameExpr`/`usernameExpr` — writing `COALESCE(u.display_name, u.username)` by hand on a new surface leaks a retired handle and nothing will fail.
 
 ## API
 
 REST at `/api/v1/*`. JSON bodies. Auth via HTTP-only Secure SameSite=Lax session cookie. All mutations require auth. Public reads are unauthenticated.
 
+**Authorization is decided in the handler, and a test walks the table to prove it.** There is no role gate at the router beyond `AuthRequired`/`AdminRequired`/`RequireNodeRole`: the real rules live in helpers like `seatRoom`, `maintainerDecidable` and `electedHere`, because they are per template and per venue and would lose their meaning as a middleware. The cost is that a check is invisible from the route table, so a new route ships with no coverage unless somebody writes it one. `cmd/patchwork/routes.go` holds the registrations as an enumerable table, and `TestEveryMutatingRouteRefusesAStranger` sends every non-GET route two requests, one anonymous and one from a signed-in person holding no role on the patch, and requires 401, 403 or 404 (404 where the room hides its existence, docs/adr/081). A route that accepts either caller fails the build until it is named in `openToAnyone` or `openToAnySignedInUser` with a one-line reason, the way `internal/seamrip` keeps its stays-behind list. **Add a route, add a fixture row if it takes a path parameter the walk has no id for:** the test fails loudly rather than fabricating one, because a request that 404s on a missing row never reaches the check. `AddReaction` and `RemoveReaction` (`POST`/`DELETE` on `/api/v1/comments/{id}/reactions[/{emoji}]`) are how this walk earns its keep: it found both answering a roleless signed-in caller, resolved the comment to its proposal to its patch, and applied the same gate `CreateComment` beside them already ran — membership, then `follower_permissions.proposals` — so neither is in the allowlist any more.
+
 Key endpoints:
 - `GET /api/v1/nodes/tree` — flat list of patches with member/event counts, sorted by member-affinity for treemap rendering
 - `GET /api/v1/nodes/{slug}` — single patch detail
 - `POST /api/v1/nodes/{slug}/join` — join or follow a patch (body: `{"role": "follower"}` for follow)
+- `POST /api/v1/nodes/{slug}/leave`, `POST /api/v1/nodes/{slug}/withdraw` — **two verbs, and they stay apart.** Leave takes an `active` row; withdraw takes a `pending` one and refuses everything else. Nobody admitted a requester, so there is no community to exit and no admin decision to undo — the split is what lets the audit log tell `membership.withdraw` ("changed their mind before anyone answered") from `membership.leave` ("was here and left"), and keeps a patch's record from showing departures by people who were never members. Withdraw clears `join_message` the way rejection does, notifies nobody, and is scoped to the caller's own row: an admin turning a request down is `UpdateMember`'s reject, which is a decision and is logged as one. Note that a pending row carries `role='member'`, so **client code must read `status` before `role`** — see `web/src/stores/memberships.svelte.js`
 - `GET /api/v1/users/{username}` — public user profile (visible memberships only)
-- `PATCH /api/v1/users/me/memberships/{nodeId}` — the two switches a member owns on their own membership: `visible` (docs/adr/006) and `share_contact` (docs/adr/080). The contact card itself is `contact_card` on `PATCH /api/v1/auth/me`, replaced whole; `GET /api/v1/nodes/{slug}/members` carries `contact` per member only for a viewer who is an active admin/member of that patch — not for an instance admin holding no role there
+- `PATCH /api/v1/users/me/memberships/{nodeId}` — the one switch a member owns on their own membership: `visible` (docs/adr/006). Contact sharing is **not** here any more (docs/adr/083 superseded 080): it is per item and per patch, at `GET|PUT /api/v1/nodes/{slug}/contact-shares`, a PUT of the whole set the caller's items may be read by in that patch. The items themselves live at `GET|POST /api/v1/users/me/contact-items` and `PATCH|DELETE .../{id}`, plus `DELETE .../{id}/shares` — the one item-first write there is, because item-first writes may only reduce exposure and a per-item picker of every patch you are in is the share-with-everything the design refuses, wearing a checkbox. **There is deliberately no rule anywhere**: nothing is shared by a default, a standing choice, or an act of the app, so a patch joined later starts shared with nothing and a promotion grants nothing.
+- `suggest_tags` on `POST /api/v1/nodes` and `PATCH /api/v1/nodes/{slug}`, `DELETE /api/v1/nodes/{slug}/suggested-tags/{name}`, plus `GET /api/v1/admin/tag-suggestions` and `PATCH /api/v1/admin/tag-suggestions/{id}` (`approve` | `reject`, with an optional `name` that renames before approving) — **suggested tags** (docs/adr/114), which amends docs/adr/021's instance-only vocabulary. A suggested tag is a `pending` row in the one `tags` table, worn by the proposing patch from the moment it is proposed and returned as `pending_tags` **only to that patch's admins**; `tags` still means the approved, public list to every reader. An unknown name inside `tags` stays a 400 everywhere, including `POST /api/v1/submissions`, which never suggests: if a lookup miss meant "coin this", a typo would become vocabulary. `setNodeTags` scopes its delete to approved ids, because the settings form spreads `node.tags` back into a wholesale PATCH and would otherwise destroy the patch's own suggestion; withdrawing is the explicit DELETE. Rejecting keeps the row so the name is spent, and `POST /admin/tags` resurrects a pending or rejected name rather than colliding with `UNIQUE`. Approving may rename, so approving may merge onto an approved, rejected or pending row. Names are normalized server-side on every write path (`tags.name` also carries a `COLLATE NOCASE` unique index), and the queue travels in an admin seamrip but never a member one
+- `GET /api/v1/nodes/{slug}/members` — gated by the patch's **public member list** setting (docs/adr/095): `nodes.public_member_list` is `everyone` (default), `admins` or `nobody`, and for anyone outside the room it is ANDed with the member's own `visible` switch — it can only ever subtract, never reveal somebody who hid. A follower is an outsider here. The payload states the setting back, because a client that only sees an empty array cannot tell "no members yet" from a withheld list, and those two want opposite copy. `member_count` is the one filter it deliberately skips: the quilt sizes a patch's tile by member count, so this control withholds identities and never the number. It also carries `contact`, the items each member shares **into this patch**, only for a viewer who is an active admin/member of it — not for an instance admin holding no role there. That listing is **paged like every other**, so a client that ignores `next_cursor` shows 20 people and hides everyone below them, contact items included. It also sends `member_count` and `follower_count` counted under the same visibility gate the listing runs, because a header that counts the loaded page states the page size as the patch's size, and one counted without the gate promises rows the list will never hand over.
+- **A new table joins no cross-cutting list on its own.** Account deletion (`internal/handler/account_deletion.go`), `make import`, and the seamrip spec each keep their own, and only the seamrip one fails the build when you forget (`TestEveryTableHasABoundaryDecision`). `contact_items` was missed by the first two: deleting an account left the card behind, because docs/adr/086's tombstone means ON DELETE CASCADE never fires, and importing a pre-068 archive lost every card silently. Both are fixed; the pattern is not.
+- `DELETE /api/v1/users/me` — self-serve account deletion (docs/adr/086). Step-up gated and confirmed by typing the username. **Erases the person, keeps the acts**: the `users` row stays as a tombstone (`deleted_at`) so every RESTRICT FK holds and every vote still has a voter, identity columns are emptied, and rows that are the person alone are deleted — sessions, passkeys, recovery codes, notifications and prefs, every membership, connected/remote quilts, the label entry, open claims, standing candidacies. The username stays on the row so it can never be re-registered; the profile 404s, the AP actor 410s, and every API surface substitutes "Deleted account" in SQL (`internal/handler/deleted_accounts.go`) so no component can leak the handle. Refused (409, with the patches listed) while the person is the only admin of any patch, and refused for the last instance admin. Audited `user.deleted`
 - `GET /api/v1/events` — **omitting `from` means upcoming.** The list sorts `starts_at` ascending, so an unbounded list would be a patch's *oldest* events; three surfaces headed "upcoming events" shipped that bug at once. Pass `include_past=true` for the whole calendar (workspace calendar, scoped search, "any events yet" probes). An explicit `from` always wins, including one in the past. Date-only `from`/`to` are widened to the instants they mean, in UTC (docs/adr/045). `scope=my` narrows to the caller's own patches, defined exactly as `PersonalICSFeed` defines My Quilt — every active relationship including follower, confirmed event links carried along, members-only events only for a member/admin of the event's own patch. The quilt (`/nodes/tree`) and the map (`/nodes`) take the same parameter; all three surfaces of docs/adr/035 must answer the scope switcher or "My Quilt" silently means "everything" on the one that doesn't
 - `POST /api/v1/events` — members/admins post directly; anyone else submits for review (`status: pending_review`) per docs/adr/026; trusted contributors (users flag) post directly to unclaimed patches. `event_url` is the event's **own page out on the web** (docs/adr/079) — tickets, the venue's listing — distinct from the Patchwork permalink and from an `event_link`. http(s) only, checked at every write path *and* at every parser, because it is rendered as an href and a feed is somebody else's input
 - `PATCH /api/v1/events/{id}/review` — approve/reject an event submission (instance admin for unclaimed patches, patch admins for active)
 - `GET /api/v1/admin/event-submissions`, `GET /api/v1/nodes/{slug}/event-submissions` — the two review queues
+- **The trusted-contributor grant has a scope** (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md): `users.trusted_contributor` is the quilt-wide grant and `node_trusted_contributors` the per-patch one, and every gate that is about one patch (event create/edit, CSV upload, the link handshake, event sources) reads `userTrustedOn`, never the flag. `GET /api/v1/nodes/{slug}` answers `viewer_trusted` beside `is_unclaimed`, at the top of the payload and not on the node. A quilt-wide grant also skips listing review: `POST /api/v1/submissions` publishes that person's suggestion as unclaimed at once. A suggestion may carry `feed_url`, probed synchronously and parked in `nodes.suggested_feed_url` until `PATCH /api/v1/admin/submissions/{id}` approves with `grant_trust` and `attach_feed` (both default true), which is where the per-patch grant is ordinarily given. Both outcomes notify the suggester
+- `GET|POST /api/v1/users/me/trust-request`, `GET|PATCH /api/v1/admin/trust-requests[/{id}]`, `POST|DELETE /api/v1/admin/users/{id}/trusted-patches[/{nodeId}]` — a **trust request** names a scope (patches, or `all`) and is answered at whatever scope the admin judges right, wider or narrower; requested and granted are two facts in the audit line. One open per person, a 30-day cooldown after a decline, moot when every named patch is claimed (swept lazily on read and before a new ask). `GET /api/v1/nodes?status=unclaimed` feeds the picker. None of the three tables travels in a seamrip
 - `POST /api/v1/nodes/{slug}/claim`, `GET /api/v1/nodes/{slug}/claims/mine`, `POST /api/v1/claims/{id}/{verify|withdraw|resend-email}`, `GET|POST /api/v1/claims/verify-email` — claiming an unclaimed patch (docs/adr/030): concurrent claims (one open per user per patch), self-verification (DNS / meta tag / email) anchored on the vetted `nodes.verification_domain`, admin review via `GET/PATCH /api/v1/admin/claims`
 - `GET|POST /api/v1/nodes/{slug}/event-sources`, `DELETE|POST .../{id}[/sync]`, `POST /api/v1/events/{id}/detach` — event sources (docs/adr/031): owner-attached calendar feeds (ICS; Squarespace and schema.org-marked events pages auto-detected), synced hourly; imported events publish directly, are read-only until detached. Every parser fills `Item.URL` and the reconciler diffs it, so **adding a field the feed is authoritative about needs no backfill migration** — the next sync sees every row as changed and fills it (docs/adr/079). Detach does not clear it: detach severs provenance, and the link is content
 - `POST /api/v1/nodes/{slug}/events/bulk` — event upload (CSV door): admin-only batch create, all-or-nothing validation, title+start dedup, silent (no notify/AP burst)
 - `GET /api/v1/nodes/{slug}/events.{ics|rss}` — public subscribable feeds per patch; `GET /api/v1/feeds/{secret}/events.ics` + `GET|POST|DELETE /api/v1/users/me/feed-secret` — the personal My Quilt calendar behind a regenerable URL secret
 - `GET /api/v1/admin/export` — zip download of all instance data (admin only)
+- `GET /api/v1/users/me/seamrip` — the **member seamrip** (docs/adr/089, docs/adr/012 affordance 2): a zip of the caller's own *view* of the quilt in the import format, so any member can seed a fork without asking anybody. Authed, two per account per day, audited as `user.seamrip`. Which rows leave is not decided in the handler: `internal/seamrip` states a member-view rule per travelling table beside its travel decision, and the export runs the same queries through it. People travel as stubs (id, username, display name, avatar), never emails; no noticeboards, contact cards, claims, or hidden memberships from a patch the caller is not in
+- `GET /api/v1/users/me/export` — **personal export** (docs/adr/012, affordance 1): one JSON document of everything about the requesting person, no admin involved. Their `users` row, every membership *including hidden ones* (the visibility switch is theirs, so the hidden ones are too), and their rows from every author- or actor-attributed table — down to their own audit-log entries. Authentication material never travels (credentials, sessions, recovery codes, magic/invite/signup links, `feed_secret_hash`, AP keys): an export is a file that gets copied around, and nothing in it should help anybody get in. Neither does moderation the person *performed* — reviewing somebody else's report is the instance's record of handling a third party, though reports they *filed* are theirs. Session-gated, rate-limited per account, audited as `user.export`, offered at Account settings as "Download my data". Affordances 2 (member seamrip) and 3 (moved-to pointer) remain backlog
 - `PUT /api/v1/admin/users/{id}/email` — set a user's email address (docs/adr/072): the in-product repair for an account with no way back in, and for a typo'd address. Its own route rather than a field on `PATCH /api/v1/admin/users/{id}`, because pointing an account at a mailbox lets whoever holds that mailbox magic-link in — so it takes the step-up gate (docs/adr/017) that promotion takes. Normalized through `auth.NormalizeEmail` (sign-in is an exact `WHERE email = ?` match), refuses an address another account holds, audited as `admin.user_email_set`, and announced to the old address as well as the new one
+- `moved_to` on `PATCH /api/v1/nodes/{slug}` (patch admins) and on `PATCH /api/v1/auth/me` (the person themselves) — the "we've moved" pointer (docs/adr/090), ADR 012's third egress affordance. Nullable, `""` clears it, read back on `GET /api/v1/nodes/{slug}`, `/nodes`, `/nodes/tree` and `GET /api/v1/users/{username}`. http(s) only and never this instance's own domain, checked at every write path exactly as `event_url` is, because it renders as an href. A patch carrying one declines joins, follows and outsiders' event submissions with the pointer in the error body while its own members keep every act they had, and its actor document gains `movedTo` (no `Move` activity is emitted)
 - `GET /api/v1/gazetteer/suggest?q=` — one **suggested placement** for an address (docs/adr/082). Authed and rate-limited. A miss and an instance with no gazetteer both answer `200 {"found": false}` — not 404, because a miss is the ordinary answer for a valid prose address and an error code would put a red console line under a form that is working. The confirm step is the point: the create form sends `latitude`/`longitude` only once somebody has confirmed a marker, so submitting the form never accepts a guess by silence
 - `GET /api/v1/instance/icon` — the public quilt icon, rendered to SVG from the drafted design (docs/adr/043); an instance that has drafted none wears a starter block assigned from its name
 - `GET|PATCH /api/v1/admin/settings`, `POST /api/v1/admin/wipe` — quilt settings: rename/description overrides, the icon design (`icon_design`: a drafted block plus its fabrics; `null` clears it), danger-zone wipe (docs/adr/014, docs/adr/043)
+- `GET|DELETE /api/v1/admin/usage`, plus `usage_stats` on the settings endpoint — **visitor counts** (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md). Off by default. On, a middleware around the SPA handler alone counts page loads per *route pattern* per UTC day and distinct visitors per UTC day, the latter as `sha256(salt ‖ ip ‖ ua)` under a random in-memory salt replaced at midnight and on restart; only daily totals (`usage_days`, `usage_visitors`) are ever written, pruned after 13 months, and both tables stay behind in a seamrip. **There is no script in the page and must not be**: the shipped privacy policy says there are no analytics scripts, and its `{usage_stats}` placeholder is rendered from the switch so the text is true in both states. Every clause of that "on" paragraph is a property of `internal/middleware/usage.go`; change one and change the other. The shipped Caddyfile keeps no access log, and the policy says that too
+- `POST /api/v1/admin/attestation`, `GET /api/v1/instance/attestation-key` — proving the admin role to an outside party (docs/adr/087). The admin signs a verifier-supplied nonce; the blob is `base64url(payload).base64url(signature)`, RS256 over the *first segment's bytes*, signed with the instance service actor's key and good for 15 minutes. Instance-admin only and step-up gated (docs/adr/017), rate-limited, audited as `admin.attestation_issued` with the nonce. The statement names the domain, the claim and the times and **never a person** — no username, email or user id, because docs/adr/023's roster stays unpublished and a proof of the role must not become the roster by another route. The key endpoint is public, cacheable, and mounted **outside the federation gate** (unlike `/ap/instance`), so `EnsureInstanceActor` runs at startup regardless of `federation.enabled`. Verify with `patchwork -verify-attestation <blob>`, `internal/attest.Verify`, or the `openssl` recipe in docs/DEPLOYMENT.md — always against the key served at the domain you care about, never the one the blob names
 - `GET /api/v1/legal/{privacy|terms}` — public legal documents: shipped defaults or admin overrides, rendered at /privacy and /terms; admin editing via `GET /api/v1/admin/legal` + `PUT|DELETE /api/v1/admin/legal/{doc}` (docs/adr/028)
 - `PUT|DELETE /api/v1/nodes/{slug}/successor` — maintainer succession (docs/adr/051); step-up gated
+- `POST /api/v1/nodes/{slug}/seats`, `DELETE .../seats/{id}` — the council's chairs on an `elected` patch (docs/adr/100). A patch admin adds a vacant seat or removes an empty one; removing a **held** seat is refused, so the control can never unseat anybody. Adding a chair grants nobody anything — filling it is nomination plus ratification into that seat, inheriting *its* remaining term, never a fresh one — which is why the furniture is administrative and sitting in it is governed. **The role dropdown does not make an admin on an elected patch**; it names the vacancy to nominate into, or the date of the next contest. Refused off the `elected` model and where the venue is `elsewhere` (there the attestation supplies the council). A 403 rather than the noticeboard's 404: a council's seats are public, so the refusal hides the button, not the patch
 - `POST /api/v1/proposals/{id}/candidates`, `PUT /api/v1/proposals/{id}/ballot` — elections: standing is a member act, the ballot is a PUT of the whole approved set (approval voting replaces wholesale)
 - `GET|POST /api/v1/nodes/{slug}/attestations`, `PATCH /api/v1/nodes/{slug}/attestation-names/{id}` — leadership decided elsewhere (docs/adr/052); public read, step-up write
 - `GET|POST /api/v1/nodes/{slug}/amendment-attestations` — texts a meeting adopted (docs/adr/053); replaces the whole charter, checks no base
@@ -336,8 +406,8 @@ Registry JSON format:
 Federation is live at the protocol level: actor documents, outboxes,
 followers collections, WebFinger (`/.well-known/webfinger`), an inbox that
 handles `Follow`/`Undo(Follow)`, HTTP-signature signing on outbound
-deliveries and verification on inbound ones (with Date-skew replay window
-and remote key caching), and a retrying delivery worker — all in
+deliveries and verification on inbound ones (with a required signed-header
+set, a Date-skew replay window, and remote key caching), and a retrying delivery worker — all in
 `internal/ap` and mounted in `cmd/patchwork/main.go`. Keypairs and `ap_id`s
 are backfilled on startup, and stale-domain `ap_id`s are healed to the
 configured domain. `federation.enabled` in patchwork.yaml gates the AP,
@@ -353,7 +423,24 @@ was verified 2026-07-13.
 
 The seamrip mechanism is a governance safety valve: if a community's leadership goes sideways, members can fork the data to a new instance. The portability boundary (what travels, what stays) is defined once in `internal/seamrip` and documented in docs/adr/002 — memberships travel, so the fork keeps its inferred threads; keys, sessions, and AP identity do not.
 
+**The boundary has two axes** (docs/adr/089). The first says what travels; the second says, for each travelling table, which rows a given *member* may carry out, and it is what `GET /api/v1/users/me/seamrip` runs. A member seamrip is the admin export's own queries wrapped in a viewer-scoped filter, not a second implementation — the failure mode ADR 002 exists to document is copies of the boundary drifting apart. `TestEveryTableHasAMemberViewRule` fails the build when a travelling table states no member-view rule.
+
 **Adding a table means deciding whether it travels.** `TestEveryTableHasABoundaryDecision` requires every table in the schema to be either in `Tables()` or in an explicit stays-behind list with a reason — a new table fails the build until someone chooses. This exists because migration 050's `seats` silently didn't travel, and since election dueness is derived from `seats.term_ends_at`, a forked elected patch stopped holding elections forever.
+
+**Governance repos don't travel, so they get rebuilt** (docs/adr/084). Rows without repos — a seamrip import, or a restore from the SQLite file alone — read fine and can never be *written*, because every governance write starts at `openBare`. `governance.Repair` reconciles the derived repos with the canonical `governance_docs` rows: create-missing on every boot (strictly create-missing, never a write into a repo that exists), and `patchwork -repair-governance` for the whole reconciliation with a per-patch summary, server stopped. It is a flag on the server binary rather than a `cmd/repair` because the distroless image ships only `/patchwork`. Synthetic commits are authored `Patchwork repair` and labelled in the charter history view — a rebuilt history must never pass for a real one.
+
+**A repo has no seam, so its door carries the whole rule** (docs/adr/110). The git smart-HTTP transport hands over the entire bare repository — every doc body, its revision history, its diffs, and the editors' names in the commit metadata — so it is gated on `canReadPatchDocs`, the same whole-shelf rule the REST listing asks, and never on per-document visibility: there is no half-clone. `DirectEdit` mirrors members-only docs in regardless of visibility, so anything that opens one of these repos to a caller is opening all of it. The refusal and the not-found are deliberately one 404.
+
+## Cutting a release
+
+A `v*` tag publishes an image only if `release-notes/vX.Y.Z.md` is already on
+main (docs/adr/085). Front matter carries `breaking`, `irreversible_migrations`
+and a one-line `summary`; the body becomes the GitHub release notes and CI
+attaches a `release.json` an unattended updater gates on. Write the file, run
+`make release-notes-check TAG=vX.Y.Z`, *then* push the tag — the CI gate is on
+the `image` job, so forgetting means no image at all, and the repair is a
+commit plus moving the tag. Only a person can say a release is breaking; when
+it is arguable, say `true`.
 
 ## Key Principles
 

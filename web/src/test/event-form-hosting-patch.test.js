@@ -87,10 +87,20 @@ describe('the row and the button say what will happen', () => {
   it('mirrors CreateEvent on who posts directly (docs/adr/026)', () => {
     // Instance admin anywhere; trusted contributor on unclaimed only;
     // member or admin of an active patch. A follower is none of these.
-    expect(form).toMatch(/function postsDirectly\(status, slug\)/);
+    // Trust is scoped per patch now (docs/adr/2026-09-18-trust-has-a-scope-
+    // and-a-suggestion-carries-its-calendar): the third parameter carries a
+    // patch's own fetched viewer_trusted, defaulting to the quilt-wide flag
+    // for the picker's bulk preview, where nothing has been fetched yet.
+    expect(form).toMatch(/function postsDirectly\(status, slug, unclaimedTrusted = isTrustedContributor\(\)\)/);
     expect(form).toMatch(/if \(isAdmin\(\)\) return true/);
-    expect(form).toMatch(/if \(status === 'unclaimed'\) return isTrustedContributor\(\)/);
+    expect(form).toMatch(/if \(status === 'unclaimed'\) return unclaimedTrusted/);
     expect(form).toMatch(/role === 'member' \|\| role === 'admin'/);
+  });
+
+  it('answers the chosen patch with its own fetched trust, not the flag', () => {
+    expect(form).toMatch(/let hostingViewerTrusted = \$state\(false\)/);
+    expect(form).toMatch(/hostingViewerTrusted = data\.viewer_trusted === true/);
+    expect(form).toMatch(/postsDirectly\(hostingPatch\.status, hostingPatch\.slug, hostingViewerTrusted\)/);
   });
 
   it('shows a patch that refuses suggestions rather than hiding it', () => {

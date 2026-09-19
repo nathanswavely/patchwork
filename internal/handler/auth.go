@@ -14,6 +14,7 @@ import (
 	"github.com/go-webauthn/webauthn/protocol"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -224,9 +225,14 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 
 		ip := clientIP(r)
 
-		// Rate limit.
+		// Rate limit. The client still gets the blanket 200 — whether an
+		// address has an account must stay unanswerable — but the log must
+		// say what happened, because without SMTP the log *is* the delivery
+		// channel. Silent here, a throttled request is indistinguishable
+		// from a sent one: no new link appears, the person reuses the last
+		// one, and "magic link already used" is the only symptom (#222).
 		if err := middleware.CheckMagicLinkRate(email, ip); err != nil {
-			// Still return 200 to not leak info.
+			log.Printf("magic link: request for %s throttled (%v); nothing was issued", email, err)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 			return
@@ -477,6 +483,15 @@ func StepUpStatus(db *database.DB) http.HandlerFunc {
 			"active":      middleware.SudoSatisfied(db, r),
 			"window_secs": int(auth.SudoWindow.Seconds()),
 		}
+		// What this session could step up with instead of a passkey
+		// (docs/adr/099), so the dialog offers the code field only when a
+		// code would actually be taken. Codes minted during this session
+		// are not counted, and the page must not pretend otherwise.
+		if cookie, err := r.Cookie(auth.CookieName); err == nil {
+			resp["recovery_ready"] = auth.UsableStepUpCodes(db, user.ID, cookie.Value)
+		} else {
+			resp["recovery_ready"] = 0
+		}
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
@@ -549,6 +564,83 @@ func StepUpFinish(db *database.DB, wa *auth.WebAuthnService) http.HandlerFunc {
 	}
 }
 
+// StepUpRecovery handles POST /api/v1/auth/step-up/recovery — burns one
+// recovery code to open the same five-minute window a passkey opens
+// (docs/adr/099).
+//
+// docs/adr/017 gated the irreversible on a WebAuthn assertion and said that
+// locked nobody out, because enrolling needs only the session you hold. It
+// does lock people out: a device with no authenticator cannot enrol, and
+// since then the gate spread from three instance-level acts to a patch's
+// monthly minute-taking (docs/adr/052). A coalition secretary on an office
+// desktop had no way to record what her meeting decided.
+func StepUpRecovery(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := middleware.UserFromContext(r.Context())
+
+		var req struct {
+			Code string `json:"code"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Code == "" {
+			http.Error(w, `{"error":"a recovery code is required"}`, http.StatusBadRequest)
+			return
+		}
+
+		ip := clientIP(r)
+		// The same tight limiter sign-in redemption uses: twelve characters
+		// of a 31-letter alphabet is a long way beyond an online guessing
+		// budget, but only while the budget stays small.
+		if err := middleware.CheckRecoveryRedeemRate(user.Username, ip); err != nil {
+			w.Header().Set("Retry-After", "120")
+			http.Error(w, `{"error":"too many attempts. Wait a couple of minutes"}`, http.StatusTooManyRequests)
+			return
+		}
+
+		cookie, err := r.Cookie(auth.CookieName)
+		if err != nil {
+			http.Error(w, `{"error":"no session"}`, http.StatusUnauthorized)
+			return
+		}
+
+		remaining, err := auth.StepUpWithRecoveryCode(db, user.ID, cookie.Value, req.Code)
+		if err != nil {
+			code := "invalid_code"
+			switch {
+			case errors.Is(err, auth.ErrNoRecoveryCodes):
+				code = "no_recovery_codes"
+			case errors.Is(err, auth.ErrRecoveryCodesTooNew):
+				code = "recovery_codes_too_new"
+			case errors.Is(err, auth.ErrInvalidRecoveryCode):
+				code = "invalid_code"
+			default:
+				http.Error(w, `{"error":"failed to check that code"}`, http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error(), "code": code})
+			return
+		}
+
+		until, err := auth.GrantSudo(db, cookie.Value)
+		if err != nil {
+			http.Error(w, `{"error":"failed to open confirmation window"}`, http.StatusInternalServerError)
+			return
+		}
+
+		auth.LogAuditEventJSON(db, user.ID, "auth.step_up", "user", user.ID,
+			map[string]any{"method": "recovery_code", "codes_remaining": remaining}, ip)
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"active":             true,
+			"expires_at":         until.Format(time.RFC3339),
+			"codes_remaining":    remaining,
+			"used_recovery_code": true,
+		})
+	}
+}
+
 // WebAuthnLoginBegin handles POST /api/v1/auth/webauthn/login/begin.
 func WebAuthnLoginBegin(wa *auth.WebAuthnService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -602,15 +694,16 @@ func loadUserLinks(db *database.DB, user *model.User) {
 	json.Unmarshal([]byte(linksJSON), &user.Links)
 }
 
-// loadContactCard populates user.ContactCard from the users.contact_*
-// columns (docs/adr/080). Only the Me handlers call it: the card is the
-// person's own to see in full, and everyone else sees it patch by patch
-// through ListMembers.
+// loadContactCard populates user.ContactItems with the person's own card
+// (docs/adr/083). Only the Me handlers call it: the card is the person's own
+// to see in full, and everyone else sees items patch by patch, through
+// ListMembers or a profile they share a room with.
 func loadContactCard(db *database.DB, user *model.User) {
-	card := &model.ContactCard{}
-	db.QueryRow("SELECT contact_phone, contact_email, contact_note FROM users WHERE id = ?", user.ID).
-		Scan(&card.Phone, &card.Email, &card.Note)
-	user.ContactCard = card
+	items, err := loadMyContactItems(db, user.ID)
+	if err != nil {
+		return
+	}
+	user.ContactItems = items
 }
 
 // Contact card field limits. Phone is free text on purpose — "+1 717 555
@@ -621,12 +714,37 @@ const (
 	maxContactNote  = 200
 )
 
+// loadMovedTo populates user.MovedTo from the users.moved_to column
+// (docs/adr/090). Session validation does not carry it, so every handler
+// that answers with the person's own record reads it here.
+func loadMovedTo(db *database.DB, user *model.User) {
+	db.QueryRow("SELECT COALESCE(moved_to,'') FROM users WHERE id = ?", user.ID).Scan(&user.MovedTo)
+}
+
+// loadTrustedPatches fills the per-patch scope of the trusted-contributor
+// grant (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+// calendar.md) — only the patches still unclaimed, because trustedNodesByUser
+// filters by status and the grant is worth nothing once a patch is claimed.
+// The Me payload is the one place a client learns this reach: memberships
+// cannot carry it, since an unclaimed patch admits nobody, and without it a
+// person trusted on one patch would be shown no way to speak for it from
+// anywhere but that patch's own page.
+func loadTrustedPatches(db *database.DB, user *model.User) {
+	refs := trustedNodesByUser(db, []string{user.ID})[user.ID]
+	user.TrustedPatches = nil
+	for _, n := range refs {
+		user.TrustedPatches = append(user.TrustedPatches, model.TrustedPatch{ID: n.ID, Slug: n.Slug, Name: n.Name})
+	}
+}
+
 // Me handles GET /api/v1/auth/me.
 func Me(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
 		loadUserLinks(db, user)
 		loadContactCard(db, user)
+		loadMovedTo(db, user)
+		loadTrustedPatches(db, user)
 		var hide int
 		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
 		user.HideAmendedLinings = hide == 1
@@ -646,47 +764,39 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 			Links              *[]model.NodeLink `json:"links"`
 			StartOnMyQuilt     *bool             `json:"start_on_my_quilt"`
 			HideAmendedLinings *bool             `json:"hide_amended_linings"`
-			// ContactCard replaces the whole card (docs/adr/080). One
-			// object rather than three fields, so a form that spreads the
-			// card back never half-updates it.
-			ContactCard *model.ContactCard `json:"contact_card"`
+			// MovedTo is the person's own "we've moved" pointer
+			// (docs/adr/090). "" clears it.
+			MovedTo *string `json:"moved_to"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
 
-		if req.ContactCard != nil {
-			card := model.ContactCard{
-				Phone: strings.TrimSpace(req.ContactCard.Phone),
-				Email: strings.TrimSpace(req.ContactCard.Email),
-				Note:  strings.TrimSpace(req.ContactCard.Note),
-			}
-			switch {
-			case len(card.Phone) > maxContactPhone:
-				http.Error(w, `{"error":"phone must be 60 characters or fewer"}`, http.StatusBadRequest)
-				return
-			case len(card.Email) > maxContactEmail:
-				http.Error(w, `{"error":"email must be 254 characters or fewer"}`, http.StatusBadRequest)
-				return
-			case card.Email != "" && (!strings.Contains(card.Email, "@") || strings.ContainsAny(card.Email, " \t\n")):
-				http.Error(w, `{"error":"that doesn't look like an email address"}`, http.StatusBadRequest)
-				return
-			case len(card.Note) > maxContactNote:
-				http.Error(w, `{"error":"note must be 200 characters or fewer"}`, http.StatusBadRequest)
+		// The moved-to pointer (docs/adr/090). Checked here because the
+		// public profile renders it as an href, the same reason
+		// events.event_url is checked at every write path (docs/adr/079).
+		if req.MovedTo != nil {
+			moved := strings.TrimSpace(*req.MovedTo)
+			if msg := validateMovedTo(moved); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
-			_, err := db.Exec("UPDATE users SET contact_phone = ?, contact_email = ?, contact_note = ?, updated_at = ? WHERE id = ?",
-				card.Phone, card.Email, card.Note, time.Now().UTC().Format(time.RFC3339), user.ID)
+			var stored interface{}
+			if moved != "" {
+				stored = moved
+			}
+			_, err := db.Exec("UPDATE users SET moved_to = ?, updated_at = ? WHERE id = ?",
+				stored, clock.Now(), user.ID)
 			if err != nil {
-				http.Error(w, `{"error":"failed to update contact card"}`, http.StatusInternalServerError)
+				http.Error(w, `{"error":"failed to update where you moved to"}`, http.StatusInternalServerError)
 				return
 			}
 		}
 
 		if req.DisplayName != nil {
 			_, err := db.Exec("UPDATE users SET display_name = ?, updated_at = ? WHERE id = ?",
-				*req.DisplayName, time.Now().UTC().Format(time.RFC3339), user.ID)
+				*req.DisplayName, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update display name"}`, http.StatusInternalServerError)
 				return
@@ -696,7 +806,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 
 		if req.Bio != nil {
 			_, err := db.Exec("UPDATE users SET bio = ?, updated_at = ? WHERE id = ?",
-				*req.Bio, time.Now().UTC().Format(time.RFC3339), user.ID)
+				*req.Bio, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update bio"}`, http.StatusInternalServerError)
 				return
@@ -707,7 +817,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		if req.Links != nil {
 			lb, _ := json.Marshal(*req.Links)
 			_, err := db.Exec("UPDATE users SET links = ?, updated_at = ? WHERE id = ?",
-				string(lb), time.Now().UTC().Format(time.RFC3339), user.ID)
+				string(lb), clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update links"}`, http.StatusInternalServerError)
 				return
@@ -715,7 +825,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		}
 		if req.StartOnMyQuilt != nil {
 			_, err := db.Exec("UPDATE users SET start_on_my_quilt = ?, updated_at = ? WHERE id = ?",
-				*req.StartOnMyQuilt, time.Now().UTC().Format(time.RFC3339), user.ID)
+				*req.StartOnMyQuilt, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update landing preference"}`, http.StatusInternalServerError)
 				return
@@ -729,7 +839,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 				v = 1
 			}
 			_, err := db.Exec("UPDATE users SET hide_amended_linings = ?, updated_at = ? WHERE id = ?",
-				v, time.Now().UTC().Format(time.RFC3339), user.ID)
+				v, clock.Now(), user.ID)
 			if err != nil {
 				http.Error(w, `{"error":"failed to update setting"}`, http.StatusInternalServerError)
 				return
@@ -737,6 +847,7 @@ func UpdateMe(db *database.DB) http.HandlerFunc {
 		}
 		loadUserLinks(db, user)
 		loadContactCard(db, user)
+		loadMovedTo(db, user)
 		var hide int
 		db.QueryRow("SELECT hide_amended_linings FROM users WHERE id = ?", user.ID).Scan(&hide)
 		user.HideAmendedLinings = hide == 1

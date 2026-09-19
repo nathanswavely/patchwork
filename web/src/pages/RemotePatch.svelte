@@ -149,8 +149,8 @@
       {/if}
 
       <p class="remote-note muted">
-        You're viewing this patch's public face from your own quilt. Joining,
-        RSVPs, and everything deeper live on
+        You're viewing this patch's public face from your own quilt. Joining
+        and everything deeper live on
         <a href={origin} target="_blank" rel="noopener">{quiltInfo?.name || host}</a>.
       </p>
     </div>

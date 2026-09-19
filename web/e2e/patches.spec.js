@@ -3,7 +3,7 @@
  * Tests create, join, leave, follow, dashboard, PatchShell.
  */
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin } from './setup.js';
+import { loginAsAdmin, goto } from './setup.js';
 
 test.describe('Patches — Create', () => {
   test.beforeEach(async ({ page }) => {
@@ -11,8 +11,7 @@ test.describe('Patches — Create', () => {
   });
 
   test('3.1 — /patches/new renders form or auth guard', async ({ page }) => {
-    await page.goto('/patches/new');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/new');
     // Should show the create form OR an auth guard — not a 404
     const hasForm = await page.locator('input, form, h1').first().isVisible().catch(() => false);
     const hasSignIn = await page.getByText(/sign in/i).isVisible().catch(() => false);
@@ -22,8 +21,14 @@ test.describe('Patches — Create', () => {
   });
 
   test('3.1 — create patch form has fields when authenticated', async ({ page }) => {
-    await page.goto('/patches/new');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/new');
+    // Creation opens on a fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-
+    // suggestion-carries-its-calendar): "Is this your patch to run?" before
+    // any field. Answer it to reach the form.
+    const forkCard = page.getByRole('button', { name: /^i run this patch/i });
+    if (await forkCard.isVisible()) {
+      await forkCard.click();
+    }
     const nameInput = page.locator('input#name');
     if (await nameInput.isVisible()) {
       // Visibility/policy moved out of the create form (set in settings
@@ -42,8 +47,7 @@ test.describe('Patches — PatchShell Rendering', () => {
   });
 
   test('Patch detail page renders inside PatchShell', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // PatchShell should render with the patch name
     const shellTitle = page.locator('.shell-title');
@@ -54,8 +58,7 @@ test.describe('Patches — PatchShell Rendering', () => {
   });
 
   test('PatchShell tabs are visible on patch page', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     const tabs = page.locator('.workspace-tabs');
     if (await tabs.isVisible()) {
@@ -66,8 +69,7 @@ test.describe('Patches — PatchShell Rendering', () => {
   });
 
   test('PatchShell breadcrumb is visible', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     const breadcrumb = page.locator('.breadcrumb, nav[aria-label="breadcrumb"]').first();
     const isVisible = await breadcrumb.isVisible().catch(() => false);
@@ -78,8 +80,7 @@ test.describe('Patches — PatchShell Rendering', () => {
   });
 
   test('the profile shows a relationship control', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // The relationship row states standing, or offers the next rung — and
     // holds nothing else (docs/adr/042).
@@ -99,8 +100,7 @@ test.describe('Patches — Settings (formerly Admin)', () => {
   });
 
   test('Patch settings page renders at /patches/:slug/settings', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district/settings');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district/settings');
 
     // Should render inside PatchShell with Settings tab active, or show auth guard
     const notFound = await page.getByText('Page not found').isVisible().catch(() => false);
@@ -116,8 +116,7 @@ test.describe('Patches — Settings (formerly Admin)', () => {
   });
 
   test('Patch members page renders at /patches/:slug/members', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district/members');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district/members');
 
     const notFound = await page.getByText('Page not found').isVisible().catch(() => false);
     expect(notFound).toBe(false);
@@ -130,8 +129,7 @@ test.describe('Patches — Settings (formerly Admin)', () => {
   });
 
   test('Patch events page renders at /patches/:slug/events', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district/events');
-    await page.waitForTimeout(2000);
+    await goto(page, '/patches/lancaster-arts-district/events');
 
     const notFound = await page.getByText('Page not found').isVisible().catch(() => false);
     expect(notFound).toBe(false);
@@ -168,8 +166,7 @@ test.describe('Patches — Dashboard', () => {
   });
 
   test('3.7 — dashboard shows role-grouped sections', async ({ page }) => {
-    await page.goto('/dashboard');
-    await page.waitForTimeout(2000);
+    await goto(page, '/dashboard');
 
     // Dashboard now groups patches by role: Managing, Member of, Following
     const managingSection = page.locator('.section-title', { hasText: 'Managing' });
@@ -187,8 +184,7 @@ test.describe('Patches — Dashboard', () => {
   });
 
   test('3.7 — dashboard has quick actions', async ({ page }) => {
-    await page.goto('/dashboard');
-    await page.waitForTimeout(2000);
+    await goto(page, '/dashboard');
     // Should show action cards OR sign-in prompt
     const hasActions = await page.locator('.action-card, .quick-actions').first().isVisible().catch(() => false);
     const hasSignIn = await page.getByText(/sign in/i).isVisible().catch(() => false);
@@ -196,8 +192,7 @@ test.describe('Patches — Dashboard', () => {
   });
 
   test('3.7 — dashboard patch cards have settings/members links', async ({ page }) => {
-    await page.goto('/dashboard');
-    await page.waitForTimeout(2000);
+    await goto(page, '/dashboard');
 
     // Managing section should have quick links to settings and members
     const patchCard = page.locator('.patch-card').first();
@@ -214,14 +209,13 @@ test.describe('Patches — Dashboard', () => {
   });
 
   test('3.7 — clicking patch name navigates to patch detail', async ({ page }) => {
-    await page.goto('/dashboard');
-    await page.waitForTimeout(2000);
+    await goto(page, '/dashboard');
 
     const firstPatchName = page.locator('.patch-name').first();
     if (await firstPatchName.isVisible()) {
       await firstPatchName.click();
-      await page.waitForTimeout(1000);
       // Should navigate to patch detail page (PatchShell)
+      await page.waitForURL(/\/patches\//);
       expect(page.url()).toMatch(/\/patches\//);
     }
   });
@@ -233,8 +227,7 @@ test.describe('Patches — Join/Leave/Follow', () => {
   });
 
   test('3.4 — patch page shows a relationship control, and nothing else', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(3000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     const profileActions = page.locator('.profile-actions');
     if (await profileActions.isVisible()) {
@@ -250,8 +243,7 @@ test.describe('Patches — Join/Leave/Follow', () => {
   });
 
   test('exits live inside the standing control, never beside the rung', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(3000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // Whatever the viewer's standing, the exits are inside the standing
     // control and never sit beside the rung (docs/adr/042).
@@ -273,8 +265,7 @@ test.describe('Patches — PatchPanel Role Badge', () => {
   });
 
   test('PatchPanel shows role indicator badge from memberships store', async ({ page }) => {
-    await page.goto('/patches/lancaster-arts-district');
-    await page.waitForTimeout(3000);
+    await goto(page, '/patches/lancaster-arts-district');
 
     // PatchPanel renders a role-badge when the user has a membership
     const roleBadge = page.locator('.role-badge').first();

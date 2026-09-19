@@ -33,7 +33,8 @@ type bulkEventRow struct {
 // spreadsheet door. Bulk upload is an admin act, deliberately narrower
 // than single-event posting: patch admins on active patches, the
 // instance admin and trusted contributors on unclaimed ones (their
-// docs/adr/026 grant already lets them record events there directly).
+// docs/adr/026 grant already lets them record events there directly, at
+// either scope — quilt-wide, or this one patch).
 // Members still post one event at a time; suggesters go through review.
 //
 // The batch is all-or-nothing on validation (fix row 7 and retry beats
@@ -57,7 +58,7 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 
 		allowed := user.Role == "admin" ||
 			(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
-			(nodeStatus == "unclaimed" && user.TrustedContributor)
+			(nodeStatus == "unclaimed" && userTrustedOn(db, user, nodeID))
 		if !allowed {
 			http.Error(w, `{"error":"bulk upload is for patch admins"}`, http.StatusForbidden)
 			return
@@ -75,7 +76,7 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if len(req.Events) > maxBulkEvents {
-			http.Error(w, fmt.Sprintf(`{"error":"an upload is at most %d events"}`, maxBulkEvents), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("an upload is at most %d events", maxBulkEvents))
 			return
 		}
 
@@ -180,8 +181,8 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "event.bulk_upload", "node", nodeID,
-			fmt.Sprintf(`{"created":%d,"skipped":%d}`, created, skipped), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.bulk_upload", "node", nodeID,
+			map[string]any{"created": created, "skipped": skipped}, clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]int{"created": created, "skipped": skipped})

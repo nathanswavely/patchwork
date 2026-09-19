@@ -7,6 +7,26 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 )
 
+// The two kinds of bundle, written into instance.json (and, for a member
+// seamrip, manifest.json beside it) so an importer can tell them apart
+// instead of assuming. They differ in one way that matters at the far end:
+// a full seamrip carries email addresses and a member seamrip does not, so
+// people re-join the fork of a member seamrip by invitation rather than by
+// magic link. An archive written before this key existed has no `kind`; it
+// is a full seamrip, and KindFor says so.
+const (
+	KindFull   = "seamrip"
+	KindMember = "member-seamrip"
+)
+
+// KindFor normalizes the `kind` field of an archive's instance manifest.
+func KindFor(kind string) string {
+	if kind == KindMember {
+		return KindMember
+	}
+	return KindFull
+}
+
 // SentinelUserID owns unclaimed patches. It exists in every database (created
 // by migration 015) and is excluded from export, so it maps to itself.
 const SentinelUserID = "00000000-0000-0000-0000-000000000000"

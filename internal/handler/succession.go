@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -20,6 +21,26 @@ import (
 // ever succeed to would be a seventh field in the family docs/adr/049 and 050
 // catalogued, stored and rendered and read by nothing. Its trigger is the
 // maintainer leaving, which is also what lets them leave at all.
+
+// roleSinceNow is the SET clause every write that changes a membership's role
+// carries with it (migration 072).
+//
+// `memberships.role_since` is when this person got the role they hold now, and
+// it is a floor the inactivity sweep measures absence from (docs/adr/051).
+// Without it the floor was `joined_at`, so somebody promoted to fill an
+// absence was already older than the vacate threshold on the day they were
+// appointed: vacated on the next pass, replaced by the next member down, and
+// round again — 1,348 successions in a simulated year.
+//
+// It is a constant spliced into the SQL rather than a bound parameter because
+// the statements it joins are a mix of positional-argument shapes, and a
+// literal `strftime` keeps the timestamp in the same format and the same clock
+// as every other column written by the same statement.
+//
+// Paths that write `joined_at = now` in the same statement — a follower
+// upgrading, an invitation being accepted — deliberately do not carry it:
+// NULL reads as `joined_at`, which is the same instant.
+const roleSinceNow = "role_since = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"
 
 // leadershipModel reads the node's cached governance config. Empty when the
 // config is absent or unparseable, which reads as "not maintainer" everywhere
@@ -83,7 +104,23 @@ func validateNomination(db *database.DB, nodeID, authorID, nomineeID string) str
 	if leadershipDecidedElsewhere(db, nodeID) {
 		return "this patch chooses its admins elsewhere: record that decision instead of nominating"
 	}
-	if leadershipModel(db, nodeID) != "meritocratic" {
+	switch leadershipModel(db, nodeID) {
+	case "meritocratic":
+		// The mechanic this was written for. Conditions below.
+	case "elected":
+		// A mid-term vacancy borrows meritocratic's mechanic, because the
+		// template already says so: "the council may appoint a replacement
+		// from active members. The appointment must be ratified by the
+		// community within 14 days" (docs/adr/051). What is different is
+		// that the appointment lands in a chair — so with no vacant chair
+		// there is nothing to nominate *into*, and the honest answer is the
+		// date of the next contest (docs/adr/100). Refused here, at
+		// creation, so the "approved but unseatable" case at ratification
+		// stays the rarity it should be.
+		if vacantSeat(db, nodeID) == "" {
+			return electedPromotionDenial(db, nodeID)
+		}
+	default:
 		return "nominating an admin is the meritocratic model's mechanic; this patch fills admin seats another way"
 	}
 	if !userHasNodeRole(db, authorID, nodeID, "admin") {
@@ -115,7 +152,11 @@ func validateNomination(db *database.DB, nodeID, authorID, nomineeID string) str
 // nomination and ratification is not dragged back into it, and one who was
 // promoted by some other path in the meantime is left alone.
 func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
-	if nomineeID == "" || leadershipModel(db, nodeID) != "meritocratic" {
+	if nomineeID == "" {
+		return
+	}
+	lm := leadershipModel(db, nodeID)
+	if lm != "meritocratic" && lm != "elected" {
 		return
 	}
 	var role string
@@ -125,11 +166,48 @@ func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
 	).Scan(&role); err != nil || role != "member" {
 		return
 	}
+
+	// On an elected patch the ratification seats them, so it needs a chair.
+	// The chair's own term end carries over untouched: someone appointed to a
+	// mid-term vacancy serves out the remainder, not a fresh term
+	// (docs/adr/051), which is what stops a council resetting its own clocks
+	// by appointing allies.
+	//
+	// No chair, no promotion. The proposal approved something that is no
+	// longer possible — somebody else took the last seat, or an admin removed
+	// it, between the vote opening and closing — and quietly promoting anyway
+	// would put an admin on this patch in no seat at all, which is the state
+	// docs/adr/100 exists to end. Creation refuses a nomination with no
+	// vacancy, so this is the narrow race and not the ordinary path.
+	seatID := ""
+	if lm == "elected" {
+		seatID = vacantSeat(db, nodeID)
+		if seatID == "" {
+			reportUnseatableRatification(db, proposalID, nodeID, nomineeID)
+			return
+		}
+	}
+
 	if _, err := db.Exec(
-		"UPDATE memberships SET role = 'admin' WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		"UPDATE memberships SET role = 'admin', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'",
 		nomineeID, nodeID,
 	); err != nil {
 		return
+	}
+
+	// The chair, not a new one, and not a new term. term_ends_at is left
+	// exactly as the seat carried it (docs/adr/051).
+	if seatID != "" {
+		// The promotion above already landed, so a seat that does not record
+		// its holder leaves an admin sitting in no chair — the state
+		// docs/adr/100 exists to end, and one nothing else would notice.
+		// `seat.filled` is only written where the seat was in fact filled.
+		if _, err := db.Exec("UPDATE seats SET holder_id = ? WHERE id = ?", nomineeID, seatID); err != nil {
+			applyIncomplete(db, proposalID, "", "seat handover to "+nomineeID, err)
+		} else {
+			auth.LogAuditEvent(db, "", "seat.filled", "seat", seatID,
+				`{"node_id":"`+nodeID+`","holder_id":"`+nomineeID+`","proposal_id":"`+proposalID+`"}`, "")
+		}
 	}
 
 	// No actor: ratification is the electorate and the clock, not a person, so
@@ -149,6 +227,39 @@ func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
 		Title:    "You are now an admin of " + nodeName,
 		Body:     "The community ratified your nomination.",
 		Link:     weblink.Patch(slug),
+	})
+}
+
+// reportUnseatableRatification says plainly that a ratification could not be
+// carried out (docs/adr/100): the community approved somebody for a seat and
+// by the time the vote closed there was no seat to put them in.
+//
+// The patch's admins hear it, because adding a chair is their act and nobody
+// else's. Logged as well as notified: this is the one outcome where an
+// approved proposal changes nothing, and a record that does not say so is
+// worse than the outcome.
+func reportUnseatableRatification(db *database.DB, proposalID, nodeID, nomineeID string) {
+	var slug, nodeName string
+	db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&slug, &nodeName)
+	var who string
+	db.QueryRow("SELECT "+displayNameExpr("u")+" FROM users u WHERE u.id = ?", nomineeID).Scan(&who)
+	if who == "" {
+		who = "the nominee"
+	}
+
+	log.Printf("election: %s ratified %s with no vacant seat; nobody promoted", slug, nomineeID)
+	auth.LogAuditEvent(db, "", "membership.ratification_unseated", "membership", nomineeID,
+		`{"node_id":"`+nodeID+`","proposal_id":"`+proposalID+`"}`, "")
+
+	notify(notifications.Event{
+		Type:     notifications.GovernanceSeatUnavailable,
+		NodeID:   nodeID,
+		NodeSlug: slug,
+		NodeName: nodeName,
+		EntityID: proposalID,
+		Title:    "A ratified nomination had no seat in " + nodeName,
+		Body:     "The members approved " + who + " for the council, and every seat was held by the time the vote closed. Nothing changed. Add a seat and nominate again, or wait for the next contest.",
+		Link:     weblink.PatchGovernance(slug),
 	})
 }
 
@@ -288,7 +399,7 @@ func succeedOnDeparture(db *database.DB, r *http.Request, nodeID, slug, departin
 	}
 
 	if _, err := db.Exec(
-		"UPDATE memberships SET role = 'admin' WHERE user_id = ? AND node_id = ? AND status = 'active'",
+		"UPDATE memberships SET role = 'admin', "+roleSinceNow+" WHERE user_id = ? AND node_id = ? AND status = 'active'",
 		successorID, nodeID,
 	); err != nil {
 		return false

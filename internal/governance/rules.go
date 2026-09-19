@@ -63,13 +63,39 @@ func DefaultRules() *GovernanceRules {
 		MaxAdmins:        3,
 		InactivityDays:   90,
 		MembershipPolicy: "open",
+		// Charters is the one of these four that is off by default
+		// (docs/adr/116). The other three govern what a follower sees of a
+		// patch's public life; this one hands over the charters the patch
+		// chose not to publish, and following costs nothing and asks nobody.
+		// It shipped on, from a time when the key also gated published
+		// charters, and stayed on after docs/adr/036 narrowed it to the
+		// members-only shelf — so every patch granted it without ever
+		// deciding to. A patch that wants it says so.
 		FollowerPermissions: model.FollowerPermissions{
 			Events:    true,
 			Proposals: true,
-			Charters:  true,
+			Charters:  false,
 			Members:   true,
 		},
 	}
+}
+
+// TemplateRules returns the rules a governance template ships in its
+// governance-rules.json, read over DefaultRules() exactly as ReadRules reads
+// a node's file, so a field the template omits takes the shipped default. An
+// unknown template is an error rather than a fallback: ForkForNode falls
+// back to casual for a name it does not know, and a caller asking what a
+// template says should learn it asked about nothing.
+func TemplateRules(template string) (*GovernanceRules, error) {
+	content, ok := templateFiles(template)["governance-rules.json"]
+	if !ok {
+		return nil, fmt.Errorf("governance template %q has no governance-rules.json", template)
+	}
+	rules := DefaultRules()
+	if err := json.Unmarshal([]byte(content), rules); err != nil {
+		return nil, fmt.Errorf("parse %s template rules: %w", template, err)
+	}
+	return rules, nil
 }
 
 // ReadRules reads the governance rules from the git repo for a node.
@@ -104,8 +130,12 @@ func WriteRules(dataDir, nodeID string, rules *GovernanceRules, message string) 
 	return DirectEdit(dataDir, nodeID, "governance-rules.json", content, "Patchwork System", "system@patchwork.local", message)
 }
 
-// marshalConfig renders the governance_config cache column value for a rule set.
-func marshalConfig(rules *GovernanceRules) (string, error) {
+// MarshalConfig renders the governance_config cache column value for a rule
+// set. It is the one place the cache's shape is decided: every writer of
+// nodes.governance_config — creation, the amendment apply paths, the seed —
+// goes through it, so a hand-written literal that disagrees with the rules
+// file has nowhere to come from.
+func MarshalConfig(rules *GovernanceRules) (string, error) {
 	gcJSON, err := json.Marshal(model.GovernanceConfig{
 		DecisionMethod:      rules.DecisionMethod,
 		QuorumPercent:       rules.QuorumPercent,
@@ -139,7 +169,7 @@ func SyncConfigToDB(db *database.DB, dataDir, nodeID string) error {
 	if err != nil {
 		return err
 	}
-	gcJSON, err := marshalConfig(rules)
+	gcJSON, err := MarshalConfig(rules)
 	if err != nil {
 		return err
 	}
@@ -154,7 +184,7 @@ func SyncRulesToDB(db *database.DB, dataDir, nodeID string) error {
 		return err
 	}
 
-	gcJSON, err := marshalConfig(rules)
+	gcJSON, err := MarshalConfig(rules)
 	if err != nil {
 		return err
 	}

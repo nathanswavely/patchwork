@@ -12,6 +12,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/atproto"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -26,8 +27,23 @@ const maxSourcesPerNode = 5
 // sourceNodeAccess resolves a slug and answers whether the user may
 // manage its event sources (docs/adr/031): patch admins on their own
 // active patch, the instance admin on unclaimed patches (who holds those
-// calendars in trust). Trusted contributors are deliberately excluded —
-// their grant delegates the review queue, not standing feeds.
+// calendars in trust), and a trusted contributor whose grant reaches an
+// unclaimed patch — at either scope, quilt-wide or that one patch.
+//
+// That last clause reverses an exclusion ADR 031 stated on purpose: the
+// grant "delegates the review queue, not standing feeds". The distinction
+// did not survive contact with the rest of the code, because a trusted
+// contributor could already CSV-upload forty events silently onto a
+// listing (event_upload.go), and a feed is that same batch kept current.
+// Reversed by docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+// carries-its-calendar.md, decision 5. The consent stays in reach of the
+// people who gave it: the grant is revocable, and an instance admin can
+// detach any source at any time. Revoking does not detach what that
+// person already attached — those are ordinary rows the admin sees and
+// can stop, exactly as ADR 057 leaves their pending links standing.
+//
+// It stops where every other clause of the grant stops: a claimed patch
+// runs its own calendar, and this is worth nothing there.
 func sourceNodeAccess(db *database.DB, user *model.User, slug string) (nodeID string, ok bool) {
 	var status string
 	err := db.QueryRow(
@@ -41,6 +57,9 @@ func sourceNodeAccess(db *database.DB, user *model.User, slug string) (nodeID st
 		return nodeID, true
 	}
 	if status == "active" && userHasNodeRole(db, user.ID, nodeID, "admin") {
+		return nodeID, true
+	}
+	if status == "unclaimed" && userTrustedOn(db, user, nodeID) {
 		return nodeID, true
 	}
 	return nodeID, false
@@ -257,8 +276,8 @@ func SyncEventSource(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if lastFetch != nil {
-			if t, err := time.Parse("2006-01-02T15:04:05.000Z", *lastFetch); err == nil && time.Since(t) < time.Minute {
-				http.Error(w, `{"error":"this source just synced — try again in a minute"}`, http.StatusTooManyRequests)
+			if t, err := clock.Parse(*lastFetch); err == nil && time.Since(t) < time.Minute {
+				http.Error(w, `{"error":"this source just synced, try again in a minute"}`, http.StatusTooManyRequests)
 				return
 			}
 		}
@@ -444,8 +463,8 @@ func UpdateEventSource(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to update event source"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "event_source.update", "event_source", sourceID,
-			fmt.Sprintf(`{"local_time_stamped_utc":%t}`, *req.LocalTimeStampedUTC), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event_source.update", "event_source", sourceID,
+			map[string]any{"local_time_stamped_utc": *req.LocalTimeStampedUTC}, clientIP(r))
 
 		sources, err := scanEventSources(db, nodeID)
 		if err != nil {

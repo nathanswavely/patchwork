@@ -74,6 +74,8 @@
   import Lining from './pages/Lining.svelte';
   import Governance from './pages/Governance.svelte';
   import AdminLegal from './pages/AdminLegal.svelte';
+  import AdminUsage from './pages/AdminUsage.svelte';
+  import AdminAttestation from './pages/AdminAttestation.svelte';
   import LegalDoc from './pages/LegalDoc.svelte';
   import SubmitPatch from './pages/SubmitPatch.svelte';
   import ClaimPatch from './pages/ClaimPatch.svelte';
@@ -90,6 +92,7 @@
   import Welcome from './pages/Welcome.svelte';
   import Discover from './pages/Discover.svelte';
   import Toast from './components/Toast.svelte';
+  import StepUpPrompt from './components/StepUpPrompt.svelte';
 
   // --- Routes ---
   // Home / discovery. Scope lives in the URL (docs/adr/035): the whole
@@ -224,6 +227,8 @@
   addRoute('/admin/aggregators', 'adminAggregators');
   addRoute('/admin/label', 'adminLabel');
   addRoute('/admin/legal', 'adminLegal');
+  addRoute('/admin/usage', 'adminUsage');
+  addRoute('/admin/attestation', 'adminAttestation');
 
   // --- Derived state ---
   let path = $derived(getPath());
@@ -239,6 +244,40 @@
   ]);
   let isSocialHome = $derived(socialHomeRoutes.has(routeName));
 
+  // --- The overlay route (docs/adr/094) --------------------------------
+  // A patch profile has one address and two containers, and the room picks:
+  // where a discovery surface is on screen to keep, the profile docks over
+  // it; where there is none, it is the page. "Is a surface on screen" is a
+  // fact only this component holds — the router knows the address it is at,
+  // not what that address replaced — so the surface is remembered here
+  // while a docked profile sits on top of it.
+  //
+  // Dropped the moment the reader goes anywhere else: a profile reached
+  // from a third page has no surface to keep, so it renders as the page,
+  // and the canvas is never rebuilt behind a sheet just to have something
+  // there. Which is also what keeps a cold link a page — nothing was ever
+  // recorded for it.
+  const dockableRoutes = new Set(['patchProfile', 'remotePatch']);
+  let isDockable = $derived(dockableRoutes.has(routeName));
+  let dockedOver = $state(null);
+
+  $effect(() => {
+    const name = routeName;
+    if (socialHomeRoutes.has(name)) {
+      dockedOver = { routeName: name, quiltScope: scopeForRoute(name) };
+    } else if (!dockableRoutes.has(name)) {
+      dockedOver = null;
+    }
+  });
+
+  let docked = $derived(isDockable && dockedOver ? dockedOver : null);
+  // Dismissing goes back rather than forward: the entry behind a docked
+  // profile is always the surface it was docked over, because opening one
+  // pushes and changing which patch is docked replaces (SocialHome).
+  function closeDock() {
+    history.back();
+  }
+
   // Patch shell routes (governance participation + admin settings)
   const patchShellRoutes = new Set([
     'claimPatch',
@@ -252,7 +291,7 @@
   let isPatchShellRoute = $derived(patchShellRoutes.has(routeName));
 
   const settingsRoutes = new Set(['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'quilts']);
-  const adminRoutes = new Set(['adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal']);
+  const adminRoutes = new Set(['adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminArchived', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminUsage', 'adminAttestation']);
   let isSettingsRoute = $derived(settingsRoutes.has(routeName));
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
@@ -286,7 +325,7 @@
     ['settings', 'settingsNotifications', 'settingsSecurity', 'settingsPatches', 'notifications', 'activity', 'dashboard', 'submitPatch', 'claimPatch', 'patchSetup', 'patchNew', 'eventNew', 'eventEdit',
      'governanceProposalNew', 'governanceDocNew',
      'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
-     'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal'].includes(routeName)
+     'adminDashboard', 'adminReports', 'adminTags', 'adminUsers', 'adminAudit', 'adminSubmissions', 'adminEventSubmissions', 'adminClaims', 'adminQuilt', 'adminNeighbors', 'adminAggregators', 'adminLabel', 'adminLegal', 'adminUsage', 'adminAttestation'].includes(routeName)
   );
 
   // The gate is a detour, not a destination, so it carries where the person
@@ -510,12 +549,16 @@
           <AdminLabel />
         {:else if routeName === 'adminLegal'}
           <AdminLegal />
+        {:else if routeName === 'adminUsage'}
+          <AdminUsage />
         {:else if routeName === 'adminQuilt'}
           <AdminQuiltSettings />
         {:else if routeName === 'adminNeighbors'}
           <AdminNeighborQuilts />
         {:else if routeName === 'adminAggregators'}
           <AdminAggregators />
+        {:else if routeName === 'adminAttestation'}
+          <AdminAttestation />
         {/if}
       {/snippet}
     </AdminShell>
@@ -575,7 +618,15 @@
 
 {:else}
   <!-- ===== SOCIAL SHELL (discovery + personal pages) ===== -->
-  <SocialShell {routeName} {quiltScope}>
+  <!-- While a profile is docked the shell is told the surface's route, not
+       the profile's: the surface is what is on screen, and a shell told
+       "patchProfile" leaves quilt mode — bordered bar, page gutters, no
+       view pill, no chips — around a quilt that is still there. -->
+  <SocialShell
+    routeName={docked ? docked.routeName : routeName}
+    quiltScope={docked ? docked.quiltScope : quiltScope}
+    dockOpen={!!docked}
+  >
     {#snippet children()}
       {#if authRequired && !isLoggedIn()}
         <div class="auth-gate">
@@ -584,11 +635,19 @@
           <a href={loginHref} class="btn btn-primary" onclick={(e) => handleNav(e, loginHref)}>Log In</a>
         </div>
 
-      <!-- ===== SOCIAL HOME: Quilt + Cards ===== -->
-      {:else if isSocialHome}
+      <!-- ===== SOCIAL HOME: Quilt + Cards =====
+           Also the branch a docked profile takes: the surface stays mounted
+           under it, at the zoom and pan the reader left it, and the profile
+           is drawn at one of the surface's edges (docs/adr/094). The
+           surface is the one component that knows which edge it can spare,
+           so it draws the dock rather than this chain. -->
+      {:else if isSocialHome || docked}
         <SocialHome
-          {quiltScope}
-          {routeName}
+          quiltScope={docked ? docked.quiltScope : quiltScope}
+          routeName={docked ? docked.routeName : routeName}
+          dockedSlug={docked ? routeParams.slug : null}
+          dockedHost={docked && routeName === 'remotePatch' ? routeParams.host : null}
+          onDockClose={closeDock}
         />
 
       <!-- ===== EVENTS ===== -->
@@ -684,6 +743,12 @@
 {/if}
 
 <Toast />
+
+<!-- Mounted once, for every surface (docs/adr/099). Registering it here is
+     what lets lib/stepUp.js ask for a recovery code without the seven
+     screens that confirm irreversible actions each carrying their own copy
+     of the flow. With it unmounted, withStepUp throws as it always did. -->
+<StepUpPrompt />
 
 <style>
   .takeover-gate {

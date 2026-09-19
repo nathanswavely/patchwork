@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
-	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
@@ -109,6 +109,106 @@ func CountRecoveryCodes(db *database.DB, userID string) (total, remaining int, e
 // exist.
 var errInvalidRecovery = fmt.Errorf("invalid username or recovery code")
 
+// The three ways a step-up by recovery code can fail. Unlike sign-in
+// redemption these are distinguishable, and safely: the caller is already
+// authenticated as the account in question, so nothing here tells them
+// anything about somebody else's.
+var (
+	// ErrInvalidRecoveryCode — no unused code of theirs matches.
+	ErrInvalidRecoveryCode = fmt.Errorf("that recovery code is not one of yours, or has been used")
+	// ErrNoRecoveryCodes — the account holds no unused codes at all.
+	ErrNoRecoveryCodes = fmt.Errorf("this account has no unused recovery codes")
+	// ErrRecoveryCodesTooNew — they hold codes, but every one was issued
+	// during the session asking to use it. See StepUpWithRecoveryCode.
+	ErrRecoveryCodesTooNew = fmt.Errorf("these codes were made during this sign-in")
+)
+
+// StepUpWithRecoveryCode burns one recovery code as proof of presence, so a
+// person with no passkey can still confirm a step-up-gated action
+// (docs/adr/099). It reports how many codes remain.
+//
+// The code must have been issued *before* the session presenting it began.
+// Step-up exists to prove a person is at the keyboard, and anything the
+// session itself could have produced proves nothing: generating a batch
+// needs only a session, so without this rule a stolen cookie could mint its
+// own second factor and wipe an instance with it. A batch made beforehand
+// and kept on paper is the "something you have" the gate is asking for.
+//
+// The first time, that costs a sign-out: make codes, sign back in with one
+// (which opens the window by itself, see the redemption path), and from
+// then on the rest of the batch predates the session and works directly.
+func StepUpWithRecoveryCode(db *database.DB, userID, rawSessionToken, rawCode string) (int, error) {
+	tx, err := db.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback()
+
+	var sessionCreatedAt string
+	err = tx.QueryRow(`SELECT created_at FROM sessions WHERE token = ?`, HashToken(rawSessionToken)).Scan(&sessionCreatedAt)
+	if err == sql.ErrNoRows {
+		return 0, fmt.Errorf("no such session")
+	}
+	if err != nil {
+		return 0, fmt.Errorf("query session: %w", err)
+	}
+
+	var codeID string
+	err = tx.QueryRow(
+		`SELECT id FROM recovery_codes
+		 WHERE user_id = ? AND code = ? AND used = 0 AND created_at < ?`,
+		userID, HashToken(NormalizeRecoveryCode(rawCode)), sessionCreatedAt,
+	).Scan(&codeID)
+	if err == sql.ErrNoRows {
+		// Say which of the three it is, so the page can tell someone whose
+		// codes are simply too young what to do about it rather than
+		// leaving them retyping a code that will never work.
+		var usable, unused int
+		tx.QueryRow(`SELECT COUNT(*) FROM recovery_codes WHERE user_id = ? AND used = 0`, userID).Scan(&unused)
+		tx.QueryRow(`SELECT COUNT(*) FROM recovery_codes WHERE user_id = ? AND used = 0 AND created_at < ?`,
+			userID, sessionCreatedAt).Scan(&usable)
+		switch {
+		case unused == 0:
+			return 0, ErrNoRecoveryCodes
+		case usable == 0:
+			return 0, ErrRecoveryCodesTooNew
+		default:
+			return 0, ErrInvalidRecoveryCode
+		}
+	}
+	if err != nil {
+		return 0, fmt.Errorf("query recovery code: %w", err)
+	}
+
+	now := clock.Now()
+	if _, err := tx.Exec(`UPDATE recovery_codes SET used = 1, used_at = ? WHERE id = ?`, now, codeID); err != nil {
+		return 0, fmt.Errorf("mark recovery code used: %w", err)
+	}
+
+	var remaining int
+	if err := tx.QueryRow(`SELECT COUNT(*) FROM recovery_codes WHERE user_id = ? AND used = 0`, userID).Scan(&remaining); err != nil {
+		return 0, fmt.Errorf("count remaining: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, fmt.Errorf("commit: %w", err)
+	}
+	return remaining, nil
+}
+
+// UsableStepUpCodes counts the codes this session could step up with: unused,
+// and issued before it began.
+func UsableStepUpCodes(db *database.DB, userID, rawSessionToken string) int {
+	var n int
+	db.QueryRow(
+		`SELECT COUNT(*) FROM recovery_codes rc
+		 JOIN sessions s ON s.token = ?
+		 WHERE rc.user_id = ? AND rc.used = 0 AND rc.created_at < s.created_at`,
+		HashToken(rawSessionToken), userID,
+	).Scan(&n)
+	return n
+}
+
 // RedeemRecoveryCode validates a username + code pair, burns the code, and
 // returns the user. Each code works exactly once.
 func RedeemRecoveryCode(db *database.DB, username, rawCode string) (*model.User, error) {
@@ -145,7 +245,7 @@ func RedeemRecoveryCode(db *database.DB, username, rawCode string) (*model.User,
 		return nil, fmt.Errorf("query recovery code: %w", err)
 	}
 
-	now := time.Now().UTC().Format(time.RFC3339)
+	now := clock.Now()
 	if _, err := tx.Exec(`UPDATE recovery_codes SET used = 1, used_at = ? WHERE id = ?`, now, codeID); err != nil {
 		return nil, fmt.Errorf("mark recovery code used: %w", err)
 	}

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -23,10 +22,10 @@ type eventSubmission struct {
 	SubmitterDisplay  string `json:"submitter_display_name"`
 }
 
-const eventSubmissionSelect = `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location,
+var eventSubmissionSelect = `SELECT e.id, e.node_id, e.created_by, e.title, e.description, e.location,
 	e.latitude, e.longitude, e.starts_at, e.ends_at, e.recurrence, e.visibility, e.status,
 	e.created_at, e.updated_at, n.name, n.slug, n.status,
-	COALESCE(u.username,''), COALESCE(u.display_name,'')
+	` + usernameExpr("u") + `, ` + displayNameExpr("u") + `
 	FROM events e
 	JOIN nodes n ON n.id = e.node_id
 	LEFT JOIN users u ON u.id = e.created_by
@@ -200,16 +199,9 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				Title:    "Your event was approved: " + e.Title,
 				Link:     weblink.Event(eventID),
 			})
-			notify(notifications.Event{
-				Type:     notifications.EventCreated,
-				NodeID:   e.NodeID,
-				NodeSlug: nodeSlug,
-				NodeName: nodeName,
-				ActorID:  user.ID,
-				EntityID: eventID,
-				Title:    "New event: " + e.Title,
-				Link:     weblink.Event(eventID),
-			})
+			// The submitter hears that their event was approved, because
+			// that answers something they did. The patch hears nothing:
+			// the event itself is a fact about the world (docs/adr/093).
 
 			var full model.Event
 			db.QueryRow(
@@ -240,7 +232,7 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to reject event"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "event.submission_rejected", "event", eventID, fmt.Sprintf(`{"note":%q}`, req.Note), clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "event.submission_rejected", "event", eventID, map[string]any{"note": req.Note}, clientIP(r))
 
 			notify(notifications.Event{
 				Type:     notifications.EventSubmissionRejected,

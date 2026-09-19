@@ -53,6 +53,40 @@ func TestLegalDefaultsServeWithQuiltName(t *testing.T) {
 	}
 }
 
+// The privacy policy says whether visitor counting is on, from the switch
+// itself, so the shipped text is true in both states
+// (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
+func TestLegalPrivacyStatesWhetherVisitorsAreCounted(t *testing.T) {
+	db := setupTestDB(t)
+
+	md, _ := getLegal(t, db, "privacy")["markdown"].(string)
+	if !strings.Contains(md, "does not count its visitors") {
+		t.Errorf("fresh instance should say it counts nobody; got:\n%s", md)
+	}
+	if strings.Contains(md, "{usage_stats}") {
+		t.Error("placeholder left unsubstituted")
+	}
+	if strings.Contains(md, "request logs") {
+		t.Error("the shipped Caddyfile keeps no access log; the policy must not claim one")
+	}
+
+	if err := settings.Set(db, settings.KeyUsageStats, "true"); err != nil {
+		t.Fatal(err)
+	}
+	md, _ = getLegal(t, db, "privacy")["markdown"].(string)
+	if !strings.Contains(md, "turned on visitor counting") {
+		t.Error("with counting on, the policy should say so")
+	}
+	for _, claim := range []string{"replaces every midnight", "No script runs in your browser", "deleted after 13 months", "question mark"} {
+		if !strings.Contains(md, claim) {
+			t.Errorf("the on-state paragraph should state %q", claim)
+		}
+	}
+	if strings.Contains(md, "does not count its visitors") {
+		t.Error("the off-state paragraph must not survive turning counting on")
+	}
+}
+
 func TestLegalDefaultHonorsRename(t *testing.T) {
 	db := setupTestDB(t)
 	if err := settings.Set(db, settings.KeyName, "Renamed Quilt"); err != nil {

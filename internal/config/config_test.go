@@ -196,3 +196,30 @@ instance:
 		t.Errorf("expected a timezone warning, got %v", cfg.Warnings())
 	}
 }
+
+// bootstrap_token lives under instance: in the struct (yaml:"bootstrap_token"
+// on the Instance type), and patchwork.yaml.example documents it there too
+// (docs/adr/070). This guards against the field and its documentation
+// drifting apart again — Load uses yaml.Unmarshal without KnownFields, so a
+// key documented under the wrong top-level section is silently dropped
+// rather than rejected.
+func TestExampleBootstrapTokenRoundTrips(t *testing.T) {
+	exampleData, err := os.ReadFile(filepath.Join("..", "..", "patchwork.yaml.example"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	const commented = `# bootstrap_token: "a-long-random-string"`
+	if !strings.Contains(string(exampleData), commented) {
+		t.Fatalf("patchwork.yaml.example no longer has the commented bootstrap_token line under instance:; update this test to match")
+	}
+	content := strings.Replace(string(exampleData), commented, `bootstrap_token: "x"`, 1)
+
+	cfg, err := Load(writeConfig(t, content))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Instance.BootstrapToken != "x" {
+		t.Errorf("Instance.BootstrapToken = %q, want %q — bootstrap_token must live under instance: in patchwork.yaml.example", cfg.Instance.BootstrapToken, "x")
+	}
+}

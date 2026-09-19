@@ -9,6 +9,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
@@ -69,6 +70,39 @@ func nullableZone(tz string) any {
 // event that inherits should inherit whether its zone is NULL or blank.
 const eventZoneSQL = `COALESCE(NULLIF(e.timezone,''), NULLIF(n.timezone,''), ?)`
 
+// validateRecurrence refuses a word the product cannot keep.
+//
+// `events.recurrence` has been a stored label since migration 001 and
+// nothing has ever expanded it. One row said "Repeats weekly" and showed
+// one date; the ICS feed carried no RRULE, so a subscriber got one
+// occurrence; every list counted it once. The label was the only part of
+// a recurring event that existed.
+//
+// The control is withdrawn rather than implemented, and the trade is
+// worth stating. Expansion is not a feature, it is a data model: real
+// occurrences or a virtual expander, an RRULE in feeds.go, an exception
+// model for the week a rehearsal moves, a diff in the ADR 031 reconciler
+// that already keys imported occurrences by start instant, and a decision
+// on every list, count, cursor and reminder about which of the four
+// Tuesdays it means. Against that, the honest alternative already ships
+// twice over: four events is four events, and a community that keeps its
+// series in Google Calendar attaches it as an event source
+// (docs/adr/031), where an RRULE *is* expanded, in the calendar's own
+// zone (docs/adr/065 decision 4), into rows every surface already
+// understands. docs/adr/049 is the rule being applied — Patchwork states
+// only what it enforces.
+//
+// Rows already carrying a word keep it: the column stays, it still
+// travels in a seamrip, and the event page renders it with the caveat it
+// always needed. What ends here is *new* ones, including from a client
+// that never saw the form.
+func validateRecurrence(v string) string {
+	if strings.TrimSpace(v) == "" {
+		return ""
+	}
+	return "this quilt does not expand recurring events — add each date as its own event, or attach the calendar as an event source in the patch's settings"
+}
+
 func ListEvents(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		after, limit := parsePaginationParams(r)
@@ -117,7 +151,7 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 		// workspace calendar, a "has this patch any events yet" probe, a
 		// scoped search that should find what already happened.
 		if from == "" && r.URL.Query().Get("include_past") != "true" {
-			from = time.Now().UTC().Format(time.RFC3339)
+			from = clock.Now()
 		}
 
 		// Resolve node_slug to node_id if provided.
@@ -300,6 +334,16 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 			NodeStatus string               `json:"node_status"`
 			Links      []model.EventLink    `json:"links"`
 			Mentions   []model.EventMention `json:"mentions"`
+			// ViewerTrusted: does this viewer's trusted-contributor grant,
+			// quilt-wide or scoped to this one patch, reach the event's own
+			// patch (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+			// carries-its-calendar.md)? Same answer GetNode gives beside
+			// is_unclaimed, carried here so the event page can decide the
+			// owner side of the link handshake (docs/adr/057) from the
+			// payload it already has, without a second fetch it would only
+			// make to read one bit. Always stated, never absent; false on
+			// an active patch, where either scope is worth nothing.
+			ViewerTrusted bool `json:"viewer_trusted"`
 		}
 		// An archived or removed patch takes its events with it — same gate
 		// as GetNode, so an event link doesn't outlive its patch page.
@@ -316,9 +360,27 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 
 		// A pending submission is visible only to its submitter and its
 		// reviewers (docs/adr/026) — to everyone else it doesn't exist yet.
+		// That branch decides the whole question for a submission, so the
+		// visibility gate below is the published event's rule and never
+		// runs on top of it: an instance admin reviewing a submission to an
+		// unclaimed patch holds no membership there, and a members-only
+		// submission must not vanish from the queue that has to answer it.
 		user := middleware.UserFromContext(r.Context())
 		if e.Status == "pending_review" {
 			if user == nil || (user.ID != e.CreatedBy && user.Role != "admin" && !userHasNodeRole(db, user.ID, e.NodeID, "admin")) {
+				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
+				return
+			}
+		} else if e.Visibility != "public" {
+			// Members-only events are for a member or admin of the event's
+			// OWN patch, which is the rule ListEvents and EventICS already
+			// apply — a confirmed link never widens visibility. A 404 rather
+			// than a 403: to someone who can't read it, the event doesn't
+			// exist. A private *patch* is unlisted rather than locked, so
+			// its public events stay readable by anyone holding the link,
+			// exactly as its page stays readable — this gate reads the
+			// event's own visibility and never the patch's.
+			if user == nil || !userHasNodeRole(db, user.ID, e.NodeID, "member", "admin") {
 				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 				return
 			}
@@ -329,6 +391,7 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 		// admins who could act on them.
 		e.Links = eventLinksForViewer(db, user, e.ID, e.NodeID)
 		e.Mentions = eventMentions(db, e.ID)
+		e.ViewerTrusted = e.NodeStatus == "unclaimed" && userTrustedOn(db, user, e.NodeID)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
@@ -396,16 +459,20 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		// A flyer is a reference, and its description comes with it
 		// (docs/adr/007).
 		if msg := validateImageRef(req.ImageURL, req.ImageAlt); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		if msg := validateEventURL(req.EventURL); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		req.Timezone = strings.TrimSpace(req.Timezone)
 		if req.Timezone != "" && !settings.ValidTimezone(req.Timezone) {
-			http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, settings.BadTimezoneMessage)
+			return
+		}
+		if msg := validateRecurrence(req.Recurrence); msg != "" {
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 		if req.NodeID == "" || req.Title == "" || req.StartsAt == "" {
@@ -417,12 +484,12 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 
 		// Verify node exists and load what the authz decision needs.
-		var nodeStatus string
+		var nodeStatus, nodeMoved string
 		var acceptSuggestions bool
 		err := db.QueryRow(
-			"SELECT status, accept_event_suggestions FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL",
+			"SELECT status, accept_event_suggestions, COALESCE(moved_to,'') FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL",
 			req.NodeID,
-		).Scan(&nodeStatus, &acceptSuggestions)
+		).Scan(&nodeStatus, &acceptSuggestions, &nodeMoved)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -440,11 +507,23 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		case "active":
 			direct = direct || userHasNodeRole(db, user.ID, req.NodeID, "member", "admin")
 		case "unclaimed":
-			direct = direct || user.TrustedContributor
+			// Either scope of the trusted-contributor grant: quilt-wide, or
+			// this one patch (docs/adr/2026-09-18-trust-has-a-scope-and-a-
+			// suggestion-carries-its-calendar.md).
+			direct = direct || userTrustedOn(db, user, req.NodeID)
 		}
 
 		status := "active"
 		if !direct {
+			// A patch that has moved takes no suggestions from outside
+			// (docs/adr/090). Its own members and admins still post, because
+			// the old home stays a record and a record can be corrected;
+			// what stops is asking strangers to feed a calendar the
+			// community has left.
+			if nodeMoved != "" {
+				writeMovedAway(w, nodeMoved)
+				return
+			}
 			if !cfg.Submissions.Enabled {
 				http.Error(w, `{"error":"community submissions are disabled on this instance"}`, http.StatusForbidden)
 				return
@@ -468,7 +547,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		auth.LogAuditEvent(db, user.ID, "event.create", "event", id, fmt.Sprintf(`{"status":"%s"}`, status), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "event.create", "event", id, map[string]any{"status": status}, clientIP(r))
 
 		var e model.Event
 		db.QueryRow(
@@ -505,17 +584,11 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				})
 			}
 		} else {
-			// Notify members about the new event.
-			notify(notifications.Event{
-				Type:     notifications.EventCreated,
-				NodeID:   req.NodeID,
-				NodeSlug: nodeSlugN,
-				NodeName: nodeNameN,
-				ActorID:  user.ID,
-				EntityID: id,
-				Title:    "New event: " + req.Title,
-				Link:     weblink.Event(id),
-			})
+			// No notification: an event is a fact about the world, and
+			// Patchwork publishes rather than broadcasts (docs/adr/093).
+			// It reaches people through the patch's calendar feed, the
+			// quilt, and the map. Federation is publication, so the AP
+			// delivery below stays.
 			broadcastEventCreate(db, e, req.NodeID)
 		}
 
@@ -565,7 +638,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		direct := user.Role == "admin" ||
 			(nodeStatus == "active" && userHasNodeRole(db, user.ID, nodeID, "admin")) ||
 			(nodeStatus == "active" && isCreator && userHasNodeRole(db, user.ID, nodeID, "member")) ||
-			(nodeStatus == "unclaimed" && user.TrustedContributor && isCreator)
+			(nodeStatus == "unclaimed" && isCreator && userTrustedOn(db, user, nodeID))
 		reReview := false
 		switch {
 		case direct:
@@ -601,17 +674,29 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			if tz = strings.TrimSpace(tz); tz == "" {
 				req["timezone"] = nil
 			} else if !settings.ValidTimezone(tz) {
-				http.Error(w, `{"error":"timezone must be an IANA zone name, like America/New_York"}`, http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, settings.BadTimezoneMessage)
 				return
 			} else {
 				req["timezone"] = tz
 			}
 		}
 
+		// Recurrence is accepted only as a clearing (see validateRecurrence).
+		// An edit that leaves it out leaves a stored word alone; one that
+		// sends "" retires it.
+		if raw, present := req["recurrence"]; present {
+			v, _ := raw.(string)
+			if msg := validateRecurrence(v); msg != "" {
+				writeJSONError(w, http.StatusBadRequest, msg)
+				return
+			}
+			req["recurrence"] = ""
+		}
+
 		// Same pairing rule as a patch's image: a PATCH carrying one half is
 		// judged against the stored other half (docs/adr/007).
 		if msg := checkPatchedImage(db, "events", eventID, req); msg != "" {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+			writeJSONError(w, http.StatusBadRequest, msg)
 			return
 		}
 
@@ -621,7 +706,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			link, _ := raw.(string)
 			link = strings.TrimSpace(link)
 			if msg := validateEventURL(link); msg != "" {
-				http.Error(w, fmt.Sprintf(`{"error":%q}`, msg), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, msg)
 				return
 			}
 			req["event_url"] = link
@@ -680,19 +765,10 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 				Title:    "Event edit awaiting review: " + e.Title,
 				Link:     "/admin/event-submissions",
 			})
-		} else if e.Status == "active" {
-			// Notify members about the event update.
-			notify(notifications.Event{
-				Type:     notifications.EventUpdated,
-				NodeID:   nodeID,
-				NodeSlug: nodeSlugN,
-				NodeName: nodeNameN,
-				ActorID:  user.ID,
-				EntityID: eventID,
-				Title:    "Event updated: " + e.Title,
-				Link:     weblink.Event(eventID),
-			})
 		}
+		// An active event's edit notifies nobody (docs/adr/093): a
+		// subscribed calendar takes the change on its next refresh, and a
+		// changed detail is not an obligation anyone took on.
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
@@ -709,12 +785,14 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 			return
 		}
 
-		// Get event to check permissions and capture info for notification.
-		var nodeID, eventTitle, createdBy, eventStatus string
+		// Get the event to check permissions and to find its feed item.
+		// Title and status used to be read here for the cancellation
+		// notice; nothing announces a deletion now (docs/adr/093).
+		var nodeID, createdBy string
 		var sourceID, sourceUID *string
 		var sourceOccurrence string
-		err := db.QueryRow("SELECT node_id, title, created_by, status, source_id, source_uid, source_occurrence FROM events WHERE id = ?", eventID).
-			Scan(&nodeID, &eventTitle, &createdBy, &eventStatus, &sourceID, &sourceUID, &sourceOccurrence)
+		err := db.QueryRow("SELECT node_id, created_by, source_id, source_uid, source_occurrence FROM events WHERE id = ?", eventID).
+			Scan(&nodeID, &createdBy, &sourceID, &sourceUID, &sourceOccurrence)
 		if err != nil {
 			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 			return
@@ -753,25 +831,11 @@ func DeleteEvent(db *database.DB) http.HandlerFunc {
 
 		auth.LogAuditEvent(db, user.ID, "event.delete", "event", eventID, "{}", clientIP(r))
 
-		// Notify members about the cancellation — but a withdrawn pending
-		// submission was never announced, so its removal isn't either.
-		if eventStatus != "active" {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-			return
-		}
-		var nodeSlugN, nodeNameN string
-		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", nodeID).Scan(&nodeSlugN, &nodeNameN)
-		notify(notifications.Event{
-			Type:     notifications.EventCancelled,
-			NodeID:   nodeID,
-			NodeSlug: nodeSlugN,
-			NodeName: nodeNameN,
-			ActorID:  user.ID,
-			EntityID: eventID,
-			Title:    "Event cancelled: " + eventTitle,
-			Link:     weblink.Patch(nodeSlugN),
-		})
+		// A cancellation notifies nobody, and refusing this is the point
+		// (docs/adr/093). It is the strongest case for an exception, so
+		// granting it would mean granting every later one. Telling people
+		// the show is off is the venue's job; Patchwork's is that the
+		// record is right when somebody looks, and the row is gone.
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})

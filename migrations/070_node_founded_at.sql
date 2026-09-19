@@ -1,0 +1,23 @@
+-- 070: when the group behind a patch started (docs/adr/098).
+--
+-- A minimum voting tenure asks whether someone has been here long enough to
+-- decide (docs/adr/044). On a patch made this morning nobody has, so the
+-- Formal template's thirty days excluded the founder from the founder's own
+-- rules vote: "0 of 0 needed", and a window that lapsed with no ballots. The
+-- required tenure is now capped at the patch's age — nobody can be asked to
+-- have been here longer than the patch has.
+--
+-- This column is what lets a patch state its age. NULL means the group
+-- started when its row was written, which is true of a community formed
+-- here. A date means it predates its patch: an organisation moving rules it
+-- already lives by onto Patchwork keeps the full bar from the first day,
+-- because its members have in fact been there that long.
+--
+-- Date-only TEXT (YYYY-MM-DD), like seats.term_ends_at: a founding is a day,
+-- not an instant. Validated at the one write path (PATCH /nodes/{slug}) —
+-- well-formed, and never in the future.
+--
+-- Numbering: 069 is the highest on main, and no open PR, local branch or
+-- other worktree had claimed 070 when this branch was assigned it up front
+-- (CLAUDE.md, "Claiming a number"). Re-check before merge.
+ALTER TABLE nodes ADD COLUMN founded_at TEXT;

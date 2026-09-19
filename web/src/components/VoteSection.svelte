@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { timeLeft as timeLeftFor, timeLeftPhrase } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
 
   let {
@@ -23,13 +24,31 @@
     state: propState = 'voting',
     voters = [],
     canVote = false,
+    // Whether this tally is advice to a maintainer rather than the decision
+    // (docs/adr/092), and what kind of proposal it is, which decides which
+    // of the terms' two thresholds applies.
+    advisory = false,
+    proposalType = '',
+    // The tenure actually in force and, for a member still inside it, the
+    // day it lifts — both the server's answers (docs/adr/098). Never
+    // `terms.min_voting_tenure_days`: the frozen terms carry the number the
+    // patch configured, and a patch younger than that number is not running
+    // it, so the page was reciting a rule while the button took the vote.
+    tenureDays = 0,
+    voteEligibleAt = '',
     onVote = () => {},
   } = $props();
 
   let quorumPercent = $derived(terms?.quorum_percent || 0);
-  let tenureDays = $derived(terms?.min_voting_tenure_days || 0);
+  // The amendment threshold applies to amendments and to nothing else —
+  // resolveProposal reads it only for proposal_type 'amendment'. This used
+  // to prefer it for every proposal, so an action proposal on a
+  // Collaborative patch said "Supermajority" while the server carried it
+  // by majority.
   let threshold = $derived(
-    terms?.amendment_threshold || terms?.decision_method || 'majority'
+    proposalType === 'amendment' && terms?.amendment_threshold
+      ? terms.amendment_threshold
+      : terms?.decision_method || 'majority'
   );
 
   let voting = $state(false);
@@ -53,14 +72,22 @@
 
   let quorumNeeded = $derived(Math.ceil(electorateSize * quorumPercent / 100));
 
+  // Whether more votes can still arrive. "Not yet met" is a promise about
+  // the future, and on a proposal that has lapsed there is no future to
+  // promise: late enthusiasm reopens nothing (docs/adr/097). Either the
+  // proposal has settled, or the clock has run out on a vote the page is
+  // still rendering ahead of the sweep.
+  let windowClosed = $derived.by(() => {
+    if (propState !== 'voting' && propState !== 'open') return true;
+    const left = timeLeftFor(votingEndsAt);
+    return !!(left && left.ended);
+  });
+
   let timeLeft = $derived.by(() => {
-    if (!votingEndsAt) return '';
-    const ms = new Date(votingEndsAt) - new Date();
-    if (ms <= 0) return 'Voting has ended';
-    const days = Math.floor(ms / 86400000);
-    const hours = Math.floor((ms % 86400000) / 3600000);
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} remaining`;
-    return `${hours} hour${hours > 1 ? 's' : ''} remaining`;
+    const left = timeLeftFor(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'Voting has ended';
+    return `${timeLeftPhrase(left)} remaining`;
   });
 
   let thresholdExplain = $derived.by(() => {
@@ -68,9 +95,23 @@
       majority: 'Majority \u2014 more than half of votes must approve',
       supermajority: 'Supermajority \u2014 at least 2 out of 3 votes must approve',
       consensus: 'Consensus \u2014 no reject votes allowed',
+      admin: 'Advisory \u2014 the maintainer decides, with this tally in front of them',
     };
+    if (advisory) return explanations.admin;
     return explanations[threshold] || threshold;
   });
+
+  // The day the tenure bar lifts for this viewer, in words. A date answers
+  // the question a waiting member is actually asking; the rule in the
+  // abstract does not.
+  let eligibleDate = $derived(
+    voteEligibleAt
+      ? new Date(`${voteEligibleAt}T00:00:00`).toLocaleDateString(undefined, {
+          month: 'long',
+          day: 'numeric',
+        })
+      : ''
+  );
 
   let termsLine = $derived.by(() => {
     if (!terms) return '';
@@ -78,7 +119,13 @@
       ? new Date(openedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
       : '';
     const head = when ? `Rules as of ${when}` : 'Rules fixed when voting opened';
-    if (tenureDays > 0) {
+    // Only the tenure in force, and only when it is holding somebody back.
+    // A member who may already vote does not need the rule recited at them,
+    // and a patch too young to run the rule must not print it at all.
+    if (eligibleDate) {
+      return `${head} — you can vote here from ${eligibleDate}`;
+    }
+    if (tenureDays > 0 && !canVote) {
       return `${head} — voting requires ${tenureDays} days' membership`;
     }
     return head;
@@ -118,11 +165,13 @@
 
   <!-- Quorum status -->
   <div class="quorum-status">
-    {#if quorumPercent > 0}
+    {#if advisory}
+      <span class="quorum-none muted">No quorum. This vote advises; it does not decide.</span>
+    {:else if quorumPercent > 0}
       {#if quorumMet}
         <span class="quorum-met">Quorum met ({totalVotes} of {electorateSize} voted, {quorumPercent}% needed)</span>
       {:else}
-        <span class="quorum-unmet">Quorum not yet met ({totalVotes} of {quorumNeeded} needed)</span>
+        <span class="quorum-unmet">{windowClosed ? 'Quorum not met' : 'Quorum not yet met'} ({totalVotes} of {quorumNeeded} needed)</span>
       {/if}
     {:else}
       <span class="quorum-none muted">No quorum required</span>
