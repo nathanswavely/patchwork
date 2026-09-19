@@ -223,8 +223,13 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 			return Place{}, false
 		}
 		score := hits
-		// The housenumber only counts when the query actually carried it.
-		if p.HouseNumber != "" {
+		// The housenumber only counts when the query carried it, and only
+		// on the street the query named. Every street has a 150, so a
+		// number matched on a street nobody typed used to outscore the
+		// named street's own rows: "150 N Prince St, Lancaster" answered
+		// "150 East King Street", which is not a near miss but a different
+		// address a third of a mile away.
+		if p.HouseNumber != "" && streetNamed(query, p.Street) {
 			for _, ht := range Tokenize(p.HouseNumber) {
 				if query[ht] {
 					score += weightHouseNumber
@@ -265,6 +270,41 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 		return Place{}, false
 	}
 	return best.place, true
+}
+
+// streetTypes are the generic words a street name ends in. They carry no
+// locating power of their own: a county's roads share a handful of them, and
+// people leave them off ("23 N Market") about as often as they write them.
+// Comparing a street on its whole token set would therefore fail on the
+// shorthand everybody types, so it is compared on the words that name it.
+var streetTypes = map[string]bool{
+	"street": true, "avenue": true, "road": true, "drive": true,
+	"boulevard": true, "lane": true, "court": true, "place": true,
+	"square": true, "terrace": true, "parkway": true, "highway": true,
+	"circle": true, "alley": true,
+}
+
+// streetNamed reports whether the query names this street. Direction is part
+// of the name and stays in the comparison, because North Prince and South
+// Prince are different streets; only the type word is dropped.
+func streetNamed(query map[string]bool, street string) bool {
+	if street == "" {
+		return false
+	}
+	tokens := Tokenize(street)
+	distinctive := make([]string, 0, len(tokens))
+	for _, t := range tokens {
+		if !streetTypes[t] {
+			distinctive = append(distinctive, t)
+		}
+	}
+	// A street whose whole name is its type, like "The Circle", has nothing
+	// left to compare, so compare what it does have rather than matching
+	// every query that mentions a circle.
+	if len(distinctive) == 0 {
+		distinctive = tokens
+	}
+	return containsAll(query, distinctive)
 }
 
 // containsAll reports whether every one of these tokens was in the query.

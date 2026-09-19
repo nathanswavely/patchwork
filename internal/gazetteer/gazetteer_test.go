@@ -233,3 +233,84 @@ func TestDistanceMetres(t *testing.T) {
 		t.Fatal("a point is not zero metres from itself")
 	}
 }
+
+// A housenumber that is not on the street somebody named is not evidence
+// about that street. Before this, "150 N Prince St" scored a building on East
+// King Street above every row of North Prince Street, because the number and
+// the city outweighed the street name nobody had matched.
+func TestAHouseNumberOnAnotherStreetDoesNotWin(t *testing.T) {
+	g := build(t,
+		Place{Name: "East King Street Garage", HouseNumber: "150", Street: "East King Street", City: "Lancaster", Latitude: 40.03826, Longitude: -76.30232},
+		Place{Name: "Prince Street Parking Garage", HouseNumber: "111", Street: "North Prince Street", City: "Lancaster", Latitude: 40.04012, Longitude: -76.30840},
+	)
+	if got, ok := g.Suggest("150 N Prince St, Lancaster"); ok && got.Street == "East King Street" {
+		t.Fatalf("suggested a different street: %+v", got)
+	}
+}
+
+// The number still decides between buildings once the street does match, so
+// gating it must not cost the case it was weighted for.
+func TestTheNumberStillDecidesOnTheNamedStreet(t *testing.T) {
+	g := build(t,
+		Place{HouseNumber: "150", Street: "East King Street", City: "Lancaster", Latitude: 40.03826, Longitude: -76.30232},
+		Place{HouseNumber: "15", Street: "North Prince Street", City: "Lancaster", Latitude: 40.03811, Longitude: -76.30777},
+		Place{HouseNumber: "48", Street: "North Prince Street", City: "Lancaster", Latitude: 40.03897, Longitude: -76.30819},
+	)
+	got, ok := g.Suggest("48 N Prince St, Lancaster")
+	if !ok {
+		t.Fatal("nothing found for an address that exists")
+	}
+	if got.HouseNumber != "48" {
+		t.Fatalf("picked %s on %s, wanted 48 North Prince Street", got.HouseNumber, got.Street)
+	}
+}
+
+// People leave the type word off as often as they write it. Comparing a
+// street on its whole token set would break every one of these.
+func TestAStreetMatchesWithoutItsTypeWord(t *testing.T) {
+	g := build(t,
+		Place{Name: "Lancaster Central Market", HouseNumber: "23", Street: "North Market Street", City: "Lancaster", Latitude: 40.03865, Longitude: -76.30638},
+		Place{HouseNumber: "23", Street: "East King Street", City: "Lancaster", Latitude: 40.03800, Longitude: -76.30400},
+	)
+	for _, q := range []string{"23 N Market St, Lancaster", "23 N Market, Lancaster", "23 North Market Street Lancaster"} {
+		got, ok := g.Suggest(q)
+		if !ok {
+			t.Errorf("%q found nothing", q)
+			continue
+		}
+		if got.Street != "North Market Street" {
+			t.Errorf("%q matched %s, wanted North Market Street", q, got.Street)
+		}
+	}
+}
+
+// Direction is part of a street's name, not a type word, so it must keep
+// telling two streets apart.
+func TestDirectionStillSeparatesTwoStreets(t *testing.T) {
+	g := build(t,
+		Place{HouseNumber: "200", Street: "North Queen Street", City: "Lancaster", Latitude: 40.04200, Longitude: -76.30600},
+		Place{HouseNumber: "200", Street: "South Queen Street", City: "Lancaster", Latitude: 40.03300, Longitude: -76.30600},
+	)
+	got, ok := g.Suggest("200 S Queen St, Lancaster")
+	if !ok {
+		t.Fatal("nothing found")
+	}
+	if got.Street != "South Queen Street" {
+		t.Fatalf("matched %s, wanted South Queen Street", got.Street)
+	}
+}
+
+// A query with no street at all still reaches a venue by name. The gate is on
+// the housenumber, not on the name path.
+func TestANamedVenueIsStillFoundWithoutAStreet(t *testing.T) {
+	g := build(t,
+		Place{Name: "Fulton", HouseNumber: "12", Street: "North Prince Street", City: "Lancaster", Latitude: 40.03814, Longitude: -76.30798},
+	)
+	got, ok := g.Suggest("Fulton Theatre")
+	if !ok {
+		t.Fatal("named venue not found")
+	}
+	if got.Name != "Fulton" {
+		t.Fatalf("matched %+v", got)
+	}
+}

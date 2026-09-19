@@ -187,6 +187,21 @@ derived one and hides wrong answers behind a button nobody read.
   from 288/300 to 292/300 — the remaining eight are the generator inventing
   the same address twice, 27 km apart, which the ambiguity rule is right to
   refuse.
+- **The blind spot above was real, and a downloaded extract found it.** Built
+  on 2026-09-19 from a September Geofabrik Pennsylvania extract cropped to the
+  configured radius (29,812 places), `150 N Prince St, Lancaster` answered
+  `150 East King Street`: a different street a third of a mile away, offered
+  with no less confidence than a correct answer. There is no 150 on North
+  Prince, so the housenumber and the city outscored four matching street
+  tokens on rows that were actually on the street somebody had named. A
+  housenumber is now evidence only on the street the query named, compared on
+  the words that name it rather than the generic type word, since people write
+  "23 N Market" as readily as "23 N Market St". Two outcomes moved on that
+  index: the wrong-street answer became silence, which is the ordinary answer
+  for an address that does not exist, and `100 W Orange St` began resolving to
+  108 West Orange Street, four doors along, after previously being drowned out
+  by unrelated 100s elsewhere in the city. Nothing else in an 18-query
+  regression set changed.
 - **The volume is in events, and this does not serve them.** The event form
   has no coordinate input at all, and `events.latitude`/`longitude` are
   written by the JSON-LD importer and the aggregator and then read by
