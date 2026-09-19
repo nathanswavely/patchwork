@@ -52,6 +52,15 @@ type Source struct {
 	// page can tell — the feed's own offset is internally consistent and
 	// simply wrong.
 	LocalTimeStampedUTC bool
+	// Visibility is the tier this feed's events are born at
+	// (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-
+	// patch-allows.md). Applied at INSERT and nowhere else, which is a
+	// deliberate departure from the docs/adr/079 habit of letting a feed
+	// refill every field it owns: the feed owns the show, not who on this
+	// quilt may read about it. So a tier changed on one event sticks
+	// across every later sync, and changing the source's default moves
+	// only the rows that arrive after it.
+	Visibility string
 }
 
 // sourceLocks serializes syncs per source: the hourly worker and a
@@ -74,13 +83,13 @@ func Sync(ctx context.Context, db *database.DB, notifier *notifications.Notifier
 	err := db.QueryRow(
 		`SELECT s.id, s.node_id, s.type, s.url, s.added_by, s.etag, s.last_modified,
 		 s.last_success_at, s.aggregator_id, s.name_key, s.suggests,
-		 s.local_time_stamped_utc, COALESCE(NULLIF(n.timezone,''), ?)
+		 s.local_time_stamped_utc, s.visibility, COALESCE(NULLIF(n.timezone,''), ?)
 		 FROM event_sources s JOIN nodes n ON n.id = s.node_id WHERE s.id = ?`,
 		settings.EffectiveTimezone(db), sourceID,
 	).Scan(&src.ID, &src.NodeID, &src.Type, &src.URL, &src.AddedBy,
 		&src.Etag, &src.LastModified, &src.LastSuccessAt,
 		&src.AggregatorID, &src.NameKey, &src.Suggests,
-		&src.LocalTimeStampedUTC, &zoneName)
+		&src.LocalTimeStampedUTC, &src.Visibility, &zoneName)
 	if err != nil {
 		return fmt.Errorf("load source: %w", err)
 	}
@@ -405,6 +414,13 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 			if prev.Removed || !changed(prev, it) {
 				continue
 			}
+			// visibility is deliberately absent from this list, and stays
+			// absent. Every other field here is one the feed owns, so
+			// docs/adr/079 has the next sync refill it and no backfill
+			// migration is ever needed. Who an event is for is not one of
+			// those: it is this quilt's policy about this quilt's roles,
+			// which the feed has never heard of. A patch that retiers one
+			// imported night keeps that decision through every later sync.
 			_, err := tx.Exec(
 				`UPDATE events SET title = ?, description = ?, location = ?, latitude = ?,
 				 longitude = ?, starts_at = ?, ends_at = ?, event_url = ?, updated_at = ? WHERE id = ?`,
@@ -479,9 +495,9 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 			`INSERT INTO events (id, node_id, created_by, title, description, location,
 			 latitude, longitude, starts_at, ends_at, event_url, recurrence, visibility, status,
 			 ap_id, source_id, source_uid, source_occurrence)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'active', ?, ?, ?, ?)`,
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, 'active', ?, ?, ?, ?)`,
 			id, src.NodeID, src.AddedBy, it.Title, it.Description, it.Location,
-			it.Latitude, it.Longitude, it.StartsAt, it.EndsAt, it.URL, apID,
+			it.Latitude, it.Longitude, it.StartsAt, it.EndsAt, it.URL, src.Visibility, apID,
 			src.ID, it.UID, it.Occurrence,
 		)
 		if err != nil {
@@ -494,7 +510,7 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 				Title: it.Title, Description: it.Description, Location: it.Location,
 				Latitude: it.Latitude, Longitude: it.Longitude,
 				StartsAt: it.StartsAt, EndsAt: it.EndsAt, EventURL: it.URL,
-				Visibility: "public",
+				Visibility: src.Visibility,
 			})
 		}
 	}
@@ -686,7 +702,15 @@ func strEq(a, b *string) bool {
 
 // broadcastCreate mirrors the handler's broadcastEventCreate: a Create
 // activity to the patch's AP followers. A no-op without followers.
+//
+// Including the public-only gate. A feed given a non-public default tier
+// stops federating, which is correct — `followers` and `members` name roles
+// on this quilt and a remote follower holds neither — and is the thing the
+// source form says beside the control, because it will surprise somebody.
 func broadcastCreate(db *database.DB, e model.Event, nodeID string) {
+	if e.Visibility != "public" {
+		return
+	}
 	go func() {
 		obj := ap.EventToObject(e, ap.GetDomain())
 		activity := map[string]interface{}{
