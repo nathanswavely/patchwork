@@ -542,6 +542,20 @@ checkout (`make export`). The matching `make import IN=./export/` brings the
 data up on a fresh instance with new IDs. This is the data-portability path,
 disaster recovery included.
 
+`make export` opens the database read-only (`-db` points at the same file
+the running instance uses) and never migrates or checkpoints it, so it is
+safe to run from a checkout that is a different version than the image the
+instance is actually serving. That also means it needs to see the database
+exactly as the instance left it: if `patchwork.db-wal` and `patchwork.db-shm`
+sit next to `patchwork.db`, copy or mount all three, not just the `.db`
+file, or recently-committed rows that haven't been checkpointed into the
+main file yet will be missing from the export. Running against a stopped
+instance, or against a volume snapshot taken while it runs, both carry the
+sidecars along naturally; a helper container that bind-mounts only the `.db`
+path does not. A database whose recorded schema is newer than the export
+binary's own embedded migrations is refused outright, naming both versions,
+rather than read partially.
+
 ### Restoring a database without its governance repos
 
 The restore above brings back the whole volume, repos included. Two common
