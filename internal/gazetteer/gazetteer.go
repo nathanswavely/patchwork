@@ -143,7 +143,9 @@ func (g *Gazetteer) Count() int {
 }
 
 // Scoring weights. A housenumber that matches is worth more than any other
-// single token because every building on a street shares everything else.
+// single token because every building on a street shares everything else —
+// which is also why it is the one weight with a precondition: it only pays on
+// a row whose street the query named. See the gate in Suggest.
 const (
 	weightHouseNumber = 3
 	weightWholeName   = 2
@@ -184,10 +186,15 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 	if len(tokens) == 0 {
 		return Place{}, false
 	}
-	// A single token is a city or a street name shared by hundreds of rows.
-	// Nothing it selects is a placement anybody meant.
-	if len(tokens) < 2 {
-		return Place{}, false
+	// A single token is usually a city or a street name shared by hundreds
+	// of rows, and nothing that selects is a placement anybody meant. The
+	// exception is a place whose *whole name* is that one word, Tellus360 or
+	// Zoetropolis, which on a Lancaster arts instance is the common case
+	// rather than a curiosity: 877 of one real index's 29,812 places have a
+	// one-word name. That case gets its own narrow path instead of a
+	// loosened guard, because the two are told apart by different evidence.
+	if len(tokens) == 1 {
+		return g.suggestWholeName(tokens[0])
 	}
 
 	args := make([]any, len(tokens))
@@ -223,8 +230,21 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 			return Place{}, false
 		}
 		score := hits
-		// The housenumber only counts when the query actually carried it.
-		if p.HouseNumber != "" {
+		// The housenumber only counts when the query carried it *and* named
+		// the street it stands on. Without the second half, a number that
+		// matched on the wrong street outscored the right street with no
+		// such number: "150 N Prince St" shares {150, street, lancaster}
+		// with the East King Street Garage at 150 East King Street and beat
+		// every genuine North Prince Street row, because the generic word
+		// "Street" carried the match and the housenumber paid for it.
+		//
+		// The check is a gate on the bonus rather than a filter on the row.
+		// A filter would need to know that the query named a street at all,
+		// and it never does — "The Selvage, Lancaster" names none, and OSM
+		// spells plenty of streets in ways nobody types. Withholding a bonus
+		// we cannot justify leaves those rows scoring on what they did
+		// match; dropping them would answer nothing.
+		if p.HouseNumber != "" && streetNamed(query, p.Street) {
 			for _, ht := range Tokenize(p.HouseNumber) {
 				if query[ht] {
 					score += weightHouseNumber
@@ -265,6 +285,114 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 		return Place{}, false
 	}
 	return best.place, true
+}
+
+// suggestWholeName answers a one-word query, and only ever with a place whose
+// entire name is that one word.
+//
+// Two things have to hold before it answers anything, and they are what keep
+// the guard the multi-token path relies on. The word must name no city and no
+// street anywhere in the index: "Lancaster" and "Prince" stay unanswerable
+// however many rows happen to carry them, because a word that labels a town
+// or a road is exactly the word whose matches are hundreds of doorways. And
+// the places it does name have to sit close enough together to be one
+// answer: "Sheetz" names a dozen buildings, and none of them is the one meant.
+//
+// A single token never earns the housenumber or city bonuses. Those exist to
+// break ties between addresses, and a bare "433" or a bare "Lititz" is the
+// thing this path is refusing, not the thing it is scoring.
+func (g *Gazetteer) suggestWholeName(token string) (Place, bool) {
+	// DISTINCT because a city carries thousands of rows and a handful of
+	// distinct (street, city) pairs; this asks what the word labels, not how
+	// often. SQL cannot fold abbreviations, so the comparison happens in Go
+	// on the same tokenizer both sides of the index already run.
+	rows, err := g.db.Query(`
+		SELECT DISTINCT p.street, p.city
+		FROM place_tokens t
+		JOIN places p ON p.id = t.place_id
+		WHERE t.token = ? AND (p.street <> '' OR p.city <> '')`, token)
+	if err != nil {
+		return Place{}, false
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var street, city string
+		if err := rows.Scan(&street, &city); err != nil {
+			return Place{}, false
+		}
+		if hasToken(Tokenize(street), token) || hasToken(Tokenize(city), token) {
+			return Place{}, false
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return Place{}, false
+	}
+
+	// Deliberately unlimited. What survives the check above is the set of
+	// places named after a word that labels no road and no town, which is
+	// small by construction. Truncating it would hide the second candidate
+	// that makes a suggestion ambiguous, turning a refusal into a confident
+	// wrong answer.
+	named, err := g.db.Query(`
+		SELECT p.name, p.housenumber, p.street, p.city, p.postcode, p.lat, p.lon
+		FROM place_tokens t
+		JOIN places p ON p.id = t.place_id
+		WHERE t.token = ? AND p.name <> ''`, token)
+	if err != nil {
+		return Place{}, false
+	}
+	defer named.Close()
+
+	query := map[string]bool{token: true}
+	var best Place
+	found := false
+	for named.Next() {
+		var p Place
+		if err := named.Scan(&p.Name, &p.HouseNumber, &p.Street, &p.City, &p.Postcode, &p.Latitude, &p.Longitude); err != nil {
+			return Place{}, false
+		}
+		// The same whole-name test weightWholeName scores on the multi-token
+		// path: every token of the name was typed. With one token typed that
+		// can only mean the name is that token, which is the point.
+		if !containsAll(query, Tokenize(p.Name)) {
+			continue
+		}
+		if !found {
+			best, found = p, true
+			continue
+		}
+		if DistanceMetres(best.Latitude, best.Longitude, p.Latitude, p.Longitude) > ambiguousMetres {
+			return Place{}, false
+		}
+	}
+	if err := named.Err(); err != nil {
+		return Place{}, false
+	}
+	return best, found
+}
+
+// hasToken reports whether a tokenized field contains this token.
+func hasToken(tokens []string, token string) bool {
+	for _, t := range tokens {
+		if t == token {
+			return true
+		}
+	}
+	return false
+}
+
+// streetNamed reports whether the query named this street, judged on the
+// words that distinguish it — one is enough, because "Philadelphia Pike" is
+// what somebody types for Old Philadelphia Pike. A street with no
+// distinguishing word cannot be confirmed, and neither can a row with no
+// street at all: there is nothing there for the query to have named.
+func streetNamed(query map[string]bool, street string) bool {
+	for _, t := range streetCore(street) {
+		if query[t] {
+			return true
+		}
+	}
+	return false
 }
 
 // containsAll reports whether every one of these tokens was in the query.

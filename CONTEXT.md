@@ -428,8 +428,21 @@ _Avoid_: patch finder, patch search, patch selector, autocomplete, typeahead
 
 **Admin panel**:
 The instance admin surface at /admin. Gets the same full-screen takeover
-treatment as a workspace.
-_Avoid_: admin area, dashboard (that is the user's personal page)
+treatment as a workspace, and the same shape (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md): five tabs,
+each answering one question the admin arrived with. **Overview** (what is
+waiting on me, what is unattended), **Review** (the decision queues:
+reports, patch submissions, event submissions, claims, suggested tags),
+**Users**, **Settings** (how this quilt is configured: quilt settings, the
+Label, legal documents, the tag vocabulary, neighbors, aggregators, visitor
+counting, archived patches, proving admin) and **Audit log**. Review and Settings carry a
+sidebar, the same one a patch's Settings has; a section's URL is its tab's
+plus one segment (/admin/review/claims, /admin/settings/legal), and a tab's
+bare URL lands on its first section. The Review tab wears the count of
+what is waiting, read from the Overview's own inbox so the two never
+disagree. Before that record every page was a top-level tab, fifteen across; those
+flat paths redirect.
+_Avoid_: admin area, dashboard (that is the user's personal page), queue
+(as the tab's label: the tab is Review, and a queue is one section of it)
 
 **Overview**:
 The admin panel's landing page. It shows what is waiting on the instance
@@ -1444,8 +1457,9 @@ credential the person handles)
 ## Quilt identity
 
 **Quilt settings**:
-The admin panel tab (/admin/quilt) where the instance's community identity
-lives: rename, description, quilt icon, data export, and the danger zone.
+The admin panel's Settings → Quilt section (/admin/settings/quilt) where the
+instance's community identity lives: rename, description, quilt icon, data
+export, and the danger zone.
 Community identity is editable by the instance admin in the UI; deployment
 concerns (domain, ports, SMTP, federation) stay in patchwork.yaml and
 belong to whoever operates the machine.

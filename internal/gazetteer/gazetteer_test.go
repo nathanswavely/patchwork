@@ -90,6 +90,100 @@ func TestHouseNumberPicksTheRightBuilding(t *testing.T) {
 	}
 }
 
+// Found against a real index built from the September 2026 Pennsylvania
+// extract: "150 N Prince St, Lancaster" suggested the East King Street
+// Garage, a different street entirely. 150 North Prince Street does not
+// exist, and the East King row shared {150, street, lancaster} — three hits
+// plus the housenumber weight plus the city — while every genuine North
+// Prince row shared four tokens and no number. The generic word "Street" did
+// the matching and the housenumber paid for it.
+func TestAHouseNumberOnTheWrongStreetDoesNotWin(t *testing.T) {
+	g := build(t,
+		Place{Name: "East King Street Garage", HouseNumber: "150", Street: "East King Street", City: "Lancaster", Latitude: 40.03826, Longitude: -76.30232},
+		Place{Name: "Prince Street Parking Garage", HouseNumber: "111", Street: "North Prince Street", City: "Lancaster", Latitude: 40.04000, Longitude: -76.30800},
+	)
+	got, ok := g.Suggest("150 N Prince St, Lancaster")
+	if !ok {
+		t.Fatal("nothing found")
+	}
+	if got.Street != "North Prince Street" {
+		t.Fatalf("suggested a different street: %+v", got)
+	}
+}
+
+// And when the right street cannot say which building, saying nothing is the
+// answer — not the confident wrong street the housenumber used to buy.
+func TestAnAbsentHouseNumberFallsBackToSilenceNotAnotherStreet(t *testing.T) {
+	g := build(t,
+		Place{Name: "East King Street Garage", HouseNumber: "150", Street: "East King Street", City: "Lancaster", Latitude: 40.03826, Longitude: -76.30232},
+		Place{HouseNumber: "111", Street: "North Prince Street", City: "Lancaster", Latitude: 40.04000, Longitude: -76.30800},
+		Place{HouseNumber: "301", Street: "North Prince Street", City: "Lancaster", Latitude: 40.04400, Longitude: -76.30830},
+	)
+	if got, ok := g.Suggest("150 N Prince St, Lancaster"); ok {
+		t.Fatalf("a number that exists on no named-street row was answered with %+v", got)
+	}
+}
+
+// The gate cannot key on the whole street name: people drop the direction far
+// more often than they invent one, so "40 King St" has to still find West
+// King Street — and has to prefer it over the same number on another street.
+func TestADroppedDirectionStillMatchesTheStreet(t *testing.T) {
+	g := build(t,
+		Place{HouseNumber: "40", Street: "West King Street", City: "Lancaster", Latitude: 40.03790, Longitude: -76.30550},
+		Place{HouseNumber: "40", Street: "North Queen Street", City: "Lancaster", Latitude: 40.04200, Longitude: -76.30300},
+	)
+	got, ok := g.Suggest("40 King St, Lancaster")
+	if !ok {
+		t.Fatal("nothing found")
+	}
+	if got.Street != "West King Street" {
+		t.Fatalf("picked %+v", got)
+	}
+}
+
+// A street whose entire name is a direction has to keep it, or it has no name
+// left to be confirmed by and its housenumber never scores.
+func TestAStreetNamedOnlyByItsDirectionStillScores(t *testing.T) {
+	g := build(t,
+		Place{HouseNumber: "22", Street: "North Street", City: "Lititz", Latitude: 40.15730, Longitude: -76.30770},
+		Place{HouseNumber: "22", Street: "Main Street", City: "Lititz", Latitude: 40.15300, Longitude: -76.31400},
+	)
+	got, ok := g.Suggest("22 North Street, Lititz")
+	if !ok {
+		t.Fatal("nothing found")
+	}
+	if got.Street != "North Street" {
+		t.Fatalf("picked %+v", got)
+	}
+}
+
+func TestStreetCore(t *testing.T) {
+	cases := []struct {
+		street string
+		want   []string
+	}{
+		{"East King Street", []string{"king"}},
+		{"North Prince Street", []string{"prince"}},
+		{"Old Philadelphia Pike", []string{"old", "philadelphia"}},
+		{"North Street", []string{"north"}}, // nothing else to keep
+		{"Street", nil},                     // no name to confirm
+		{"", nil},                           // no street at all
+	}
+	for _, c := range cases {
+		got := streetCore(c.street)
+		if len(got) != len(c.want) {
+			t.Errorf("streetCore(%q) = %v, want %v", c.street, got, c.want)
+			continue
+		}
+		for i := range got {
+			if got[i] != c.want[i] {
+				t.Errorf("streetCore(%q) = %v, want %v", c.street, got, c.want)
+				break
+			}
+		}
+	}
+}
+
 // The same street name in two townships is the case where guessing would put
 // a marker in the wrong town and dress it as an answer.
 func TestTheSameStreetInTwoTownsSuggestsNothing(t *testing.T) {
@@ -169,6 +263,76 @@ func TestASingleTokenSuggestsNothing(t *testing.T) {
 		if _, ok := g.Suggest(q); ok {
 			t.Errorf("%q produced a suggestion", q)
 		}
+	}
+}
+
+// One-word venue names are the norm on an arts instance (877 of a real
+// Lancaster index's 29,812 places have one), and the guard above made every
+// one of them unreachable. A word that is the whole of a place's name is the
+// one single token that names a doorway rather than a town.
+func TestAOneWordVenueNameIsFound(t *testing.T) {
+	g := build(t,
+		Place{Name: "Tellus360", HouseNumber: "24", Street: "East King Street", City: "Lancaster", Latitude: 40.0378, Longitude: -76.3041},
+		Place{HouseNumber: "26", Street: "East King Street", City: "Lancaster", Latitude: 40.0378, Longitude: -76.3040},
+		Place{Name: "Tellus Wellness Studio", HouseNumber: "9", Street: "North Prince Street", City: "Lancaster", Latitude: 40.0400, Longitude: -76.3060},
+	)
+	got, ok := g.Suggest("Tellus360")
+	if !ok {
+		t.Fatal("a one-word venue name found nothing")
+	}
+	if got.Name != "Tellus360" {
+		t.Fatalf("matched something else: %+v", got)
+	}
+}
+
+// The narrow path must stay narrow. A word that labels a town or a road is
+// exactly the word the guard exists for, and a place happening to be named
+// after one does not buy it an answer.
+func TestAOneWordCityOrStreetStillSuggestsNothing(t *testing.T) {
+	g := build(t,
+		// The city node an extract carries alongside its addresses.
+		Place{Name: "Lancaster", Latitude: 40.0379, Longitude: -76.3055},
+		Place{HouseNumber: "433", Street: "Ice Avenue", City: "Lancaster", Latitude: 40.0300, Longitude: -76.3000},
+		// A street drawn as a way is indexed under its own name.
+		Place{Name: "Prince Street", Latitude: 40.0390, Longitude: -76.3060},
+		Place{HouseNumber: "9", Street: "North Prince Street", City: "Lancaster", Latitude: 40.0400, Longitude: -76.3061},
+	)
+	for _, q := range []string{"Lancaster", "Prince", "Ice"} {
+		if got, ok := g.Suggest(q); ok {
+			t.Errorf("%q was answered with %+v", q, got)
+		}
+	}
+}
+
+// A chain names a dozen buildings and none of them is the one meant, so the
+// same distance rule that refuses "Main Street in three townships" has to
+// refuse this too.
+func TestAOneWordNameOnSeveralBuildingsSuggestsNothing(t *testing.T) {
+	g := build(t,
+		Place{Name: "Sheetz", HouseNumber: "1500", Street: "Manheim Pike", City: "Lancaster", Latitude: 40.0700, Longitude: -76.3100},
+		Place{Name: "Sheetz", HouseNumber: "2", Street: "South Broad Street", City: "Lititz", Latitude: 40.1573, Longitude: -76.3077},
+	)
+	if got, ok := g.Suggest("Sheetz"); ok {
+		t.Fatalf("a name on two far-apart buildings was answered with %+v", got)
+	}
+
+	// But two rows for one doorway, the node and the building way OSM often
+	// carries for the same venue, are the same answer twice, not a tie.
+	g = build(t,
+		Place{Name: "Zoetropolis", HouseNumber: "112", Street: "North Water Street", City: "Lancaster", Latitude: 40.03900, Longitude: -76.31000},
+		Place{Name: "Zoetropolis", Street: "North Water Street", City: "Lancaster", Latitude: 40.03910, Longitude: -76.31005},
+	)
+	if _, ok := g.Suggest("Zoetropolis"); !ok {
+		t.Fatal("two entries for one venue suppressed the suggestion")
+	}
+}
+
+// A bare housenumber is not an address. The weight that makes "433" decisive
+// inside "433 Ice Avenue" must not make it an answer on its own.
+func TestABareHouseNumberSuggestsNothing(t *testing.T) {
+	g := build(t, Place{HouseNumber: "433", Street: "Ice Avenue", City: "Lancaster", Latitude: 40.03, Longitude: -76.30})
+	if got, ok := g.Suggest("433"); ok {
+		t.Fatalf("a bare housenumber was answered with %+v", got)
 	}
 }
 

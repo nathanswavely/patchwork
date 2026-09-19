@@ -19545,21 +19545,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 522,
+          "line": 538,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 572,
+          "line": 590,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 633,
+          "line": 651,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -19577,21 +19577,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 523,
+          "line": 539,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 573,
+          "line": 591,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 634,
+          "line": 652,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -19609,7 +19609,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 736,
+          "line": 754,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -19627,78 +19627,10 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 737,
+          "line": 755,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "4c3eb60301a8",
-      "text": "Event submissions",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/AdminShell.svelte",
-          "line": 27,
-          "kind": "js-string",
-          "raw": "Event submissions",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "47751f88edff",
-      "text": "Audit Log",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/AdminShell.svelte",
-          "line": 31,
-          "kind": "js-string",
-          "raw": "Audit Log",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 88,
-          "kind": "markup",
-          "raw": "Audit Log",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "596439f03867",
-      "text": "Prove admin",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
-      "occurrences": [
-        {
-          "file": "web/src/components/AdminShell.svelte",
-          "line": 33,
-          "kind": "js-string",
-          "raw": "Prove admin",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/lib/finderProviders.js",
-          "line": 126,
-          "kind": "js-string",
-          "raw": "Prove admin",
-          "quote": "'"
         }
       ]
     },
@@ -19713,7 +19645,7 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 56,
+          "line": 88,
           "kind": "attr:placeholder",
           "raw": "Search administration…",
           "quote": "\""
@@ -25796,8 +25728,8 @@
           "quote": "'"
         },
         {
-          "file": "web/src/pages/AdminTags.svelte",
-          "line": 64,
+          "file": "web/src/pages/AdminTagSuggestions.svelte",
+          "line": 49,
           "kind": "js-string",
           "raw": "Failed to decide",
           "quote": "'"
@@ -29737,6 +29669,156 @@
       ]
     },
     {
+      "id": "8609225200ce",
+      "text": "Patch submissions",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: admin panel tab and section labels, and the split of the suggested-tag queue from the Tags page. Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/adminPanel.js",
+          "line": 31,
+          "kind": "js-string",
+          "raw": "Patch submissions",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 110,
+          "kind": "js-string",
+          "raw": "Patch submissions",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4c3eb60301a8",
+      "text": "Event submissions",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/adminPanel.js",
+          "line": 32,
+          "kind": "js-string",
+          "raw": "Event submissions",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 111,
+          "kind": "js-string",
+          "raw": "Event submissions",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c5fb2453fe2c",
+      "text": "Suggested tags",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/adminPanel.js",
+          "line": 34,
+          "kind": "js-string",
+          "raw": "Suggested tags",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 113,
+          "kind": "js-string",
+          "raw": "Suggested tags",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminTagSuggestions.svelte",
+          "line": 64,
+          "kind": "markup",
+          "raw": "Suggested tags",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "18eb2d056d2e",
+      "text": "Archived patches",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: admin panel tab and section labels, and the split of the suggested-tag queue from the Tags page. Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/adminPanel.js",
+          "line": 52,
+          "kind": "js-string",
+          "raw": "Archived patches",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 124,
+          "kind": "js-string",
+          "raw": "Archived patches",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "596439f03867",
+      "text": "Prove admin",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Redrafted by Claude at Nathan's direction on 2026-09-07 (no em dashes, plainer sentences) and approved by him in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/adminPanel.js",
+          "line": 53,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/lib/finderProviders.js",
+          "line": 125,
+          "kind": "js-string",
+          "raw": "Prove admin",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "e4d36f9a4e22",
+      "text": "Audit log",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: admin panel tab and section labels, and the split of the suggested-tag queue from the Tags page. Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/adminPanel.js",
+          "line": 56,
+          "kind": "js-string",
+          "raw": "Audit log",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "a40fd4093e61",
       "text": "Raw Cotton",
       "words": 2,
@@ -29873,7 +29955,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 108,
+          "line": 117,
           "kind": "js-string",
           "raw": "Quilt Settings",
           "quote": "'"
@@ -34201,6 +34283,24 @@
       ]
     },
     {
+      "id": "47751f88edff",
+      "text": "Audit Log",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminAuditLog.svelte",
+          "line": 88,
+          "kind": "markup",
+          "raw": "Audit Log",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "64cff1319d2f",
       "text": "Action",
       "words": 1,
@@ -34854,7 +34954,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 74,
+          "line": 75,
           "kind": "markup",
           "raw": "Overview",
           "quote": null
@@ -34872,7 +34972,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 83,
+          "line": 84,
           "kind": "markup",
           "raw": "Waiting on you",
           "quote": null
@@ -34890,7 +34990,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 85,
+          "line": 86,
           "kind": "markup",
           "raw": "Nothing is waiting on you.",
           "quote": null
@@ -34908,7 +35008,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 93,
+          "line": 94,
           "kind": "markup",
           "raw": "oldest {formatRelative(q.oldest_at)}",
           "quote": null
@@ -34926,7 +35026,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 106,
+          "line": 107,
           "kind": "markup",
           "raw": "{' '}across {plural(overview.unrouted_names.aggregators, 'aggregator', 'aggregators')}. Nobody is waiting on these.",
           "quote": null
@@ -34944,7 +35044,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 113,
+          "line": 114,
           "kind": "markup",
           "raw": "Needs attention",
           "quote": null
@@ -34962,7 +35062,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 118,
+          "line": 119,
           "kind": "markup",
           "raw": "{p.name} has no admin.",
           "quote": null
@@ -34980,7 +35080,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 120,
+          "line": 121,
           "kind": "markup",
           "raw": "{plural(p.member_count, 'member', 'members')} to hand it to.",
           "quote": null
@@ -34998,7 +35098,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 122,
+          "line": 123,
           "kind": "markup",
           "raw": "No members to hand it to.",
           "quote": null
@@ -35016,7 +35116,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 130,
+          "line": 131,
           "kind": "markup",
           "raw": "{a.name} is not syncing.",
           "quote": null
@@ -35034,7 +35134,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 131,
+          "line": 132,
           "kind": "markup",
           "raw": "{' · '}last synced {formatRelative(a.last_success_at)}",
           "quote": null
@@ -35052,7 +35152,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 138,
+          "line": 139,
           "kind": "markup",
           "raw": "{s.node_name}'s feed is not syncing.",
           "quote": null
@@ -35070,7 +35170,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 139,
+          "line": 140,
           "kind": "markup",
           "raw": "{' · '}last synced {formatRelative(s.last_success_at)}",
           "quote": null
@@ -35088,7 +35188,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 146,
+          "line": 147,
           "kind": "markup",
           "raw": "{plural(care.failed_deliveries, 'federated activity', 'federated activities')} could not be delivered.",
           "quote": null
@@ -35106,7 +35206,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 147,
+          "line": 148,
           "kind": "markup",
           "raw": "The delivery worker has given up on these.",
           "quote": null
@@ -35124,7 +35224,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 159,
+          "line": 160,
           "kind": "markup",
           "raw": "Mail is off. Sign-in is by invite link and passkey, and magic links print to the server log.",
           "quote": null
@@ -35142,7 +35242,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminDashboard.svelte",
-          "line": 163,
+          "line": 164,
           "kind": "markup",
           "raw": "You have no passkey. Export, wipe, setting a person's email and proving admin each need one.",
           "quote": null
@@ -37630,7 +37730,7 @@
         },
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 114,
+          "line": 83,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -37821,49 +37921,6 @@
       ]
     },
     {
-      "id": "aa8c2c2dae7f",
-      "text": "Tag added to the vocabulary",
-      "words": 5,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminTags.svelte",
-          "line": 60,
-          "kind": "js-string",
-          "raw": "Tag added to the vocabulary",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "8a52d2824570",
-      "text": "Suggestion declined",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminTags.svelte",
-          "line": 60,
-          "kind": "js-string",
-          "raw": "Suggestion declined",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/PatchEvents.svelte",
-          "line": 91,
-          "kind": "js-string",
-          "raw": "Suggestion declined",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "6658557065dd",
       "text": "Tag created",
       "words": 2,
@@ -37874,7 +37931,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 79,
+          "line": 48,
           "kind": "js-string",
           "raw": "Tag created",
           "quote": "'"
@@ -37892,7 +37949,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 83,
+          "line": 52,
           "kind": "js-string",
           "raw": "Failed to create tag",
           "quote": "'"
@@ -37910,7 +37967,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 93,
+          "line": 62,
           "kind": "js-string",
           "raw": "Motif set",
           "quote": "'"
@@ -37928,7 +37985,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 93,
+          "line": 62,
           "kind": "js-string",
           "raw": "Motif cleared",
           "quote": "'"
@@ -37946,7 +38003,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 97,
+          "line": 66,
           "kind": "js-string",
           "raw": "Failed to update tag",
           "quote": "'"
@@ -37964,7 +38021,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 104,
+          "line": 73,
           "kind": "js-string",
           "raw": "Tag deleted",
           "quote": "'"
@@ -37982,7 +38039,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 108,
+          "line": 77,
           "kind": "js-string",
           "raw": "Failed to delete tag",
           "quote": "'"
@@ -37990,92 +38047,20 @@
       ]
     },
     {
-      "id": "999d4d756e70",
-      "text": "The vocabulary patch admins tag their patches with. Tags power discovery and pull patches with shared tags together on the quilt. A tag's motif is the mark shown for patches that chose no motif of their own. Deleting a tag removes it from every patch wearing it.",
-      "words": 47,
+      "id": "059b2ec16317",
+      "text": "The vocabulary patch admins tag their patches with. Tags power discovery and pull patches with shared tags together on the quilt. A tag's motif is the mark shown for patches that chose no motif of their own. Deleting a tag removes it from every patch wearing it. Words patch admins have asked for wait under",
+      "words": 55,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: admin panel tab and section labels, and the split of the suggested-tag queue from the Tags page. Left as drafted; listed for a later voice review.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 116,
+          "line": 85,
           "kind": "markup",
-          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it. Words patch\n    admins have asked for wait under",
           "quote": null
-        }
-      ]
-    },
-    {
-      "id": "c5fb2453fe2c",
-      "text": "Suggested tags",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminTags.svelte",
-          "line": 127,
-          "kind": "markup",
-          "raw": "Suggested tags",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "571baca9a41a",
-      "text": "Words patch admins asked for. A suggestion sits privately on the patch that asked until you add it here. Approving publishes it on every patch waiting on it; declining removes it from them and spends the word, though you can still add it yourself later.",
-      "words": 45,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminTags.svelte",
-          "line": 129,
-          "kind": "markup",
-          "raw": "Words patch admins asked for. A suggestion sits privately on the\n      patch that asked until you add it here. Approving publishes it on\n      every patch waiting on it; declining removes it from them and spends\n      the word, though you can still add it yourself later.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "023fc95ff6c5",
-      "text": "Nothing waiting for review.",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): empty-state line for the review queue. Mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminTags.svelte",
-          "line": 135,
-          "kind": "markup",
-          "raw": "Nothing waiting for review.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "eb0231b1ba09",
-      "text": "Tag name, editable before approving",
-      "words": 5,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminTags.svelte",
-          "line": 146,
-          "kind": "attr:aria-label",
-          "raw": "Tag name, editable before approving",
-          "quote": "\""
         }
       ]
     },
@@ -38090,7 +38075,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 182,
+          "line": 96,
           "kind": "attr:placeholder",
           "raw": "New tag name (e.g. music)",
           "quote": "\""
@@ -38108,7 +38093,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 196,
+          "line": 110,
           "kind": "markup",
           "raw": "No tags yet. Add the first one above.",
           "quote": null
@@ -38126,9 +38111,106 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminTags.svelte",
-          "line": 211,
+          "line": 125,
           "kind": "attr:title",
           "raw": "Change motif",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "aa8c2c2dae7f",
+      "text": "Tag added to the vocabulary",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTagSuggestions.svelte",
+          "line": 45,
+          "kind": "js-string",
+          "raw": "Tag added to the vocabulary",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8a52d2824570",
+      "text": "Suggestion declined",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTagSuggestions.svelte",
+          "line": 45,
+          "kind": "js-string",
+          "raw": "Suggestion declined",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/PatchEvents.svelte",
+          "line": 91,
+          "kind": "js-string",
+          "raw": "Suggestion declined",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "392a7957b0d8",
+      "text": "Words patch admins asked for. A suggestion sits privately on the patch that asked until you add it to the vocabulary. Approving publishes it on every patch waiting on it; declining removes it from them and spends the word, though you can still add it yourself later under",
+      "words": 48,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: admin panel tab and section labels, and the split of the suggested-tag queue from the Tags page. Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTagSuggestions.svelte",
+          "line": 66,
+          "kind": "markup",
+          "raw": "Words patch admins asked for. A suggestion sits privately on the\n    patch that asked until you add it to the vocabulary. Approving\n    publishes it on every patch waiting on it; declining removes it from\n    them and spends the word, though you can still add it yourself later\n    under",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "38819cad5d29",
+      "text": "No suggested tags waiting.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: admin panel tab and section labels, and the split of the suggested-tag queue from the Tags page. Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTagSuggestions.svelte",
+          "line": 79,
+          "kind": "markup",
+          "raw": "No suggested tags waiting.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "eb0231b1ba09",
+      "text": "Tag name, editable before approving",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): API errors, button labels and aria text. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTagSuggestions.svelte",
+          "line": 90,
+          "kind": "attr:aria-label",
+          "raw": "Tag name, editable before approving",
           "quote": "\""
         }
       ]
@@ -57865,6 +57947,60 @@
           "line": 62,
           "kind": "go-doc-block",
           "raw": "This site sets one cookie. It's the HTTP-only session cookie that keeps you signed in. That's it. There are no advertising or third-party cookies here, and no cross-site tracking of any kind.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "999d4d756e70",
+      "text": "The vocabulary patch admins tag their patches with. Tags power discovery and pull patches with shared tags together on the quilt. A tag's motif is the mark shown for patches that chose no motif of their own. Deleting a tag removes it from every patch wearing it.",
+      "words": 47,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 116,
+          "kind": "markup",
+          "raw": "The vocabulary patch admins tag their patches with. Tags power discovery\n    and pull patches with shared tags together on the quilt. A tag's motif\n    is the mark shown for patches that chose no motif of their own.\n    Deleting a tag removes it from every patch wearing it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "571baca9a41a",
+      "text": "Words patch admins asked for. A suggestion sits privately on the patch that asked until you add it here. Approving publishes it on every patch waiting on it; declining removes it from them and spends the word, though you can still add it yourself later.",
+      "words": 45,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): AI-drafted and shipped as drafted. Voice-bearing, so worth a pass in copy-review if the wording should be yours.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 129,
+          "kind": "markup",
+          "raw": "Words patch admins asked for. A suggestion sits privately on the\n      patch that asked until you add it here. Approving publishes it on\n      every patch waiting on it; declining removes it from them and spends\n      the word, though you can still add it yourself later.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "023fc95ff6c5",
+      "text": "Nothing waiting for review.",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Suggested tags (docs/adr/114): empty-state line for the review queue. Mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminTags.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "Nothing waiting for review.",
           "quote": null
         }
       ]

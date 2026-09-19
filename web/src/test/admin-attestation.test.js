@@ -68,15 +68,14 @@ describe('Admin attestation page', () => {
 });
 
 describe('Admin panel wiring', () => {
-  it('gives the page a tab in the admin shell', () => {
-    const shell = source('components/AdminShell.svelte');
-    expect(shell).toContain("href: '/admin/attestation'");
-    expect(shell).toContain("label: 'Prove admin'");
+  it('gives the page a section of the admin panel (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md)', () => {
+    const registry = source('lib/adminPanel.js');
+    expect(registry).toContain("{ id: 'attestation', label: 'Prove admin' }");
   });
 
-  it('routes /admin/attestation to the page', () => {
+  it('routes /admin/settings/attestation to the page', () => {
     const app = source('App.svelte');
-    expect(app).toContain("addRoute('/admin/attestation', 'adminAttestation')");
+    expect(app).toContain("addRoute('/admin/settings/attestation', 'adminAttestation')");
     expect(app).toContain("routeName === 'adminAttestation'");
     expect(app).toContain('<AdminAttestation />');
   });
@@ -97,6 +96,6 @@ describe('Admin panel wiring', () => {
 
   it('is findable from the admin finder', () => {
     const providers = source('lib/finderProviders.js');
-    expect(providers).toContain("href: '/admin/attestation'");
+    expect(providers).toContain("href: '/admin/settings/attestation'");
   });
 });

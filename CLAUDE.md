@@ -363,7 +363,7 @@ URL; this is the follow path, since browsing happens on their soil where
 Follow can't exist).
 
 - **Two connection tiers:** instance admins curate public **neighbor
-  quilts** (`neighbor_quilts` table, admin panel → Neighbors, exposed on
+  quilts** (`neighbor_quilts` table, admin panel → Settings → Neighbors, exposed on
   `GET /api/v1/instance` for every visitor, anonymous included); signed-in
   users add personal **connected quilts** (`user_quilts`,
   `/api/v1/users/me/quilts`, Settings → Connected Quilts).

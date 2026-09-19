@@ -25,9 +25,12 @@ dev: build
 # Build the local place index from an OpenStreetMap extract (docs/adr/082).
 # Run this on a machine with disk and memory to spare, then copy the result
 # next to patchwork.db — the server never parses an extract.
-#   make gazetteer IN=pennsylvania-latest.osm.bz2
-# An extract you hold as .pbf converts first:
-#   osmium cat in.osm.pbf -o out.osm.bz2
+#   make gazetteer IN=lancaster.osm.bz2
+# Expect to convert first. Geofabrik publishes regions as .osm.pbf only, and
+# this reads XML (see cmd/gazetteer), so osmium sits between the download and
+# the build. Crop to a box while you are there: the builder reads the file
+# twice, so cropping first is the difference between seconds and many minutes.
+#   osmium extract -b <west>,<south>,<east>,<north> region.osm.pbf -o local.osm.bz2
 gazetteer:
 	go run ./cmd/gazetteer/ -in $(IN)
 

@@ -618,7 +618,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 					ActorID:  user.ID,
 					EntityID: id,
 					Title:    "New event submission: " + req.Title,
-					Link:     "/admin/event-submissions",
+					Link:     "/admin/review/event-submissions",
 				})
 			} else {
 				notify(notifications.Event{
@@ -834,7 +834,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: eventID,
 				Title:    "Event edit awaiting review: " + e.Title,
-				Link:     "/admin/event-submissions",
+				Link:     "/admin/review/event-submissions",
 			})
 		}
 		// An active event's edit notifies nobody (docs/adr/093): a

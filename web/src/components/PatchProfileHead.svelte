@@ -218,7 +218,7 @@
         No one runs this patch yet.
         <a href="/about" class="provenance-link" onclick={go('/about')}>The community added it</a>.
         {#if isAdmin}
-          <a href="/admin/claims" onclick={go('/admin/claims')}>Review claims</a>.
+          <a href="/admin/review/claims" onclick={go('/admin/review/claims')}>Review claims</a>.
         {:else if hasOpenClaim}
           <a href="/patches/{slug}/claim" onclick={go(`/patches/${slug}/claim`)}>Your claim is in progress</a>.
         {:else}
