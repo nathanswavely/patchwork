@@ -37,6 +37,9 @@
             onclick={(e) => handleClick(e, section.href)}
           >
             {section.label}
+            {#if section.count > 0}
+              <span class="settings-nav-count">{section.count}</span>
+            {/if}
           </a>
         </li>
       {/each}
@@ -79,7 +82,10 @@
   }
 
   .settings-nav-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
     padding: 0.45rem 0.6rem;
     font-size: 0.85rem;
     color: var(--color-text-muted);
@@ -98,6 +104,21 @@
     background: var(--color-overlay);
     color: var(--color-text);
     font-weight: 500;
+  }
+
+  /* How many items a section is holding for the reader. Only the admin
+     panel's Review sidebar passes one; a section without a count renders
+     exactly as before. */
+  .settings-nav-count {
+    min-width: 1.25rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-surface);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    text-align: center;
   }
 
   .settings-content {

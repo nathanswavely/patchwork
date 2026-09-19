@@ -36,10 +36,11 @@ test.describe('Smoke — Authenticated Routes (Admin)', () => {
     '/events/new',
     '/admin',
     '/admin/users',
-    '/admin/reports',
+    '/admin/review/reports',
     '/admin/audit',
-    '/admin/submissions',
-    '/admin/claims',
+    '/admin/review/submissions',
+    '/admin/review/claims',
+    '/admin/settings/quilt',
   ];
 
   for (const route of routes) {

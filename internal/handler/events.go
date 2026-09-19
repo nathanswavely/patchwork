@@ -96,6 +96,26 @@ const eventZoneSQL = `COALESCE(NULLIF(e.timezone,''), NULLIF(n.timezone,''), ?)`
 // travels in a seamrip, and the event page renders it with the caveat it
 // always needed. What ends here is *new* ones, including from a client
 // that never saw the form.
+// validEventVisibility reports whether v is an event visibility the API
+// accepts. Mirrors the CHECK constraint in migration 001. Empty is not
+// valid here — callers default it to "public" before checking, the same
+// way BulkCreateEvents does.
+func validEventVisibility(v string) bool {
+	return v == "public" || v == "private" || v == "unlisted"
+}
+
+// canReadNonPublicEvent reports whether user may read a private/unlisted
+// event hosted at nodeID. Only a member or admin of the event's OWN
+// patch may — a confirmed event link never widens visibility, so this
+// deliberately never consults event_links. GetEvent and EventICS are the
+// two single-event reads that gate on it; ListEvents applies the same
+// rule inline in SQL because it has to read the membership row that
+// matched a scope=my relationship, which a Go helper can't share across
+// that boundary.
+func canReadNonPublicEvent(db *database.DB, user *model.User, nodeID string) bool {
+	return user != nil && userHasNodeRole(db, user.ID, nodeID, "member", "admin")
+}
+
 func validateRecurrence(v string) string {
 	if strings.TrimSpace(v) == "" {
 		return ""
@@ -380,7 +400,7 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 			// its public events stay readable by anyone holding the link,
 			// exactly as its page stays readable — this gate reads the
 			// event's own visibility and never the patch's.
-			if user == nil || !userHasNodeRole(db, user.ID, e.NodeID, "member", "admin") {
+			if !canReadNonPublicEvent(db, user, e.NodeID) {
 				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 				return
 			}
@@ -481,6 +501,9 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		}
 		if req.Visibility == "" {
 			req.Visibility = "public"
+		} else if !validEventVisibility(req.Visibility) {
+			writeJSONError(w, http.StatusBadRequest, "visibility must be public, private, or unlisted")
+			return
 		}
 
 		// Verify node exists and load what the authz decision needs.
@@ -569,7 +592,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 					ActorID:  user.ID,
 					EntityID: id,
 					Title:    "New event submission: " + req.Title,
-					Link:     "/admin/event-submissions",
+					Link:     "/admin/review/event-submissions",
 				})
 			} else {
 				notify(notifications.Event{
@@ -693,6 +716,18 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 			req["recurrence"] = ""
 		}
 
+		// A bad value here would otherwise reach SQLite as-is and 500 off
+		// the CHECK constraint instead of answering with a 400. Absent
+		// means unchanged; present-but-empty is not a value this field has,
+		// so it fails like any other invalid string.
+		if raw, present := req["visibility"]; present {
+			v, _ := raw.(string)
+			if !validEventVisibility(v) {
+				writeJSONError(w, http.StatusBadRequest, "visibility must be public, private, or unlisted")
+				return
+			}
+		}
+
 		// Same pairing rule as a patch's image: a PATCH carrying one half is
 		// judged against the stored other half (docs/adr/007).
 		if msg := checkPatchedImage(db, "events", eventID, req); msg != "" {
@@ -763,7 +798,7 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: eventID,
 				Title:    "Event edit awaiting review: " + e.Title,
-				Link:     "/admin/event-submissions",
+				Link:     "/admin/review/event-submissions",
 			})
 		}
 		// An active event's edit notifies nobody (docs/adr/093): a

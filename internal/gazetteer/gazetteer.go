@@ -143,7 +143,9 @@ func (g *Gazetteer) Count() int {
 }
 
 // Scoring weights. A housenumber that matches is worth more than any other
-// single token because every building on a street shares everything else.
+// single token because every building on a street shares everything else —
+// which is also why it is the one weight with a precondition: it only pays on
+// a row whose street the query named. See the gate in Suggest.
 const (
 	weightHouseNumber = 3
 	weightWholeName   = 2
@@ -223,12 +225,20 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 			return Place{}, false
 		}
 		score := hits
-		// The housenumber only counts when the query carried it, and only
-		// on the street the query named. Every street has a 150, so a
-		// number matched on a street nobody typed used to outscore the
-		// named street's own rows: "150 N Prince St, Lancaster" answered
-		// "150 East King Street", which is not a near miss but a different
-		// address a third of a mile away.
+		// The housenumber only counts when the query carried it *and* named
+		// the street it stands on. Without the second half, a number that
+		// matched on the wrong street outscored the right street with no
+		// such number: "150 N Prince St" shares {150, street, lancaster}
+		// with the East King Street Garage at 150 East King Street and beat
+		// every genuine North Prince Street row, because the generic word
+		// "Street" carried the match and the housenumber paid for it.
+		//
+		// The check is a gate on the bonus rather than a filter on the row.
+		// A filter would need to know that the query named a street at all,
+		// and it never does — "The Selvage, Lancaster" names none, and OSM
+		// spells plenty of streets in ways nobody types. Withholding a bonus
+		// we cannot justify leaves those rows scoring on what they did
+		// match; dropping them would answer nothing.
 		if p.HouseNumber != "" && streetNamed(query, p.Street) {
 			for _, ht := range Tokenize(p.HouseNumber) {
 				if query[ht] {
@@ -272,39 +282,18 @@ func (g *Gazetteer) Suggest(text string) (Place, bool) {
 	return best.place, true
 }
 
-// streetTypes are the generic words a street name ends in. They carry no
-// locating power of their own: a county's roads share a handful of them, and
-// people leave them off ("23 N Market") about as often as they write them.
-// Comparing a street on its whole token set would therefore fail on the
-// shorthand everybody types, so it is compared on the words that name it.
-var streetTypes = map[string]bool{
-	"street": true, "avenue": true, "road": true, "drive": true,
-	"boulevard": true, "lane": true, "court": true, "place": true,
-	"square": true, "terrace": true, "parkway": true, "highway": true,
-	"circle": true, "alley": true,
-}
-
-// streetNamed reports whether the query names this street. Direction is part
-// of the name and stays in the comparison, because North Prince and South
-// Prince are different streets; only the type word is dropped.
+// streetNamed reports whether the query named this street, judged on the
+// words that distinguish it — one is enough, because "Philadelphia Pike" is
+// what somebody types for Old Philadelphia Pike. A street with no
+// distinguishing word cannot be confirmed, and neither can a row with no
+// street at all: there is nothing there for the query to have named.
 func streetNamed(query map[string]bool, street string) bool {
-	if street == "" {
-		return false
-	}
-	tokens := Tokenize(street)
-	distinctive := make([]string, 0, len(tokens))
-	for _, t := range tokens {
-		if !streetTypes[t] {
-			distinctive = append(distinctive, t)
+	for _, t := range streetCore(street) {
+		if query[t] {
+			return true
 		}
 	}
-	// A street whose whole name is its type, like "The Circle", has nothing
-	// left to compare, so compare what it does have rather than matching
-	// every query that mentions a circle.
-	if len(distinctive) == 0 {
-		distinctive = tokens
-	}
-	return containsAll(query, distinctive)
+	return false
 }
 
 // containsAll reports whether every one of these tokens was in the query.

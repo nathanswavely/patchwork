@@ -121,9 +121,9 @@
       {/if}
     {/if}
     <a
-      href="/admin/claims"
+      href="/admin/review/claims"
       class="btn btn-secondary btn-sm"
-      onclick={(e) => { e.preventDefault(); navigate('/admin/claims'); }}
+      onclick={(e) => { e.preventDefault(); navigate('/admin/review/claims'); }}
     >Review claims</a>
   </section>
 </div>

@@ -248,7 +248,7 @@ func SubmitPatch(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				ActorID:  user.ID,
 				EntityID: id,
 				Title:    "New patch submission: " + req.Name,
-				Link:     "/admin/submissions",
+				Link:     "/admin/review/submissions",
 			})
 		}
 

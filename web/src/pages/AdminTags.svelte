@@ -6,6 +6,7 @@
    * when they chose no explicit motif.
    */
   import { api } from '../lib/api.js';
+  import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import { loadTags } from '../stores/quilt.svelte.js';
   import { colorForTag, textOnColor } from '../lib/quiltTheme.js';
@@ -17,13 +18,6 @@
   let tags = $state([]);
   let loading = $state(true);
   let error = $state('');
-
-  // The suggested-tag queue (docs/adr/114). Approving may rename, and a
-  // rename may merge onto a word that already exists, so the name is an
-  // editable field rather than a fixed label.
-  let suggestions = $state([]);
-  let editedNames = $state({});
-  let deciding = $state('');
 
   let newName = $state('');
   let creating = $state(false);
@@ -39,32 +33,7 @@
     } catch (e) {
       error = e.message;
     }
-    try {
-      suggestions = await api('admin/tag-suggestions');
-      editedNames = Object.fromEntries(suggestions.map(s => [s.id, s.name]));
-    } catch (e) {
-      // The vocabulary still lists; a queue that fails to load is not a
-      // reason to blank the page.
-      suggestions = [];
-    }
     loading = false;
-  }
-
-  async function decide(suggestion, action) {
-    deciding = suggestion.id;
-    try {
-      const body = { action };
-      const edited = (editedNames[suggestion.id] || '').trim();
-      if (action === 'approve' && edited && edited !== suggestion.name) body.name = edited;
-      await api(`admin/tag-suggestions/${suggestion.id}`, { method: 'PATCH', body });
-      showToast(action === 'approve' ? 'Tag added to the vocabulary' : 'Suggestion declined', 'success');
-      await load();
-      loadTags();
-    } catch (e) {
-      showToast(e.message || 'Failed to decide', 'error');
-    } finally {
-      deciding = '';
-    }
   }
 
   $effect(() => { load(); });
@@ -116,65 +85,10 @@
     The vocabulary patch admins tag their patches with. Tags power discovery
     and pull patches with shared tags together on the quilt. A tag's motif
     is the mark shown for patches that chose no motif of their own.
-    Deleting a tag removes it from every patch wearing it.
+    Deleting a tag removes it from every patch wearing it. Words patch
+    admins have asked for wait under
+    <a href="/admin/review/tags" onclick={(e) => { e.preventDefault(); navigate('/admin/review/tags'); }}>Review</a>.
   </p>
-
-  <!-- Always rendered, empty or not (docs/adr/114). A queue that disappears
-       when nothing is in it leaves an admin no way to tell "nobody has asked"
-       from "this instance does not have the feature", and those want opposite
-       copy. -->
-  <section class="suggestions">
-    <h2>Suggested tags</h2>
-    <p class="muted intro">
-      Words patch admins asked for. A suggestion sits privately on the
-      patch that asked until you add it here. Approving publishes it on
-      every patch waiting on it; declining removes it from them and spends
-      the word, though you can still add it yourself later.
-    </p>
-    {#if suggestions.length === 0}
-      <p class="muted empty">Nothing waiting for review.</p>
-    {:else}
-    <ul class="suggestion-list">
-        {#each suggestions as s (s.id)}
-          <li class="suggestion-row">
-            <div class="suggestion-main">
-              <input
-                class="suggestion-name"
-                type="text"
-                bind:value={editedNames[s.id]}
-                maxlength="32"
-                aria-label="Tag name, editable before approving"
-                disabled={deciding === s.id}
-              />
-              <span class="muted suggestion-meta">
-                {#if s.suggested_by?.username}
-                  by {s.suggested_by.display_name || s.suggested_by.username}
-                {:else}
-                  by {s.suggested_by?.display_name || 'Deleted account'}
-                {/if}
-                {#if s.patches?.length}
-                  {' · '}on {s.patches.map(p => p.name).join(', ')}
-                {/if}
-              </span>
-            </div>
-            <div class="suggestion-actions">
-              <button
-                class="btn btn-primary btn-sm"
-                onclick={() => decide(s, 'approve')}
-                disabled={deciding === s.id}
-              >Approve</button>
-              <ConfirmAction
-                label="Decline"
-                confirmLabel="Decline"
-                variant="danger"
-                onConfirm={() => decide(s, 'reject')}
-              />
-            </div>
-          </li>
-        {/each}
-    </ul>
-    {/if}
-  </section>
 
   <form class="create-row" onsubmit={(e) => { e.preventDefault(); createTag(); }}>
     <input
@@ -261,64 +175,6 @@
 </div>
 
 <style>
-  .suggestions {
-    margin: 1rem 0 1.5rem;
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-surface);
-  }
-
-  .suggestions .empty {
-    font-size: 0.85rem;
-    margin: 0.5rem 0 0;
-  }
-
-  .suggestions h2 {
-    font-size: 1rem;
-    margin: 0 0 0.35rem;
-  }
-
-  .suggestion-list {
-    list-style: none;
-    padding: 0;
-    margin: 0.75rem 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .suggestion-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .suggestion-main {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
-    flex: 1;
-  }
-
-  .suggestion-name {
-    max-width: 18rem;
-    font-weight: 500;
-  }
-
-  .suggestion-meta {
-    font-size: 0.75rem;
-  }
-
-  .suggestion-actions {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-  }
-
   .admin-tags {
     max-width: var(--pw-measure);
   }

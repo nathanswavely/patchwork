@@ -460,6 +460,31 @@ func TestGetEvent_NonPublicEventNeedsTheRoom(t *testing.T) {
 	}
 }
 
+// A confirmed event link (docs/adr/032) puts an event on the linked patch's
+// calendar page, but never widens who may read it: the detail endpoint reads
+// the event's OWN patch membership, exactly as ListEvents' scope=my rule and
+// EventICS already do.
+func TestGetEvent_ConfirmedLinkDoesNotWidenVisibility(t *testing.T) {
+	db := setupTestDB(t)
+	owner, _ := createTestUser(t, db, "detaillinkowner", "member")
+	linked, linkedToken := createTestUser(t, db, "detaillinkmember", "member")
+	host := createTestNode(t, db, owner.ID, "Host Room", "detail-link-host", "open")
+	band := createTestNode(t, db, owner.ID, "Linked Band", "detail-link-band", "open")
+	createTestMembership(t, db, linked.ID, band, "member", "active")
+
+	eventID := seedEvent(t, db, host, owner.ID, "Members Only Show", daysOut(2))
+	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, eventID); err != nil {
+		t.Fatal(err)
+	}
+	linkEvent(t, db, eventID, band, "confirmed", owner.ID)
+
+	r := authedRequest("GET", "/api/v1/events/"+eventID, nil, linkedToken)
+	w := serveOptionalAuthMux(t, db, "GET", "/api/v1/events/{id}", handler.GetEvent(db), r)
+	if w.Code != http.StatusNotFound {
+		t.Errorf("a member of the confirmed-linked patch: code=%d, want 404 — a link must not widen visibility", w.Code)
+	}
+}
+
 // TestGetEvent_NonPublicSubmissionStillReachesItsReviewers: the submission gate
 // (docs/adr/026) decides the whole question for a pending event, so the
 // visibility gate must not run on top of it. An instance admin reviewing a
@@ -496,5 +521,67 @@ func TestGetEvent_NonPublicSubmissionStillReachesItsReviewers(t *testing.T) {
 		if w.Code != tc.want {
 			t.Errorf("%s on a members-only submission: code=%d, want %d", tc.who, w.Code, tc.want)
 		}
+	}
+}
+
+// POST /api/v1/events used to pass visibility straight to SQLite, so a bad
+// value reached the CHECK constraint and came back a 500 instead of a 400.
+// The CSV bulk-upload path (event_upload.go) already validated against the
+// three live values; this mirrors it.
+func TestCreateEventRejectsABadVisibility(t *testing.T) {
+	db := setupTestDB(t)
+	cfg := testConfig()
+	owner, token := createTestUser(t, db, "vis-create-owner", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Visibility Venue", "vis-create-venue", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+
+	body := map[string]interface{}{
+		"node_id": nodeID, "title": "Show", "starts_at": daysOut(2), "visibility": "hidden",
+	}
+	r := authedRequest("POST", "/api/v1/events", body, token)
+	w := serveMux(t, db, "POST", "/api/v1/events", handler.CreateEvent(db, cfg), r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("bad visibility: code=%d, want 400 — %s", w.Code, w.Body.String())
+	}
+
+	// Every value the schema still accepts works.
+	for _, vis := range []string{"public", "private", "unlisted"} {
+		body := map[string]interface{}{
+			"node_id": nodeID, "title": "Show " + vis, "starts_at": daysOut(2), "visibility": vis,
+		}
+		r := authedRequest("POST", "/api/v1/events", body, token)
+		w := serveMux(t, db, "POST", "/api/v1/events", handler.CreateEvent(db, cfg), r)
+		if w.Code != http.StatusCreated {
+			t.Errorf("visibility %q: code=%d, want 201 — %s", vis, w.Code, w.Body.String())
+		}
+	}
+}
+
+// PATCH /api/v1/events/{id} let the same bad value through, since
+// "visibility" was in UpdateEvent's allowed-fields set with no check on it.
+func TestUpdateEventRejectsABadVisibility(t *testing.T) {
+	db := setupTestDB(t)
+	owner, token := createTestUser(t, db, "vis-update-owner", "member")
+	nodeID := createTestNode(t, db, owner.ID, "Visibility Update Venue", "vis-update-venue", "open")
+	createTestMembership(t, db, owner.ID, nodeID, "admin", "active")
+	eventID := seedEvent(t, db, nodeID, owner.ID, "Show", daysOut(2))
+
+	r := authedRequest("PATCH", "/api/v1/events/"+eventID, map[string]interface{}{"visibility": "hidden"}, token)
+	w := serveMux(t, db, "PATCH", "/api/v1/events/{id}", handler.UpdateEvent(db), r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("bad visibility: code=%d, want 400 — %s", w.Code, w.Body.String())
+	}
+	var stored string
+	if err := db.QueryRow(`SELECT visibility FROM events WHERE id = ?`, eventID).Scan(&stored); err != nil {
+		t.Fatal(err)
+	}
+	if stored != "public" {
+		t.Errorf("visibility = %q after a refused edit, want unchanged", stored)
+	}
+
+	r = authedRequest("PATCH", "/api/v1/events/"+eventID, map[string]interface{}{"visibility": "private"}, token)
+	w = serveMux(t, db, "PATCH", "/api/v1/events/{id}", handler.UpdateEvent(db), r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("valid visibility: code=%d, want 200 — %s", w.Code, w.Body.String())
 	}
 }

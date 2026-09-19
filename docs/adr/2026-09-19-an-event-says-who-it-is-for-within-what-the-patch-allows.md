@@ -15,9 +15,11 @@ read paths branch on it, each as a binary: the events list admits a
 non-public event only to an active member or admin of its own patch, the
 per-patch ICS and RSS feeds serve public events only, the personal My Quilt
 feed applies the member test, and federation refuses to broadcast anything
-not public. The detail endpoint does not check it at all, so a non-public
-event is readable by anyone holding its permalink, which is reachable today
-through the CSV door and is a bug on its own.
+not public. The detail endpoint applies the list's member test too, since
+2026-09-16, though until PR #330 it and the single-event ICS each carried
+their own copy of the rule. The JSON write paths accept any string for the
+column and let a bad one fail on the CHECK constraint as a 500; the CSV
+door validates.
 
 Separately, every patch carries `follower_permissions`, a four-switch blob in
 its governance rules (`events`, `proposals`, `charters`, `members`) edited
@@ -81,9 +83,10 @@ what its followers may have; the event's tier chooses within that.
    bulletin, federation, and the member seamrip each decide with one
    predicate: the viewer's role on the event's patch, the event's tier, and
    the patch's switch. The membership subquery those paths share becomes
-   role-aware rather than `role IN ('member','admin')`. The detail endpoint
-   gains the check it never had, and that lands first, as its own fix,
-   before any of the rest.
+   role-aware rather than `role IN ('member','admin')`. That predicate is
+   one function, `canReadNonPublicEvent`, extracted in PR #330 ahead of the
+   rest so the paths cannot drift; the same PR turned a bad `visibility`
+   value on the JSON write paths from a 500 into a 400.
 
 5. **An event source carries a default tier.** `event_sources` gains a
    `visibility` column set when a feed is attached or edited. It applies at
