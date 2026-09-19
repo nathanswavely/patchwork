@@ -150,7 +150,7 @@ func TestListEventsScopeMyMembersOnlyVisibility(t *testing.T) {
 	createTestMembership(t, db, linked.ID, band, "member", "active")
 
 	private := insertEvent(t, db, host, owner.ID, "Members Only", soon(10))
-	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, private); err != nil {
+	if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, private); err != nil {
 		t.Fatalf("set event private: %v", err)
 	}
 	linkEvent(t, db, private, band, "confirmed", owner.ID)
@@ -178,7 +178,7 @@ func TestListEventsDefaultScopeStaysPublicOnly(t *testing.T) {
 
 	pub := insertEvent(t, db, host, owner.ID, "Open Night", soon(3))
 	private := insertEvent(t, db, host, owner.ID, "Members Only", soon(4))
-	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, private); err != nil {
+	if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, private); err != nil {
 		t.Fatalf("set event private: %v", err)
 	}
 

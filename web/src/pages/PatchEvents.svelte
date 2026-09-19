@@ -9,6 +9,7 @@
   import { eventPostingRight } from '../lib/patchWorkspace.js';
   import { showToast } from '../stores/toast.svelte.js';
   import SubscribeFeeds from '../components/SubscribeFeeds.svelte';
+  import EventTierChip from '../components/EventTierChip.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -370,7 +371,10 @@
           >
             <span class="event-date">{formatDate(event.starts_at, event.timezone)}</span>
             <span class="event-info">
-              <span class="event-title">{event.title}</span>
+              <span class="event-title">
+                {event.title}
+                <EventTierChip visibility={event.visibility} />
+              </span>
               <span class="event-detail">
                 {formatTime(event.starts_at, event.timezone)}
                 {#if event.location} &middot; {event.location}{/if}

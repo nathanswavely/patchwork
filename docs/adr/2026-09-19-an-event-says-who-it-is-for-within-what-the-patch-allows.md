@@ -1,6 +1,6 @@
 # An event says who it is for, within what the patch allows
 
-Date: 2026-09-19. Status: accepted, implementation is backlog (issue #272).
+Date: 2026-09-19. Status: accepted, implemented.
 Extends docs/adr/036 (two tiers, not three, for charters) to events with one
 more tier that the follower role exists for; makes `follower_permissions.events`
 (migration 012) an enforced rule rather than a hidden tab.

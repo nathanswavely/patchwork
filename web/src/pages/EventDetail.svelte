@@ -7,6 +7,7 @@
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import EventLinks from '../components/EventLinks.svelte';
+  import EventTierChip from '../components/EventTierChip.svelte';
   import { formatEventDateLong as formatDate, formatEventTime as formatTime } from '../lib/datetime.js';
 
   let { eventId = '' } = $props();
@@ -205,6 +206,7 @@
         {#if event.node_status === 'unclaimed'}
           <span class="badge">Community-submitted</span>
         {/if}
+        <EventTierChip visibility={event.visibility} />
       </div>
     {/if}
 

@@ -27,7 +27,7 @@ func TestNodeICSFeed_PublicEventsOnly(t *testing.T) {
 	seedEvent(t, db, nodeID, admin.ID, "Public Show", future)
 	// A private event and a pending submission must never leave.
 	privateID := seedEvent(t, db, nodeID, admin.ID, "Private Show", future)
-	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, privateID); err != nil {
+	if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, privateID); err != nil {
 		t.Fatal(err)
 	}
 	pendingID := seedEvent(t, db, nodeID, admin.ID, "Pending Show", future)
@@ -191,12 +191,12 @@ func TestPersonalFeed_Lifecycle(t *testing.T) {
 	future := time.Now().Add(48 * time.Hour).UTC().Format(time.RFC3339)
 	seedEvent(t, db, memberNode, admin.ID, "Band Practice Public", future)
 	privateID := seedEvent(t, db, memberNode, admin.ID, "Band Practice Private", future)
-	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, privateID); err != nil {
+	if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, privateID); err != nil {
 		t.Fatal(err)
 	}
 	seedEvent(t, db, followedNode, admin.ID, "Venue Show", future)
 	followedPrivateID := seedEvent(t, db, followedNode, admin.ID, "Venue Members Meeting", future)
-	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, followedPrivateID); err != nil {
+	if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, followedPrivateID); err != nil {
 		t.Fatal(err)
 	}
 	seedEvent(t, db, strangerNode, admin.ID, "Stranger Event", future)
@@ -315,11 +315,12 @@ func TestEventICS_OneEventForOneNight(t *testing.T) {
 	}
 }
 
-// A non-public event is a file only its patch's members can take away.
-// The events table spells that 'private' or 'unlisted'; ListEvents admits
-// either only for a member or admin of the event's own patch, and this
-// endpoint follows it. GetEvent applies the same rule — see
+// A members-only event is a file only its patch's members can take away.
+// ListEvents admits it only for a member or admin of the event's own patch,
+// and this endpoint follows it. GetEvent applies the same rule — see
 // TestGetEvent_NonPublicEventNeedsTheRoom, which is the JSON half of this.
+// The followers tier and the patch-level ceiling over it are covered by
+// TestEventTiers, which walks role x tier x switch across every surface.
 func TestEventICS_NonPublicEventNeedsTheRoom(t *testing.T) {
 	db := setupTestDB(t)
 	cfg := feedTestConfig()
@@ -335,7 +336,7 @@ func TestEventICS_NonPublicEventNeedsTheRoom(t *testing.T) {
 	future := time.Now().Add(48 * time.Hour).UTC().Format(time.RFC3339)
 	eventID := seedEvent(t, db, nodeID, admin.ID, "House Meeting", future)
 
-	for _, vis := range []string{"private", "unlisted"} {
+	for _, vis := range []string{"members"} {
 		if _, err := db.Exec(`UPDATE events SET visibility = ? WHERE id = ?`, vis, eventID); err != nil {
 			t.Fatal(err)
 		}
