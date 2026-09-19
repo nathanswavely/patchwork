@@ -187,6 +187,21 @@ derived one and hides wrong answers behind a button nobody read.
   from 288/300 to 292/300 — the remaining eight are the generator inventing
   the same address twice, 27 km apart, which the ambiguity rule is right to
   refuse.
+- **A real index found what the synthetic one could not, exactly where this
+  said it wouldn't.** The blind spot named above closed on the first index
+  built from a real September 2026 Pennsylvania extract, cropped to 25 km:
+  29,812 places, 877 of them with a one-word name. The query path refused any
+  text that tokenized to fewer than two tokens — right for "Lancaster" or
+  "Ephrata", and wrong for `Tellus360`, which was in the index at 24 East
+  King Street and unreachable by the only string anybody would type for it.
+  On an arts instance a one-word venue name is the common case, not an edge
+  one. A single token is now answered, but only by a place whose *whole name*
+  is that word and only when the word labels no street and no city anywhere in
+  the index — so "Prince" and "Lititz" stay refused for the reason they always
+  were, and a name on a dozen far-apart buildings still falls to the existing
+  ambiguity rule. Nothing about decision 3 moves: the answer is still a
+  provisional marker somebody has to confirm.
+
 - **The volume is in events, and this does not serve them.** The event form
   has no coordinate input at all, and `events.latitude`/`longitude` are
   written by the JSON-LD importer and the aggregator and then read by
