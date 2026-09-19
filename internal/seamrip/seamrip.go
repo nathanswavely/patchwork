@@ -532,11 +532,17 @@ func Tables() []Table {
 			// Who is standing in an election (docs/adr/051). Before
 			// `election_ballots` below, because a ballot names a candidate and
 			// the FK is enforced at insert.
+			//
+			// `seated` travels with them: it is the contest's own record of
+			// who it put in the chairs, written once when the contest
+			// resolved and never recomputed. A fork that lost it would have
+			// a governance record that stops naming who was elected, which
+			// is the half of ADR 002's promise about carrying the record.
 			File: "election_candidates.json",
 			Name: "election_candidates",
-			Query: `SELECT id, proposal_id, user_id, created_at
+			Query: `SELECT id, proposal_id, user_id, created_at, seated
 				FROM election_candidates`,
-			Columns: cols(id("id"), id("proposal_id"), id("user_id"), c("created_at")),
+			Columns: cols(id("id"), id("proposal_id"), id("user_id"), c("created_at"), c("seated")),
 		},
 		{
 			// An approval ballot is rows rather than a value (docs/adr/051), so

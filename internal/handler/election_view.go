@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
 // What the proposal page needs to render an election (docs/adr/051).
@@ -26,6 +27,76 @@ func electionPhase(seatsContested int, nominationsCloseAt, status string) string
 	return "voting"
 }
 
+// electionTurnout is how many people took part in a contest and how many had
+// to. It is the answer to the only question a failed election was never asked
+// on its own page.
+//
+// An ordinary proposal has said this for as long as it has existed: "Quorum
+// met (3 of 4 voted, 50% needed)", the voters named underneath, the terms it
+// was judged by beside them. A contest said "Settled nothing." A founder
+// whose patch had failed six of them in ten months found the number she
+// needed on the *rules form*, two clicks away and phrased about a
+// hypothetical proposal — "2 of the 4 people who can vote today must cast a
+// ballot" — and worked out from it that her election had failed by one person
+// not turning up. Her words: one kind of decision on this site explains
+// itself completely, and the kind that decides who runs her press does not.
+//
+// One struct, computed one way, so the number a member reads is the number
+// that decided. resolveElection asks this too rather than counting for
+// itself.
+type electionTurnout struct {
+	Voted    int `json:"voted"`
+	Eligible int `json:"eligible"`
+	// Needed is the count of ballots quorum takes, not the percentage. "2
+	// needed" is a sentence somebody can act on.
+	Needed int  `json:"needed"`
+	Met    bool `json:"met"`
+}
+
+// ballotsCast counts the people whose ballots this contest counts.
+//
+// Deliberately the same `countedBallot` predicate the candidate tally uses.
+// It was not: the tally excluded ballots from people the electorate no longer
+// counts, and quorum's own count did not, so the numerator could include a
+// voter the denominator had already dropped — a departed member pushing a
+// contest over quorum while contributing to nobody's approvals, and turnout
+// able to exceed the electorate. Two populations, one fraction.
+func ballotsCast(db *database.DB, proposalID string) int {
+	var n int
+	db.QueryRow(`
+		SELECT COUNT(DISTINCT b.voter_id)
+		FROM election_ballots b
+		JOIN proposals p ON p.id = b.proposal_id
+		JOIN memberships m ON m.user_id = b.voter_id AND m.node_id = p.node_id
+		WHERE b.proposal_id = ? AND `+countedBallot, proposalID).Scan(&n)
+	return n
+}
+
+// electionTurnoutFor is electionTurnoutOf for the proposal payload: nil on
+// every proposal that is not an election, so the page can test one field
+// rather than re-deriving whether it is looking at a contest.
+func electionTurnoutFor(db *database.DB, seatsContested int, proposalID, nodeID string, gc model.GovernanceConfig) *electionTurnout {
+	if seatsContested <= 0 {
+		return nil
+	}
+	t := electionTurnoutOf(db, proposalID, nodeID, gc)
+	return &t
+}
+
+// electionTurnoutOf reads a contest's turnout against the terms it is judged
+// by. gc is the frozen photograph (docs/adr/047), never the patch's live
+// rules, for the same reason every other reader of a vote's terms is.
+func electionTurnoutOf(db *database.DB, proposalID, nodeID string, gc model.GovernanceConfig) electionTurnout {
+	voted := ballotsCast(db, proposalID)
+	eligible, _ := eligibleVoters(db, nodeID, gc)
+	return electionTurnout{
+		Voted:    voted,
+		Eligible: eligible,
+		Needed:   votesNeededForQuorum(gc, eligible),
+		Met:      quorumReached(gc, voted, eligible),
+	}
+}
+
 type candidateView struct {
 	ID          string `json:"id"`
 	UserID      string `json:"user_id"`
@@ -35,6 +106,11 @@ type candidateView struct {
 	// ApprovedByMe is this viewer's own ballot, so the page can render the set
 	// they currently hold rather than an empty form they have to rebuild.
 	ApprovedByMe bool `json:"approved_by_me"`
+	// Seated is the stored outcome for this candidate, written when the
+	// contest resolved. The page used to work it out — top `seats_contested`
+	// with at least one approval — which is a tally, and a tally moves after
+	// the fact when a voter leaves the patch.
+	Seated bool `json:"seated"`
 }
 
 // electionCandidates lists who is standing, with the approvals each has and
@@ -52,7 +128,8 @@ func electionCandidates(db *database.DB, proposalID, viewerID string) []candidat
 		          JOIN memberships m ON m.user_id = b.voter_id AND m.node_id = p.node_id
 		          WHERE b.candidate_id = c.id AND `+countedBallot+`) AS approvals,
 		       (SELECT COUNT(*) FROM election_ballots b2
-		          WHERE b2.candidate_id = c.id AND b2.voter_id = ?) AS mine
+		          WHERE b2.candidate_id = c.id AND b2.voter_id = ?) AS mine,
+		       c.seated
 		FROM election_candidates c
 		JOIN proposals p ON p.id = c.proposal_id
 		LEFT JOIN users u ON u.id = c.user_id
@@ -65,10 +142,12 @@ func electionCandidates(db *database.DB, proposalID, viewerID string) []candidat
 	for rows.Next() {
 		var c candidateView
 		var mine int
-		if rows.Scan(&c.ID, &c.UserID, &c.Username, &c.DisplayName, &c.Approvals, &mine) != nil {
+		var seated int
+		if rows.Scan(&c.ID, &c.UserID, &c.Username, &c.DisplayName, &c.Approvals, &mine, &seated) != nil {
 			continue
 		}
 		c.ApprovedByMe = mine > 0
+		c.Seated = seated == 1
 		out = append(out, c)
 	}
 	return out
