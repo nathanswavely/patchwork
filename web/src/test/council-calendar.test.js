@@ -61,7 +61,10 @@ describe('GovernanceOverview — one sentence per chair', () => {
 
   it('renders the per-seat line against every chair, held or vacant', () => {
     expect(src).toMatch(/\{#each seats as seat\}/);
-    expect(src).toMatch(/\{seat\.vacant \? 'Vacant' : \(seat\.display_name \|\| seat\.username\)\}/);
+    // Three branches, not a ternary: a chair whose holder this viewer is
+    // not shown is held, and inferring it from an absent name would file a
+    // seated council under Vacant.
+    expect(src).toMatch(/\{#if seat\.vacant\}Vacant\{:else if seat\.holder_withheld\}Held\{:else\}\{seat\.display_name \|\| seat\.username\}\{\/if\}/);
     expect(src).toMatch(/<span class="seat-fate muted">\{seatLine\(seat\)\}<\/span>/);
   });
 

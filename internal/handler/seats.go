@@ -91,6 +91,54 @@ type seatView struct {
 	// ContestID is the open election deciding this chair, when Fill is
 	// seatFillContest, so the row can link to it.
 	ContestID string `json:"contest_id,omitempty"`
+	// HolderWithheld is set when this chair is held by somebody the viewer
+	// is not shown. It is stated for the same reason Vacant is: the row
+	// turns on it, and a client that inferred vacancy from a missing name
+	// would report a seated council as empty.
+	HolderWithheld bool `json:"holder_withheld,omitempty"`
+}
+
+// withholdSeatHolders takes the names out of a council's chairs for a viewer
+// who is not owed them, and leaves every other fact about the chair standing.
+//
+// The council is the half of a patch's roster that names the people with
+// power, so it has to answer the question the admin listing answers rather
+// than a question of its own — a patch that has taken its roster down and
+// still publishes "Sam Pryor, term ends Aug 15 2027" to anyone who asks has
+// not taken its roster down. The overview said both things in one payload:
+// `admins_withheld: true` beside a seats array carrying the same person's
+// username, display name and dates.
+//
+// Two rules, and the second may only subtract further, exactly as it does
+// for the admin listing: the patch's `nobody` withholds every holder from
+// outside the room, and a member's own visibility switch withholds that one
+// holder wherever the patch would have shown them (docs/adr/006, docs/adr/095).
+//
+// What stays is the shape of the council: how many chairs there are, which
+// are held, when the terms end and what happens to each next. ADR 100 put
+// that in public on purpose — it is what a member is asking about when they
+// wonder how to get on the council — and none of it names anybody.
+//
+// The name is substituted rather than dropped, the way the voter list
+// substitutes it, so no surface renders a blank where a person is and
+// nothing downstream has to remember the flag to stay correct.
+func withholdSeatHolders(db *database.DB, seats []seatView, nodeID string, insider bool, rosterSetting string) []seatView {
+	if insider {
+		return seats
+	}
+	for i := range seats {
+		if seats[i].HolderID == "" {
+			continue
+		}
+		if rosterSetting != "nobody" && !membershipHidden(db, nodeID, seats[i].HolderID) {
+			continue
+		}
+		seats[i].HolderID = ""
+		seats[i].Username = ""
+		seats[i].DisplayName = HiddenMemberName
+		seats[i].HolderWithheld = true
+	}
+	return seats
 }
 
 // seatsOf lists a patch's council in the order the chairs were made, which is

@@ -561,8 +561,12 @@
               {#each seats as seat}
                 <li class="seat-row">
                   <div class="seat-main">
+                    <!-- Three states, not two. A chair whose holder this
+                         viewer is not shown is held, and rendering it from
+                         an absent name would put it in the Vacant column
+                         and report a seated council as empty. -->
                     <span class="seat-who" class:vacant={seat.vacant}>
-                      {seat.vacant ? 'Vacant' : (seat.display_name || seat.username)}
+                      {#if seat.vacant}Vacant{:else if seat.holder_withheld}Held{:else}{seat.display_name || seat.username}{/if}
                     </span>
                     <span class="seat-fate muted">{seatLine(seat)}</span>
                     {#if seat.fill === 'contest_open' && seat.contest_id}
