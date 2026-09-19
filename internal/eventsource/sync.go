@@ -440,6 +440,12 @@ func reconcile(db *database.DB, notifier *notifications.Notifier, src *Source, i
 		// A suggesting entry needs no duplicate hold: every item it
 		// brings already stops at a human, and a reviewer looking at a
 		// show they already have will reject it (docs/adr/056).
+		//
+		// 'public', not src.Visibility, and deliberately. A suggesting entry
+		// produces a submission, and a submission is public whatever it
+		// asked for — the same rule CreateEvent applies to a stranger's
+		// suggestion (docs/adr/026). The patch that reviews it chooses the
+		// tier afterwards, on an event that is now its own.
 		if src.Suggests {
 			id := auth.NewUUIDv7()
 			apID := ap.EventAPID(ap.GetDomain(), id)
