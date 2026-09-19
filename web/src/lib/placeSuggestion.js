@@ -12,9 +12,11 @@
 import { api } from './api.js';
 import { hasMapLocation } from './mapLocation.js';
 
-// Below this, an address is a fragment. The index refuses one-token queries
-// anyway, and asking on every keystroke of "La" would be noise.
-const MIN_QUERY_LENGTH = 5;
+// Below this, an address is a fragment rather than a thing anybody named.
+// The floor is short because a one-word venue name is an address here: the
+// index answers a word that is the whole of a place's name, and a floor of
+// five silently excluded the shortest of them.
+const MIN_QUERY_LENGTH = 3;
 
 export function worthLookingUp(address) {
   return (address || '').trim().length >= MIN_QUERY_LENGTH;

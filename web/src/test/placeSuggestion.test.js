@@ -73,6 +73,9 @@ describe('suggestPlace', () => {
 
   it('does not ask about a fragment', async () => {
     expect(worthLookingUp('La')).toBe(false);
+    // A one-word venue name is an address, and the shortest of them are short.
+    expect(worthLookingUp('Fig')).toBe(true);
+    expect(worthLookingUp('Tellus360')).toBe(true);
     expect(worthLookingUp('')).toBe(false);
     expect(worthLookingUp(null)).toBe(false);
     expect(worthLookingUp('433 Ice Avenue')).toBe(true);

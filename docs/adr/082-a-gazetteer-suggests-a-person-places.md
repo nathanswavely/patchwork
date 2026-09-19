@@ -204,6 +204,20 @@ derived one and hides wrong answers behind a button nobody read.
   rather than a filter on the row: a filter would have to know the query
   named a street at all, and it never does.
 
+- **The same extract found a second thing, in the guard rather than in the
+  scoring.** The query path refused any text that tokenized to fewer than two
+  tokens. That is right for "Lancaster" or "Ephrata", and wrong for
+  `Tellus360`, which sat in the index at 24 East King Street and was
+  unreachable by the only string anybody would type for it. 877 of those
+  29,812 places have a one-word name, and on an arts instance a one-word
+  venue name is the common case rather than an edge one. A single token is
+  now answered, but only by a place whose *whole name* is that word, and only
+  when the word labels no street and no city anywhere in the index. So
+  "Prince" and "Lititz" stay refused for the reason they always were, and a
+  name on a dozen far-apart buildings still falls to the ambiguity rule.
+  Nothing about decision 3 moves: the answer is still a provisional marker
+  somebody has to confirm.
+
 - **The volume is in events, and this does not serve them.** The event form
   has no coordinate input at all, and `events.latitude`/`longitude` are
   written by the JSON-LD importer and the aggregator and then read by
