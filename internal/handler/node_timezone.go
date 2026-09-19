@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/settings"
 )
@@ -203,7 +204,7 @@ func zoneReadingChanges(instant string, from, to *time.Location) bool {
 	if strings.TrimSpace(instant) == "" {
 		return false
 	}
-	t, err := time.Parse(time.RFC3339, instant)
+	t, err := clock.Parse(instant)
 	if err != nil {
 		return false
 	}
@@ -221,7 +222,7 @@ func zoneReadingChanges(instant string, from, to *time.Location) bool {
 // event_upload's dedupe key). Rewriting a row into the other precision
 // would be a second, invisible change.
 func reanchorInstant(instant string, from, to *time.Location) (string, bool) {
-	t, err := time.Parse(time.RFC3339, instant)
+	t, err := clock.Parse(instant)
 	if err != nil {
 		return instant, false
 	}

@@ -27,7 +27,14 @@ func main() {
 		log.Fatalf("migrations fs: %v", err)
 	}
 
-	db, err := database.Open(*dbPath, migrations)
+	// Read-only: an exporter is a read tool, and database.Open's startup
+	// checkpoint-then-migrate is right for a server that owns the file, not
+	// for a tool that was only asked to look at it (GH issue #246 — a
+	// source checkout newer than the running instance's image silently
+	// migrated a live instance's on-disk schema during export). Requires
+	// the -wal and -shm sidecars to be present and readable alongside the
+	// database file; see docs/DEPLOYMENT.md.
+	db, err := database.OpenReadOnly(*dbPath, migrations)
 	if err != nil {
 		log.Fatalf("open database: %v", err)
 	}

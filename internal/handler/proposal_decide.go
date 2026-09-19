@@ -2,12 +2,12 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
@@ -99,8 +99,15 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 		}
 
 		approve, reject, abstain := tallyProposal(db, proposalID)
-		detail := fmt.Sprintf(`{"decision":"%s","from_state":"%s","advice":{"approve":%d,"reject":%d,"abstain":%d}}`,
-			req.Decision, p.State, approve, reject, abstain)
+		detail := map[string]any{
+			"decision":   req.Decision,
+			"from_state": p.State,
+			"advice": map[string]any{
+				"approve": approve,
+				"reject":  reject,
+				"abstain": abstain,
+			},
+		}
 
 		var nodeSlug, nodeName string
 		db.QueryRow("SELECT slug, name FROM nodes WHERE id = ?", p.NodeID).Scan(&nodeSlug, &nodeName)
@@ -113,7 +120,7 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"`+applyFailureMessage+`"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
 			notifyProposalApplied(db, p.NodeID, proposalID, user.ID)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"status": "approved", "state": "in_effect"})
@@ -125,7 +132,7 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 		// tally reads as a vote that failed. The amendment branch is left
 		// in place, like a vote that failed leaves it — the proposal page
 		// still shows what was asked for.
-		now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+		now := clock.Now()
 		if _, err := db.Exec(
 			"UPDATE proposals SET status = 'rejected', state = 'rejected', declined_by = ?, updated_at = ? WHERE id = ?",
 			user.ID, now, proposalID,
@@ -133,7 +140,7 @@ func DecideProposal(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"failed to decline proposal"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "proposal.decided", "proposal", proposalID, detail, clientIP(r))
 		notify(notifications.Event{
 			Type:     notifications.ProposalRejected,
 			NodeID:   p.NodeID,
@@ -188,16 +195,16 @@ func OpenAdvisoryVote(db *database.DB) http.HandlerFunc {
 			req.DurationHours = 72
 		}
 		now := time.Now().UTC()
-		endsAt := now.Add(time.Duration(req.DurationHours) * time.Hour).Format("2006-01-02T15:04:05.000Z")
+		endsAt := clock.Format(now.Add(time.Duration(req.DurationHours) * time.Hour))
 		if _, err := db.Exec(
 			"UPDATE proposals SET state = 'voting', voting_ends_at = ?, duration_hours = ?, updated_at = ? WHERE id = ?",
-			endsAt, req.DurationHours, now.Format("2006-01-02T15:04:05.000Z"), proposalID,
+			endsAt, req.DurationHours, clock.Format(now), proposalID,
 		); err != nil {
 			http.Error(w, `{"error":"failed to open vote"}`, http.StatusInternalServerError)
 			return
 		}
-		auth.LogAuditEvent(db, user.ID, "proposal.advisory_vote_opened", "proposal", proposalID,
-			fmt.Sprintf(`{"duration_hours":%d}`, req.DurationHours), clientIP(r))
+		auth.LogAuditEventJSON(db, user.ID, "proposal.advisory_vote_opened", "proposal", proposalID,
+			map[string]any{"duration_hours": req.DurationHours}, clientIP(r))
 
 		// The advisory ballot opens here rather than at creation, so this is
 		// where its electorate is written down as told (docs/adr/093).

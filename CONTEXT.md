@@ -119,7 +119,11 @@ is not overlap. A thread is what the quilt's proximity means, so it has no
 control anywhere in the UI; the only way to make one is for people to
 belong to both patches. Distinct from placement affinity, the broader
 internal weighting the layout runs on (shared events, shared followers,
-shared tags), none of which is a thread.
+shared tags), none of which is a thread. A membership its holder has
+hidden (docs/adr/006) feeds neither: hidden rows are excluded from every
+placement-affinity term that reads memberships, the same way they are
+excluded from the thread signal
+(docs/adr/2026-09-18-a-hidden-membership-does-not-place.md).
 _Avoid_: edge (the removed explicit-connection concept), link (that is an
 event link, which is declared), connection (in UI copy — say thread)
 

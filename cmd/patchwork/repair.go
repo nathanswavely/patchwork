@@ -39,6 +39,13 @@ func runGovernanceRepair(configPath string) {
 		os.Exit(1)
 	}
 
+	// database.Open, not OpenReadOnly: this is a mode of the server binary
+	// itself, not a separate tool that might be a different version than
+	// the instance it's pointed at (the failure mode GH issue #246 is
+	// about). Run with the server stopped, it *is* the instance's own
+	// startup path — migrating here is exactly what starting the server
+	// would do, and Repair below needs the current governance_docs schema
+	// to read the rows it reconciles against the repos.
 	db, err := database.Open(cfg.Database.Path, migrations)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "repair: database: %v\n", err)

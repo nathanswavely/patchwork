@@ -1,12 +1,39 @@
 package auth
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 )
 
-// LogAuditEvent writes an entry to the audit_log table.
+// LogAuditEventJSON writes an entry to the audit_log table, marshaling
+// payload to JSON rather than trusting a caller to have hand-built a valid
+// JSON string. The inputs behind today's hand-built payloads are all
+// validated or fixed-set, so nothing is unsafe yet — but a hand-built
+// literal is a landmine for the day a free-text field (a join message, a
+// display name, a reason) joins one of them. On a marshal error the event
+// is still recorded, with the error message as the payload, because a
+// malformed payload is a bug to fix, not a reason to drop the audit line.
+func LogAuditEventJSON(db *database.DB, userID, action, entityType, entityID string, payload any, ip string) {
+	metadata := "{}"
+	if payload != nil {
+		b, err := json.Marshal(payload)
+		if err != nil {
+			log.Printf("audit: %s on %s %s payload not marshaled: %v", action, entityType, entityID, err)
+			if eb, merr := json.Marshal(map[string]string{"marshal_error": err.Error()}); merr == nil {
+				metadata = string(eb)
+			}
+		} else {
+			metadata = string(b)
+		}
+	}
+	LogAuditEvent(db, userID, action, entityType, entityID, metadata, ip)
+}
+
+// LogAuditEvent writes an entry to the audit_log table. metadata must
+// already be a valid JSON object string; prefer LogAuditEventJSON, which
+// marshals a Go value instead of trusting a hand-built literal.
 func LogAuditEvent(db *database.DB, userID, action, entityType, entityID, metadata, ip string) {
 	id := NewUUIDv7()
 	if metadata == "" {

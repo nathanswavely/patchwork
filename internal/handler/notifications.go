@@ -90,8 +90,8 @@ func ListNotifications(db *database.DB) http.HandlerFunc {
 		if category := r.URL.Query().Get("category"); category != "" {
 			patterns, known := notificationListCategories[category]
 			if !known {
-				http.Error(w, fmt.Sprintf(`{"error":"category must be one of %s"}`,
-					strings.Join(sortedKeys(notificationListCategories), ", ")), http.StatusBadRequest)
+				writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("category must be one of %s",
+					strings.Join(sortedKeys(notificationListCategories), ", ")))
 				return
 			}
 			var likes []string

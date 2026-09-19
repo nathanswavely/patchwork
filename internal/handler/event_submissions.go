@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -233,7 +232,7 @@ func ReviewEventSubmission(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"failed to reject event"}`, http.StatusInternalServerError)
 				return
 			}
-			auth.LogAuditEvent(db, user.ID, "event.submission_rejected", "event", eventID, fmt.Sprintf(`{"note":%q}`, req.Note), clientIP(r))
+			auth.LogAuditEventJSON(db, user.ID, "event.submission_rejected", "event", eventID, map[string]any{"note": req.Note}, clientIP(r))
 
 			notify(notifications.Event{
 				Type:     notifications.EventSubmissionRejected,

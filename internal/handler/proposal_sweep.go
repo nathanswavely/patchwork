@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 	"github.com/patchwork-toolkit/patchwork/internal/notifications"
@@ -26,7 +26,7 @@ import (
 // closed. Elections are the other sweep's; advisory votes land back on the
 // maintainer here exactly as they would on a read (docs/adr/092).
 func SweepProposals(db *database.DB) {
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	rows, err := db.Query(`SELECT p.id FROM proposals p
 	                       JOIN nodes n ON n.id = p.node_id
 	                       WHERE p.status = 'open'
@@ -59,10 +59,7 @@ func windowClosed(votingEndsAt string) bool {
 	if votingEndsAt == "" {
 		return false
 	}
-	ends, err := time.Parse("2006-01-02T15:04:05.000Z", votingEndsAt)
-	if err != nil {
-		ends, err = time.Parse(time.RFC3339, votingEndsAt)
-	}
+	ends, err := clock.Parse(votingEndsAt)
 	return err == nil && time.Now().UTC().After(ends)
 }
 
@@ -73,7 +70,7 @@ func windowClosed(votingEndsAt string) bool {
 // happened, and the record and the notice both say "not decided" rather
 // than "failed". Idempotent: the WHERE refuses a proposal already moved.
 func lapseProposal(db *database.DB, p model.Proposal, votes int) {
-	now := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	now := clock.Now()
 	res, err := db.Exec(`UPDATE proposals SET status = 'rejected', state = 'lapsed', updated_at = ?
 	                     WHERE id = ? AND status = 'open'`, now, p.ID)
 	if err != nil {
@@ -88,8 +85,8 @@ func lapseProposal(db *database.DB, p model.Proposal, votes int) {
 	db.QueryRow(`SELECT slug, name FROM nodes WHERE id = ?`, p.NodeID).Scan(&slug, &name)
 
 	// No actor: the clock closed it, not a person.
-	auth.LogAuditEvent(db, "", "proposal.lapsed", "proposal", p.ID,
-		fmt.Sprintf(`{"node_id":%q,"votes":%d}`, p.NodeID, votes), "")
+	auth.LogAuditEventJSON(db, "", "proposal.lapsed", "proposal", p.ID,
+		map[string]any{"node_id": p.NodeID, "votes": votes}, "")
 	notify(notifications.Event{
 		Type:     notifications.ProposalRejected,
 		NodeID:   p.NodeID,

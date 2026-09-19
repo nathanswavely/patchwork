@@ -198,9 +198,16 @@ func ratifyNomination(db *database.DB, proposalID, nodeID, nomineeID string) {
 	// The chair, not a new one, and not a new term. term_ends_at is left
 	// exactly as the seat carried it (docs/adr/051).
 	if seatID != "" {
-		db.Exec("UPDATE seats SET holder_id = ? WHERE id = ?", nomineeID, seatID)
-		auth.LogAuditEvent(db, "", "seat.filled", "seat", seatID,
-			`{"node_id":"`+nodeID+`","holder_id":"`+nomineeID+`","proposal_id":"`+proposalID+`"}`, "")
+		// The promotion above already landed, so a seat that does not record
+		// its holder leaves an admin sitting in no chair — the state
+		// docs/adr/100 exists to end, and one nothing else would notice.
+		// `seat.filled` is only written where the seat was in fact filled.
+		if _, err := db.Exec("UPDATE seats SET holder_id = ? WHERE id = ?", nomineeID, seatID); err != nil {
+			applyIncomplete(db, proposalID, "", "seat handover to "+nomineeID, err)
+		} else {
+			auth.LogAuditEvent(db, "", "seat.filled", "seat", seatID,
+				`{"node_id":"`+nodeID+`","holder_id":"`+nomineeID+`","proposal_id":"`+proposalID+`"}`, "")
+		}
 	}
 
 	// No actor: ratification is the electorate and the clock, not a person, so

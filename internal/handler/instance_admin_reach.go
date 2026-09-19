@@ -84,6 +84,15 @@ var instanceAdminReach = map[string]struct {
 	"comments.go:CreateComment": {reachSpeech, 2, true,
 		"Commenting on a proposal and the follower-permission gate around it. Kept: speech, not authority."},
 
+	"comments.go:AddReaction": {reachSpeech, 2, true,
+		"Reacting to a comment takes the same standing gate CreateComment does, added alongside it " +
+			"(issue #321): a role on the patch, and the follower-permission gate around it. Same reasoning " +
+			"as its neighbor — a reaction is speech, not authority."},
+
+	"comments.go:RemoveReaction": {reachSpeech, 2, true,
+		"Un-reacting, gated the same way as AddReaction even though the delete is already scoped to the " +
+			"caller's own row (issue #321)."},
+
 	"comments.go:DeleteComment": {reachNone, 1, false,
 		"Deleting somebody else's comment is moderation, not speech. Routes through the report queue like " +
 			"every other piece of content."},
