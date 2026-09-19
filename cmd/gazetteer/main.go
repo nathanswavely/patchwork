@@ -6,15 +6,23 @@
 // result next to patchwork.db — the server never parses an extract, because
 // the binary has to run on a Raspberry Pi 4 with 2GB of RAM.
 //
-//	gazetteer -in pennsylvania-latest.osm.bz2 -out data/gazetteer.db
+//	gazetteer -in lancaster.osm.bz2 -out data/gazetteer.db
 //
 // Input is OSM XML, plain or gzip- or bzip2-compressed. All three decoders
 // are in the standard library, which is the whole reason this reads XML
 // rather than the denser .osm.pbf: a pbf reader would put protocol buffers in
-// go.mod for every fork forever, to build a file that ships separately. An
-// extract you have as .pbf converts in one command:
+// go.mod for every fork forever, to build a file that ships separately.
 //
-//	osmium cat pennsylvania-latest.osm.pbf -o pennsylvania.osm.bz2
+// Converting is the normal path, not an exception. Geofabrik publishes
+// regional extracts as .osm.pbf and nothing else, so plan on one osmium
+// command between the download and this one. Crop to a bounding box in that
+// same command rather than converting the whole region: the scan below runs
+// twice, and two passes over a state is many minutes where two passes over a
+// county is seconds. A generous box costs nothing, since the radius crop
+// below is what actually decides what is kept.
+//
+//	osmium extract -b -76.62,39.80,-75.99,40.28 \
+//	  pennsylvania-latest.osm.pbf -o lancaster.osm.bz2
 package main
 
 import (

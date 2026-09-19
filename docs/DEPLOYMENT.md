@@ -146,37 +146,52 @@ It is one file, built on your laptop and copied to the server. Nothing is
 fetched at runtime and there is no account, key or third-party service
 anywhere in it (docs/adr/082).
 
-**1. Get an extract of your region.** Any OpenStreetMap XML extract covering
-your community will do — Geofabrik publishes them per country and state. The
-build reads `.osm`, `.osm.gz` and `.osm.bz2`. If what you have is the denser
-`.osm.pbf`, convert it once:
+**1. Download an extract of your region.** Geofabrik publishes one per country
+and state. Take the `.osm.pbf`, which is all they offer for a US state:
 
 ```sh
-osmium cat pennsylvania-latest.osm.pbf -o pennsylvania.osm.bz2
+curl -LO https://download.geofabrik.de/north-america/us/pennsylvania-latest.osm.pbf
 ```
 
-**2. Crop it to your radius.** The build reads `geographic.latitude`,
-`longitude` and `radius` from your `patchwork.yaml`, so it keeps only the
-places your instance actually covers:
+**2. Convert and crop it with osmium.** The build reads XML (`.osm`,
+`.osm.gz`, `.osm.bz2`), not `.pbf`, so a conversion step is normal rather than
+a fallback. Do the cropping here too, in the same command:
 
 ```sh
-make gazetteer IN=pennsylvania.osm.bz2
-# or: go run ./cmd/gazetteer/ -in pennsylvania.osm.bz2 -out data/gazetteer.db
+osmium extract -b -76.62,39.80,-75.99,40.28 \
+  pennsylvania-latest.osm.pbf -o lancaster.osm.bz2
+```
+
+The box is `west,south,east,north` in degrees. Pad it past your radius and do
+not fuss over it: step 3 crops to the exact radius, so the only thing a
+generous box costs is a few seconds here. Roughly, a radius of `r` km is
+`r / 111` degrees of latitude and `r / (111 * cos(latitude))` degrees of
+longitude.
+
+Cropping now rather than converting the whole state is what keeps step 3
+quick, because the build reads its input twice. Skipping it works, but two
+passes over a state is minutes where two passes over a county is seconds.
+
+**3. Build the index.** It reads `geographic.latitude`, `longitude` and
+`radius` from your `patchwork.yaml`, so it keeps only the places your instance
+actually covers:
+
+```sh
+make gazetteer IN=lancaster.osm.bz2
+# or: go run ./cmd/gazetteer/ -in lancaster.osm.bz2 -out data/gazetteer.db
 ```
 
 It reads the extract twice and holds the in-radius nodes in memory, which is
-bounded by your radius rather than by the size of the extract. To give you an
-order of magnitude, a 264 MB extract (1.2 million nodes, 180 thousand ways)
-cropped to a 25 km radius took **18 seconds, peaked at 29 MB of memory, and
-produced a 4.3 MB index of about 22 thousand places**. Those figures come from
-a generated extract of that size rather than a real regional download, so
-treat them as the right order of magnitude and not a promise — the memory in
-particular scales with how many nodes fall inside your radius, not with the
-file.
+bounded by your radius rather than by the size of the extract. The whole of
+Lancaster's run, end to end, was a 331 MB Pennsylvania download, an osmium
+crop to the box above giving 21 MB, and **24 seconds** to a 4.3 MB index of
+**29,812 places**. Memory scales with how many nodes fall inside your radius
+rather than with the file, so a tighter radius is cheaper than a smaller
+download.
 
 The server never parses an extract; it only reads the result.
 
-**3. Copy the file to the server**, next to `patchwork.db`:
+**4. Copy the file to the server**, next to `patchwork.db`:
 
 ```sh
 scp data/gazetteer.db you@your-server:/srv/patchwork/data/gazetteer.db
