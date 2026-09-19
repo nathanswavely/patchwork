@@ -42363,9 +42363,9 @@
       "text": "Followers can't see this patch's non-public events. That is set at the patch level, under",
       "words": 15,
       "tier": "helper",
-      "status": "human",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Claude wrote the sentence from the maintainer's direction; the direction was human, the wording was not.",
       "occurrences": [
         {
           "file": "web/src/pages/EventForm.svelte",
