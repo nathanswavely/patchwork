@@ -103,9 +103,9 @@ func seedTwoRooms(t *testing.T, db *database.DB) fixture {
 	f.membersEventOwn, f.membersEventOther = nextID(), nextID()
 	for _, e := range []struct{ id, node, title, visibility string }{
 		{nextID(), f.pubOwn, "Open Show", "public"},
-		{f.membersEventOwn, f.pubOwn, "Members Meeting", "private"},
+		{f.membersEventOwn, f.pubOwn, "Members Meeting", "members"},
 		{nextID(), f.pubOther, "Park Show", "public"},
-		{f.membersEventOther, f.pubOther, "Their Meeting", "private"},
+		{f.membersEventOther, f.pubOther, "Their Meeting", "members"},
 	} {
 		mustExec(t, db,
 			`INSERT INTO events (id, node_id, created_by, title, description, location, starts_at, recurrence, visibility, created_at, updated_at)

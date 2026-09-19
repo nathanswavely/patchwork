@@ -67,10 +67,19 @@ func SEO(db *database.DB, cfg *config.Config, spaHTML []byte) func(http.Handler)
 				// Same gate as the public event endpoints: no OG preview for
 				// pending, removed, or non-public events, nor for events
 				// whose patch is archived or removed.
+				//
+				// The visibility clause was missing and the comment was
+				// already promising it. It matters the moment an event can
+				// name a tier: this runs for every request the SPA handler
+				// serves, with no session in hand, so a members-only
+				// night's title and description went into the page a
+				// crawler reads. Public only, and no tiered read here —
+				// an OG tag has no viewer to ask about.
 				err := db.QueryRow(
 					`SELECT e.title, COALESCE(e.description, '') FROM events e
 					 JOIN nodes n ON n.id = e.node_id
 					 WHERE e.id = ? AND e.removed_at IS NULL AND e.status = 'active'
+					   AND e.visibility = 'public'
 					   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL`,
 					id,
 				).Scan(&title, &desc)

@@ -254,18 +254,15 @@ func EventICS(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		// Members-only events are for a member or admin of the event's OWN
+		// The event's tier against this viewer's role on the event's OWN
 		// patch, which is the rule ListEvents and GetEvent already apply —
 		// a confirmed link never widens visibility. A private patch is
 		// unlisted rather than locked, so its public events stay
 		// downloadable by anyone holding the link, exactly as its page
 		// stays readable.
-		if visibility != "public" {
-			user := middleware.UserFromContext(r.Context())
-			if !canReadNonPublicEvent(db, user, nodeID) {
-				http.Error(w, "not found", http.StatusNotFound)
-				return
-			}
+		if !canReadEvent(db, middleware.UserFromContext(r.Context()), nodeID, visibility) {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
 		}
 
 		// Named for the event, so a downloads folder holding six of these
@@ -374,9 +371,10 @@ func PersonalICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		since := clock.Format(time.Now().Add(-feedWindowBack))
 		// Public events from every patch the person has a relationship
 		// with — including confirmed event links (docs/adr/032), so a
-		// followed band's linked gig lands here too. Members-only
-		// (private/unlisted) events only where the person belongs to the
-		// event's own patch; a link never widens visibility.
+		// followed band's linked gig lands here too. A non-public event
+		// only on the strength of a relationship with the event's own
+		// patch, and only as far as its tier reaches that relationship;
+		// a link never widens visibility.
 		events, err := scanFeedEvents(db,
 			`SELECT DISTINCT e.id, e.title, e.description, e.location, e.latitude, e.longitude,
 			 e.starts_at, e.ends_at, COALESCE(e.event_url,''), n.slug, n.name, e.created_at, e.updated_at
@@ -388,7 +386,7 @@ func PersonalICSFeed(db *database.DB, cfg *config.Config) http.HandlerFunc {
 			      AND el.node_id = m.node_id AND el.status = 'confirmed'))
 			 WHERE e.status = 'active' AND e.removed_at IS NULL AND n.removed_at IS NULL
 			 AND n.status IN ('active','unclaimed')
-			 AND (e.visibility = 'public' OR (m.node_id = e.node_id AND m.role IN ('member','admin')))
+			 AND `+eventVisibleToMatchedMembership("m", "e", "n")+`
 			 AND e.starts_at >= ?
 			 ORDER BY e.starts_at LIMIT ?`, userID, since, feedMaxEvents)
 		if err != nil {
