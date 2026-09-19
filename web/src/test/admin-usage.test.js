@@ -50,18 +50,22 @@ describe('Admin usage page', () => {
 });
 
 describe('Admin usage wiring', () => {
-  it('is routed, gated, and in the admin tab row', () => {
+  // A Settings section of the admin panel
+  // (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md): the switch
+  // that turns counting on lives on the page, which makes it a setting.
+  it('is routed, gated, and a Settings section of the admin panel', () => {
     const app = source('App.svelte');
-    expect(app).toContain("addRoute('/admin/usage', 'adminUsage')");
+    expect(app).toContain("addRoute('/admin/settings/usage', 'adminUsage')");
     expect(app).toContain("import AdminUsage from './pages/AdminUsage.svelte'");
     expect(app).toContain("{:else if routeName === 'adminUsage'}");
 
-    const shell = source('components/AdminShell.svelte');
-    expect(shell).toContain("{ label: 'Usage', href: '/admin/usage', icon: ChartBar }");
+    const registry = source('lib/adminPanel.js');
+    expect(registry).toContain("{ id: 'usage', label: 'Usage' }");
+    expect(registry).toContain("usage: '/admin/settings/usage'");
   });
 
   it('is findable from the admin finder', () => {
     const finder = source('lib/finderProviders.js');
-    expect(finder).toContain("href: '/admin/usage'");
+    expect(finder).toContain("href: '/admin/settings/usage'");
   });
 });

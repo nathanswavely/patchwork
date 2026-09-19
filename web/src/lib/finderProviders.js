@@ -103,30 +103,28 @@ export function adminFinderProvider() {
         href: '/admin/submissions',
       });
     }
-    items.push({
-      type: 'Settings',
-      label: 'Quilt Settings',
-      sublabel: 'rename, icon, export, danger zone',
-      href: '/admin/quilt',
-    });
-    items.push({
-      type: 'Settings',
-      label: 'Tags',
-      sublabel: 'the tag vocabulary and per-tag motifs',
-      href: '/admin/tags',
-    });
-    items.push({
-      type: 'Settings',
-      label: 'Usage',
-      sublabel: 'daily page views and visitors, counted on the server',
-      href: '/admin/usage',
-    });
-    items.push({
-      type: 'Settings',
-      label: 'Prove admin',
-      sublabel: 'sign an outside party’s nonce as this quilt',
-      href: '/admin/attestation',
-    });
+    // The panel's sections (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md), a level down from the tab row,
+    // so a typed name still lands on the page.
+    const review = [
+      { label: 'Reports', sublabel: 'the report queue', href: '/admin/review/reports' },
+      { label: 'Patch submissions', sublabel: 'names proposed for the quilt', href: '/admin/review/submissions' },
+      { label: 'Event submissions', sublabel: 'events proposed on unclaimed patches', href: '/admin/review/event-submissions' },
+      { label: 'Claims', sublabel: 'people claiming an unclaimed patch', href: '/admin/review/claims' },
+      { label: 'Suggested tags', sublabel: 'words patch admins asked for', href: '/admin/review/tags' },
+    ];
+    for (const s of review) items.push({ type: 'Review', ...s });
+    const settings = [
+      { label: 'Quilt Settings', sublabel: 'rename, icon, export, danger zone', href: '/admin/settings/quilt' },
+      { label: 'Label', sublabel: 'who runs this quilt and what it costs', href: '/admin/settings/label' },
+      { label: 'Legal', sublabel: 'privacy policy and terms', href: '/admin/settings/legal' },
+      { label: 'Tags', sublabel: 'the tag vocabulary and per-tag motifs', href: '/admin/settings/tags' },
+      { label: 'Neighbors', sublabel: 'quilts listed beside this one', href: '/admin/settings/neighbors' },
+      { label: 'Aggregators', sublabel: 'calendar feeds routed onto patches', href: '/admin/settings/aggregators' },
+      { label: 'Usage', sublabel: 'daily page views and visitors, counted on the server', href: '/admin/settings/usage' },
+      { label: 'Archived patches', sublabel: 'restore a patch that was archived', href: '/admin/settings/archived' },
+      { label: 'Prove admin', sublabel: 'sign an outside party’s nonce as this quilt', href: '/admin/settings/attestation' },
+    ];
+    for (const s of settings) items.push({ type: 'Settings', ...s });
     return items;
   };
 }
