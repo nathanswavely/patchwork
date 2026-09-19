@@ -415,13 +415,13 @@ func TestAPNodeOutbox_OmitsNonPublicEvents(t *testing.T) {
 	owner, _ := createTestUser(t, db, "apmixedoutbox", "member")
 	nodeID := createTestNode(t, db, owner.ID, "Mixed Outbox Patch", "mixed-outbox-patch", "open")
 	createTestEvent(t, db, nodeID, owner.ID, "Public Show")
-	unlistedID := auth.NewUUIDv7()
+	membersOnlyID := auth.NewUUIDv7()
 	if _, err := db.Exec(
 		`INSERT INTO events (id, node_id, created_by, title, description, location, starts_at, recurrence, visibility)
-		 VALUES (?, ?, ?, 'Members Only', '', '', '2025-06-01T12:00:00Z', '', 'unlisted')`,
-		unlistedID, nodeID, owner.ID,
+		 VALUES (?, ?, ?, 'Members Only', '', '', '2025-06-01T12:00:00Z', '', 'members')`,
+		membersOnlyID, nodeID, owner.ID,
 	); err != nil {
-		t.Fatalf("insert unlisted event: %v", err)
+		t.Fatalf("insert members-only event: %v", err)
 	}
 
 	r := apRequest("GET", "/ap/nodes/"+nodeID+"/outbox")

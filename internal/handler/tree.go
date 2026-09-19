@@ -74,6 +74,14 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 		var query string
 		var args []interface{}
 
+		// event_count sizes nothing on its own, but it is printed on the
+		// tile and it is the number a tier decides. A quilt tile counted
+		// without the gate advertises a members-only night to the people
+		// its tier excludes — "4 events" on a patch whose page shows one.
+		// Counted with it, the tile and the calendar under it agree, which
+		// is the same argument GetNode's upcoming count settles.
+		evCond, evArgs := eventVisibleSQL("e", user)
+
 		if scope == "my" && user != nil {
 			// Scoped to user's patches only (any active membership).
 			query = `
@@ -81,12 +89,14 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
-					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
-					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active'), 0) AS event_count
+					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active' AND ` + evCond + `), 0)
+					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active' AND ` + evCond + `), 0) AS event_count
 				FROM nodes n
 				JOIN memberships mem ON mem.node_id = n.id AND mem.user_id = ? AND mem.status = 'active'
 				WHERE n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 				ORDER BY n.name ASC`
+			args = append(args, evArgs...)
+			args = append(args, evArgs...)
 			args = append(args, user.ID)
 		} else {
 			// All public patches (default).
@@ -95,11 +105,13 @@ func NodeTree(db *database.DB) http.HandlerFunc {
 					n.id, n.name, n.slug, n.description, COALESCE(n.appearance,''), n.status, n.latitude, n.longitude, n.activated_at, n.created_at, COALESCE(n.moved_to,''), COALESCE(n.membership_policy,''),
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role IN ('admin','member')), 0) AS member_count,
 					COALESCE((SELECT COUNT(*) FROM memberships m WHERE m.node_id = n.id AND m.status = 'active' AND m.role = 'follower'), 0) AS follower_count,
-					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active'), 0)
-					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active'), 0) AS event_count
+					COALESCE((SELECT COUNT(*) FROM events e WHERE e.node_id = n.id AND e.status = 'active' AND ` + evCond + `), 0)
+					+ COALESCE((SELECT COUNT(*) FROM event_links el JOIN events e ON e.id = el.event_id WHERE el.node_id = n.id AND el.status = 'confirmed' AND e.status = 'active' AND ` + evCond + `), 0) AS event_count
 				FROM nodes n
 				WHERE n.status IN ('active','unclaimed') AND n.removed_at IS NULL AND n.visibility = 'public'
 				ORDER BY n.name ASC`
+			args = append(args, evArgs...)
+			args = append(args, evArgs...)
 		}
 
 		rows, err := db.Query(query, args...)

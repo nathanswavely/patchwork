@@ -103,7 +103,7 @@ func TestUpcomingEventCountSkipsRemovedAndPrivateEvents(t *testing.T) {
 		}
 	})
 	insertEvent(t, db, nodeID, owner.ID, "Not public", now.Add(50*time.Hour), func(id string) {
-		if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, id); err != nil {
+		if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, id); err != nil {
 			t.Fatalf("set visibility: %v", err)
 		}
 	})

@@ -90,14 +90,31 @@ const sqlAdminNodes = `SELECT am.node_id FROM memberships am
 const sqlOpenRosterNodes = `SELECT rn.id FROM nodes rn WHERE rn.public_member_list = 'everyone'`
 const sqlAdminRosterNodes = `SELECT rn.id FROM nodes rn WHERE rn.public_member_list = 'admins'`
 
-// sqlVisibleEvents: the events on those patches this viewer may read.
-// Members-only events only inside their own patch — a confirmed link to
+// sqlFollowerEventNodes: the patches where a follower gets the followers
+// tier — the ones this viewer follows whose `follower_permissions.events`
+// is on. Absent or malformed means on, the same defaults the handler's
+// followerEventsAllowedSQL reads, for the same reason: the shipped default
+// is the box ticked, and a query that aborts on one patch's bad rules blob
+// takes the whole export with it.
+const sqlFollowerEventNodes = `SELECT fm.node_id FROM memberships fm
+	JOIN nodes fn ON fn.id = fm.node_id
+	WHERE fm.user_id = ? AND fm.status = 'active' AND fm.role = 'follower'
+	AND CASE WHEN json_valid(COALESCE(fn.follower_permissions, ''))
+		THEN COALESCE(json_extract(fn.follower_permissions, '$.events'), 1)
+		ELSE 1 END = 1`
+
+// sqlVisibleEvents: the events on those patches this viewer may read
+// (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md).
+// A non-public event only inside its own patch — a confirmed link to
 // another patch never widens visibility, which is the rule ListEvents
-// enforces in the same shape.
+// enforces in the same shape — and only as far as its tier reaches the
+// relationship this viewer holds there.
 const sqlVisibleEvents = `SELECT ve.id FROM events ve
 	WHERE ve.removed_at IS NULL AND ve.status = 'active'
 	AND ve.node_id IN (` + sqlVisibleNodes + `)
-	AND (ve.visibility = 'public' OR ve.node_id IN (` + sqlInsiderNodes + `))`
+	AND (ve.visibility = 'public'
+		OR ve.node_id IN (` + sqlInsiderNodes + `)
+		OR (ve.visibility = 'followers' AND ve.node_id IN (` + sqlFollowerEventNodes + `)))`
 
 // sqlVisibleProposals: proposals on a patch this viewer may carry — from a
 // patch that publishes its deliberation, plus every patch the viewer is
@@ -318,7 +335,7 @@ func memberViews() map[string]MemberView {
 			Where: "source_id IN (" + sqlVisibleSources + ")",
 		},
 		"events": {
-			Rule:  "on a patch that travelled: public events, plus members-only ones where the viewer is a member or admin of the event's own patch.",
+			Rule:  "on a patch that travelled: public events, plus members-only ones where the viewer is a member or admin of the event's own patch, plus followers ones where they follow it and its Follower Permissions still grant events.",
 			Where: "id IN (" + sqlVisibleEvents + ")",
 			Cols: map[string]string{
 				// Provenance points at a feed row, and most viewers carry

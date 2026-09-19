@@ -477,6 +477,13 @@ type EventSource struct {
 	// wrong, so only a person comparing the markup against the page can
 	// say so.
 	LocalTimeStampedUTC bool `json:"local_time_stamped_utc"`
+	// Visibility is the tier this feed's events are born at
+	// (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-
+	// patch-allows.md). Applied when the sync inserts a row and never when
+	// it updates one: who an event is for is local policy, not a fact the
+	// feed is authoritative about, so a per-event change sticks across
+	// syncs. Anything but "public" also stops these events federating.
+	Visibility string `json:"visibility"`
 	// SampleStartsAt is one upcoming event from this source, and Timezone
 	// the zone its patch resolves to. Together they let the settings page
 	// show what the switch above would actually do to a real row before

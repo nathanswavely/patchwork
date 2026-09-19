@@ -21,8 +21,12 @@ func UserActivityFeed(db *database.DB) http.HandlerFunc {
 		// Each branch gates on the hosting node's status: an archived patch
 		// disappears from the member's patch list (memberships handler), so
 		// its activity has to leave the feed too — the links would 404.
-		// No visibility gate here: the feed is scoped to the viewer's own
-		// memberships, and a private patch you belong to is yours to see.
+		// No *node* visibility gate here: the feed is scoped to the viewer's
+		// own memberships, and a private patch you belong to is yours to
+		// see. An event's own tier is a different question and is asked —
+		// every active relationship lands rows in this feed, follower
+		// included, so without it a patch's members-only night would
+		// announce itself to the people its tier excludes.
 		query := `
 			SELECT id, type, title, body, link, patch_slug, patch_name, actor_name, created_at
 			FROM (
@@ -49,9 +53,10 @@ func UserActivityFeed(db *database.DB) http.HandlerFunc {
 				FROM events e
 				JOIN nodes n ON n.id = e.node_id
 					AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
+				JOIN memberships m ON m.node_id = e.node_id AND m.user_id = ? AND m.status = 'active'
 				WHERE e.removed_at IS NULL
 					AND e.status = 'active'
-					AND e.node_id IN (SELECT node_id FROM memberships WHERE user_id = ? AND status = 'active')
+					AND ` + eventVisibleToMatchedMembership("m", "e", "n") + `
 
 				UNION ALL
 

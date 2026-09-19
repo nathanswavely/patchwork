@@ -33,6 +33,11 @@
   let imageUrl = $state('');
   let imageAlt = $state('');
   let eventUrl = $state('');
+  // Who this event is for
+  // (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md).
+  // Public unless somebody says otherwise, which is what every event
+  // created in the product was before the control existed.
+  let visibility = $state('public');
 
   // The patch this event is for: chosen in the picker, or fixed by the door
   // that was walked in through. { id, name, slug, status }.
@@ -73,11 +78,19 @@
   // carries-its-calendar). It is read here rather than asked separately,
   // since every path that sets the hosting patch already calls this.
   let hostingViewerTrusted = $state(false);
+  // The patch's `follower_permissions.events`, which the ADR makes a ceiling
+  // on the tier rather than a default for it. The node payload already
+  // carries the whole blob, so this is read from the fetch the form makes
+  // anyway rather than asked for separately. Absent reads as allowed, which
+  // is what the server's own default says about a patch that has never
+  // opened its rules editor.
+  let followersMayHaveEvents = $state(true);
   async function loadPatchZone(slug) {
     const fallback = getInstanceTimezone() || '';
     if (!slug) {
       patchTimezone = fallback;
       hostingViewerTrusted = false;
+      followersMayHaveEvents = true;
       return;
     }
     try {
@@ -85,9 +98,11 @@
       const node = data.node || data;
       patchTimezone = node.timezone || fallback;
       hostingViewerTrusted = data.viewer_trusted === true;
+      followersMayHaveEvents = node.follower_permissions?.events !== false;
     } catch {
       patchTimezone = fallback;
       hostingViewerTrusted = false;
+      followersMayHaveEvents = true;
     }
   }
   // Set when a submit came back pending_review — the form is replaced by
@@ -119,6 +134,7 @@
       imageUrl = event.image_url || '';
       imageAlt = event.image_alt || '';
       eventUrl = event.event_url || '';
+      visibility = event.visibility || 'public';
       // Read in the event's zone, not the editor's: an organizer editing a
       // Lancaster show sees 8:00 PM whether they are in Lancaster or on
       // tour, because 8pm is the fact they are editing.
@@ -153,6 +169,7 @@
         status: data.is_unclaimed ? 'unclaimed' : node.status || 'active',
       };
       hostingViewerTrusted = data.viewer_trusted === true;
+      followersMayHaveEvents = node.follower_permissions?.events !== false;
       patchTimezone = node.timezone || getInstanceTimezone() || '';
       if (!isEdit) timezone = patchTimezone;
     } catch (e) {
@@ -257,6 +274,34 @@
   );
   let reviewers = $derived(
     hostingPatch?.status === 'unclaimed' ? 'quilt admins' : 'patch admins'
+  );
+
+  // The tier control is for people posting to their own patch. A suggestion
+  // is public whatever it asks for (docs/adr/026) and the server says so, so
+  // the form does not offer a choice it cannot keep.
+  let showTierControl = $derived(!!hostingPatch && !willReview);
+
+  // What the patch allows. Where Follower Permissions has events switched
+  // off, the followers tier is not offered — it would be read down to
+  // members-only on every read path, and a control that promises otherwise
+  // is the thing the ceiling exists to stop. An event that already says
+  // 'followers' keeps saying it: the switch is read, never written, so the
+  // option stays on screen for the row that holds it.
+  let tierOptions = $derived(
+    followersMayHaveEvents || visibility === 'followers'
+      ? ['public', 'followers', 'members']
+      : ['public', 'members']
+  );
+  const TIER_LABELS = {
+    public: 'Public',
+    followers: 'Followers',
+    members: 'Members only',
+  };
+
+  // An admin of this patch can go and change the switch; anyone else is
+  // being told a fact about where they are.
+  let canEditRules = $derived(
+    isAdmin() || activeRoles.get(hostingPatch?.slug) === 'admin'
   );
 
   // The trust ask (docs/adr/2026-09-18-..., decision 7): offered exactly
@@ -372,6 +417,7 @@
         image_url: imageUrl.trim(),
         image_alt: imageAlt.trim(),
         event_url: eventUrl.trim(),
+        visibility,
       };
       if (isEdit) {
         const result = await api(`events/${eventId}`, { method: 'PATCH', body });
@@ -577,6 +623,27 @@
             {@render trustAsk()}
           {/if}
         </div>
+
+        {#if showTierControl}
+          <div class="field">
+            <label for="event-visibility">Who can see this</label>
+            <select id="event-visibility" bind:value={visibility} disabled={submitting}>
+              {#each tierOptions as tier (tier)}
+                <option value={tier}>{TIER_LABELS[tier]}</option>
+              {/each}
+            </select>
+            {#if !followersMayHaveEvents}
+              <p class="image-hint muted">
+                Followers can't see this patch's non-public events. That is set
+                at the patch level, under
+                {#if canEditRules}<a
+                  href="/patches/{hostingPatch.slug}/governance/rules/propose"
+                  onclick={(e) => { e.preventDefault(); navigate(`/patches/${hostingPatch.slug}/governance/rules/propose`); }}
+                >Follower Permissions</a>{:else}Follower Permissions{/if}.
+              </p>
+            {/if}
+          </div>
+        {/if}
 
         <div class="field">
           <label for="location">Location</label>
