@@ -55,6 +55,11 @@ type CommitInfo struct {
 	AuthorEmail   string    `json:"author_email"`
 	Date          time.Time `json:"date"`
 	VersionNumber int       `json:"version_number"` // 1-indexed, computed from position in history
+	// Repair marks a commit the repair pass wrote rather than a person:
+	// "rebuilt" when it stands in for a repo's lost history, "restored" when
+	// it brought one file back in line with the database, empty otherwise
+	// (docs/adr/084). The history view reads this to say so out loud.
+	Repair string `json:"repair,omitempty"`
 }
 
 // repoPath returns the filesystem path for a governance repo.
@@ -127,6 +132,31 @@ func ForkForNode(dataDir, nodeID, template string) error {
 // objects directly — no worktree, no clone, no git binary. On failure the
 // half-created repo is removed so a retry starts clean.
 func initBareRepoWithFiles(path string, files map[string]string, message string) error {
+	return initBareRepoWithFilesAs(path, files, message, systemSignature())
+}
+
+// systemSignature is the identity ordinary Patchwork-authored commits wear.
+func systemSignature() *object.Signature {
+	return &object.Signature{
+		Name:  "Patchwork System",
+		Email: "system@patchwork.local",
+		When:  time.Now(),
+	}
+}
+
+// repairSignature is the identity the repair pass signs with, so a
+// reconstructed commit is visibly not one somebody made (docs/adr/084).
+func repairSignature() *object.Signature {
+	return &object.Signature{
+		Name:  RepairAuthorName,
+		Email: RepairAuthorEmail,
+		When:  time.Now(),
+	}
+}
+
+// initBareRepoWithFilesAs is initBareRepoWithFiles with the commit's author
+// spelled out.
+func initBareRepoWithFilesAs(path string, files map[string]string, message string, sig *object.Signature) error {
 	repo, err := git.PlainInit(path, true)
 	if err != nil {
 		return fmt.Errorf("init bare repo: %w", err)
@@ -142,11 +172,6 @@ func initBareRepoWithFiles(path string, files map[string]string, message string)
 		return fail(err)
 	}
 
-	sig := &object.Signature{
-		Name:  "Patchwork System",
-		Email: "system@patchwork.local",
-		When:  time.Now(),
-	}
 	commitHash, err := createCommit(repo, treeHash, nil, message, sig)
 	if err != nil {
 		return fail(err)
@@ -373,6 +398,7 @@ func GetHistory(dataDir, nodeID, filename string) ([]CommitInfo, error) {
 			AuthorName:  c.Author.Name,
 			AuthorEmail: c.Author.Email,
 			Date:        c.Author.When,
+			Repair:      repairKind(c),
 		})
 		return nil
 	})

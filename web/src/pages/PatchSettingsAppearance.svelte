@@ -49,7 +49,10 @@
   $effect(() => {
     if (!node?.id) return;
     const ap = node.appearance || null;
-    const pal = paletteForPatch(node.id, ap);
+    // raw: the block drafter always draws Default (docs/adr/112). A tool for
+    // choosing fabric must show the fabric that was chosen — an admin who
+    // picks Hi-Vis and is shown a muted swatch has been lied to by the picker.
+    const pal = paletteForPatch(node.id, ap, { raw: true });
     const isDraft = !!ap?.block && typeof ap.block === 'object';
     const d = {
       mode: isDraft ? 'draft' : 'traditional',
@@ -245,7 +248,7 @@
     <div class="picker-group">
       <span class="picker-label">Palette</span>
       <p class="picker-hint muted">
-        Pre-cut bundles from the record crate. Picking one fills your fabrics below.
+        Pre-cut bundles. Picking one fills your fabrics below.
       </p>
       <div class="palette-grid">
         {#each PALETTE_KEYS as key (key)}

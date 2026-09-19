@@ -9,10 +9,19 @@
   let memberships = $state([]);
   let loading = $state(true);
 
-  // Aggregated attention items
+  // Aggregated attention items.
+  //
+  // Counts came from `items.length` of requests made with `limit=1`, so
+  // every number here was 0 or 1 whatever the patch held. The members
+  // listing sends `member_count` under the same filter it ran, so pending
+  // requests are counted exactly. Proposals and events send no total: those
+  // ask for a page of PAGE and say "20+" when a cursor follows, rather than
+  // stating the page size as the count.
+  const PAGE = 20;
   let pendingCounts = $state({});   // slug → count
-  let proposalCounts = $state({});  // slug → count
+  let proposalCounts = $state({});  // slug → { count, more }
   let upcomingEvents = $state([]);
+  let upcomingMore = $state(false);
 
   $effect(() => {
     if (user) loadMemberships();
@@ -25,7 +34,12 @@
 
   // Total attention items
   let totalPending = $derived(Object.values(pendingCounts).reduce((s, n) => s + n, 0));
-  let totalProposals = $derived(Object.values(proposalCounts).reduce((s, n) => s + n, 0));
+  let totalProposals = $derived(Object.values(proposalCounts).reduce((s, c) => s + c.count, 0));
+  let proposalsMore = $derived(Object.values(proposalCounts).some((c) => c.more));
+
+  function countLabel(count, more) {
+    return `${count}${more ? '+' : ''}`;
+  }
 
   async function loadMemberships() {
     loading = true;
@@ -45,27 +59,33 @@
     const pending = {};
     const proposals = {};
 
-    // Fetch pending counts for admin patches
+    // Pending join requests on the patches this person runs. An admin is
+    // inside the room, so member_count under status=pending is the whole
+    // queue, not the page.
     const adminFetches = adminPatches.map(async (m) => {
       try {
         const data = await api(`nodes/${m.node_slug}/members?status=pending&limit=1`);
-        const items = data.items || data || [];
-        if (items.length > 0) pending[m.node_slug] = items.length;
+        const items = data.items || [];
+        const count = typeof data.member_count === 'number' ? data.member_count : items.length;
+        if (count > 0) pending[m.node_slug] = count;
       } catch {}
     });
 
-    // Fetch open proposal counts for member patches
+    // Open proposals on the patches this person can vote in.
     const memberFetches = [...adminPatches, ...memberPatches].map(async (m) => {
       try {
-        const data = await api(`nodes/${m.node_slug}/proposals?status=open&limit=1`);
-        const items = data.items || data || [];
-        if (items.length > 0) proposals[m.node_slug] = items.length;
+        const data = await api(`nodes/${m.node_slug}/proposals?status=open&limit=${PAGE}`);
+        const items = data.items || [];
+        if (items.length > 0) proposals[m.node_slug] = { count: items.length, more: !!data.next_cursor };
       } catch {}
     });
 
-    // Fetch upcoming events
-    const eventFetch = api(`events?from=${encodeURIComponent(upcomingFrom())}&limit=5`).then(data => {
-      upcomingEvents = data.items || data || [];
+    // Upcoming events on this person's own patches (scope=my, docs/adr/035),
+    // not the whole quilt's calendar: a dashboard headed "attention needed"
+    // that lists strangers' shows is asking for attention it has no claim on.
+    const eventFetch = api(`events?scope=my&from=${encodeURIComponent(upcomingFrom())}&limit=${PAGE}`).then(data => {
+      upcomingEvents = data.items || [];
+      upcomingMore = !!data.next_cursor;
     }).catch(() => {});
 
     await Promise.all([...adminFetches, ...memberFetches, eventFetch]);
@@ -106,19 +126,19 @@
           {/if}
           {#if totalProposals > 0}
             <div class="attention-item">
-              <span class="attention-count">{totalProposals}</span>
-              <span>open {totalProposals === 1 ? 'proposal' : 'proposals'}</span>
-              {#each Object.entries(proposalCounts) as [slug, count]}
+              <span class="attention-count">{countLabel(totalProposals, proposalsMore)}</span>
+              <span>open {totalProposals === 1 && !proposalsMore ? 'proposal' : 'proposals'}</span>
+              {#each Object.entries(proposalCounts) as [slug, c]}
                 <a href="/patches/{slug}/governance/proposals" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/proposals`); }}>
-                  {slug} ({count})
+                  {slug} ({countLabel(c.count, c.more)})
                 </a>
               {/each}
             </div>
           {/if}
           {#if upcomingEvents.length > 0}
             <div class="attention-item">
-              <span class="attention-count">{upcomingEvents.length}</span>
-              <span>upcoming events</span>
+              <span class="attention-count">{countLabel(upcomingEvents.length, upcomingMore)}</span>
+              <span>upcoming {upcomingEvents.length === 1 && !upcomingMore ? 'event' : 'events'} on your patches</span>
               {#each upcomingEvents.slice(0, 3) as event}
                 <a href="/events/{event.id}" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}`); }}>
                   {formatDate(event.starts_at, event.timezone)} &middot; {event.title}
@@ -134,7 +154,7 @@
     <div class="quick-actions">
       <a href="/patches/new" class="action-card" onclick={(e) => { e.preventDefault(); navigate('/patches/new'); }}>
         <span class="action-icon">+</span>
-        <span>Create Patch</span>
+        <span>Add a patch</span>
       </a>
       {#if adminPatches.length > 0}
         <a href="/events/new" class="action-card" onclick={(e) => { e.preventDefault(); navigate('/events/new'); }}>
@@ -182,7 +202,7 @@
                   {m.node_name}
                 </a>
                 {#if proposalCounts[m.node_slug]}
-                  <span class="badge">{proposalCounts[m.node_slug]} open</span>
+                  <span class="badge">{countLabel(proposalCounts[m.node_slug].count, proposalCounts[m.node_slug].more)} open</span>
                 {/if}
               </div>
               <div class="patch-card-actions">

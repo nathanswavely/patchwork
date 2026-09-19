@@ -1,9 +1,28 @@
 {$DOMAIN:localhost} {
-	reverse_proxy patchwork:8080 {
-		# Overwrite rather than append. Caddy's default is to append the peer
-		# address to any client-supplied X-Forwarded-For, which would let a
-		# client inject arbitrary text into the header the app reads for
-		# rate-limit keys, session rows, and the audit log.
-		header_up X-Forwarded-For {remote_host}
-	}
+	# Caddy's reverse_proxy ignores client-supplied X-Forwarded-For by
+	# default and sets it from the connecting address itself; only
+	# `trusted_proxies` opts into believing an incoming value. If another
+	# proxy sits in front of Caddy, `server.trusted_proxies` in
+	# patchwork.yaml is the setting that matters.
+	reverse_proxy patchwork:8080
+
+	# No access log ships, and the shipped privacy policy says so. If you
+	# need one for troubleshooting, this keeps it short-lived and masks the
+	# client address; then edit the policy's "Technical records" paragraph
+	# (Administration → Legal), because it currently says there is no log.
+	# See docs/DEPLOYMENT.md, "Visitor counts and access logs".
+	#
+	# log {
+	# 	output file /data/access.log {
+	# 		roll_size 20mb
+	# 		roll_keep 7
+	# 		roll_keep_for 168h
+	# 	}
+	# 	format filter {
+	# 		request>remote_ip ip_mask 24 48
+	# 		request>client_ip ip_mask 24 48
+	# 		request>headers>Cookie delete
+	# 		request>headers>Authorization delete
+	# 	}
+	# }
 }

@@ -24,7 +24,7 @@ function source(relPath) {
 }
 
 const events = source('pages/PatchEvents.svelte');
-const profile = source('pages/PatchProfile.svelte');
+const profile = ['pages/PatchProfile.svelte', 'components/PatchProfileHead.svelte', 'components/PatchProfileGlimpses.svelte'].map(source).join('\n');
 
 describe('the events page asks the shared question', () => {
   it('calls eventPostingRight rather than deriving its own answer', () => {
@@ -76,7 +76,7 @@ describe('the rights the helper grants, at the boundaries this page cares about'
 
   it('gives a trusted contributor a door on an unclaimed patch', () => {
     expect(
-      eventPostingRight({ signedIn: true, trustedContributor: true, isUnclaimed: true })
+      eventPostingRight({ signedIn: true, viewerTrusted: true, isUnclaimed: true })
     ).toBe('direct');
   });
 

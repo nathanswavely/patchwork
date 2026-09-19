@@ -24,7 +24,9 @@ test.describe('Discovery — Quilt View', () => {
 
   test('1.3 — filter button opens chip strip', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(1000);
+    // Quilt tiles are the page-ready signal; the filter button (if this
+    // viewport shows one) only ever appears after them.
+    await page.locator('svg .tile').first().waitFor({ timeout: 10000 });
     const filterBtn = page.locator('.filter-btn');
     if (await filterBtn.isVisible()) {
       await filterBtn.click();
@@ -45,30 +47,57 @@ test.describe('Discovery — Quilt View', () => {
     await expect(page.locator('.finder-action')).toContainText('Show matches on the quilt');
   });
 
-  test('1.8 — theme toggle in user menu switches between light and dark', async ({ page }) => {
+  test('1.8 — the Display menu switches theme between light and dark', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(500);
 
-    const initialTheme = await page.locator('html').getAttribute('data-theme');
-
-    // Theme toggle lives in the user menu
+    // The lone Light/Dark toggle became the Display menu's Theme row when
+    // docs/adr/112 added Colors beside it. Three choices now, not a flip —
+    // `system` was always the store's default and no UI ever offered it back.
     await page.locator('.bar-avatar-btn').click();
-    await page.locator('.user-dropdown button', { hasText: /mode/i }).click();
-    const newTheme = await page.locator('html').getAttribute('data-theme');
-    expect(newTheme).not.toBe(initialTheme);
+    await expect(page.locator('.display-menu')).toBeVisible();
 
-    // Toggle back — the dropdown stays open after toggling
-    await page.locator('.user-dropdown button', { hasText: /mode/i }).click();
-    const revertedTheme = await page.locator('html').getAttribute('data-theme');
-    expect(revertedTheme).toBe(initialTheme);
+    await page.locator('.display-row', { hasText: 'Theme' }).getByText('Light', { exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+    // The dropdown stays open, so the next choice is one click away.
+    await page.locator('.display-row', { hasText: 'Theme' }).getByText('Dark', { exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  });
+
+  test('1.8b — the Display menu switches the quilt between default and muted', async ({ page }) => {
+    // docs/adr/112. Held per browser rather than on the account, so this
+    // asserts localStorage rather than anything the server knows.
+    await loginAsAdmin(page);
+    await page.goto('/');
+
+    await page.locator('.bar-avatar-btn').click();
+    const colors = page.locator('.display-row', { hasText: 'Colors' });
+    await expect(colors.getByText('Default', { exact: true })).toHaveAttribute('aria-pressed', 'true');
+
+    await colors.getByText('Muted', { exact: true }).click();
+    await expect(colors.getByText('Muted', { exact: true })).toHaveAttribute('aria-pressed', 'true');
+    expect(await page.evaluate(() => localStorage.getItem('patchwork-colors'))).toBe('muted');
+
+    await colors.getByText('Default', { exact: true }).click();
+    expect(await page.evaluate(() => localStorage.getItem('patchwork-colors'))).toBe('default');
+  });
+
+  test('1.8c — a signed-out reader gets the Display menu in the same slot', async ({ page }) => {
+    // docs/adr/112: the control must not move when somebody joins, and an
+    // anonymous reader previously had no theme control at all.
+    await page.goto('/');
+
+    await expect(page.locator('.bar-avatar-btn')).toHaveCount(0);
+    await page.locator('.bar-display-btn').click();
+    await expect(page.locator('.display-menu')).toBeVisible();
+    await expect(page.locator('.display-row', { hasText: 'Colors' })).toBeVisible();
   });
 });
 
 test.describe('Discovery — Sidebar Navigation', () => {
   test('1.5 — Patches nav item shows the quilt', async ({ page }) => {
     await page.goto('/events');
-    await page.waitForTimeout(500);
 
     await page.locator('.rail-item', { hasText: 'Patches' }).click();
     await page.locator('svg .tile').first().waitFor({ timeout: 10000 });
@@ -77,17 +106,15 @@ test.describe('Discovery — Sidebar Navigation', () => {
 
   test('1.6 — Events nav item shows the event list', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await page.locator('.rail-item', { hasText: 'Events' }).click();
-    await page.waitForTimeout(500);
+    await page.waitForURL(/\/events/);
     expect(page.url()).toContain('/events');
   });
 
   test('9.2 — notification panel opens from bell and closes', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await page.locator('.bar-bell .bell-btn').click();
     const panel = page.locator('.sidepanel');
@@ -125,8 +152,10 @@ test.describe('Discovery — Search keyboard behaviour', () => {
     await expect(suggest).not.toHaveClass(/active/);
 
     await searchInput.press('Enter');
-    await page.waitForTimeout(300);
-    expect(new URL(page.url()).pathname).toBe('/');
+    // Enter on a zero-result query is handled synchronously (activeIndex
+    // stays -1, so onKeydown returns before touching navigation) — no
+    // navigation is ever in flight to wait out.
+    await expect(page).toHaveURL('/');
 
     // Still reachable deliberately.
     await suggest.click();
@@ -162,7 +191,6 @@ test.describe('Discovery — Mobile search takeover', () => {
 test.describe('Discovery — Workspace Switcher', () => {
   test('logged out — switcher shows instance only, no My Quilt option', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await page.locator('.scope-btn').click();
     const dropdown = page.locator('.scope-dropdown');
@@ -173,7 +201,6 @@ test.describe('Discovery — Workspace Switcher', () => {
   test('logged in — switcher offers instance and My Quilt', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await page.locator('.scope-btn').click();
     const options = page.locator('.scope-dropdown .scope-option');
@@ -186,15 +213,16 @@ test.describe('Discovery — Workspace Switcher', () => {
   test('logged in — / is the whole quilt, never My Quilt', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(1000);
 
+    // Ground the negative assertion on the label actually being mounted —
+    // otherwise a not-yet-rendered element (empty text) would pass trivially.
+    await expect(page.locator('.scope-btn .logo-label')).toBeVisible();
     await expect(page.locator('.scope-btn .logo-label')).not.toContainText('My Quilt');
   });
 
   test('logged in — /my is My Quilt scope', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/my');
-    await page.waitForTimeout(1000);
 
     await expect(page.locator('.scope-btn .logo-label')).toContainText('My Quilt');
   });
@@ -202,7 +230,6 @@ test.describe('Discovery — Workspace Switcher', () => {
   test('logged in — selecting My Quilt moves to /my', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(1000);
 
     await page.locator('.scope-btn').click();
     await page.locator('.scope-dropdown .scope-option').nth(1).click();
@@ -213,7 +240,6 @@ test.describe('Discovery — Workspace Switcher', () => {
   test('logged in — selecting the instance switches scope back', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/my');
-    await page.waitForTimeout(1000);
 
     await page.locator('.scope-btn').click();
     await page.locator('.scope-dropdown .scope-option').first().click();
@@ -224,7 +250,6 @@ test.describe('Discovery — Workspace Switcher', () => {
 test.describe('Discovery — Top Bar Identity', () => {
   test('logged out — shows "Log In" button instead of user icon', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     const loginBtn = page.locator('.bar-login');
     await expect(loginBtn).toBeVisible();
@@ -233,17 +258,15 @@ test.describe('Discovery — Top Bar Identity', () => {
 
   test('logged out — Log In button navigates to login page', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await page.locator('.bar-login').click();
-    await page.waitForTimeout(500);
+    await page.waitForURL(/\/login/);
     expect(page.url()).toContain('/login');
   });
 
   test('logged in — shows avatar button with user menu', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     const avatarBtn = page.locator('.bar-avatar-btn');
     await expect(avatarBtn).toBeVisible();
@@ -258,7 +281,6 @@ test.describe('Discovery — Top Bar Identity', () => {
   test('logged in — user dropdown shows Settings and Log Out', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await page.locator('.bar-avatar-btn').click();
     const dropdown = page.locator('.user-dropdown');
@@ -271,7 +293,6 @@ test.describe('Discovery — Top Bar Identity', () => {
   test('logged in — user dropdown Admin link visible for admin users', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await page.locator('.bar-avatar-btn').click();
     const dropdown = page.locator('.user-dropdown');
@@ -282,7 +303,6 @@ test.describe('Discovery — Top Bar Identity', () => {
   test('logged in — notification bell is visible in the top bar', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/');
-    await page.waitForTimeout(500);
 
     await expect(page.locator('.bar-bell')).toBeVisible();
   });

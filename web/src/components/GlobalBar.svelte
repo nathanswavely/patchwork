@@ -16,8 +16,8 @@
    */
   import { navigate, getPath } from '../stores/router.svelte.js';
   import { isLoggedIn, isAdmin as isGlobalAdmin, getUser, logout } from '../stores/auth.svelte.js';
-  import { toggleTheme, getResolvedTheme } from '../stores/theme.svelte.js';
-  import { Plus } from 'phosphor-svelte';
+  import { Plus, Sliders } from 'phosphor-svelte';
+  import DisplayMenu from './DisplayMenu.svelte';
   import NotificationBell from './NotificationBell.svelte';
   import SidePanel from './SidePanel.svelte';
   import NotifIcon from './NotifIcon.svelte';
@@ -31,7 +31,7 @@
 
   let userMenuOpen = $state(false);
   let newMenuOpen = $state(false);
-  let isDark = $state(getResolvedTheme() === 'dark');
+  let displayMenuOpen = $state(false);
 
   // Notification panel state
   let notifPanelOpen = $state(false);
@@ -90,17 +90,13 @@
     return `${Math.floor(hrs / 24)}d ago`;
   }
 
-  function handleThemeToggle() {
-    toggleTheme();
-    isDark = getResolvedTheme() === 'dark';
-  }
-
   // Close menus on navigation
   let path = $derived(getPath());
   $effect(() => {
     void path;
     userMenuOpen = false;
     newMenuOpen = false;
+    displayMenuOpen = false;
   });
 
   function handleNav(e, href) {
@@ -188,9 +184,8 @@
               <a href="/admin" onclick={(e) => { handleNav(e, '/admin'); userMenuOpen = false; }}>Admin</a>
             {/if}
             <div class="dropdown-divider"></div>
-            <button onclick={() => { handleThemeToggle(); }}>
-              {isDark ? 'Light mode' : 'Dark mode'}
-            </button>
+            <DisplayMenu />
+            <div class="dropdown-divider"></div>
             <button onclick={handleLogout}>Log Out</button>
           </div>
         {/if}
@@ -204,6 +199,23 @@
            /login straight to the sign-in panel via ?mode=signin. Under
            640px only Sign Up remains: /login's sign-in toggle is one tap
            in, the unified-auth-page pattern. -->
+      <div class="display-menu-container">
+        <button
+          class="bar-display-btn"
+          class:open={displayMenuOpen}
+          onclick={() => { displayMenuOpen = !displayMenuOpen; }}
+          aria-label="Display"
+          aria-haspopup="menu"
+          aria-expanded={displayMenuOpen}
+        >
+          <Sliders size={18} />
+        </button>
+        {#if displayMenuOpen}
+          <div class="user-dropdown display-dropdown" role="menu">
+            <DisplayMenu />
+          </div>
+        {/if}
+      </div>
       <a href="/login?mode=signin" class="bar-login" onclick={(e) => handleNav(e, '/login?mode=signin')}>Log In</a>
       <a href="/login" class="btn btn-primary bar-signup" onclick={(e) => handleNav(e, '/login')}>Sign Up</a>
     {/if}
@@ -465,6 +477,38 @@
 
   .user-menu-container {
     position: relative;
+  }
+
+  .display-menu-container {
+    position: relative;
+  }
+
+  /* Signed out, this occupies the slot the avatar holds once you join, so
+     the Display control does not move when somebody signs up (docs/adr/112).
+     It also closes a gap that predates muted colors: an anonymous reader had
+     no theme control at all, and got whatever their OS asked for. */
+  .bar-display-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+
+  .bar-display-btn:hover,
+  .bar-display-btn.open {
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .display-dropdown {
+    min-width: 232px;
+    padding: 0;
   }
 
   .user-dropdown {

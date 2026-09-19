@@ -30,6 +30,10 @@ const GO_FILES = [
   'internal/notifications/email.go',      // email subjects/bodies
   'internal/notifications/reminders.go',
   'internal/notifications/inactivity.go',
+  // A notification built in a handler rather than in notifications/ is copy
+  // all the same, and the handler sweep below takes only `{"error":"..."}`
+  // bodies, so this one's title and body were invisible to the ledger.
+  'internal/handler/follower_charters_default.go',
 ];
 
 // Every handler, for its API error messages alone.

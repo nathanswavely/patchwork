@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { timeLeft as timeLeftFor, timeLeftPhrase, formatDay } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from './ConfirmAction.svelte';
 
@@ -12,14 +13,25 @@
     votingEndsAt = null,
     approveCount = 0,
     rejectCount = 0,
+    abstainCount = 0,
     directChange = false,
     canVote = false,
+    // The maintainer's patch (docs/adr/092). `advisory` says any tally on
+    // this proposal is advice and the maintainer decides; `canDecide` is the
+    // server's answer to whether this viewer is that maintainer, right now;
+    // `declinedBy` names who said no, when somebody did.
+    advisory = false,
+    canDecide = false,
+    declinedBy = '',
     // An election's phase, empty on every other proposal (docs/adr/051). An
     // election row carries state 'voting' from the moment it is created, so
     // without this the banner announces an open vote through the whole
     // nomination window — over a panel correctly saying nominations close in
     // two weeks, and with an empty time-left leaving "Voting is open. .".
     electionPhase = '',
+    // When standing shuts. A different deadline from votingEndsAt, and the
+    // only one that matters while nominations are open (docs/adr/106).
+    nominationsCloseAt = null,
     onStateChange = () => {},
   } = $props();
 
@@ -42,13 +54,10 @@
   let effectiveState = $derived(propState || (status === 'open' ? 'voting' : status === 'passed' || status === 'approved' ? 'approved' : status));
 
   let timeLeft = $derived.by(() => {
-    if (!votingEndsAt) return '';
-    const ms = new Date(votingEndsAt) - new Date();
-    if (ms <= 0) return 'Voting ended';
-    const days = Math.floor(ms / 86400000);
-    const hours = Math.floor((ms % 86400000) / 3600000);
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} left`;
-    return `${hours} hour${hours > 1 ? 's' : ''} left`;
+    const left = timeLeftFor(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'Voting ended';
+    return `${timeLeftPhrase(left)} left`;
   });
 
   // "Cast your vote below" only when there is a vote below. A viewer outside
@@ -62,7 +71,48 @@
       (canVote ? ' Cast your vote below.' : '')
   );
 
+  // An advisory vote says so in the first breath (docs/adr/092): a member
+  // watching a bar fill toward a majority that has no force is the lie the
+  // whole feature exists to end.
+  let advisoryLine = $derived(
+    (timeLeft ? `Advisory vote. ${timeLeft}. ` : 'Advisory vote. ') +
+      'The maintainer decides.' +
+      (canVote ? ' Cast your vote below.' : '')
+  );
+
+  let hasBallots = $derived(approveCount + rejectCount + abstainCount > 0);
+  // The members can be asked once. A window that has run carries its
+  // advice; the server refuses a second one and the button is not offered.
+  let mayAskMembers = $derived(canDecide && !hasBallots && !votingEndsAt);
+
   let applying = $state(false);
+  let deciding = $state(false);
+
+  async function handleDecide(decision) {
+    deciding = true;
+    try {
+      await api(`proposals/${proposalId}/decide`, { method: 'POST', body: { decision } });
+      showToast(decision === 'approve' ? 'Approved. The change is in effect' : 'Declined', decision === 'approve' ? 'success' : 'info');
+      onStateChange(decision === 'approve' ? 'in_effect' : 'rejected');
+    } catch (e) {
+      showToast(e.message || 'Failed to decide', 'error');
+    } finally {
+      deciding = false;
+    }
+  }
+
+  async function handleAskMembers() {
+    deciding = true;
+    try {
+      await api(`proposals/${proposalId}/open-vote`, { method: 'POST', body: {} });
+      showToast('Advisory vote opened', 'success');
+      onStateChange('voting');
+    } catch (e) {
+      showToast(e.message || 'Failed to open the vote', 'error');
+    } finally {
+      deciding = false;
+    }
+  }
 
   async function handleApply() {
     applying = true;
@@ -94,7 +144,18 @@
        no ballot and no clock, so the phase decides this branch, not the
        state. -->
   <div class="status-banner voting">
-    <p>Nominations are open. Voting starts when they close.</p>
+    <!-- With the date (docs/adr/106). This said only that nominations were
+         open; the one number on the page was the voting countdown, which is
+         a different deadline. Three members of a co-op arrived to stand after
+         the window had shut, and the person who told them when it shut had
+         read the wrong line. A window is its closing date. -->
+    <p>
+      {#if nominationsCloseAt}
+        Nominations are open until {formatDay(nominationsCloseAt)}. Voting starts then.
+      {:else}
+        Nominations are open. Voting starts when they close.
+      {/if}
+    </p>
     {#if mayWithdraw}
       <div class="banner-actions">
         <ConfirmAction
@@ -103,6 +164,38 @@
           variant="danger"
           onConfirm={handleWithdraw}
         />
+      </div>
+    {/if}
+  </div>
+
+{:else if effectiveState === 'voting' && advisory}
+  <!-- The maintainer asked the members (docs/adr/092). The vote runs on
+       the ordinary ballot and the ordinary clock, and decides nothing: the
+       maintainer may approve or decline at any time, and when the window
+       closes the proposal comes back to them with the tally attached. -->
+  <div class="status-banner voting advisory">
+    <p>{advisoryLine}</p>
+    {#if canDecide || mayWithdraw}
+      <div class="banner-actions">
+        {#if canDecide}
+          <button class="btn btn-primary" onclick={() => handleDecide('approve')} disabled={deciding}>
+            {deciding ? 'Working...' : 'Approve'}
+          </button>
+          <ConfirmAction
+            label="Decline"
+            confirmLabel="Decline this proposal"
+            variant="danger"
+            onConfirm={() => handleDecide('decline')}
+          />
+        {/if}
+        {#if mayWithdraw}
+          <ConfirmAction
+            label="Withdraw this proposal"
+            confirmLabel="Withdraw"
+            variant="danger"
+            onConfirm={handleWithdraw}
+          />
+        {/if}
       </div>
     {/if}
   </div>
@@ -118,6 +211,49 @@
           variant="danger"
           onConfirm={handleWithdraw}
         />
+      </div>
+    {/if}
+  </div>
+
+{:else if effectiveState === 'awaiting_admin'}
+  <!-- Waiting on the maintainer (docs/adr/092). Open, discussable, and
+       carrying no ballot: a member's proposal is born here, and an
+       advisory vote lands back here when its window closes. No clock ends
+       it; only an admin's decision or the author withdrawing does. -->
+  <div class="status-banner awaiting">
+    <p>
+      {#if hasBallots}
+        The members have been asked and the vote has closed. The maintainer decides, with the tally below.
+      {:else}
+        Waiting on the maintainer. This patch's admins decide its proposals, and may ask the members first.
+      {/if}
+    </p>
+    {#if canDecide || mayWithdraw}
+      <div class="banner-actions">
+        {#if canDecide}
+          <button class="btn btn-primary" onclick={() => handleDecide('approve')} disabled={deciding}>
+            {deciding ? 'Working...' : 'Approve'}
+          </button>
+          <ConfirmAction
+            label="Decline"
+            confirmLabel="Decline this proposal"
+            variant="danger"
+            onConfirm={() => handleDecide('decline')}
+          />
+          {#if mayAskMembers}
+            <button class="btn btn-secondary" onclick={handleAskMembers} disabled={deciding}>
+              Ask the members
+            </button>
+          {/if}
+        {/if}
+        {#if mayWithdraw}
+          <ConfirmAction
+            label="Withdraw this proposal"
+            confirmLabel="Withdraw"
+            variant="danger"
+            onConfirm={handleWithdraw}
+          />
+        {/if}
       </div>
     {/if}
   </div>
@@ -156,14 +292,63 @@
     {/if}
   </div>
 
-{:else if effectiveState === 'in_effect' || effectiveState === 'passed'}
+{:else if (effectiveState === 'in_effect' || effectiveState === 'passed') && electionPhase}
+  <!-- A settled election (docs/adr/109). It fell through to the amendment
+       branch below and read "Approved. This change is now in effect." over a
+       council: no winner, no chair, no term, and a community's leadership
+       called "this change". The `unsettled` sibling has had a sentence of its
+       own since docs/adr/097; the outcome a year of contests is actually for
+       had none. Who was seated is in the panel below, which is why this does
+       not repeat it. -->
   <div class="status-banner in-effect">
-    <p>{directChange ? 'This change is in effect.' : 'Approved. This change is now in effect.'}</p>
+    <p>This election has closed and the council below is seated.</p>
   </div>
 
+{:else if effectiveState === 'in_effect' || effectiveState === 'passed'}
+  <div class="status-banner in-effect">
+    <p>
+      {#if directChange}
+        This change is in effect.
+      {:else if advisory}
+        The maintainer approved this. It is in effect.
+      {:else}
+        Approved. This change is now in effect.
+      {/if}
+    </p>
+  </div>
+
+{:else if effectiveState === 'lapsed'}
+  <!-- The window closed under quorum (docs/adr/097). Nobody decided
+       anything, so this is worded as a vote that did not happen rather than
+       one that failed; the tally below is who turned up. -->
+  <div class="status-banner lapsed">
+    <p>Voting ended without reaching quorum. This proposal lapsed and was not decided.</p>
+  </div>
+
+{:else if effectiveState === 'unsettled'}
+  <!-- An election that seated nobody: no candidates, quorum unmet, or
+       nobody approved (docs/adr/051). The election-shaped sibling of a
+       lapse — holdover, not a rejection — so it never wears the tally
+       sentence below, which would read "0 approved, 0 rejected" over a
+       contest the community simply did not settle. -->
+  <div class="status-banner unsettled">
+    <!-- Not "the council continues" (docs/adr/106): this banner outlives the
+         council it would be describing, and on a patch with no admins it was
+         the same comfortable lie the record was telling. The seats it names
+         are the ones this contest was for (docs/adr/103). -->
+    <p>This election settled nothing; nobody was seated, and the seats it was for are unchanged.</p>
+  </div>
 {:else if effectiveState === 'rejected'}
   <div class="status-banner rejected">
-    <p>This proposal did not pass. {approveCount} approved, {rejectCount} rejected.</p>
+    <!-- A decline is one person's decision (docs/adr/092), and the tally, if
+         any, was advice — so it is never worded as a vote that failed. -->
+    <p>
+      {#if declinedBy}
+        Declined by {declinedBy}.
+      {:else}
+        This proposal did not pass. {approveCount} approved, {rejectCount} rejected.
+      {/if}
+    </p>
   </div>
 
 {:else if effectiveState === 'withdrawn'}
@@ -191,6 +376,18 @@
     color: var(--color-text);
   }
 
+  /* Advice, not a decision: the vote's own tint, dashed, so it reads as a
+     vote with something missing (docs/adr/092). */
+  .voting.advisory {
+    border-style: dashed;
+  }
+
+  .awaiting {
+    background: var(--color-overlay);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+  }
+
   .elsewhere {
     background: var(--color-overlay);
     border: 1px solid var(--color-border);
@@ -215,7 +412,9 @@
     color: var(--color-text-muted);
   }
 
-  .withdrawn {
+  .withdrawn,
+  .lapsed,
+  .unsettled {
     background: var(--color-overlay);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);

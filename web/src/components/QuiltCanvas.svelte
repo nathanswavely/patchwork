@@ -17,6 +17,7 @@
     getRemoteFollows, fetchQuiltInfo, colorForQuilt, refreshFollowSnapshot,
   } from '../stores/multiQuilt.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
+  import { getColorMode } from '../stores/colors.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
 
   // A search that named a group the quilt doesn't have. The filter-miss case
@@ -70,6 +71,11 @@
     // either surface (docs/adr/078) — a sheet you can only dismiss by
     // finding its one small button is a sheet in the reader's way.
     onBackgroundClick = null,
+    // A patch the *parent* is pointing at, from outside the canvas: hovering
+    // its card in the list beside the quilt (docs/adr/112). The canvas answers
+    // with the same hover dim a tile's own pointerenter engages, so the two
+    // surfaces cannot drift into two different ideas of "this one".
+    focusPatchId = null,
   } = $props();
 
   let containerEl = $state(null);
@@ -485,6 +491,51 @@
       if (tileMap.size > 0) {
         relayout(ids);
       }
+    });
+  });
+
+  // The card list pointing at a patch (docs/adr/112).
+  //
+  // Only when that patch's tile is actually on screen. Dimming every visible
+  // tile for one that is scrolled out of view leaves nothing lit, which reads
+  // as the quilt breaking rather than as an answer — the dim says "this one",
+  // and it cannot say it about something the reader cannot see.
+  $effect(() => {
+    const id = focusPatchId;
+    untrack(() => {
+      if (!interactive) return;
+      if (!id) {
+        releaseDim();
+        return;
+      }
+      const inView = computeInView();
+      if (inView && !inView.includes(id)) {
+        releaseDim();
+        return;
+      }
+      engageDim(id);
+    });
+  });
+
+  // Rebuild when the viewer changes register (docs/adr/112).
+  //
+  // A repaint would be the obvious move and is not available: the fabric is
+  // batched by paint within spatial chunks (docs/adr/066), the weave is baked
+  // per fabric, and the corner marks carry the identity color — so a colour
+  // change touches geometry that was merged on the way in. A rebuild is the
+  // honest answer, and this is a deliberate act a reader takes rarely, not
+  // something on a frame path.
+  let prevColorMode = getColorMode();
+  $effect(() => {
+    const mode = getColorMode();
+    untrack(() => {
+      if (mode === prevColorMode) return;
+      prevColorMode = mode;
+      if (!layoutBuilt) return;
+      resetDim();
+      layoutBuilt = false;
+      tileMap = new Map();
+      buildLayout();
     });
   });
 
@@ -1030,7 +1081,8 @@
           syncRoleMark(entry);
         }
 
-        // Hover overlay (starts transparent, darkens on hover).
+        // The scrim this tile takes while another tile is hovered
+        // (docs/adr/112). Transparent at rest; see the hover dim above.
         inner.append('rect').attr('class', 'overlay')
           .attr('width', s).attr('height', s)
           .attr('fill', 'transparent')
@@ -1045,24 +1097,35 @@
         // the badge already said the name, which made the same gesture do
         // different things depending on a collision the reader can't see —
         // and the name is the one thing in the tip they already had.
+        //
+        // Pointer events rather than mouse events, and only a hovering
+        // pointer answers (isHoverPointer): a finger fires the same enter
+        // on its way to a tap, and on a laptop with a touchscreen the
+        // build-time media query below says "hover" while the finger says
+        // otherwise. The tip then arrived with the tap and stayed. A click
+        // hides it too — the tap has been answered by the docked profile,
+        // and a tip that outlives its click sits on top of that answer.
         if (interactive) {
-          g.on('mouseenter', function(event) {
-            d3.select(this).select('.overlay').attr('fill', 'var(--color-overlay-hover)');
+          g.on('pointerenter', function(event) {
+            if (!isHoverPointer(event)) return;
+            engageDim(tile.data.id);
             if (onPatchHover) onPatchHover(tile.data);
-            showTooltip(tile.data, event.clientX, event.clientY);
+            if (!tipHeld(event)) showTooltip(tile.data, event.clientX, event.clientY);
           })
-          .on('mousemove', function(event) {
+          .on('pointermove', function(event) {
+            if (!isHoverPointer(event)) return;
             if (tooltip && tooltip.style.display === 'block') {
               tooltip.style.left = event.clientX + 14 + 'px';
               tooltip.style.top = event.clientY - 10 + 'px';
             }
           })
-          .on('mouseleave', function() {
-            d3.select(this).select('.overlay').attr('fill', 'transparent');
+          .on('pointerleave', function() {
+            releaseDim();
             if (onPatchHover) onPatchHover(null);
-            if (tooltip) tooltip.style.display = 'none';
+            hideTooltip();
           })
-          .on('click', function() {
+          .on('click', function(event) {
+            holdTooltip(event);
             if (tile.data.slug) onPatchClick(tile.data.slug, tile.data._source || null);
           });
         }
@@ -1216,6 +1279,109 @@
     if (standingIds.size !== allChildren.length) {
       relayout(standingIds);
     }
+  }
+
+  // --- Hover dim (docs/adr/112) ---
+  //
+  // Pointing at a tile scrims every *other* tile, rather than darkening the
+  // one under the pointer as this used to. Dim and mute are deliberately
+  // different channels: if hover muted, a reader already in muted colors
+  // would get nothing at all from hovering, which is the reader most likely
+  // to want it.
+  //
+  // Recolouring is not available here — the fabric is built once and batched
+  // by paint within spatial chunks (docs/adr/066), so a recolour invalidates
+  // every batch on every pointer move. Every tile already carries a
+  // transparent .overlay rect, so this is one attribute per tile.
+  //
+  // It engages on a dwell and releases on a delay, and crossing from tile to
+  // tile just moves the lit hole. Without that, panning across a dense quilt
+  // strobes the whole canvas — the same failure the name badges spent
+  // LABEL_KEEP and a ramp-not-a-cutoff avoiding for a single pill.
+  const DIM_DWELL_MS = 150;
+  const DIM_RELEASE_MS = 120;
+  let dimEngageTimer = null;
+  let dimReleaseTimer = null;
+  let dimLitPatchId = null;
+
+  function paintDim(litPatchId) {
+    if (!svgSelection) return;
+    svgSelection.selectAll('.overlay').attr('fill', 'var(--color-quilt-dim)');
+    const entry = litPatchId ? cornerMarks.get(litPatchId) : null;
+    if (entry) entry.inner.select('.overlay').attr('fill', 'transparent');
+    dimLitPatchId = litPatchId;
+  }
+
+  /** Drop the dim without touching the DOM — for a rebuild, which is about
+   *  to replace every overlay with a fresh transparent one anyway. */
+  function resetDim() {
+    clearTimeout(dimEngageTimer);
+    clearTimeout(dimReleaseTimer);
+    dimEngageTimer = null;
+    dimReleaseTimer = null;
+    dimLitPatchId = null;
+  }
+
+  function clearDim() {
+    dimReleaseTimer = null;
+    if (svgSelection) svgSelection.selectAll('.overlay').attr('fill', 'transparent');
+    dimLitPatchId = null;
+  }
+
+  function engageDim(patchId) {
+    clearTimeout(dimReleaseTimer);
+    dimReleaseTimer = null;
+    // Already dimmed: move the hole immediately, so crossing tiles reads as
+    // one continuous state rather than a flicker per boundary.
+    if (dimLitPatchId !== null) {
+      paintDim(patchId);
+      return;
+    }
+    clearTimeout(dimEngageTimer);
+    dimEngageTimer = setTimeout(() => {
+      dimEngageTimer = null;
+      paintDim(patchId);
+    }, DIM_DWELL_MS);
+  }
+
+  function releaseDim() {
+    clearTimeout(dimEngageTimer);
+    dimEngageTimer = null;
+    clearTimeout(dimReleaseTimer);
+    dimReleaseTimer = setTimeout(clearDim, DIM_RELEASE_MS);
+  }
+
+  // A pointer that hovers. Touch never does — a finger's pointerenter is
+  // the front half of a tap — so a tip shown for it would outlive the only
+  // gesture that could dismiss it. Pen and mouse both hover.
+  function isHoverPointer(event) {
+    return event.pointerType !== 'touch';
+  }
+
+  function hideTooltip() {
+    if (tooltip) tooltip.style.display = 'none';
+  }
+
+  // A click is answered by the docked profile, and opening it relays out
+  // the surface under a cursor that has not moved — at which point Chrome
+  // re-enters every element beneath it, tile included, and a tip that came
+  // back on that enter sat on top of the answer. So a click holds the tip
+  // where the cursor is, and the hold lifts when the pointer itself moves,
+  // not when the page moves under it.
+  let tipHeldAt = null;
+
+  function holdTooltip(event) {
+    hideTooltip();
+    tipHeldAt = { x: event.clientX, y: event.clientY };
+  }
+
+  function tipHeld(event) {
+    if (!tipHeldAt) return false;
+    if (Math.abs(event.clientX - tipHeldAt.x) > 3 || Math.abs(event.clientY - tipHeldAt.y) > 3) {
+      tipHeldAt = null;
+      return false;
+    }
+    return true;
   }
 
   function showTooltip(data, x, y) {
@@ -1454,21 +1620,26 @@
     // moment the pointer found the name. Same door as the tile
     // (docs/adr/078) — the badge is part of the patch, not a thing beside it.
     const tileData = tile.data;
-    label.addEventListener('mouseenter', (event) => {
+    label.addEventListener('pointerenter', (event) => {
+      if (!isHoverPointer(event)) return;
+      engageDim(tileData.id);
       if (onPatchHover) onPatchHover(tileData);
-      showTooltip(tileData, event.clientX, event.clientY);
+      if (!tipHeld(event)) showTooltip(tileData, event.clientX, event.clientY);
     });
-    label.addEventListener('mousemove', (event) => {
+    label.addEventListener('pointermove', (event) => {
+      if (!isHoverPointer(event)) return;
       if (tooltip && tooltip.style.display === 'block') {
         tooltip.style.left = event.clientX + 14 + 'px';
         tooltip.style.top = event.clientY - 10 + 'px';
       }
     });
-    label.addEventListener('mouseleave', () => {
+    label.addEventListener('pointerleave', () => {
+      releaseDim();
       if (onPatchHover) onPatchHover(null);
-      if (tooltip) tooltip.style.display = 'none';
+      hideTooltip();
     });
-    label.addEventListener('click', () => {
+    label.addEventListener('click', (event) => {
+      holdTooltip(event);
       // A pan that started on this badge still ends in a click (synthesized
       // on touch, native on mouseup) — dragging the quilt shouldn't open
       // whatever happened to be under the pointer.
@@ -2168,6 +2339,41 @@
     };
   });
 
+  // The cards pane changing width (docs/adr/111). Nothing above catches it:
+  // the ResizeObserver watches .quilt-pane, which is `inset: 0` — full-bleed
+  // *behind* the pane — so the container's own size never moves when the
+  // pane's does. Every other consumer of insetRight reads it inside a pass
+  // something else triggers, which is why widening the pane used to leave the
+  // quilt centred for the old width.
+  //
+  // Re-centre, never re-zoom. The quilt is centred in [0, vw - padRight], so
+  // when padRight goes from P1 to P2 the centre moves by (P1 - P2)/2 — hiding
+  // the pane slides the quilt right into the room it just gained. A zoom-fit
+  // would have been consistent with "the canvas zoom-fits at rest"
+  // (docs/adr/074) and was rejected: moving a divider is not a request to be
+  // taken somewhere, and a reader zoomed into one corner stays there. 150ms
+  // is the pane's own width transition, so the two edges move together.
+  let lastInsetRight = null;
+  $effect(() => {
+    const inset = insetRight;
+    untrack(() => {
+      const prev = lastInsetRight;
+      lastInsetRight = inset;
+      // First read establishes the baseline; the opening layout centres
+      // itself from insetRight already.
+      if (prev === null || prev === inset) return;
+      if (!svgSelection || !zoomBehavior || !placedTiles.length) return;
+      const { vw } = getContainerSize();
+      if (!vw) return;
+      const dx = (Math.round(vw * prev) - Math.round(vw * inset)) / 2;
+      if (!dx) return;
+      const t = currentTransform;
+      svgSelection.transition('paneWidth').duration(150).ease(d3.easeCubicInOut)
+        .call(zoomBehavior.transform,
+          d3.zoomIdentity.translate(t.x + dx, t.y).scale(t.k));
+    });
+  });
+
   onMount(() => {
     loadData();
     // The tooltip lives on <body>, not in this component's markup:
@@ -2315,6 +2521,12 @@
     overflow: hidden;
     /* Touches here belong to the quilt's own pan/zoom, not to the page. */
     touch-action: none;
+  }
+
+  /* The hover dim moves fill on every tile at once; easing it is what makes
+     that read as the quilt settling rather than as a repaint. */
+  .canvas-container :global(rect.overlay) {
+    transition: fill 160ms ease;
   }
 
   .canvas-container :global(svg) {

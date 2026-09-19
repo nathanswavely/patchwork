@@ -78,6 +78,7 @@ func TestGovernanceOverview_NeedsVoteFollowsElectorate(t *testing.T) {
 		admin, _ := createTestUser(t, db, "ov_admin_t", "member")
 		newMember, newMemberToken := createTestUser(t, db, "ov_new_member", "member")
 		nodeID := createTestNode(t, db, admin.ID, "Overview T", "overview-t", "open")
+		predateNode(t, db, nodeID) // the tenure rule applies in full (docs/adr/098)
 		createTestMembership(t, db, admin.ID, nodeID, "admin", "active")
 		createTestMembership(t, db, newMember.ID, nodeID, "member", "active")
 		if _, err := db.Exec(`UPDATE nodes SET governance_config = ? WHERE id = ?`,

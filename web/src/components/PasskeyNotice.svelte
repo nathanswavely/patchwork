@@ -1,21 +1,26 @@
 <script>
   /**
-   * Tells an admin that an action needs a passkey they don't have yet
-   * (docs/adr/017).
+   * Tells an admin that an action needs a confirmation they can't yet give
+   * (docs/adr/017, docs/adr/099).
    *
    * Shown up front, next to the action, not raised as an error once they
    * click. Discovering the requirement at the moment you are trying to
    * export your data is the failure mode this exists to avoid.
+   *
+   * It names both proofs. "Add a passkey first" was a dead end for the one
+   * person who most needs to read this — the device that cannot make one.
    */
   let { show = false, action = 'this action' } = $props();
 </script>
 
 {#if show}
   <p class="passkey-notice" role="status">
-    <strong>Passkey needed.</strong>
-    To {action} you'll be asked to confirm with a passkey, and you don't have
-    one enrolled yet. <a href="/settings/security">Add a passkey</a> first.
-    It takes a moment and uses the sign-in you already have.
+    <strong>Confirmation needed.</strong>
+    To {action} you'll be asked to confirm, and you don't have a passkey
+    enrolled yet. <a href="/settings/security">Add a passkey</a> first — it
+    takes a moment and uses the sign-in you already have. If this device
+    can't make one, a recovery code confirms too, once you've signed in again
+    with one.
   </p>
 {/if}
 

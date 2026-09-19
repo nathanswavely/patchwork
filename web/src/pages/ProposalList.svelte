@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { timeLeft, timeLeftShort } from '../lib/datetime.js';
   import { docLabel } from '../lib/docLabel.js';
   import { navigate } from '../stores/router.svelte.js';
 
@@ -15,8 +16,27 @@
   let proposals = $state([]);
   let loading = $state(true);
   let followerPermissions = $derived(patch.value.followerPermissions);
-  let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.proposals === false);
+  // Two different refusals that land on the same notice. The follower key is
+  // workspace tidiness over a read that used to stay public (docs/adr/095);
+  // the record setting is the read itself
+  // (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). The
+  // nav drops this section for an outsider on a closed record, so reaching
+  // here means a typed or shared URL — it still has to say why.
+  let recordInsider = $derived(
+    patch.value.isAdmin || membershipRole === 'member' || membershipRole === 'admin'
+  );
+  let recordWithheld = $derived(
+    !recordInsider && patch.value.node?.public_governance_record === 'nobody'
+  );
+  let permissionDenied = $derived(
+    recordWithheld || (membershipRole === 'follower' && followerPermissions?.proposals === false)
+  );
   let statusFilter = $state('open');
+  // On an admin-decides patch an admin's new proposal is a change they
+  // apply, and the button says so (docs/adr/041, docs/adr/092). The patch's
+  // own role, not `isAdmin`, which is set for instance admins too.
+  let adminDecides = $derived(patch.value.node?.governance_config?.decision_method === 'admin');
+  let newLabel = $derived(adminDecides && membershipRole === 'admin' ? 'New change' : 'New Proposal');
 
   $effect(() => {
     if (slug) {
@@ -43,10 +63,12 @@
   }
 
   function statusClass(status) {
-    if (status === 'approved') return 'status-approved';
+    if (status === 'approved' || status === 'applied') return 'status-approved';
     if (status === 'rejected') return 'status-rejected';
     if (status === 'open') return 'status-open';
-    if (status === 'withdrawn') return 'status-withdrawn';
+    // Withdrawn, lapsed and unsettled all mean "ended without a decision":
+    // muted, not red.
+    if (status === 'withdrawn' || status === 'lapsed' || status === 'unsettled') return 'status-withdrawn';
     return '';
   }
 
@@ -56,17 +78,10 @@
   }
 
   function timeRemaining(votingEndsAt) {
-    if (!votingEndsAt) return '';
-    const now = new Date();
-    const end = new Date(votingEndsAt);
-    const diff = end - now;
-    if (diff <= 0) return 'Voting ended';
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(hours / 24);
-    if (days > 0) return `${days}d ${hours % 24}h left`;
-    if (hours > 0) return `${hours}h left`;
-    const mins = Math.floor(diff / (1000 * 60));
-    return `${mins}m left`;
+    const left = timeLeft(votingEndsAt);
+    if (!left) return '';
+    if (left.ended) return 'Voting ended';
+    return `${timeLeftShort(left)} left`;
   }
 
   function voteTallyPercent(approve, reject) {
@@ -80,6 +95,18 @@
   // says "applied" rather than "approved".
   function isDirectRow(p) {
     return p.status === 'approved' && !((p.approve_count || 0) + (p.reject_count || 0) + (p.abstain_count || 0));
+  }
+
+  // What the row calls the proposal's outcome. A lapsed vote carries the
+  // schema's terminal "rejected" status (docs/adr/097) but nobody rejected
+  // it, so the row says what happened instead of what the column holds. An
+  // election that seated nobody carries the same status and is the same
+  // absence — holdover, docs/adr/051 — under its own word.
+  function rowStatus(p) {
+    if (isDirectRow(p)) return 'applied';
+    if (p.state === 'lapsed') return 'lapsed';
+    if (p.state === 'unsettled') return 'unsettled';
+    return p.status;
   }
 </script>
 
@@ -100,7 +127,7 @@
             class="btn btn-primary"
             onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/new`); }}
           >
-            New Proposal
+            {newLabel}
           </a>
         {:else if membershipRole === 'follower'}
           <p class="role-prompt muted">Become a member to create proposals and vote.</p>
@@ -109,8 +136,14 @@
         {/if}
       </div>
 
+      <!-- The chips filter by outcome, not by the status column
+           (docs/adr/097, amended). A lapse and an unsettled contest both
+           carry the schema's `rejected`, so a drawer labelled Rejected was
+           opening onto three proposals nobody rejected — including the
+           reader's own. Rejected now means rejected, and the fourth chip
+           carries the two absences under the word both of them use. -->
       <div class="status-filters">
-        {#each [['open', 'Open'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['all', 'All']] as [value, label]}
+        {#each [['open', 'Open'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['not_decided', 'Not decided'], ['all', 'All']] as [value, label]}
           <button
             class="chip"
             class:selected={statusFilter === value}
@@ -125,7 +158,13 @@
         <p class="muted" style="padding: 2rem 0; text-align: center;">Loading...</p>
       {:else if proposals.length === 0}
         <p class="muted" style="padding: 2rem 0; text-align: center;">
-          No proposals{statusFilter && statusFilter !== 'all' ? ` with status "${statusFilter}"` : ''}.
+          {#if statusFilter === 'not_decided'}
+            Nothing here has lapsed or settled nothing.
+          {:else if statusFilter && statusFilter !== 'all'}
+            No {statusFilter} proposals.
+          {:else}
+            No proposals.
+          {/if}
         </p>
       {:else}
         <div class="proposal-list">
@@ -148,10 +187,15 @@
                   {#if proposal.author_name}
                     <span class="muted">{isDirectRow(proposal) ? 'applied by' : 'by'} {proposal.author_name}</span>
                   {/if}
-                  {#if proposal.status === 'open' && proposal.voting_ends_at}
+                  {#if proposal.state === 'awaiting_admin'}
+                    <!-- No ballot and no clock (docs/adr/092): the row says
+                         what it is waiting for instead of a time that is
+                         not running. -->
+                    <span class="muted">waiting on the maintainer</span>
+                  {:else if proposal.status === 'open' && proposal.voting_ends_at}
                     <span class="time-remaining">{timeRemaining(proposal.voting_ends_at)}</span>
                   {:else if proposal.status !== 'open' && !isDirectRow(proposal)}
-                    <span class="muted">{proposal.status}</span>
+                    <span class="muted">{rowStatus(proposal)}</span>
                   {/if}
                 </div>
                 {#if (proposal.approve_count || 0) + (proposal.reject_count || 0) > 0}
@@ -166,7 +210,7 @@
                   </div>
                 {/if}
               </div>
-              <span class="badge {statusClass(proposal.status)}">{isDirectRow(proposal) ? 'applied' : proposal.status}</span>
+              <span class="badge {statusClass(rowStatus(proposal))}">{rowStatus(proposal)}</span>
             </a>
           {/each}
         </div>

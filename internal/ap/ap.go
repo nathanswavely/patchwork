@@ -18,6 +18,28 @@ type Actor struct {
 	Outbox            string `json:"outbox"`
 	Followers         string `json:"followers"`
 	Following         string `json:"following"`
+	// MovedTo is where this patch or person says they have gone
+	// (docs/adr/090). Mastodon-style clients read it as the redirect on a
+	// profile. Only the field travels: no `Move` activity is emitted, so no
+	// remote server is asked to drag its followers across.
+	MovedTo string `json:"movedTo,omitempty"`
+}
+
+// MovedToContext is the JSON-LD context an actor document needs before
+// `movedTo` means anything to a reader.
+//
+// The plain AS2 context does not define the term, so an actor that carried
+// it bare would be handing out a property no consumer is obliged to
+// understand. This is the same pair Mastodon publishes, and it is only used
+// on the actors that actually carry a pointer — every other actor keeps the
+// single-string context it has always had.
+func MovedToContext() []interface{} {
+	return []interface{}{
+		Context,
+		map[string]interface{}{
+			"movedTo": map[string]string{"@id": "as:movedTo", "@type": "@id"},
+		},
+	}
 }
 
 // Object represents an ActivityPub Object (Event, Note, etc.).

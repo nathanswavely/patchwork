@@ -13,14 +13,28 @@ import (
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
 
+// adminUserRow is a user as the admin screen reads them: the row itself plus
+// the listings they hold a per-patch trusted-contributor grant on. Embedded
+// rather than copied field by field, so a column added to model.User reaches
+// this screen without anybody remembering to add it here too.
+type adminUserRow struct {
+	model.User
+	TrustedNodes []trustNodeRef `json:"trusted_nodes"`
+}
+
 // ListUsers handles GET /api/v1/admin/users.
+//
+// Tombstones are not listed (docs/adr/086). A deleted account is not an
+// account to administer: there is nobody to suspend, promote, or write to,
+// and every control this screen offers would act on an empty row. The row
+// itself lives on so the community's record does.
 func ListUsers(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		after, limit := parsePaginationParams(r)
 		search := r.URL.Query().Get("search")
 
 		query := `SELECT id, email, username, display_name, bio, avatar_url, role, trusted_contributor, suspended_at, created_at, updated_at FROM users`
-		var conditions []string
+		conditions := []string{"deleted_at IS NULL"}
 		var args []interface{}
 
 		if search != "" {
@@ -33,9 +47,7 @@ func ListUsers(db *database.DB) http.HandlerFunc {
 			args = append(args, after)
 		}
 
-		if len(conditions) > 0 {
-			query += " WHERE " + strings.Join(conditions, " AND ")
-		}
+		query += " WHERE " + strings.Join(conditions, " AND ")
 		query += " ORDER BY id ASC LIMIT ?"
 		args = append(args, limit+1)
 
@@ -68,9 +80,29 @@ func ListUsers(db *database.DB) http.HandlerFunc {
 			users = []model.User{}
 		}
 
+		// The per-patch half of the trusted-contributor grant
+		// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar.md).
+		// The quilt-wide flag is a column on the row above; a per-patch grant
+		// is rows in its own table, and this screen is where both are given
+		// and taken away — so the listing has to carry both or the admin can
+		// only see half of what they granted.
+		ids := make([]string, 0, len(users))
+		for _, u := range users {
+			ids = append(ids, u.ID)
+		}
+		grants := trustedNodesByUser(db, ids)
+		items := make([]adminUserRow, 0, len(users))
+		for _, u := range users {
+			row := adminUserRow{User: u, TrustedNodes: grants[u.ID]}
+			if row.TrustedNodes == nil {
+				row.TrustedNodes = []trustNodeRef{}
+			}
+			items = append(items, row)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"items":       users,
+			"items":       items,
 			"next_cursor": nextCursor,
 		})
 	}
@@ -202,7 +234,7 @@ func AuditLog(db *database.DB) http.HandlerFunc {
 		to := r.URL.Query().Get("to")
 
 		query := `SELECT a.id, a.user_id, a.action, a.entity_type, a.entity_id, a.metadata, a.ip_address, a.created_at,
-			COALESCE(u.username, '') AS username, COALESCE(u.display_name, '') AS display_name
+			` + usernameExpr("u") + ` AS username, ` + displayNameExpr("u") + ` AS display_name
 			FROM audit_log a LEFT JOIN users u ON a.user_id = u.id`
 		var conditions []string
 		var args []interface{}
@@ -271,38 +303,6 @@ func AuditLog(db *database.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"items":       entries,
 			"next_cursor": nextCursor,
-		})
-	}
-}
-
-// AdminStats handles GET /api/v1/admin/stats.
-func AdminStats(db *database.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var totalUsers, activeUsers30d, totalNodes, totalEvents int
-		var openProposals, passedProposals, rejectedProposals int
-		var pendingReports, recentSignups7d int
-
-		db.QueryRow("SELECT COUNT(*) FROM users").Scan(&totalUsers)
-		db.QueryRow("SELECT COUNT(DISTINCT user_id) FROM sessions WHERE expires_at > strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-30 days')").Scan(&activeUsers30d)
-		db.QueryRow("SELECT COUNT(*) FROM nodes WHERE status = 'active' AND removed_at IS NULL").Scan(&totalNodes)
-		db.QueryRow("SELECT COUNT(*) FROM events WHERE removed_at IS NULL").Scan(&totalEvents)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE status = 'open'").Scan(&openProposals)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE status = 'approved'").Scan(&passedProposals)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE status = 'rejected'").Scan(&rejectedProposals)
-		db.QueryRow("SELECT COUNT(*) FROM content_reports WHERE status = 'pending'").Scan(&pendingReports)
-		db.QueryRow("SELECT COUNT(*) FROM users WHERE created_at >= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-7 days')").Scan(&recentSignups7d)
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]int{
-			"total_users":        totalUsers,
-			"active_users_30d":   activeUsers30d,
-			"total_nodes":        totalNodes,
-			"total_events":       totalEvents,
-			"open_proposals":     openProposals,
-			"passed_proposals":   passedProposals,
-			"rejected_proposals": rejectedProposals,
-			"pending_reports":    pendingReports,
-			"recent_signups_7d":  recentSignups7d,
 		})
 	}
 }

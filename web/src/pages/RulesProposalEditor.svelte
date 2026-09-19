@@ -14,13 +14,18 @@
 
   // The entry point on the governance hub is gated, but the route is
   // reachable by URL, so the page states the rule itself rather than
-  // trusting the button that sent you. Not `isMember` — the node payload
-  // sets is_member for followers too, and following carries no governance
-  // rights.
+  // trusting the button that sent you. Derived from the role: following
+  // carries no governance rights, and docs/adr/117 is why is_member now
+  // agrees.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
   let currentRules = $state(null);
   let proposedRules = $state(null);
+  // Who votes here today, so the editor can say what a quorum or a tenure
+  // bar comes to for this patch rather than leaving a founder to guess
+  // (docs/adr/104). Its own request: the rules payload is spread back into
+  // the submission, so nothing that is not a rule may travel in it.
+  let electorate = $state(null);
   let loading = $state(true);
   let error = $state('');
 
@@ -111,6 +116,13 @@
       const data = await api(`nodes/${slug}/governance/rules`);
       currentRules = data.rules || data;
       proposedRules = JSON.parse(JSON.stringify(currentRules)); // deep copy
+      // Best effort, and never fatal: the form works without the sentences,
+      // and failing to load them must not stop somebody changing their rules.
+      try {
+        electorate = await api(`nodes/${slug}/governance/electorate`);
+      } catch {
+        electorate = null;
+      }
     } catch (e) {
       error = e.message || 'Failed to load rules';
     } finally {
@@ -233,6 +245,7 @@
       <div class="editor-card">
         <StructuredRulesEditor
           currentRules={currentRules}
+          electorate={electorate}
           onSave={handleRulesChange}
         />
 

@@ -11,6 +11,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/model"
 )
@@ -89,11 +90,11 @@ func CreateSession(db *database.DB, userID, ip, userAgent string) (string, error
 
 	id := NewUUIDv7()
 	now := time.Now().UTC()
-	expiresAt := now.Add(sessionMaxLifetime).Format(time.RFC3339)
+	expiresAt := clock.Format(now.Add(sessionMaxLifetime))
 
 	_, err = db.Exec(
 		`INSERT INTO sessions (id, user_id, token, expires_at, ip_address, user_agent, last_used_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		id, userID, HashToken(rawToken), expiresAt, ip, userAgent, now.Format(time.RFC3339),
+		id, userID, HashToken(rawToken), expiresAt, ip, userAgent, clock.Format(now),
 	)
 	if err != nil {
 		return "", fmt.Errorf("insert session: %w", err)
@@ -136,7 +137,7 @@ func ValidateSession(db *database.DB, rawToken string) (*model.User, error) {
 		return nil, fmt.Errorf("validate session: %w", err)
 	}
 
-	exp, err := time.Parse(time.RFC3339, expiresAt)
+	exp, err := clock.Parse(expiresAt)
 	if err != nil {
 		return nil, fmt.Errorf("parse session expiry: %w", err)
 	}
@@ -161,7 +162,7 @@ func ValidateSession(db *database.DB, rawToken string) (*model.User, error) {
 	if !lastUsedOK || now.Sub(lastUsed) >= stampInterval {
 		if _, err := db.Exec(
 			"UPDATE sessions SET last_used_at = ? WHERE token = ?",
-			now.UTC().Format(time.RFC3339), tokenHash,
+			clock.Format(now), tokenHash,
 		); err != nil {
 			// A failed stamp costs freshness, not access. The session is
 			// valid; do not fail the request over it.
@@ -178,12 +179,11 @@ func parseTimestamp(s string) (time.Time, bool) {
 	if s == "" {
 		return time.Time{}, false
 	}
-	for _, layout := range []string{time.RFC3339, "2006-01-02T15:04:05.000Z"} {
-		if t, err := time.Parse(layout, s); err == nil {
-			return t, true
-		}
+	t, err := clock.Parse(s)
+	if err != nil {
+		return time.Time{}, false
 	}
-	return time.Time{}, false
+	return t, true
 }
 
 // GrantSudo opens a step-up window on the session presenting rawToken, after
@@ -193,7 +193,7 @@ func GrantSudo(db *database.DB, rawToken string) (time.Time, error) {
 	until := time.Now().Add(SudoWindow).UTC()
 	res, err := db.Exec(
 		"UPDATE sessions SET sudo_until = ? WHERE token = ?",
-		until.Format(time.RFC3339), HashToken(rawToken),
+		clock.Format(until), HashToken(rawToken),
 	)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("grant sudo: %w", err)
@@ -297,7 +297,7 @@ func ListUserSessions(db *database.DB, userID, currentRawToken string) ([]Sessio
 			continue
 		}
 
-		if exp, err := time.Parse(time.RFC3339, expiresAt); err == nil && now.After(exp) {
+		if exp, err := clock.Parse(expiresAt); err == nil && now.After(exp) {
 			continue
 		}
 		if lastUsed, ok := parseTimestamp(lastUsedAt); ok && now.After(lastUsed.Add(sessionIdleTimeout)) {

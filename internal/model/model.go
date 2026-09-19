@@ -21,6 +21,16 @@ type User struct {
 	// events this person records on unclaimed patches skip review. It is
 	// orthogonal to patch roles and worth nothing on active patches.
 	TrustedContributor bool `json:"trusted_contributor"`
+	// TrustedPatches is the per-patch scope of the same grant
+	// (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-
+	// calendar.md): the unclaimed patches this person may speak for without
+	// holding the quilt-wide flag. Populated by the Me handler only, and
+	// already filtered to patches still unclaimed, because the grant ends
+	// when the patch is claimed and a client must not be told otherwise.
+	// It is what lets the client enumerate a reach it could not otherwise
+	// know — memberships list nothing here, since an unclaimed patch admits
+	// nobody.
+	TrustedPatches []TrustedPatch `json:"trusted_patches,omitempty"`
 	// StartOnMyQuilt is the per-person landing preference (docs/adr/035):
 	// when true, a cold visit to "/" redirects once to "/my". Default false
 	// — the whole quilt is the shared default landing.
@@ -33,9 +43,20 @@ type User struct {
 	// patch (docs/adr/080). Populated by the Me handlers only — it never
 	// rides along on a login response, a public profile, or an AP actor.
 	ContactCard *ContactCard `json:"contact_card,omitempty"`
-	SuspendedAt *string      `json:"suspended_at,omitempty"`
-	CreatedAt   string       `json:"created_at"`
-	UpdatedAt   string       `json:"updated_at"`
+	// MovedTo is where this person says they have gone (docs/adr/090): a
+	// plain http(s) URL they set themselves, shown on their public profile
+	// and carried on their AP actor as `movedTo`. Empty means no move.
+	MovedTo string `json:"moved_to,omitempty"`
+	// ContactItems is the contact card in the shape docs/adr/083 gives it —
+	// an ordered set of typed items, each shared into patches one at a time.
+	// Populated by the Me handlers only: it never rides along on a login
+	// response, a public profile, or an AP actor. Items a *viewer* may read
+	// about someone else arrive on that person's row in a Members listing,
+	// never on a User.
+	ContactItems []ContactItem `json:"contact_items,omitempty"`
+	SuspendedAt  *string       `json:"suspended_at,omitempty"`
+	CreatedAt    string        `json:"created_at"`
+	UpdatedAt    string        `json:"updated_at"`
 }
 
 type Notification struct {
@@ -101,6 +122,16 @@ type NodeLink struct {
 	Label string `json:"label"`
 }
 
+// TrustedPatch names one unclaimed patch a person's per-patch
+// trusted-contributor grant reaches (docs/adr/2026-09-18-trust-has-a-scope-
+// and-a-suggestion-carries-its-calendar.md). Identity only: the grant is
+// not a membership and carries no role.
+type TrustedPatch struct {
+	ID   string `json:"id"`
+	Slug string `json:"slug"`
+	Name string `json:"name"`
+}
+
 // ContactCard is how a person can be reached, kept once on the account and
 // shown only inside the patches whose membership they have switched
 // contact sharing on for (docs/adr/080). Email here is an address to be
@@ -115,6 +146,43 @@ type ContactCard struct {
 // Empty reports whether the card carries nothing to show.
 func (c ContactCard) Empty() bool {
 	return c.Phone == "" && c.Email == "" && c.Note == ""
+}
+
+// Contact item kinds (docs/adr/083). A closed set: the kind is what lets a
+// surface render tel:/mailto: without guessing at the value, so a new channel
+// is a decision here rather than something a person types into a note.
+const (
+	ContactKindPhone  = "phone"
+	ContactKindEmail  = "email"
+	ContactKindHandle = "handle"
+	ContactKindNote   = "note"
+)
+
+// ContactItem is one way a person is willing to be reached — the unit the
+// contact card is made of, and the unit that is shared (docs/adr/083).
+// Sharing is not a property of the item: an item is shared into a patch by a
+// row in contact_item_shares, one explicit act at a time, so nothing here
+// says who can see it.
+type ContactItem struct {
+	ID    string `json:"id"`
+	Kind  string `json:"kind"`
+	Value string `json:"value"`
+	// Label is the person's own word for it — "work", "Signal only".
+	Label    string `json:"label,omitempty"`
+	Position int    `json:"position"`
+	// SharedWith counts the patches this item is shared into. Sent only to
+	// the item's owner, on their own card; a viewer reading someone else's
+	// items in a room learns nothing about the other rooms.
+	SharedWith int `json:"shared_with,omitempty"`
+}
+
+// ValidContactKind reports whether kind is one this build knows how to render.
+func ValidContactKind(kind string) bool {
+	switch kind {
+	case ContactKindPhone, ContactKindEmail, ContactKindHandle, ContactKindNote:
+		return true
+	}
+	return false
 }
 
 type FollowerPermissions struct {
@@ -198,6 +266,11 @@ type Node struct {
 	// pre-filled one nobody chose.
 	Timezone string `json:"timezone"`
 	Website  string `json:"website"`
+	// DID is the atproto identity a claim proved (docs/adr/062), always a
+	// `did:web` on the patch's own domain. Set on the detail response only:
+	// the handle is a fact about this one patch, not a column the quilt
+	// sorts by. Empty means the patch never verified one.
+	DID string `json:"did,omitempty"`
 	// ImageURL is a reference, never bytes (docs/adr/007): the browser fetches
 	// it from wherever the patch keeps it. ImageAlt is required alongside, and
 	// is what remains when the bytes go.
@@ -208,6 +281,12 @@ type Node struct {
 	MembershipPolicy string      `json:"membership_policy"`
 	Appearance       *Appearance `json:"appearance,omitempty"`
 	Tags             []string    `json:"tags,omitempty"`
+	// PendingTags are suggested tags this patch wears provisionally
+	// (docs/adr/114). Sent only to the patch's own admins: a pending word is
+	// not vocabulary, so "tags" above means the approved, public list to
+	// every reader, and this stays a separate array rather than making one
+	// array mean different things to different viewers.
+	PendingTags      []string    `json:"pending_tags,omitempty"`
 	Status           string      `json:"status,omitempty"`
 	SubmittedBy      string      `json:"submitted_by,omitempty"`
 	SubmissionSource string      `json:"submission_source,omitempty"`
@@ -217,12 +296,31 @@ type Node struct {
 	// The noticeboard's two settings (docs/adr/081): who may put up a
 	// notice ("admins" or "members"), and whether a new notice takes
 	// replies unless its author says otherwise. Set on the detail response.
-	NoticePosting        string               `json:"notice_posting,omitempty"`
-	NoticeRepliesDefault bool                 `json:"notice_replies_default"`
-	FollowerPermissions  *FollowerPermissions `json:"follower_permissions,omitempty"`
-	GovernanceConfig     *GovernanceConfig    `json:"governance_config,omitempty"`
-	MemberCount          int                  `json:"member_count,omitempty"`
-	FollowerCount        int                  `json:"follower_count,omitempty"`
+	NoticePosting        string `json:"notice_posting,omitempty"`
+	NoticeRepliesDefault bool   `json:"notice_replies_default"`
+	// PublicMemberList is who appears in this patch's public member list
+	// (docs/adr/095): "everyone", "admins", or "nobody". A patch can be
+	// findable without being enumerable. It only ever subtracts — the
+	// listing's gate is this AND the member's own `visible` switch
+	// (docs/adr/006), so nothing here reveals somebody who chose to hide.
+	// Set on the detail response; the settings form and the member list's
+	// own copy both read it.
+	PublicMemberList string `json:"public_member_list,omitempty"`
+	// PublicGovernanceRecord is the sibling control over the patch's
+	// deliberation — proposals, the discussion under them, and attestations
+	// — "everyone" or "nobody", defaulting closed
+	// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md). Two
+	// rungs where PublicMemberList has three: a roster has a natural subset
+	// and a record that names people inside its own prose does not.
+	//
+	// It stops at charters, which carry their own per-document visibility
+	// (docs/adr/036), and at the lining, which is pinned public
+	// (docs/adr/037).
+	PublicGovernanceRecord string               `json:"public_governance_record,omitempty"`
+	FollowerPermissions    *FollowerPermissions `json:"follower_permissions,omitempty"`
+	GovernanceConfig    *GovernanceConfig    `json:"governance_config,omitempty"`
+	MemberCount         int                  `json:"member_count,omitempty"`
+	FollowerCount       int                  `json:"follower_count,omitempty"`
 	// Events not yet started — distinct from the tree endpoint's
 	// event_count, which is every active event past and future
 	// (CONTEXT.md "Upcoming events"). Set on the single-node detail
@@ -234,8 +332,21 @@ type Node struct {
 	// (docs/adr/076). Distinct from CreatedAt, which is when the row was
 	// written, and from UpdatedAt, which every later edit moves.
 	ActivatedAt *string `json:"activated_at,omitempty"`
-	CreatedAt   string  `json:"created_at"`
-	UpdatedAt   string  `json:"updated_at"`
+	// FoundedAt is when the group behind this patch started, as a date
+	// (docs/adr/098). NULL means it started when its row was written. It is
+	// what caps the minimum voting tenure: nobody is asked to have been here
+	// longer than the patch has, so a patch that says it was founded in 2015
+	// keeps its full bar and one made this morning asks for none. Set on the
+	// detail response and by the patch's admins at Settings -> Info.
+	FoundedAt *string `json:"founded_at"`
+	// MovedTo is where this patch says it has gone (docs/adr/090). Set by
+	// the patch's own admins, rendered as a banner on its page and a line
+	// on its card, and carried on the AP actor as `movedTo`. The patch
+	// stays where it is and keeps working: the old home is still a record,
+	// so this is a signpost rather than a redirect. Empty means no move.
+	MovedTo   string `json:"moved_to,omitempty"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type ClaimRequest struct {
@@ -313,6 +424,12 @@ type EventLink struct {
 	// Display fields joined from nodes for rendering "with X".
 	NodeName string `json:"node_name,omitempty"`
 	NodeSlug string `json:"node_slug,omitempty"`
+	// NodeStatus lets a client decide the linked side of the handshake
+	// the way the server does (docs/adr/057): a trusted contributor
+	// confirms or removes for the linked patch only while it is unclaimed,
+	// and without the status here the UI could only ever offer that to
+	// its admins, which an unclaimed patch has none of.
+	NodeStatus string `json:"node_status,omitempty"`
 }
 
 // EventMention is a display-only doorway on an event page to a patch on

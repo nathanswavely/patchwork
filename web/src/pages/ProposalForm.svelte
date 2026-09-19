@@ -2,21 +2,40 @@
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
+  import { formatDay } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
-  let isAdmin = $derived(patch.value.isAdmin);
   let membershipRole = $derived(patch.value.membershipRole);
 
   // The New Proposal button on the proposals list is already gated, but this
-  // route is reachable by URL, so the page states the rule itself. Not
-  // `isMember` — the node payload sets is_member for followers too, and
-  // following carries no governance rights.
+  // route is reachable by URL, so the page states the rule itself. From
+  // the role: following carries no governance rights, and docs/adr/117 is
+  // why is_member now agrees.
   let canPropose = $derived(membershipRole === 'member' || membershipRole === 'admin');
 
+  // The patch's decision method decides what this form is (docs/adr/092).
+  // On an admin-decides patch the maintainer decides every proposal: an
+  // admin's is a direct change unless they ask the members first, and a
+  // member's is a request to the maintainer. The form used to offer everyone
+  // a voting duration and a "Submit Proposal" button, then apply an admin's
+  // instantly — docs/adr/041 says the UI never says "propose", "submit" or
+  // "vote" for a direct change, and the rules editor honoured that while
+  // this page did not. `membershipRole`, not `isAdmin`: the node payload
+  // sets is_admin for instance admins too, and deciding here needs the
+  // patch's own role.
+  let decisionMethod = $derived(patch.value.node?.governance_config?.decision_method || '');
+  let adminDecides = $derived(decisionMethod === 'admin');
+  let isPatchAdmin = $derived(membershipRole === 'admin');
+  let putToVote = $state(false);
+  let directChange = $derived(adminDecides && isPatchAdmin && !putToVote);
+  let advisoryVote = $derived(adminDecides && isPatchAdmin && putToVote);
+  let toMaintainer = $derived(adminDecides && !isPatchAdmin);
+  let asksDuration = $derived(!adminDecides || advisoryVote);
+
   $effect(() => {
-    patch.value.setBreadcrumbExtra?.([{ label: 'New Proposal' }]);
+    patch.value.setBreadcrumbExtra?.([{ label: adminDecides && isPatchAdmin ? 'New change' : 'New Proposal' }]);
     return () => patch.value.setBreadcrumbExtra?.([]);
   });
 
@@ -36,35 +55,56 @@
     { value: 336, label: '2 weeks' },
   ];
 
-  const typeOptions = [
-    { value: 'action', label: 'Action', description: 'Propose a concrete action for the community to take' },
-    { value: 'membership', label: 'Membership', description: 'Request or propose changes to membership' },
-    { value: 'other', label: 'Other', description: 'Any other proposal that needs community input' },
-  ];
-
-  // Nominating an admin, on meritocratic patches only (docs/adr/051). The
-  // community ratifies admins there, so an admin nominates instead of
-  // promoting — the member list refuses a direct promotion.
+  // Nominating an admin (docs/adr/051, docs/adr/100). A meritocratic patch
+  // ratifies admins, and an elected one fills a mid-term vacancy the same
+  // way — so there the nomination also needs a vacant seat to land in.
+  // `membershipRole`, not `isAdmin`: the node payload sets is_admin for
+  // instance admins too, and the server refuses them.
   let nomineeId = $state('');
-  let isMeritocratic = $state(false);
+  let leadershipModel = $state('');
+  let vacantSeats = $state(0);
+  let nextContestOpens = $state('');
   let nominatable = $state([]);
-  let canNominate = $derived(isAdmin && isMeritocratic);
+  let isMeritocratic = $derived(leadershipModel === 'meritocratic');
+  let isElected = $derived(leadershipModel === 'elected');
+  let canNominate = $derived(isPatchAdmin && (isMeritocratic || (isElected && vacantSeats > 0)));
+
+  // A membership proposal is a nomination and nothing else (docs/adr/100):
+  // it has to name the person it is about, and only someone who may nominate
+  // can raise one. Offering the type to everyone is what left a member with
+  // no way to ask for a seat except a targetless vote on his own name.
+  let typeOptions = $derived([
+    { value: 'action', label: 'Action', description: 'Propose a concrete action for the community to take' },
+    ...(canNominate
+      ? [{ value: 'membership', label: 'Membership', description: 'Nominate an active member for admin' }]
+      : []),
+    { value: 'other', label: 'Other', description: 'Any other proposal that needs community input' },
+  ]);
 
   $effect(() => {
-    if (slug) loadNominationContext();
+    if (slug) loadGovernanceContext();
   });
 
-  async function loadNominationContext() {
+  // Keep the chosen type valid: an elected patch whose last seat was filled
+  // stops offering Membership, and a radio left on a vanished option would
+  // submit a type the server refuses.
+  $effect(() => {
+    if (proposalType === 'membership' && !canNominate) proposalType = 'action';
+  });
+
+  async function loadGovernanceContext() {
     try {
       const ov = await api(`nodes/${slug}/governance/overview`);
-      isMeritocratic = ov?.rules?.leadership_model === 'meritocratic';
-      if (!isMeritocratic || !isAdmin) return;
+      leadershipModel = ov?.rules?.leadership_venue === 'elsewhere' ? '' : (ov?.rules?.leadership_model || '');
+      vacantSeats = (ov?.seats || []).filter((s) => !s.holder_id).length;
+      nextContestOpens = ov?.next_contest_opens || '';
+      if (!canNominate) return;
       const data = await api(`nodes/${slug}/members`);
       // Only plain members can be nominated: an admin already holds the role,
       // and a follower is not on the ladder.
       nominatable = (data.items || data || []).filter((m) => m.role === 'member');
     } catch {
-      isMeritocratic = false;
+      leadershipModel = '';
       nominatable = [];
     }
   }
@@ -74,8 +114,8 @@
       error = 'Title is required';
       return;
     }
-    if (proposalType === 'membership' && canNominate && nomineeId && nominatable.length === 0) {
-      error = 'There is nobody to nominate yet';
+    if (proposalType === 'membership' && !nomineeId) {
+      error = 'Choose the member this nomination is about';
       return;
     }
 
@@ -86,11 +126,15 @@
         title: title.trim(),
         body: body.trim() || '',
         proposal_type: proposalType,
-        duration_hours: durationHours,
       };
+      // A window only where a vote will run. A direct change and a request
+      // to the maintainer have no ballot, so sending one would be a number
+      // the server ignores and the form pretended to mean something.
+      if (asksDuration) payload.duration_hours = durationHours;
+      if (adminDecides && isPatchAdmin) payload.put_to_vote = putToVote;
       // Only a membership proposal carries a subject, and only where the
       // community ratifies admins.
-      if (proposalType === 'membership' && canNominate && nomineeId) {
+      if (proposalType === 'membership' && nomineeId) {
         payload.target_user_id = nomineeId;
       }
       const result = await api(`nodes/${slug}/proposals`, {
@@ -177,33 +221,84 @@
                nominate; everywhere else a membership proposal is ordinary. -->
           {#if proposalType === 'membership' && canNominate}
             <div class="nominee-field">
-              <label for="nominee">Nominate for admin</label>
+              <label for="nominee">Nominate for admin <span class="required">*</span></label>
               {#if nominatable.length > 0}
-                <select id="nominee" bind:value={nomineeId} disabled={submitting}>
-                  <option value="">Nobody. This is an ordinary membership proposal</option>
+                <select id="nominee" bind:value={nomineeId} disabled={submitting} required>
+                  <option value="">Choose a member</option>
                   {#each nominatable as m}
                     <option value={m.user_id}>{m.display_name || m.username}</option>
                   {/each}
                 </select>
                 <p class="nominee-hint muted">
-                  If this passes, they become an admin. Nobody has to approve it afterwards.
+                  {#if isElected}
+                    If this passes, they take the vacant seat and serve out its term. Nobody has to approve it afterwards.
+                  {:else}
+                    If this passes, they become an admin. Nobody has to approve it afterwards.
+                  {/if}
                 </p>
               {:else}
                 <p class="nominee-hint muted">There is nobody to nominate yet.</p>
               {/if}
             </div>
           {/if}
+
+          <!-- An elected patch with no vacancy: say where the way onto the
+               council actually is, rather than leaving someone to invent
+               one (docs/adr/100). -->
+          {#if isElected && !canNominate}
+            <p class="nominee-hint muted">
+              {#if !isPatchAdmin}
+                Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.
+              {:else if nextContestOpens}
+                Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.
+              {:else}
+                Every seat on the council is held, so there is nobody to nominate. You can add a seat on the Governance page.
+              {/if}
+            </p>
+          {/if}
         </div>
 
-        <div class="field">
-          <label for="duration">Voting Duration</label>
-          <select id="duration" bind:value={durationHours} disabled={submitting}>
-            {#each durationOptions as opt}
-              <option value={opt.value}>{opt.label}</option>
-            {/each}
-          </select>
-          <span class="duration-tip">Tip: 72 hours gives everyone a chance to vote before the question goes stale.</span>
-        </div>
+        <!-- Who decides this (docs/adr/092). On an admin-decides patch an
+             admin chooses between applying now and asking the members first;
+             a member is told their proposal goes to the maintainer. On every
+             voting patch nothing appears here: the vote is the decision. -->
+        {#if adminDecides && isPatchAdmin}
+          <div class="field">
+            <label>How this gets decided</label>
+            <div class="type-radio-group">
+              <label class="type-radio-option" class:selected={!putToVote}>
+                <input type="radio" name="ceremony" value={false} bind:group={putToVote} disabled={submitting} />
+                <div class="type-radio-content">
+                  <span class="type-radio-label">Apply it now</span>
+                  <span class="type-radio-desc">You decide this patch's proposals. This takes effect as soon as you save it.</span>
+                </div>
+              </label>
+              <label class="type-radio-option" class:selected={putToVote}>
+                <input type="radio" name="ceremony" value={true} bind:group={putToVote} disabled={submitting} />
+                <div class="type-radio-content">
+                  <span class="type-radio-label">Ask the members first</span>
+                  <span class="type-radio-desc">Opens an advisory vote. You still decide, at any time, with the tally in front of you.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        {:else if toMaintainer}
+          <p class="ceremony-note muted">
+            This patch's maintainer decides proposals. Yours goes to them, and they may ask the members before deciding.
+          </p>
+        {/if}
+
+        {#if asksDuration}
+          <div class="field">
+            <label for="duration">{advisoryVote ? 'How long to ask' : 'Voting Duration'}</label>
+            <select id="duration" bind:value={durationHours} disabled={submitting}>
+              {#each durationOptions as opt}
+                <option value={opt.value}>{opt.label}</option>
+              {/each}
+            </select>
+            <span class="duration-tip">Tip: 72 hours gives everyone a chance to vote before the question goes stale.</span>
+          </div>
+        {/if}
 
         {#if error}
           <p class="error-text">{error}</p>
@@ -211,7 +306,15 @@
 
         <div class="field-actions">
           <button type="submit" class="btn btn-primary" disabled={submitting}>
-            {submitting ? 'Creating...' : 'Submit Proposal'}
+            {#if directChange}
+              {submitting ? 'Applying...' : 'Apply change'}
+            {:else if advisoryVote}
+              {submitting ? 'Opening...' : 'Open advisory vote'}
+            {:else if toMaintainer}
+              {submitting ? 'Sending...' : 'Send to the maintainer'}
+            {:else}
+              {submitting ? 'Creating...' : 'Submit Proposal'}
+            {/if}
           </button>
           <button
             type="button"
@@ -368,6 +471,11 @@
   .type-radio-desc {
     font-size: 0.8rem;
     color: var(--color-text-muted);
+  }
+
+  .ceremony-note {
+    font-size: 0.88rem;
+    margin: 0 0 1.25rem;
   }
 
   .duration-tip {

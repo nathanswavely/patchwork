@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -88,7 +90,7 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	if err != nil || status != "active" || (role != "admin" && role != "member") {
 		return 0
 	}
-	joined, parseErr := time.Parse("2006-01-02T15:04:05.000Z", joinedAt)
+	joined, parseErr := clock.Parse(joinedAt)
 	if parseErr != nil {
 		// An unreadable joined_at can't be shown to clear any requirement.
 		// Only a patch with no tenure rule at all can still count.
@@ -100,7 +102,10 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	//
 	//   - A proposal on a patch that decides elsewhere has no ballot at all
 	//     (docs/adr/053). Counting it produces "1 proposal needs your vote"
-	//     pointing at a page with no vote buttons.
+	//     pointing at a page with no vote buttons. One waiting on the
+	//     maintainer (docs/adr/092) has none either, until an admin opens
+	//     an advisory vote — at which point its state is 'voting' and it
+	//     counts like any other.
 	//   - An election's ballot is rows in `election_ballots`, not `votes`
 	//     (docs/adr/051), so a NOT EXISTS against `votes` is true for every
 	//     election forever — during nominations, when no ballot may be cast,
@@ -110,7 +115,7 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 	rows, err := db.Query(
 		`SELECT COALESCE(p.voting_terms,''), COALESCE(p.target_user_id,'') FROM proposals p
 		 WHERE p.node_id = ? AND p.status = 'open'
-		 AND COALESCE(p.state,'') != 'elsewhere'
+		 AND COALESCE(p.state,'') NOT IN ('elsewhere', 'awaiting_admin')
 		 AND (p.seats_contested = 0 OR (
 		       p.voting_ends_at IS NOT NULL
 		       AND NOT EXISTS (SELECT 1 FROM election_ballots b
@@ -134,8 +139,10 @@ func countProposalsAwaitingVote(db *database.DB, nodeID, userID, nodeGCJSON stri
 		}
 		var gc model.GovernanceConfig
 		json.Unmarshal([]byte(termsJSON), &gc)
-		if gc.MinVotingTenureDays > 0 {
-			if time.Since(joined) < time.Duration(gc.MinVotingTenureDays)*24*time.Hour {
+		// The tenure in force is capped at the patch's age (docs/adr/098),
+		// read through the same helper the gate uses.
+		if days := effectiveTenureDays(db, nodeID, gc); days > 0 {
+			if time.Since(joined) < time.Duration(days)*24*time.Hour {
 				continue
 			}
 		}
@@ -165,6 +172,8 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		// Get governance config from DB cache.
 		var gcJSON, membershipPolicy string
 		db.QueryRow("SELECT COALESCE(governance_config,'{}'), membership_policy FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON, &membershipPolicy)
+		var overviewGC model.GovernanceConfig
+		json.Unmarshal([]byte(gcJSON), &overviewGC)
 
 		// Get admin list.
 		type adminInfo struct {
@@ -175,14 +184,37 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			JoinedAt    string `json:"joined_at"`
 		}
 
-		var admins []adminInfo
-		rows, err := db.Query(
-			`SELECT u.id, u.username, u.display_name, u.avatar_url, m.joined_at
+		// The council named here is a public member list by another route, and
+		// it used to run no gate at all: not the patch's public_member_list
+		// (docs/adr/095), not the member's own visible switch (docs/adr/006).
+		// So a patch that had taken its roster down published its admins here
+		// anyway, and a hidden admin was named to anyone — found by opening
+		// the page on a patch set to `nobody`
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		//
+		// The room always sees its own council. Outside it, `nobody` withholds
+		// the names and `everyone`/`admins` both show admins — this is the one
+		// listing where those two rungs agree, since admins are what it lists.
+		// The member's switch subtracts on top, the one direction no patch
+		// setting may overrule.
+		var rosterSetting string
+		db.QueryRow("SELECT public_member_list FROM nodes WHERE id = ?", nodeID).Scan(&rosterSetting)
+		adminInsider := viewerIsInPatchRoom(db, r, nodeID)
+		adminQuery := `SELECT u.id, u.username, u.display_name, u.avatar_url, m.joined_at
 			 FROM memberships m JOIN users u ON m.user_id = u.id
-			 WHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'
-			 ORDER BY m.joined_at ASC`, nodeID,
-		)
-		if err == nil {
+			 WHERE m.node_id = ? AND m.role = 'admin' AND m.status = 'active'`
+		if !adminInsider {
+			adminQuery += ` AND COALESCE(m.visible, 1) = 1`
+		}
+		adminQuery += ` ORDER BY m.joined_at ASC`
+
+		var admins []adminInfo
+		var rows *sql.Rows
+		var err error
+		if adminInsider || rosterSetting != "nobody" {
+			rows, err = db.Query(adminQuery, nodeID)
+		}
+		if rows != nil && err == nil {
 			defer rows.Close()
 			for rows.Next() {
 				var a adminInfo
@@ -249,8 +281,30 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// that does not elect, so the hub renders neither.
 			"election":      currentElection(db, nodeID),
 			"next_term_end": nextTermEnd(db, nodeID),
+			// The council's chairs, held and vacant (docs/adr/100). The
+			// admin list above says who holds power; this says how many
+			// positions there are, which is the number the next contest
+			// contests and the number a member is asking about when they
+			// wonder how to get on the council. Empty on every patch that
+			// does not elect, so the hub renders nothing.
+			// Each chair carries its own answer to "what happens to this
+			// one" — vacant and fillable by nomination today, in the contest
+			// running now, contested when the calendar opens on a date, or
+			// held with no calendar at all. The page states that per row
+			// instead of three general facts about councils side by side.
+			"seats": seatsOf(db, nodeID, overviewGC),
+			// When the calendar next opens a contest. Derived from the
+			// seats' own term ends, never stored (see nextContestOpens).
+			"next_contest_opens": nextContestOpens(db, nodeID, overviewGC),
 			"membership_policy":  membershipPolicy,
 			"admins":             admins,
+			// Which kind of empty `admins` is. Withholding the names made the
+			// page report the patch as leaderless — "nobody holds the admin
+			// role here" over a patch with a council — which is worse than
+			// the leak it replaced, and is exactly what docs/adr/095 means by
+			// letting an empty list say something false. The client reads
+			// this before it reads the length.
+			"admins_withheld": !adminInsider && rosterSetting == "nobody",
 			"successor":          successor,
 			"member_count":       memberCount,
 			"document_count":     docCount,

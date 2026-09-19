@@ -44,6 +44,16 @@ func APUser(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// A deleted account answers 410 rather than 404 (docs/adr/086). The
+		// fediverse reads Gone as "this actor existed and is finished", which
+		// is what stops remote servers retrying and is the same statement the
+		// Delete activity made on the way out. 404 would read as a transient
+		// miss and leave the cached copy in place.
+		if accountDeleted(db, userID) {
+			http.Error(w, `{"error":"account deleted"}`, http.StatusGone)
+			return
+		}
+
 		if !acceptsActivityPub(r) {
 			domain := ap.GetDomain()
 			// Redirect to web UI.
@@ -60,9 +70,9 @@ func APUser(db *database.DB) http.HandlerFunc {
 		var u model.User
 		var publicKey sql.NullString
 		err := db.QueryRow(
-			`SELECT id, username, display_name, bio, avatar_url, role, created_at, updated_at, public_key
+			`SELECT id, username, display_name, bio, avatar_url, role, COALESCE(moved_to,''), created_at, updated_at, public_key
 			 FROM users WHERE id = ? AND suspended_at IS NULL`, userID,
-		).Scan(&u.ID, &u.Username, &u.DisplayName, &u.Bio, &u.AvatarURL, &u.Role, &u.CreatedAt, &u.UpdatedAt, &publicKey)
+		).Scan(&u.ID, &u.Username, &u.DisplayName, &u.Bio, &u.AvatarURL, &u.Role, &u.MovedTo, &u.CreatedAt, &u.UpdatedAt, &publicKey)
 		if err != nil {
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
@@ -87,6 +97,13 @@ func APUser(db *database.DB) http.HandlerFunc {
 		}
 		if publicKey.Valid && publicKey.String != "" {
 			resp["publicKey"] = publicKeyObject(actor.ID, publicKey.String)
+		}
+		// The moved-to pointer, and the context term that gives it meaning
+		// (docs/adr/090). Both only when there is a pointer: an actor that
+		// has not moved keeps exactly the document it had.
+		if actor.MovedTo != "" {
+			resp["movedTo"] = actor.MovedTo
+			resp["@context"] = ap.MovedToContext()
 		}
 
 		writeAP(w, resp)
@@ -125,9 +142,9 @@ func APNode(db *database.DB) http.HandlerFunc {
 		var n model.Node
 		var publicKey sql.NullString
 		err := db.QueryRow(
-			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, website, visibility, membership_policy, created_at, updated_at, public_key
+			`SELECT id, owner_id, name, slug, description, latitude, longitude, address, website, visibility, membership_policy, COALESCE(moved_to,''), created_at, updated_at, public_key
 			 FROM nodes WHERE id = ? AND status IN ('active','unclaimed') AND removed_at IS NULL AND visibility = 'public'`, nodeID,
-		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Website, &n.Visibility, &n.MembershipPolicy, &n.CreatedAt, &n.UpdatedAt, &publicKey)
+		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Website, &n.Visibility, &n.MembershipPolicy, &n.MovedTo, &n.CreatedAt, &n.UpdatedAt, &publicKey)
 		if err != nil {
 			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
 			return
@@ -151,6 +168,13 @@ func APNode(db *database.DB) http.HandlerFunc {
 		}
 		if publicKey.Valid && publicKey.String != "" {
 			resp["publicKey"] = publicKeyObject(actor.ID, publicKey.String)
+		}
+		// The moved-to pointer, and the context term that gives it meaning
+		// (docs/adr/090). Both only when there is a pointer: an actor that
+		// has not moved keeps exactly the document it had.
+		if actor.MovedTo != "" {
+			resp["movedTo"] = actor.MovedTo
+			resp["@context"] = ap.MovedToContext()
 		}
 
 		writeAP(w, resp)
@@ -237,7 +261,6 @@ func APProposal(db *database.DB) http.HandlerFunc {
 			"id":            proposalAPID,
 			"name":          p.Title,
 			"content":       p.Body,
-			"attributedTo":  ap.UserAPID(domain, p.AuthorID),
 			"context":       ap.NodeAPID(domain, p.NodeID),
 			"status":        p.Status,
 			"proposalType":  p.ProposalType,
@@ -247,6 +270,13 @@ func APProposal(db *database.DB) http.HandlerFunc {
 		}
 		if p.VotingEndsAt != nil {
 			resp["votingEndsAt"] = *p.VotingEndsAt
+		}
+		// The push side of this object gates its attribution (docs/adr/006);
+		// the pull side is the same object served to an anonymous fetch, so it
+		// asks the same question. Only a member can author a proposal here, so
+		// naming one publishes a membership that may be switched out of sight.
+		if !membershipHidden(db, p.NodeID, p.AuthorID) {
+			resp["attributedTo"] = ap.UserAPID(domain, p.AuthorID)
 		}
 
 		writeAP(w, resp)
@@ -294,10 +324,14 @@ func APGovernanceDoc(db *database.DB) http.HandlerFunc {
 			"name":         doc.Title,
 			"content":      doc.Body,
 			"version":      doc.Version,
-			"attributedTo": ap.UserAPID(domain, doc.CreatedBy),
 			"context":      ap.NodeAPID(domain, doc.NodeID),
 			"published":    doc.CreatedAt,
 			"updated":      doc.UpdatedAt,
+		}
+		// As above: editing a charter takes a membership, so the editor is
+		// named only where that membership is not hidden (docs/adr/006).
+		if !membershipHidden(db, doc.NodeID, doc.CreatedBy) {
+			resp["attributedTo"] = ap.UserAPID(domain, doc.CreatedBy)
 		}
 
 		writeAP(w, resp)
@@ -451,7 +485,7 @@ func APUserOutbox(db *database.DB) http.HandlerFunc {
 
 		// Verify user exists.
 		var exists int
-		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL", userID).Scan(&exists); err != nil {
+		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL AND deleted_at IS NULL", userID).Scan(&exists); err != nil {
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
 		}
@@ -483,7 +517,7 @@ func APUserFollowers(db *database.DB) http.HandlerFunc {
 
 		// Verify user exists.
 		var exists int
-		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL", userID).Scan(&exists); err != nil {
+		if err := db.QueryRow("SELECT 1 FROM users WHERE id = ? AND suspended_at IS NULL AND deleted_at IS NULL", userID).Scan(&exists); err != nil {
 			http.Error(w, `{"error":"user not found"}`, http.StatusNotFound)
 			return
 		}

@@ -7,6 +7,12 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
   },
+  // MapLibre asks for a module worker first (`new Worker(url, {type:
+  // 'module'})`), so the worker chunk has to be an ES module. Vite's default
+  // is an IIFE, which that constructor would load under module semantics.
+  worker: {
+    format: 'es',
+  },
   server: {
     proxy: {
       // Default backend port; the empty-instance e2e suite

@@ -46,6 +46,28 @@ func ListComments(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		proposalID := r.PathValue("id")
 
+		// The discussion under a proposal follows the proposal
+		// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+		// This route was mounted bare — no auth wrapper, no viewer at all —
+		// which is how a thread nobody meant to publish became world-readable
+		// with every commenter named. It is AuthOptional now so there is
+		// somebody to check.
+		//
+		// 404 rather than an empty list, matching the single proposal: the
+		// thread is reached from a proposal that already answered 404, so an
+		// empty 200 here would only ever be read by somebody who guessed.
+		var commentNodeID string
+		if err := db.QueryRow(
+			"SELECT node_id FROM proposals WHERE id = ?", proposalID,
+		).Scan(&commentNodeID); err != nil {
+			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
+			return
+		}
+		if !canReadGovernanceRecord(db, r, commentNodeID) {
+			http.Error(w, `{"error":"proposal not found"}`, http.StatusNotFound)
+			return
+		}
+
 		// Determine current user (optional, for reaction "me" flag).
 		var currentUserID string
 		cookie, _ := r.Cookie(auth.CookieName)
@@ -57,7 +79,7 @@ func ListComments(db *database.DB) http.HandlerFunc {
 
 		// Fetch all comments for this proposal.
 		rows, err := db.Query(
-			`SELECT c.id, c.body, COALESCE(u.display_name, u.username) as author_name, c.author_id, c.created_at, c.updated_at, c.parent_id
+			`SELECT c.id, c.body, `+displayNameExpr("u")+` as author_name, c.author_id, c.created_at, c.updated_at, c.parent_id
 			 FROM proposal_comments c
 			 LEFT JOIN users u ON u.id = c.author_id
 			 WHERE c.proposal_id = ?
@@ -117,12 +139,9 @@ func ListComments(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Build threaded structure: top-level comments with nested replies.
-		var topLevel []commentItem
+		// Attach replies to their parent comment.
 		for i := range all {
-			if all[i].parentID == nil {
-				topLevel = append(topLevel, all[i].commentItem)
-			} else {
+			if all[i].parentID != nil {
 				parentIdx, ok := byID[*all[i].parentID]
 				if ok {
 					all[parentIdx].Replies = append(all[parentIdx].Replies, all[i].commentItem)
@@ -130,9 +149,8 @@ func ListComments(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		// Copy updated replies back into topLevel items.
-		// Since we modified all[parentIdx].Replies, rebuild topLevel from the flat list.
-		topLevel = nil
+		// Build the top-level list, now that every parent's Replies are filled in.
+		var topLevel []commentItem
 		for i := range all {
 			if all[i].parentID == nil {
 				item := all[i].commentItem
@@ -248,7 +266,7 @@ func CreateComment(db *database.DB) http.HandlerFunc {
 		// Return the created comment.
 		var c commentItem
 		db.QueryRow(
-			`SELECT c.id, c.body, COALESCE(u.display_name, u.username), c.author_id, c.created_at, c.updated_at, c.parent_id
+			`SELECT c.id, c.body, `+displayNameExpr("u")+`, c.author_id, c.created_at, c.updated_at, c.parent_id
 			 FROM proposal_comments c LEFT JOIN users u ON u.id = c.author_id
 			 WHERE c.id = ?`, id,
 		).Scan(&c.ID, &c.Body, &c.AuthorName, &c.AuthorID, &c.CreatedAt, &c.UpdatedAt, &c.ParentID)
@@ -304,7 +322,7 @@ func UpdateComment(db *database.DB) http.HandlerFunc {
 
 		var c commentItem
 		db.QueryRow(
-			`SELECT c.id, c.body, COALESCE(u.display_name, u.username), c.author_id, c.created_at, c.updated_at, c.parent_id
+			`SELECT c.id, c.body, `+displayNameExpr("u")+`, c.author_id, c.created_at, c.updated_at, c.parent_id
 			 FROM proposal_comments c LEFT JOIN users u ON u.id = c.author_id
 			 WHERE c.id = ?`, commentID,
 		).Scan(&c.ID, &c.Body, &c.AuthorName, &c.AuthorID, &c.CreatedAt, &c.UpdatedAt, &c.ParentID)
@@ -354,16 +372,42 @@ func DeleteComment(db *database.DB) http.HandlerFunc {
 	}
 }
 
+// commentNodeID resolves a comment to the node its proposal belongs to, the
+// same path CreateComment's standing check runs, just starting one hop
+// later. Returns ok=false when the comment does not exist.
+func commentNodeID(db *database.DB, commentID string) (nodeID string, ok bool) {
+	err := db.QueryRow(
+		`SELECT p.node_id FROM proposal_comments c
+		 JOIN proposals p ON p.id = c.proposal_id
+		 WHERE c.id = ?`, commentID,
+	).Scan(&nodeID)
+	return nodeID, err == nil
+}
+
 // AddReaction handles POST /api/v1/comments/{id}/reactions.
 func AddReaction(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
 		commentID := r.PathValue("id")
 
-		// Verify comment exists.
-		var exists int
-		if err := db.QueryRow("SELECT COUNT(*) FROM proposal_comments WHERE id = ?", commentID).Scan(&exists); err != nil || exists == 0 {
+		// Verify comment exists, and resolve it to the patch its proposal
+		// belongs to.
+		nodeID, ok := commentNodeID(db, commentID)
+		if !ok {
 			http.Error(w, `{"error":"comment not found"}`, http.StatusNotFound)
+			return
+		}
+
+		// Reacting is participation the same as commenting is, so it takes
+		// the same standing gate CreateComment applies (docs/adr/044,
+		// docs/adr/050): a role on the patch, and — for a follower — the
+		// patch's own say on whether followers take part in its proposals.
+		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "follower", "member", "admin") {
+			http.Error(w, `{"error":"must be member of node"}`, http.StatusForbidden)
+			return
+		}
+		if user.Role != "admin" && !followerMayJoinProposals(db, user.ID, nodeID) {
+			http.Error(w, `{"error":"this patch does not include followers in its proposals"}`, http.StatusForbidden)
 			return
 		}
 
@@ -402,6 +446,24 @@ func RemoveReaction(db *database.DB) http.HandlerFunc {
 		user := middleware.UserFromContext(r.Context())
 		commentID := r.PathValue("id")
 		emoji := r.PathValue("emoji")
+
+		// Same standing gate as AddReaction. The delete is already scoped to
+		// the caller's own row, so a stranger's request was always a no-op —
+		// but "does nothing" is not the same as "was allowed to ask", and the
+		// gate belongs on its twin regardless.
+		nodeID, ok := commentNodeID(db, commentID)
+		if !ok {
+			http.Error(w, `{"error":"comment not found"}`, http.StatusNotFound)
+			return
+		}
+		if user.Role != "admin" && !userHasNodeRole(db, user.ID, nodeID, "follower", "member", "admin") {
+			http.Error(w, `{"error":"must be member of node"}`, http.StatusForbidden)
+			return
+		}
+		if user.Role != "admin" && !followerMayJoinProposals(db, user.ID, nodeID) {
+			http.Error(w, `{"error":"this patch does not include followers in its proposals"}`, http.StatusForbidden)
+			return
+		}
 
 		_, err := db.Exec(
 			`DELETE FROM comment_reactions WHERE comment_id = ? AND user_id = ? AND emoji = ?`,

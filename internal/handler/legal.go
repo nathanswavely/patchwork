@@ -38,9 +38,14 @@ var legalDocByPath = map[string]legalDocDef{
 // renderLegalDefault substitutes deployment identity into a shipped
 // template so a rename never strands a stale name in a legal document.
 func renderLegalDefault(db *database.DB, cfg *config.Config, def legalDocDef) string {
+	usage := usageStatsOffText
+	if settings.UsageStatsEnabled(db) {
+		usage = usageStatsOnText
+	}
 	return strings.NewReplacer(
 		"{quilt_name}", settings.EffectiveName(db, cfg),
 		"{domain}", cfg.Instance.Domain,
+		"{usage_stats}", usage,
 	).Replace(def.Template)
 }
 
@@ -121,7 +126,7 @@ func AdminUpdateLegal(db *database.DB) http.HandlerFunc {
 		if md == "" {
 			// An empty legal document is a hole, not a choice — resetting
 			// to the shipped default is the explicit DELETE route.
-			http.Error(w, `{"error":"document cannot be empty — use reset to restore the default"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"document cannot be empty, use reset to restore the default"}`, http.StatusBadRequest)
 			return
 		}
 		if len(md) > legalMaxBytes {

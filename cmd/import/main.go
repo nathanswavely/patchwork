@@ -18,6 +18,7 @@ import (
 	patchwork "github.com/patchwork-toolkit/patchwork"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
+	"github.com/patchwork-toolkit/patchwork/internal/handler"
 	"github.com/patchwork-toolkit/patchwork/internal/seamrip"
 )
 
@@ -53,9 +54,59 @@ func main() {
 		return items, nil
 	}
 
+	// Which bundle this is, before anything is written. Both kinds import
+	// with the same code, and they arrive at very different places: a full
+	// seamrip carries email addresses, so people sign in on the new quilt
+	// by magic link, while a member seamrip carries none and every person
+	// in it has to be invited back (docs/adr/089). Saying so here is the
+	// difference between a fork that knows it must invite its community and
+	// one that finds out when nobody can sign in.
+	kind, requestedBy := readKind(*inDir)
+	if kind == seamrip.KindMember {
+		fmt.Printf("Reading a MEMBER SEAMRIP")
+		if requestedBy != "" {
+			fmt.Printf(", taken by %s", requestedBy)
+		}
+		fmt.Print(".\n")
+		fmt.Println("  It holds one member's view: no email addresses, no hidden")
+		fmt.Println("  memberships, no noticeboards. People arrive as stubs and join")
+		fmt.Println("  this quilt by invitation.")
+		fmt.Println()
+	}
+
 	idMap, results, err := seamrip.Import(db, read, auth.NewUUIDv7)
 	if err != nil {
 		log.Fatalf("import: %v", err)
+	}
+
+	// Two heals that startup also runs, and that an import needs for the same
+	// reason it needs the contact conversion: the rows arrive after the boot
+	// that would have run them.
+	//
+	// An older archive can carry a node whose governance_config is still the
+	// migration-013 default, which would leave the fork voting by rules its
+	// charter does not describe — the "rules on screen are not the rules in
+	// force" failure docs/adr/041 names. And an unclaimed node imported
+	// without a verification_domain gives the claim flow nothing to anchor
+	// on. Both are idempotent: on an archive that needs neither they do
+	// nothing.
+	if n, err := handler.BackfillGovernanceConfig(db); err != nil {
+		log.Printf("warning: governance config backfill: %v", err)
+	} else if n > 0 {
+		fmt.Printf("  %-28s %d synced from the charter\n", "governance_config", n)
+	}
+	handler.BackfillVerificationDomains(db)
+
+	// An archive taken before migration 068 carries the contact card as three
+	// columns on users plus a boolean per membership (docs/adr/080). Nothing
+	// reads those any more, so without this the cards would arrive on the
+	// fork and be invisible — a silent loss in the one mechanism that exists
+	// for a community to leave with what is theirs (docs/adr/002). The same
+	// conversion startup runs, run once more now that the rows are here.
+	if n, err := handler.BackfillContactItems(db); err != nil {
+		log.Fatalf("import: converting contact cards: %v", err)
+	} else if n > 0 {
+		fmt.Printf("  %-28s %d converted from the pre-068 card\n", "contact_items", n)
 	}
 
 	for _, r := range results {
@@ -109,4 +160,29 @@ func main() {
 
 	fmt.Printf("\nImport complete. ID mapping saved to %s\n", idMapPath)
 	fmt.Println("ActivityPub identifiers and keypairs are minted on first server start.")
+	if kind == seamrip.KindMember {
+		fmt.Println("Nobody in this archive has an email address. Invite people back with")
+		fmt.Println("invite links, and each person sets their own visibility here again.")
+	}
+}
+
+// readKind reports which kind of archive this directory holds, and who took
+// it when that is recorded. manifest.json is the member seamrip's own file;
+// instance.json carries the same key, and an archive written before either
+// existed has neither and is a full seamrip.
+func readKind(dir string) (string, string) {
+	var meta struct {
+		Kind        string `json:"kind"`
+		RequestedBy string `json:"requested_by"`
+	}
+	for _, name := range []string{"manifest.json", "instance.json"} {
+		data, err := os.ReadFile(filepath.Join(dir, name))
+		if err != nil {
+			continue
+		}
+		if json.Unmarshal(data, &meta) == nil && meta.Kind != "" {
+			return seamrip.KindFor(meta.Kind), meta.RequestedBy
+		}
+	}
+	return seamrip.KindFull, ""
 }

@@ -16,7 +16,7 @@ func TestFetchActorCachesResults(t *testing.T) {
 		atomic.AddInt32(&calls, 1)
 		return &ap.RemoteActor{ID: id, Inbox: id + "/inbox", PublicKey: "pem"}, nil
 	})
-	defer ap.SetActorFetcher(restore)
+	defer func() { ap.SetActorFetcher(restore) }()
 
 	const actor = "https://remote.example/ap/users/cached"
 	for i := 0; i < 3; i++ {
@@ -51,7 +51,7 @@ func TestFetchActorCacheNotSharedAcrossFetchers(t *testing.T) {
 	ap.SetActorFetcher(func(_ context.Context, id string) (*ap.RemoteActor, error) {
 		return &ap.RemoteActor{ID: id, Inbox: "second-inbox", PublicKey: "pem"}, nil
 	})
-	defer ap.SetActorFetcher(restore)
+	defer func() { ap.SetActorFetcher(restore) }()
 
 	second, err := ap.FetchActor(context.Background(), actor)
 	if err != nil || second.Inbox != "second-inbox" {

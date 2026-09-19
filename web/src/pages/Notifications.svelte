@@ -18,6 +18,10 @@
     { value: 'governance', label: 'Governance' },
     { value: 'membership', label: 'Membership' },
     { value: 'events', label: 'Events' },
+    // What a moderator did about you, or about something you reported. The
+    // backend decides which types those are — account.email_changed is not
+    // one of them (internal/handler/notifications.go).
+    { value: 'moderation', label: 'Moderation' },
   ];
 
   $effect(() => {

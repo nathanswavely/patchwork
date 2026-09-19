@@ -11,6 +11,11 @@
    * joined_at falls within the last 30 days, and only until dismissed for
    * this patch. Mounted once in PatchShell, above the tab content.
    *
+   * "Active" is load-bearing and checked here: a pending request on an
+   * approval_required patch is a row with role='member' too, and greeting
+   * a would-be member with what membership unlocked would be a promise
+   * the patch hasn't made yet.
+   *
    * The workspace node payload carries no joined_at, so this reads the
    * viewer's own memberships store instead (lib/stores/memberships) and
    * refreshes it on mount — a join made moments ago elsewhere in this same
@@ -54,6 +59,7 @@
     !!node &&
     isAuthChecked() &&
     isMembershipsLoaded() &&
+    membership?.status === 'active' &&
     membership?.role === 'member' &&
     withinWindow &&
     !dismissed

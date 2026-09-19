@@ -11,6 +11,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/ap"
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/eventsource"
 	"github.com/patchwork-toolkit/patchwork/internal/middleware"
@@ -243,7 +244,7 @@ func AdminSyncAggregator(db *database.DB) http.HandlerFunc {
 			return
 		}
 		if lastFetch != nil {
-			if t, err := time.Parse("2006-01-02T15:04:05.000Z", *lastFetch); err == nil && time.Since(t) < time.Minute {
+			if t, err := clock.Parse(*lastFetch); err == nil && time.Since(t) < time.Minute {
 				http.Error(w, `{"error":"this aggregator just synced. Try again in a minute."}`, http.StatusTooManyRequests)
 				return
 			}
@@ -474,7 +475,7 @@ func scanCrosswalk(db *database.DB, nodeID string) ([]model.EventSource, error) 
 		 es.created_at, es.updated_at, es.aggregator_id, es.name_key,
 		 a.name, COALESCE((SELECT MIN(l.display_name) FROM aggregator_listings l
 		   WHERE l.aggregator_id = es.aggregator_id AND l.name_key = es.name_key), es.name_key),
-		 es.suggests, COALESCE(u.display_name, u.username, ''),
+		 es.suggests, `+displayNameExpr("u")+`,
 		 (SELECT COUNT(*) FROM events e WHERE e.source_id = es.id
 		    AND e.removed_at IS NULL AND e.status = 'pending_review')
 		 FROM event_sources es

@@ -1,0 +1,47 @@
+name: Race (nightly)
+
+# The full `go test -race ./...` sweep from issue #312's suggested shape.
+# ci.yaml's own `race` job already runs -race on every PR, but only against
+# the packages with actual shared, mutex-guarded state (the ICS sync worker,
+# the rate limiter, the AP delivery worker, the reminder worker) — running
+# the whole tree that way on every PR would roughly double the `test` job's
+# time, and CI is already at budget (~6:23; no bigger runner is available on
+# a personal repo). This workflow is the safety net over everything the
+# per-PR subset doesn't cover, on its own schedule instead of on the
+# critical path to merge.
+on:
+  schedule:
+    # 09:00 UTC: after a day of merges land, and outside any contributor's
+    # normal working hours in either Lancaster, PA (the reference community)
+    # or Europe — a failure here is read the next morning, not mid-review.
+    - cron: "0 9 * * *"
+  # Manual runs, e.g. checking a suspected race before it's reproduced by a
+  # nightly failure, or re-running after a flake.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  race:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+
+      # go build/test needs web/dist to exist (embed.FS — see web/embed.go),
+      # and this job never runs the frontend build. The SPA's actual content
+      # plays no part in what -race is checking, so a placeholder is enough
+      # — the same one a Go-only dev loop uses.
+      - name: Placeholder frontend asset
+        run: |
+          mkdir -p web/dist
+          echo '<!doctype html><title>placeholder</title>' > web/dist/index.html
+
+      - name: go test -race ./...
+        run: go test -race ./...

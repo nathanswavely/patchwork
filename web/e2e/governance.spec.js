@@ -78,13 +78,19 @@ test.describe('Governance — Create General Proposal', () => {
     await expect(page.locator('textarea#body')).toBeVisible();
   });
 
-  test('proposal form has type selector without Amendment option', async ({ page }) => {
+  test('proposal form offers only the types this patch can actually run', async ({ page }) => {
     await goto(page, `${PATCH_URL}/governance/new`);
-    // Should have Action, Membership — but NOT Amendment.
     await expect(page.locator('.type-radio-label', { hasText: 'Action' })).toBeVisible();
-    await expect(page.locator('.type-radio-label', { hasText: 'Membership' })).toBeVisible();
-    const amendmentOption = page.locator('.type-radio-label', { hasText: 'Amendment' });
-    await expect(amendmentOption).not.toBeVisible();
+
+    // Amendment is raised from a document, not from here.
+    await expect(page.locator('.type-radio-label', { hasText: 'Amendment' })).not.toBeVisible();
+
+    // Membership is a nomination now (docs/adr/100) and must name somebody.
+    // This patch forks the Casual template, so it is `maintainer`: an admin
+    // is made by designating a successor, and the server has always refused
+    // a nomination here. Offering the type put a dead end on the form — the
+    // person filled it in and the API said no.
+    await expect(page.locator('.type-radio-label', { hasText: 'Membership' })).not.toBeVisible();
   });
 
   test('can submit a general proposal', async ({ page }) => {
@@ -141,7 +147,7 @@ test.describe('Governance — Proposal Detail', () => {
       if (await discussionTab.isVisible()) {
         await discussionTab.click();
         // Should show comment thread
-        await page.waitForTimeout(500);
+        await page.waitForLoadState('networkidle');
         await expectNoError(page);
       }
 
@@ -149,7 +155,7 @@ test.describe('Governance — Proposal Detail', () => {
       const historyTab = page.locator('.tab', { hasText: 'History' });
       if (await historyTab.isVisible()) {
         await historyTab.click();
-        await page.waitForTimeout(500);
+        await page.waitForLoadState('networkidle');
         await expectNoError(page);
       }
     }
@@ -273,7 +279,7 @@ test.describe('Governance — Diff View', () => {
       const changesTab = page.locator('.tab', { hasText: 'Changes' });
       if (await changesTab.isVisible()) {
         await changesTab.click();
-        await page.waitForTimeout(500);
+        await page.waitForLoadState('networkidle');
         const diffView = page.locator('.diff-view');
         if (await diffView.isVisible()) {
           // Should have mode toggle

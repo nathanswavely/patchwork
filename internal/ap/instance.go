@@ -53,6 +53,26 @@ func InstanceActorKeys(db *database.DB) (apID, publicKey string, err error) {
 	return apID, publicKey, err
 }
 
+// InstanceActorPrivateKey returns the instance actor's signing key.
+//
+// It reads the singleton row rather than matching on ap_id the way
+// PrivateKeyForActor does, because the two callers want different things: a
+// delivery signs *as* a particular AP identity and must fail when that
+// identity's id has drifted, while admin attestation (docs/adr/087) signs as
+// the instance itself and wants the key whatever the ap_id currently says —
+// including on a quilt that has never federated and whose ap_id is only ever
+// a placeholder.
+func InstanceActorPrivateKey(db *database.DB) (string, error) {
+	var priv sql.NullString
+	if err := db.QueryRow("SELECT private_key FROM instance_actor WHERE id = 1").Scan(&priv); err != nil {
+		return "", err
+	}
+	if !priv.Valid || priv.String == "" {
+		return "", errors.New("instance actor has no private key")
+	}
+	return priv.String, nil
+}
+
 // BuildFollow builds a Follow activity from the instance actor to a
 // remote actor. The activity ID doubles as the reference an Accept or
 // Undo can point back to.

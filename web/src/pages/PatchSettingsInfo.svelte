@@ -1,17 +1,39 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
+  import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
   import InlineEdit from '../components/InlineEdit.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import TagPicker from '../components/TagPicker.svelte';
   import MapLocationPicker from '../components/MapLocationPicker.svelte';
   import { hasMapLocation, formatCoord } from '../lib/mapLocation.js';
+  import { isPlaceZone } from '../lib/datetime.js';
   import { suggestPlace, worthLookingUp } from '../lib/placeSuggestion.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
   let node = $derived(patch.value.node);
+
+  // The membership policy, stated here and changed elsewhere. It is governance — it
+  // lives in the patch's rules file and PATCH /nodes refuses it outright —
+  // so this page cannot hold the control without making the rules file and
+  // the row two sources for one fact. But an admin looking for it comes
+  // here first, and finding nothing reads as "there is no such setting":
+  // an open patch stayed open because its admin could not find the door.
+  // So the setting appears where it is looked for, says what it currently
+  // is, and hands over to the page that owns it.
+  const MEMBERSHIP_POLICY_LABEL = {
+    open: 'Open. Anyone can join without approval.',
+    approval_required: 'Approval required. Anyone can ask; an admin answers each request.',
+    invite_only: 'Invite only. Only people an admin invites can join.',
+  };
+  let membershipPolicyLabel = $derived(MEMBERSHIP_POLICY_LABEL[node?.membership_policy] || '');
+  // The rules editor is a member's page, gated on a role in this patch
+  // (RulesProposalEditor). An instance admin holding no role here reaches
+  // Settings but not that, so they are told where it is rather than sent
+  // to a refusal.
+  let isPatchAdmin = $derived(patch.value.membershipRole === 'admin');
 
   // Map location (issue #4): a placed marker, independent of the address
   // prose above. Placement is a deliberate, explicit-save flow — the picker
@@ -125,6 +147,11 @@
   let tags = $state([]);
   let savingTags = $state(false);
   let tagsSynced = false;
+  // Words proposed in this editing session, not yet sent. Distinct from
+  // node.pending_tags, which are the suggestions already waiting for review
+  // (docs/adr/114) — those arrive only for this patch's admins.
+  let suggestTags = $state([]);
+  let pendingTags = $derived(Array.isArray(node?.pending_tags) ? node.pending_tags : []);
   $effect(() => {
     if (node && !tagsSynced) {
       tags = Array.isArray(node.tags) ? [...node.tags] : [];
@@ -133,14 +160,21 @@
   });
 
   let tagsDirty = $derived(
-    JSON.stringify(tags) !== JSON.stringify(Array.isArray(node?.tags) ? node.tags : [])
+    JSON.stringify(tags) !== JSON.stringify(Array.isArray(node?.tags) ? node.tags : []) ||
+    suggestTags.length > 0
   );
 
   async function saveTags() {
     savingTags = true;
     try {
-      await api(`nodes/${slug}`, { method: 'PATCH', body: { tags } });
-      showToast('Tags saved', 'success');
+      // Sent separately: the server rejects an unknown name in `tags`, and
+      // its replace-all is scoped to approved tags so this cannot delete a
+      // suggestion already waiting.
+      const body = { tags };
+      if (suggestTags.length > 0) body.suggest_tags = suggestTags;
+      await api(`nodes/${slug}`, { method: 'PATCH', body });
+      showToast(suggestTags.length > 0 ? 'Tags saved, suggestions sent for review' : 'Tags saved', 'success');
+      suggestTags = [];
       tagsSynced = false;
       patch.value.reload();
     } catch (e) {
@@ -152,22 +186,74 @@
 
   function resetTags() {
     tags = Array.isArray(node?.tags) ? [...node.tags] : [];
+    suggestTags = [];
   }
+
+  // Taking a suggestion back is its own act, never a side effect of saving
+  // the form (docs/adr/114).
+  async function withdrawSuggestion(name) {
+    try {
+      await api(`nodes/${slug}/suggested-tags/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      showToast(`Withdrew ${name}`, 'success');
+      patch.value.reload();
+    } catch (e) {
+      showToast(e.message || 'Failed to withdraw', 'error');
+    }
+  }
+
+  // Changing this patch's zone changes what time its events say
+  // (docs/adr/067: the stored instant and the wall clock it reads as are
+  // different things). The events that inherit the patch's zone do not
+  // move; their readings do — four rehearsals typed as 7pm start saying
+  // 2pm. The server refuses to guess which was meant and answers 409 with
+  // the count, and this is the question it asks.
+  let zoneChoice = $state(null);
+  let zoneSaving = $state('');
 
   // Checked before the round trip so a typo is visible where it was typed.
   // The server validates too and is the authority; a zone it cannot resolve
   // would silently hand every event in this patch the quilt's clock instead.
+  // A fixed-offset name like EST is refused as well — it is not a place,
+  // and it is an hour wrong for half the year.
   async function saveTimezone(newValue) {
     const tz = (newValue || '').trim();
-    if (tz) {
-      try {
-        new Intl.DateTimeFormat('en-US', { timeZone: tz });
-      } catch {
-        showToast('That is not a timezone this quilt knows', 'error');
+    if (tz && !isPlaceZone(tz)) {
+      showToast('That is not a place this quilt keeps time in. Try America/New_York.', 'error');
+      return;
+    }
+    try {
+      await saveField('timezone', tz);
+    } catch (e) {
+      if (e?.status === 409 && e?.data?.code === 'timezone_events_undecided') {
+        zoneChoice = { ...e.data, timezone: tz };
         return;
       }
+      showToast(e.message || 'Failed to save the timezone', 'error');
     }
-    await saveField('timezone', tz);
+  }
+
+  async function resolveZoneChange(mode) {
+    zoneSaving = mode;
+    try {
+      const result = await api(`nodes/${slug}`, {
+        method: 'PATCH',
+        body: { timezone: zoneChoice.timezone, timezone_events: mode },
+      });
+      const moved = result?.timezone_change?.events_moved ?? 0;
+      const affected = result?.timezone_change?.events_affected ?? 0;
+      showToast(
+        mode === 'keep_clock'
+          ? `Timezone saved. ${moved} event${moved === 1 ? '' : 's'} kept ${moved === 1 ? 'its' : 'their'} listed time.`
+          : `Timezone saved. ${affected} event${affected === 1 ? '' : 's'} stayed put and now read in ${zoneChoice.to.replace(/_/g, ' ')}.`,
+        'success'
+      );
+      zoneChoice = null;
+      patch.value.reload();
+    } catch (e) {
+      showToast(e.message || 'Failed to save the timezone', 'error');
+    } finally {
+      zoneSaving = '';
+    }
   }
 
   async function saveField(field, newValue) {
@@ -258,6 +344,72 @@
     }
   }
 
+  // The moved-to pointer (docs/adr/090). Its own block rather than an
+  // InlineEdit, because it needs a sentence saying what setting it does to
+  // the patch, and because clearing it is a real act somebody will want.
+  let movedTo = $state('');
+  let movedSeeded = $state('');
+  let savingMoved = $state(false);
+  let movedError = $state('');
+
+  $effect(() => {
+    if (node?.id && movedSeeded !== node.id) {
+      movedTo = node.moved_to || '';
+      movedSeeded = node.id;
+    }
+  });
+
+  let movedDirty = $derived(movedTo.trim() !== (node?.moved_to || ''));
+
+  async function saveMovedTo(value) {
+    savingMoved = true;
+    movedError = '';
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { moved_to: value } });
+      showToast('Saved', 'success');
+      movedSeeded = '';
+      patch.value.reload();
+    } catch (e) {
+      movedError = e.message || 'Could not save that link';
+    } finally {
+      savingMoved = false;
+    }
+  }
+
+  // When the group started (docs/adr/098). A date input rather than an
+  // InlineEdit, which has no date type. Blank means the group started with
+  // its patch; a date means it predates it, and the voting tenure the patch
+  // may require is capped at that age.
+  let foundedAt = $state('');
+  let foundedSeeded = $state('');
+  let savingFounded = $state(false);
+  let foundedError = $state('');
+  const today = new Date().toISOString().slice(0, 10);
+
+  $effect(() => {
+    if (node?.id && foundedSeeded !== node.id) {
+      foundedAt = node.founded_at || '';
+      foundedSeeded = node.id;
+    }
+  });
+
+  let foundedDirty = $derived(foundedAt !== (node?.founded_at || ''));
+
+  async function saveFoundedAt(value) {
+    savingFounded = true;
+    foundedError = '';
+    try {
+      await api(`nodes/${slug}`, { method: 'PATCH', body: { founded_at: value } });
+      showToast('Saved', 'success');
+      foundedSeeded = '';
+      patch.value.reload();
+    } catch (e) {
+      foundedError = e.message || 'Could not save that date';
+    } finally {
+      savingFounded = false;
+    }
+  }
+
   async function removeLink(index) {
     const updatedLinks = links.filter((_, i) => i !== index);
     savingLinks = true;
@@ -345,10 +497,60 @@
       placeholder={instanceTimezone || 'e.g. America/New_York'}
     />
     <p class="field-hint muted">
-      An IANA name. Leave it empty to follow the quilt{instanceTimezone
+      An IANA place name. Leave it empty to follow the quilt{instanceTimezone
         ? `, which keeps time in ${instanceTimezone.replace(/_/g, ' ')}`
         : ''}.
     </p>
+
+    <!--
+      The question docs/adr/067 makes unavoidable. Two answers, both
+      defensible, neither a default: re-anchoring rewrites stored instants
+      and leaving them alone rewrites every reading. Whichever is chosen,
+      the toast says what happened and to how many.
+    -->
+    {#if zoneChoice}
+      <div class="zone-choice">
+        <p class="zone-choice-lead">
+          {zoneChoice.events_affected} event{zoneChoice.events_affected === 1 ? '' : 's'}
+          follow{zoneChoice.events_affected === 1 ? 's' : ''} this patch's timezone.
+          Moving from {zoneChoice.from.replace(/_/g, ' ')} to {zoneChoice.to.replace(/_/g, ' ')}
+          changes what time {zoneChoice.events_affected === 1 ? 'it reads' : 'they read'} as.
+        </p>
+        <div class="zone-choice-actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            disabled={!!zoneSaving}
+            onclick={() => resolveZoneChange('keep_clock')}
+          >{zoneSaving === 'keep_clock'
+              ? 'Moving...'
+              : zoneChoice.events_affected === 1
+                ? 'Keep the listed time'
+                : 'Keep the listed times'}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            disabled={!!zoneSaving}
+            onclick={() => resolveZoneChange('keep_instant')}
+          >{zoneSaving === 'keep_instant'
+              ? 'Saving...'
+              : zoneChoice.events_affected === 1
+                ? 'Leave the event where it is'
+                : 'Leave the events where they are'}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            disabled={!!zoneSaving}
+            onclick={() => (zoneChoice = null)}
+          >Cancel</button>
+        </div>
+        <p class="muted zone-choice-hint">
+          Keeping listed times moves each event to the new zone, so 7pm stays 7pm.
+          Leaving them where they are keeps the exact moment and changes the clock time shown.
+          Events with a timezone of their own, and events from a calendar feed, are not touched.
+        </p>
+      </div>
+    {/if}
 
     <!-- Map location (issue #4). Sharing a section with the address does
          not make them one claim: an address never implies a map position. -->
@@ -406,6 +608,41 @@
     onSave={(v) => saveField('website', v)}
     placeholder="https://..."
   />
+
+  <!-- When the group started (docs/adr/098). Its own field because the
+       voting tenure a patch may require is capped at its age, and a group
+       older than its patch should be able to say so. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Founded</span>
+    </div>
+    <input
+      class="founded-input"
+      type="date"
+      max={today}
+      bind:value={foundedAt}
+      disabled={savingFounded}
+    />
+    <p class="muted tags-hint">
+      When this group started, if it predates its patch. Voting tenure is never
+      required to be longer than the group has existed.
+    </p>
+    {#if foundedError}<p class="image-error">{foundedError}</p>{/if}
+    {#if foundedDirty}
+      <div class="tags-actions">
+        <button
+          class="btn btn-primary btn-sm"
+          onclick={() => saveFoundedAt(foundedAt)}
+          disabled={savingFounded}
+        >{savingFounded ? 'Saving...' : 'Save'}</button>
+        <button
+          class="btn btn-secondary btn-sm"
+          onclick={() => { foundedAt = node?.founded_at || ''; foundedError = ''; }}
+          disabled={savingFounded}
+        >Cancel</button>
+      </div>
+    {/if}
+  </div>
 
   <!-- The image and its description save together, unlike every other field
        here. They are only valid as a pair (docs/adr/007), so two separate
@@ -498,8 +735,16 @@
     <p class="muted tags-hint">
       Tags help people find this patch, and the quilt places patches with
       shared tags near each other. The first tag decides the default motif.
+      Missing a word? Suggest it, and an admin decides whether it joins the
+      quilt's tags.
     </p>
-    <TagPicker bind:selected={tags} disabled={savingTags} />
+    <TagPicker
+      bind:selected={tags}
+      bind:suggested={suggestTags}
+      pending={pendingTags}
+      onWithdraw={withdrawSuggestion}
+      disabled={savingTags}
+    />
     {#if tagsDirty}
       <div class="tags-actions">
         <button class="btn btn-primary btn-sm" onclick={saveTags} disabled={savingTags}>
@@ -521,8 +766,7 @@
       <span class="links-label">Visibility</span>
     </div>
     <p class="muted tags-hint">
-      This is about the patch itself — where it shows up. Events, members, and
-      documents each carry their own visibility.
+      Patch specific configuration. Events, members, and documents carry their own visibility.
     </p>
     <div class="choice-list">
       {#each visibilityOptions as opt}
@@ -548,6 +792,34 @@
     </p>
   </div>
 
+  <!-- Membership policy. Stated, not set — the control belongs to the rules
+       (see MEMBERSHIP_POLICY_LABEL above). Sits under Visibility because
+       the two are the questions admins ask together: who can see this, and
+       who can get in. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">Membership policy</span>
+    </div>
+    {#if membershipPolicyLabel}
+      <p class="muted tags-hint">{membershipPolicyLabel}</p>
+    {/if}
+    {#if isPatchAdmin}
+      <a
+        class="policy-link"
+        href="/patches/{slug}/governance/rules/propose"
+        onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules/propose`); }}
+      >Change membership policy</a>
+      <p class="muted tags-hint caveat">
+        This is part of the patch's rules. Changing it applies immediately or
+        goes to a vote, depending on the patch's decision method.
+      </p>
+    {:else}
+      <p class="muted tags-hint caveat">
+        Changed in Governance, by an admin of this patch.
+      </p>
+    {/if}
+  </div>
+
   <!-- Event suggestions section (docs/adr/026) -->
   <div class="links-section">
     <div class="links-header">
@@ -567,12 +839,72 @@
     </p>
   </div>
 
+  <!-- We've moved (docs/adr/090). Last, because it is the one setting that
+       is about leaving rather than about running the patch. -->
+  <div class="links-section">
+    <div class="links-header">
+      <span class="links-label">We have moved</span>
+    </div>
+    <p class="muted tags-hint">
+      Point this patch at its new home. The page here keeps working and stays
+      readable, with a banner saying where the patch went. New joins, new
+      follows and event suggestions from outside are turned away and sent to
+      the new address. Members and admins keep everything they had. Clear the
+      field to undo it.
+    </p>
+    <input
+      class="moved-input"
+      type="url"
+      bind:value={movedTo}
+      disabled={savingMoved}
+      placeholder="https://their-quilt.example.com/patches/gallery-row"
+    />
+    {#if movedError}<p class="image-error">{movedError}</p>{/if}
+    {#if movedDirty}
+      <div class="tags-actions">
+        <button
+          class="btn btn-primary btn-sm"
+          onclick={() => saveMovedTo(movedTo.trim())}
+          disabled={savingMoved}
+        >{savingMoved ? 'Saving...' : 'Save'}</button>
+        <button
+          class="btn btn-secondary btn-sm"
+          onclick={() => { movedTo = node?.moved_to || ''; movedError = ''; }}
+          disabled={savingMoved}
+        >Cancel</button>
+      </div>
+    {/if}
+  </div>
 
 </div>
 
 <style>
   .field-hint {
     margin: -0.5rem 0 1rem;
+    font-size: 0.85rem;
+  }
+
+  .zone-choice {
+    margin: -0.5rem 0 1.25rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+  }
+
+  .zone-choice-lead {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .zone-choice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .zone-choice-hint {
+    margin: 0.75rem 0 0;
     font-size: 0.85rem;
   }
 
@@ -618,6 +950,27 @@
 
   .image-section .btn {
     align-self: flex-start;
+  }
+
+  .founded-input {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-family: inherit;
+  }
+
+  .moved-input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-family: inherit;
   }
 
   .links-section {
@@ -762,6 +1115,11 @@
 
   .caveat {
     margin-top: 0.5rem;
+  }
+
+  .policy-link {
+    font-size: 0.85rem;
+    font-weight: 500;
   }
 
   .tags-hint {

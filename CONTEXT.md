@@ -119,7 +119,11 @@ is not overlap. A thread is what the quilt's proximity means, so it has no
 control anywhere in the UI; the only way to make one is for people to
 belong to both patches. Distinct from placement affinity, the broader
 internal weighting the layout runs on (shared events, shared followers,
-shared tags), none of which is a thread.
+shared tags), none of which is a thread. A membership its holder has
+hidden (docs/adr/006) feeds neither: hidden rows are excluded from every
+placement-affinity term that reads memberships, the same way they are
+excluded from the thread signal
+(docs/adr/2026-09-18-a-hidden-membership-does-not-place.md).
 _Avoid_: edge (the removed explicit-connection concept), link (that is an
 event link, which is declared), connection (in UI copy — say thread)
 
@@ -127,8 +131,18 @@ event link, which is declared), connection (in UI copy — say thread)
 Admins plus members — never followers. A follower is an interested
 observer, not a member; follower interest is its own count. The two are
 never summed in anything user-facing.
+
+One number, ungated. It counts every active member/admin row, including
+memberships their holders have hidden (docs/adr/006) and rows a patch's
+`public_member_list` withholds (docs/adr/095 decision 3). A count names
+nobody — the visibility gates decide who is *listed*, not how many there
+are — and the quilt already sizes a patch's tile by this number, so a
+surface that counted under its own gate would contradict the front page
+rather than conceal anything. The same holds for follower count. Where a
+list is shorter than the count it sits under, the page says why if it can
+(the roster note) and never restates the count to match the page.
 _Avoid_: community size (ambiguous), total members (when it includes
-followers)
+followers), counting the loaded page of rows
 
 **Upcoming events**:
 A patch's events that have not yet started — the number the patch profile
@@ -143,7 +157,8 @@ the all-time number)
 **Tag**:
 A label a patch wears, chosen by that patch's admins — many per patch —
 from a single vocabulary curated by the instance admin. Patch admins pick
-from the list; only instance admins change the list. Tags power discovery:
+from the list, and may propose a word that is not on it (see **Suggested
+tag**); only instance admins change the list itself. Tags power discovery:
 filtering, onboarding interests, and the tag-derived motif. Shared tags
 also weakly attract patches in the quilt — a declared similarity that
 matters most for patches too new or thin to have member overlap, and that
@@ -153,6 +168,21 @@ There is no second classification system — "category" is this concept and
 never a separate one. Tags never label people or events — an event matches
 a tag through its patch.
 _Avoid_: category, genre, topic, label (as a noun)
+
+**Suggested tag**:
+A word a patch's admin proposes for the instance's **tag** vocabulary,
+worn provisionally by the patch that proposed it and invisible to everyone
+else until an instance admin approves it. Until then it is not a tag: it
+does not filter, does not derive a motif, does not attract patches on the
+quilt, and does not travel in a member seamrip. Approving it makes it an
+ordinary tag for the whole quilt at once, including any other patch that
+proposed the same word. Declining it spends the word: it cannot be
+suggested again, though an instance admin can still create it outright.
+The vocabulary stays the instance admin's to change, and a suggestion asks
+them to.
+_Avoid_: tag submission (a person submits patches and events,
+docs/adr/026), custom tag (no patch owns one), category (that is this
+concept, see **Tag**)
 
 **Quilt**:
 The treemap visualization of all patches on one instance, placed by member
@@ -173,8 +203,25 @@ _Avoid_: quilt admin, moderator, owner (as a role name)
 
 **Instance admin**:
 A person with the site-wide admin role on an instance. Curates instance-wide
-options; does not override per-patch choices.
+options; does not override per-patch choices. Their reach into any individual
+patch is **custody**, never rank (docs/adr/115).
 _Avoid_: quilt admin, superadmin
+
+**Custody**:
+The standing an instance admin holds over a patch that has no admin of its own,
+and only for as long as that is true (docs/adr/115). A patch nobody has claimed
+is held for its calendar, so its events, feeds and submissions are the instance
+admin's to keep alive. A claimed patch whose seats were vacated for inactivity
+is held only to hand back: the one act is putting an admin in place, because its
+members are still there and running their patch was never the steward's job. A
+patch with an admin is held by nobody else at all. Distinct from the instance
+admin's own surfaces (tags, claims, legal documents, reports, archive, the
+quilt's identity), which were never a patch's to hold and so are not custody.
+The decided rule, not yet the running code: the handlers still grant an
+instance admin every patch-admin verb everywhere, deferred on purpose while the
+reference instance is young (docs/adr/115, "Deferred on purpose").
+_Avoid_: override, superadmin access, god mode, break-glass (deliberately not
+built)
 
 **Steward**:
 A person publicly accountable for how a quilt is run, named on its Label.
@@ -290,6 +337,11 @@ not travel with a person from surface to surface. Never addressable — quilt
 space is re-sewn as membership changes, so a saved viewport would come to
 mean other patches. Distinct from what the layout code calls visible, which
 is a patch passing the filter.
+
+It needs two panes on screen at once, so it is absent where there is only
+one: on a phone, where the panes toggle, and wherever the **cards pane**
+has been put away, since there is then no list to narrow. Absent, not off
+— the setting is kept and bites again when the second pane returns.
 _Avoid_: visible (that word belongs to the filter), viewport (in UI copy),
 bounds, this area
 
@@ -359,6 +411,21 @@ The instance admin surface at /admin. Gets the same full-screen takeover
 treatment as a workspace.
 _Avoid_: admin area, dashboard (that is the user's personal page)
 
+**Overview**:
+The admin panel's landing page. It shows what is waiting on the instance
+admin's decision and what is unattended, and nothing else: no size, growth,
+or activity figures. Something is on it only when the next act is the
+instance admin's; what waits on somebody else (a claimant still setting up)
+is not. Decisions a person is waiting on come first; routing work nobody is
+waiting on (unrouted names) sits below them. Below that is what is broken or
+unattended and the instance admin's to mend, which under custody
+(docs/adr/115) means the instance's own machinery and patches held in
+custody; a claimed patch with no admin leads it, and a fault on a patch that
+has admins of its own never appears. Standing conditions (mail is off, the
+admin holds no passkey) are stated plainly, never nagged or dismissed. A
+quilt with nothing waiting shows a quiet page.
+_Avoid_: admin dashboard, stats, KPIs
+
 ## Layout & spacing
 
 **Gutter**:
@@ -379,37 +446,136 @@ is the page, so it separates with a heading and a rule, not a box.
 _Avoid_: panel, box, tile (that is a patch on the quilt), section (a
 section may or may not be a card)
 
+**Cards pane**:
+The discovery surface's second half: the column beside the quilt or the
+map that holds the **patch cards**, and on a desktop the slot a **docked
+profile** takes. On a phone there is no beside — the panes toggle and this
+one fills the screen.
+
+A reader can **put it away**. Shown or hidden, one bit and nothing between:
+a narrower pane is a worse list and a barely better quilt, so the only
+choice worth offering is whether the list is there. Shown is the width it
+has always had; hidden gives the whole window to the canvas, which is the
+signature visual and was never something a reader could ask to see all of.
+An arrangement rather than a lens, so it persists, the way the collapsed
+rail and the collapsed chips do and the filter, the order and **in view**
+deliberately do not.
+
+It arranges the room, so the control is the shell's rather than the list's,
+and it never lives in the pane's own header: it parks against the pane's
+edge and travels with it, because a control that can delete its own
+container cannot live inside it. It is the rail's toggle mirrored — the two
+edges of one room, learned once. Hiding suspends the **in view** lens rather
+than clearing it: there is no list to narrow, and the reader's setting is
+not the app's to discard. A docked profile opens the pane for as long as it
+is docked, for the same reason — the room makes space for what was asked for
+without overwriting what was chosen.
+
+Not the list (a docked profile can occupy the pane and is not a list) and
+not a panel in the **Card** sense.
+_Avoid_: sidebar (the rail is the sidebar), drawer, list pane, results
+panel, collapse (the rail collapses; this one is hidden), minimize
+
 **Patch card**:
 A patch as rendered in a list — its cover, name, counts, a line of
 description, and the viewer's standing with it. The one rendering of a
 patch outside the quilt, and deliberately the same one wherever it
-appears. It has two homes: the **cards pane** beside a discovery surface,
-and — where the screen has no room for a pane — **docked** at the foot of
-the surface, carrying the patch a person just touched. Which home a card
-lands in follows the room on screen, never which surface the person came
-from.
+appears. It has one home: the **cards pane** beside a discovery surface,
+which on a phone is the list view filling the screen. It sits in a grid
+where tapping a card is already the convention, so the standing stays a
+labelled chip in the cover's corner rather than an invitation repeated
+eighteen times — labelled, because follower, member and admin are the
+ladder a reader is here to learn and an unlabelled glyph teaches nobody a
+word.
 
 Previewing costs a gesture the device can spare: where there is a pointer,
 pointing at a patch previews it — its card highlights in the pane — and
 clicking opens the patch. Where there is no pointer there is only one
-gesture, so the first tap previews into the docked card, and the card
-itself is how the patch is opened. The quilt and the map behave the same
-way as each other on the same hardware.
+gesture, so the first tap opens the **docked profile**. The quilt and the
+map behave the same way as each other on the same hardware.
 
-The two homes are the same card, and differ only in what the room affords.
-Docked, it stands alone above every other thing on screen, spends the width
-on a longer description, and ends in an **action row** naming what it can
-do — "View patch", and the viewer's standing beside it. In the pane it sits
-in a grid where tapping a card is already the convention, so the standing
-stays a chip in the cover's corner and no card repeats the invitation
-eighteen times. The standing is spelled out in both: follower, member and
-admin are the ladder a reader is here to learn, and an unlabelled glyph
-teaches nobody a word.
+A card is never what a surface hands back to a tap: what a patch is gets
+answered by the patch's own profile, docked. The card's job is to make a
+list of patches readable, and a list is the one place it lives.
 
 Not a tile (that is a patch drawn as fabric on the quilt) and not a remote
 patch card (that is another quilt's patch, read-only).
 _Avoid_: peek sheet, sheet (a Join sheet is an interstitial statement
-passed through, not a preview glanced at), preview, tile, popup
+passed through, not a preview glanced at), preview, tile, popup, docked
+card (retired — a surface hands back the docked profile)
+
+**Docked profile**:
+A **patch profile** shown over a discovery surface — the quilt, the map or
+the list — attached to an edge of it: docked at the **foot** on a phone,
+docked in the **cards pane's slot** on a desktop. One thing in two forms,
+and which form a reader gets follows the room on screen, never how they
+arrived. It is the profile itself and not a summary of one — the same
+rendering the page shows, so a patch has one face and it cannot drift.
+
+A discovery surface is the only thing that hands one back. Everywhere else
+a patch is named — an events list, search results, a notification, inside
+the workspace — its link opens the page, because there is no set being
+worked through that a reader would lose.
+
+On a phone it has two heights and no third. At rest it shows the profile's
+**head** — cover, name, counts, and the relationship row — painted on the
+first frame from the row the surface already fetched, and completed by one
+request for what a quilt row cannot know: a ban that suppresses a rung, an
+open claim, and the upcoming-event count, which is never the all-time count
+sitting beside it on that row. Pulled up it is **full screen**: the whole
+profile with its glimpses, and the pull is what fetches them. In the pane's slot there are no heights: the room already
+shows a surface and a profile at once, which is the reason that form is a
+panel beside the surface rather than a sheet over it, and a reader wanting
+the profile alone has the page.
+
+The surface underneath stays alive but idle, never torn down, so dismissing
+returns the reader to what they tapped from — the canvas at the zoom and
+pan they left it, the list at the row they had reached.
+
+Opening one is a navigation — it takes the profile's address — and its
+height is not: there is no address for a half-open sheet. Choosing another
+patch while one is open replaces that address rather than pushing a second,
+so one dismissal does not walk back through every patch a reader glanced
+at. Full screen
+leaves nothing of the surface showing, so the tap-behind that dismisses it
+at rest is unavailable there; it closes by the handle, the dismiss, or
+back.
+
+The container is chosen by the room and its occupant by the address, so a
+remote patch docks its **remote patch card** — one gesture on a My Quilt
+surface where local and remote patches sit side by side, rather than a tap
+that means two things depending on a chip in a tile's corner.
+
+Holds the patch a reader chose until they choose another — a pointer
+sweeping the canvas previews, and a preview never replaces what is open.
+No lens closes it either: narrowing a set is not a request to stop reading
+what is open, and the patch it names need not be in the narrowed set. On a
+phone the canvas chrome steps aside while one is docked — one temporary
+overlay at a time — so the lenses wait until it is dismissed; in the pane's
+slot they stay live and the surface re-narrows behind it. Changing **scope**
+is not a lens but another address, so it closes what is docked.
+_Avoid_: peek sheet, sheet (the Join sheet is an interstitial passed
+through; this is the profile, docked), bottom sheet, drawer, modal (it is
+never modal — the canvas behind it stays live on a desktop), preview
+
+**Person card**:
+A person as rendered anywhere they are named — avatar, display name, their
+standing in the patch at hand, and the way through to their Profile. The one
+rendering of a person outside their own page, and deliberately the same one
+in the Members room, on a notice's replies, and beside an event's organizer.
+It follows the patch card's gesture rule rather than inventing a second one:
+where there is a pointer, pointing at a person previews them; where there is
+not, the first tap opens the card and the card is how the profile is reached.
+A person's Profile is this card at full page size.
+
+Its last section is the **contact card** — the items that person shares with
+a patch this viewer is also in — and that section is the one part that
+differs by who is looking. It is absent far more often than it is present,
+so the card has to be worth opening without it. Never a directory: a person
+card is reached from somewhere a person already stands, never from a search
+over people.
+_Avoid_: member card (an admin is not a member), user card, profile card,
+contact card (that is the data the last section shows), hover card, popup
 
 **Interruption**:
 The one other thing that earns a border: a surface that is loud on purpose
@@ -456,25 +622,92 @@ controls both directions — whether the membership appears on the person's
 profile and whether the person appears in the patch's public member list.
 Default: visible. A hidden membership is still seen by that patch's admins
 and members inside the workspace. There is no profile-only or list-only
-hiding; the two surfaces never disagree.
+hiding; the two surfaces never disagree. The patch's own **public member
+list** setting can withhold the list on the patch's side, but never puts a
+hidden membership back — this switch is the member's, and only ever loses
+an argument in the hiding direction.
+
+The profile and the member list are where the switch is *read*, not the
+whole of what it means. The rule is that no public read names a membership
+its holder hid, and a surface that names people by something only a member
+can do is such a read: a patch's voter list is a member list assembled from
+the other end, and named one until it was fixed. Where withholding a name
+would damage a record, the name is **substituted**, not the row dropped —
+see `HiddenMemberName` beside `DeletedAccountName` in
+`internal/handler/deleted_accounts.go`, which is the same move for a
+different reason. Deliberately still named, because the act is the person's
+own public speech rather than a byproduct of membership: a proposal's
+author, a comment's author, a candidate standing for a seat.
 _Avoid_: private membership (collides with private patches), profile
 visibility (it is per-membership, not per-profile)
 
+**Public member list**:
+Who a visitor sees listed on a patch: **everyone**, **admins only**, or
+**nobody** (docs/adr/095). A patch-level setting owned by its admins,
+edited at Patch Settings → Members, and the answer to a different question
+from membership visibility — "may this patch be enumerated" rather than
+"is this person listed". It only subtracts: the listing's gate is this
+setting *and* the member's own switch. It withholds identities, never the
+count — a patch's member count stays public at every setting, because the
+quilt draws its tile from it. A patch whose size is itself sensitive wants
+a private patch, not this. It governs the patch's own surfaces (the member
+list, the profile's glimpse, the workspace tab) and stops at
+/users/:username, where what a person says about their own memberships
+stays theirs.
+_Avoid_: private members, member privacy (the members are not what is
+private; the list is), roster (fine in an ADR, not a UI word), hidden
+members (that is membership visibility)
+
+**Public governance record**:
+Whether a patch's deliberation can be read from outside it: **everyone** or
+**nobody**. A patch-level setting owned by its admins, the sibling of the
+public member list and asked in the same grammar — "may this patch's
+decisions be read" beside "may this patch be enumerated". It covers what
+the patch argued and decided: proposals and their bodies, the discussion
+under them, attestations and the names they seat. It does not cover
+**charters**, which carry their own per-document visibility and are
+published one at a time; it does not cover the **lining**; and it does not
+cover counts.
+
+Two rungs, not three. The public member list has a middle rung because a
+roster is a list of names with a natural subset. A deliberation record is
+prose that names people inside itself — a nomination's subject is in its
+own title — so there is no state between open and closed that says what it
+means.
+_Avoid_: governance visibility (that is a charter's, per document),
+private governance (the governing is not private; the record of it is),
+anonymous proposals (there are none; the record is readable or it is not)
+
 **Contact card**:
-How a person can be reached — a phone number, an email address to reach
-them at (not the sign-in address), and a short note — kept once on the
-account and shared patch by patch. **Contact sharing** is the per-membership
-switch that shows it, owned by the member and off for every patch until
-they turn it on; on, that patch's admins and members see the card in its
-Members room, including people who join later. It is never on the profile,
-never in a public member list, and never federates; a follower has no room
-to share into and cannot switch it on. A second axis beside membership
-visibility, not a second visibility switch: visibility says whether a
-membership is *known*, sharing says whether the people already in the room
-can *reach* you (docs/adr/080).
-_Avoid_: contact info (unbounded — the card is three fields), phone number
-(one field of it), private contact (everything about it is private; say
-"shared with" a patch), directory (there is no people search)
+Every way a person is willing to be reached, kept once on the account. The
+card is a set of **contact items** — one phone number, one email address to
+reach them at (never the sign-in address), one handle, one line of plain
+text — each carrying its own kind, so a channel is a fact about the item
+rather than something typed into the value. The card has no fixed length
+and no required item; an empty card is the normal starting state.
+_Avoid_: contact info (say the card, or an item), contact details, phone
+number (one item of it), private contact (all of it is private; say "shared
+with" a patch), directory (there is no people search)
+
+**Contact sharing**:
+The disclosure a single item carries into a single patch, chosen by its
+owner and by nobody else. Every pairing is decided on its own and nothing
+is ever shared by a rule, a default, or an act of the app: there is no
+share-with-everything, so a patch joined later starts shared with nothing
+and a person is never surprised by a room they did not hand something to.
+A shared item is seen by that patch's admins and members, and by them
+wherever they look: in the patch's Members room, and on the person's
+profile, which shows a visitor exactly the items they could already have
+read by walking into a room they share. The profile is a window onto that
+audience, never a wider one, and it never names the patch an item came
+through — an item shared through a private or hidden membership shows the
+same as any other. Nothing is public, nothing federates, and a follower has
+no room to share into. A second axis beside membership visibility, not a
+second visibility switch: visibility says whether a membership is *known*,
+sharing says whether the people already in the room can *reach* you
+(docs/adr/083).
+_Avoid_: visible/hidden (that pair belongs to membership visibility), public
+(no item ever is), all/everyone (there is no such choice), default
 
 **Role mark**:
 The icon that carries a person's relationship to a patch, used the same
@@ -487,7 +720,11 @@ than standing alone.
 _Avoid_: star for follows, favorite, bookmark, owner (as a role name)
 
 **Patch profile**:
-A patch's public page at /patches/:slug — the face it shows the street.
+A patch's public face at /patches/:slug, shown in one of two homes: as a
+**page**, and — where a discovery surface is on screen to keep — as a
+**docked profile** over it. One address either way, and which home it
+lands in follows the room, never how the reader arrived: a link opened
+cold has no surface to sit over.
 Read at a glance: cover, description, and a glimpse of each of the
 patch's surfaces. Deliberately not the workspace and deliberately without
 the workspace's tab row; a person with standing enters through the
@@ -523,16 +760,71 @@ them without having to read the word "Leave".
 _Avoid_: follow button (it is not a toggle), membership badge (a badge is
 not clickable), leave button
 
+**Requester**:
+A person who has asked to join an approval-required patch and has not been
+answered. Outside the ladder, not a fourth rung on it: a requester holds an
+outstanding request, not a relationship, and so has no standing, no role
+mark, and no thread, and is absent from the member list and the member
+count until an admin admits them.
+_Avoid_: pending member (a request is not a diminished membership),
+applicant (there is no application), prospective member
+
+**Request control**:
+The resting form of an outstanding request — "Membership requested" — in
+the place a standing control sits and under the same discipline: Withdraw
+is inside it, so retracting costs the deliberate step departure costs. It
+is a sibling of the standing control, never one of them: it states no
+standing and wears no role mark, because a requester has none, and it is
+muted where a standing is not.
+_Avoid_: standing control (a request is not standing), pending badge (a
+badge is not clickable), cancel button
+
+**Invited**:
+A person an admin has asked into a patch by username and who has not yet
+answered (docs/adr/098). The requester's mirror image: the ask runs the
+other way and the answer is theirs. Not a member and not a requester — no
+role, no thread, absent from every count, listing, audience and electorate
+until they accept; declining leaves no row. The membership status is
+`invited`; a request stays `pending`.
+_Avoid_: pending (that is a request nobody answered), requested, pending
+invite, invitee (in UI copy — say "invited")
+
 **Trusted contributor**:
-An instance-level grant — given and revoked by the instance admin, never
-earned automatically — that lets a person record events on unclaimed patches
-without review. Orthogonal to patch roles: not a rung between member and
-admin, and worth nothing on active patches, where every suggestion still
-goes through that patch's admins. Review is owed to whoever owns the
-calendar; the grant only waives the instance admin's own queue. Trust is
-per-instance — standing on another quilt earns it nowhere.
-_Avoid_: correspondent, steward, moderator, contributor (alone),
-trusted user
+An instance admin's grant, given and revoked explicitly and never earned
+automatically, that lets a person record events on unclaimed patches
+without review. It has a scope: the whole quilt, or one patch. The
+quilt-wide grant waives every queue the instance admin holds alone: events
+on any unclaimed patch, and the review of a suggested listing, which lands
+as an unclaimed patch at once. The per-patch grant is the same
+standing on one unclaimed patch and nothing else, and the ordinary way it
+is given is at the moment an instance admin approves that person's patch
+suggestion, where it is offered as a checked line the admin may uncheck:
+approving a listing is a judgement about the place, and letting its
+suggester keep its calendar is a second judgement the admin should see
+before making. Either scope is orthogonal to patch roles: not a rung
+between member and admin, and worth nothing on active patches, where every
+suggestion still goes through that patch's admins. A per-patch grant ends
+when the patch is claimed, because the calendar it opened now has an owner.
+Review is owed to whoever owns the calendar; the grant only waives the
+instance admin's own queue. Trust is per-instance, and standing on another
+quilt earns it nowhere.
+_Avoid_: correspondent, steward, keeper, moderator, contributor (alone),
+trusted user, patch contributor, suggester's rights
+
+**Trust request**:
+A person's ask to become a trusted contributor, made from the one place
+the review cost is being paid: the event form, when the event is about to
+queue on an unclaimed patch. It names a scope, that patch by default, more
+unclaimed patches, or the whole quilt, and may carry a short message. One
+open request per person. It is answered, never merely seen: an instance
+admin approves it at whatever scope they judge right, wider or narrower
+than what was asked, or declines it, and the requester is told either way.
+A declined person may ask again after a while, because a person is not a
+word to be spent. A named patch that is claimed before the answer drops
+off the request, and a request with nothing left resolves itself as moot.
+Active patches are never askable, since the grant is worth nothing there.
+_Avoid_: application, apply (both read as a job posting), trust
+application, contributor request, promotion request
 
 **Community-submitted**:
 The label every event on an unclaimed patch wears: recorded by the
@@ -574,14 +866,14 @@ _Avoid_: welcome modal, splash screen, announcement banner, popup (as a
 UI word)
 
 **Join sheet**:
-The statement shown between clicking Join and standing as a member or
-requester: the patch's membership policy, its lining state (including an
-amended lining, with the changes one link away), and its published
-charters. A lens over the patch's public face, never a bypass of document
-visibility — a members-only charter stays unseen. Informative, not
-contractual: no checkbox; joining informed is the agreement. On
-approval-required patches it carries the one optional intro message to
-the admins — a field, never a questionnaire. Follows never see it:
+The statement shown between clicking Join and either standing as a member
+or holding an open request: the patch's membership policy, its lining
+state (including an amended lining, with the changes one link away), and
+its published charters. A lens over the patch's public face, never a
+bypass of document visibility — a members-only charter stays unseen.
+Informative, not contractual: no checkbox; joining informed is the
+agreement. On approval-required patches it carries the one optional intro
+message to the admins — a field, never a questionnaire. Follows never see it:
 following has no ceremony.
 _Avoid_: join agreement, application form, consent modal, membership form
 
@@ -654,7 +946,10 @@ Something a patch votes on. It opens for voting the moment it is raised
 rejected, then in effect. Discussion happens alongside the vote in the
 proposal's Discussion tab, not in a stage before it — the `draft` and
 `discussion` states in the migration-016 column are retired and nothing
-writes them.
+writes them. On an admin-decides patch the maintainer decides it instead
+(docs/adr/092): born **waiting on the maintainer** when a member raises
+it, born applied as a **direct change** when an admin does, and any vote
+held on it is an **advisory vote**.
 Deliberately the same word in the UI and the backend; the textile coinage
 "baste request" is retired. It explained a metaphor before it explained
 the feature — every UI surface had already grown Proposals headings and
@@ -715,7 +1010,10 @@ timeline, notifications, and history with voted proposals; the UI never
 says "propose", "submit", or "vote" for one. Which framing a patch gets
 follows the rules in force, not its size: the words are "change these
 rules" / "rule change · applied by …" on admin-decides patches, and
-"proposal" everywhere a vote actually happens.
+"proposal" everywhere a vote actually happens. An admin who would rather
+hear from the members first opens an **advisory vote** instead
+(docs/adr/092); the maintainer's decline is worded the same way — "Declined
+by …" — never as a vote that failed.
 _Avoid_: proposal (nothing is proposed to anyone), fast-track (an
 implementation word, not a concept), edit (undersells that it's tracked
 and visible)
@@ -739,6 +1037,57 @@ meeting result instead. The decision comes back as an attestation on the
 charter. Not a draft and not a discussion stage: nothing promotes out of
 it, and no vote is coming (docs/adr/048, docs/adr/053).
 _Avoid_: draft, pending, awaiting vote (none is), informal, unofficial
+
+**Advisory vote**:
+A vote held on an admin-decides patch (docs/adr/092). It runs on the
+ordinary ballot with the ordinary electorate and decides nothing: the
+maintainer approves or declines at any moment, mid-vote included, and
+when the window closes the proposal goes back to **waiting on the
+maintainer** with the tally attached. Said in the first breath wherever
+it appears — "Advisory vote. The maintainer decides." — because a bar
+filling toward a majority that has no force is the lie the word exists to
+end. The members can be asked once per proposal. Opened by an admin, on
+their own proposal ("Ask the members first") or on a member's.
+_Avoid_: poll (undersells that it is the patch's real ballot), vote
+without the adjective, referendum, binding (it never is)
+
+**Waiting on the maintainer**:
+The state a proposal is in on an admin-decides patch while nobody has
+decided it (`state = 'awaiting_admin'`, docs/adr/092): a member's
+proposal from the moment it is raised, and an admin's or a member's after
+an **advisory vote** closes. Open, discussable, withdrawable, and carrying
+no ballot and no clock — the only things that end it are the maintainer's
+approve or decline, or the author taking it back. Shaped like
+**elsewhere** (an open proposal the tally does not decide) rather than the
+retired `discussion` stage, which sat ahead of a vote that would come.
+_Avoid_: pending (which review queues already use), awaiting approval (an
+admin may also decline), draft
+
+**Lapsed**:
+A proposal whose voting window closed under quorum (`state = 'lapsed'`,
+docs/adr/097). Nobody decided it either way, so every surface says "not
+decided": the banner, the list row, the notice. It carries `status =
+'rejected'` because that is the schema's only terminal "no" (the CHECK
+constraint predates the word), which is exactly why the UI reads `state`
+first and never shows a lapsed vote as one the community turned down. The
+clock closes it — the hourly proposal sweep, or a read after the deadline —
+and votes are refused after the window as before. An election that settles
+nothing is not lapsed but **unsettled** (holdover, docs/adr/051).
+_Avoid_: rejected, failed (both say the members said no), expired (says
+the proposal went stale rather than that the vote did), abandoned
+
+**Unsettled**:
+An election that decided nothing (`state = 'unsettled'`, docs/adr/051's
+holdover): nobody stood, or quorum went unmet, or no candidate was
+approved. The sitting council keeps serving — "directors serve until
+their successors are elected and qualified" — so the record says the
+contest settled nothing, never that a council was turned down. The
+election-shaped sibling of **lapsed**, and it carries `status =
+'rejected'` for the same reason and with the same rule: read `state`
+first. A contest that settles nothing seats nobody, so nobody in it is
+**seated**, however the approvals fell.
+_Avoid_: failed, rejected, void, cancelled (nothing was called off — the
+contest ran and ended)
 
 **Attestation**:
 A record of a decision the community made at a venue that isn't
@@ -931,9 +1280,12 @@ Calendar's secret address, a venue tool's calendar export), a Squarespace
 events page, or any page carrying schema.org Event markup (Humanitix host
 pages among them) — the kind is auto-detected from a pasted address.
 Attached by a
-patch admin to their own patch, or by an instance admin to an unclaimed
-patch, never by anyone else: attaching is vouching for the feed once, so
-imported events publish without per-event review (docs/adr/031). The
+patch admin to their own patch, or to an unclaimed patch by an instance
+admin or a trusted contributor whose grant reaches it, never by anyone
+else: attaching is vouching for the feed once, so imported events publish
+without per-event review (docs/adr/031). A patch suggestion may carry a
+feed, checked when it is offered and attached when the listing publishes,
+vouched for by whoever held standing at that moment. The
 source stays authoritative — its events are read-only and follow the feed
 until detached. An unreachable feed never removes anything; only a
 successful fetch that no longer carries an event cancels it. The UI may
@@ -1190,7 +1542,7 @@ _Avoid_: bookmark, watch, subscription
 **Doorway**:
 The labeled link that hands you to another quilt's own site: every
 switcher entry for another quilt, and the deeper-than-looking actions on
-a remote patch card (join, RSVP, workspace). Whole quilts are always
+a remote patch card (join, propose, workspace). Whole quilts are always
 entered through doorways — places are visited at their own address,
 never rendered inside this one. A doorway is always marked as leaving.
 Declining cross-quilt reads (the multi-quilt flag off) is respected,
@@ -1205,7 +1557,10 @@ sashing color, always naming where it lives. A card about the patch,
 never that quilt's site embedded. Follow lives here (and posts home);
 everything deeper is a doorway. Reached from My Quilt tiles,
 notifications, and pasted patch links — pasting a patch's URL into the
-search opens its card.
+search opens its card. Has the two homes a patch profile has: a page, and
+docked over a discovery surface, where a remote patch's tap lands it. Its head draws
+from the follow's display snapshot, so it appears whether or not the other
+quilt is reachable.
 _Avoid_: remote profile, embedded view, preview (it is the full public
 face)
 
@@ -1255,10 +1610,15 @@ an egress right)
 **Member seamrip**:
 An export any member can take of what they can already see — enough to
 seed a fork, never containing other people's secrets (emails, hidden
-memberships). People join the fork by choice and re-set their own
-visibility there.
+memberships). Other people travel as a **stub**: id, username, display
+name, avatar, and nothing else, which is enough for the memberships to
+keep their shape so the threads survive the move. People join the fork by
+choice and re-set their own visibility there. Offered at Account settings
+beside the personal export; a zip, in the same format the full seamrip
+writes, with a manifest naming who took it (docs/adr/089).
 _Avoid_: public export (it includes member-visible data, not just
-public), scrape
+public), scrape, "the member's seamrip" (it is the community's quilt, not
+theirs — the member is who may take it, not what it contains)
 
 **Personal export**:
 Everything about *you* — profile, your memberships including hidden
@@ -1278,10 +1638,17 @@ _Avoid_: parent quilt (there is no hierarchy between instances), upstream
 (git register), origin
 
 **Moved-to pointer**:
-A profile's or patch's own signpost to its new home on another quilt.
-Local first; federated Move emission is future work.
+A profile's or patch's own signpost to its new home on another quilt
+(docs/adr/090). Set by that patch's admins at Patch Settings, or by the
+person themselves at account settings. The UI word is plain: a patch that
+has one says it has **moved**, and the discovery card's chip reads
+**Moved**. The old page keeps working and stays readable — what stops is
+new joins, new follows, and event suggestions from outside, each answered
+with the new address. Carried on the ActivityPub actor as `movedTo`; the
+federated `Move` activity is still future work, on purpose.
 _Avoid_: redirect (nothing is forwarded automatically), migration (the
-pointer points; people choose)
+pointer points; people choose), moved patch as a status (it is a field on
+a patch, not a fourth value beside active / unclaimed / archived)
 
 ## Place
 
@@ -1508,6 +1875,47 @@ tile (card banners, the motif corner mark's disc). Always the patch's
 palette primary.
 Distinct from tag colors, which color tags, not patches.
 _Avoid_: brand color, accent
+
+**Muted colors**:
+The second way a patch's colors are drawn: every fabric in its tile becomes
+that patch's identity color at a fixed lightness step, with chroma only ever
+capped, never added. The lightness ramp is shared by every tile, so a muted
+quilt varies by hue alone — and a patch that chose neutrals stays neutral,
+because nothing is invented for it. It reaches every colour that stands for
+something — tiles, card covers, map markers, profile banners, tag chips,
+neighbour-quilt sashing — with one exception: the **block drafter** always
+draws Default, because a tool for choosing fabric must show the fabric that
+was chosen. The block, the rotation and the stored bundle are untouched:
+what changes is how a viewer is shown them, never what the patch chose.
+Every instance opens in Default, and no instance setting moves that —
+Default is the intent, Muted is the accommodation.
+_Avoid_: theme (that is light/dark), appearance (that is the patch's own
+tile design), palette (that is a pre-cut bundle), quilt mode (a CSS class
+already means "on a quilt route"), calm/quiet/low-stimulation mode (they
+name a complaint rather than the colours), accessibility mode
+
+**Hover dim**:
+The scrim every tile *except* the hovered one takes while a pointer rests on
+the quilt, so the tile under the pointer is the one at full strength. A
+behaviour, not a preference — nothing to set and nothing to persist. It dims
+rather than mutes, deliberately: **Muted colors** owns chroma, so a hover
+that muted would do nothing at all for a reader already in Muted. It engages
+after a short dwell and holds while the pointer crosses between tiles, for
+the reason the name badges hold theirs — a whole-canvas scrim flipping at
+every tile boundary strobes. Desktop only; a touch reader gets the docked
+profile instead (docs/adr/094).
+_Avoid_: spotlight, focus mode, highlight (the hovered tile is not
+brightened — everything else is dimmed), muting (that is the standing
+colour choice)
+
+**Display menu**:
+The two standing choices a viewer makes about how Patchwork looks to them —
+**Theme** (light · dark · system) and **Colors** (default · muted). Held per
+browser, never on the account, so it reaches a reader with no account; it
+sits in the account menu in the global bar when signed in and in that same
+slot when signed out, so the control does not move when somebody joins.
+_Avoid_: settings (that is the Settings page), preferences, appearance,
+view options
 
 **Ink on fabric**:
 Anything drawn over a patch's own fabric rather than over a theme surface

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/patchwork-toolkit/patchwork/internal/clock"
 	"github.com/patchwork-toolkit/patchwork/internal/config"
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/mail"
@@ -34,7 +35,7 @@ func GenerateMagicLink(db *database.DB, email string, smtpCfg config.SMTP, linkF
 	tokenHash := hex.EncodeToString(hash[:])
 
 	id := NewUUIDv7()
-	expiresAt := time.Now().Add(magicLinkExpiry).UTC().Format(time.RFC3339)
+	expiresAt := clock.Format(time.Now().Add(magicLinkExpiry))
 
 	_, err = db.Exec(
 		`INSERT INTO magic_links (id, email, token, expires_at) VALUES (?, ?, ?, ?)`,
@@ -72,7 +73,7 @@ func GenerateMagicLinkLocal(db *database.DB, email string) (string, error) {
 	tokenHash := hex.EncodeToString(hash[:])
 
 	id := NewUUIDv7()
-	expiresAt := time.Now().Add(magicLinkExpiry).UTC().Format(time.RFC3339)
+	expiresAt := clock.Format(time.Now().Add(magicLinkExpiry))
 
 	_, err = db.Exec(
 		`INSERT INTO magic_links (id, email, token, expires_at) VALUES (?, ?, ?, ?)`,
@@ -118,7 +119,7 @@ func VerifyMagicLink(db *database.DB, rawToken string) (*model.User, string, err
 		return nil, "", fmt.Errorf("magic link already used")
 	}
 
-	exp, err := time.Parse(time.RFC3339, expiresAt)
+	exp, err := clock.Parse(expiresAt)
 	if err == nil && time.Now().After(exp) {
 		return nil, "", fmt.Errorf("magic link has expired")
 	}

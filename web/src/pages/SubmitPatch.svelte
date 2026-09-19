@@ -2,6 +2,7 @@
   import { api } from '../lib/api.js';
   import { navigate, getQuery } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { isTrustedContributor } from '../stores/auth.svelte.js';
   import TagPicker from '../components/TagPicker.svelte';
 
   // Arriving from a search that found nothing: the query becomes the name so
@@ -11,11 +12,21 @@
   let website = $state('');
   let links = $state([{ url: '', label: '' }]);
   let address = $state('');
+  // The calendar a suggestion carries (docs/adr/2026-09-18-trust-has-a-
+  // scope-and-a-suggestion-carries-its-calendar): checked through the same
+  // detection event sources already use, so a URL Patchwork cannot read is
+  // refused now rather than never.
+  let feedUrl = $state('');
   // Tags are optional on a community suggestion — an admin can add them at
   // review time if the submitter skips this (docs/adr/021).
   let tags = $state([]);
   let submitting = $state(false);
   let error = $state('');
+
+  // Quilt-wide trusted contributors waive listing review too (decision 4):
+  // their suggestion lands as an unclaimed patch at once. Everyone else
+  // waits on an instance admin.
+  let trustedQuiltWide = $derived(isTrustedContributor());
 
   function addLink() {
     links = [...links, { url: '', label: '' }];
@@ -40,6 +51,7 @@
         website: website.trim() || undefined,
         links: cleanLinks.length > 0 ? cleanLinks : undefined,
         address: address.trim() || undefined,
+        feed_url: feedUrl.trim() || undefined,
         tags: tags.length > 0 ? tags : undefined,
       };
       const result = await api('submissions', { method: 'POST', body });
@@ -47,7 +59,7 @@
         showToast('Patch added to the quilt!', 'success');
         navigate(`/patches/${result.node.slug}`);
       } else {
-        showToast('Submitted for review. Thanks!', 'success');
+        showToast("Suggested. An admin will review it and you'll be notified.", 'success');
         navigate('/');
       }
     } catch (e) {
@@ -63,8 +75,8 @@
 </script>
 
 <div class="submit-page page-fade">
-  <h1>Add a patch to the quilt</h1>
-  <p class="muted">Know a place or group that should be on the map? The real owner can claim it later.</p>
+  <h1>Suggest a patch</h1>
+  <p class="muted">Know a place or group that should be on the map? Suggest it here and the real owner can claim it later.</p>
 
   <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
     <div class="field">
@@ -80,6 +92,12 @@
     <div class="field">
       <label for="website">Website</label>
       <input id="website" type="url" bind:value={website} placeholder="https://..." disabled={submitting} />
+    </div>
+
+    <div class="field">
+      <label for="feed-url">Events feed <span class="muted">(optional)</span></label>
+      <input id="feed-url" type="url" bind:value={feedUrl} placeholder="https://..." disabled={submitting} />
+      <span class="field-hint muted">A calendar Patchwork can read: an ICS address, a Squarespace events page, or a page with event markup. Checked when you submit.</span>
     </div>
 
     <div class="field">
@@ -109,6 +127,14 @@
     {#if error}
       <p class="error-text">{error}</p>
     {/if}
+
+    <p class="muted review-note">
+      {#if trustedQuiltWide}
+        As a trusted contributor, your suggestion joins the quilt at once.
+      {:else}
+        An instance admin reviews suggestions. Once it's approved, you can add its events without review until its owner claims it.
+      {/if}
+    </p>
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" disabled={submitting}>
@@ -151,8 +177,16 @@
     font-weight: 500;
   }
 
+  .field-hint {
+    font-size: 0.8rem;
+  }
+
   .required {
     color: var(--color-error);
+  }
+
+  .review-note {
+    font-size: 0.85rem;
   }
 
   .link-row {

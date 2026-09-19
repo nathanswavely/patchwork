@@ -22,6 +22,31 @@ import (
 // so adding a column can't leave one read path scanning a stale order.
 const governanceDocColumns = `SELECT id, node_id, title, body, kind, visibility, version, created_by, created_at, updated_at FROM governance_docs`
 
+// commitIdentity is the name and address a person's governance commit is
+// authored with: what the patch would call them, and an address that is
+// derived rather than theirs.
+//
+// A governance repo has no seam and is handed over whole (docs/adr/110), so
+// everything in it is readable by everyone who may clone it, commit metadata
+// included. Four call sites used to pass user.Email straight into the
+// signature, which wrote members' real addresses into a file the transport
+// serves. Nothing else in Patchwork lets an address travel that way: the
+// personal export withholds authentication material, the member seamrip
+// travels people as stubs and never emails (docs/adr/089), and no API surface
+// hands one person another's email. A commit is the same kind of record and
+// gets the same answer.
+//
+// .local is reserved and can never resolve (RFC 6762), so the address stays a
+// stable per-person identity for git tooling and reaches nobody. Two call
+// sites already built it this way; this is that convention, stated once.
+func commitIdentity(user *model.User) (string, string) {
+	name := user.DisplayName
+	if name == "" {
+		name = user.Username
+	}
+	return name, user.Username + "@patchwork.local"
+}
+
 // validDocVisibility reports whether v is a governance doc visibility the API
 // accepts. Mirrors the CHECK constraint in migration 036.
 func validDocVisibility(v string) bool {
@@ -29,10 +54,25 @@ func validDocVisibility(v string) bool {
 }
 
 // canReadPatchDocs reports whether the request's viewer may read this patch's
-// members-only charters (docs/adr/036). Instance admins and the patch's
+// *members-only* charters (docs/adr/036). Instance admins and the patch's
 // admins/members always may; a follower may when the patch's follower
-// permissions grant charters — the same knob the workspace UI reads, so the
-// two never disagree. Signed-out visitors never may.
+// permissions grant charters. Signed-out visitors never may.
+//
+// It is not what gates the git transport. A clone takes the whole repository
+// at once, so that door asks viewerIsInPatchRoom instead (docs/adr/116); this
+// rule governs REST reads of the members-only shelf, document by document.
+//
+// A charter the patch published to everyone
+// is readable by everyone, signed out included, and no path below consults
+// this before handing one over — `follower_permissions.charters` grants a
+// follower the members-only shelf and can never take away what the patch
+// published. That is the narrowing F-052 needed: the Minimal template ships
+// `charters: false`, and while that flag stood for "this patch has no
+// governance worth showing you", a document whose own visibility was `public`
+// was never linked from the patch's own page at all. docs/adr/036 makes
+// publishing a deliberate act whose whole point is that the public can read
+// the result, and docs/adr/050 leaves this the one follower key that gates a
+// read — of the one thing there is to withhold.
 func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 	user := middleware.UserFromContext(r.Context())
 	if user == nil {
@@ -56,6 +96,41 @@ func canReadPatchDocs(db *database.DB, r *http.Request, nodeID string) bool {
 	var fp model.FollowerPermissions
 	json.Unmarshal([]byte(fpJSON), &fp)
 	return fp.Charters
+}
+
+// GovernanceRepoNodeID resolves a patch slug for the git transport
+// (internal/governance/http.go), and refuses anybody who is not in the patch.
+//
+// The REST layer above can hand a visitor the published docs and keep the
+// rest back, because it filters row by row. A bare repository has no such
+// seam: a clone takes every document body, its whole history and its diffs,
+// and the commits carry their editors' names besides — which the
+// per-membership visibility switch (docs/adr/006) and the tombstone rule
+// (docs/adr/086) each exist to govern. So the transport asks the one question
+// it can answer honestly (docs/adr/110).
+//
+// It asks viewerIsInPatchRoom rather than canReadPatchDocs (docs/adr/116).
+// Those two looked interchangeable and are not. canReadPatchDocs admits a
+// follower holding `follower_permissions.charters`, which is a decision about
+// reading a page; this is a decision about being handed a repository, and the
+// difference is exactly the thing deleted_accounts.go already refuses to let
+// a follower have: "the people in a patch are not theirs to enumerate". Commit
+// metadata enumerates them. Following is frictionless and needs nobody's
+// approval, so wiring the two together meant anyone who clicked Follow on an
+// invite-only patch could clone its whole governance history.
+//
+// The charters key keeps its narrower job above: a follower the patch grants
+// it still reads the members-only shelf over REST, one document at a time,
+// with hidden memberships and tombstones still substituted the way every
+// other API surface substitutes them.
+func GovernanceRepoNodeID(db *database.DB) func(*http.Request, string) string {
+	return func(r *http.Request, slug string) string {
+		nodeID := NodeIDFromSlug(db, slug)
+		if nodeID == "" || !viewerIsInPatchRoom(db, r, nodeID) {
+			return ""
+		}
+		return nodeID
+	}
 }
 
 // followerMayJoinProposals reports whether this person may take part in a
@@ -227,8 +302,13 @@ func ListGovernanceDocs(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Whether this viewer is being handed the whole shelf or only what
+		// the patch published. The listing filter and the empty-state signal
+		// below are the same fact asked once.
+		readsAll := canReadPatchDocs(db, r, nodeID)
+
 		query := governanceDocColumns + ` WHERE node_id = ?`
-		if !canReadPatchDocs(db, r, nodeID) {
+		if !readsAll {
 			query += ` AND visibility = 'public'`
 		}
 		query += ` ORDER BY created_at ASC`
@@ -267,6 +347,14 @@ func ListGovernanceDocs(db *database.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"items": items,
+			// Which kind of empty an empty list is. Counting rows cannot tell
+			// "this patch has published nothing" from "you are not being shown
+			// what it has", and those are different sentences to the person
+			// reading the page (F-052). This states a fact about the *viewer* —
+			// true of every visitor to every patch, whether or not the patch is
+			// withholding a single thing — so it discloses neither the
+			// existence nor the count of anything hidden.
+			"published_only": !readsAll,
 		})
 	}
 }
@@ -418,12 +506,9 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		// history and diffs reflect edits made through this endpoint. Best
 		// effort: repos may not exist (tests, fresh instances).
 		if dataDir := governance.GetDataDir(); dataDir != "" && contentChanged {
-			author := user.DisplayName
-			if author == "" {
-				author = user.Username
-			}
+			author, authorEmail := commitIdentity(user)
 			if _, gitErr := governance.DirectEdit(dataDir, nodeID, governanceFilename(newTitle),
-				newBody, author, user.Username+"@patchwork.local",
+				newBody, author, authorEmail,
 				"Update "+newTitle+" (v"+strconv.Itoa(newVersion)+")"); gitErr != nil {
 				log.Printf("governance: git mirror of doc %s failed: %v", docID, gitErr)
 			}
@@ -461,7 +546,7 @@ func UpdateGovernanceDoc(db *database.DB) http.HandlerFunc {
 		// members-only charter would publish the very thing it withholds.
 		if doc.Visibility == "public" && contentChanged {
 			go func() {
-				docObj := ap.GovernanceDocToObject(doc, ap.GetDomain())
+				docObj := ap.GovernanceDocToObject(doc, ap.GetDomain(), !membershipHidden(db, doc.NodeID, doc.CreatedBy))
 				activity := map[string]interface{}{
 					"@context": ap.GovernanceContext(),
 					"type":     "Update",
@@ -627,18 +712,12 @@ func GetGovernanceRules(db *database.DB) http.HandlerFunc {
 	}
 }
 
-// governanceFilename converts a governance doc title to a kebab-case .md filename.
+// governanceFilename converts a governance doc title to a kebab-case .md
+// filename. The mapping itself lives in internal/governance, which needs it
+// to rebuild a repo from the canonical rows (docs/adr/084); a second copy of
+// it here would be a second answer to "which git file is this row's history".
 func governanceFilename(title string) string {
-	name := strings.ToLower(title)
-	name = strings.ReplaceAll(name, " ", "-")
-	// Remove non-alphanumeric except hyphens
-	var clean []byte
-	for _, c := range []byte(name) {
-		if (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' {
-			clean = append(clean, c)
-		}
-	}
-	return string(clean) + ".md"
+	return governance.Filename(title)
 }
 
 // syncLiningToDB mirrors a merged amendment's file back into the
@@ -646,31 +725,33 @@ func governanceFilename(title string) string {
 // Git keeps history and diffs; the DB row is what the governance hub,
 // seamrip, and every other read path serve, so a merged amendment that
 // stays only in git is invisible to the community that just voted it in.
-// This is the symmetric inverse of UpdateGovernanceDoc's DB→git mirror,
-// and like it, best effort: it reads the merged file from git HEAD (the
-// merge is truth, not the proposal's proposed_body) and logs on failure.
+// This is the symmetric inverse of UpdateGovernanceDoc's DB→git mirror: it
+// reads the merged file from git HEAD (the merge is truth, not the
+// proposal's proposed_body). It cannot undo the merge that preceded it, so a
+// failure is returned rather than acted on — the apply paths record it as a
+// divergence between git and the database instead of dropping it.
 //
 // Rules files have their own sync (governance.SyncRulesToDB); only
 // markdown docs come through here.
-func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID string) {
+func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID string) error {
 	if targetDoc == "" || !strings.HasSuffix(targetDoc, ".md") {
-		return
+		return nil
 	}
 	dataDir := governance.GetDataDir()
 	if dataDir == "" {
-		return
+		return nil
 	}
 	content, err := governance.GetDocument(dataDir, nodeID, targetDoc)
 	if err != nil {
 		log.Printf("governance: DB sync of %s for node %s: read merged file: %v", targetDoc, nodeID, err)
-		return
+		return err
 	}
 
 	// Find the row this file mirrors, using the same identity rule as the
 	// DB→git direction: filename = governanceFilename(title).
 	rows, err := db.Query("SELECT id, title, version FROM governance_docs WHERE node_id = ?", nodeID)
 	if err != nil {
-		return
+		return err
 	}
 	var docID string
 	var version int
@@ -691,11 +772,11 @@ func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID 
 		// Body only — the title stays, because the title IS the filename
 		// identity linking this row to targetDoc; renaming here would orphan
 		// the git file for every future mirror write.
-		db.Exec(
+		_, err := db.Exec(
 			`UPDATE governance_docs SET body = ?, version = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
 			content, version+1, docID,
 		)
-		return
+		return err
 	}
 
 	// No row yet — a doc that until now lived only in git (pre-ADR-011
@@ -704,10 +785,11 @@ func syncLiningToDB(db *database.DB, nodeID, targetDoc, proposedTitle, editorID 
 	if title == "" {
 		title = titleFromGovernanceFilename(targetDoc)
 	}
-	db.Exec(
+	_, err = db.Exec(
 		`INSERT INTO governance_docs (id, node_id, title, body, created_by) VALUES (?, ?, ?, ?, ?)`,
 		auth.NewUUIDv7(), nodeID, title, content, editorID,
 	)
+	return err
 }
 
 // titleFromGovernanceFilename inverts governanceFilename well enough for a

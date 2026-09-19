@@ -3,6 +3,7 @@
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { showToast } from '../stores/toast.svelte.js';
+  import { loadMemberships } from '../stores/memberships.svelte.js';
   import { getSubmissionsEnabled } from '../stores/quilt.svelte.js';
   import TemplatePreviewDrawer from '../components/TemplatePreviewDrawer.svelte';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
@@ -13,6 +14,7 @@
   import { MOTIFS, MOTIF_KEYS } from '../lib/patchIcons.js';
   import { PALETTES, PALETTE_KEYS, paletteForPatch } from '../lib/quiltTheme.js';
   import { BLOCKS, getBlockIndex, getRotation } from '../lib/quiltBlocks.js';
+  import { templateMembershipPolicy } from '../lib/governanceTemplates.js';
 
   // Patch setup (docs/adr/039) reuses this exact form: a claim is creation
   // with prepopulated fields, not a handoff. mode='setup' prepopulates
@@ -27,6 +29,14 @@
     expiresAt = '',
     initial = null,
   } = $props();
+
+  // The fork (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar):
+  // ordinary creation opens on "Is this your patch to run?" before any
+  // field, so nothing promises admin of a place nobody has admitted the
+  // visitor to. Claim setup skips it — a claimant has already answered by
+  // claiming. Answered in component state only, never persisted: it is a
+  // question about this visit, not a standing preference.
+  let readyToCreate = $state(mode === 'setup');
 
   let name = $state(initial?.name || '');
   let description = $state(initial?.description || '');
@@ -59,11 +69,48 @@
   // Fired when the address field loses focus, not on every keystroke: a map
   // that materializes mid-typing shoves every control below it down the page
   // while somebody is still using one.
+  //
+  // The same shove happens on blur when the blur *is* a press: mousedown on
+  // Create Patch blurs the address field, the picker (320px of map) lands
+  // above the button, and mouseup arrives on the map instead — the press is
+  // swallowed. So while a pointer is down, the reveal waits for it to come
+  // up, plus a tick so the click has dispatched against the layout it
+  // started on. The suggestion itself is unchanged: it is still only a
+  // proposal until somebody confirms it (docs/adr/082).
+  let pointerHeld = false;
+
+  $effect(() => {
+    const down = () => { pointerHeld = true; };
+    const up = () => { pointerHeld = false; };
+    // Capture phase, so the flag is set before the press blurs anything.
+    window.addEventListener('pointerdown', down, true);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    return () => {
+      window.removeEventListener('pointerdown', down, true);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+  });
+
+  function pointerReleased() {
+    return new Promise((resolve) => {
+      const done = () => {
+        window.removeEventListener('pointerup', done);
+        window.removeEventListener('pointercancel', done);
+        setTimeout(resolve, 0);
+      };
+      window.addEventListener('pointerup', done);
+      window.addEventListener('pointercancel', done);
+    });
+  }
+
   async function addressSettled() {
     const q = address.trim();
     if (!worthLookingUp(q)) return;
     if (q === lastLookedUp) return;
     lastLookedUp = q;
+    if (pointerHeld) await pointerReleased();
     showPicker = true;
     // A marker the person already placed is theirs; never propose over it.
     if (placed) return;
@@ -88,12 +135,56 @@
     showPicker = false;
   }
   let visibility = $state(initial?.visibility || 'public');
+  // The membership policy, preselected to the closed option.
+  //
+  // This has been wrong twice in opposite directions. First the create form
+  // never asked at all, and the API's default made the patch open. F-008
+  // answered that by starting unset, so the person had to choose. That fixed
+  // the right bug the wrong way round: unset weights the three options
+  // equally and the first card reads as the ordinary pick, while the template
+  // list below *is* preselected, at Minimal, whose own rules say invite_only.
+  // So the form pre-answered one question and left the other looking like a
+  // choice between equals. On the reference instance a five-minute-old
+  // account took the first card and got a patch anyone could join.
+  //
+  // Preselected is not the same as unasked. The question is still on the
+  // screen, still required, and one click changes it. What moved is which way
+  // it fails when nobody engages with it, and closed is the safe direction: a
+  // patch that should have been open is a setting away, and a patch that
+  // should have been closed has already admitted people.
+  //
+  // Setup (docs/adr/039) asks the same question, seeded from the chosen
+  // template rather than fixed here, because a claimant picking a template is
+  // already saying what kind of patch this is. See policySeeded below.
+  let membershipPolicy = $state('invite_only');
+  const membershipPolicies = [
+    { id: 'invite_only', name: 'Invite only', desc: 'Only people an admin invites can join.' },
+    { id: 'approval_required', name: 'Approval required', desc: 'Anyone can ask to join; an admin approves each request.' },
+    { id: 'open', name: 'Open', desc: 'Anyone can join without approval.' },
+  ];
   // Minimal is the default (docs/adr/041): the typical new patch is one
   // person running a listing; ceremony is opted into, not inherited.
   let template = $state('minimal');
+
+  // In setup mode the policy follows the template until the claimant answers
+  // the question themselves, after which it is theirs and nothing moves it.
+  // Each template's rules file already states a membership policy, so the
+  // seed is that template's own answer rather than a fourth opinion — and
+  // the server falls back to the same value when a client sends no policy,
+  // so the form and the API agree about what Minimal means. Creation is
+  // untouched: it starts blank and refuses to submit unanswered.
+  let policyAnswered = $state(false);
+  let seededPolicy = $derived(templateMembershipPolicy(template));
+  let policySeeded = $derived(mode === 'setup' && !policyAnswered && !!seededPolicy);
+  $effect(() => {
+    if (policySeeded) membershipPolicy = seededPolicy;
+  });
   // Tags, in priority order — the first motif-bearing tag derives the
   // motif, and shared tags place new patches near their kind on the quilt.
   let tags = $state(Array.isArray(initial?.tags) ? [...initial.tags] : []);
+  // Words that are not in the vocabulary yet (docs/adr/114). They travel in
+  // their own field so an unknown name in `tags` stays an error.
+  let suggestTags = $state([]);
 
   // Tile appearance. At creation the form always shows a concrete pick —
   // seeded randomly so every new patch starts somewhere real — and
@@ -113,7 +204,9 @@
       };
     }
     const ap = initial.appearance || null;
-    const pal = paletteForPatch(initial.id, ap);
+    // raw: see PatchSettingsAppearance — a fabric picker shows real fabric,
+    // whatever register the viewer reads the quilt in (docs/adr/112).
+    const pal = paletteForPatch(initial.id, ap, { raw: true });
     return {
       palette: pal.paletteKey || PALETTE_KEYS[0],
       blockKey: BLOCKS[getBlockIndex(initial.id, ap)].key,
@@ -178,6 +271,7 @@
 
   function validate() {
     if (!name.trim()) return 'Name is required';
+    if (!membershipPolicy) return 'Choose a membership policy';
     return '';
   }
 
@@ -211,7 +305,14 @@
       // lands the claimant on their new patch — the edits just wait in
       // Settings.
       try {
-        await api(`claims/${claimId}/setup`, { method: 'POST', body: { template } });
+        // The policy travels with the template, not in the PATCH below:
+        // setup is where governance is forked, and the rules file is written
+        // from this answer. PATCH /nodes does not accept a membership policy
+        // at all — it is governance, and governance moves through the rules.
+        await api(`claims/${claimId}/setup`, {
+          method: 'POST',
+          body: { template, membership_policy: membershipPolicy },
+        });
       } catch (e) {
         if (e.status === 410) {
           showToast(e.message || 'Your setup window has expired. The patch is claimable again.', 'error');
@@ -240,12 +341,17 @@
             visibility,
             appearance,
             tags: tags.length > 0 ? tags : undefined,
+            suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
           },
         });
         showToast('This patch is yours', 'success');
       } catch (e) {
         showToast('Patch set up. Finish edits in Patch Settings.', 'info');
       }
+      // The claimant is this patch's admin now, but the memberships store
+      // still says they belong nowhere, and the zero-membership redirect in
+      // App.svelte reads that store. Refresh it before landing.
+      await loadMemberships();
       navigate(`/patches/${setupSlug}`);
       submitting = false;
       return;
@@ -260,11 +366,21 @@
         latitude: placed ? latitude : undefined,
         longitude: placed ? longitude : undefined,
         visibility,
+        membership_policy: membershipPolicy,
         template,
         appearance,
         tags: tags.length > 0 ? tags : undefined,
+        suggest_tags: suggestTags.length > 0 ? suggestTags : undefined,
       };
       const result = await api('nodes', { method: 'POST', body });
+      // A word an admin already declined does not fail the creation; the
+      // patch exists and the person is told why the chip is missing.
+      if (result?.tag_warning) showToast(result.tag_warning, 'info');
+      // Creating a patch makes you its admin, server-side. The memberships
+      // store loaded before that row existed, and App.svelte's onboarding
+      // redirect sends anyone with zero memberships to /welcome — which is
+      // where a founder landed instead of on their patch. Refresh first.
+      await loadMemberships();
       showToast('Patch created', 'success');
       navigate(`/patches/${result.slug}`);
     } catch (e) {
@@ -279,6 +395,20 @@
 <div class="page-fade">
   <div class="container-narrow">
     <div>
+      {#if mode === 'create' && !readyToCreate}
+        <h1>Add a patch</h1>
+        <p class="fork-question">Is this your patch to run?</p>
+        <div class="fork-cards">
+          <button type="button" class="fork-card" onclick={() => { readyToCreate = true; }}>
+            <strong>I run this patch</strong>
+            <span>You become its admin. Members, events and settings are yours from the start.</span>
+          </button>
+          <button type="button" class="fork-card" onclick={() => navigate('/submit')}>
+            <strong>Someone else runs it</strong>
+            <span>It joins the quilt as an unclaimed patch. The people who run it can claim it later, and you can add its events once it's approved.</span>
+          </button>
+        </div>
+      {:else}
       {#if mode === 'setup'}
         <h1>Set up your patch</h1>
         <p class="muted" style="margin-bottom: 0.35rem;">Complete this patch's details to activate it.</p>
@@ -287,9 +417,9 @@
         {/if}
       {:else}
         <h1>Create Patch</h1>
-        <p class="muted" style="margin-bottom: {getSubmissionsEnabled() ? '0.35rem' : '1.5rem'};">Start a new community, collective, venue, or group.</p>
+        <p class="muted" style="margin-bottom: 1.5rem;">Start a new community, collective, venue, or group.</p>
         {#if getSubmissionsEnabled()}
-          <p class="muted" style="margin-bottom: 1.5rem;">Creating a patch makes you its admin. Know a group that isn't yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest a patch</a> instead.</p>
+          <p class="muted" style="margin-bottom: 1.5rem;">Not yours to run? <a href="/submit" class="suggest-link" onclick={(e) => { e.preventDefault(); navigate('/submit'); }}>Suggest it instead</a></p>
         {/if}
       {/if}
 
@@ -356,9 +486,10 @@
           <p class="field-hint muted">
             What kind of patch is this? Tags help people find you, and new
             patches are placed near others with the same tags on the quilt.
-            The first tag decides your default motif.
+            The first tag decides your default motif. Missing a word? Suggest
+            it, and an admin decides whether it joins the quilt's tags.
           </p>
-          <TagPicker bind:selected={tags} disabled={submitting} />
+          <TagPicker bind:selected={tags} bind:suggested={suggestTags} disabled={submitting} />
         </div>
 
         <div class="field">
@@ -465,10 +596,7 @@
         <div class="field">
           <label>The lining</label>
           <p class="field-hint muted">
-            Every patch starts with the lining — this quilt's shared community
-            standards. It is always public, and if your patch amends it, the
-            changes are public and the patch is marked as having amended the
-            lining.
+            Every patch starts with a shared community standards called the lining. It is always public, and if your patch amends it, the changes are public and the patch is marked as having amended the lining.
           </p>
           <button type="button" class="lining-toggle" onclick={toggleLining}>
             {liningOpen ? 'Hide the lining' : 'Read the lining'}
@@ -483,6 +611,53 @@
             </div>
           {/if}
         </div>
+
+        <!-- One sentence, not a section
+             (docs/adr/2026-09-18-the-default-should-match-the-assumption.md
+             decision 10). docs/adr/037 earned the lining its own block above
+             because adopting it is a standing commitment a patch cannot undo;
+             a default that Patch Settings can flip does not deserve equal
+             weight, and this form is already long. It is here at all because
+             admins formed the opposite belief in silence, and a default
+             nobody is told about is how that happened the first time. -->
+        <div class="field">
+          <label>Members and governance</label>
+          <p class="field-hint muted">
+            Your member list and your proposals start out visible to members only. Events, your description and your tile are public. You can publish either one later in Patch Settings.
+          </p>
+        </div>
+
+        <fieldset class="field policy-field">
+          <legend>Membership Policy <span class="required">*</span></legend>
+          <!-- The distinction the form otherwise never mentions. Joining and
+               following are different relationships, and only one of them is
+               what this setting governs — so somebody can pick Open reasoning
+               that people need it to see the patch at all, which is the one
+               thing it has nothing to do with. -->
+          <p class="field-hint muted">
+            Members vote on proposals and appear in the patch's member list.
+            Following is separate and always open: anyone can follow a public
+            patch and see its events.
+          </p>
+          {#if policySeeded}
+            <!-- What the control cannot show: that this answer came from the
+                 template below and will keep following it until it is
+                 answered here. Without the line, picking a template silently
+                 moves an answer further up the page. -->
+            <p class="field-hint muted">Set by the {templates.find((t) => t.id === template)?.name || template} template. Change it if that is not this patch.</p>
+          {/if}
+          <div class="policy-grid">
+            {#each membershipPolicies as p (p.id)}
+              <label class="policy-card" class:selected={membershipPolicy === p.id}>
+                <input type="radio" name="membership_policy" value={p.id} bind:group={membershipPolicy} onchange={() => policyAnswered = true} disabled={submitting} required />
+                <span class="policy-info">
+                  <strong>{p.name}</strong>
+                  <span class="policy-desc">{p.desc}</span>
+                </span>
+              </label>
+            {/each}
+          </div>
+        </fieldset>
 
         <div class="field">
           <label>Governance Template</label>
@@ -525,9 +700,12 @@
           </button>
         </div>
       </form>
+      {/if}
     </div>
   </div>
 </div>
+
+<svelte:window onkeydown={(e) => { if (e.key === 'Escape' && previewTemplate) previewTemplate = ''; }} />
 
 {#if previewTemplate}
   <TemplatePreviewDrawer templateId={previewTemplate} onClose={() => previewTemplate = ''} />
@@ -536,6 +714,56 @@
 <style>
   h1 {
     margin-bottom: 0.25rem;
+  }
+
+  .fork-question {
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .fork-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .fork-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-start;
+    text-align: left;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+
+  .fork-card:hover,
+  .fork-card:focus-visible {
+    border-color: var(--color-primary);
+  }
+
+  .fork-card strong {
+    font-size: 0.95rem;
+  }
+
+  .fork-card span {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (min-width: 640px) {
+    .fork-cards {
+      flex-direction: row;
+    }
+
+    .fork-card {
+      flex: 1;
+    }
   }
 
   form {
@@ -710,6 +938,68 @@
   .motif-swatch.selected {
     border-color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  }
+
+  .policy-field {
+    border: none;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .policy-field legend {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    padding: 0;
+    margin-bottom: 0.25rem;
+  }
+
+  .policy-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .policy-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+
+  .policy-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .policy-card.selected {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  }
+
+  .policy-card input[type="radio"] {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .policy-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .policy-info strong {
+    font-size: 0.9rem;
+  }
+
+  .policy-desc {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
   }
 
   .template-grid {

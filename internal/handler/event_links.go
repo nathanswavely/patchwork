@@ -27,7 +27,9 @@ import (
 // patches' calendars in trust — docs/adr/031).
 //
 // Plus one seam (docs/adr/057): a trusted contributor speaks for a patch
-// while that patch is unclaimed. An unclaimed patch has no admins by
+// while that patch is unclaimed — at either scope of the grant, quilt-wide
+// or this one patch (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-
+// carries-its-calendar.md). An unclaimed patch has no admins by
 // definition, so without this the person who recorded a community event
 // is shown no link control at all — the events with the least
 // institutional attention would be the only ones that can never be
@@ -45,7 +47,7 @@ func userSpeaksForNode(db *database.DB, user *model.User, nodeID string) bool {
 	if userHasNodeRole(db, user.ID, nodeID, "admin") {
 		return true
 	}
-	return user.TrustedContributor && nodeIsUnclaimed(db, nodeID)
+	return nodeIsUnclaimed(db, nodeID) && userTrustedOn(db, user, nodeID)
 }
 
 // nodeIsUnclaimed reports whether a patch is still unclaimed — held in
@@ -495,7 +497,7 @@ func loadEventLink(db *database.DB, eventID, nodeID string) model.EventLink {
 // side). Pending links are invisible to the public (docs/adr/032).
 func eventLinksForViewer(db *database.DB, user *model.User, eventID, ownerNodeID string) []model.EventLink {
 	rows, err := db.Query(
-		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.created_at, n.name, n.slug
+		`SELECT l.id, l.event_id, l.node_id, l.status, l.initiated_by, l.requested_by, l.created_at, n.name, n.slug, n.status
 		 FROM event_links l JOIN nodes n ON l.node_id = n.id
 		 WHERE l.event_id = ? AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 		 ORDER BY l.created_at`,
@@ -510,7 +512,7 @@ func eventLinksForViewer(db *database.DB, user *model.User, eventID, ownerNodeID
 	ownerSide := userSpeaksForNode(db, user, ownerNodeID)
 	for rows.Next() {
 		var l model.EventLink
-		if err := rows.Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CreatedAt, &l.NodeName, &l.NodeSlug); err != nil {
+		if err := rows.Scan(&l.ID, &l.EventID, &l.NodeID, &l.Status, &l.InitiatedBy, &l.RequestedBy, &l.CreatedAt, &l.NodeName, &l.NodeSlug, &l.NodeStatus); err != nil {
 			continue
 		}
 		if l.Status != "confirmed" && !ownerSide && !userSpeaksForNode(db, user, l.NodeID) {

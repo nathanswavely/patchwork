@@ -264,10 +264,17 @@ describe('GovernanceRecord — what it claims', () => {
     expect(src).not.toMatch(/e\.approve/);
   });
 
-  it('says an election that settled nothing left the council in place', () => {
-    // Holdover removes nobody (docs/adr/051). "Rejected" would read as the
-    // community turning somebody down.
-    expect(src).toMatch(/Settled nothing\. The council kept serving\./);
+  it('says an election settled nothing without claiming a council carried on', () => {
+    // Holdover removes nobody (docs/adr/051), and "Rejected" would read as
+    // the community turning somebody down. But this line is read months
+    // later and cannot know what the council was on the day: five members of
+    // a co-op with no admins at all read "The council kept serving" five
+    // times down this page (docs/adr/106). What is always true is what the
+    // contest did.
+    expect(src).toMatch(/'Settled nothing\. Nobody was elected\.'/);
+    // The string, not the word — the comment above the line explains why it
+    // is gone and has to be allowed to name it.
+    expect(src).not.toMatch(/'Settled nothing\. The council kept serving\.'/);
   });
 
   it('names who applied a direct change, since no vote stands behind it', () => {
@@ -334,10 +341,12 @@ describe('Where an image renders', () => {
   });
 
   it('shows the patch image in About, and opens About when it is the only thing there', () => {
-    const src = source('pages/PatchProfile.svelte');
+    const src = source('components/PatchProfileGlimpses.svelte');
     expect(src).toMatch(/<img class="patch-image" src=\{node\.image_url\} alt=\{node\.image_alt\}/);
     // Without this a patch whose only About content is a picture renders no
-    // About section at all, and the picture is invisible.
-    expect(src).toMatch(/showAbout = \$derived\(.*!!node\?\.image_url\)/);
+    // About section at all, and the picture is invisible. Anchored on the
+    // clause rather than on the end of the condition: what matters is that
+    // a picture opens About, not that it is the last thing that can.
+    expect(src).toMatch(/showAbout = \$derived\([^\n]*!!node\?\.image_url/);
   });
 });

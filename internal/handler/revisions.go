@@ -23,7 +23,7 @@ func ListRevisions(db *database.DB) http.HandlerFunc {
 
 		rows, err := db.Query(
 			`SELECT r.id, r.proposal_id, r.title, r.body, COALESCE(r.proposed_body,''), r.revision_number, r.author_id, r.change_note, r.created_at,
-			 COALESCE(u.display_name, u.username) as author_name
+			 `+displayNameExpr("u")+` as author_name
 			 FROM proposal_revisions r
 			 LEFT JOIN users u ON u.id = r.author_id
 			 WHERE r.proposal_id = ?
@@ -162,7 +162,8 @@ func CreateRevision(db *database.DB) http.HandlerFunc {
 		// If this is an amendment with a git branch, update the branch.
 		if req.ProposedBody != nil && targetDoc != "" && proposedBranch != "" {
 			governance.DeleteBranch(governance.GetDataDir(), nodeID, proposedBranch)
-			governance.CreateBranch(governance.GetDataDir(), nodeID, proposedBranch, targetDoc, *req.ProposedBody, user.DisplayName, user.Email, req.ChangeNote)
+			revName, revEmail := commitIdentity(user)
+			governance.CreateBranch(governance.GetDataDir(), nodeID, proposedBranch, targetDoc, *req.ProposedBody, revName, revEmail, req.ChangeNote)
 		}
 
 		auth.LogAuditEvent(db, user.ID, "proposal.revise", "proposal", proposalID, `{"revision_number":`+json.Number(itoa(nextRevision)).String()+`}`, clientIP(r))
