@@ -187,6 +187,23 @@ derived one and hides wrong answers behind a button nobody read.
   from 288/300 to 292/300 — the remaining eight are the generator inventing
   the same address twice, 27 km apart, which the ambiguity rule is right to
   refuse.
+- **A real extract found the blind spot the synthetic one predicted.** Built
+  from the September 2026 Pennsylvania extract cropped to 25 km (29,812
+  places), "150 N Prince St, Lancaster" suggested the East King Street
+  Garage. There is no 150 on North Prince Street, and the East King row
+  shared `{150, street, lancaster}` — three hits, plus the housenumber
+  weight, plus the city — while every genuine North Prince row shared four
+  tokens and no number. The generic word "Street" carried the match and the
+  housenumber paid for it: a number on the wrong street outscored the right
+  street. The housenumber weight now requires the query to have named the
+  street the number stands on, judged on the words that distinguish it
+  ("East King Street" is `king`) so that a dropped direction still matches.
+  With the number nowhere on the named street, the ambiguity rule takes over
+  and the answer is silence — which is the ordinary answer here, and a better
+  one than a confident marker on another block. It is a gate on the bonus
+  rather than a filter on the row: a filter would have to know the query
+  named a street at all, and it never does.
+
 - **The volume is in events, and this does not serve them.** The event form
   has no coordinate input at all, and `events.latitude`/`longitude` are
   written by the JSON-LD importer and the aggregator and then read by
