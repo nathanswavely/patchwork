@@ -26,6 +26,27 @@
   // candidates "seated" — people who hold no seat, on a page whose banner
   // says the council held over.
   let settledNothing = $derived(proposal?.state === 'unsettled');
+  // How many took part and how many had to. Turnout is the thing that
+  // decides a contest and was the one number its page never showed: a
+  // four-person collective failed six in a row, each reported as "Settled
+  // nothing", while the ordinary proposal two rows up in the same record
+  // said "Quorum met (3 of 4 voted, 50% needed)" and named the voters.
+  // Server-side, from the same function that resolves the contest, so the
+  // page cannot disagree with the outcome.
+  let turnout = $derived(proposal?.election_turnout || null);
+  // Whether this contest recorded its own outcome. Contests resolved before
+  // the seated column existed have it on nobody, and fall back to the old
+  // inference rather than reporting that a contest which seated a council
+  // seated none.
+  let outcomeStored = $derived(candidates.some((c) => c.seated));
+  // Named rather than repeated inline, because the losing rows need its
+  // negation and were rendering a blank: a former chair read one row saying
+  // "seated" and the row under it saying nothing at all, and sat wondering
+  // whether that meant still pending.
+  function isSeated(c, i) {
+    if (phase !== 'closed' || settledNothing) return false;
+    return outcomeStored ? c.seated : i < seats && c.approvals > 0;
+  }
   let me = $derived(getUser());
   let iAmStanding = $derived(candidates.some((c) => c.user_id === me?.id));
 
@@ -177,6 +198,22 @@
       </p>
     {/if}
 
+    <!-- Turnout, in the same words and the same place the ordinary proposal
+         puts it. Not during nominations: no ballot may be cast yet, so there
+         is nothing to be short of. -->
+    {#if turnout && phase !== 'nominating'}
+      <p class="small turnout" class:quorum-unmet={!turnout.met} class:quorum-met={turnout.met}>
+        {#if turnout.needed === 0}
+          No quorum required. {turnout.voted} of {turnout.eligible} voted.
+        {:else if turnout.met}
+          Quorum met: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.
+        {:else}
+          {phase === 'closed' ? 'Quorum not met' : 'Quorum not yet met'}:
+          {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.
+        {/if}
+      </p>
+    {/if}
+
     {#if candidates.length === 0}
       <p class="muted small">
         {phase === 'nominating' ? 'Nobody has stood yet.' : 'Nobody stood.'}
@@ -184,7 +221,7 @@
     {:else}
       <ul class="candidates">
         {#each candidates as c, i}
-          <li class:seated={phase === 'closed' && !settledNothing && i < seats && c.approvals > 0}>
+          <li class:seated={isSeated(c, i)}>
             <!-- The name is not the control (docs/adr/109). It used to sit
                  inside the checkbox's own <label>, so tapping it cast a vote:
                  a member on a phone tapped a candidate's name to find out who
@@ -200,8 +237,13 @@
             {#if phase !== 'nominating'}
               <span class="count">{c.approvals} approval{c.approvals === 1 ? '' : 's'}</span>
             {/if}
-            {#if phase === 'closed' && !settledNothing && i < seats && c.approvals > 0}
+            <!-- Both outcomes say themselves. A blank beside a name is not
+                 an answer, and on a closed contest the reader has no other
+                 way to tell "lost" from "still being counted". -->
+            {#if isSeated(c, i)}
               <span class="tag">seated</span>
+            {:else if phase === 'closed'}
+              <span class="tag tag-quiet">not seated</span>
             {/if}
           </li>
         {/each}
@@ -389,6 +431,17 @@
     background: color-mix(in srgb, var(--color-success) 18%, transparent);
     color: var(--color-text);
   }
+  /* Losing is an outcome, not a warning: the row states it and does not
+     shout it. */
+  .tag-quiet {
+    background: color-mix(in srgb, var(--color-text) 8%, transparent);
+    color: var(--color-text-muted);
+  }
+  /* The same two colours the ordinary proposal's quorum line uses, because
+     it is the same sentence about the same thing. */
+  .turnout { margin: 0.35rem 0 0; }
+  .quorum-met { color: var(--color-success); }
+  .quorum-unmet { color: var(--color-accent); }
 
   /* A link, but a quiet one: a ballot of six blue underlined names reads as
      navigation rather than as a list of people to choose between. */

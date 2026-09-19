@@ -125,8 +125,12 @@ describe('an unsettled election is a lapse in election shape (docs/adr/051)', ()
 
   it('the election panel tags nobody seated on a contest that seated nobody', () => {
     expect(panel).toMatch(/let settledNothing = \$derived\(proposal\?\.state === 'unsettled'\)/);
-    expect(panel).not.toMatch(/phase === 'closed' && i < seats/);
-    expect(panel.match(/phase === 'closed' && !settledNothing && i < seats/g)).toHaveLength(2);
+    // The guard lives in one function now rather than inline in two places,
+    // so the class and the tag cannot drift apart. Still the same rule: a
+    // contest that settled nothing seats nobody, whatever the tally says.
+    expect(panel).toMatch(/if \(phase !== 'closed' \|\| settledNothing\) return false;/);
+    expect(panel).toContain('class:seated={isSeated(c, i)}');
+    expect(panel).toContain('{#if isSeated(c, i)}');
   });
 
   it('the list row says "unsettled" and mutes it', () => {
