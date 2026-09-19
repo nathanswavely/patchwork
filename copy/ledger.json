@@ -42399,42 +42399,6 @@
       ]
     },
     {
-      "id": "c0e8135e327f",
-      "text": "Who can see this",
-      "words": 4,
-      "tier": "label",
-      "status": "as-is",
-      "replacement": null,
-      "note": "Asks the question a person is actually answering. Not Visibility, which is the column name and names a property rather than a decision.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 616,
-          "kind": "markup",
-          "raw": "Who can see this",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "591935b15b1c",
-      "text": "Public",
-      "words": 1,
-      "tier": "label",
-      "status": "as-is",
-      "replacement": null,
-      "note": "The audience, in the word the roles table and the charter shelf already use.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 618,
-          "kind": "markup",
-          "raw": "Public",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "5a3adce002f6",
       "text": "Event page",
       "words": 2,
