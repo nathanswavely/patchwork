@@ -421,7 +421,7 @@ func TestGetEvent_NonPublicEventNeedsTheRoom(t *testing.T) {
 
 	eventID := seedEvent(t, db, nodeID, admin.ID, "House Meeting", daysOut(2))
 
-	for _, vis := range []string{"private", "unlisted"} {
+	for _, vis := range []string{"members"} {
 		if _, err := db.Exec(`UPDATE events SET visibility = ? WHERE id = ?`, vis, eventID); err != nil {
 			t.Fatal(err)
 		}
@@ -473,7 +473,7 @@ func TestGetEvent_ConfirmedLinkDoesNotWidenVisibility(t *testing.T) {
 	createTestMembership(t, db, linked.ID, band, "member", "active")
 
 	eventID := seedEvent(t, db, host, owner.ID, "Members Only Show", daysOut(2))
-	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, eventID); err != nil {
+	if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, eventID); err != nil {
 		t.Fatal(err)
 	}
 	linkEvent(t, db, eventID, band, "confirmed", owner.ID)
@@ -501,7 +501,7 @@ func TestGetEvent_NonPublicSubmissionStillReachesItsReviewers(t *testing.T) {
 
 	eventID := seedEvent(t, db, nodeID, submitter.ID, "Unreviewed Show", daysOut(3))
 	if _, err := db.Exec(
-		`UPDATE events SET status = 'pending_review', visibility = 'private' WHERE id = ?`, eventID,
+		`UPDATE events SET status = 'pending_review', visibility = 'members' WHERE id = ?`, eventID,
 	); err != nil {
 		t.Fatal(err)
 	}
@@ -545,7 +545,7 @@ func TestCreateEventRejectsABadVisibility(t *testing.T) {
 	}
 
 	// Every value the schema still accepts works.
-	for _, vis := range []string{"public", "private", "unlisted"} {
+	for _, vis := range []string{"public", "followers", "members"} {
 		body := map[string]interface{}{
 			"node_id": nodeID, "title": "Show " + vis, "starts_at": daysOut(2), "visibility": vis,
 		}
@@ -579,7 +579,7 @@ func TestUpdateEventRejectsABadVisibility(t *testing.T) {
 		t.Errorf("visibility = %q after a refused edit, want unchanged", stored)
 	}
 
-	r = authedRequest("PATCH", "/api/v1/events/"+eventID, map[string]interface{}{"visibility": "private"}, token)
+	r = authedRequest("PATCH", "/api/v1/events/"+eventID, map[string]interface{}{"visibility": "members"}, token)
 	w = serveMux(t, db, "PATCH", "/api/v1/events/{id}", handler.UpdateEvent(db), r)
 	if w.Code != http.StatusOK {
 		t.Fatalf("valid visibility: code=%d, want 200 — %s", w.Code, w.Body.String())

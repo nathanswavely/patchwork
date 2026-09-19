@@ -76,8 +76,12 @@
     if (!newUrl.trim()) return;
     adding = true;
     try {
-      await api(`nodes/${slug}/event-sources`, { method: 'POST', body: { url: newUrl.trim() } });
+      await api(`nodes/${slug}/event-sources`, {
+        method: 'POST',
+        body: { url: newUrl.trim(), visibility: newVisibility },
+      });
       newUrl = '';
+      newVisibility = 'public';
       await loadSources();
     } catch (err) {
       showToast(err.message || 'Failed to attach feed', 'error');
@@ -104,6 +108,36 @@
       before: formatEventTime(source.sample_starts_at, source.timezone),
       after: formatEventTime(corrected, source.timezone),
     };
+  }
+
+  // The default tier for the events a feed brings in
+  // (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-
+  // allows.md). It applies when a row is inserted, so changing it moves the
+  // events that arrive next and leaves the ones already here alone — which
+  // is the point: a tier changed on one imported night survives every later
+  // sync.
+  const TIER_LABELS = {
+    public: 'Public',
+    followers: 'Followers',
+    members: 'Members only',
+  };
+  let newVisibility = $state('public');
+  let retiering = $state({});
+
+  async function setSourceVisibility(id, value) {
+    retiering = { ...retiering, [id]: true };
+    try {
+      const updated = await api(`nodes/${slug}/event-sources/${id}`, {
+        method: 'PATCH',
+        body: { visibility: value },
+      });
+      sources = sources.map((s) => (s.id === id ? updated : s));
+      showToast('Saved. Events already imported keep the tier they have.', 'success');
+    } catch (e) {
+      showToast(e.message || 'Failed to save', 'error');
+      sources = [...sources];
+    }
+    retiering = { ...retiering, [id]: false };
   }
 
   async function setStampedUTC(id, value) {
@@ -321,6 +355,24 @@
               </span>
             </div>
             <div class="source-correction">
+              <label class="source-tier" for="tier-{source.id}">Who can see these events</label>
+              <select
+                id="tier-{source.id}"
+                value={source.visibility || 'public'}
+                disabled={!!retiering[source.id]}
+                onchange={(e) => setSourceVisibility(source.id, e.target.value)}
+              >
+                {#each Object.entries(TIER_LABELS) as [tier, label] (tier)}
+                  <option value={tier}>{label}</option>
+                {/each}
+              </select>
+              <p class="correction-hint muted">
+                The tier new events from this feed are created at. Events
+                already imported keep the tier they have. Anything but Public
+                also stops these events federating to other quilts.
+              </p>
+            </div>
+            <div class="source-correction">
               <label class="correction-toggle">
                 <input
                   type="checkbox"
@@ -373,6 +425,11 @@
         bind:value={newUrl}
         disabled={adding}
       />
+      <select bind:value={newVisibility} disabled={adding} aria-label="Who can see these events">
+        {#each Object.entries(TIER_LABELS) as [tier, label] (tier)}
+          <option value={tier}>{label}</option>
+        {/each}
+      </select>
       <button class="btn btn-primary" type="submit" disabled={adding || !newUrl.trim()}>
         {adding ? 'Attaching…' : 'Attach feed'}
       </button>
@@ -558,6 +615,15 @@
     margin: 0.25rem 0 0 1.6rem;
     font-size: 0.85rem;
     line-height: 1.5;
+  }
+  .source-tier {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+  .source-correction select {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.4rem;
   }
 
   h2 {

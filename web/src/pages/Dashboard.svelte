@@ -3,6 +3,7 @@
   import { getUser } from '../stores/auth.svelte.js';
   import { navigate } from '../stores/router.svelte.js';
   import Skeleton from '../components/Skeleton.svelte';
+  import EventTierChip from '../components/EventTierChip.svelte';
   import { formatEventDate as formatDate, upcomingFrom } from '../lib/datetime.js';
 
   let user = $derived(getUser());
@@ -142,6 +143,7 @@
               {#each upcomingEvents.slice(0, 3) as event}
                 <a href="/events/{event.id}" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/events/${event.id}`); }}>
                   {formatDate(event.starts_at, event.timezone)} &middot; {event.title}
+                  <EventTierChip visibility={event.visibility} />
                 </a>
               {/each}
             </div>

@@ -755,9 +755,11 @@ func DecideAggregatorHold(db *database.DB) http.HandlerFunc {
 				`INSERT INTO events (id, node_id, created_by, title, description, location,
 				 latitude, longitude, starts_at, ends_at, event_url, recurrence, visibility, status,
 				 ap_id, source_id, source_uid, source_occurrence)
-				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', 'public', 'active', ?, ?, ?, ?)`,
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '',
+				         COALESCE((SELECT visibility FROM event_sources WHERE id = ?), 'public'),
+				         'active', ?, ?, ?, ?)`,
 				id, nodeID, user.ID, title, description, location, lat, lon,
-				startsAt, endsAt, listingURL, apID, sourceID, uid, occurrence,
+				startsAt, endsAt, listingURL, sourceID, apID, sourceID, uid, occurrence,
 			); err != nil {
 				http.Error(w, `{"error":"failed to create event"}`, http.StatusInternalServerError)
 				return

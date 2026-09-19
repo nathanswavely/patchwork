@@ -610,6 +610,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			http.Error(w, `{"error":"slug required"}`, http.StatusBadRequest)
 			return
 		}
+		viewer := middleware.UserFromContext(r.Context())
 
 		var n model.Node
 		var linksJSON, fpJSON, gcJSON, apJSON string
@@ -635,8 +636,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		// not to members, not to followers, and not to an instance admin
 		// holding no role here. A pending word is a request one of its admins
 		// filed, not a fact about the patch.
-		if viewer := middleware.UserFromContext(r.Context()); viewer != nil &&
-			userHasNodeRole(db, viewer.ID, n.ID, "admin") {
+		if viewer != nil && userHasNodeRole(db, viewer.ID, n.ID, "admin") {
 			n.PendingTags = nodePendingTagNames(db, n.ID)
 		}
 
@@ -670,16 +670,23 @@ func GetNode(db *database.DB) http.HandlerFunc {
 		// that has since been archived is counted by nothing and listed by
 		// nothing. Leaving it out of the count was the one filter ListEvents
 		// applied and this query did not.
+		//
+		// The event tier is part of that mirror too: a member reading a
+		// patch's page counts the members-only nights the list under it
+		// shows them, and a stranger counts neither.
+		visCond, visArgs := eventVisibleSQL("e", viewer)
+		countArgs := append([]interface{}{}, visArgs...)
+		countArgs = append(countArgs, clock.Now(), n.ID, n.ID, n.ID)
 		db.QueryRow(
 			`SELECT COUNT(*) FROM events e JOIN nodes n ON e.node_id = n.id
-			 WHERE e.visibility = 'public' AND e.removed_at IS NULL
+			 WHERE `+visCond+` AND e.removed_at IS NULL
 			   AND e.status = 'active' AND e.starts_at >= ?
 			   AND (e.node_id = ? OR EXISTS (
 			         SELECT 1 FROM event_links el WHERE el.event_id = e.id
 			         AND el.node_id = ? AND el.status = 'confirmed'))
 			   AND n.status IN ('active','unclaimed') AND n.removed_at IS NULL
 			   AND (n.visibility = 'public' OR e.node_id = ?)`,
-			clock.Now(), n.ID, n.ID, n.ID,
+			countArgs...,
 		).Scan(&n.UpcomingEventCount)
 
 		isUnclaimed := n.Status == "unclaimed"
@@ -713,7 +720,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			).Scan(&owner.ID, &owner.Username, &owner.DisplayName, &owner.AvatarURL)
 			resp["owner"] = owner
 		}
-		if user := middleware.UserFromContext(r.Context()); user != nil {
+		if user := viewer; user != nil {
 			var role, memStatus string
 			err := db.QueryRow(
 				"SELECT role, status FROM memberships WHERE user_id = ? AND node_id = ?",

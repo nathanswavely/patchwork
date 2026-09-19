@@ -286,7 +286,7 @@ func Tables() []Table {
 			// transfer (docs/adr/012), so they travel. Fetch state stays
 			// behind — the fork re-syncs from scratch.
 			Query: `SELECT id, node_id, type, url, added_by, aggregator_id, name_key,
-				suggests, local_time_stamped_utc, created_at, updated_at FROM event_sources`,
+				suggests, local_time_stamped_utc, visibility, created_at, updated_at FROM event_sources`,
 			// aggregator_id + name_key make a row a crosswalk entry
 			// (docs/adr/056). They travel because the crosswalk is dozens
 			// of names mapped by hand — community labour, and the reason
@@ -305,9 +305,17 @@ func Tables() []Table {
 			// as UTC, and that stays true after a fork. Losing it would
 			// have the fork re-import the same events hours off, with no
 			// trace of the reason they were ever right here.
+			//
+			// visibility is the feed's default tier
+			// (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-
+			// the-patch-allows.md). It travels beside the events it
+			// stamped, so the fork's next sync keeps putting new rows
+			// where the patch put the old ones. Defaulted to public for an
+			// archive written before the column existed.
 			Columns: cols(id("id"), id("node_id"), c("type"), c("url"),
 				id("added_by"), id("aggregator_id"), c("name_key"),
 				def("suggests", 0), def("local_time_stamped_utc", 0),
+				def("visibility", "public"),
 				c("created_at"), c("updated_at")),
 		},
 		{

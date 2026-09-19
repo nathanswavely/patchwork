@@ -104,12 +104,18 @@ func BulkCreateEvents(db *database.DB) http.HandlerFunc {
 					fail(i, "ends_at must be after starts_at")
 				}
 			}
+			// The CSV door is the only one that has ever written a
+			// non-public event, so it is the only one with rows in the old
+			// words. They are gone now
+			// (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-
+			// the-patch-allows.md), and a sheet still carrying "private"
+			// fails the row rather than guessing which tier was meant.
 			switch ev.Visibility {
 			case "":
 				ev.Visibility = "public"
-			case "public", "private", "unlisted":
+			case "public", "followers", "members":
 			default:
-				fail(i, "visibility must be public, private, or unlisted")
+				fail(i, badVisibilityMessage)
 			}
 			if msg := validateEventURL(ev.EventURL); msg != "" {
 				fail(i, msg)

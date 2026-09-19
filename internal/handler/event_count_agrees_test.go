@@ -90,7 +90,7 @@ func TestUpcomingCountEqualsTheListTheSameRequestReturns(t *testing.T) {
 		t.Fatalf("remove: %v", err)
 	}
 	inside := insertEvent(t, db, home, owner.ID, "Private", now.Add(192*time.Hour))
-	if _, err := db.Exec(`UPDATE events SET visibility = 'private' WHERE id = ?`, inside); err != nil {
+	if _, err := db.Exec(`UPDATE events SET visibility = 'members' WHERE id = ?`, inside); err != nil {
 		t.Fatalf("visibility: %v", err)
 	}
 

@@ -70,7 +70,7 @@ func scanEventSources(db *database.DB, nodeID string) ([]model.EventSource, erro
 		`SELECT s.id, s.node_id, s.type, s.url, s.added_by, s.status,
 		 s.last_fetch_at, s.last_success_at, s.last_error,
 		 (SELECT COUNT(*) FROM events e WHERE e.source_id = s.id AND e.removed_at IS NULL),
-		 s.local_time_stamped_utc,
+		 s.local_time_stamped_utc, s.visibility,
 		 -- One upcoming event, so the settings page can show what flipping
 		 -- the switch would do to a real row rather than describing it
 		 -- (docs/adr/073). Upcoming rather than any: a past event is not
@@ -95,7 +95,7 @@ func scanEventSources(db *database.DB, nodeID string) ([]model.EventSource, erro
 		var s model.EventSource
 		if err := rows.Scan(&s.ID, &s.NodeID, &s.Type, &s.URL, &s.AddedBy, &s.Status,
 			&s.LastFetchAt, &s.LastSuccessAt, &s.LastError, &s.EventCount,
-			&s.LocalTimeStampedUTC, &s.SampleStartsAt, &s.Timezone,
+			&s.LocalTimeStampedUTC, &s.Visibility, &s.SampleStartsAt, &s.Timezone,
 			&s.CreatedAt, &s.UpdatedAt); err != nil {
 			return nil, err
 		}
@@ -145,9 +145,20 @@ func CreateEventSource(db *database.DB) http.HandlerFunc {
 
 		var req struct {
 			URL string `json:"url"`
+			// The tier every event this feed brings in is born at
+			// (docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-
+			// the-patch-allows.md). Absent means public, which is what
+			// every feed attached before this existed does.
+			Visibility string `json:"visibility"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.URL == "" {
 			http.Error(w, `{"error":"url is required"}`, http.StatusBadRequest)
+			return
+		}
+		if req.Visibility == "" {
+			req.Visibility = "public"
+		} else if !validEventVisibility(req.Visibility) {
+			writeJSONError(w, http.StatusBadRequest, badVisibilityMessage)
 			return
 		}
 		// An atproto handle or AT-URI is a source too (docs/adr/064). It is
@@ -185,8 +196,8 @@ func CreateEventSource(db *database.DB) http.HandlerFunc {
 
 		id := auth.NewUUIDv7()
 		_, err := db.Exec(
-			`INSERT INTO event_sources (id, node_id, type, url, added_by) VALUES (?, ?, ?, ?, ?)`,
-			id, nodeID, sourceType, req.URL, user.ID,
+			`INSERT INTO event_sources (id, node_id, type, url, added_by, visibility) VALUES (?, ?, ?, ?, ?, ?)`,
+			id, nodeID, sourceType, req.URL, user.ID, req.Visibility,
 		)
 		if err != nil {
 			http.Error(w, `{"error":"this feed is already attached"}`, http.StatusConflict)
@@ -442,29 +453,55 @@ func UpdateEventSource(db *database.DB) http.HandlerFunc {
 		}
 
 		var req struct {
-			LocalTimeStampedUTC *bool `json:"local_time_stamped_utc"`
+			LocalTimeStampedUTC *bool   `json:"local_time_stamped_utc"`
+			Visibility          *string `json:"visibility"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
-		if req.LocalTimeStampedUTC == nil {
+		if req.LocalTimeStampedUTC == nil && req.Visibility == nil {
 			http.Error(w, `{"error":"no valid fields to update"}`, http.StatusBadRequest)
 			return
 		}
-
-		if _, err := db.Exec(
-			`UPDATE event_sources
-			    SET local_time_stamped_utc = ?, etag = NULL, last_modified = NULL,
-			        updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
-			  WHERE id = ?`,
-			boolToInt(*req.LocalTimeStampedUTC), sourceID,
-		); err != nil {
-			http.Error(w, `{"error":"failed to update event source"}`, http.StatusInternalServerError)
+		if req.Visibility != nil && !validEventVisibility(*req.Visibility) {
+			writeJSONError(w, http.StatusBadRequest, badVisibilityMessage)
 			return
 		}
+
+		audit := map[string]any{}
+		// The stamped-UTC correction re-reads the feed, because it changes
+		// what every row already imported should say (docs/adr/073) — hence
+		// the etag reset. The default tier does not: it applies at insert
+		// only, so clearing the conditional-GET state would fetch a feed
+		// that would change nothing. Two fields, two updates.
+		if req.LocalTimeStampedUTC != nil {
+			if _, err := db.Exec(
+				`UPDATE event_sources
+				    SET local_time_stamped_utc = ?, etag = NULL, last_modified = NULL,
+				        updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+				  WHERE id = ?`,
+				boolToInt(*req.LocalTimeStampedUTC), sourceID,
+			); err != nil {
+				http.Error(w, `{"error":"failed to update event source"}`, http.StatusInternalServerError)
+				return
+			}
+			audit["local_time_stamped_utc"] = *req.LocalTimeStampedUTC
+		}
+		if req.Visibility != nil {
+			if _, err := db.Exec(
+				`UPDATE event_sources
+				    SET visibility = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+				  WHERE id = ?`,
+				*req.Visibility, sourceID,
+			); err != nil {
+				http.Error(w, `{"error":"failed to update event source"}`, http.StatusInternalServerError)
+				return
+			}
+			audit["visibility"] = *req.Visibility
+		}
 		auth.LogAuditEventJSON(db, user.ID, "event_source.update", "event_source", sourceID,
-			map[string]any{"local_time_stamped_utc": *req.LocalTimeStampedUTC}, clientIP(r))
+			audit, clientIP(r))
 
 		sources, err := scanEventSources(db, nodeID)
 		if err != nil {

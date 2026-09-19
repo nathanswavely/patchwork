@@ -97,24 +97,21 @@ const eventZoneSQL = `COALESCE(NULLIF(e.timezone,''), NULLIF(n.timezone,''), ?)`
 // always needed. What ends here is *new* ones, including from a client
 // that never saw the form.
 // validEventVisibility reports whether v is an event visibility the API
-// accepts. Mirrors the CHECK constraint in migration 001. Empty is not
+// accepts. Mirrors the CHECK constraint in
+// migrations/20260919T155435_event_visibility_tiers.sql. Empty is not
 // valid here — callers default it to "public" before checking, the same
 // way BulkCreateEvents does.
 func validEventVisibility(v string) bool {
-	return v == "public" || v == "private" || v == "unlisted"
+	return v == "public" || v == "followers" || v == "members"
 }
 
-// canReadNonPublicEvent reports whether user may read a private/unlisted
-// event hosted at nodeID. Only a member or admin of the event's OWN
-// patch may — a confirmed event link never widens visibility, so this
-// deliberately never consults event_links. GetEvent and EventICS are the
-// two single-event reads that gate on it; ListEvents applies the same
-// rule inline in SQL because it has to read the membership row that
-// matched a scope=my relationship, which a Go helper can't share across
-// that boundary.
-func canReadNonPublicEvent(db *database.DB, user *model.User, nodeID string) bool {
-	return user != nil && userHasNodeRole(db, user.ID, nodeID, "member", "admin")
-}
+// badVisibilityMessage is the 400 every write path answers with, so the
+// three doors into this column say the same thing.
+const badVisibilityMessage = "visibility must be public, followers, or members"
+
+// Who may read an event at which tier is decided in event_tiers.go —
+// canReadEvent for a single row, eventVisibleSQL and
+// eventVisibleToMatchedMembership for the listings.
 
 func validateRecurrence(v string) string {
 	if strings.TrimSpace(v) == "" {
@@ -209,20 +206,38 @@ func ListEvents(db *database.DB) http.HandlerFunc {
 			// would break the keyset cursor as well as the list.
 			//
 			// The visibility test lives inside the same subquery on purpose.
-			// It has to read the membership row that matched, so that
-			// members-only events are admitted only for a member or admin of
-			// the event's OWN patch — a confirmed link never widens
-			// visibility.
+			// It has to read the membership row that matched, so that a
+			// non-public event is admitted only on the strength of a
+			// relationship with the event's OWN patch — a confirmed link
+			// never widens visibility.
 			conditions = append(conditions, `EXISTS (
 				SELECT 1 FROM memberships m
 				WHERE m.user_id = ? AND m.status = 'active'
 				AND (m.node_id = e.node_id OR EXISTS (
 					SELECT 1 FROM event_links el WHERE el.event_id = e.id
 					AND el.node_id = m.node_id AND el.status = 'confirmed'))
-				AND (e.visibility = 'public'
-					OR (m.node_id = e.node_id AND m.role IN ('member','admin'))))`)
+				AND `+eventVisibleToMatchedMembership("m", "e", "n")+`)`)
 			args = append(args, viewer.ID)
+		} else if nodeID != "" {
+			// One patch's own calendar, which is where a tier is for. The
+			// question here is only about the event's own patch, so the
+			// plain predicate answers it: a member browsing the patch's
+			// events tab sees its members-only nights, and a follower sees
+			// its followers ones where that patch's Follower Permissions
+			// still grant events.
+			//
+			// Before tiers this branch was `e.visibility = 'public'` like
+			// the one below, so a members-only event was invisible on the
+			// one page it exists for.
+			cond, condArgs := eventVisibleSQL("e", viewer)
+			conditions = append(conditions, cond)
+			args = append(args, condArgs...)
 		} else {
+			// The unscoped, instance-wide feed stays public-only no matter
+			// who asks. Wrapping the route in AuthOptional must not turn
+			// discovery into a personal feed — scope=my is the parameter
+			// that asks for one, and this is the same line ListNodes and
+			// the tree draw (docs/adr/035).
 			conditions = append(conditions, "e.visibility = 'public'")
 		}
 		conditions = append(conditions, "e.removed_at IS NULL")
@@ -391,19 +406,18 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
 				return
 			}
-		} else if e.Visibility != "public" {
-			// Members-only events are for a member or admin of the event's
-			// OWN patch, which is the rule ListEvents and EventICS already
-			// apply — a confirmed link never widens visibility. A 404 rather
-			// than a 403: to someone who can't read it, the event doesn't
-			// exist. A private *patch* is unlisted rather than locked, so
-			// its public events stay readable by anyone holding the link,
-			// exactly as its page stays readable — this gate reads the
-			// event's own visibility and never the patch's.
-			if !canReadNonPublicEvent(db, user, e.NodeID) {
-				http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
-				return
-			}
+		} else if !canReadEvent(db, user, e.NodeID, e.Visibility) {
+			// The event's tier, read against this viewer's role on the
+			// event's OWN patch and that patch's Follower Permissions —
+			// the rule ListEvents and EventICS apply in SQL. A confirmed
+			// link never widens it. A 404 rather than a 403: to someone
+			// who can't read it, the event doesn't exist. A private
+			// *patch* is unlisted rather than locked, so its public events
+			// stay readable by anyone holding the link, exactly as its
+			// page stays readable — this gate reads the event's own
+			// visibility and never the patch's.
+			http.Error(w, `{"error":"event not found"}`, http.StatusNotFound)
+			return
 		}
 
 		// Event links and cross-quilt mentions (docs/adr/032): confirmed
@@ -420,7 +434,9 @@ func GetEvent(db *database.DB) http.HandlerFunc {
 
 // broadcastEventCreate federates a public event to the patch's AP
 // followers (docs/adr/024) — this is what makes a cross-quilt follow more
-// than a bookmark. Private/unlisted and pending events never federate.
+// than a bookmark. Only the public tier goes: `followers` and `members`
+// name roles on this quilt, and a remote follower holds neither. Pending
+// events never federate either.
 func broadcastEventCreate(db *database.DB, e model.Event, nodeID string) {
 	if e.Visibility != "public" {
 		return
@@ -502,7 +518,7 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 		if req.Visibility == "" {
 			req.Visibility = "public"
 		} else if !validEventVisibility(req.Visibility) {
-			writeJSONError(w, http.StatusBadRequest, "visibility must be public, private, or unlisted")
+			writeJSONError(w, http.StatusBadRequest, badVisibilityMessage)
 			return
 		}
 
@@ -556,6 +572,16 @@ func CreateEvent(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				return
 			}
 			status = "pending_review"
+
+			// A suggestion is public, whatever it asked for (docs/adr/026).
+			// Submitting is how somebody outside a patch tells it about a
+			// show; it is not a way into the patch's own calendar. A
+			// stranger who could name a tier could place an event inside a
+			// room they have no standing in, and the reviewer approving a
+			// listing would be publishing something they cannot see on the
+			// surfaces their members read. The patch can retier it after
+			// review like any other event of its own.
+			req.Visibility = "public"
 		}
 
 		id := auth.NewUUIDv7()
@@ -723,7 +749,17 @@ func UpdateEvent(db *database.DB) http.HandlerFunc {
 		if raw, present := req["visibility"]; present {
 			v, _ := raw.(string)
 			if !validEventVisibility(v) {
-				writeJSONError(w, http.StatusBadRequest, "visibility must be public, private, or unlisted")
+				writeJSONError(w, http.StatusBadRequest, badVisibilityMessage)
+				return
+			}
+			// Same rule CreateEvent applies to a suggestion (docs/adr/026):
+			// whoever is editing through the review door rather than the
+			// direct one does not get to place the event inside the patch's
+			// private calendar. Refused rather than dropped, because a form
+			// that reports success and stores something else is worse than
+			// one that says no.
+			if !direct && v != "public" {
+				writeJSONError(w, http.StatusForbidden, "a suggested event is public; the patch chooses its tier once it is approved")
 				return
 			}
 		}

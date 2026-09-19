@@ -4,6 +4,7 @@
   import { navigate } from '../stores/router.svelte.js';
   import { getSelectedTags, getSearchQuery, resetFilters } from '../stores/quilt.svelte.js';
   import FilterChips from '../components/FilterChips.svelte';
+  import EventTierChip from '../components/EventTierChip.svelte';
   import { getRemoteFollows } from '../stores/multiQuilt.svelte.js';
   import { sortByDate } from '../lib/multiQuilt.js';
   import { textMatches } from '../lib/textMatch.js';
@@ -311,7 +312,10 @@
             <span class="event-time-label">{formatTime(event.starts_at, event.timezone)}</span>
           </div>
           <div class="event-info">
-            <div class="event-title">{event.title}</div>
+            <div class="event-title">
+              {event.title}
+              <EventTierChip visibility={event.visibility} />
+            </div>
             {#if event.location}
               <div class="event-location">{event.location}</div>
             {/if}
