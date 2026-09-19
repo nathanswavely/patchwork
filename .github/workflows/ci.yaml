@@ -58,12 +58,6 @@ jobs:
       - name: npm audit (all deps)
         run: cd web && npm audit --audit-level=high
 
-      # Verifies each package's registry signature against npm's public keys —
-      # catches a tampered tarball served for a legitimate version, which the
-      # advisory database above cannot see.
-      - name: npm audit signatures
-        run: cd web && npm audit signatures
-
       - name: Frontend unit tests
         run: cd web && npx vitest run
 
@@ -117,6 +111,49 @@ jobs:
       # only fails on a discard that isn't already in that file.
       - name: errcheck (new discards only)
         run: scripts/errcheck-check.sh
+
+  npm-audit-signatures:
+    # Split out of `test` (#324): this step queries the live npm registry for
+    # attestation public keys, and a registry blip there (EMISSINGSIGNATUREKEY
+    # on @playwright/test@1.63.0, seven times on 2026-09-18/19, passing on a
+    # plain rerun every time) used to sit before every Go step in one
+    # sequential job, so it skipped build, vet, test, govulncheck, staticcheck
+    # and errcheck and painted the check red with nothing actually tested. A
+    # separate job runs in parallel with `test`, `race`, `smoke` and `e2e` (no
+    # `needs` between them), so this costs wall-clock only if it becomes the
+    # slowest job — it won't, next to e2e's 30-minute budget.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install frontend deps
+        run: cd web && npm ci
+
+      # Verifies each package's registry signature against npm's public keys —
+      # catches a tampered tarball served for a legitimate version, which the
+      # advisory database in the `test` job cannot see. Retries up to three
+      # times with a short sleep because the failure above is a registry read,
+      # not a real signature mismatch, and has cleared on its own every time
+      # it's been seen so far.
+      - name: npm audit signatures
+        run: |
+          cd web
+          for attempt in 1 2 3; do
+            if npm audit signatures; then
+              exit 0
+            fi
+            echo "npm audit signatures failed (attempt $attempt/3)" >&2
+            if [ "$attempt" -lt 3 ]; then
+              sleep 25
+            fi
+          done
+          exit 1
 
   race:
     # go test -race, scoped to the packages that actually hold shared,
@@ -260,20 +297,26 @@ jobs:
     #
     # Hard-gated on the whole pipeline: nothing publishes — release tag or
     # :latest — unless unit suites, the race-detector subset, the
-    # recreate-survival smoke test, the full e2e suites, AND the
-    # release-notes check are green. Production pulls these images; a red
-    # suite must mean no artifact. The cost is publish latency (e2e is the
-    # long pole); a genuinely flaky e2e test blocks releases and should be
-    # treated as a release blocker itself, not routed around.
+    # recreate-survival smoke test, the full e2e suites, the npm package
+    # signature check, AND the release-notes check are green. Production
+    # pulls these images; a red suite must mean no artifact. The cost is
+    # publish latency (e2e is the long pole); a genuinely flaky e2e test
+    # blocks releases and should be treated as a release blocker itself, not
+    # routed around.
     #
     # `race` is the per-PR subset (see its own comment above), not the
     # nightly full sweep — the nightly job is a safety net that reports on
     # its own schedule, not a release gate this job would have to wait on.
     #
+    # `npm-audit-signatures` is split from `test` (#324) so a registry blip
+    # there can't be confused with the Go suites in `test` passing or
+    # failing; it still has to be green for an image to publish, so a
+    # tampered tarball blocks a release exactly as before the split.
+    #
     # `release-notes` belongs in this gate rather than beside the release job
     # further down, because the point is that an unannounced release produces
     # no image at all — not that it produces an image with no release page.
-    needs: [test, race, smoke, e2e, release-notes]
+    needs: [test, race, smoke, e2e, release-notes, npm-audit-signatures]
     # Publishes on pushes and on manual runs (workflow_dispatch only fires
     # from main, so a manual run republishes :latest).
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
