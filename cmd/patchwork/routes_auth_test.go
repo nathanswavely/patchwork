@@ -51,6 +51,7 @@ import (
 var openToAnyone = map[string]string{
 	"POST /api/v1/auth/invite":                                 "redeeming an invite link is how an account is made; the token in the body is the credential",
 	"POST /api/v1/auth/magic-link":                             "asking for a sign-in link; the caller has no session yet, by definition",
+	"POST /api/v1/auth/magic-link/verify":                      "finishing that same sign-in by typing the code out of the email; the code is the credential",
 	"POST /api/v1/auth/signup":                                 "completing signup; the signup token is the credential",
 	"POST /api/v1/auth/recovery":                               "redeeming a recovery code, which is the way back in when the passkey is gone",
 	"POST /api/v1/auth/webauthn/login/begin":                   "the passkey sign-in ceremony starts before there is a session",
