@@ -94,7 +94,12 @@
     const explanations = {
       majority: 'Majority \u2014 more than half of votes must approve',
       supermajority: 'Supermajority \u2014 at least 2 out of 3 votes must approve',
-      consensus: 'Consensus \u2014 no reject votes allowed',
+      // Not "no reject votes allowed", which is a house rule printed
+      // directly above a button labelled Reject: "if one reject kills it,
+      // why is Reject a button I can press?" One reject is exactly how a
+      // member blocks a consensus proposal, and the sentence now says the
+      // button's job rather than forbidding it (F-129).
+      consensus: 'Consensus \u2014 one reject blocks it',
       admin: 'Advisory \u2014 the maintainer decides, with this tally in front of them',
     };
     if (advisory) return explanations.admin;

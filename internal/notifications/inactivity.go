@@ -214,7 +214,11 @@ func warnInactive(n *Notifier, nodeID, slug, name, memID, userID string, days in
 		Type: GovernanceInactivityWarning, NodeID: nodeID, NodeSlug: slug, NodeName: name,
 		TargetID: userID,
 		Title:    "Your admin seat in " + name + " is inactive",
-		Body:     "You have not taken part in governance here for " + itoaDays(days) + ". Vote, propose, or comment to keep the seat; otherwise it is declared vacant after twice that long.",
+		// The day, not "twice that long". A reader who has to multiply
+		// before they know when they lose a seat is a reader who will not,
+		// and this notice is the only warning there is. The council page
+		// states the same two numbers off the same rule (F-115).
+		Body:     "You have not taken part in governance here for " + itoaDays(days) + ". Vote, propose, or comment to keep the seat; otherwise it is declared vacant at " + itoaDays(days*2) + ".",
 		Link:     weblink.PatchGovernance(slug),
 	})
 }
