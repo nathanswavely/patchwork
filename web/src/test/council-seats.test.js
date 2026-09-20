@@ -36,7 +36,7 @@ describe('PatchSettingsMembers — the dropdown does not make an admin', () => {
   it('says what fills a seat instead, with the vacancy or the date', () => {
     expect(src).toMatch(/This patch elects its council, so admins are not made here\./);
     expect(src).toMatch(/the members ratify it/);
-    expect(src).toMatch(/the next contest opens \{formatDay\(nextContestOpens\)\}/);
+    expect(src).toMatch(/the next election opens \{formatDay\(nextContestOpens\)\}/);
   });
 });
 
@@ -78,7 +78,7 @@ describe('GovernanceOverview — the council is countable', () => {
   // the wording; this only holds that the hub is still where he finds it.
   it('tells a member looking for a way onto the council where it is', () => {
     expect(src).toMatch(/Filled by nomination: an admin puts a member forward and the members ratify it\./);
-    expect(src).toMatch(/There is nothing to do until \$\{formatDay\(nextContestOpens\)\}, when the next contest opens and any member may stand\./);
+    expect(src).toMatch(/There is nothing to do until \$\{formatDay\(nextContestOpens\)\}, when the next election opens and any member may stand\./);
   });
 
   it('posts and deletes against the seat routes', () => {

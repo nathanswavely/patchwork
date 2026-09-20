@@ -1274,6 +1274,8 @@ internal/handler/notifications.go:	json.NewEncoder(w).Encode(map[string]string{"
 internal/handler/notifications.go:	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 internal/handler/notifications.go:	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 internal/handler/notifications.go:	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+internal/handler/one_word_for_an_election_test.go:	db.QueryRow(`SELECT body FROM proposals WHERE id = ?`, id).Scan(&body)
+internal/handler/one_word_for_an_election_test.go:	defer db.Close()
 internal/handler/personal_export.go:	defer rows.Close()
 internal/handler/personal_export.go:	enc.Encode(doc)
 internal/handler/personal_export.go:	w.Write([]byte(`{"error":"you have downloaded your data several times just now — try again in a few minutes"}`))

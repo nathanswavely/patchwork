@@ -271,7 +271,11 @@ describe('GovernanceRecord — what it claims', () => {
     // a co-op with no admins at all read "The council kept serving" five
     // times down this page (docs/adr/106). What is always true is what the
     // contest did.
-    expect(src).toMatch(/'Settled nothing\. Nobody was elected\.'/);
+    // And it leads with the fact. "Settled nothing" first read to one
+    // member as a dispute — "tied or disputed, something contentious" —
+    // when it means the opposite, that nobody turned up (F-107).
+    expect(src).toMatch(/'Nobody was elected\. The seats it was for are unchanged\.'/);
+    expect(src).not.toMatch(/'Settled nothing\. Nobody was elected\.'/);
     // The string, not the word — the comment above the line explains why it
     // is gone and has to be allowed to name it.
     expect(src).not.toMatch(/'Settled nothing\. The council kept serving\.'/);

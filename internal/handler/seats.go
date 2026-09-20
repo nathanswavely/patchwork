@@ -23,7 +23,7 @@ import (
 // while sitting in it is not.
 //
 // There is no second number: the seats table is the council's size, which is
-// what makes "the next contest contests the seats that exist" true rather than
+// what makes "the next election contests the seats that exist" true rather than
 // "however many admins happen to hold the role". max_admins is not that
 // number and never becomes it (docs/adr/051 retracted its enforcement, and
 // migration 041 backfilled 3 into nearly every patch).
@@ -312,12 +312,12 @@ func electedPromotionDenial(db *database.DB, nodeID string) string {
 	gc, _ := electedHere(db, nodeID)
 	opens := nextContestOpens(db, nodeID, gc)
 	if opens == "" {
-		return full + ": no contest is scheduled, so add a seat first"
+		return full + ": no election is scheduled, so add a seat first"
 	}
 	if opensAt, err := time.Parse("2006-01-02", opens); err == nil && !time.Now().UTC().Before(opensAt) {
-		return full + ": the next contest is due now"
+		return full + ": the next election is due now"
 	}
-	return full + ": the next contest opens " + opens
+	return full + ": the next election opens " + opens
 }
 
 // isAre agrees the verb with a counted noun, so the copy does not have to.
@@ -402,7 +402,7 @@ func RemoveSeat(db *database.DB) http.HandlerFunc {
 		// dissolving it mid-ballot would throw away a vote already cast
 		// (docs/adr/103).
 		if contestedIn != "" && contestedIn == openContestID(db, nodeID) {
-			http.Error(w, `{"error":"this seat is in the contest running now: it can be removed once that settles"}`, http.StatusConflict)
+			http.Error(w, `{"error":"this seat is in the election running now: it can be removed once that settles"}`, http.StatusConflict)
 			return
 		}
 		if holderID != "" {
@@ -483,7 +483,7 @@ func SetSeatTerm(db *database.DB) http.HandlerFunc {
 		}
 		today := time.Now().UTC().Format("2006-01-02")
 		if req.TermEndsAt < today {
-			http.Error(w, `{"error":"a term end must be today or later: a date in the past would say a contest was already overdue when it was not"}`, http.StatusBadRequest)
+			http.Error(w, `{"error":"a term end must be today or later: a date in the past would say an election was already overdue when it was not"}`, http.StatusBadRequest)
 			return
 		}
 		termEnds := newEnd.Format("2006-01-02")
@@ -500,7 +500,7 @@ func SetSeatTerm(db *database.DB) http.HandlerFunc {
 		}
 
 		if contestedIn != "" && contestedIn == openContestID(db, nodeID) {
-			http.Error(w, `{"error":"this seat is in the contest running now: its term can move once that settles"}`, http.StatusConflict)
+			http.Error(w, `{"error":"this seat is in the election running now: its term can move once that settles"}`, http.StatusConflict)
 			return
 		}
 

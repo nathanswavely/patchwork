@@ -15780,19 +15780,19 @@
       ]
     },
     {
-      "id": "e89384ba2da5",
-      "text": "this seat is in the contest running now: it can be removed once that settles",
+      "id": "433f753f1bea",
+      "text": "this seat is in the election running now: it can be removed once that settles",
       "words": 15,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "docs/adr/103: the refusal names the chair, not the council",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
           "line": 405,
           "kind": "go-error-body",
-          "raw": "this seat is in the contest running now: it can be removed once that settles",
+          "raw": "this seat is in the election running now: it can be removed once that settles",
           "quote": null
         }
       ]
@@ -15834,37 +15834,37 @@
       ]
     },
     {
-      "id": "10682523e787",
-      "text": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
+      "id": "cef2c69604c5",
+      "text": "a term end must be today or later: a date in the past would say an election was already overdue when it was not",
       "words": 24,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
           "line": 486,
           "kind": "go-error-body",
-          "raw": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
+          "raw": "a term end must be today or later: a date in the past would say an election was already overdue when it was not",
           "quote": null
         }
       ]
     },
     {
-      "id": "073c4f8133bc",
-      "text": "this seat is in the contest running now: its term can move once that settles",
+      "id": "9a1bcdfebefe",
+      "text": "this seat is in the election running now: its term can move once that settles",
       "words": 15,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "docs/adr/103: the refusal names the chair, not the council",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
           "line": 503,
           "kind": "go-error-body",
-          "raw": "this seat is in the contest running now: its term can move once that settles",
+          "raw": "this seat is in the election running now: its term can move once that settles",
           "quote": null
         }
       ]
@@ -17673,19 +17673,19 @@
       ]
     },
     {
-      "id": "ccfb9bd5199a",
-      "text": "Its seats were vacated for inactivity. It elects its council and no contest can be scheduled, so nothing will refill it on its own.",
+      "id": "5141d6b7a3af",
+      "text": "Its seats were vacated for inactivity. It elects its council and no election can be scheduled, so nothing will refill it on its own.",
       "words": 24,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "The succession churn fix (docs/adr/102, F-082..F-085). Left as drafted; listed for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "internal/notifications/inactivity.go",
           "line": 348,
           "kind": "go-string",
-          "raw": "Its seats were vacated for inactivity. It elects its council and no contest can be scheduled, so nothing will refill it on its own.",
+          "raw": "Its seats were vacated for inactivity. It elects its council and no election can be scheduled, so nothing will refill it on its own.",
           "quote": "\""
         }
       ]
@@ -19835,7 +19835,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 438,
+          "line": 443,
           "kind": "markup",
           "raw": "Nothing recorded yet.",
           "quote": null
@@ -20391,7 +20391,7 @@
         },
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 330,
+          "line": 336,
           "kind": "markup",
           "raw": "Choose a member",
           "quote": null
@@ -21349,7 +21349,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 197,
+          "line": 203,
           "kind": "markup",
           "raw": "Nominations",
           "quote": null
@@ -21357,19 +21357,19 @@
       ]
     },
     {
-      "id": "eb41ec23bd54",
-      "text": "The ballot",
-      "words": 2,
+      "id": "aca2f665db08",
+      "text": "Voting",
+      "words": 1,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Panel heading during the voting phase, was \"The ballot\". A ballot is what a voter casts; this is the phase, and these are the two words the bell already uses for the two phases.",
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 197,
+          "line": 203,
           "kind": "markup",
-          "raw": "The ballot",
+          "raw": "Voting",
           "quote": null
         }
       ]
@@ -21385,7 +21385,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 197,
+          "line": 203,
           "kind": "markup",
           "raw": "Result",
           "quote": null
@@ -21403,7 +21403,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 198,
+          "line": 204,
           "kind": "markup",
           "raw": "{seats} seat{seats === 1 ? '' : 's'}",
           "quote": null
@@ -21421,7 +21421,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 203,
+          "line": 209,
           "kind": "markup",
           "raw": "Anyone who is a member can stand.",
           "quote": null
@@ -21439,7 +21439,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 205,
+          "line": 211,
           "kind": "markup",
           "raw": "Nominations close {formatDay(proposal.nominations_close_at)}, and voting opens then.",
           "quote": null
@@ -21457,7 +21457,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 210,
+          "line": 216,
           "kind": "markup",
           "raw": "Approve as many candidates as you like.",
           "quote": null
@@ -21475,7 +21475,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 212,
+          "line": 218,
           "kind": "markup",
           "raw": "The most approved candidate takes the seat.",
           "quote": null
@@ -21493,7 +21493,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 214,
+          "line": 220,
           "kind": "markup",
           "raw": "The {seats} most approved take the seats.",
           "quote": null
@@ -21511,7 +21511,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 230,
+          "line": 236,
           "kind": "markup",
           "raw": "Standing closed {formatDay(proposal.nominations_close_at)}.",
           "quote": null
@@ -21529,7 +21529,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 240,
+          "line": 246,
           "kind": "markup",
           "raw": "No quorum required. {turnout.voted} of {turnout.eligible} voted.",
           "quote": null
@@ -21547,7 +21547,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 242,
+          "line": 248,
           "kind": "markup",
           "raw": "Quorum met: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
           "quote": null
@@ -21565,7 +21565,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 244,
+          "line": 250,
           "kind": "markup",
           "raw": "{phase === 'closed' ? 'Quorum not met' : 'Quorum not yet met'}:\n          {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
           "quote": null
@@ -21583,7 +21583,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 271,
+          "line": 277,
           "kind": "markup",
           "raw": "{c.approvals} approval{c.approvals === 1 ? '' : 's'}",
           "quote": null
@@ -21601,7 +21601,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 277,
+          "line": 283,
           "kind": "markup",
           "raw": "seated",
           "quote": null
@@ -21619,7 +21619,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 279,
+          "line": 285,
           "kind": "markup",
           "raw": "not seated",
           "quote": null
@@ -21637,7 +21637,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 296,
+          "line": 302,
           "kind": "markup",
           "raw": "You are standing in this election.",
           "quote": null
@@ -21655,7 +21655,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 303,
+          "line": 309,
           "kind": "markup",
           "raw": "Why you are standing",
           "quote": null
@@ -21673,7 +21673,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 303,
+          "line": 309,
           "kind": "markup",
           "raw": "(optional)",
           "quote": null
@@ -21733,7 +21733,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 310,
+          "line": 316,
           "kind": "attr:placeholder",
           "raw": "A few lines the other members will see beside your name on the ballot.",
           "quote": "\""
@@ -21751,7 +21751,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 316,
+          "line": 322,
           "kind": "markup",
           "raw": "{STATEMENT_MAX - statement.length} characters left",
           "quote": null
@@ -21769,7 +21769,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 327,
+          "line": 333,
           "kind": "markup",
           "raw": "Put another member forward",
           "quote": null
@@ -21787,7 +21787,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 340,
+          "line": 346,
           "kind": "markup",
           "raw": "They go on the ballot straight away, and can withdraw themselves\n              until nominations close.",
           "quote": null
@@ -21805,7 +21805,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 356,
+          "line": 362,
           "kind": "markup",
           "raw": "Your ballot is in. You can change it until voting closes.",
           "quote": null
@@ -21823,7 +21823,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 358,
+          "line": 364,
           "kind": "markup",
           "raw": "You can change this until voting closes.",
           "quote": null
@@ -21841,7 +21841,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 376,
+          "line": 382,
           "kind": "markup",
           "raw": "You are counted as taking part and approving nobody. Ticking a name\n            and saving replaces that.",
           "quote": null
@@ -21859,7 +21859,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 384,
+          "line": 390,
           "kind": "markup",
           "raw": "Counts toward the turnout this election needs, the way an abstention\n            counts on an ordinary proposal.",
           "quote": null
@@ -22720,7 +22720,7 @@
         },
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 158,
+          "line": 174,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -22760,19 +22760,19 @@
       ]
     },
     {
-      "id": "7e379558c7e1",
-      "text": "In the contest running now. Whoever the members approve takes it.",
+      "id": "7c579257bfd1",
+      "text": "In the election running now. Whoever the members approve takes it.",
       "words": 11,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
           "line": 106,
           "kind": "js-string",
-          "raw": "In the contest running now. Whoever the members approve takes it.",
+          "raw": "In the election running now. Whoever the members approve takes it.",
           "quote": "'"
         }
       ]
@@ -22922,19 +22922,19 @@
       ]
     },
     {
-      "id": "fe899f1542de",
-      "text": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
+      "id": "9ba35f06516c",
+      "text": "Every seat is held and the next election is due now. It opens shortly, and any member may stand.",
       "words": 19,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
           "line": 180,
           "kind": "js-string",
-          "raw": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
+          "raw": "Every seat is held and the next election is due now. It opens shortly, and any member may stand.",
           "quote": "'"
         }
       ]
@@ -24033,7 +24033,7 @@
         },
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 383,
+          "line": 388,
           "kind": "markup",
           "raw": "Governance",
           "quote": null
@@ -24898,7 +24898,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 249,
+          "line": 254,
           "kind": "markup",
           "raw": "About",
           "quote": null
@@ -24916,7 +24916,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 278,
+          "line": 283,
           "kind": "markup",
           "raw": "atproto handle, proved when this patch was claimed",
           "quote": null
@@ -24934,7 +24934,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 287,
+          "line": 292,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -24966,7 +24966,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 299,
+          "line": 304,
           "kind": "markup",
           "raw": "Community-submitted",
           "quote": null
@@ -25005,7 +25005,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 339,
+          "line": 344,
           "kind": "markup",
           "raw": "{moreEvents} more upcoming",
           "quote": null
@@ -25023,7 +25023,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 342,
+          "line": 347,
           "kind": "markup",
           "raw": "No upcoming events.",
           "quote": null
@@ -25041,7 +25041,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 375,
+          "line": 380,
           "kind": "markup",
           "raw": "No members yet.",
           "quote": null
@@ -25073,7 +25073,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 394,
+          "line": 399,
           "kind": "markup",
           "raw": "Documents",
           "quote": null
@@ -25098,7 +25098,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 434,
+          "line": 439,
           "kind": "markup",
           "raw": "Proposals and decisions here are not public.",
           "quote": null
@@ -25116,7 +25116,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 436,
+          "line": 441,
           "kind": "markup",
           "raw": "Nothing published yet.",
           "quote": null
@@ -44444,19 +44444,19 @@
       ]
     },
     {
-      "id": "162021507e98",
-      "text": "Settled nothing. Nobody was elected.",
-      "words": 5,
-      "tier": "label",
+      "id": "393a273db643",
+      "text": "Nobody was elected. The seats it was for are unchanged.",
+      "words": 10,
+      "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
+      "note": "Was \"Settled nothing. Nobody was elected.\" One member read the first sentence as a dispute: \"tied or disputed, something contentious. It means nobody turned up.\" Leads with the fact now, and the second clause is the banner's, so the two pages say one thing.",
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 100,
+          "line": 104,
           "kind": "js-string",
-          "raw": "Settled nothing. Nobody was elected.",
+          "raw": "Nobody was elected. The seats it was for are unchanged.",
           "quote": "'"
         }
       ]
@@ -44472,7 +44472,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 108,
+          "line": 112,
           "kind": "js-string",
           "raw": "The members seated a council.",
           "quote": "'"
@@ -44490,7 +44490,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 113,
+          "line": 117,
           "kind": "js-string",
           "raw": "A meeting chose the council.",
           "quote": "'"
@@ -44508,7 +44508,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 115,
+          "line": 119,
           "kind": "js-string",
           "raw": "A meeting adopted this text.",
           "quote": "'"
@@ -44526,7 +44526,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 124,
+          "line": 128,
           "kind": "markup",
           "raw": "Record",
           "quote": null
@@ -44544,7 +44544,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 128,
+          "line": 132,
           "kind": "markup",
           "raw": "Every decision this patch has reached, and every one it failed to, newest first.",
           "quote": null
@@ -44562,7 +44562,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 137,
+          "line": 141,
           "kind": "markup",
           "raw": "Nothing settled yet. Proposals show up here once they close.",
           "quote": null
@@ -48029,7 +48029,7 @@
         },
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 117,
+          "line": 133,
           "kind": "markup",
           "raw": "This content is only visible to members.",
           "quote": null
@@ -50443,37 +50443,37 @@
       ]
     },
     {
-      "id": "7918ceb57d94",
-      "text": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
+      "id": "44277f5d2c1e",
+      "text": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next election opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
       "words": 52,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
           "line": 424,
           "kind": "markup",
-          "raw": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
+          "raw": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next election opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
           "quote": null
         }
       ]
     },
     {
-      "id": "8e0c61c85a96",
-      "text": "This patch elects its council, so admins are not made here. Every seat is held and no contest is scheduled. To make room, add a seat on the Governance page.",
+      "id": "fef8549d026c",
+      "text": "This patch elects its council, so admins are not made here. Every seat is held and no election is scheduled. To make room, add a seat on the Governance page.",
       "words": 30,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsMembers.svelte",
           "line": 426,
           "kind": "markup",
-          "raw": "This patch elects its council, so admins are not made here. Every seat is held and no contest is scheduled. To make room, add a seat on the Governance page.",
+          "raw": "This patch elects its council, so admins are not made here. Every seat is held and no election is scheduled. To make room, add a seat on the Governance page.",
           "quote": null
         }
       ]
@@ -52474,37 +52474,37 @@
       ]
     },
     {
-      "id": "8cf6960717ea",
-      "text": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.",
+      "id": "a91607c57bf2",
+      "text": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at an election any member may stand in.",
       "words": 31,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
           "line": 268,
           "kind": "markup",
-          "raw": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.",
+          "raw": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at an election any member may stand in.",
           "quote": null
         }
       ]
     },
     {
-      "id": "b6c6cc0a592e",
-      "text": "Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
+      "id": "9be8f9a840e8",
+      "text": "Every seat on the council is held, so there is nobody to nominate. The next election opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
       "words": 27,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Same sentence as before with one word changed: contest -> election. The product said contest on the hub, Council election on the proposal and The ballot on the panel, and a member could not tell whether they were one event or four he was behind on. CONTEXT.md now names election as the only UI word and lists contest under Avoid; the backend keeps its contest_* fields.",
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
           "line": 270,
           "kind": "markup",
-          "raw": "Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
+          "raw": "Every seat on the council is held, so there is nobody to nominate. The next election opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
           "quote": null
         }
       ]
@@ -52664,7 +52664,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 118,
+          "line": 134,
           "kind": "markup",
           "raw": "Become a member to access proposals.",
           "quote": null
@@ -52682,7 +52682,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 133,
+          "line": 149,
           "kind": "markup",
           "raw": "Become a member to create proposals and vote.",
           "quote": null
@@ -52700,7 +52700,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 135,
+          "line": 151,
           "kind": "markup",
           "raw": "Follow or join this patch to get started.",
           "quote": null
@@ -52718,7 +52718,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 162,
+          "line": 178,
           "kind": "markup",
           "raw": "Nothing here has lapsed or settled nothing.",
           "quote": null
@@ -52736,7 +52736,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 164,
+          "line": 180,
           "kind": "markup",
           "raw": "No {statusFilter} proposals.",
           "quote": null
@@ -52754,7 +52754,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 166,
+          "line": 182,
           "kind": "markup",
           "raw": "No proposals.",
           "quote": null
@@ -52772,7 +52772,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalList.svelte",
-          "line": 194,
+          "line": 210,
           "kind": "markup",
           "raw": "waiting on the maintainer",
           "quote": null
@@ -58721,6 +58721,222 @@
           "kind": "js-string",
           "raw": "Decisions require everyone (or nearly everyone) to agree.",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "e89384ba2da5",
+      "text": "this seat is in the contest running now: it can be removed once that settles",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/103: the refusal names the chair, not the council",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 405,
+          "kind": "go-error-body",
+          "raw": "this seat is in the contest running now: it can be removed once that settles",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "10682523e787",
+      "text": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 486,
+          "kind": "go-error-body",
+          "raw": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "073c4f8133bc",
+      "text": "this seat is in the contest running now: its term can move once that settles",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/103: the refusal names the chair, not the council",
+      "occurrences": [
+        {
+          "file": "internal/handler/seats.go",
+          "line": 503,
+          "kind": "go-error-body",
+          "raw": "this seat is in the contest running now: its term can move once that settles",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ccfb9bd5199a",
+      "text": "Its seats were vacated for inactivity. It elects its council and no contest can be scheduled, so nothing will refill it on its own.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The succession churn fix (docs/adr/102, F-082..F-085). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "internal/notifications/inactivity.go",
+          "line": 348,
+          "kind": "go-string",
+          "raw": "Its seats were vacated for inactivity. It elects its council and no contest can be scheduled, so nothing will refill it on its own.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "eb41ec23bd54",
+      "text": "The ballot",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 197,
+          "kind": "markup",
+          "raw": "The ballot",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7e379558c7e1",
+      "text": "In the contest running now. Whoever the members approve takes it.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 106,
+          "kind": "js-string",
+          "raw": "In the contest running now. Whoever the members approve takes it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fe899f1542de",
+      "text": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
+      "words": 19,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 180,
+          "kind": "js-string",
+          "raw": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "162021507e98",
+      "text": "Settled nothing. Nobody was elected.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/106: a contest says what happened; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 100,
+          "kind": "js-string",
+          "raw": "Settled nothing. Nobody was elected.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7918ceb57d94",
+      "text": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
+      "words": 52,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "One story about a seat, and a published charter that reaches visitors (F-052/067/068 and the ADR 097 chip amendment). Left as drafted; listed for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsMembers.svelte",
+          "line": 424,
+          "kind": "markup",
+          "raw": "This patch elects its council, so admins are not made here. All {councilSeats.length} seat{councilSeats.length === 1 ? '' : 's'} {councilSeats.length === 1 ? 'is' : 'are'} held; the next contest opens {formatDay(nextContestOpens)}. To make room sooner, add a seat on the Governance page, or bring a seat's term end forward there.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8e0c61c85a96",
+      "text": "This patch elects its council, so admins are not made here. Every seat is held and no contest is scheduled. To make room, add a seat on the Governance page.",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsMembers.svelte",
+          "line": 426,
+          "kind": "markup",
+          "raw": "This patch elects its council, so admins are not made here. Every seat is held and no contest is scheduled. To make room, add a seat on the Governance page.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "8cf6960717ea",
+      "text": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.",
+      "words": 31,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalForm.svelte",
+          "line": 268,
+          "kind": "markup",
+          "raw": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b6c6cc0a592e",
+      "text": "Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
+      "words": 27,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Council seats and the elected promotion path (docs/adr/100). Left as drafted; listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/ProposalForm.svelte",
+          "line": 270,
+          "kind": "markup",
+          "raw": "Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
+          "quote": null
         }
       ]
     }
