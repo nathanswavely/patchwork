@@ -1382,6 +1382,10 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			// own table, so those counts are all zero and the page had
 			// nothing to say. Null on anything that is not an election.
 			"election_turnout": electionTurnoutFor(db, seatsContested, proposalID, p.NodeID, gc),
+			// Whether this viewer took part without approving anybody, so
+			// the panel can render the ballot they hold rather than an empty
+			// form that reads as not having voted (F-092).
+			"i_abstained": abstained(db, proposalID, viewerID),
 			"title":                p.Title,
 			"body":                 p.Body,
 			"status":               p.Status,

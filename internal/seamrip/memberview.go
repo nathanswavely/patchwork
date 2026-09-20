@@ -395,6 +395,10 @@ func memberViews() map[string]MemberView {
 			Rule:  "the approvals cast on a proposal that travelled.",
 			Where: "proposal_id IN (" + sqlVisibleProposals + ")",
 		},
+		"election_abstentions": {
+			Rule:  "the ballots cast for nobody on a proposal that travelled: turnout is half of why a contest settled as it did.",
+			Where: "proposal_id IN (" + sqlVisibleProposals + ")",
+		},
 		"proposal_comments": {
 			Rule:  "the discussion under a proposal that travelled.",
 			Where: "proposal_id IN (" + sqlVisibleProposals + ")",
