@@ -67,6 +67,23 @@ live inside it.** The header was also the wrong shape for it — at the
 one-column stop the header's own contents wrapped, and the width control was
 the thing pushed off the end, unreachable at a stop it existed to reach.
 
+> **Amended 2026-09-20.** The list is now drawn as one full-height glass
+> card (header and cards on a single surface, hung from the same 56px line
+> as the rail's card), and the control ends that card's own header row,
+> on the edge it puts the card away toward. Two of the three objections
+> above no longer hold: the header is a row of a card that does not wrap
+> the control off its end, and the container the control deletes is the
+> card it sits in, as the rail's toggle sits in the bar it collapses. The
+> third stands and is paid knowingly: put away, there is no card, so a
+> canvas copy stands in at the window's edge. Same glyph, same top line,
+> one press either way. While a profile is docked in the list's slot there
+> is no control at all: the pane is open for the profile rather than by the
+> reader's bit, and the profile's dismiss is what ends that. This retires
+> the press-while-docked rule below (under "A docked profile opens the
+> pane for as long as it is docked"), which dismissed the
+> profile and put the pane away in one act; there is no longer a press to
+> give that meaning to.
+
 **3. It is the rail's toggle, mirrored.** Same `SidebarSimple` glyph, same
 two weights (`duotone` put away, `fill` in place), flipped on X, sitting at
 `top: 68px` on the right exactly as the canvas view switcher sits on the
