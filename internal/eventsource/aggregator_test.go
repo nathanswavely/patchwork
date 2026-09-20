@@ -515,3 +515,47 @@ func aggregatorState(t *testing.T, db *database.DB, id string) (string, *string)
 	}
 	return status, lastError
 }
+
+// The feed's own page for a listing has to survive the cache. The
+// aggregator stores it, and a crosswalk entry reads its items back out
+// of that cache rather than from the feed, so a column the read-back
+// skips is a field every routed event silently lacks. This asserts both
+// halves: a routed event carries the URL, and one routed before the
+// column was read back is filled on the next pass, which is the
+// no-backfill promise of docs/adr/079 applied to an aggregator.
+func TestAggregator_RoutedEventKeepsTheFeedURL(t *testing.T) {
+	db := setupTestDB(t)
+	const link = "https://calendar.example.org/detail/596"
+	feed := newFeedServer(t, wrap(
+		"BEGIN:VEVENT\nUID:a@city\nSUMMARY:Open Mic Jam\nDTSTART:"+future(48*time.Hour)+
+			"\nLOCATION:Binns Park\nURL:"+link+"\nEND:VEVENT\n"))
+	userID := seedUser(t, db, "steward")
+	nodeID := seedNode(t, db, userID, "Binns Park", "binns-park")
+	aggID := seedAggregator(t, db, userID, feed.srv.URL)
+	entryID := mapName(t, db, aggID, nodeID, userID, "binns park")
+	if err := SyncAggregator(context.Background(), db, nil, aggID); err != nil {
+		t.Fatalf("sync aggregator: %v", err)
+	}
+
+	var got string
+	if err := db.QueryRow(`SELECT event_url FROM events WHERE source_id = ?`, entryID).Scan(&got); err != nil {
+		t.Fatalf("routed event: %v", err)
+	}
+	if got != link {
+		t.Fatalf("a routed event must carry the feed's URL; got %q", got)
+	}
+
+	// An event routed while the cache dropped the column looks like this.
+	if _, err := db.Exec(`UPDATE events SET event_url = '' WHERE source_id = ?`, entryID); err != nil {
+		t.Fatal(err)
+	}
+	if err := SyncAggregator(context.Background(), db, nil, aggID); err != nil {
+		t.Fatalf("re-sync: %v", err)
+	}
+	if err := db.QueryRow(`SELECT event_url FROM events WHERE source_id = ?`, entryID).Scan(&got); err != nil {
+		t.Fatalf("routed event after re-sync: %v", err)
+	}
+	if got != link {
+		t.Errorf("the next pass must fill a missing URL from the cache; got %q", got)
+	}
+}
