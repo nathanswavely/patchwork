@@ -116,6 +116,7 @@ func deletionRules() map[string]deletionRule {
 		"content_reports":        {kept, "a report is a moderation record; the queue must not lose its history."},
 		"event_links":            {kept, "a link between an event and a patch, neither of which is the person."},
 		"election_ballots":       {kept, "an approval vote that stays counted."},
+		"election_abstentions":   {kept, "a ballot cast for nobody, which is a vote and stays counted: turnout is what decides a contest."},
 
 		// The row stays and the person's own fields in it are cleared.
 		"users": {emptied, "the tombstone: the row is kept so every RESTRICT holds, the identity columns are emptied, and the username is retired rather than freed."},

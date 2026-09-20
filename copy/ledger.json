@@ -3941,7 +3941,7 @@
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 540,
+          "line": 571,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4123,14 +4123,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1533,
+          "line": 1537,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1746,
+          "line": 1750,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -5134,7 +5134,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1786,
+          "line": 1790,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5699,14 +5699,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1675,
+          "line": 1679,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1729,
+          "line": 1733,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6464,28 +6464,28 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1460,
+          "line": 1464,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1644,
+          "line": 1648,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1721,
+          "line": 1725,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1831,
+          "line": 1835,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -8806,21 +8806,21 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 344,
+          "line": 353,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 415,
+          "line": 441,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
         },
         {
           "file": "internal/handler/elections.go",
-          "line": 516,
+          "line": 542,
           "kind": "go-error-body",
           "raw": "election not found",
           "quote": null
@@ -8838,7 +8838,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 348,
+          "line": 357,
           "kind": "go-error-body",
           "raw": "nominations have closed",
           "quote": null
@@ -8856,7 +8856,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 353,
+          "line": 362,
           "kind": "go-error-body",
           "raw": "must be a member of this patch to nominate",
           "quote": null
@@ -8874,7 +8874,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 366,
+          "line": 392,
           "kind": "go-error-body",
           "raw": "a candidate must be an active member of this patch",
           "quote": null
@@ -8892,7 +8892,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 374,
+          "line": 400,
           "kind": "go-error-body",
           "raw": "failed to add the candidate",
           "quote": null
@@ -8910,7 +8910,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 419,
+          "line": 445,
           "kind": "go-error-body",
           "raw": "nominations have closed: the slate is what people are voting on",
           "quote": null
@@ -8928,7 +8928,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 426,
+          "line": 452,
           "kind": "go-error-body",
           "raw": "failed to withdraw",
           "quote": null
@@ -8946,7 +8946,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 430,
+          "line": 456,
           "kind": "go-error-body",
           "raw": "you are not standing in this election",
           "quote": null
@@ -8964,7 +8964,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 520,
+          "line": 546,
           "kind": "go-error-body",
           "raw": "this election has closed",
           "quote": null
@@ -8982,7 +8982,7 @@
       "occurrences": [
         {
           "file": "internal/handler/elections.go",
-          "line": 524,
+          "line": 550,
           "kind": "go-error-body",
           "raw": "nominations are still open; voting has not started",
           "quote": null
@@ -14733,7 +14733,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1465,
+          "line": 1469,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -14751,7 +14751,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1476,
+          "line": 1480,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -14769,7 +14769,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1483,
+          "line": 1487,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -14787,7 +14787,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1491,
+          "line": 1495,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -14805,7 +14805,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1537,
+          "line": 1541,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -14823,7 +14823,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1556,
+          "line": 1560,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -14841,7 +14841,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1649,
+          "line": 1653,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -14859,7 +14859,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1667,
+          "line": 1671,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -14877,7 +14877,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1686,
+          "line": 1690,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -14895,7 +14895,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1751,
+          "line": 1755,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -14913,7 +14913,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1764,
+          "line": 1768,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -14931,7 +14931,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1798,
+          "line": 1802,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -14956,7 +14956,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1840,
+          "line": 1844,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -14974,7 +14974,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1857,
+          "line": 1861,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -14992,7 +14992,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1860,
+          "line": 1864,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null
@@ -20391,7 +20391,7 @@
         },
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 277,
+          "line": 330,
           "kind": "markup",
           "raw": "Choose a member",
           "quote": null
@@ -21256,7 +21256,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 99,
+          "line": 113,
           "kind": "js-string",
           "raw": "Failed to stand",
           "quote": "'"
@@ -21274,7 +21274,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 119,
+          "line": 133,
           "kind": "js-string",
           "raw": "Failed to put them forward",
           "quote": "'"
@@ -21292,7 +21292,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 134,
+          "line": 148,
           "kind": "js-string",
           "raw": "Failed to withdraw",
           "quote": "'"
@@ -21324,7 +21324,14 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 154,
+          "line": 167,
+          "kind": "js-string",
+          "raw": "Failed to save your ballot",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 187,
           "kind": "js-string",
           "raw": "Failed to save your ballot",
           "quote": "'"
@@ -21342,7 +21349,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 164,
+          "line": 197,
           "kind": "markup",
           "raw": "Nominations",
           "quote": null
@@ -21360,7 +21367,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 164,
+          "line": 197,
           "kind": "markup",
           "raw": "The ballot",
           "quote": null
@@ -21378,7 +21385,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 164,
+          "line": 197,
           "kind": "markup",
           "raw": "Result",
           "quote": null
@@ -21396,7 +21403,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 165,
+          "line": 198,
           "kind": "markup",
           "raw": "{seats} seat{seats === 1 ? '' : 's'}",
           "quote": null
@@ -21414,7 +21421,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 170,
+          "line": 203,
           "kind": "markup",
           "raw": "Anyone who is a member can stand.",
           "quote": null
@@ -21432,7 +21439,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 172,
+          "line": 205,
           "kind": "markup",
           "raw": "Nominations close {formatDay(proposal.nominations_close_at)}, and voting opens then.",
           "quote": null
@@ -21450,7 +21457,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 177,
+          "line": 210,
           "kind": "markup",
           "raw": "Approve as many candidates as you like.",
           "quote": null
@@ -21468,7 +21475,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 179,
+          "line": 212,
           "kind": "markup",
           "raw": "The most approved candidate takes the seat.",
           "quote": null
@@ -21486,7 +21493,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 181,
+          "line": 214,
           "kind": "markup",
           "raw": "The {seats} most approved take the seats.",
           "quote": null
@@ -21504,7 +21511,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 197,
+          "line": 230,
           "kind": "markup",
           "raw": "Standing closed {formatDay(proposal.nominations_close_at)}.",
           "quote": null
@@ -21522,7 +21529,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 207,
+          "line": 240,
           "kind": "markup",
           "raw": "No quorum required. {turnout.voted} of {turnout.eligible} voted.",
           "quote": null
@@ -21540,7 +21547,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 209,
+          "line": 242,
           "kind": "markup",
           "raw": "Quorum met: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
           "quote": null
@@ -21558,7 +21565,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 211,
+          "line": 244,
           "kind": "markup",
           "raw": "{phase === 'closed' ? 'Quorum not met' : 'Quorum not yet met'}:\n          {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
           "quote": null
@@ -21576,7 +21583,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 238,
+          "line": 271,
           "kind": "markup",
           "raw": "{c.approvals} approval{c.approvals === 1 ? '' : 's'}",
           "quote": null
@@ -21594,7 +21601,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 244,
+          "line": 277,
           "kind": "markup",
           "raw": "seated",
           "quote": null
@@ -21612,7 +21619,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 246,
+          "line": 279,
           "kind": "markup",
           "raw": "not seated",
           "quote": null
@@ -21630,9 +21637,123 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 257,
+          "line": 296,
           "kind": "markup",
           "raw": "You are standing in this election.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "baebccfb306b",
+      "text": "Why you are standing",
+      "words": 4,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The field the first person to stand in a real contest asked for: \"Ask me for a few lines when I press the button.\" Marked optional, because a patch where everybody knows everybody should not be made to write an essay.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 303,
+          "kind": "markup",
+          "raw": "Why you are standing",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0059798b7f70",
+      "text": "(optional)",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 303,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/ReportButton.svelte",
+          "line": 93,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AmendmentEditor.svelte",
+          "line": 264,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/RulesProposalEditor.svelte",
+          "line": 287,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 98,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 118,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/SubmitPatch.svelte",
+          "line": 123,
+          "kind": "markup",
+          "raw": "(optional)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7985ed247ad5",
+      "text": "A few lines the other members will see beside your name on the ballot.",
+      "words": 14,
+      "tier": "helper",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Says where the words will appear, which is the point of them: four voters decided on the strength of a comment behind a Discussion tab because the ballot was a list of bare names.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 310,
+          "kind": "attr:placeholder",
+          "raw": "A few lines the other members will see beside your name on the ballot.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "02e2cd140c67",
+      "text": "{STATEMENT_MAX - statement.length} characters left",
+      "words": 5,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "A plain remaining count. The cap keeps the ballot a list; an argument belongs in the discussion.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 316,
+          "kind": "markup",
+          "raw": "{STATEMENT_MAX - statement.length} characters left",
           "quote": null
         }
       ]
@@ -21648,7 +21769,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 274,
+          "line": 327,
           "kind": "markup",
           "raw": "Put another member forward",
           "quote": null
@@ -21666,7 +21787,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 287,
+          "line": 340,
           "kind": "markup",
           "raw": "They go on the ballot straight away, and can withdraw themselves\n              until nominations close.",
           "quote": null
@@ -21684,7 +21805,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 303,
+          "line": 356,
           "kind": "markup",
           "raw": "Your ballot is in. You can change it until voting closes.",
           "quote": null
@@ -21692,19 +21813,55 @@
       ]
     },
     {
-      "id": "0e20416f4548",
-      "text": "You can change this until voting closes. Approving nobody is the same as not voting.",
-      "words": 15,
+      "id": "7e1558368bcd",
+      "text": "You can change this until voting closes.",
+      "words": 7,
       "tier": "helper",
-      "status": "ai-fine",
+      "status": "as-is",
       "replacement": null,
-      "note": null,
+      "note": "Shortened. It used to carry \"Approving nobody is the same as not voting\", which was true and is no longer, now that approving nobody is an act you can take.",
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 306,
+          "line": 358,
           "kind": "markup",
-          "raw": "You can change this until voting closes. Approving nobody is the same as\n          not voting.",
+          "raw": "You can change this until voting closes.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f8040dddb3a5",
+      "text": "You are counted as taking part and approving nobody. Ticking a name and saving replaces that.",
+      "words": 16,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The state after abstaining, and how to leave it. Reads back what the server holds rather than what was clicked, so it survives a reload.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 376,
+          "kind": "markup",
+          "raw": "You are counted as taking part and approving nobody. Ticking a name\n            and saving replaces that.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "1c0d9e8c19ca",
+      "text": "Counts toward the turnout this election needs, the way an abstention counts on an ordinary proposal.",
+      "words": 16,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Answers the question two members could not resolve between a notice asking them to turn up and a page saying it would do nothing. Names the ordinary proposal on purpose: the behaviour is the same one they already know.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 384,
+          "kind": "markup",
+          "raw": "Counts toward the turnout this election needs, the way an abstention\n            counts on an ordinary proposal.",
           "quote": null
         }
       ]
@@ -26663,59 +26820,6 @@
           "line": 144,
           "kind": "markup",
           "raw": "Details",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "0059798b7f70",
-      "text": "(optional)",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/ReportButton.svelte",
-          "line": 93,
-          "kind": "markup",
-          "raw": "(optional)",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/AmendmentEditor.svelte",
-          "line": 264,
-          "kind": "markup",
-          "raw": "(optional)",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 287,
-          "kind": "markup",
-          "raw": "(optional)",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 98,
-          "kind": "markup",
-          "raw": "(optional)",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 118,
-          "kind": "markup",
-          "raw": "(optional)",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/SubmitPatch.svelte",
-          "line": 123,
-          "kind": "markup",
-          "raw": "(optional)",
           "quote": null
         }
       ]
@@ -58473,6 +58577,24 @@
           "kind": "go-string",
           "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "0e20416f4548",
+      "text": "You can change this until voting closes. Approving nobody is the same as not voting.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 306,
+          "kind": "markup",
+          "raw": "You can change this until voting closes. Approving nobody is the same as\n          not voting.",
+          "quote": null
         }
       ]
     }

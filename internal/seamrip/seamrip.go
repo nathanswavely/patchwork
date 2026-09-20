@@ -546,11 +546,28 @@ func Tables() []Table {
 			// resolved and never recomputed. A fork that lost it would have
 			// a governance record that stops naming who was elected, which
 			// is the half of ADR 002's promise about carrying the record.
+			//
+			// `statement` travels for the same reason the proposal body
+			// does: it is what the candidate said, and a record of a contest
+			// that keeps the names and drops the reasons is a worse record.
 			File: "election_candidates.json",
 			Name: "election_candidates",
-			Query: `SELECT id, proposal_id, user_id, created_at, seated
+			Query: `SELECT id, proposal_id, user_id, created_at, seated, statement
 				FROM election_candidates`,
-			Columns: cols(id("id"), id("proposal_id"), id("user_id"), c("created_at"), c("seated")),
+			Columns: cols(id("id"), id("proposal_id"), id("user_id"), c("created_at"), c("seated"), c("statement")),
+		},
+		{
+			// Taking part without approving anybody (F-092). Travels with the
+			// ballots and for the same reason: it is a vote cast. A fork that
+			// kept the approvals and dropped these would recount every
+			// contest's turnout lower than it was, and quorum is what decides
+			// a contest — so the fork's record of why an election failed would
+			// disagree with the one it forked from.
+			File: "election_abstentions.json",
+			Name: "election_abstentions",
+			Query: `SELECT id, proposal_id, voter_id, created_at
+				FROM election_abstentions`,
+			Columns: cols(id("id"), id("proposal_id"), id("voter_id"), c("created_at")),
 		},
 		{
 			// An approval ballot is rows rather than a value (docs/adr/051), so
