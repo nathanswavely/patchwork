@@ -122,3 +122,28 @@ and CONTEXT.md says so.
 There is no Svelte render library here, so the three tiers need a browser
 pass as anonymous, follower and member, on a patch with the switch on and
 one with it off, before this ships.
+
+## Amended 2026-09-19
+
+Point 6 above still hid the tab: "including the ones a follower reaches
+without the tab" describes a Go-side ceiling sitting behind a Svelte-side
+refusal, which is the same shape docs/adr/050 named a costume in
+`proposals` before this ADR gave `events` its own enforcement. The maintainer
+closed that gap the same day. **The Events tab is shown to a follower on
+every patch, switch on or off.** `PatchEvents.svelte` no longer computes a
+`permissionDenied` for `follower_permissions.events`, and `workspaceTabs`
+(`web/src/lib/patchWorkspace.js`) no longer hides the `events` tab id for a
+follower; the tab renders whatever `GET /api/v1/nodes/{slug}/events` already
+answers for that viewer, which since point 6 is that patch's public events
+only when the switch is off. No client-side filtering was added — the
+ceiling in Go is the only rule.
+
+This discharges ADR 050's costume objection for `events` specifically: the
+switch is enforced server-side on every surface, and the workspace no
+longer overstates what it is withholding, because it withholds nothing.
+The other three follower-permission switches (`proposals`, `charters`,
+`members`) are unaffected; `proposals` and `members` remain tab-hiding
+conveniences over public reads, and `charters` remains the one switch with
+something real to withhold (docs/adr/050). The rules editor
+(`StructuredRulesEditor.svelte`) now says what the Events checkbox does:
+"Off: followers see this patch's public events only."
