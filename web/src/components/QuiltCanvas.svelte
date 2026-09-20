@@ -2039,16 +2039,21 @@
     }
 
     // --- Bevel and puff ----------------------------------------------------
-    // A single wide stroke centred on the boundary darkens both sides at
+    // A single wide stroke centred on the boundary shades both sides at
     // once, which is what an inner lip on each of two neighbours added up to
     // anyway. Three stacked widths stand in for a soft falloff without a
     // filter. This is the ground the light sits on, so it goes first.
+    // The colour is the theme's, not black: on denim the seam sinks into the
+    // ground because the shading is as dark as the ground, and on raw cotton
+    // the same relationship needs the shading to be cream. textile.css owns
+    // the triplet and a gain on the alpha, since a pale stroke needs more of
+    // it than a black one to read at all.
     if (CLOTH.bevel > 0) {
       const lip = CLOTH.bevel * bu * 2;
       const bevelG = clothG.append('g').attr('class', 'bevel');
       for (const [mult, alpha] of [[3.2, 0.05], [1.9, 0.07], [1.0, 0.13]]) {
         strokeChunks(bevelG, seams.chunks, {
-          stroke: `rgba(0,0,0,${(alpha * (1 + CLOTH.puff * 2)).toFixed(3)})`,
+          stroke: `rgba(var(--lt-seam-shade), calc(${(alpha * (1 + CLOTH.puff * 2)).toFixed(3)} * var(--lt-seam-shade-gain)))`,
           'stroke-width': (lip * mult).toFixed(2),
           'stroke-linecap': 'round',
           'stroke-linejoin': 'round',
@@ -2066,11 +2071,14 @@
     if (CLOTH.lightAmt > 0) {
       const off = CLOTH.bevel * bu * 1.1 || 4;
       const domeG = clothG.append('g').attr('class', 'doming');
+      // The shadow side is themed like the bevel; the lit side is lamp
+      // colour in both themes.
       for (const [shift, colour, weight] of [
-        [off, '255,252,244', 1], [-off, '0,0,0', 0.85],
+        [off, '255,252,244', 1],
+        [-off, 'var(--lt-seam-shadow)', 'var(--lt-seam-shadow-gain)'],
       ]) {
         strokeChunks(domeG, seams.chunks, {
-          stroke: `rgba(${colour},${(CLOTH.lightAmt * 1.7 * weight).toFixed(3)})`,
+          stroke: `rgba(${colour}, calc(${(CLOTH.lightAmt * 1.7).toFixed(3)} * ${weight}))`,
           'stroke-width': (off * 1.6).toFixed(2),
           transform: `translate(${shift.toFixed(2)},${shift.toFixed(2)})`,
           'stroke-linecap': 'round',

@@ -208,3 +208,23 @@ is a mark, not a piece of cloth, and it has no seam to reach.
 Nothing here touches the database, the API, or the seamrip boundary. A
 quilt drawn by an older build and one drawn by this one hold the same
 data; only the pixels differ.
+
+## Addendum, 2026-09-20: the seam takes the ground's colour, and is half as wide
+
+Point 4 above says the bevel *darkens* both sides of a seam. It did, in
+both themes, and that was only right in one of them. On denim a black
+falloff is the colour of the ground, so a seam sinks into the quilt; on
+raw cotton the same black is a trench drawn around every tile, and a pale
+block such as a Flying Geese in cream wore an outline. The relationship
+dark mode had by accident is now the rule: the bevel's falloff and the
+doming's shadow side are the theme's, as `--lt-seam-shade` and
+`--lt-seam-shadow` in `textile.css`, each an rgb triplet plus a gain on the
+alpha the canvas computes. The canvas still owns how deep the puff is; the
+theme owns what colour it is. Light mode shades in cream with the shadow
+side in hemp twine held well back, and dark mode is unchanged to the pixel.
+
+At the same time `CLOTH.bevel` went from 0.02 to 0.01 tiles. Every
+seam-side stroke is sized from it, so this is the seam's width, and at
+0.02 the falloff was eating a few pixels of every tile in both themes.
+Halved, the tiles keep their edge and the seam stays recessed. The
+lit-side stroke of the doming is lamp colour in both themes as before.
