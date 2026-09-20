@@ -32,10 +32,10 @@ describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the tab row'
     expect(review.sections.map((s) => s.queue)).toEqual(['reports', 'submissions', 'event_submissions', 'claims', 'tag_suggestions']);
   });
 
-  it('puts every configuration page under Settings, with the rare step-up tool last', () => {
+  it('puts every configuration page under Settings, with the two rare step-up tools last', () => {
     const settings = adminTabs().find((t) => t.id === 'settings');
-    expect(settings.sections.map((s) => s.id)).toEqual(['quilt', 'label', 'legal', 'tags', 'neighbors', 'aggregators', 'usage', 'archived', 'attestation']);
-    expect(settings.sections.at(-1).label).toBe('Prove admin');
+    expect(settings.sections.map((s) => s.id)).toEqual(['quilt', 'label', 'legal', 'tags', 'neighbors', 'aggregators', 'usage', 'archived', 'attestation', 'apps']);
+    expect(settings.sections.map((s) => s.label).slice(-2)).toEqual(['Prove admin', 'Apps']);
   });
 
   it('gives a section the URL of its tab plus its id', () => {
@@ -155,6 +155,7 @@ describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: every route 
     ['/admin/settings/usage', 'adminUsage'],
     ['/admin/settings/archived', 'adminArchived'],
     ['/admin/settings/attestation', 'adminAttestation'],
+    ['/admin/settings/apps', 'adminApps'],
     ['/admin/audit', 'adminAudit'],
   ];
 
