@@ -1,7 +1,7 @@
 <script>
   import { getContext } from 'svelte';
   import { api } from '../lib/api.js';
-  import { navigate } from '../stores/router.svelte.js';
+  import { navigate, getQuery } from '../stores/router.svelte.js';
   import { formatDay } from '../lib/datetime.js';
   import MarkdownRenderer from '../components/MarkdownRenderer.svelte';
 
@@ -41,7 +41,13 @@
 
   let title = $state('');
   let body = $state('');
-  let proposalType = $state('action');
+  // The council page links here with ?type=membership from a vacant chair's
+  // "Nominate a member", so the form opens on the thing that was clicked
+  // rather than on Action with the reader hunting for the radio they just
+  // asked for. The $effect below still drops it if this patch cannot
+  // nominate, so a stale or hand-typed link cannot select an option the
+  // server would refuse.
+  let proposalType = $state(getQuery().get('type') === 'membership' ? 'membership' : 'action');
   let durationHours = $state(72);
   let submitting = $state(false);
   let error = $state('');
@@ -63,6 +69,8 @@
   let nomineeId = $state('');
   let leadershipModel = $state('');
   let vacantSeats = $state(0);
+  // Whether the governance overview has answered yet, either way.
+  let govLoaded = $state(false);
   let nextContestOpens = $state('');
   let nominatable = $state([]);
   let isMeritocratic = $derived(leadershipModel === 'meritocratic');
@@ -88,15 +96,22 @@
   // Keep the chosen type valid: an elected patch whose last seat was filled
   // stops offering Membership, and a radio left on a vanished option would
   // submit a type the server refuses.
+  // Waits for the overview: `canNominate` is false until it lands, so an
+  // unguarded reset would undo the ?type=membership the council page just
+  // sent and drop the reader back on Action.
   $effect(() => {
-    if (proposalType === 'membership' && !canNominate) proposalType = 'action';
+    if (govLoaded && proposalType === 'membership' && !canNominate) proposalType = 'action';
   });
 
   async function loadGovernanceContext() {
     try {
       const ov = await api(`nodes/${slug}/governance/overview`);
       leadershipModel = ov?.rules?.leadership_venue === 'elsewhere' ? '' : (ov?.rules?.leadership_model || '');
-      vacantSeats = (ov?.seats || []).filter((s) => !s.holder_id).length;
+      // `vacant`, not an absent holder_id: a chair whose holder this
+      // viewer is not shown carries no holder_id either (docs/adr/095's
+      // roster rule reaching the council), and counting those as vacancies
+      // would offer a nomination into an occupied seat.
+      vacantSeats = (ov?.seats || []).filter((s) => s.vacant).length;
       nextContestOpens = ov?.next_contest_opens || '';
       if (!canNominate) return;
       const data = await api(`nodes/${slug}/members`);
@@ -106,6 +121,8 @@
     } catch {
       leadershipModel = '';
       nominatable = [];
+    } finally {
+      govLoaded = true;
     }
   }
 

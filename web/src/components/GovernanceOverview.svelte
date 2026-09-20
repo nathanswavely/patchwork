@@ -152,12 +152,17 @@
     if (vacantSeats.length > 0) {
       // With nobody in the role, "ask an admin to nominate you" names a
       // person who does not exist here (docs/adr/108). The contest is the
-      // way back, and the seat rows carry its date.
-      if (!adminsWithheld && (overview?.admins?.length ?? 0) === 0) {
-        return contestDue || !nextContestOpens
-          ? 'Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.'
-          : `Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats opens ${formatDay(nextContestOpens)}, and any member of this patch may stand.`;
-      }
+      // way back — and each vacant chair's own row already says exactly
+      // that, with that chair's date, because `fill` is 'contest_fills'
+      // precisely when this patch has no admins.
+      //
+      // Saying it again here was the same fact in two shapes, one of them
+      // addressing a single empty chair as "these seats". The founder of a
+      // one-seat collective read the pair three times: "It reads like two
+      // people wrote the page and neither deleted the other's sentence."
+      // The rows win, because a sentence about one chair can name its date
+      // and this one cannot.
+      if (vacantSeats.every((s) => s.fill === 'contest_fills')) return '';
       if (isPatchAdmin) {
         return 'You can nominate a member for a vacant seat today. The members ratify it, and the appointee serves out that seat\u2019s term.';
       }
@@ -591,6 +596,25 @@
                         <button class="btn btn-sm" disabled={seatBusy} onclick={() => editTerm(seat)}>
                           {seat.term_ends_at ? 'Change term end' : 'Set term end'}
                         </button>
+                        <!-- The act this row has been describing. The page
+                             said "You can nominate a member for a vacant
+                             seat today" and offered only Change term end
+                             and Remove seat, so the co-op's one admin read
+                             the sentence, looked at the row, looked back at
+                             the sentence, and found the form two menus away
+                             by exhausting the alternatives. docs/adr/107
+                             put a picker on the contest panel and left this
+                             path, which is the one an admin uses to fill a
+                             chair between contests. -->
+                        {#if seat.vacant && seat.fill === 'nomination'}
+                          <a
+                            class="btn btn-sm btn-primary"
+                            href="/patches/{slug}/governance/new?type=membership"
+                            onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/new?type=membership`); }}
+                          >
+                            Nominate a member
+                          </a>
+                        {/if}
                         {#if seat.vacant}
                           <button class="btn btn-sm" disabled={seatBusy} onclick={() => removeSeat(seat.id)}>
                             Remove seat
