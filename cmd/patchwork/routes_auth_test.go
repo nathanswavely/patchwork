@@ -570,6 +570,12 @@ func (f *routeFixture) seed(t *testing.T) {
 		VALUES (?, ?, 'https://other.example', 'https://other.example/ap/nodes/1', 'their-patch', 'Their Patch')`,
 		follow, owner)
 
+	// One listed native app, so DELETE /admin/native-apps/{id} finds a row
+	// and gets as far as asking who is calling
+	// (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md).
+	nativeApp := id("native-apps")
+	f.exec(t, `INSERT INTO native_apps (id, platform, identifier, label) VALUES (?, 'apple', 'ABCDE12345.org.example.app', 'Example')`, nativeApp)
+
 	neighbor := id("neighbor-quilts")
 	f.exec(t, `INSERT INTO neighbor_quilts (id, url, name) VALUES (?, 'https://neighbor.example', 'Neighbor')`, neighbor)
 

@@ -124,6 +124,7 @@ export function adminFinderProvider() {
       { label: 'Usage', sublabel: 'daily page views and visitors, counted on the server', href: '/admin/settings/usage' },
       { label: 'Archived patches', sublabel: 'restore a patch that was archived', href: '/admin/settings/archived' },
       { label: 'Prove admin', sublabel: 'sign an outside party’s nonce as this quilt', href: '/admin/settings/attestation' },
+      { label: 'Apps', sublabel: 'native apps this quilt vouches for', href: '/admin/settings/apps' },
     ];
     for (const s of settings) items.push({ type: 'Settings', ...s });
     return items;
