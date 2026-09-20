@@ -93,8 +93,12 @@ describe('Putting somebody forward, and taking your own name back', () => {
 
   it('sends the chosen member rather than an empty body', () => {
     expect(panel).toMatch(/body: \{ user_id: nomineeId \}/);
-    // Standing yourself is still its own act, with its own empty body.
-    expect(panel).toMatch(/method: 'POST', body: \{\} \}/);
+    // Standing yourself is still its own act and still sends no user_id.
+    // It carries a statement now (F-095), which is the one thing a nominee
+    // may say for themselves and nobody may say for them — the server drops
+    // a statement sent with somebody else's user_id.
+    expect(panel).toContain('body: { statement: statement.trim() }');
+    expect(panel).not.toMatch(/body: \{ user_id: nomineeId, statement/);
   });
 
   it('never offers you your own name in the put-somebody-forward list', () => {

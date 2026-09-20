@@ -211,11 +211,16 @@ func routeAll(ctx context.Context, db *database.DB, notifier *notifications.Noti
 
 // listingsFor reads one crosswalk entry's items out of the cache. This
 // is the whole of a crosswalk entry's "fetch": the aggregator already
-// did it.
+// did it. Every column storeListings writes is read back here: a field
+// the cache holds and this query omits reaches the reconciler empty on
+// every pass, so it never differs from the row and never fills. That is
+// how url went missing from every aggregator-routed event for a month
+// (docs/adr/079 expects the next sync to backfill, which needs the
+// value to arrive).
 func listingsFor(db *database.DB, aggregatorID, nameKey string) ([]Item, error) {
 	rows, err := db.Query(
 		`SELECT uid, occurrence, title, description, location, latitude, longitude,
-		 starts_at, ends_at FROM aggregator_listings
+		 starts_at, ends_at, url FROM aggregator_listings
 		 WHERE aggregator_id = ? AND name_key = ?`, aggregatorID, nameKey)
 	if err != nil {
 		return nil, fmt.Errorf("load listings: %w", err)
@@ -226,7 +231,7 @@ func listingsFor(db *database.DB, aggregatorID, nameKey string) ([]Item, error) 
 	for rows.Next() {
 		var it Item
 		if err := rows.Scan(&it.UID, &it.Occurrence, &it.Title, &it.Description,
-			&it.Location, &it.Latitude, &it.Longitude, &it.StartsAt, &it.EndsAt); err != nil {
+			&it.Location, &it.Latitude, &it.Longitude, &it.StartsAt, &it.EndsAt, &it.URL); err != nil {
 			return nil, err
 		}
 		items = append(items, it)

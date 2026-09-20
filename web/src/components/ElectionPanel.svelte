@@ -58,6 +58,16 @@
     members.filter((m) => m.user_id !== me?.id && !candidates.some((c) => c.user_id === m.user_id)),
   );
   let nomineeId = $state('');
+  // A few lines saying why you are standing (F-095). The ballot was a list
+  // of bare names: the first person to stand in a real contest asked for
+  // this in as many words — "Ask me for a few lines when I press the button"
+  // — and four voters decided on the strength of a comment hidden behind a
+  // Discussion tab. Optional, and capped, because the ballot has to stay a
+  // list and an argument belongs in the discussion.
+  let statement = $state('');
+  const STATEMENT_MAX = 500;
+  // Whether this viewer has taken part without approving anybody (F-092).
+  let iAbstained = $derived(proposal?.i_abstained === true);
 
   let busy = $state(false);
   let error = $state('');
@@ -92,7 +102,11 @@
   async function stand() {
     busy = true; error = '';
     try {
-      await api(`proposals/${proposal.id}/candidates`, { method: 'POST', body: {} });
+      await api(`proposals/${proposal.id}/candidates`, {
+        method: 'POST',
+        body: { statement: statement.trim() },
+      });
+      statement = '';
       seeded = '';
       onChanged();
     } catch (e) {
@@ -132,6 +146,25 @@
       onChanged();
     } catch (e) {
       error = e.message || 'Failed to withdraw';
+    } finally {
+      busy = false;
+    }
+  }
+
+  // Taking part while approving nobody. Its own request rather than an empty
+  // ballot, so the server can tell it from a withdrawal.
+  async function abstain() {
+    busy = true; error = '';
+    try {
+      await api(`proposals/${proposal.id}/ballot`, {
+        method: 'PUT',
+        body: { candidate_ids: [], abstain: true },
+      });
+      approved = new Set();
+      saved = true;
+      onChanged();
+    } catch (e) {
+      error = e.message || 'Failed to save your ballot';
     } finally {
       busy = false;
     }
@@ -245,6 +278,12 @@
             {:else if phase === 'closed'}
               <span class="tag tag-quiet">not seated</span>
             {/if}
+            <!-- Beside the name, on the ballot, which is the whole point:
+                 voters were reading a Discussion tab they opened by accident
+                 to find out who they were choosing between. -->
+            {#if c.statement}
+              <p class="why small">{c.statement}</p>
+            {/if}
           </li>
         {/each}
       </ul>
@@ -260,9 +299,23 @@
             </button>
           </p>
         {:else}
-          <button class="btn btn-sm" onclick={stand} disabled={busy}>
-            {busy ? 'Standing…' : 'Stand for election'}
-          </button>
+          <div class="stand-row">
+            <label for="why-standing">Why you are standing <span class="muted">(optional)</span></label>
+            <textarea
+              id="why-standing"
+              bind:value={statement}
+              disabled={busy}
+              rows="3"
+              maxlength={STATEMENT_MAX}
+              placeholder="A few lines the other members will see beside your name on the ballot."
+            ></textarea>
+            <div class="stand-actions">
+              <button class="btn btn-sm" onclick={stand} disabled={busy}>
+                {busy ? 'Standing…' : 'Stand for election'}
+              </button>
+              <span class="muted small">{STATEMENT_MAX - statement.length} characters left</span>
+            </div>
+          </div>
         {/if}
 
         <!-- Putting somebody else forward, which every other surface has been
@@ -302,11 +355,37 @@
       {#if ballotIn}
         <p class="ballot-in small">Your ballot is in. You can change it until voting closes.</p>
       {:else}
-        <p class="muted small">
-          You can change this until voting closes. Approving nobody is the same as
-          not voting.
-        </p>
+        <p class="muted small">You can change this until voting closes.</p>
       {/if}
+
+      <!-- Turning up and approving nobody (F-092).
+
+           This used to read "Approving nobody is the same as not voting",
+           which was true and was the opposite of what a member organising
+           for quorum needed. Two of them read it against a notice asking
+           everyone to turn up: "She is telling eight people to turn up and
+           tick nothing to make quorum; the page says that does nothing. One
+           of them is wrong and I do not know which, and it is the whole
+           thing that decides whether this seventh election works."
+
+           An explicit act rather than an empty save, because an empty save
+           still means "take my ballot back" and a member needs both. -->
+      <div class="abstain-row">
+        {#if iAbstained}
+          <p class="ballot-in small">
+            You are counted as taking part and approving nobody. Ticking a name
+            and saving replaces that.
+          </p>
+        {:else}
+          <button class="btn-link small" onclick={abstain} disabled={busy}>
+            {busy ? 'Saving…' : 'Take part without approving anyone'}
+          </button>
+          <p class="muted small">
+            Counts toward the turnout this election needs, the way an abstention
+            counts on an ordinary proposal.
+          </p>
+        {/if}
+      </div>
     {/if}
 
     {#if error}<p class="err">{error}</p>{/if}

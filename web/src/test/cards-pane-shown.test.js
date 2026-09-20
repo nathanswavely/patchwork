@@ -76,10 +76,9 @@ describe('the width is one published fact', () => {
     expect(source('components/SocialShell.svelte')).not.toMatch(/calc\(45% \+ 16px\)/);
   });
 
-  it('sizes the pane, clears the chips and parks the control from one property', () => {
+  it('sizes the pane and clears the chips from one property', () => {
     const home = source('pages/SocialHome.svelte');
     expect(home).toContain('width: var(--pw-cards-pane-w');
-    expect(home).toContain('right: var(--pw-cards-pane-w, 45%)');
     expect(source('components/SocialShell.svelte')).toContain('var(--pw-cards-pane-w');
   });
 
@@ -96,18 +95,25 @@ describe('the width is one published fact', () => {
 describe('the control has one home', () => {
   const home = source('pages/SocialHome.svelte');
 
-  // It parks against the pane's edge and travels with it, so it is in the
-  // same place relative to the thing it moves whether that thing is there or
-  // not. A control that can delete its own container cannot live inside it.
-  it('lives on the canvas, never in the list header', () => {
-    const header = home.slice(home.indexOf('<div class="cards-header">'), home.indexOf('<div class="cards-scroll">'));
-    expect(header).not.toContain('pane-toggle');
+  // Amended 2026-09-20: with the list drawn as one full-height card, the
+  // control ends the card's own header row, on the edge it puts the card
+  // away toward. The canvas copy stands in only once the list is put away
+  // and there is no card to hold it. While a profile is docked there is no
+  // control at all: the pane is open for the profile, not by the reader's
+  // choice, and the profile's dismiss is what ends that.
+  it('ends the list header, and falls back to the canvas without one', () => {
+    const header = home.slice(home.indexOf('<div class="cards-header">'), home.indexOf('<div class="cards-scroll scroll-thin">'));
+    expect(header).toContain('class="pane-toggle in-card"');
+    expect(header.indexOf('pane-toggle in-card')).toBeGreaterThan(header.indexOf('<div class="list-controls">'));
     expect(home).toContain('class="pane-toggle"');
+    expect(home).toContain('{#if paneHidden}');
+    expect(home).not.toContain('dockNeedsPane)}');
   });
 
   it('is the rail toggle mirrored — same icon, same weights', () => {
     expect(home).toContain('SidebarSimple');
-    expect(home).toContain("weight={paneHidden ? 'duotone' : 'fill'}");
+    expect(home).toContain('weight="fill"');
+    expect(home).toContain('weight="duotone"');
     expect(home).toMatch(/\.pane-toggle :global\(svg\) \{\s*transform: scaleX\(-1\);/);
     // The pair has to stay a pair: the rail's own toggle uses the same two.
     expect(source('components/SocialShell.svelte'))
@@ -115,7 +121,7 @@ describe('the control has one home', () => {
   });
 
   it('is absent below the breakpoint, where the pill already answers this', () => {
-    expect(home).toContain('{#if winW > 768}');
+    expect(home).toContain('let paneHidden = $derived(winW > 768 &&');
     expect(home).toMatch(/\.pane-toggle \{\s*display: none;/);
   });
 });
@@ -139,14 +145,15 @@ describe('what a hidden pane does to what lives in it', () => {
   });
 
   // With a profile docked over a pane the reader had hidden, the stored bit
-  // says hidden while the pane is visibly open. A plain toggle there would
-  // flip the bit to *shown*, destroy the setting, and change nothing on
-  // screen — a press that does the opposite of its label, invisibly. The
-  // button means one thing in every state: the canvas alone.
-  it('clears the dock too rather than toggling a bit nobody can see', () => {
-    expect(home).toMatch(
-      /function paneButtonPress\(\) \{\s*if \(dockNeedsPane\) \{\s*onDockClose\(\);\s*setPaneHidden\(true\);/
-    );
+  // says hidden while the pane is visibly open. A toggle there would flip
+  // the bit to *shown*, destroy the setting, and change nothing on screen —
+  // a press that does the opposite of its label, invisibly. So there is no
+  // toggle while a profile is docked: the in-card one goes with the list
+  // the profile replaces, and the canvas one renders only when the bit in
+  // force says hidden, which a docked profile never lets it say.
+  it('offers no toggle at all while a profile is docked', () => {
+    expect(home).toContain('{#if paneHidden}');
+    expect(home).not.toContain('dockNeedsPane)}');
     expect(home).toContain('onclick={paneButtonPress}');
     expect(home).not.toContain('onclick={togglePaneHidden}');
   });

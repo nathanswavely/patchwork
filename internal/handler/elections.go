@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/patchwork-toolkit/patchwork/internal/auth"
@@ -329,6 +331,13 @@ func systemAuthorFor(db *database.DB, nodeID string) string {
 // who came to nominate a colleague put herself on a three-seat ballot by
 // accident and then wrote a comment asking her neighbours not to vote for
 // her, which four of them read and acted on.
+// candidateStatementMax is how long a candidate's statement may be.
+//
+// A few lines, not a manifesto: the ballot has to stay readable as a list,
+// and the Discussion tab is where an argument belongs. Counted in runes so
+// the limit means the same in every alphabet.
+const candidateStatementMax = 500
+
 func AddCandidate(db *database.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := middleware.UserFromContext(r.Context())
@@ -356,11 +365,28 @@ func AddCandidate(db *database.DB) http.HandlerFunc {
 
 		var req struct {
 			UserID string `json:"user_id"`
+			// A few lines saying why. Asked for by the first person who
+			// stood in a real contest: "Ask me for a few lines when I press
+			// the button." Optional, because a small patch where everybody
+			// knows everybody should not be made to write an essay.
+			Statement string `json:"statement"`
 		}
 		json.NewDecoder(r.Body).Decode(&req)
 		nominee := req.UserID
 		if nominee == "" {
 			nominee = user.ID // standing yourself
+		}
+		statement := strings.TrimSpace(req.Statement)
+		if len([]rune(statement)) > candidateStatementMax {
+			writeJSONError(w, http.StatusBadRequest,
+				"a candidate's statement is at most "+strconv.Itoa(candidateStatementMax)+" characters")
+			return
+		}
+		// Only your own. Putting somebody forward is a real act (docs/adr/107)
+		// and speaking for them is not: a nominee writes their own statement
+		// afterwards, or stands with none.
+		if nominee != user.ID {
+			statement = ""
 		}
 		if !isActivePatchPerson(db, nominee, nodeID) {
 			http.Error(w, `{"error":"a candidate must be an active member of this patch"}`, http.StatusBadRequest)
@@ -368,8 +394,8 @@ func AddCandidate(db *database.DB) http.HandlerFunc {
 		}
 
 		if _, err := db.Exec(
-			`INSERT OR IGNORE INTO election_candidates (id, proposal_id, user_id) VALUES (?, ?, ?)`,
-			auth.NewUUIDv7(), proposalID, nominee,
+			`INSERT OR IGNORE INTO election_candidates (id, proposal_id, user_id, statement) VALUES (?, ?, ?, ?)`,
+			auth.NewUUIDv7(), proposalID, nominee, statement,
 		); err != nil {
 			http.Error(w, `{"error":"failed to add the candidate"}`, http.StatusInternalServerError)
 			return
@@ -535,13 +561,35 @@ func CastElectionBallot(db *database.DB) http.HandlerFunc {
 
 		var req struct {
 			CandidateIDs []string `json:"candidate_ids"`
+			// Taking part while approving nobody (F-092). An explicit act,
+			// not an empty list: an empty list still means "take my ballot
+			// back", and the two have to stay tellable apart or a member
+			// cannot withdraw and a member cannot abstain.
+			Abstain bool `json:"abstain"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, `{"error":"invalid request body"}`, http.StatusBadRequest)
 			return
 		}
+		if req.Abstain && len(req.CandidateIDs) > 0 {
+			writeJSONError(w, http.StatusBadRequest,
+				"a ballot either approves candidates or approves nobody, not both")
+			return
+		}
 
+		// The two states are exclusive, so each write clears the other.
 		db.Exec(`DELETE FROM election_ballots WHERE proposal_id = ? AND voter_id = ?`, proposalID, user.ID)
+		db.Exec(`DELETE FROM election_abstentions WHERE proposal_id = ? AND voter_id = ?`, proposalID, user.ID)
+
+		if req.Abstain {
+			if _, err := db.Exec(
+				`INSERT OR IGNORE INTO election_abstentions (id, proposal_id, voter_id) VALUES (?, ?, ?)`,
+				auth.NewUUIDv7(), proposalID, user.ID,
+			); err != nil {
+				writeJSONError(w, http.StatusInternalServerError, "failed to record your ballot")
+				return
+			}
+		}
 		for _, cid := range req.CandidateIDs {
 			var belongs int
 			db.QueryRow(`SELECT COUNT(*) FROM election_candidates WHERE id = ? AND proposal_id = ?`, cid, proposalID).Scan(&belongs)
@@ -554,7 +602,10 @@ func CastElectionBallot(db *database.DB) http.HandlerFunc {
 		auth.LogAuditEvent(db, user.ID, "election.ballot", "proposal", proposalID, "{}", clientIP(r))
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]int{"approved": len(req.CandidateIDs)})
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"approved": len(req.CandidateIDs),
+			"abstain":  req.Abstain,
+		})
 	}
 }
 

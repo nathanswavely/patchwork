@@ -63,13 +63,36 @@ type electionTurnout struct {
 // able to exceed the electorate. Two populations, one fraction.
 func ballotsCast(db *database.DB, proposalID string) int {
 	var n int
+	// Approvals and abstentions together: turning up and approving nobody is
+	// taking part (F-092), which is what `votes.value = 'abstain'` has always
+	// meant on an ordinary proposal. DISTINCT over the union because the two
+	// are exclusive per voter by construction and a UNION of voter ids is
+	// cheaper to read than a pair of counts that must not double-count.
 	db.QueryRow(`
-		SELECT COUNT(DISTINCT b.voter_id)
-		FROM election_ballots b
-		JOIN proposals p ON p.id = b.proposal_id
-		JOIN memberships m ON m.user_id = b.voter_id AND m.node_id = p.node_id
-		WHERE b.proposal_id = ? AND `+countedBallot, proposalID).Scan(&n)
+		SELECT COUNT(DISTINCT v.voter_id) FROM (
+			SELECT b.voter_id, p.node_id FROM election_ballots b
+			  JOIN proposals p ON p.id = b.proposal_id
+			 WHERE b.proposal_id = ?
+			UNION
+			SELECT a.voter_id, p.node_id FROM election_abstentions a
+			  JOIN proposals p ON p.id = a.proposal_id
+			 WHERE a.proposal_id = ?
+		) v
+		JOIN memberships m ON m.user_id = v.voter_id AND m.node_id = v.node_id
+		WHERE `+countedBallot, proposalID, proposalID).Scan(&n)
 	return n
+}
+
+// abstained reports whether this viewer has taken part without approving
+// anybody, so the panel can show the ballot they actually hold.
+func abstained(db *database.DB, proposalID, viewerID string) bool {
+	if viewerID == "" {
+		return false
+	}
+	var n int
+	db.QueryRow(`SELECT COUNT(*) FROM election_abstentions WHERE proposal_id = ? AND voter_id = ?`,
+		proposalID, viewerID).Scan(&n)
+	return n > 0
 }
 
 // electionTurnoutFor is electionTurnoutOf for the proposal payload: nil on
@@ -111,6 +134,9 @@ type candidateView struct {
 	// with at least one approval — which is a tally, and a tally moves after
 	// the fact when a voter leaves the patch.
 	Seated bool `json:"seated"`
+	// Statement is why they are standing, in their own words (F-095). Empty
+	// where they wrote none, which stays the common case on a small patch.
+	Statement string `json:"statement,omitempty"`
 }
 
 // electionCandidates lists who is standing, with the approvals each has and
@@ -129,7 +155,7 @@ func electionCandidates(db *database.DB, proposalID, viewerID string) []candidat
 		          WHERE b.candidate_id = c.id AND `+countedBallot+`) AS approvals,
 		       (SELECT COUNT(*) FROM election_ballots b2
 		          WHERE b2.candidate_id = c.id AND b2.voter_id = ?) AS mine,
-		       c.seated
+		       c.seated, c.statement
 		FROM election_candidates c
 		JOIN proposals p ON p.id = c.proposal_id
 		LEFT JOIN users u ON u.id = c.user_id
@@ -143,7 +169,7 @@ func electionCandidates(db *database.DB, proposalID, viewerID string) []candidat
 		var c candidateView
 		var mine int
 		var seated int
-		if rows.Scan(&c.ID, &c.UserID, &c.Username, &c.DisplayName, &c.Approvals, &mine, &seated) != nil {
+		if rows.Scan(&c.ID, &c.UserID, &c.Username, &c.DisplayName, &c.Approvals, &mine, &seated, &c.Statement) != nil {
 			continue
 		}
 		c.ApprovedByMe = mine > 0

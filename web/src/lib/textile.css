@@ -24,6 +24,20 @@
   --lt-seam-ink: rgba(28, 24, 18, 0.55);
   --lt-seam-ridge: rgba(255, 255, 255, 0.75);
   --lt-seam-stitch: rgba(255, 255, 255, 0.7);
+
+  /* The shading either side of a seam: the bevel's falloff and the doming's
+     shadow side. Each is an rgb triplet plus a gain on the alpha the canvas
+     computes, because the canvas owns how deep the puff is and the theme
+     owns what colour it is. On raw cotton the seam is cream, the way it is
+     black on denim: shading the colour of the ground is what lets a seam
+     belong to the quilt instead of outlining every tile. A pale stroke over
+     coloured fabric needs more alpha than a black one to read, hence the
+     gain above one; the shadow side is hemp twine held well back so the
+     lit side still wins. */
+  --lt-seam-shade: 244, 240, 232;
+  --lt-seam-shade-gain: 2.6;
+  --lt-seam-shadow: 122, 116, 106;
+  --lt-seam-shadow-gain: 0.4;
 }
 
 [data-theme="dark"] {
@@ -40,6 +54,12 @@
   --lt-seam-ink: rgba(0, 0, 0, 0.72);
   --lt-seam-ridge: rgba(255, 255, 255, 0.22);
   --lt-seam-stitch: rgba(226, 220, 208, 0.45);
+
+  /* Black shading on a near-black ground: the seam sinks in. */
+  --lt-seam-shade: 0, 0, 0;
+  --lt-seam-shade-gain: 1;
+  --lt-seam-shadow: 0, 0, 0;
+  --lt-seam-shadow-gain: 0.85;
 }
 
 /* ---- Vellum: semi-opaque layer with soft blur, like tracing paper ---- */
