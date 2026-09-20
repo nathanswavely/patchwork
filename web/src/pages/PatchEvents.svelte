@@ -18,8 +18,15 @@
   let viewerTrusted = $derived(patch.value.viewerTrusted === true);
   let node = $derived(patch.value.node);
 
-  let followerPermissions = $derived(patch.value.followerPermissions);
-  let permissionDenied = $derived(membershipRole === 'follower' && followerPermissions?.events === false);
+  // follower_permissions.events used to hide this whole tab from a
+  // follower (docs/adr/050 named that a costume: the same public events
+  // are on the quilt, the map, /events, the ICS feed and the link, so
+  // withholding the tab withheld nothing). Since
+  // docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md
+  // the switch is a ceiling enforced in Go on every read path, so this page
+  // shows the tab and renders whatever the server already answers for this
+  // viewer — a follower on a switch-off patch gets that patch's public
+  // events, the same list every other surface gives them.
 
   // Review is owed to whoever owns the calendar (docs/adr/026): patch
   // admins here, and the instance admin for unclaimed patches.
@@ -195,12 +202,6 @@
 
 </script>
 
-{#if permissionDenied}
-  <div class="permission-notice">
-    <p>This content is only visible to members.</p>
-    <p class="muted">Become a member to access events.</p>
-  </div>
-{:else}
 <div class="events-page">
   <div class="events-header">
     <span class="muted">
@@ -386,19 +387,8 @@
     </ul>
   {/if}
 </div>
-{/if}
 
 <style>
-  .permission-notice {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .permission-notice p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
-
   .events-header {
     display: flex;
     justify-content: space-between;

@@ -51,8 +51,14 @@ export function workspaceTabs({
   // misreports the patch, and the page under it says the same word.
   if ((!isFollower || fp?.members !== false) && !rosterHidden)
     t.push({ id: 'members', label: rosterAdminsOnly ? 'Admins' : 'Members' });
-  if (!isFollower || fp?.events !== false)
-    t.push({ id: 'events', label: 'Events' });
+  // Events never hides for a follower any more (docs/adr/050's costume
+  // objection, discharged for this switch by
+  // docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md):
+  // follower_permissions.events is now enforced as a read ceiling in Go, so
+  // the tab always shows and the list it renders is whatever the server
+  // already hands this viewer — that patch's public events when the switch
+  // is off, same as the quilt, the map, and the public feed already give.
+  t.push({ id: 'events', label: 'Events' });
   // The noticeboard is the room's, and only the room's (docs/adr/081): a
   // member or admin, never a follower, and never a follower-permissions
   // key — those hide tabs over public reads, and this read is withheld.
