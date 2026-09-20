@@ -8,6 +8,7 @@
  * docs/adr/005. Each entry: { type, label, sublabel, href }.
  */
 import { api } from './api.js';
+import { formatDay } from './datetime.js';
 
 /**
  * Everything searchable inside a patch workspace.
@@ -57,7 +58,7 @@ export function workspaceFinderProvider(slug) {
       items.push({
         type: 'Events',
         label: e.title,
-        sublabel: e.starts_at ? new Date(e.starts_at).toLocaleDateString() : '',
+        sublabel: e.starts_at ? formatDay(e.starts_at) : '',
         href: `/events/${e.id}`,
       });
     }

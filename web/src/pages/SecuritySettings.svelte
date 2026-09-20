@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { formatDay } from '../lib/datetime.js';
   import { getUser } from '../stores/auth.svelte.js';
   import {
     prepareCreationOptions,
@@ -324,7 +325,7 @@
                 <span class="cred-name">{cred.name || 'Passkey'}</span>
                 {#if cred.created_at}
                   <small class="muted">
-                    Added {new Date(cred.created_at).toLocaleDateString()}
+                    Added {formatDay(cred.created_at)}
                   </small>
                 {/if}
               </div>
@@ -383,7 +384,7 @@
               <small class="muted">
                 {#if s.last_used_at}Last active {timeAgo(s.last_used_at)}{/if}
                 {#if s.created_at}
-                  · Signed in {new Date(s.created_at).toLocaleDateString()}
+                  · Signed in {formatDay(s.created_at)}
                 {/if}
               </small>
             </div>

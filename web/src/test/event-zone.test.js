@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
@@ -36,9 +36,15 @@ describe('an event renders in its own zone, not the reader’s', () => {
   });
 
   it('renders one instant differently for two places', () => {
+    // Pinned to the fixture's own year: the compact date carries the year
+    // only when the date is not in the current one, so these literals
+    // would start failing in January without saying when "now" is.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-01T12:00:00Z'));
     expect(formatEventTime(LANCASTER_8PM, 'America/Los_Angeles')).toMatch(/^5:00 PM/);
     expect(formatEventDate(LANCASTER_8PM, 'America/Los_Angeles')).toBe('Wed, Jul 22');
     expect(formatEventDate(LANCASTER_8PM, 'Europe/Berlin')).toBe('Thu, Jul 23');
+    vi.useRealTimers();
   });
 });
 
