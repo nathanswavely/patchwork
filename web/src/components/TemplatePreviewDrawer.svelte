@@ -38,7 +38,7 @@
       admin: 'The maintainer makes all decisions, and may ask the members first.',
       majority: 'Decisions pass when more than half of voters agree.',
       supermajority: 'Decisions require at least 2 out of 3 voters to agree.',
-      consensus: 'Decisions require everyone (or nearly everyone) to agree.',
+      consensus: 'One reject blocks a proposal. A proposal nobody rejects carries.',
     };
     if (rules.decision_method) {
       explanations.push({ label: 'Decision method', value: rules.decision_method, explain: methods[rules.decision_method] || '' });
