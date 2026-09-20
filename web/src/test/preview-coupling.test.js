@@ -104,8 +104,15 @@ describe('previewing a patch', () => {
   it('emphasises with transforms, so nothing reflows', () => {
     // A card that changes size on hover shifts the list; a pin that changes
     // its footprint moves off its own coordinate.
-    expect(home).toMatch(/\.patch-card\.previewing \{[^}]*border-color/);
+    expect(home).toMatch(/\.patch-card\.previewing \{[^}]*box-shadow/);
     expect(home).not.toMatch(/\.patch-card\.previewing \{[^}]*(width|height|padding|margin):/);
+    // The emphasis is the list's own hover dim (docs/adr/112): pointed at
+    // from the other surface, every other card fades. Only from the other
+    // surface — a card hover sets both ids, and dimming the list under the
+    // pointer reading it would fade the rows it is about to move to.
+    expect(home).toContain('let listDimmed = $derived(previewing !== null && hoveredCardId === null)');
+    expect(home).toContain('class:dimmed={listDimmed}');
+    expect(home).toMatch(/\.cards-grid\.dimmed \.patch-card:not\(\.previewing\) \{\s*opacity: 0\.38;/);
     // And the scale goes on the child, never the marker: Leaflet positions
     // the marker with a transform, and CSS composes `scale` *with* it rather
     // than beside it — scaling the marker multiplies its translation and

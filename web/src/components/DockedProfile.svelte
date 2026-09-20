@@ -249,7 +249,7 @@
     <X size={16} weight="bold" />
   </button>
 
-  <div class="dock-scroll" class:scrollable={glimpsesActive}>
+  <div class="dock-scroll scroll-thin" class:scrollable={glimpsesActive}>
     {#if host}
       <!-- Another quilt's patch: read-only, and every act on it a doorway
            (docs/adr/024). It has no glimpses to defer, so both heights
@@ -378,7 +378,8 @@
 
   /* ---- The panel: the cards pane's slot ------------------------------ */
   /* A card where the list was. The pane is transparent and the cards float
-     over the canvas, so the profile is a card too: the list's own margins,
+     over the canvas, so the profile is a card too: the list's own margins
+     (hung from the 56px line the rail's card hangs from),
      a surface, an edge and the cards' shadow. It fills the pane's height
      and scrolls inside itself, the way the list did. The canvas's inset is
      unchanged and nothing reflows behind it: the marker the reader clicked
@@ -387,7 +388,7 @@
     position: relative;
     flex: 1;
     min-height: 0;
-    margin: 12px 16px 16px;
+    margin: 0 16px 16px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     box-shadow: 0 2px 10px var(--color-shadow);

@@ -132,19 +132,15 @@
 
   let paneButtonLabel = $derived(paneHidden ? 'Show the patch list' : 'Hide the patch list');
 
-  // The button means one thing in every state: the canvas alone, or something
-  // beside it. Pressing it while a profile is docked therefore dismisses the
-  // profile as well as putting the pane away — otherwise the two facts get
-  // out of step. With a profile docked over a pane the reader had hidden, the
-  // stored bit says hidden while the pane is visibly open, so a plain toggle
-  // would flip the bit to *shown*, destroy the setting, and change nothing on
-  // screen: a press that does the opposite of its label, invisibly.
+  // The button is only ever offered while the reader's bit is the one in
+  // force: in the list's card, or on the canvas once the list is put away.
+  // While a profile is docked there is no button at all — the pane is open
+  // for the profile, not by the reader's choice, and its dismiss is the
+  // control that ends that state. A toggle there would flip a stored bit
+  // nobody can see: with a profile docked over a pane the reader had hidden,
+  // the bit says hidden while the pane is visibly open, and a press would
+  // set it to *shown* and change nothing on screen.
   function paneButtonPress() {
-    if (dockNeedsPane) {
-      onDockClose();
-      setPaneHidden(true);
-      return;
-    }
     togglePaneHidden();
   }
 
@@ -405,6 +401,15 @@
   // answers its own pointer itself.
   let hoveredCardId = $state(null);
 
+  // A preview that came from the other surface dims every other card, the
+  // way the quilt scrims every other tile (docs/adr/112): the lit card is
+  // the one at full strength among faded ones, which reads from across the
+  // screen where a thin coloured border did not. Only from the other
+  // surface — a card hover sets both ids, and dimming the list under a
+  // pointer that is reading it would fade the very rows it is about to
+  // move to.
+  let listDimmed = $derived(previewing !== null && hoveredCardId === null);
+
   function preview(patch, fromMap = false) {
     previewing = patch?.id ?? null;
     // A preview that comes from the map brings its card to the reader; one
@@ -654,6 +659,13 @@
         onClose={onDockClose}
       />
     {:else}
+    <!-- One glass card for the whole list: the header and the scrolling
+         cards share a single surface with the docked profile's margins, so
+         the quilt shows through one calm pane rather than around every card.
+         The header used to be its own floating card over loose cards, and
+         at desktop width the quilt behind, the header edge and forty card
+         edges all competed. -->
+    <div class="cards-panel">
     <!-- The list's header carries only the list's own controls
          (docs/adr/074). The Quilt/Map switch used to sit here and now lives
          on the canvas, which is the thing it changes. -->
@@ -688,9 +700,22 @@
           <option value="alpha">A→Z</option>
         </select>
       </div>
+      <!-- The show/hide control (docs/adr/111, amended 2026-09-20): at the
+           end of the card's own header row while the list is there, on the
+           edge it puts the card away toward. Hidden, the card is gone with
+           it, so the canvas copy below takes over at the window's edge. -->
+      <button
+        class="pane-toggle in-card"
+        onclick={paneButtonPress}
+        title={paneButtonLabel}
+        aria-label={paneButtonLabel}
+        aria-pressed="true"
+      >
+        <SidebarSimple size={20} weight="fill" />
+      </button>
     </div>
 
-    <div class="cards-scroll">
+    <div class="cards-scroll scroll-thin">
       {#if loading}
         <div class="cards-loading">
           {#each Array(6) as _}
@@ -735,7 +760,7 @@
           {/if}
         </div>
       {:else}
-        <div class="cards-grid">
+        <div class="cards-grid" class:dimmed={listDimmed}>
           {#each filtered as patch (patch.id)}
             {@render patchCard(patch)}
           {/each}
@@ -747,28 +772,30 @@
         {/if}
       {/if}
     </div>
+    </div>
     {/if}
   </div>
 
-  <!-- The show/hide control (docs/adr/111). One home, never the header: it
-       parks against the pane's left edge and travels with it, so it is in
-       the same place relative to the thing it moves whether that thing is
-       there or not. A control that can delete its own container cannot live
-       inside it, and a control that changes homes is two controls to learn.
+  <!-- The show/hide control's canvas home (docs/adr/111, amended
+       2026-09-20). With the list on screen the control ends the list's own
+       header row, above. This copy stands in once the list is put away and
+       there is no card to hold it: at the window's edge, on the canvas
+       chrome layer with the view switcher. While a profile is docked there
+       is no control at all — the pane is open for the profile, and the
+       profile's dismiss is what ends that.
 
        The rail's toggle mirrored — same icon, same weights, flipped, because
        these are the two edges of one room and a reader who has learned the
        left one has learned this. -->
-  {#if winW > 768}
+  {#if paneHidden}
     <button
       class="pane-toggle"
-      class:pane-shown={!paneHidden}
       onclick={paneButtonPress}
       title={paneButtonLabel}
       aria-label={paneButtonLabel}
-      aria-pressed={!paneHidden}
+      aria-pressed="false"
     >
-      <SidebarSimple size={20} weight={paneHidden ? 'duotone' : 'fill'} />
+      <SidebarSimple size={20} weight="duotone" />
     </button>
   {/if}
 
@@ -830,7 +857,8 @@
 
   /* ================================================================
      CARDS PANE — floats over the right side of the canvas; the pane
-     itself is transparent so the quilt pans behind the cards
+     itself is transparent, and the list inside it is one glass card
+     (.cards-panel) the quilt pans behind
      ================================================================ */
   /* The width is the reader's, at three stops (docs/adr/111), published as
      one custom property so the shell's filter chips can clear the same edge
@@ -860,18 +888,13 @@
     pointer-events: none;
   }
 
-  /* Canvas chrome, on the same floating layer and with the same glass recipe
-     as the view switcher — and parked against the pane's own edge, which it
-     reads from the same published width the pane does. So it travels with
-     the pane and stays in one place relative to it, rather than being in the
-     header sometimes and on the canvas other times. Level with the view
-     switcher on the opposite edge: the two ends of the canvas's top line.
-     It rides the same 150ms as the pane so the button and the edge arrive
-     together. */
+  /* The canvas copy: chrome on the same floating layer and with the same
+     glass recipe as the view switcher, level with it on the opposite edge —
+     the two ends of the canvas's top line. It only exists with the list put
+     away, so it sits 12px off the window's edge like any floating chrome. */
   .pane-toggle {
     position: fixed;
     top: 68px;
-    /* Hidden: 12px off the window's edge, like any floating chrome. */
     right: 12px;
     z-index: 20;
     display: flex;
@@ -888,7 +911,7 @@
     box-shadow: 0 2px 12px var(--color-shadow);
     color: var(--color-text-muted);
     cursor: pointer;
-    transition: right 150ms ease, color 150ms ease;
+    transition: color 150ms ease;
   }
 
   /* The rail's icon points at a panel on the left; this one is the same room's
@@ -902,20 +925,39 @@
     color: var(--color-text);
   }
 
-  /* Shown: flush to the pane's box, so the only space between the button and
-     the cards is the pane's own 16px gutter — the same one the header card
-     and the scroll area are already inset by. Adding a gap on top of that
-     gutter read as a double margin, because it was one. */
-  .pane-toggle.pane-shown {
-    right: var(--pw-cards-pane-w, 45%);
-    color: var(--color-text);
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .cards-pane,
     .pane-toggle {
       transition: none;
     }
+  }
+
+  /* The list is one card, full height. The same margins, edge and shadow as
+     the docked profile that takes this slot (DockedProfile's .dock.panel),
+     so the two things that can occupy the pane are the same shape. The
+     backdrop is the rail panel's recipe, not --color-glass: at 0.92 alpha a
+     card this size is a wall, and the point of a card over the quilt is
+     that the quilt is still there behind it. Blur keeps the tiles' colour
+     and drops their labels, so nothing behind competes with the list. */
+  .cards-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    /* No top margin: the pane's own padding already ends at 56px, which is
+       where the rail's card starts on the other side (SocialShell's
+       .sidebar-rail.quilt-mode). The bar paints no edge on this route, so
+       the two cards hang from the same line with nothing between. */
+    margin: 0 16px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: 0 2px 12px var(--color-shadow);
+    /* The corners clip the scroll area, so the cards slide under the
+       header's edge rather than past the panel's rounded corners. */
+    overflow: hidden;
   }
 
   /* The header has to survive the one-column stop (docs/adr/111), where it
@@ -924,21 +966,42 @@
      results"), "In view" broke across two lines, and the width control
      itself was pushed off the end — a control that cannot be reached at one
      of its own stops. `margin-left: auto` on the group keeps it right-
-     aligned on whichever row it lands on. */
+     aligned on whichever row it lands on.
+
+     A row of the panel, not a card of its own: one edge below it separates
+     it from the scrolling cards. The show/hide control ends the row, on the
+     edge it puts the card away toward, so the right padding is the button's
+     own breathing room rather than the text's. */
   .cards-header {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     row-gap: 6px;
     gap: 8px;
-    margin: 12px 16px 0;
-    padding: 10px 14px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-glass);
-    backdrop-filter: blur(14px) saturate(1.2);
-    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    padding: 8px 8px 8px 14px;
+    border-bottom: 1px solid var(--color-border);
     flex-shrink: 0;
+  }
+
+  /* In the card: the bar's sidebar toggle, mirrored — no chip, no glass, a
+     hover wash on the surface it already sits on. Centred on the row rather
+     than on the text baseline, which an icon has none of. */
+  .pane-toggle.in-card {
+    position: static;
+    align-self: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius);
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    color: var(--color-text-muted);
+  }
+
+  .pane-toggle.in-card:hover {
+    background: var(--color-overlay);
+    color: var(--color-text);
   }
 
   .cards-header h2 {
@@ -1013,7 +1076,7 @@
   .cards-scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 12px 16px;
+    padding: 12px 14px;
   }
 
   /* ================================================================
@@ -1039,16 +1102,29 @@
     background: var(--color-surface);
     text-align: left;
     box-shadow: 0 2px 10px var(--color-shadow);
-    transition: box-shadow 150ms ease, border-color 150ms ease;
+    transition: box-shadow 150ms ease, border-color 150ms ease, opacity 150ms ease;
     padding: 0;
   }
 
-  /* The previewed card, whether the pointer is on it or on its pin. Border
-     and lift only — nothing that changes the card's size, or the list would
-     reflow under a pointer that is merely passing over the map. */
+  /* The previewed card, whether the pointer is on it or on its tile. Lift
+     only — nothing that changes the card's size, or the list would reflow
+     under a pointer that is merely passing over the quilt. The emphasis is
+     what happens to the *other* cards, below. */
   .patch-card.previewing {
-    border-color: var(--color-primary);
     box-shadow: 0 4px 16px var(--color-shadow);
+  }
+
+  /* Pointed at from the quilt or the map, every other card fades — the
+     list's own version of the quilt's hover dim (docs/adr/112), and the
+     same strength: the quilt's scrim is 62% of the background, so the card
+     keeps 38%. Opacity rather than a scrim because the cards are opaque
+     surfaces over glass, and fading one toward the glass is what a scrim of
+     the panel's own colour would do anyway. The transition is the whole
+     smoothing: crossing tile to tile keeps the list dimmed and moves the lit
+     card, and the 150ms swallows the empty instant between one tile's leave
+     and the next one's enter. */
+  .cards-grid.dimmed .patch-card:not(.previewing) {
+    opacity: 0.38;
   }
 
   .patch-card:hover {
@@ -1218,14 +1294,12 @@
     margin-bottom: 10px;
   }
 
+  /* Plain text in the panel. It was a glass card of its own when the
+     cards floated loose over the quilt; inside a card it would be a card
+     in a card. */
   .cards-empty {
     text-align: center;
     padding: 1.25rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-glass);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
   }
 
   .cards-empty .suggest-link {
@@ -1372,11 +1446,23 @@
     }
 
     .cards-scroll {
-      padding-bottom: calc(124px + env(safe-area-inset-bottom, 0px));
+      padding: 12px 16px calc(124px + env(safe-area-inset-bottom, 0px));
     }
 
     .cards-header {
       display: none;
+    }
+
+    /* The list fills the screen here and the pane is opaque already, so
+       the card dissolves: no edge, no inset, nothing to see through. */
+    .cards-panel {
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
     }
 
     /* Toggle visibility */
