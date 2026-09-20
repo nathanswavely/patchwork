@@ -664,13 +664,24 @@
     </section>
 
     <section class="pw-section">
-      <h2>Download my data</h2>
+      <!-- Two downloads three inches apart, one saving a person and one
+           saving the community, and the headings said neither: "if I'd
+           taken the obvious-sounding one, the one called 'Download my
+           data', I'd have walked away thinking I had the press's records
+           and I'd have had a file with one person in it." So each heading
+           now says whose data it is, and each paragraph ends by naming the
+           other one (F-103). -->
+      <h2>Your own data</h2>
       <p class="muted profile-hint">
         One file with everything this quilt holds about you: your profile and
         contact card, every membership including the ones you keep hidden, the
         proposals, votes, comments, notices and events you wrote, and your
         settings. Nothing anyone else wrote, and no sign-in secrets — so it is
         safe to keep, and it will not let anyone into your account.
+      </p>
+      <p class="muted profile-hint">
+        This is about you and nobody else. For your community's own
+        records, take a copy of the quilt below.
       </p>
       <div class="field-actions">
         <button class="btn btn-secondary" onclick={downloadMyData} disabled={downloadingData}>
@@ -680,7 +691,13 @@
     </section>
 
     <section class="pw-section">
-      <h2>Member seamrip</h2>
+      <!-- "Member seamrip" as a heading did none of the work, sitting
+           directly above Danger Zone: "I sat there for a good half-minute
+           working out whether 'Member seamrip' meant 'rip out this member',
+           as in remove me. That paragraph is doing all the work; the label
+           is doing none." Plain words first, the product's own word beside
+           them so somebody told to "take a seamrip" still finds it. -->
+      <h2>A copy of this quilt (seamrip)</h2>
       <p class="muted profile-hint">
         A copy of this quilt as you can see it, in the format a new Patchwork
         reads. It is here so a community can start again elsewhere without
@@ -691,6 +708,10 @@
         contact cards, or noticeboards. Other people travel as a name and a
         picture, so the new quilt invites everyone back and each person sets
         their own visibility there.
+      </p>
+      <p class="muted profile-hint">
+        Nothing here removes you or changes this quilt. Any Patchwork can
+        read the file, so it goes to whoever sets the new one up.
       </p>
       <div class="field-actions">
         <button class="btn btn-secondary" onclick={takeMemberSeamrip} disabled={takingSeamrip}>
