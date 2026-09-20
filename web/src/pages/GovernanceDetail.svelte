@@ -1,5 +1,6 @@
 <script>
   import { getContext } from 'svelte';
+  import { formatDay } from '../lib/datetime.js';
   import { api } from '../lib/api.js';
   import { getParams, navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
@@ -65,7 +66,7 @@
             <h1>{doc.title}</h1>
             <div class="doc-meta">
               <span class="badge">v{doc.version}</span>
-              <span class="muted">Last updated {new Date(doc.updated_at).toLocaleDateString()}</span>
+              <span class="muted">Last updated {formatDay(doc.updated_at)}</span>
               {#if isMember && doc.visibility !== 'public'}
                 <!-- Only members see this doc at all; the chip tells them the
                      public can't (docs/adr/036). -->

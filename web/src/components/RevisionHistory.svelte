@@ -1,5 +1,6 @@
 <script>
   import { api } from '../lib/api.js';
+  import { formatDay } from '../lib/datetime.js';
 
   let { proposalId = '' } = $props();
 
@@ -36,7 +37,7 @@
     if (hours < 24) return `${hours}h ago`;
     const days = Math.floor(hours / 24);
     if (days < 30) return `${days}d ago`;
-    return new Date(dateStr).toLocaleDateString();
+    return formatDay(dateStr);
   }
 </script>
 
