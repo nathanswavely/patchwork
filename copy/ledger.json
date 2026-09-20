@@ -19803,7 +19803,7 @@
         },
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 49,
+          "line": 50,
           "kind": "js-string",
           "raw": "Adopted elsewhere",
           "quote": "'"
@@ -44224,7 +44224,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 75,
+          "line": 76,
           "kind": "js-string",
           "raw": "Carried by a vote.",
           "quote": "'"
@@ -44242,7 +44242,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 80,
+          "line": 81,
           "kind": "js-string",
           "raw": "Put to a vote. Nobody decided it either way; the proposal lapsed.",
           "quote": "'"
@@ -44260,7 +44260,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 82,
+          "line": 83,
           "kind": "js-string",
           "raw": "Put to a vote and did not carry.",
           "quote": "'"
@@ -44278,7 +44278,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 89,
+          "line": 90,
           "kind": "js-string",
           "raw": "Declined by the maintainer.",
           "quote": "'"
@@ -44296,7 +44296,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 91,
+          "line": 92,
           "kind": "js-string",
           "raw": "Applied without a vote.",
           "quote": "'"
@@ -44314,7 +44314,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 100,
+          "line": 101,
           "kind": "js-string",
           "raw": "Settled nothing. Nobody was elected.",
           "quote": "'"
@@ -44332,7 +44332,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 108,
+          "line": 109,
           "kind": "js-string",
           "raw": "The members seated a council.",
           "quote": "'"
@@ -44350,9 +44350,99 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 113,
+          "line": 114,
           "kind": "js-string",
           "raw": "A meeting chose the council.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "9f50f781a363",
+      "text": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
+      "words": 17,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The sentence a founder came back for twice. Says both halves of her question, when and why, and names the rule rather than a number, because the inactivity period is per patch.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 124,
+          "kind": "js-string",
+          "raw": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "30b9dae3ff4c",
+      "text": "Their seat was vacated.",
+      "words": 4,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The same event where the sweep recorded no reason. Says what is known and does not invent the rest.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 125,
+          "kind": "js-string",
+          "raw": "Their seat was vacated.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "73d7724bc77e",
+      "text": "Stepped in as an interim admin, under this patch’s succession policy.",
+      "words": 11,
+      "tier": "helper",
+      "status": "as-is",
+      "replacement": null,
+      "note": "An interim promotion. Names the policy because the reader is often finding out for the first time that their patch has one.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 128,
+          "kind": "js-string",
+          "raw": "Stepped in as an interim admin, under this patch’s succession policy.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "daf091a504fe",
+      "text": "Made an admin.",
+      "words": 3,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "A person made an admin by another person, where the record has lost who did it. The actor is named in the branch above where it is known.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 131,
+          "kind": "js-string",
+          "raw": "Made an admin.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fb4bb0ff71e6",
+      "text": "Stopped being an admin.",
+      "words": 4,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Somebody off the council by a decision rather than by the clock. Deliberately not \"removed\": the same act covers stepping down and being stood down, and the record should not assert which.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 133,
+          "kind": "js-string",
+          "raw": "Stopped being an admin.",
           "quote": "'"
         }
       ]
@@ -44368,7 +44458,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 115,
+          "line": 135,
           "kind": "js-string",
           "raw": "A meeting adopted this text.",
           "quote": "'"
@@ -44386,7 +44476,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 124,
+          "line": 144,
           "kind": "markup",
           "raw": "Record",
           "quote": null
@@ -44404,7 +44494,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 128,
+          "line": 148,
           "kind": "markup",
           "raw": "Every decision this patch has reached, and every one it failed to, newest first.",
           "quote": null
@@ -44422,7 +44512,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 137,
+          "line": 157,
           "kind": "markup",
           "raw": "Nothing settled yet. Proposals show up here once they close.",
           "quote": null
