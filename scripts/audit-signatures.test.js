@@ -135,3 +135,23 @@ test('an empty invalid array is not read as a mismatch', opts, () => {
   });
   assert.equal(r.code, 0);
 });
+
+// CI runs the script by path, not as an argument to bash, so it needs the
+// execute bit recorded in git. Windows does not track file modes, so a
+// script added from there arrives 100644 and the job dies with a bare
+// "Permission denied" and exit 126 — which is what happened to the first
+// push of this very change. The cases above all invoke it through `bash`,
+// so none of them could ever have caught it. This reads the index, which
+// is the thing CI actually checks out, and works from any platform.
+test('the script is executable in git, the way CI invokes it', () => {
+  const r = spawnSync('git', ['ls-files', '-s', '--', 'scripts/audit-signatures.sh'], {
+    cwd: resolve(__dirname, '..'),
+    encoding: 'utf8',
+  });
+  assert.equal(r.status, 0, 'git ls-files failed');
+  assert.match(
+    r.stdout,
+    /^100755 /,
+    `expected mode 100755, got: ${r.stdout.trim()}. Fix with: git update-index --chmod=+x scripts/audit-signatures.sh`,
+  );
+});
