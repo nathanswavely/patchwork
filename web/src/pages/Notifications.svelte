@@ -1,5 +1,6 @@
 <script>
   import NotifIcon from '../components/NotifIcon.svelte';
+  import { formatDay } from '../lib/datetime.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
@@ -109,7 +110,10 @@
     if (hrs < 24) return `${hrs}h ago`;
     const days = Math.floor(hrs / 24);
     if (days < 30) return `${days}d ago`;
-    return new Date(iso).toLocaleDateString();
+    // The same words the rest of the app uses for a date. This column
+    // mixes relative and absolute already; it should not also mix
+    // "Aug 15, 2026" with "8/15/2026".
+    return formatDay(iso);
   }
 </script>
 

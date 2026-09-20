@@ -6,7 +6,7 @@
  * against source text — there is no Svelte render library in this project
  * (see patch-profile-window.test.js).
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
@@ -25,7 +25,17 @@ function source(relPath) {
 const AUG_2026 = '2026-08-12T19:30:00Z';
 
 describe('the date densities are named, not re-derived', () => {
+  // The compact density drops the year only while the year is implied, so
+  // these assertions have to say when "now" is or they mean something
+  // different every January.
+  afterEach(() => { vi.useRealTimers(); });
+  function pretendItIs(iso) {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(iso));
+  }
+
   it('gives three distinct densities', () => {
+    pretendItIs('2026-09-19T12:00:00Z');
     const compact = formatEventDate(AUG_2026);
     const stamped = formatEventDateStamped(AUG_2026);
     const long = formatEventDateLong(AUG_2026);
@@ -35,6 +45,30 @@ describe('the date densities are named, not re-derived', () => {
     expect(long).toContain('2026');
     // The long form spells its words out; the stamped one abbreviates.
     expect(long.length).toBeGreaterThan(stamped.length);
+  });
+
+  // F-104. The compact density dropped the year unconditionally, and the
+  // surfaces that use it are the ones that outlive a year: a patch's event
+  // list is its whole calendar, a noticeboard keeps a notice as long as it
+  // is useful, and formatRelative falls back here at thirty days. A member
+  // read "Oct 28, rehearsal, upstairs room" as something to turn up to and
+  // found 2025 on it only after clicking.
+  it('carries the year once the date is not in this one', () => {
+    pretendItIs('2027-02-01T12:00:00Z');
+    expect(formatEventDate(AUG_2026)).toContain('2026');
+  });
+
+  it('still drops it inside the current year, which is the common case', () => {
+    pretendItIs('2026-01-02T12:00:00Z');
+    expect(formatEventDate(AUG_2026)).not.toContain('2026');
+  });
+
+  // The fallback is the whole reason this matters: past thirty days the
+  // relative form hands over to the compact one, at exactly the point the
+  // year stops being implied.
+  it('reaches formatRelative, which falls back to it past thirty days', () => {
+    pretendItIs('2027-02-01T12:00:00Z');
+    expect(formatRelative(AUG_2026)).toContain('2026');
   });
 
   it('returns empty for a missing timestamp rather than "Invalid Date"', () => {

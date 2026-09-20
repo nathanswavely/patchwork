@@ -1,0 +1,34 @@
+-- A contest records who it seated.
+--
+-- It did not. `seatWinners` writes the holder onto the seat and clears
+-- `seats.contested_in`, so once a contest resolves nothing connects it to the
+-- people it put in the chairs. The record page therefore said "The electorate
+-- seated a council." and named nobody, and the election page worked out who
+-- was seated by re-deriving it: the top `seats_contested` candidates with at
+-- least one approval.
+--
+-- Re-deriving is the thing this schema already refuses to do elsewhere. The
+-- governance record's own Entry struct says why it carries no tally: a tally
+-- is recomputed on every read and drops ballots from people who have since
+-- left the patch, so it drifts from the outcome that was recorded when the
+-- vote resolved. The seated list has exactly that problem — a voter leaving
+-- changes an approval count, which can reorder the candidates, which can move
+-- the "seated" tag onto somebody who never held the chair. The election panel
+-- has already been bitten once by inferring seats from the tally, when a
+-- contest that missed quorum tagged its most-approved candidates seated.
+--
+-- So it becomes a stored fact, written once when the contest resolves.
+--
+-- ADD COLUMN, not a table rebuild: `election_ballots.candidate_id` references
+-- this table, and a rebuild would fire its ON DELETE CASCADE inside the
+-- migration's transaction, where PRAGMA foreign_keys cannot be turned off.
+-- Adding a column touches none of that.
+--
+-- Existing rows get 0, including the candidates of contests that really did
+-- seat somebody. That is correct rather than convenient: nothing recorded who
+-- they were, and writing a guess into a governance record is worse than
+-- leaving it unnamed. Every surface degrades to the sentence it used before —
+-- the record says a council was seated without naming it, and the panel falls
+-- back to the tally for contests that predate this column.
+
+ALTER TABLE election_candidates ADD COLUMN seated INTEGER NOT NULL DEFAULT 0;

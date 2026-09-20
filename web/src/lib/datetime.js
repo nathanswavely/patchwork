@@ -57,12 +57,47 @@ function withZone(opts, tz) {
   return { ...opts, timeZone: tz };
 }
 
-/** "Sun, Jul 26" — list rows, cards, anywhere the year is implied. */
+/**
+ * yearIn is the calendar year a instant falls in, read in the zone it will
+ * be rendered in. Comparing `getFullYear()` would answer for the reader's
+ * own zone, which is the wrong one for an event pinned to its patch's.
+ */
+function yearIn(d, tz) {
+  try {
+    return new Intl.DateTimeFormat('en-US', withZone({ year: 'numeric' }, tz)).format(d);
+  } catch {
+    return String(d.getFullYear());
+  }
+}
+
+/**
+ * "Sun, Jul 26" this year, "Sun, Jul 26, 2025" otherwise — list rows and
+ * cards, where the year is noise right up until it isn't.
+ *
+ * This used to drop the year unconditionally, described as "anywhere the
+ * year is implied". It is implied for about eleven months of the twelve,
+ * and the surfaces that call this are exactly the ones that outlive that:
+ * a patch's event list is its whole calendar, a noticeboard keeps a notice
+ * for as long as it is useful, and `formatRelative` falls back here at
+ * thirty days, which is the moment implication runs out.
+ *
+ * The cost was not hypothetical. A member read "Oct 28, rehearsal, upstairs
+ * room" as a thing to turn up to and found 2025 on it only after clicking:
+ * "If I hadn't clicked I'd have shown up with my bass to an empty room."
+ * Another read a notice from the previous October as three weeks away.
+ * A third, on a board where two notices thirteen months apart sat one above
+ * the other looking the same age: "On a board where things sit for a year,
+ * a date without a year is not a date."
+ *
+ * Same year, no year: that is still the common case and still reads
+ * cleanly. Any other year says so.
+ */
 export function formatEventDate(iso, tz) {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-US', withZone({
-    weekday: 'short', month: 'short', day: 'numeric',
-  }, tz));
+  const d = new Date(iso);
+  const opts = { weekday: 'short', month: 'short', day: 'numeric' };
+  if (yearIn(d, tz) !== yearIn(new Date(), tz)) opts.year = 'numeric';
+  return d.toLocaleDateString('en-US', withZone(opts, tz));
 }
 
 /** "Sun, Jul 26, 2026" — queues and admin tables, where rows span years. */

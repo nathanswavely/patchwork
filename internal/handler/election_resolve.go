@@ -69,11 +69,16 @@ func resolveElection(db *database.DB, proposalID string) bool {
 	// be told apart from not voting — a real limit of the model, and one that
 	// errs toward "not enough people took part" rather than toward seating a
 	// council on silence.
-	var voted int
-	db.QueryRow(`SELECT COUNT(DISTINCT voter_id) FROM election_ballots WHERE proposal_id = ?`, proposalID).Scan(&voted)
-	eligible, _ := eligibleVoters(db, nodeID, gc)
-	if gc.QuorumPercent > 0 && (eligible == 0 || (voted*100/eligible) < gc.QuorumPercent) {
-		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName, "Not enough people voted.")
+	//
+	// Through electionTurnoutOf and quorumReached rather than counting here:
+	// the page says this number and the page must not be able to disagree
+	// with the thing that decided. The old inline count also drew its
+	// numerator from every ballot row and its denominator from the current
+	// electorate, so the two came from different populations.
+	turnout := electionTurnoutOf(db, proposalID, nodeID, gc)
+	if !turnout.Met {
+		closeElectionUnsettled(db, proposalID, nodeID, slug, nodeName,
+			quorumShortfall(turnout))
 		return true
 	}
 
@@ -185,9 +190,35 @@ func closeElectionUnsettled(db *database.DB, proposalID, nodeID, slug, nodeName,
 // docs/adr/102 made an empty council a state the product accepts; this is the
 // product admitting to it at the moment it happens, in the notification, the
 // first time rather than the fifth.
+// quorumShortfall says why a contest failed, in the numbers it failed by.
+//
+// "Not enough people voted." on its own is what six consecutive failures told
+// a four-person collective, while the arithmetic that produced it sat on a
+// settings form two clicks away.
+func quorumShortfall(t electionTurnout) string {
+	if t.Eligible == 0 {
+		return "Nobody was eligible to vote."
+	}
+	return "Not enough people voted: " + strconv.Itoa(t.Voted) + " of " +
+		strconv.Itoa(t.Eligible) + ", and " + strconv.Itoa(t.Needed) + " were needed."
+}
+
 func holdoverLine(db *database.DB, nodeID string) string {
 	var held, total int
 	db.QueryRow(`SELECT COUNT(holder_id), COUNT(*) FROM seats WHERE node_id = ?`, nodeID).Scan(&held, &total)
+	// A council can be part full, and saying "the council continues" over one
+	// person on a bench of three is what a former chair called generous to
+	// the point of being untrue. Three states here were not enough for four
+	// worlds: full, part full, empty, and no council at all.
+	if held > 0 && held < total {
+		empty := total - held
+		seats := "seats are"
+		if empty == 1 {
+			seats = "seat is"
+		}
+		return "The " + strconv.Itoa(held) + " of " + strconv.Itoa(total) +
+			" seats that are held carry on, and " + strconv.Itoa(empty) + " " + seats + " still empty."
+	}
 	if held > 0 {
 		return "The council continues until a successor is elected."
 	}
@@ -337,6 +368,12 @@ func seatWinners(db *database.DB, nodeID, slug, nodeName, proposalID string, win
 		seated[wnr.UserID] = true
 		db.Exec(`UPDATE seats SET holder_id = ?, term_ends_at = ?, contested_in = NULL WHERE id = ?`,
 			wnr.UserID, nullIfEmpty(termEnds), chairs[i])
+		// And on the contest, so the record can name who it seated without
+		// re-deriving it from a tally that moves when somebody leaves the
+		// patch. This is the only moment the answer is known for certain:
+		// the line above clears `contested_in`, after which nothing joins
+		// this contest to the chairs it filled.
+		db.Exec(`UPDATE election_candidates SET seated = 1 WHERE id = ?`, wnr.CandidateID)
 
 		var role string
 		db.QueryRow(`SELECT role FROM memberships WHERE user_id = ? AND node_id = ? AND status = 'active'`,

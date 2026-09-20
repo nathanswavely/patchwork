@@ -1376,6 +1376,12 @@ func GetProposal(db *database.DB) http.HandlerFunc {
 			"nominations_close_at": nominationsCloseAt,
 			"election_phase":       electionPhase(seatsContested, nominationsCloseAt, p.Status),
 			"candidates":           electionCandidates(db, proposalID, viewerID),
+			// How many took part and how many had to. An ordinary proposal
+			// has carried this since it existed, in approve/reject/abstain
+			// against `eligible_voters`; an election's ballots live in their
+			// own table, so those counts are all zero and the page had
+			// nothing to say. Null on anything that is not an election.
+			"election_turnout": electionTurnoutFor(db, seatsContested, proposalID, p.NodeID, gc),
 			"title":                p.Title,
 			"body":                 p.Body,
 			"status":               p.Status,

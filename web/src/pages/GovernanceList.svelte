@@ -1,5 +1,6 @@
 <script>
   import { getContext } from 'svelte';
+  import { formatDay } from '../lib/datetime.js';
   import { api } from '../lib/api.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
@@ -160,7 +161,7 @@
                 <h3>{doc.title}</h3>
                 <div class="doc-meta">
                   <span class="muted">v{doc.version}</span>
-                  <span class="muted">Updated {new Date(doc.updated_at).toLocaleDateString()}</span>
+                  <span class="muted">Updated {formatDay(doc.updated_at)}</span>
                   {#if doc.kind === 'lining'}
                     <span
                       class="vis-chip lining"

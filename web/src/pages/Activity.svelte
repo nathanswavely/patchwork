@@ -55,7 +55,12 @@
     const yesterday = new Date(now - 86400000).toISOString().substring(0, 10);
     if (dateStr === today) return 'Today';
     if (dateStr === yesterday) return 'Yesterday';
-    return d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+    // The year once the feed reaches back past this one. Same rule as
+    // lib/datetime.js's formatEventDate, and the same reason: these are
+    // day headings on a list that scrolls into last year.
+    const opts = { weekday: 'long', month: 'short', day: 'numeric' };
+    if (d.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
+    return d.toLocaleDateString(undefined, opts);
   }
 
   function timeOnly(iso) {

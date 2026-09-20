@@ -134,6 +134,18 @@ func settledProposals(db *database.DB, nodeID, slug string) []recordEntry {
 			// implying the community turned somebody down.
 			if status == "approved" {
 				e.Outcome = "seated"
+				// Who, by name. The line read "The electorate seated a
+				// council." on a contest that filled one chair of three,
+				// and a former chair of that co-op read it four times
+				// before accepting it named nobody: "If I had skimmed the
+				// record and gone away, I would have gone away with the
+				// wrong idea of my own co-op." The same `Names` field a
+				// council attestation already uses, so the record has one
+				// way of saying who was seated rather than two.
+				//
+				// Empty on contests that resolved before the outcome was
+				// stored, and the page falls back to the unnamed sentence.
+				e.Names = seatedNames(db, id)
 			} else {
 				e.Outcome = "unsettled"
 			}
@@ -239,5 +251,36 @@ func recordedDecisions(db *database.DB, nodeID string) []recordEntry {
 		}
 	}
 
+	return out
+}
+
+// seatedNames is who a contest put in the chairs, in the order the chairs
+// were filled.
+//
+// Read from the stored outcome rather than recomputed from the tally, for
+// the reason recordEntry gives for carrying no tally at all: a tally drops
+// ballots from people who have since left the patch, so it moves after the
+// fact, and a governance record that renames who was elected because a voter
+// left is worse than one that stays quiet.
+//
+// Empty for contests that resolved before that column existed; the page has
+// a sentence for that.
+func seatedNames(db *database.DB, proposalID string) []string {
+	rows, err := db.Query(
+		`SELECT `+displayNameExpr("u")+`
+		   FROM election_candidates c LEFT JOIN users u ON u.id = c.user_id
+		  WHERE c.proposal_id = ? AND c.seated = 1
+		  ORDER BY c.id ASC`, proposalID)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var name string
+		if rows.Scan(&name) == nil && name != "" {
+			out = append(out, name)
+		}
+	}
 	return out
 }
