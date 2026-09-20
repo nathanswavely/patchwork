@@ -1006,7 +1006,7 @@
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 389,
+          "line": 394,
           "kind": "js-string",
           "raw": "Elected Council",
           "quote": "'"
@@ -20362,7 +20362,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 227,
+          "line": 244,
           "kind": "markup",
           "raw": "Choose a member",
           "quote": null
@@ -22693,24 +22693,6 @@
       ]
     },
     {
-      "id": "dad2c9ae2e44",
-      "text": "Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.",
-      "words": 30,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "docs/adr/108: a chair nobody wins keeps the council clock; read on the page",
-      "occurrences": [
-        {
-          "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 158,
-          "kind": "js-string",
-          "raw": "Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "cb4da358c6d1",
       "text": "Only an admin can put a name forward for a vacant seat. Ask one to nominate you.",
       "words": 17,
@@ -22721,7 +22703,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 168,
+          "line": 173,
           "kind": "js-string",
           "raw": "Only an admin can put a name forward for a vacant seat. Ask one to nominate you.",
           "quote": "'"
@@ -22739,7 +22721,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 172,
+          "line": 177,
           "kind": "js-string",
           "raw": "Every seat is held and no election is scheduled. Nothing changes on this council until a seat is added or a term end is set.",
           "quote": "'"
@@ -22757,7 +22739,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 175,
+          "line": 180,
           "kind": "js-string",
           "raw": "Every seat is held and the next contest is due now. It opens shortly, and any member may stand.",
           "quote": "'"
@@ -22775,7 +22757,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 207,
+          "line": 212,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. This patch records its leadership decisions elsewhere, so a decision made there is what puts somebody back.",
           "quote": "'"
@@ -22793,7 +22775,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 208,
+          "line": 213,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. This council is filled by election.",
           "quote": "'"
@@ -22811,7 +22793,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 210,
+          "line": 215,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here. An admin is nominated by an admin and ratified by the members, so this patch cannot start one on its own until an instance admin puts somebody back.",
           "quote": "'"
@@ -22829,7 +22811,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 211,
+          "line": 216,
           "kind": "js-string",
           "raw": "Nobody holds the admin role here, so nobody can manage this patch until an instance admin puts somebody back.",
           "quote": "'"
@@ -22847,7 +22829,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 239,
+          "line": 244,
           "kind": "js-string",
           "raw": "Could not set the term end",
           "quote": "'"
@@ -22865,7 +22847,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 252,
+          "line": 257,
           "kind": "js-string",
           "raw": "Could not add a seat",
           "quote": "'"
@@ -22883,7 +22865,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 265,
+          "line": 270,
           "kind": "js-string",
           "raw": "Could not remove the seat",
           "quote": "'"
@@ -22901,7 +22883,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 328,
+          "line": 333,
           "kind": "js-string",
           "raw": "Naming a successor needs a passkey. Enroll one in Security settings first.",
           "quote": "'"
@@ -22919,7 +22901,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 329,
+          "line": 334,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -23070,7 +23052,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 346,
+          "line": 351,
           "kind": "js-string",
           "raw": "The maintainer makes all decisions for this patch, and may ask the members before deciding.",
           "quote": "'"
@@ -23088,7 +23070,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 347,
+          "line": 352,
           "kind": "js-string",
           "raw": "Your patch decides things by majority vote. More than half must agree.",
           "quote": "'"
@@ -23106,7 +23088,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 348,
+          "line": 353,
           "kind": "js-string",
           "raw": "Decisions require a supermajority: at least 2 out of 3 voters must agree.",
           "quote": "'"
@@ -23124,7 +23106,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 349,
+          "line": 354,
           "kind": "js-string",
           "raw": "Decisions require consensus. Everyone, or nearly everyone, must agree.",
           "quote": "'"
@@ -23142,7 +23124,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 356,
+          "line": 361,
           "kind": "js-string",
           "raw": " Any number of votes counts. No minimum participation required.",
           "quote": "'"
@@ -23160,7 +23142,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 375,
+          "line": 380,
           "kind": "js-string",
           "raw": "One person maintains this patch. They handle day-to-day decisions and can designate a successor.",
           "quote": "'"
@@ -23178,7 +23160,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 376,
+          "line": 381,
           "kind": "js-string",
           "raw": "Admins earn their role through sustained contribution. When a seat opens, existing admins nominate from active members and the community ratifies.",
           "quote": "'"
@@ -23196,7 +23178,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 377,
+          "line": 382,
           "kind": "js-string",
           "raw": "The community elects admins for fixed terms. Regular elections ensure power rotates.",
           "quote": "'"
@@ -23214,7 +23196,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 410,
+          "line": 415,
           "kind": "markup",
           "raw": "Failed to load governance overview.",
           "quote": null
@@ -23232,7 +23214,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 419,
+          "line": 424,
           "kind": "markup",
           "raw": "{overview.needs_vote} proposal{overview.needs_vote > 1 ? 's' : ''} need{overview.needs_vote === 1 ? 's' : ''} your vote",
           "quote": null
@@ -23250,7 +23232,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 438,
+          "line": 443,
           "kind": "markup",
           "raw": "Nominations are open for {election.seats} seat{election.seats === 1 ? '' : 's'}",
           "quote": null
@@ -23268,7 +23250,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 445,
+          "line": 450,
           "kind": "markup",
           "raw": "Closing {formatDay(election.nominations_close_at)}.",
           "quote": null
@@ -23286,7 +23268,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 457,
+          "line": 462,
           "kind": "markup",
           "raw": "How decisions are made",
           "quote": null
@@ -23304,7 +23286,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 463,
+          "line": 468,
           "kind": "markup",
           "raw": "Proposals are decided outside Patchwork. They stay open here for discussion, and adoption is recorded on the charter.",
           "quote": null
@@ -23323,7 +23305,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 470,
+          "line": 475,
           "kind": "markup",
           "raw": "An admin changes these rules directly.",
           "quote": null
@@ -23341,7 +23323,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 485,
+          "line": 490,
           "kind": "markup",
           "raw": "Leadership: {leadershipLabel(rules?.leadership_model)}",
           "quote": null
@@ -23359,7 +23341,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 503,
+          "line": 508,
           "kind": "markup",
           "raw": "This patch does not list its admins publicly.",
           "quote": null
@@ -23377,7 +23359,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 528,
+          "line": 533,
           "kind": "markup",
           "raw": "Member since {formatDate(admin.joined_at)}",
           "quote": null
@@ -23395,7 +23377,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 549,
+          "line": 554,
           "kind": "markup",
           "raw": "This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.",
           "quote": null
@@ -23413,7 +23395,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 551,
+          "line": 556,
           "kind": "markup",
           "raw": "{seats.length} seat{seats.length === 1 ? '' : 's'} on the council,\n              {vacantSeats.length === 0\n                ? 'all held'\n                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.",
           "quote": null
@@ -23431,7 +23413,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 569,
+          "line": 574,
           "kind": "markup",
           "raw": "Vacant",
           "quote": null
@@ -23449,7 +23431,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 569,
+          "line": 574,
           "kind": "markup",
           "raw": "Held",
           "quote": null
@@ -23467,7 +23449,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 585,
+          "line": 590,
           "kind": "attr:aria-label",
           "raw": "Term end",
           "quote": "\""
@@ -23485,7 +23467,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 617,
+          "line": 641,
           "kind": "markup",
           "raw": "Add a seat",
           "quote": null
@@ -23503,7 +23485,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 619,
+          "line": 643,
           "kind": "markup",
           "raw": "Adding a seat does not make anybody an admin. The community fills it.",
           "quote": null
@@ -23521,7 +23503,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 623,
+          "line": 647,
           "kind": "markup",
           "raw": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought\n              forward, because pushing it back would extend a term nobody voted for. Nobody loses their seat when a term ends — the\n              holder serves until a successor is elected.",
           "quote": null
@@ -23539,7 +23521,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 642,
+          "line": 666,
           "kind": "markup",
           "raw": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
           "quote": null
@@ -23557,7 +23539,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 644,
+          "line": 668,
           "kind": "markup",
           "raw": "Next seat comes up {formatDay(nextTermEnd)}.",
           "quote": null
@@ -23575,7 +23557,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 655,
+          "line": 679,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -23593,7 +23575,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 667,
+          "line": 691,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -23611,7 +23593,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 681,
+          "line": 705,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -23629,7 +23611,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 681,
+          "line": 705,
           "kind": "markup",
           "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
@@ -23648,7 +23630,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 684,
+          "line": 708,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -23666,7 +23648,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 690,
+          "line": 714,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -23684,7 +23666,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 704,
+          "line": 728,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -23702,14 +23684,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 716,
+          "line": 740,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 720,
+          "line": 744,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -23797,7 +23779,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 721,
+          "line": 745,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -24730,7 +24712,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 367,
+          "line": 378,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -27501,7 +27483,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 242,
+          "line": 253,
           "kind": "markup",
           "raw": "Decision Method",
           "quote": null
@@ -27526,7 +27508,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 263,
+          "line": 274,
           "kind": "markup",
           "raw": "Default Voting Period",
           "quote": null
@@ -27551,7 +27533,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 272,
+          "line": 283,
           "kind": "markup",
           "raw": "Amendment Threshold",
           "quote": null
@@ -27576,7 +27558,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 283,
+          "line": 294,
           "kind": "markup",
           "raw": "Auto-Apply Amendments",
           "quote": null
@@ -27601,7 +27583,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 330,
+          "line": 341,
           "kind": "markup",
           "raw": "Succession Policy",
           "quote": null
@@ -27662,7 +27644,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 303,
+          "line": 314,
           "kind": "markup",
           "raw": "Where admins are chosen",
           "quote": null
@@ -27687,7 +27669,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 316,
+          "line": 327,
           "kind": "markup",
           "raw": "Where proposals are decided",
           "quote": null
@@ -27712,7 +27694,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 356,
+          "line": 367,
           "kind": "markup",
           "raw": "Membership Policy",
           "quote": null
@@ -27744,7 +27726,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 365,
+          "line": 376,
           "kind": "markup",
           "raw": "Follower Permissions",
           "quote": null
@@ -27897,14 +27879,14 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 305,
+          "line": 316,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 318,
+          "line": 329,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
@@ -27929,14 +27911,14 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 306,
+          "line": 317,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 319,
+          "line": 330,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
@@ -27979,7 +27961,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 41,
+          "line": 52,
           "kind": "js-string",
           "raw": "Instance admin intervenes",
           "quote": "'"
@@ -28004,7 +27986,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 43,
+          "line": 54,
           "kind": "js-string",
           "raw": "Patch freezes",
           "quote": "'"
@@ -28029,7 +28011,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 67,
+          "line": 78,
           "kind": "js-string",
           "raw": "Approval required",
           "quote": "'"
@@ -28061,7 +28043,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 68,
+          "line": 79,
           "kind": "js-string",
           "raw": "Invite only",
           "quote": "'"
@@ -28158,7 +28140,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 35,
+          "line": 46,
           "kind": "js-string",
           "raw": "Longest-tenured members step in",
           "quote": "'"
@@ -28166,55 +28148,55 @@
       ]
     },
     {
-      "id": "977e90bac99a",
-      "text": "The three longest-standing members become interim admins.",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
+      "id": "4474cf7ca062",
+      "text": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
+      "words": 17,
+      "tier": "prose",
+      "status": "as-is",
       "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 36,
+          "line": 47,
           "kind": "js-string",
-          "raw": "The three longest-standing members become interim admins.",
+          "raw": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "559f6f125726",
-      "text": "Admins name their successors. If none are left to, the three longest-standing members step in.",
-      "words": 15,
-      "tier": "helper",
-      "status": "ai-fine",
+      "id": "a920ba08e058",
+      "text": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
+      "words": 19,
+      "tier": "prose",
+      "status": "as-is",
       "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 38,
+          "line": 49,
           "kind": "js-string",
-          "raw": "Admins name their successors. If none are left to, the three longest-standing members step in.",
+          "raw": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
           "quote": "'"
         }
       ]
     },
     {
-      "id": "32112fa24304",
-      "text": "Members elect the next admins. Until then, the three longest-standing members step in.",
-      "words": 13,
-      "tier": "helper",
-      "status": "ai-fine",
+      "id": "2abee9d8f799",
+      "text": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
+      "words": 28,
+      "tier": "prose",
+      "status": "as-is",
       "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 40,
+          "line": 51,
           "kind": "js-string",
-          "raw": "Members elect the next admins. Until then, the three longest-standing members step in.",
+          "raw": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
           "quote": "'"
         }
       ]
@@ -28230,7 +28212,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 42,
+          "line": 53,
           "kind": "js-string",
           "raw": "An instance admin is notified and decides who runs the patch.",
           "quote": "'"
@@ -28248,7 +28230,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 44,
+          "line": 55,
           "kind": "js-string",
           "raw": "Nobody is promoted; the patch keeps running with no admin.",
           "quote": "'"
@@ -28266,7 +28248,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 59,
+          "line": 70,
           "kind": "js-string",
           "raw": "An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.",
           "quote": "'"
@@ -28284,7 +28266,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 60,
+          "line": 71,
           "kind": "js-string",
           "raw": "More approvals than rejections carries a proposal.",
           "quote": "'"
@@ -28302,7 +28284,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 61,
+          "line": 72,
           "kind": "js-string",
           "raw": "Two thirds of the ballots cast must approve.",
           "quote": "'"
@@ -28320,7 +28302,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 62,
+          "line": 73,
           "kind": "js-string",
           "raw": "One reject defeats a proposal, however many approve it.",
           "quote": "'"
@@ -28338,7 +28320,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 132,
+          "line": 143,
           "kind": "js-string",
           "raw": "No quorum: however few people vote, the result stands.",
           "quote": "'"
@@ -28356,7 +28338,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 135,
+          "line": 146,
           "kind": "js-string",
           "raw": "Nobody can vote here today, so no quorum can be met and a proposal would close with nothing decided.",
           "quote": "'"
@@ -28374,7 +28356,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 140,
+          "line": 151,
           "kind": "js-string",
           "raw": "One person can vote here today, so that single ballot is the whole quorum. An abstention counts toward it.",
           "quote": "'"
@@ -28392,7 +28374,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 146,
+          "line": 157,
           "kind": "js-string",
           "raw": "Everybody votes from the day they join.",
           "quote": "'"
@@ -28410,7 +28392,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 255,
+          "line": 266,
           "kind": "markup",
           "raw": "Quorum (%)",
           "quote": null
@@ -28428,7 +28410,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 293,
+          "line": 304,
           "kind": "markup",
           "raw": "People don't vote on proposals about themselves",
           "quote": null
@@ -28446,7 +28428,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 296,
+          "line": 307,
           "kind": "markup",
           "raw": "Someone nominated for admin sits their own vote out. They stay in the\n        electorate for everything else.",
           "quote": null
@@ -28464,7 +28446,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 309,
+          "line": 320,
           "kind": "markup",
           "raw": "Pick the second if your board is elected at a meeting, on paper, or in\n      another tool. Patchwork will stop conducting leadership changes and let\n      an admin record what was decided.",
           "quote": null
@@ -28482,7 +28464,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 322,
+          "line": 333,
           "kind": "markup",
           "raw": "Pick the second if your members decide at meetings. Proposals stay open\n      for discussion and lose the vote buttons, and an admin records the\n      adopted text on the charter afterwards. Rules changes stay a direct\n      change an admin applies.",
           "quote": null
@@ -28500,7 +28482,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 343,
+          "line": 354,
           "kind": "markup",
           "raw": "Minimum Voting Tenure",
           "quote": null
@@ -28518,7 +28500,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 368,
+          "line": 379,
           "kind": "markup",
           "raw": "Proposals",
           "quote": null
@@ -28543,7 +28525,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 369,
+          "line": 380,
           "kind": "markup",
           "raw": "Charters",
           "quote": null
@@ -28561,7 +28543,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 370,
+          "line": 381,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -36898,7 +36880,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 174,
+          "line": 191,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -39636,7 +39618,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 114,
+          "line": 131,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -39718,7 +39700,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 146,
+          "line": 163,
           "kind": "js-string",
           "raw": "Failed to create proposal",
           "quote": "'"
@@ -39768,7 +39750,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 158,
+          "line": 175,
           "kind": "markup",
           "raw": "Become a member to take part in how this patch governs itself.",
           "quote": null
@@ -42405,7 +42387,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 168,
+          "line": 185,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -43911,7 +43893,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 185,
+          "line": 202,
           "kind": "markup",
           "raw": "Nothing to preview",
           "quote": null
@@ -52099,7 +52081,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 77,
+          "line": 85,
           "kind": "js-string",
           "raw": "Propose a concrete action for the community to take",
           "quote": "'"
@@ -52117,7 +52099,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 79,
+          "line": 87,
           "kind": "js-string",
           "raw": "Nominate an active member for admin",
           "quote": "'"
@@ -52135,7 +52117,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 81,
+          "line": 89,
           "kind": "js-string",
           "raw": "Any other proposal that needs community input",
           "quote": "'"
@@ -52153,7 +52135,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 118,
+          "line": 135,
           "kind": "js-string",
           "raw": "Choose the member this nomination is about",
           "quote": "'"
@@ -52171,7 +52153,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 157,
+          "line": 174,
           "kind": "markup",
           "raw": "Only members can create proposals.",
           "quote": null
@@ -52189,7 +52171,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 164,
+          "line": 181,
           "kind": "markup",
           "raw": "Want to change a governance document or rules? Go to the",
           "quote": null
@@ -52207,7 +52189,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 164,
+          "line": 181,
           "kind": "markup",
           "raw": "page and click \"Propose change\" on the document you want to edit.",
           "quote": null
@@ -52225,7 +52207,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 193,
+          "line": 210,
           "kind": "attr:placeholder",
           "raw": "Explain your proposal and why it matters... Use **bold**, *italic*, and - lists.",
           "quote": "\""
@@ -52243,7 +52225,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 200,
+          "line": 217,
           "kind": "markup",
           "raw": "Type",
           "quote": null
@@ -52261,7 +52243,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 224,
+          "line": 241,
           "kind": "markup",
           "raw": "Nominate for admin",
           "quote": null
@@ -52279,7 +52261,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 234,
+          "line": 251,
           "kind": "markup",
           "raw": "If this passes, they take the vacant seat and serve out its term. Nobody has to approve it afterwards.",
           "quote": null
@@ -52297,7 +52279,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 236,
+          "line": 253,
           "kind": "markup",
           "raw": "If this passes, they become an admin. Nobody has to approve it afterwards.",
           "quote": null
@@ -52315,7 +52297,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 240,
+          "line": 257,
           "kind": "markup",
           "raw": "There is nobody to nominate yet.",
           "quote": null
@@ -52333,7 +52315,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 251,
+          "line": 268,
           "kind": "markup",
           "raw": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.",
           "quote": null
@@ -52351,7 +52333,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 253,
+          "line": 270,
           "kind": "markup",
           "raw": "Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
           "quote": null
@@ -52369,7 +52351,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 255,
+          "line": 272,
           "kind": "markup",
           "raw": "Every seat on the council is held, so there is nobody to nominate. You can add a seat on the Governance page.",
           "quote": null
@@ -52387,7 +52369,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 267,
+          "line": 284,
           "kind": "markup",
           "raw": "How this gets decided",
           "quote": null
@@ -52405,7 +52387,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 272,
+          "line": 289,
           "kind": "markup",
           "raw": "Apply it now",
           "quote": null
@@ -52423,7 +52405,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 273,
+          "line": 290,
           "kind": "markup",
           "raw": "You decide this patch's proposals. This takes effect as soon as you save it.",
           "quote": null
@@ -52441,7 +52423,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 279,
+          "line": 296,
           "kind": "markup",
           "raw": "Ask the members first",
           "quote": null
@@ -52459,7 +52441,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 280,
+          "line": 297,
           "kind": "markup",
           "raw": "Opens an advisory vote. You still decide, at any time, with the tally in front of you.",
           "quote": null
@@ -52477,7 +52459,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 287,
+          "line": 304,
           "kind": "markup",
           "raw": "This patch's maintainer decides proposals. Yours goes to them, and they may ask the members before deciding.",
           "quote": null
@@ -52495,7 +52477,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 299,
+          "line": 316,
           "kind": "markup",
           "raw": "Tip: 72 hours gives everyone a chance to vote before the question goes stale.",
           "quote": null
@@ -58390,6 +58372,78 @@
           "kind": "markup",
           "raw": "· Signed in {new Date(s.created_at).toLocaleDateString()}",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dad2c9ae2e44",
+      "text": "Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.",
+      "words": 30,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/108: a chair nobody wins keeps the council clock; read on the page",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 158,
+          "kind": "js-string",
+          "raw": "Nobody holds the admin role here, so nobody can put a name forward. The election that fills these seats is due now, and any member of this patch may stand.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "977e90bac99a",
+      "text": "The three longest-standing members become interim admins.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 36,
+          "kind": "js-string",
+          "raw": "The three longest-standing members become interim admins.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "559f6f125726",
+      "text": "Admins name their successors. If none are left to, the three longest-standing members step in.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 38,
+          "kind": "js-string",
+          "raw": "Admins name their successors. If none are left to, the three longest-standing members step in.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "32112fa24304",
+      "text": "Members elect the next admins. Until then, the three longest-standing members step in.",
+      "words": 13,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/components/StructuredRulesEditor.svelte",
+          "line": 40,
+          "kind": "js-string",
+          "raw": "Members elect the next admins. Until then, the three longest-standing members step in.",
+          "quote": "'"
         }
       ]
     },
