@@ -31,13 +31,24 @@
   // quietly rewritten the patch's policy. The sweep runs the longest-tenure
   // rule for both today, and each hint says so rather than promising a
   // mechanic the patch does not run.
+  //
+  // "The three longest-standing members step in" was wrong twice over after
+  // docs/adr/102. Interim promotion needs *presence* as well as tenure —
+  // promoteLongestTenured filters on a governance or activity act inside
+  // twice the inactivity window, which is what stops the succession churn
+  // recurring — and where nobody clears that bar it promotes nobody. Two
+  // people read the old sentence in the present tense against patches where
+  // nobody had stepped in: "Six elections have come and gone and the press
+  // has had no admins throughout. Either 'step in' means something other
+  // than what it says, or it did not happen." It did not happen, and the
+  // sentence should have allowed for that.
   const SUCCESSION_OPTIONS = [
     { value: 'longest_tenure', label: 'Longest-tenured members step in',
-      hint: 'The three longest-standing members become interim admins.' },
+      hint: 'The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.' },
     { value: 'nomination', label: 'Nomination',
-      hint: 'Admins name their successors. If none are left to, the three longest-standing members step in.' },
+      hint: 'Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.' },
     { value: 'election', label: 'Election',
-      hint: 'Members elect the next admins. Until then, the three longest-standing members step in.' },
+      hint: 'Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.' },
     { value: 'instance_admin', label: 'Instance admin intervenes',
       hint: 'An instance admin is notified and decides who runs the patch.' },
     { value: 'freeze', label: 'Patch freezes',

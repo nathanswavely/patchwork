@@ -143,10 +143,19 @@ describe('The council page tells the truth about its own calendar', () => {
   });
 
   it('stops telling an admin-less patch to ask an admin', () => {
-    expect(overview).toMatch(/\(overview\?\.admins\?\.length \?\? 0\) === 0/);
-    expect(overview).toMatch(
-      /Nobody holds the admin role here, so nobody can put a name forward\./
-    );
+    // The answer now lives on each empty chair rather than in a general
+    // sentence underneath them, because a chair can name its own date and
+    // the general sentence could not — it addressed a single vacancy as
+    // "these seats". `fill` is 'contest_fills' exactly when the patch has
+    // no admins, so the row carries the whole story and councilAction
+    // stands down rather than saying it twice.
+    expect(overview).toMatch(/Vacant, and this patch has no admins to put a name forward\./);
+    expect(overview).toContain("if (vacantSeats.every((s) => s.fill === 'contest_fills')) return '';");
+    // And the sentence that sends somebody to an admin who does not exist
+    // is still reachable only where one does.
+    const askAn = overview.indexOf('Ask one to nominate you');
+    const adminless = overview.indexOf("s.fill === 'contest_fills'");
+    expect(askAn).toBeGreaterThan(adminless);
   });
 });
 
