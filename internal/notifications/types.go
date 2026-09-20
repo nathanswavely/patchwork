@@ -113,7 +113,19 @@ const (
 	// Its own type rather than GovernanceRulesChanged because nobody in the
 	// patch made this edit: Patchwork did, to a default that leaked, and the
 	// notice has to say so or it reads as an admin's change that no admin
-	// remembers making. Admins only — they are who can put it back.
+	// remembers making.
+	//
+	// Every member, not admins only. "They are who can put it back" is true
+	// until a patch has none, and docs/adr/102 designs for exactly that:
+	// inactivity may empty a council, and an elected patch elects its way
+	// back with no sitting admin needed. On the reference run the rollout
+	// closed two patches and delivered one notice, because the second was a
+	// four-member collective with an empty council — so Patchwork edited its
+	// governance rules, wrote a commit into its repo, and told nobody who
+	// could read it. LiningUpdated, which the delivery below is modelled on,
+	// has been AudienceAllMembers all along for the same reason: a change to
+	// the rules is the members' business, and on an admin-less patch they are
+	// the only people who can start putting it back.
 	GovernanceFollowerChartersClosed NotificationType = "governance.follower_charters_closed"
 	// GovernanceInactivityWarning tells an admin their seat is at risk before
 	// it goes, which is the whole point of the warning: the shipped succession
@@ -314,7 +326,7 @@ var TypeRegistry = map[NotificationType]TypeMeta{
 	// the mid-vote notice is. It changes who can read the patch's private
 	// charters, it happened without anybody asking, and an admin who disagrees
 	// should hear rather than find out.
-	GovernanceFollowerChartersClosed: {CategoryGovernance, "Followers can no longer read members-only charters", AudienceAdminsOnly, PriorityHigh},
+	GovernanceFollowerChartersClosed: {CategoryGovernance, "Followers can no longer read members-only charters", AudienceAllMembers, PriorityHigh},
 	GovernanceInactivityWarning:      {CategoryGovernance, "Your admin seat is inactive", AudienceSpecificUser, PriorityHigh},
 	GovernanceSeatUnavailable:        {CategoryGovernance, "A ratified nomination had no seat", AudienceAdminsOnly, PriorityHigh},
 	GovernanceCouncilEmpty:           {CategoryGovernance, "This patch has no admins", AudienceAllMembers, PriorityHigh},
