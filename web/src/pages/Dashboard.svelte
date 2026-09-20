@@ -20,7 +20,7 @@
   // stating the page size as the count.
   const PAGE = 20;
   let pendingCounts = $state({});   // slug → count
-  let proposalCounts = $state({});  // slug → { count, more }
+  let proposalCounts = $state({});  // slug → { count } awaiting this viewer's vote
   let upcomingEvents = $state([]);
   let upcomingMore = $state(false);
 
@@ -36,7 +36,6 @@
   // Total attention items
   let totalPending = $derived(Object.values(pendingCounts).reduce((s, n) => s + n, 0));
   let totalProposals = $derived(Object.values(proposalCounts).reduce((s, c) => s + c.count, 0));
-  let proposalsMore = $derived(Object.values(proposalCounts).some((c) => c.more));
 
   function countLabel(count, more) {
     return `${count}${more ? '+' : ''}`;
@@ -72,12 +71,23 @@
       } catch {}
     });
 
-    // Open proposals on the patches this person can vote in.
+    // Proposals on these patches that are still waiting on this person.
+    //
+    // This counted the rows it had just fetched — every open proposal on
+    // the patch — so the front door went on saying "ATTENTION NEEDED, 1
+    // open proposal" after they had voted, while the Governance hub inside
+    // the patch had already dropped it. Two members went back and opened
+    // their ballot a second time to check it had saved. The server states
+    // the number now, from the same count the hub reads, so the two
+    // surfaces cannot drift again.
     const memberFetches = [...adminPatches, ...memberPatches].map(async (m) => {
       try {
         const data = await api(`nodes/${m.node_slug}/proposals?status=open&limit=${PAGE}`);
-        const items = data.items || [];
-        if (items.length > 0) proposals[m.node_slug] = { count: items.length, more: !!data.next_cursor };
+        // No "+" on this one, unlike the pending and event counts:
+        // awaiting_your_vote counts the whole patch rather than the page
+        // that came back, so there is never more beyond it.
+        const count = data.awaiting_your_vote ?? 0;
+        if (count > 0) proposals[m.node_slug] = { count };
       } catch {}
     });
 
@@ -127,11 +137,16 @@
           {/if}
           {#if totalProposals > 0}
             <div class="attention-item">
-              <span class="attention-count">{countLabel(totalProposals, proposalsMore)}</span>
-              <span>open {totalProposals === 1 && !proposalsMore ? 'proposal' : 'proposals'}</span>
+              <!-- What the number now means. It counted every open
+                   proposal on the patch and said "open proposals", which
+                   was at least true of itself; it counts what this reader
+                   still owes, so it says that, in the words the Governance
+                   hub uses for the same count. -->
+              <span class="attention-count">{totalProposals}</span>
+              <span>{totalProposals === 1 ? 'proposal needs' : 'proposals need'} your vote</span>
               {#each Object.entries(proposalCounts) as [slug, c]}
                 <a href="/patches/{slug}/governance/proposals" class="attention-link" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/proposals`); }}>
-                  {slug} ({countLabel(c.count, c.more)})
+                  {slug} ({c.count})
                 </a>
               {/each}
             </div>
@@ -204,7 +219,7 @@
                   {m.node_name}
                 </a>
                 {#if proposalCounts[m.node_slug]}
-                  <span class="badge">{countLabel(proposalCounts[m.node_slug].count, proposalCounts[m.node_slug].more)} open</span>
+                  <span class="badge" title="Open proposals here that you have not voted on yet.">{proposalCounts[m.node_slug].count} to vote on</span>
                 {/if}
               </div>
               <div class="patch-card-actions">

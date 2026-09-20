@@ -128,12 +128,18 @@ describe('F-017 — dashboard counts are counts, and the attention list is the p
     expect(src).not.toMatch(/if \(items\.length > 0\) pending\[m\.node_slug\] = items\.length/);
   });
 
-  it('asks for a real page of proposals and says 20+ when more follow', () => {
+  // F-017's rule was that a count must never be the length of a page. The
+  // proposals half no longer comes from the page at all: the server states
+  // how many await this reader (F-108), which is both the honest number and
+  // a smaller one, so the "20+" hedge it used to need is gone and cannot
+  // come back as a page size wearing a plus sign.
+  it('takes the proposal count from the server, not from the page', () => {
     expect(src).toMatch(/const PAGE = 20;/);
     expect(src).toMatch(/proposals\?status=open&limit=\$\{PAGE\}/);
-    expect(src).toMatch(/\{ count: items\.length, more: !!data\.next_cursor \}/);
-    expect(src).toMatch(/function countLabel\(count, more\)/);
-    expect(src).toMatch(/countLabel\(totalProposals, proposalsMore\)/);
+    expect(src).toMatch(/data\.awaiting_your_vote \?\? 0/);
+    expect(src).toMatch(/proposals\[m\.node_slug\] = \{ count \}/);
+    expect(src).not.toMatch(/\{ count: items\.length/);
+    expect(src).not.toMatch(/proposalsMore/);
   });
 
   it('scopes upcoming events to the person\'s own patches', () => {

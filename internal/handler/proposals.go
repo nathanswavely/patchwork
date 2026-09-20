@@ -86,8 +86,13 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		if !canReadGovernanceRecord(db, r, nodeID) {
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]interface{}{
-				"items":                    []interface{}{},
-				"next_cursor":              "",
+				"items":       []interface{}{},
+				"next_cursor": "",
+				// Nobody outside the room owes a ballot here, and the field
+				// is present in both branches so a client reads it the same
+				// way whichever it got.
+				"awaiting_your_vote":       0,
+				"total":                    0,
 				"public_governance_record": "nobody",
 			})
 			return
@@ -116,17 +121,40 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 		// migration for a word — so filtering on the column put three
 		// proposals nobody rejected in a drawer labelled Rejected. The two
 		// state values are what the product means, and the query reads them.
+		//
+		// Built once and appended to both the page and the total below, so a
+		// header counting one set over a list showing another is not a thing
+		// this endpoint can do.
+		var filter string
+		var filterArgs []interface{}
 		switch status {
 		case "", "all":
 			// Every proposal.
 		case "not_decided":
-			query += " AND COALESCE(p.state,'') IN ('lapsed', 'unsettled')"
+			filter = " AND COALESCE(p.state,'') IN ('lapsed', 'unsettled')"
 		case "rejected":
-			query += " AND p.status = 'rejected' AND COALESCE(p.state,'') NOT IN ('lapsed', 'unsettled')"
+			filter = " AND p.status = 'rejected' AND COALESCE(p.state,'') NOT IN ('lapsed', 'unsettled')"
 		default:
-			query += " AND p.status = ?"
-			args = append(args, status)
+			filter = " AND p.status = ?"
+			filterArgs = append(filterArgs, status)
 		}
+		query += filter
+		args = append(args, filterArgs...)
+
+		// How many match, against how many this page carries.
+		//
+		// A glimpse takes three with no count, so a press running seven
+		// contests published three identically-titled rows and nothing said
+		// so: "The press's page shows three. The file has six, going back to
+		// December 2025. Three of them I have never seen mentioned anywhere
+		// on this site. I only know they happened because I opened a zip
+		// file." The events glimpse has read its own total this way for as
+		// long as it has been capped; this is the same fact for the other
+		// list on the same page.
+		var total int
+		countArgs := append([]interface{}{nodeID}, filterArgs...)
+		db.QueryRow(`SELECT COUNT(*) FROM proposals p WHERE p.node_id = ?`+filter, countArgs...).Scan(&total)
+
 		if after != "" {
 			query += " AND p.id < ?"
 			args = append(args, after)
@@ -172,10 +200,35 @@ func ListProposals(db *database.DB) http.HandlerFunc {
 			proposals = []proposalItem{}
 		}
 
+		// How many of this patch's open proposals are still waiting on this
+		// caller (F-108).
+		//
+		// The Dashboard's attention block counted the rows it had just
+		// fetched, so the front door went on saying "1 open proposal" after
+		// the member voted, while the Governance hub two clicks in had
+		// already dropped it. Two members checked their ballot a second
+		// time to see whether it had saved. The hub was right, so the hub's
+		// count is the one both surfaces read: one definition of what a
+		// person still owes, including every reason they might owe nothing
+		// — tenure, recusal, an election in nominations, a ballot already
+		// cast, and a contest they turned up to and approved nobody in.
+		//
+		// Beside the page of items rather than derived from it, because it
+		// is a count of the whole patch and the items are one page. Zero
+		// for a signed-out reader and for anybody holding no vote here.
+		awaiting := 0
+		if user := middleware.UserFromContext(r.Context()); user != nil {
+			var gcJSON string
+			db.QueryRow("SELECT COALESCE(governance_config,'{}') FROM nodes WHERE id = ?", nodeID).Scan(&gcJSON)
+			awaiting = countProposalsAwaitingVote(db, nodeID, user.ID, gcJSON)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"items":                    proposals,
 			"next_cursor":              nextCursor,
+			"total":                    total,
+			"awaiting_your_vote":       awaiting,
 			"public_governance_record": "everyone",
 		})
 	}
