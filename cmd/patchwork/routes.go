@@ -115,6 +115,11 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("POST /api/v1/auth/invite", rl(handler.RedeemInviteLink(d.db, d.cfg)))
 	t.handleFunc("GET /api/v1/auth/invite/{token}/validate", rl(handler.ValidateInviteLink(d.db)))
 	t.handleFunc("POST /api/v1/auth/magic-link", handler.RequestMagicLink(d.db, d.cfg))
+	// The code carried by the same email, for a client that cannot receive
+	// the link in its own session. Its own per-email limiter lives inside
+	// the handler, the way the request route's does, on top of this shared
+	// unauthed budget.
+	t.handleFunc("POST /api/v1/auth/magic-link/verify", rl(handler.VerifyMagicCode(d.db)))
 	t.handleFunc("GET /api/v1/auth/verify/{token}", handler.VerifyMagicLink(d.db))
 	// Alias for magic links mailed before the link builder was fixed: they
 	// point at /auth/verify/{token}, which the SPA has no route for and would
