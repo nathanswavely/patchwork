@@ -25173,7 +25173,7 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 201,
+          "line": 250,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -25826,14 +25826,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 178,
+          "line": 227,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 179,
+          "line": 228,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -25851,7 +25851,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 186,
+          "line": 235,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -25869,7 +25869,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 204,
+          "line": 253,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -48137,7 +48137,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 130,
+          "line": 146,
           "kind": "markup",
           "raw": "Contact details here are shared only with this patch's admins and members.",
           "quote": null
@@ -48145,19 +48145,37 @@
       ]
     },
     {
-      "id": "d21422c85198",
-      "text": "Share yours with this patch in",
-      "words": 6,
+      "id": "6ef84812230e",
+      "text": "Nobody here has shared contact details with this patch yet.",
+      "words": 10,
       "tier": "helper",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "note": "The empty case, which the roster had no words for. A list where nobody has shared looked identical to one withholding something: \"we are all eight of us Not reachable and the member list does not say so\". docs/adr/095 accepted the same argument for the roster itself.",
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 132,
+          "line": 148,
           "kind": "markup",
-          "raw": "Share yours with this patch in",
+          "raw": "Nobody here has shared contact details with this patch yet.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fe3e06c333a3",
+      "text": "Share yours in",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "\"Share yours with this patch in My Patches\" had no noun, and when nobody had shared it was the whole paragraph, so there was nothing above it to supply one. A member read it five times before tapping the link to find out what \"yours\" meant. Both branches above now name contact details, so the pronoun has an antecedent by the time it is read.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 150,
+          "kind": "markup",
+          "raw": "Share yours in",
           "quote": null
         }
       ]
@@ -48173,7 +48191,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 148,
+          "line": 166,
           "kind": "markup",
           "raw": "reachable",
           "quote": null
@@ -48191,7 +48209,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchMembers.svelte",
-          "line": 148,
+          "line": 166,
           "kind": "attr:title",
           "raw": "Shares contact details with this patch",
           "quote": "\""
@@ -58630,6 +58648,24 @@
           "line": 306,
           "kind": "markup",
           "raw": "You can change this until voting closes. Approving nobody is the same as\n          not voting.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d21422c85198",
+      "text": "Share yours with this patch in",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Reviewed by the maintainer in session on 2026-09-04 (PR #207): em dashes removed from the copy and placeholders made plain; the rest left as drafted on purpose.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchMembers.svelte",
+          "line": 132,
+          "kind": "markup",
+          "raw": "Share yours with this patch in",
           "quote": null
         }
       ]

@@ -124,12 +124,30 @@
         <span class="muted roster-note">Only this patch's admins are listed publicly.</span>
       {/if}
     </div>
+    <!-- "Share yours with this patch in My Patches" had no noun and nothing
+         above it supplied one when nobody had shared: the whole paragraph
+         was that sentence. A member read it five times before tapping the
+         link to find out what "yours" meant — "Share my *what*" — and a
+         second read it twice and moved on without finding out.
+
+         The empty case is the other half she named. A roster where nobody
+         has shared looks identical to one where something is being
+         withheld: "It is not that the site is hiding anyone from me. It is
+         that we are all eight of us 'Not reachable' and the member list
+         does not say so. It just shows nothing where something might have
+         been." docs/adr/095 already accepted that argument for the roster,
+         where the payload states the setting back so a client can tell "no
+         members" from "withheld"; this is the same distinction one column
+         over. Either way the first sentence now names the thing, so
+         "yours" has an antecedent by the time it is read. -->
     {#if offerSharing}
       <p class="muted contact-offer">
         {#if anyContact}
           Contact details here are shared only with this patch's admins and members.
+        {:else}
+          Nobody here has shared contact details with this patch yet.
         {/if}
-        Share yours with this patch in
+        Share yours in
         <a href="/settings/patches" onclick={(e) => { e.preventDefault(); navigate('/settings/patches'); }}>My Patches</a>.
       </p>
     {/if}
