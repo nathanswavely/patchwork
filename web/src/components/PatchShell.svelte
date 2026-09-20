@@ -164,6 +164,55 @@
     e.preventDefault();
     navigate(href);
   }
+
+  // The tab strip scrolls sideways on a narrow screen with its scrollbar
+  // deliberately switched off, and nothing else said the row continued. A
+  // member on a 390px phone: "I can see 'Governance' and 'Members' and then
+  // the row runs off the side of the screen. There are apparently Events and
+  // Noticeboard tabs too — I only know because I found them by other routes.
+  // I never once thought to swipe that row sideways." She had been on the
+  // site a year without knowing the patch had a noticeboard.
+  //
+  // Two things, because she was missing two. A fade on whichever side has
+  // more tabs behind it, which is the "half-cut-off word peeking out" she
+  // asked for in as many words. And the active tab scrolled into view, so
+  // arriving at a tab that lives off the edge shows you where you are
+  // instead of leaving the strip parked at the start.
+  let tabStrip = $state(null);
+  let moreLeft = $state(false);
+  let moreRight = $state(false);
+
+  function measureTabs() {
+    const el = tabStrip;
+    if (!el) return;
+    // A pixel of slack: scrollWidth and clientWidth differ by fractions at
+    // some zoom levels on a strip that does not actually overflow, and a
+    // fade over nothing is its own small lie.
+    moreLeft = el.scrollLeft > 1;
+    moreRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+  }
+
+  $effect(() => {
+    const el = tabStrip;
+    if (!el) return;
+    measureTabs();
+    const ro = new ResizeObserver(measureTabs);
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
+
+  // Bring the current tab into view when it is off the edge. Reads activeTab
+  // so it re-runs on navigation.
+  $effect(() => {
+    const el = tabStrip;
+    const current = activeTab;
+    if (!el || !current) return;
+    const tab = el.querySelector('.workspace-tab.active');
+    if (tab?.scrollIntoView) {
+      tab.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+    }
+    measureTabs();
+  });
 </script>
 
 <div class="workspace">
@@ -209,7 +258,13 @@
   {:else if node}
     <!-- Workspace nav: tabs + relationship cluster, directly under the bar -->
     <div class="workspace-nav">
-      <nav class="workspace-tabs">
+      <nav
+        class="workspace-tabs"
+        class:more-left={moreLeft}
+        class:more-right={moreRight}
+        bind:this={tabStrip}
+        onscroll={measureTabs}
+      >
         {#each tabs as tab (tab.id)}
           {@const Icon = tab.icon}
           <a
@@ -305,6 +360,28 @@
 
   .workspace-tabs::-webkit-scrollbar {
     display: none;
+  }
+
+  /* The edge says the row continues. A mask rather than an overlaid
+     gradient, so it works on any background and needs no element of its
+     own; the sides are set independently because the row can be cut at
+     either end once it has been scrolled. */
+  .workspace-tabs.more-right {
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
+  }
+
+  .workspace-tabs.more-left {
+    mask-image: linear-gradient(to right, transparent 0, #000 28px);
+  }
+
+  .workspace-tabs.more-left.more-right {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 28px,
+      #000 calc(100% - 28px),
+      transparent 100%
+    );
   }
 
   .workspace-tab {
