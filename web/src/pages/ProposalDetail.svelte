@@ -237,7 +237,7 @@
         {:else}
           <span class="muted">{isDirectChange ? 'Applied by' : 'Proposed by'} {proposal.author_name || 'unknown'}</span>
         {/if}
-        <span class="muted">{new Date(proposal.created_at).toLocaleDateString()}</span>
+        <span class="muted">{formatDay(proposal.created_at)}</span>
       </div>
     </div>
 

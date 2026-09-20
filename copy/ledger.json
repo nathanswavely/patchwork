@@ -20362,7 +20362,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 233,
+          "line": 244,
           "kind": "markup",
           "raw": "Choose a member",
           "quote": null
@@ -21088,7 +21088,7 @@
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 319,
+          "line": 320,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -21202,7 +21202,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 171,
+          "line": 175,
           "kind": "attr:title",
           "raw": "Dismiss",
           "quote": "\""
@@ -22178,7 +22178,7 @@
         },
         {
           "file": "web/src/pages/GovernanceDetail.svelte",
-          "line": 72,
+          "line": 73,
           "kind": "markup",
           "raw": "Members only",
           "quote": null
@@ -22414,7 +22414,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 119,
+          "line": 123,
           "kind": "markup",
           "raw": "Notifications",
           "quote": null
@@ -22439,7 +22439,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 122,
+          "line": 126,
           "kind": "markup",
           "raw": "Mark all read",
           "quote": null
@@ -22464,14 +22464,14 @@
         },
         {
           "file": "web/src/pages/Activity.svelte",
-          "line": 74,
+          "line": 79,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
         },
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 139,
+          "line": 140,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -22492,7 +22492,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 151,
+          "line": 155,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -22559,7 +22559,7 @@
         },
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 154,
+          "line": 158,
           "kind": "markup",
           "raw": "You're all caught up",
           "quote": null
@@ -24851,7 +24851,7 @@
         },
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 97,
+          "line": 98,
           "kind": "markup",
           "raw": "Documents",
           "quote": null
@@ -26713,7 +26713,7 @@
       "occurrences": [
         {
           "file": "web/src/components/RevisionHistory.svelte",
-          "line": 45,
+          "line": 46,
           "kind": "markup",
           "raw": "Revision History",
           "quote": null
@@ -26731,7 +26731,7 @@
       "occurrences": [
         {
           "file": "web/src/components/RevisionHistory.svelte",
-          "line": 51,
+          "line": 52,
           "kind": "markup",
           "raw": "Revision {rev.revision_number}",
           "quote": null
@@ -26749,7 +26749,7 @@
       "occurrences": [
         {
           "file": "web/src/components/RevisionHistory.svelte",
-          "line": 53,
+          "line": 54,
           "kind": "markup",
           "raw": "&mdash; {rev.change_note}",
           "quote": null
@@ -26767,7 +26767,7 @@
       "occurrences": [
         {
           "file": "web/src/components/RevisionHistory.svelte",
-          "line": 55,
+          "line": 56,
           "kind": "markup",
           "raw": "by {rev.author_name} &middot; {timeAgo(rev.created_at)}",
           "quote": null
@@ -29776,7 +29776,7 @@
         },
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 110,
+          "line": 111,
           "kind": "js-string",
           "raw": "Patch submissions",
           "quote": "'"
@@ -29801,7 +29801,7 @@
         },
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 111,
+          "line": 112,
           "kind": "js-string",
           "raw": "Event submissions",
           "quote": "'"
@@ -29826,7 +29826,7 @@
         },
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 113,
+          "line": 114,
           "kind": "js-string",
           "raw": "Suggested tags",
           "quote": "'"
@@ -29858,7 +29858,7 @@
         },
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 124,
+          "line": 125,
           "kind": "js-string",
           "raw": "Archived patches",
           "quote": "'"
@@ -29883,7 +29883,7 @@
         },
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 125,
+          "line": 126,
           "kind": "js-string",
           "raw": "Prove admin",
           "quote": "'"
@@ -30045,7 +30045,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/finderProviders.js",
-          "line": 117,
+          "line": 118,
           "kind": "js-string",
           "raw": "Quilt Settings",
           "quote": "'"
@@ -32024,7 +32024,7 @@
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 203,
+          "line": 204,
           "kind": "js-string",
           "raw": "Something went wrong. Please try again.",
           "quote": "'"
@@ -33371,7 +33371,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Activity.svelte",
-          "line": 70,
+          "line": 75,
           "kind": "markup",
           "raw": "What's New",
           "quote": null
@@ -33389,7 +33389,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Activity.svelte",
-          "line": 77,
+          "line": 82,
           "kind": "markup",
           "raw": "Nothing new yet",
           "quote": null
@@ -33407,7 +33407,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Activity.svelte",
-          "line": 78,
+          "line": 83,
           "kind": "markup",
           "raw": "Activity from your patches will show up here.",
           "quote": null
@@ -36880,7 +36880,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 180,
+          "line": 191,
           "kind": "markup",
           "raw": "Description",
           "quote": null
@@ -39572,7 +39572,7 @@
         },
         {
           "file": "web/src/pages/GovernanceDetail.svelte",
-          "line": 41,
+          "line": 42,
           "kind": "js-string",
           "raw": "Failed to load document",
           "quote": "'"
@@ -39618,7 +39618,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 120,
+          "line": 131,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -39700,7 +39700,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 152,
+          "line": 163,
           "kind": "js-string",
           "raw": "Failed to create proposal",
           "quote": "'"
@@ -39750,7 +39750,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 164,
+          "line": 175,
           "kind": "markup",
           "raw": "Become a member to take part in how this patch governs itself.",
           "quote": null
@@ -42387,7 +42387,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 174,
+          "line": 185,
           "kind": "markup",
           "raw": "Title",
           "quote": null
@@ -43675,19 +43675,19 @@
       ]
     },
     {
-      "id": "bbb43630524d",
-      "text": "Last updated {new Date(doc.updated_at).toLocaleDateString()}",
-      "words": 4,
+      "id": "d51ef43c34e6",
+      "text": "Last updated {formatDay(doc.updated_at)}",
+      "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "as-is",
       "replacement": null,
-      "note": null,
+      "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceDetail.svelte",
-          "line": 68,
+          "line": 69,
           "kind": "markup",
-          "raw": "Last updated {new Date(doc.updated_at).toLocaleDateString()}",
+          "raw": "Last updated {formatDay(doc.updated_at)}",
           "quote": null
         }
       ]
@@ -43893,7 +43893,7 @@
         },
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 191,
+          "line": 202,
           "kind": "markup",
           "raw": "Nothing to preview",
           "quote": null
@@ -43947,7 +43947,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 58,
+          "line": 59,
           "kind": "js-string",
           "raw": "Failed to load governance documents",
           "quote": "'"
@@ -43965,7 +43965,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 82,
+          "line": 83,
           "kind": "js-string",
           "raw": "Hidden from visitors",
           "quote": "'"
@@ -43983,7 +43983,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 84,
+          "line": 85,
           "kind": "js-string",
           "raw": "Failed to change visibility",
           "quote": "'"
@@ -44001,7 +44001,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 100,
+          "line": 101,
           "kind": "markup",
           "raw": "New documents start members only. Publish one to let visitors and\n              other quilts read it.",
           "quote": null
@@ -44019,7 +44019,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 110,
+          "line": 111,
           "kind": "markup",
           "raw": "Minutes of a meeting go in a document. Recording an adopted\n                text, below, replaces a charter with the version a meeting\n                adopted.",
           "quote": null
@@ -44037,7 +44037,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 119,
+          "line": 120,
           "kind": "markup",
           "raw": "Members-only documents are not listed here.",
           "quote": null
@@ -44055,7 +44055,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 133,
+          "line": 134,
           "kind": "markup",
           "raw": "These documents define how this community makes decisions.",
           "quote": null
@@ -44063,19 +44063,19 @@
       ]
     },
     {
-      "id": "95bf274d6557",
-      "text": "Updated {new Date(doc.updated_at).toLocaleDateString()}",
-      "words": 3,
+      "id": "a7a0af9344c4",
+      "text": "Updated {formatDay(doc.updated_at)}",
+      "words": 2,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "as-is",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 163,
+          "line": 164,
           "kind": "markup",
-          "raw": "Updated {new Date(doc.updated_at).toLocaleDateString()}",
+          "raw": "Updated {formatDay(doc.updated_at)}",
           "quote": null
         }
       ]
@@ -44091,7 +44091,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 167,
+          "line": 168,
           "kind": "attr:title",
           "raw": "The shared baseline every patch starts with. Always public; changed only by amendment.",
           "quote": "\""
@@ -44109,7 +44109,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceList.svelte",
-          "line": 168,
+          "line": 169,
           "kind": "markup",
           "raw": "The lining",
           "quote": null
@@ -45983,7 +45983,7 @@
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 500,
+          "line": 501,
           "kind": "attr:placeholder",
           "raw": "Passkey",
           "quote": "\""
@@ -46454,7 +46454,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 73,
+          "line": 74,
           "kind": "js-string",
           "raw": "Could not dismiss that notification",
           "quote": "'"
@@ -46472,7 +46472,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 86,
+          "line": 87,
           "kind": "js-string",
           "raw": "Could not clear notifications",
           "quote": "'"
@@ -46490,7 +46490,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 147,
+          "line": 151,
           "kind": "markup",
           "raw": "Unread only",
           "quote": null
@@ -46508,7 +46508,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 155,
+          "line": 159,
           "kind": "markup",
           "raw": "No {categoryFilter ? categoryFilter : ''} notifications{unreadOnly ? ' (unread)' : ''}.",
           "quote": null
@@ -46526,7 +46526,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Notifications.svelte",
-          "line": 171,
+          "line": 175,
           "kind": "attr:aria-label",
           "raw": "Dismiss notification",
           "quote": "\""
@@ -52063,7 +52063,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 83,
+          "line": 85,
           "kind": "js-string",
           "raw": "Propose a concrete action for the community to take",
           "quote": "'"
@@ -52081,7 +52081,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 85,
+          "line": 87,
           "kind": "js-string",
           "raw": "Nominate an active member for admin",
           "quote": "'"
@@ -52099,7 +52099,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 87,
+          "line": 89,
           "kind": "js-string",
           "raw": "Any other proposal that needs community input",
           "quote": "'"
@@ -52117,7 +52117,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 124,
+          "line": 135,
           "kind": "js-string",
           "raw": "Choose the member this nomination is about",
           "quote": "'"
@@ -52135,7 +52135,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 163,
+          "line": 174,
           "kind": "markup",
           "raw": "Only members can create proposals.",
           "quote": null
@@ -52153,7 +52153,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 170,
+          "line": 181,
           "kind": "markup",
           "raw": "Want to change a governance document or rules? Go to the",
           "quote": null
@@ -52171,7 +52171,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 170,
+          "line": 181,
           "kind": "markup",
           "raw": "page and click \"Propose change\" on the document you want to edit.",
           "quote": null
@@ -52189,7 +52189,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 199,
+          "line": 210,
           "kind": "attr:placeholder",
           "raw": "Explain your proposal and why it matters... Use **bold**, *italic*, and - lists.",
           "quote": "\""
@@ -52207,7 +52207,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 206,
+          "line": 217,
           "kind": "markup",
           "raw": "Type",
           "quote": null
@@ -52225,7 +52225,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 230,
+          "line": 241,
           "kind": "markup",
           "raw": "Nominate for admin",
           "quote": null
@@ -52243,7 +52243,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 240,
+          "line": 251,
           "kind": "markup",
           "raw": "If this passes, they take the vacant seat and serve out its term. Nobody has to approve it afterwards.",
           "quote": null
@@ -52261,7 +52261,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 242,
+          "line": 253,
           "kind": "markup",
           "raw": "If this passes, they become an admin. Nobody has to approve it afterwards.",
           "quote": null
@@ -52279,7 +52279,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 246,
+          "line": 257,
           "kind": "markup",
           "raw": "There is nobody to nominate yet.",
           "quote": null
@@ -52297,7 +52297,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 257,
+          "line": 268,
           "kind": "markup",
           "raw": "Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.",
           "quote": null
@@ -52315,7 +52315,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 259,
+          "line": 270,
           "kind": "markup",
           "raw": "Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.",
           "quote": null
@@ -52333,7 +52333,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 261,
+          "line": 272,
           "kind": "markup",
           "raw": "Every seat on the council is held, so there is nobody to nominate. You can add a seat on the Governance page.",
           "quote": null
@@ -52351,7 +52351,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 273,
+          "line": 284,
           "kind": "markup",
           "raw": "How this gets decided",
           "quote": null
@@ -52369,7 +52369,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 278,
+          "line": 289,
           "kind": "markup",
           "raw": "Apply it now",
           "quote": null
@@ -52387,7 +52387,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 279,
+          "line": 290,
           "kind": "markup",
           "raw": "You decide this patch's proposals. This takes effect as soon as you save it.",
           "quote": null
@@ -52405,7 +52405,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 285,
+          "line": 296,
           "kind": "markup",
           "raw": "Ask the members first",
           "quote": null
@@ -52423,7 +52423,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 286,
+          "line": 297,
           "kind": "markup",
           "raw": "Opens an advisory vote. You still decide, at any time, with the tally in front of you.",
           "quote": null
@@ -52441,7 +52441,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 293,
+          "line": 304,
           "kind": "markup",
           "raw": "This patch's maintainer decides proposals. Yours goes to them, and they may ask the members before deciding.",
           "quote": null
@@ -52459,7 +52459,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalForm.svelte",
-          "line": 305,
+          "line": 316,
           "kind": "markup",
           "raw": "Tip: 72 hours gives everyone a chance to vote before the question goes stale.",
           "quote": null
@@ -53150,7 +53150,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 72,
+          "line": 73,
           "kind": "js-string",
           "raw": "Session signed out",
           "quote": "'"
@@ -53168,7 +53168,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 74,
+          "line": 75,
           "kind": "js-string",
           "raw": "Failed to sign out session",
           "quote": "'"
@@ -53186,7 +53186,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 83,
+          "line": 84,
           "kind": "js-string",
           "raw": "Signed out everywhere else",
           "quote": "'"
@@ -53204,7 +53204,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 85,
+          "line": 86,
           "kind": "js-string",
           "raw": "Failed to sign out other sessions",
           "quote": "'"
@@ -53222,7 +53222,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 124,
+          "line": 125,
           "kind": "js-string",
           "raw": "Failed to generate codes",
           "quote": "'"
@@ -53240,7 +53240,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 134,
+          "line": 135,
           "kind": "js-string",
           "raw": "Codes copied",
           "quote": "'"
@@ -53258,7 +53258,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 136,
+          "line": 137,
           "kind": "js-string",
           "raw": "Copy failed. Select and copy them by hand.",
           "quote": "'"
@@ -53276,7 +53276,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 145,
+          "line": 146,
           "kind": "js-string",
           "raw": "This device",
           "quote": "'"
@@ -53294,7 +53294,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 148,
+          "line": 149,
           "kind": "js-string",
           "raw": "Android phone",
           "quote": "'"
@@ -53312,7 +53312,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 150,
+          "line": 151,
           "kind": "js-string",
           "raw": "Windows PC",
           "quote": "'"
@@ -53330,7 +53330,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 151,
+          "line": 152,
           "kind": "js-string",
           "raw": "Linux PC",
           "quote": "'"
@@ -53348,7 +53348,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 182,
+          "line": 183,
           "kind": "js-string",
           "raw": "Passkey setup was closed.",
           "quote": "'"
@@ -53373,7 +53373,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 194,
+          "line": 195,
           "kind": "js-string",
           "raw": "Passkey added",
           "quote": "'"
@@ -53391,7 +53391,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 237,
+          "line": 238,
           "kind": "js-string",
           "raw": "Could not rename. Your passkey still works.",
           "quote": "'"
@@ -53409,7 +53409,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 269,
+          "line": 270,
           "kind": "js-string",
           "raw": "Passkey renamed",
           "quote": "'"
@@ -53427,7 +53427,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 271,
+          "line": 272,
           "kind": "js-string",
           "raw": "Failed to rename",
           "quote": "'"
@@ -53445,7 +53445,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 279,
+          "line": 280,
           "kind": "js-string",
           "raw": "Passkey revoked",
           "quote": "'"
@@ -53463,7 +53463,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 281,
+          "line": 282,
           "kind": "js-string",
           "raw": "Failed to revoke",
           "quote": "'"
@@ -53481,7 +53481,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 288,
+          "line": 289,
           "kind": "markup",
           "raw": "Passkeys",
           "quote": null
@@ -53499,7 +53499,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 290,
+          "line": 291,
           "kind": "markup",
           "raw": "Passkeys sign you in without a password or email.",
           "quote": null
@@ -53517,7 +53517,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 296,
+          "line": 297,
           "kind": "markup",
           "raw": "No passkeys enrolled yet.",
           "quote": null
@@ -53535,14 +53535,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 314,
+          "line": 315,
           "kind": "attr:aria-label",
           "raw": "Passkey name",
           "quote": "\""
         },
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 499,
+          "line": 500,
           "kind": "attr:aria-label",
           "raw": "Passkey name",
           "quote": "\""
@@ -53560,7 +53560,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 317,
+          "line": 318,
           "kind": "markup",
           "raw": "Save",
           "quote": null
@@ -53568,19 +53568,19 @@
       ]
     },
     {
-      "id": "3f65e2a4a764",
-      "text": "Added {new Date(cred.created_at).toLocaleDateString()}",
-      "words": 3,
+      "id": "8b829d65bf57",
+      "text": "Added {formatDay(cred.created_at)}",
+      "words": 2,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "as-is",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 327,
+          "line": 328,
           "kind": "markup",
-          "raw": "Added {new Date(cred.created_at).toLocaleDateString()}",
+          "raw": "Added {formatDay(cred.created_at)}",
           "quote": null
         }
       ]
@@ -53596,7 +53596,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 359,
+          "line": 360,
           "kind": "markup",
           "raw": "This passkey is attached to one device. We recommend adding a second on another device as backup.",
           "quote": null
@@ -53615,7 +53615,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 365,
+          "line": 366,
           "kind": "markup",
           "raw": "Active sessions",
           "quote": null
@@ -53633,7 +53633,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 367,
+          "line": 368,
           "kind": "markup",
           "raw": "Where you're signed in. Sign out any session you don't recognize.",
           "quote": null
@@ -53651,7 +53651,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 373,
+          "line": 374,
           "kind": "markup",
           "raw": "No active sessions.",
           "quote": null
@@ -53669,7 +53669,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 381,
+          "line": 382,
           "kind": "markup",
           "raw": "This session",
           "quote": null
@@ -53687,7 +53687,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 384,
+          "line": 385,
           "kind": "markup",
           "raw": "Last active {timeAgo(s.last_used_at)}",
           "quote": null
@@ -53695,19 +53695,19 @@
       ]
     },
     {
-      "id": "e26737ab1824",
-      "text": "· Signed in {new Date(s.created_at).toLocaleDateString()}",
-      "words": 5,
+      "id": "d3b11eb4a0b8",
+      "text": "· Signed in {formatDay(s.created_at)}",
+      "words": 4,
       "tier": "label",
-      "status": "ai-fine",
+      "status": "as-is",
       "replacement": null,
-      "note": null,
+      "note": "Unchanged words. The date behind them moved from a bare toLocaleDateString, which rendered 8/25/2025, to the app format, Aug 25, 2025. Slashes-and-numbers is the format that gets read wrong, and it was the only place the app still used it.",
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 386,
+          "line": 387,
           "kind": "markup",
-          "raw": "· Signed in {new Date(s.created_at).toLocaleDateString()}",
+          "raw": "· Signed in {formatDay(s.created_at)}",
           "quote": null
         }
       ]
@@ -53723,7 +53723,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 416,
+          "line": 417,
           "kind": "markup",
           "raw": "Recovery codes",
           "quote": null
@@ -53741,7 +53741,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 418,
+          "line": 419,
           "kind": "markup",
           "raw": "If you lose your passkey, a recovery code signs you in. A code also\n      confirms actions that can't be undone, the way a passkey does. Each\n      code works once.",
           "quote": null
@@ -53759,7 +53759,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 426,
+          "line": 427,
           "kind": "markup",
           "raw": "Write these down or save them somewhere safe. This is the only time\n          they're shown.",
           "quote": null
@@ -53777,7 +53777,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 434,
+          "line": 435,
           "kind": "markup",
           "raw": "These codes confirm sensitive actions only after you sign in again\n          with one of them. Sign out, sign back in with a code, and the rest\n          of the set can confirm from then on.",
           "quote": null
@@ -53795,7 +53795,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 455,
+          "line": 456,
           "kind": "markup",
           "raw": "{recoveryStatus.remaining} of {recoveryStatus.total} codes left.",
           "quote": null
@@ -53813,7 +53813,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 458,
+          "line": 459,
           "kind": "markup",
           "raw": "Running low. Generate a fresh set.",
           "quote": null
@@ -53831,7 +53831,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 467,
+          "line": 468,
           "kind": "markup",
           "raw": "New codes replace the old set. Anything already written down\n            stops working.",
           "quote": null
@@ -53849,7 +53849,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 472,
+          "line": 473,
           "kind": "markup",
           "raw": "No recovery codes yet.",
           "quote": null
@@ -53867,7 +53867,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 484,
+          "line": 485,
           "kind": "markup",
           "raw": "Name this passkey",
           "quote": null
@@ -53885,7 +53885,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 486,
+          "line": 487,
           "kind": "markup",
           "raw": "It's saved and ready to use.",
           "quote": null
@@ -53904,7 +53904,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/SecuritySettings.svelte",
-          "line": 508,
+          "line": 509,
           "kind": "markup",
           "raw": "Keep \"{namingDefault}\"",
           "quote": null
@@ -58299,6 +58299,60 @@
           "line": 293,
           "kind": "go-error-body",
           "raw": "action must be one of %s",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "95bf274d6557",
+      "text": "Updated {new Date(doc.updated_at).toLocaleDateString()}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceList.svelte",
+          "line": 163,
+          "kind": "markup",
+          "raw": "Updated {new Date(doc.updated_at).toLocaleDateString()}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3f65e2a4a764",
+      "text": "Added {new Date(cred.created_at).toLocaleDateString()}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/SecuritySettings.svelte",
+          "line": 327,
+          "kind": "markup",
+          "raw": "Added {new Date(cred.created_at).toLocaleDateString()}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e26737ab1824",
+      "text": "· Signed in {new Date(s.created_at).toLocaleDateString()}",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/SecuritySettings.svelte",
+          "line": 386,
+          "kind": "markup",
+          "raw": "· Signed in {new Date(s.created_at).toLocaleDateString()}",
           "quote": null
         }
       ]
