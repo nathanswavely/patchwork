@@ -27634,7 +27634,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StickyVoteBar.svelte",
-          "line": 65,
+          "line": 70,
           "kind": "markup",
           "raw": "{abstainCount}&mdash;",
           "quote": null
@@ -52091,7 +52091,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 236,
+          "line": 264,
           "kind": "markup",
           "raw": "Opened by this patch&rsquo;s election calendar",
           "quote": null
@@ -52109,7 +52109,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 265,
+          "line": 293,
           "kind": "markup",
           "raw": "Why this change",
           "quote": null
@@ -52127,7 +52127,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 280,
+          "line": 308,
           "kind": "markup",
           "raw": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},\n              after this was drafted. The changes below compare against the older text.",
           "quote": null
@@ -52145,7 +52145,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 290,
+          "line": 318,
           "kind": "markup",
           "raw": "This {isDirectChange ? 'change' : 'proposal'} modifies",
           "quote": null
@@ -52163,7 +52163,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 301,
+          "line": 329,
           "kind": "markup",
           "raw": "This proposal modifies a members-only document. The text of the\n                change is visible to members.",
           "quote": null
@@ -52181,7 +52181,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 326,
+          "line": 354,
           "kind": "markup",
           "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null

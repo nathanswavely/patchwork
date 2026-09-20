@@ -37,6 +37,11 @@
 </script>
 
 {#if visible}
+  <!-- The labels follow the vote, the way VoteSection's do. A CSS `active`
+       class was the only thing marking the cast vote here, so the bar read
+       "Approve" two inches under a panel reading "Approved": "that bottom
+       bar says Approve even on the rules proposal where I've already
+       voted" (F-050). -->
   <div class="sticky-vote-bar">
     <div class="vote-buttons">
       <button
@@ -44,19 +49,19 @@
         class:active={userVote === 'approve'}
         onclick={() => castVote('approve')}
         disabled={voting}
-      >Approve</button>
+      >{userVote === 'approve' ? 'Approved' : 'Approve'}</button>
       <button
         class="vote-btn reject"
         class:active={userVote === 'reject'}
         onclick={() => castVote('reject')}
         disabled={voting}
-      >Reject</button>
+      >{userVote === 'reject' ? 'Rejected' : 'Reject'}</button>
       <button
         class="vote-btn abstain"
         class:active={userVote === 'abstain'}
         onclick={() => castVote('abstain')}
         disabled={voting}
-      >Abstain</button>
+      >{userVote === 'abstain' ? 'Abstained' : 'Abstain'}</button>
     </div>
     <div class="vote-summary">
       <span class="count approve-count">{approveCount}&#10003;</span>

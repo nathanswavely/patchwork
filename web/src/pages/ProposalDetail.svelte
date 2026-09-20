@@ -166,12 +166,40 @@
     }
   }
 
+  // A vote moves the counts at once and then the page asks the server what
+  // it actually holds.
+  //
+  // Moving the counts alone left the voters list on its pre-vote snapshot
+  // for the rest of the session, so the page said two things at once: the
+  // tally counted you and the list of who voted did not. Two people hit it
+  // the same afternoon. "The 'Show voters' button still says (2) after my
+  // vote went in." — "'Hide voters (1), Ivo Petran approve': one name, and
+  // it isn't mine, under a count that says two... The count says yes. The
+  // voters list says no." (F-049)
+  //
+  // The optimistic bump stays, because the number should move under the
+  // finger that pressed the button; the refresh is what makes the rest of
+  // the page agree with it a moment later.
   function handleVote(value) {
     const prev = proposal.my_vote;
     proposal.my_vote = value;
     proposal.approve_count = (proposal.approve_count || 0) + (value === 'approve' ? 1 : 0) - (prev === 'approve' ? 1 : 0);
     proposal.reject_count = (proposal.reject_count || 0) + (value === 'reject' ? 1 : 0) - (prev === 'reject' ? 1 : 0);
     proposal.abstain_count = (proposal.abstain_count || 0) + (value === 'abstain' ? 1 : 0) - (prev === 'abstain' ? 1 : 0);
+    refreshAfterVote();
+  }
+
+  // Refetch without the loading flag: loadProposal() swaps the page for a
+  // skeleton, and blanking the proposal somebody just voted on is a worse
+  // answer than the stale list was. A failure here leaves the optimistic
+  // counts standing, which is right — the vote landed, and a refresh that
+  // did not is no reason to tell the reader otherwise.
+  async function refreshAfterVote() {
+    try {
+      proposal = await api(`proposals/${proposalId}`);
+    } catch {
+      /* keep what we have */
+    }
   }
 
   function handleStateChange(newState) {
@@ -558,10 +586,17 @@
     background: var(--color-bg);
   }
 
+  /* Room for the sticky vote bar, which is `position: fixed; bottom: 0` at
+     every width. This padding lived inside the 640px query, so on a desktop
+     window the bar sat on top of the end of the page — which is exactly
+     where VoteSection puts its buttons and the line stating the rule the
+     vote is judged by: "the bar sits on top of the real vote buttons and
+     the 'Consensus' line, so I read the warning in two halves" (F-050). */
+  .proposal-page {
+    padding-bottom: 100px;
+  }
+
   @media (max-width: 640px) {
-    .proposal-page {
-      padding-bottom: 100px;
-    }
 
     .proposal-header h1 {
       font-size: 1.2rem;
