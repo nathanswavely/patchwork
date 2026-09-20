@@ -4186,7 +4186,7 @@
         },
         {
           "file": "internal/handler/seats.go",
-          "line": 428,
+          "line": 476,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4757,7 +4757,7 @@
         },
         {
           "file": "internal/handler/seats.go",
-          "line": 224,
+          "line": 272,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -15657,7 +15657,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 228,
+          "line": 276,
           "kind": "go-error-body",
           "raw": "only this patch's admins can change its council seats",
           "quote": null
@@ -15675,7 +15675,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 236,
+          "line": 284,
           "kind": "go-error-body",
           "raw": "this patch chooses its council elsewhere: record that decision instead",
           "quote": null
@@ -15693,7 +15693,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 244,
+          "line": 292,
           "kind": "go-error-body",
           "raw": "seats belong to the elected model; this patch makes admins another way",
           "quote": null
@@ -15711,7 +15711,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 309,
+          "line": 357,
           "kind": "go-error-body",
           "raw": "failed to add a seat",
           "quote": null
@@ -15729,14 +15729,14 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 349,
+          "line": 397,
           "kind": "go-error-body",
           "raw": "seat not found",
           "quote": null
         },
         {
           "file": "internal/handler/seats.go",
-          "line": 450,
+          "line": 498,
           "kind": "go-error-body",
           "raw": "seat not found",
           "quote": null
@@ -15754,7 +15754,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 357,
+          "line": 405,
           "kind": "go-error-body",
           "raw": "this seat is in the contest running now: it can be removed once that settles",
           "quote": null
@@ -15772,7 +15772,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 370,
+          "line": 418,
           "kind": "go-error-body",
           "raw": "failed to remove the seat",
           "quote": null
@@ -15790,7 +15790,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 433,
+          "line": 481,
           "kind": "go-error-body",
           "raw": "a term end is a date, as 2027-11-01",
           "quote": null
@@ -15808,7 +15808,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 438,
+          "line": 486,
           "kind": "go-error-body",
           "raw": "a term end must be today or later: a date in the past would say a contest was already overdue when it was not",
           "quote": null
@@ -15826,7 +15826,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 455,
+          "line": 503,
           "kind": "go-error-body",
           "raw": "this seat is in the contest running now: its term can move once that settles",
           "quote": null
@@ -15844,7 +15844,7 @@
       "occurrences": [
         {
           "file": "internal/handler/seats.go",
-          "line": 474,
+          "line": 522,
           "kind": "go-error-body",
           "raw": "failed to set the term end",
           "quote": null
@@ -23349,6 +23349,42 @@
       ]
     },
     {
+      "id": "a68c61702bbb",
+      "text": "Vacant",
+      "words": 1,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The chair nobody is in. Unchanged wording, moved out of a ternary into a branch so a withheld holder is a third state rather than an inferred vacancy.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 569,
+          "kind": "markup",
+          "raw": "Vacant",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "85cd61f8c3c8",
+      "text": "Held",
+      "words": 1,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "A chair that is held by somebody this reader is not shown. Deliberately not a name and not Vacant: the sentence above already says the patch does not list its admins publicly, and this row only has to not claim the seat is empty.",
+      "occurrences": [
+        {
+          "file": "web/src/components/GovernanceOverview.svelte",
+          "line": 569,
+          "kind": "markup",
+          "raw": "Held",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "5182905422f8",
       "text": "Term end",
       "words": 2,
@@ -23359,7 +23395,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 581,
+          "line": 585,
           "kind": "attr:aria-label",
           "raw": "Term end",
           "quote": "\""
@@ -23377,7 +23413,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 613,
+          "line": 617,
           "kind": "markup",
           "raw": "Add a seat",
           "quote": null
@@ -23395,7 +23431,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 615,
+          "line": 619,
           "kind": "markup",
           "raw": "Adding a seat does not make anybody an admin. The community fills it.",
           "quote": null
@@ -23413,7 +23449,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 619,
+          "line": 623,
           "kind": "markup",
           "raw": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought\n              forward, because pushing it back would extend a term nobody voted for. Nobody loses their seat when a term ends — the\n              holder serves until a successor is elected.",
           "quote": null
@@ -23431,7 +23467,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 638,
+          "line": 642,
           "kind": "markup",
           "raw": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
           "quote": null
@@ -23449,7 +23485,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 640,
+          "line": 644,
           "kind": "markup",
           "raw": "Next seat comes up {formatDay(nextTermEnd)}.",
           "quote": null
@@ -23467,7 +23503,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 651,
+          "line": 655,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -23485,7 +23521,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 663,
+          "line": 667,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -23503,7 +23539,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 677,
+          "line": 681,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -23521,7 +23557,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 677,
+          "line": 681,
           "kind": "markup",
           "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
@@ -23540,7 +23576,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 680,
+          "line": 684,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -23558,7 +23594,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 686,
+          "line": 690,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -23576,7 +23612,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 700,
+          "line": 704,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -23594,14 +23630,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 712,
+          "line": 716,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 716,
+          "line": 720,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -23689,7 +23725,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 717,
+          "line": 721,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null

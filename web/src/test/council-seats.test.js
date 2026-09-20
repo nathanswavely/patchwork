@@ -53,7 +53,10 @@ describe('GovernanceOverview — the council is countable', () => {
   // council-calendar.test.js, where the per-seat wording lives.
   it('lists every seat, held or vacant, with its own term end', () => {
     expect(src).toMatch(/\{#each seats as seat\}/);
-    expect(src).toMatch(/\{seat\.vacant \? 'Vacant' : \(seat\.display_name \|\| seat\.username\)\}/);
+    // Three branches, not a ternary: a chair whose holder this viewer is
+    // not shown is held, and inferring it from an absent name would file a
+    // seated council under Vacant.
+    expect(src).toMatch(/\{#if seat\.vacant\}Vacant\{:else if seat\.holder_withheld\}Held\{:else\}\{seat\.display_name \|\| seat\.username\}\{\/if\}/);
     expect(src).toMatch(/Term ends \$\{formatDay\(seat\.term_ends_at\)\}/);
   });
 
