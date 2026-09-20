@@ -376,6 +376,7 @@
     <label class="section-label">Follower Permissions</label>
     <div class="checkbox-group">
       <label><input type="checkbox" bind:checked={followerEvents} /> Events</label>
+      <p class="follower-hint muted">Off: followers see this patch's public events only.</p>
       <label><input type="checkbox" bind:checked={followerProposals} /> Proposals</label>
       <label><input type="checkbox" bind:checked={followerCharters} /> Charters</label>
       <label><input type="checkbox" bind:checked={followerMembers} /> Members</label>
@@ -431,6 +432,11 @@
   .recusal-hint {
     font-size: 0.78rem;
     margin: 0.3rem 0 0 1.5rem;
+  }
+
+  .follower-hint {
+    font-size: 0.78rem;
+    margin: 0.15rem 0 0.4rem 1.5rem;
   }
 
   .checkbox-field label {

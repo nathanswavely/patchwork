@@ -51,6 +51,22 @@ describe('#6: workspace tabs for claimed patches are unchanged', () => {
     expect(ids(tabs)).toEqual(['governance', 'events']);
   });
 
+  // docs/adr/2026-09-19-an-event-says-who-it-is-for-within-what-the-patch-allows.md:
+  // follower_permissions.events is now an enforced read ceiling in Go, not a
+  // tab-hiding switch, so it never removes the Events tab any more — a
+  // follower always gets it, and the list it shows is whatever the server
+  // already answers for them (that patch's public events, when the switch
+  // is off).
+  it('a follower keeps the Events tab even with follower_permissions.events off', () => {
+    const tabs = workspaceTabs({
+      isUnclaimed: false,
+      isAdmin: false,
+      membershipRole: 'follower',
+      followerPermissions: { events: false },
+    });
+    expect(ids(tabs)).toContain('events');
+  });
+
   it('a plain member gets governance, members, events', () => {
     const tabs = workspaceTabs({ isUnclaimed: false, isAdmin: false, membershipRole: 'member' });
     expect(ids(tabs)).toEqual(['governance', 'members', 'events', 'noticeboard']);

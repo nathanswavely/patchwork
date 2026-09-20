@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/governance"
@@ -117,8 +118,9 @@ func CloseFollowerChartersDefault(db *database.DB) (int, error) {
 			// reviews as three fragments instead of the sentence somebody
 			// reads.
 			Title: fmt.Sprintf("Followers can no longer read %s's members-only charters", p.name),
-			Body:  "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
-			Link:  weblink.PatchGovernance(p.slug),
+			Body: "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules. " +
+				stillOpenToFollowers(rules, p.fp),
+			Link: weblink.PatchGovernance(p.slug),
 		})
 	}
 
@@ -141,4 +143,63 @@ func notifyFollowerChartersClosed(events []notifications.Event) {
 		e.Title = fmt.Sprintf("Followers can no longer read members-only charters in %d of your patches", len(userEvents))
 		return e
 	})
+}
+
+// stillOpenToFollowers names the three keys this rollout did not touch.
+//
+// The notice said only what moved, and the admin who read it went looking
+// for the rest: "Nobody sent me a notice about the other three. Followers
+// can see our member list. That one I would want the co-op to have actually
+// decided, and I have no memory of anybody deciding it. It sat there
+// checked the whole time and no notice was ever sent about it. The one
+// thing the site chose to write to me about is the one of the four I care
+// least about."
+//
+// He is right that the other three were never decided either — they are
+// migration 012's column default, the same default this rollout is closing
+// for charters. Closing them is not this change's call to make, and three
+// of them govern what a follower sees of a patch's *public* life rather
+// than its private shelf. What the notice can do is stop leaving them
+// unsaid, so the reader learns the state of the shelf rather than one tin
+// on it.
+//
+// Reads the file's rules where there are any and the row otherwise, which
+// is the same order the closing above uses.
+func stillOpenToFollowers(rules *governance.GovernanceRules, rowFP string) string {
+	fp := model.FollowerPermissions{}
+	if rules != nil {
+		fp = model.FollowerPermissions{
+			Events:    rules.FollowerPermissions.Events,
+			Proposals: rules.FollowerPermissions.Proposals,
+			Members:   rules.FollowerPermissions.Members,
+		}
+	} else if rowFP != "" {
+		json.Unmarshal([]byte(rowFP), &fp)
+	}
+	var open []string
+	if fp.Events {
+		open = append(open, "this patch's events")
+	}
+	if fp.Proposals {
+		open = append(open, "its proposals")
+	}
+	if fp.Members {
+		open = append(open, "its member list")
+	}
+	if len(open) == 0 {
+		return "Followers here can now see only what any visitor can."
+	}
+	return "Followers here can still see " + joinWithAnd(open) + ", each of which is a separate switch in the same place."
+}
+
+// joinWithAnd reads a short list aloud.
+func joinWithAnd(parts []string) string {
+	switch len(parts) {
+	case 1:
+		return parts[0]
+	case 2:
+		return parts[0] + " and " + parts[1]
+	default:
+		return strings.Join(parts[:len(parts)-1], ", ") + " and " + parts[len(parts)-1]
+	}
 }
