@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -1374,7 +1375,23 @@ func UpdateNode(db *database.DB) http.HandlerFunc {
 			}
 		}
 
-		auth.LogAuditEvent(db, user.ID, "node.update", "node", nodeID, "{}", clientIP(r))
+		// Which settings this edit touched, by name.
+		//
+		// This logged a literal "{}" and the comment three lines down already
+		// said what that costs: the entry "cannot tell a patch that renamed
+		// itself from one that moved four rehearsals by five hours". The bill
+		// came due when the September migration retracted public_member_list
+		// on every patch. Its own note accepts that some patches had chosen
+		// `everyone` deliberately and are being overridden, says they "cannot
+		// be identified: node.update is audited with an empty '{}' detail",
+		// and hands the telling to the operator — who had no way to produce
+		// the list, because this line had thrown it away.
+		//
+		// Field names only, never values. The question is which control moved,
+		// and the values here run to whole descriptions and appearance blobs;
+		// an audit row is not the place to copy them. Sorted so two edits of
+		// the same fields read the same.
+		auth.LogAuditEvent(db, user.ID, "node.update", "node", nodeID, changedFields(req, allowedFields), clientIP(r))
 		if zonePlan != nil {
 			// Its own entry, because "node.update" with an empty detail
 			// blob cannot tell a patch that renamed itself from one that
@@ -1455,4 +1472,27 @@ func DeleteNode(db *database.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	}
+}
+
+// changedFields is the JSON detail for a node.update audit entry: the
+// allowed field names the request actually carried, sorted.
+//
+// Only allowed ones, because an unknown key is ignored by the update and
+// recording it would claim an edit that never happened.
+func changedFields(req map[string]interface{}, allowed map[string]bool) string {
+	var names []string
+	for k := range req {
+		if allowed[k] {
+			names = append(names, k)
+		}
+	}
+	if len(names) == 0 {
+		return "{}"
+	}
+	sort.Strings(names)
+	detail, err := json.Marshal(map[string][]string{"fields": names})
+	if err != nil {
+		return "{}"
+	}
+	return string(detail)
 }

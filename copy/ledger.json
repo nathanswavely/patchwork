@@ -4046,14 +4046,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 816,
+          "line": 817,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1070,
+          "line": 1071,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4694,21 +4694,21 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 622,
+          "line": 623,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1058,
+          "line": 1059,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1435,
+          "line": 1452,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5127,7 +5127,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1351,
+          "line": 1352,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5643,14 +5643,14 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1064,
+          "line": 1065,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1441,
+          "line": 1458,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6202,7 +6202,7 @@
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 610,
+          "line": 611,
           "kind": "go-error-body",
           "raw": "slug required",
           "quote": null
@@ -9952,7 +9952,7 @@
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 90,
+          "line": 91,
           "kind": "go-string",
           "raw": "Followers no longer read members-only charters by default (shipped with Patchwork)",
           "quote": "\""
@@ -9970,7 +9970,7 @@
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 119,
+          "line": 120,
           "kind": "go-string",
           "raw": "Followers can no longer read %s's members-only charters",
           "quote": "\""
@@ -9978,19 +9978,19 @@
       ]
     },
     {
-      "id": "de26a557dcaa",
-      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
-      "words": 43,
+      "id": "3ffd8c59e54a",
+      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules.",
+      "words": 49,
       "tier": "prose",
-      "status": "ai-fine",
+      "status": "as-is",
       "replacement": null,
-      "note": null,
+      "note": "The rollout notice. Two changes: it now names where the switch actually is (Follower Permissions, at the bottom of Propose a change to these rules) rather than pointing vaguely at Governance, and it hands off to the sentence below naming the three keys it did not touch. An admin read the old one and went hunting for the rest: \"The one thing the site chose to write to me about is the one of the four I care least about.\"",
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 120,
+          "line": 121,
           "kind": "go-string",
-          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
+          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules. ",
           "quote": "\""
         }
       ]
@@ -10006,9 +10006,45 @@
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 141,
+          "line": 143,
           "kind": "go-string",
           "raw": "Followers can no longer read members-only charters in %d of your patches",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "4363de41fb95",
+      "text": "Followers here can now see only what any visitor can.",
+      "words": 10,
+      "tier": "helper",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The case where a patch had granted followers nothing else. Worth saying rather than trailing off, so the reader learns the state of the shelf either way.",
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 190,
+          "kind": "go-string",
+          "raw": "Followers here can now see only what any visitor can.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "05447859f9db",
+      "text": "Followers here can still see",
+      "words": 5,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Opens the list of what followers keep. Assembled from the patch own rules rather than written as a fixed sentence, because the three keys differ per patch and a static claim would be wrong somewhere.",
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 192,
+          "kind": "go-string",
+          "raw": "Followers here can still see ",
           "quote": "\""
         }
       ]
@@ -13307,7 +13343,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 530,
+          "line": 531,
           "kind": "go-error-body",
           "raw": "status must be active or unclaimed",
           "quote": null
@@ -13325,7 +13361,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 567,
+          "line": 568,
           "kind": "go-error-body",
           "raw": "failed to list nodes",
           "quote": null
@@ -13343,7 +13379,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 820,
+          "line": 821,
           "kind": "go-error-body",
           "raw": "name is required",
           "quote": null
@@ -13389,7 +13425,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 920,
+          "line": 921,
           "kind": "go-error-body",
           "raw": "failed to create node",
           "quote": null
@@ -13407,7 +13443,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1144,
+          "line": 1145,
           "kind": "go-error-body",
           "raw": "failed to read this patch's calendar",
           "quote": null
@@ -13425,7 +13461,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1202,
+          "line": 1203,
           "kind": "go-error-body",
           "raw": "notice_posting must be admins or members",
           "quote": null
@@ -13443,7 +13479,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1208,
+          "line": 1209,
           "kind": "go-error-body",
           "raw": "notice_replies_default must be true or false",
           "quote": null
@@ -13461,14 +13497,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1254,
+          "line": 1255,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1261,
+          "line": 1262,
           "kind": "go-error-body",
           "raw": "tags must be an array of tag names",
           "quote": null
@@ -13486,7 +13522,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1275,
+          "line": 1276,
           "kind": "go-error-body",
           "raw": "failed to update tags",
           "quote": null
@@ -13504,14 +13540,14 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1284,
+          "line": 1285,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
         },
         {
           "file": "internal/handler/nodes.go",
-          "line": 1291,
+          "line": 1292,
           "kind": "go-error-body",
           "raw": "suggest_tags must be an array of tag names",
           "quote": null
@@ -13529,7 +13565,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1363,
+          "line": 1364,
           "kind": "go-error-body",
           "raw": "failed to update node",
           "quote": null
@@ -13547,7 +13583,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1372,
+          "line": 1373,
           "kind": "go-error-body",
           "raw": "the timezone saved, but this patch's events could not be moved",
           "quote": null
@@ -13565,7 +13601,7 @@
       "occurrences": [
         {
           "file": "internal/handler/nodes.go",
-          "line": 1449,
+          "line": 1466,
           "kind": "go-error-body",
           "raw": "failed to archive node",
           "quote": null
@@ -18043,7 +18079,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 281,
+          "line": 293,
           "kind": "go-string",
           "raw": "New proposal in your patch",
           "quote": "\""
@@ -18061,7 +18097,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 282,
+          "line": 294,
           "kind": "go-string",
           "raw": "Voting has started",
           "quote": "\""
@@ -18079,7 +18115,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 283,
+          "line": 295,
           "kind": "go-string",
           "raw": "Vote received on your proposal",
           "quote": "\""
@@ -18097,7 +18133,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 284,
+          "line": 296,
           "kind": "go-string",
           "raw": "Proposal approved",
           "quote": "\""
@@ -18115,7 +18151,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 285,
+          "line": 297,
           "kind": "go-string",
           "raw": "Proposal rejected",
           "quote": "\""
@@ -18133,7 +18169,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 286,
+          "line": 298,
           "kind": "go-string",
           "raw": "Amendment applied",
           "quote": "\""
@@ -18151,7 +18187,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 287,
+          "line": 299,
           "kind": "go-string",
           "raw": "Comment on a proposal you're in",
           "quote": "\""
@@ -18169,7 +18205,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 295,
+          "line": 307,
           "kind": "go-string",
           "raw": "Voting ends in 24 hours and you have not voted",
           "quote": "\""
@@ -18187,7 +18223,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 302,
+          "line": 314,
           "kind": "go-string",
           "raw": "An open vote you can take part in",
           "quote": "\""
@@ -18205,7 +18241,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 303,
+          "line": 315,
           "kind": "go-string",
           "raw": "A vote you have not cast is short of quorum",
           "quote": "\""
@@ -18223,7 +18259,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 305,
+          "line": 317,
           "kind": "go-string",
           "raw": "Document updated",
           "quote": "\""
@@ -18241,7 +18277,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 310,
+          "line": 322,
           "kind": "go-string",
           "raw": "Rules changed",
           "quote": "\""
@@ -18259,7 +18295,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 311,
+          "line": 323,
           "kind": "go-string",
           "raw": "Rules changed while votes are open",
           "quote": "\""
@@ -18277,7 +18313,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 312,
+          "line": 324,
           "kind": "go-string",
           "raw": "The lining was updated",
           "quote": "\""
@@ -18295,7 +18331,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 317,
+          "line": 329,
           "kind": "go-string",
           "raw": "Followers can no longer read members-only charters",
           "quote": "\""
@@ -18313,7 +18349,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 318,
+          "line": 330,
           "kind": "go-string",
           "raw": "Your admin seat is inactive",
           "quote": "\""
@@ -18331,7 +18367,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 319,
+          "line": 331,
           "kind": "go-string",
           "raw": "A ratified nomination had no seat",
           "quote": "\""
@@ -18349,7 +18385,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 320,
+          "line": 332,
           "kind": "go-string",
           "raw": "This patch has no admins",
           "quote": "\""
@@ -18367,7 +18403,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 321,
+          "line": 333,
           "kind": "go-string",
           "raw": "A patch has no admins left",
           "quote": "\""
@@ -18385,7 +18421,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 323,
+          "line": 335,
           "kind": "go-string",
           "raw": "New member joined",
           "quote": "\""
@@ -18403,7 +18439,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 324,
+          "line": 336,
           "kind": "go-string",
           "raw": "Membership request pending",
           "quote": "\""
@@ -18421,7 +18457,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 325,
+          "line": 337,
           "kind": "go-string",
           "raw": "Your membership was approved",
           "quote": "\""
@@ -18439,7 +18475,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 326,
+          "line": 338,
           "kind": "go-string",
           "raw": "Your role was changed",
           "quote": "\""
@@ -18457,7 +18493,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 327,
+          "line": 339,
           "kind": "go-string",
           "raw": "You have been removed",
           "quote": "\""
@@ -18475,7 +18511,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 328,
+          "line": 340,
           "kind": "go-string",
           "raw": "You have been reinstated",
           "quote": "\""
@@ -18493,7 +18529,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 329,
+          "line": 341,
           "kind": "go-string",
           "raw": "You're invited to join a patch",
           "quote": "\""
@@ -18511,7 +18547,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 331,
+          "line": 343,
           "kind": "go-string",
           "raw": "Event suggested to your patch",
           "quote": "\""
@@ -18529,7 +18565,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 332,
+          "line": 344,
           "kind": "go-string",
           "raw": "Your event was approved",
           "quote": "\""
@@ -18547,7 +18583,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 333,
+          "line": 345,
           "kind": "go-string",
           "raw": "Your event was declined",
           "quote": "\""
@@ -18565,7 +18601,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 338,
+          "line": 350,
           "kind": "go-string",
           "raw": "A tag you suggested was approved",
           "quote": "\""
@@ -18583,7 +18619,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 339,
+          "line": 351,
           "kind": "go-string",
           "raw": "A tag you suggested was declined",
           "quote": "\""
@@ -18601,7 +18637,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 341,
+          "line": 353,
           "kind": "go-string",
           "raw": "Event link request for your patch",
           "quote": "\""
@@ -18619,7 +18655,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 342,
+          "line": 354,
           "kind": "go-string",
           "raw": "Event link confirmed",
           "quote": "\""
@@ -18637,7 +18673,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 346,
+          "line": 358,
           "kind": "go-string",
           "raw": "A listing matched one of your programs",
           "quote": "\""
@@ -18655,7 +18691,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 351,
+          "line": 363,
           "kind": "go-string",
           "raw": "A notice for your patch",
           "quote": "\""
@@ -18673,7 +18709,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 352,
+          "line": 364,
           "kind": "go-string",
           "raw": "Reply on a notice you're in",
           "quote": "\""
@@ -18691,7 +18727,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 353,
+          "line": 365,
           "kind": "go-string",
           "raw": "A notice or reply was reported",
           "quote": "\""
@@ -18709,7 +18745,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 355,
+          "line": 367,
           "kind": "go-string",
           "raw": "New patch claim request",
           "quote": "\""
@@ -18727,7 +18763,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 356,
+          "line": 368,
           "kind": "go-string",
           "raw": "New patch submission",
           "quote": "\""
@@ -18745,7 +18781,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 357,
+          "line": 369,
           "kind": "go-string",
           "raw": "A tag was suggested",
           "quote": "\""
@@ -18763,7 +18799,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 363,
+          "line": 375,
           "kind": "go-string",
           "raw": "Your patch suggestion was approved",
           "quote": "\""
@@ -18781,7 +18817,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 364,
+          "line": 376,
           "kind": "go-string",
           "raw": "Your patch suggestion was declined",
           "quote": "\""
@@ -18799,7 +18835,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 365,
+          "line": 377,
           "kind": "go-string",
           "raw": "New event submission",
           "quote": "\""
@@ -18817,7 +18853,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 366,
+          "line": 378,
           "kind": "go-string",
           "raw": "Event link request (unclaimed patch)",
           "quote": "\""
@@ -18835,7 +18871,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 367,
+          "line": 379,
           "kind": "go-string",
           "raw": "Someone asked to be a trusted contributor",
           "quote": "\""
@@ -18853,7 +18889,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 375,
+          "line": 387,
           "kind": "go-string",
           "raw": "Your trust request was approved",
           "quote": "\""
@@ -18871,7 +18907,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 376,
+          "line": 388,
           "kind": "go-string",
           "raw": "Your trust request was declined",
           "quote": "\""
@@ -18889,7 +18925,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 377,
+          "line": 389,
           "kind": "go-string",
           "raw": "Your trust request no longer applies",
           "quote": "\""
@@ -18907,7 +18943,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 379,
+          "line": 391,
           "kind": "go-string",
           "raw": "Your claim was approved",
           "quote": "\""
@@ -18925,7 +18961,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 384,
+          "line": 396,
           "kind": "go-string",
           "raw": "New patches this month",
           "quote": "\""
@@ -18943,7 +18979,7 @@
       "occurrences": [
         {
           "file": "internal/notifications/types.go",
-          "line": 385,
+          "line": 397,
           "kind": "go-string",
           "raw": "Your claim's setup window is closing",
           "quote": "\""
@@ -58426,6 +58462,24 @@
           "kind": "js-string",
           "raw": "Members elect the next admins. Until then, the three longest-standing members step in.",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "de26a557dcaa",
+      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
+      "words": 43,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 120,
+          "kind": "go-string",
+          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again in Governance if this patch wants it.",
+          "quote": "\""
         }
       ]
     }
