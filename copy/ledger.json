@@ -4123,14 +4123,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1527,
+          "line": 1533,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1740,
+          "line": 1746,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -5134,7 +5134,7 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1780,
+          "line": 1786,
           "kind": "go-error-body",
           "raw": "no valid fields to update",
           "quote": null
@@ -5699,14 +5699,14 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1669,
+          "line": 1675,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1723,
+          "line": 1729,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -6464,28 +6464,28 @@
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1454,
+          "line": 1460,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1638,
+          "line": 1644,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1715,
+          "line": 1721,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
         },
         {
           "file": "internal/handler/proposals.go",
-          "line": 1825,
+          "line": 1831,
           "kind": "go-error-body",
           "raw": "proposal not found",
           "quote": null
@@ -14697,7 +14697,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1459,
+          "line": 1465,
           "kind": "go-error-body",
           "raw": "proposal is not open for voting",
           "quote": null
@@ -14715,7 +14715,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1470,
+          "line": 1476,
           "kind": "go-error-body",
           "raw": "this patch decides elsewhere; the decision is recorded here after it is made",
           "quote": null
@@ -14733,7 +14733,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1477,
+          "line": 1483,
           "kind": "go-error-body",
           "raw": "this proposal is waiting on the maintainer; there is no vote open on it",
           "quote": null
@@ -14751,7 +14751,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1485,
+          "line": 1491,
           "kind": "go-error-body",
           "raw": "voting period has ended",
           "quote": null
@@ -14769,7 +14769,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1531,
+          "line": 1537,
           "kind": "go-error-body",
           "raw": "value must be approve, reject, or abstain",
           "quote": null
@@ -14787,7 +14787,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1550,
+          "line": 1556,
           "kind": "go-error-body",
           "raw": "failed to cast vote",
           "quote": null
@@ -14805,7 +14805,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1643,
+          "line": 1649,
           "kind": "go-error-body",
           "raw": "can only withdraw open proposals",
           "quote": null
@@ -14823,7 +14823,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1661,
+          "line": 1667,
           "kind": "go-error-body",
           "raw": "an election cannot be withdrawn: the calendar opens it and the electorate closes it (docs/adr/051)",
           "quote": null
@@ -14841,7 +14841,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1680,
+          "line": 1686,
           "kind": "go-error-body",
           "raw": "failed to withdraw proposal",
           "quote": null
@@ -14859,7 +14859,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1745,
+          "line": 1751,
           "kind": "go-error-body",
           "raw": "state is not settable: proposals open for voting when they are created (docs/adr/048)",
           "quote": null
@@ -14877,7 +14877,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1758,
+          "line": 1764,
           "kind": "go-error-body",
           "raw": "invalid status transition",
           "quote": null
@@ -14895,7 +14895,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1792,
+          "line": 1798,
           "kind": "go-error-body",
           "raw": "failed to update proposal",
           "quote": null
@@ -14920,7 +14920,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1834,
+          "line": 1840,
           "kind": "go-error-body",
           "raw": "only this patch's admins can make proposals official",
           "quote": null
@@ -14938,7 +14938,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1851,
+          "line": 1857,
           "kind": "go-error-body",
           "raw": "this patch decides proposals by vote; wait for the window to close",
           "quote": null
@@ -14956,7 +14956,7 @@
       "occurrences": [
         {
           "file": "internal/handler/proposals.go",
-          "line": 1854,
+          "line": 1860,
           "kind": "go-error-body",
           "raw": "proposal cannot be applied in its current state",
           "quote": null
@@ -20355,7 +20355,7 @@
         },
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 235,
+          "line": 277,
           "kind": "markup",
           "raw": "Choose a member",
           "quote": null
@@ -21220,7 +21220,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 78,
+          "line": 99,
           "kind": "js-string",
           "raw": "Failed to stand",
           "quote": "'"
@@ -21238,7 +21238,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 98,
+          "line": 119,
           "kind": "js-string",
           "raw": "Failed to put them forward",
           "quote": "'"
@@ -21256,7 +21256,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 113,
+          "line": 134,
           "kind": "js-string",
           "raw": "Failed to withdraw",
           "quote": "'"
@@ -21288,7 +21288,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 133,
+          "line": 154,
           "kind": "js-string",
           "raw": "Failed to save your ballot",
           "quote": "'"
@@ -21306,7 +21306,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 143,
+          "line": 164,
           "kind": "markup",
           "raw": "Nominations",
           "quote": null
@@ -21324,7 +21324,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 143,
+          "line": 164,
           "kind": "markup",
           "raw": "The ballot",
           "quote": null
@@ -21342,7 +21342,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 143,
+          "line": 164,
           "kind": "markup",
           "raw": "Result",
           "quote": null
@@ -21360,7 +21360,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 144,
+          "line": 165,
           "kind": "markup",
           "raw": "{seats} seat{seats === 1 ? '' : 's'}",
           "quote": null
@@ -21378,7 +21378,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 149,
+          "line": 170,
           "kind": "markup",
           "raw": "Anyone who is a member can stand.",
           "quote": null
@@ -21396,7 +21396,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 151,
+          "line": 172,
           "kind": "markup",
           "raw": "Nominations close {formatDay(proposal.nominations_close_at)}, and voting opens then.",
           "quote": null
@@ -21414,7 +21414,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 156,
+          "line": 177,
           "kind": "markup",
           "raw": "Approve as many candidates as you like.",
           "quote": null
@@ -21432,7 +21432,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 158,
+          "line": 179,
           "kind": "markup",
           "raw": "The most approved candidate takes the seat.",
           "quote": null
@@ -21450,7 +21450,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 160,
+          "line": 181,
           "kind": "markup",
           "raw": "The {seats} most approved take the seats.",
           "quote": null
@@ -21468,9 +21468,63 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 176,
+          "line": 197,
           "kind": "markup",
           "raw": "Standing closed {formatDay(proposal.nominations_close_at)}.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "783b3a63ce41",
+      "text": "No quorum required. {turnout.voted} of {turnout.eligible} voted.",
+      "words": 7,
+      "tier": "helper",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Turnout where the patch asks for no quorum: still worth stating, because a reader who has just been told the contest settled nothing will ask how many turned up.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 207,
+          "kind": "markup",
+          "raw": "No quorum required. {turnout.voted} of {turnout.eligible} voted.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a4253c9fd79b",
+      "text": "Quorum met: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
+      "words": 8,
+      "tier": "helper",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The sentence the ordinary proposal already uses, in the count rather than the percentage. A contest that failed six times in a row reported only \"Settled nothing\", while the number that decided it sat on a settings form two clicks away.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 209,
+          "kind": "markup",
+          "raw": "Quorum met: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d42408b76bf2",
+      "text": "{phase === 'closed' ? 'Quorum not met' : 'Quorum not yet met'}: {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
+      "words": 18,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Same sentence, and the tense follows the phase: not yet met while the ballot is open, not met once it has closed. One reads as a thing you can still fix.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 211,
+          "kind": "markup",
+          "raw": "{phase === 'closed' ? 'Quorum not met' : 'Quorum not yet met'}:\n          {turnout.voted} of {turnout.eligible} voted, {turnout.needed} needed.",
           "quote": null
         }
       ]
@@ -21486,7 +21540,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 201,
+          "line": 238,
           "kind": "markup",
           "raw": "{c.approvals} approval{c.approvals === 1 ? '' : 's'}",
           "quote": null
@@ -21504,9 +21558,27 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 204,
+          "line": 244,
           "kind": "markup",
           "raw": "seated",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0705aee0938e",
+      "text": "not seated",
+      "words": 2,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The losing row said nothing at all, and a reader took the blank for still-pending. Quiet, because losing is an outcome and not a warning.",
+      "occurrences": [
+        {
+          "file": "web/src/components/ElectionPanel.svelte",
+          "line": 246,
+          "kind": "markup",
+          "raw": "not seated",
           "quote": null
         }
       ]
@@ -21522,7 +21594,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 215,
+          "line": 257,
           "kind": "markup",
           "raw": "You are standing in this election.",
           "quote": null
@@ -21540,7 +21612,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 232,
+          "line": 274,
           "kind": "markup",
           "raw": "Put another member forward",
           "quote": null
@@ -21558,7 +21630,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 245,
+          "line": 287,
           "kind": "markup",
           "raw": "They go on the ballot straight away, and can withdraw themselves\n              until nominations close.",
           "quote": null
@@ -21576,7 +21648,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 261,
+          "line": 303,
           "kind": "markup",
           "raw": "Your ballot is in. You can change it until voting closes.",
           "quote": null
@@ -21594,7 +21666,7 @@
       "occurrences": [
         {
           "file": "web/src/components/ElectionPanel.svelte",
-          "line": 264,
+          "line": 306,
           "kind": "markup",
           "raw": "You can change this until voting closes. Approving nobody is the same as\n          not voting.",
           "quote": null
@@ -44116,7 +44188,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 63,
+          "line": 75,
           "kind": "js-string",
           "raw": "Carried by a vote.",
           "quote": "'"
@@ -44134,7 +44206,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 68,
+          "line": 80,
           "kind": "js-string",
           "raw": "Put to a vote. Nobody decided it either way; the proposal lapsed.",
           "quote": "'"
@@ -44152,7 +44224,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 70,
+          "line": 82,
           "kind": "js-string",
           "raw": "Put to a vote and did not carry.",
           "quote": "'"
@@ -44170,7 +44242,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 77,
+          "line": 89,
           "kind": "js-string",
           "raw": "Declined by the maintainer.",
           "quote": "'"
@@ -44188,27 +44260,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 79,
+          "line": 91,
           "kind": "js-string",
           "raw": "Applied without a vote.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "750d3f9f414e",
-      "text": "The electorate seated a council.",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 89,
-          "kind": "js-string",
-          "raw": "The electorate seated a council.",
           "quote": "'"
         }
       ]
@@ -44224,9 +44278,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 90,
+          "line": 100,
           "kind": "js-string",
           "raw": "Settled nothing. Nobody was elected.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8e7744b0b45e",
+      "text": "The members seated a council.",
+      "words": 5,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "For contests that resolved before the outcome was recorded, so they cannot be named. \"The members\" rather than \"the electorate\", which is not a word the co-op that read it has ever said out loud.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 108,
+          "kind": "js-string",
+          "raw": "The members seated a council.",
           "quote": "'"
         }
       ]
@@ -44242,7 +44314,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 94,
+          "line": 113,
           "kind": "js-string",
           "raw": "A meeting chose the council.",
           "quote": "'"
@@ -44260,7 +44332,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 96,
+          "line": 115,
           "kind": "js-string",
           "raw": "A meeting adopted this text.",
           "quote": "'"
@@ -44278,7 +44350,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 105,
+          "line": 124,
           "kind": "markup",
           "raw": "Record",
           "quote": null
@@ -44286,19 +44358,19 @@
       ]
     },
     {
-      "id": "fa7c06be0289",
-      "text": "Everything this patch has settled, newest first.",
-      "words": 7,
+      "id": "7095e9401311",
+      "text": "Every decision this patch has reached, and every one it failed to, newest first.",
+      "words": 14,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "as-is",
       "replacement": null,
-      "note": null,
+      "note": "The old heading promised everything the patch had settled over a list that was nine-tenths things it did not settle.",
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 109,
+          "line": 128,
           "kind": "markup",
-          "raw": "Everything this patch has settled, newest first.",
+          "raw": "Every decision this patch has reached, and every one it failed to, newest first.",
           "quote": null
         }
       ]
@@ -44314,7 +44386,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 118,
+          "line": 137,
           "kind": "markup",
           "raw": "Nothing settled yet. Proposals show up here once they close.",
           "quote": null

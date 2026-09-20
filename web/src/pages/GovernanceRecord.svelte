@@ -49,6 +49,14 @@
     adoption: 'Adopted elsewhere',
   };
 
+  // Names as a person would read them aloud. A record is prose, and
+  // "Sam Pryor, Ana Lindqvist" in the middle of a sentence reads as a
+  // database field rather than as two people.
+  function listOf(names) {
+    if (names.length === 1) return names[0];
+    return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+  }
+
   // One sentence per entry saying how it was settled.
   //
   // No tally here, on purpose. The outcome is stored when a vote resolves and
@@ -58,6 +66,10 @@
   // 1 against." The arithmetic that actually decided it was never stored. So
   // the record states what was settled and links to the proposal, where the
   // whole voter list and the frozen terms live.
+  //
+  // Who an election seated is the exception, and it is not a tally: it is
+  // written onto the candidate when the contest resolves and never moves
+  // either, which is the whole reason it is stored rather than derived.
   function outcomeLine(e) {
     if (e.kind === 'vote') {
       if (e.outcome === 'carried') return 'Carried by a vote.';
@@ -85,13 +97,20 @@
       // page, beside a council block saying nobody held the role. What the
       // record can always say truthfully is what the *contest* did, and the
       // council block two inches away says what the council is.
-      return e.outcome === 'seated'
-        ? 'The electorate seated a council.'
-        : 'Settled nothing. Nobody was elected.';
+      if (e.outcome !== 'seated') return 'Settled nothing. Nobody was elected.';
+      // Who, when the contest recorded it. "The electorate seated a council"
+      // named nobody and overstated one chair of three as a whole council,
+      // and "electorate" is not a word the co-op that read it has ever said
+      // out loud. Contests that resolved before the outcome was stored keep
+      // the unnamed sentence, in the patch's own vocabulary.
+      return e.names?.length
+        ? `The members seated ${listOf(e.names)}.`
+        : 'The members seated a council.';
     }
     if (e.kind === 'council') {
-      const who = e.names?.length ? e.names.join(', ') : '';
-      return who ? `Seated ${who}.` : 'A meeting chose the council.';
+      return e.names?.length
+        ? `Seated ${listOf(e.names)}.`
+        : 'A meeting chose the council.';
     }
     if (e.kind === 'adoption') return 'A meeting adopted this text.';
     return '';
@@ -106,7 +125,7 @@
         <!-- No gloss on what the kinds are. Each entry wears its own label,
              and a sentence listing them ahead of the list teaches the reader
              what they are one second from seeing. -->
-        <p class="muted">Everything this patch has settled, newest first.</p>
+        <p class="muted">Every decision this patch has reached, and every one it failed to, newest first.</p>
       </div>
 
       {#if loading}
