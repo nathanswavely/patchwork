@@ -235,11 +235,29 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 		var docCount int
 		db.QueryRow(docQuery, nodeID).Scan(&docCount)
 
-		// Count proposals by status.
+		// Count proposals by status — for a viewer the proposals list will
+		// actually open to.
+		//
+		// It counted for everybody, so a patch whose deliberation is closed
+		// (public_governance_record = nobody) published "1 open proposal" as
+		// a link to a page that answers "This content is only visible to
+		// members." A founder read the pair and said the page was willing to
+		// tell her a number it would not stand behind. The document count
+		// three lines up has always been asked this way, for the same reason
+		// written there: a count of things the viewer cannot reach is a
+		// broken link rather than a hint.
+		//
+		// Withheld rather than zeroed. Zero is a number, and "0 open
+		// proposals" over a patch running one is the false-empty that
+		// admins_withheld below exists to avoid; the client reads the flag
+		// before the counts.
+		recordReadable := canReadGovernanceRecord(db, r, nodeID)
 		var openProposals, passedProposals, rejectedProposals int
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'open'", nodeID).Scan(&openProposals)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'approved'", nodeID).Scan(&passedProposals)
-		db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'rejected'", nodeID).Scan(&rejectedProposals)
+		if recordReadable {
+			db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'open'", nodeID).Scan(&openProposals)
+			db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'approved'", nodeID).Scan(&passedProposals)
+			db.QueryRow("SELECT COUNT(*) FROM proposals WHERE node_id = ? AND status = 'rejected'", nodeID).Scan(&rejectedProposals)
+		}
 
 		// Count proposals needing current user's vote — but only for someone
 		// who may actually cast one. This counted every open proposal the
@@ -279,7 +297,10 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// The contest this patch is running, and when its council next
 			// faces the electorate (docs/adr/051). Both nil/empty on a patch
 			// that does not elect, so the hub renders neither.
-			"election":      currentElection(db, nodeID),
+			// An open contest is a proposal, and its "See the candidates"
+			// link lands on the same refusal the counts above do, so it is
+			// asked through the same gate.
+			"election":      electionIfReadable(db, nodeID, recordReadable),
 			"next_term_end": nextTermEnd(db, nodeID),
 			// The council's chairs, held and vacant (docs/adr/100). The
 			// admin list above says who holds power; this says how many
@@ -308,6 +329,9 @@ func GovernanceOverview(db *database.DB) http.HandlerFunc {
 			// letting an empty list say something false. The client reads
 			// this before it reads the length.
 			"admins_withheld": !adminInsider && rosterSetting == "nobody",
+			// Which kind of zero the proposal counts are, for the same reason
+			// admins_withheld sits above them.
+			"proposals_withheld": !recordReadable,
 			"successor":          successor,
 			"member_count":       memberCount,
 			"document_count":     docCount,

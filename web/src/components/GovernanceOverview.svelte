@@ -351,7 +351,12 @@
       admin: 'The maintainer makes all decisions for this patch, and may ask the members before deciding.',
       majority: 'Your patch decides things by majority vote. More than half must agree.',
       supermajority: 'Decisions require a supermajority: at least 2 out of 3 voters must agree.',
-      consensus: 'Decisions require consensus. Everyone, or nearly everyone, must agree.',
+      // "Everyone, or nearly everyone, must agree" names a threshold
+      // this patch does not run. Consensus here is rejectCount == 0 with
+      // at least one approval, so a proposal nobody objects to carries on
+      // one vote, and silence is consent. A member who reads the hub and
+      // then the ballot should find one rule, not two (F-129).
+      consensus: 'Decisions are by consensus: one reject blocks a proposal, and a proposal nobody rejects carries.',
     };
     let desc = methods[rules.decision_method] || `Decisions use ${rules.decision_method} voting.`;
 
@@ -383,8 +388,15 @@
     };
     let desc = models[rules.leadership_model] || '';
 
+    // The one thing that takes a seat away, in the words the bell uses for
+    // it and with the number it acts on (F-115). "Admins inactive for 30
+    // days may be asked to step down" described a conversation; the sweep
+    // warns at 30 and vacates the chair at 60 without asking anybody. A
+    // co-op's only admin held that sentence against the warning in his bell
+    // and the absolute in the council block below, and could not tell which
+    // of the three was true of him.
     if (rules.inactivity_days > 0) {
-      desc += ` Admins inactive for ${rules.inactivity_days} days may be asked to step down.`;
+      desc += ` An admin who does not vote, propose or comment here for ${rules.inactivity_days} days is warned, and the seat is declared vacant at ${rules.inactivity_days * 2} days.`;
     }
 
     return desc;
@@ -401,6 +413,12 @@
   }
 
   let rules = $derived(overview?.rules ? (typeof overview.rules === 'string' ? JSON.parse(overview.rules) : overview.rules) : null);
+
+  // Whether this patch runs the inactivity sweep at all. A patch with the
+  // rule switched off must not be told about a mechanism that would take a
+  // seat away, and one that runs it must not be told a term end is the only
+  // clock on the page (F-115).
+  let inactivityDays = $derived(Number(rules?.inactivity_days) || 0);
 </script>
 
 <div class="governance-overview">
@@ -645,8 +663,9 @@
             </div>
             <p class="council-hint muted">
               A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought
-              forward, because pushing it back would extend a term nobody voted for. Nobody loses their seat when a term ends — the
-              holder serves until a successor is elected.
+              forward, because pushing it back would extend a term nobody voted for. A term ending takes nobody's seat away: the
+              holder serves until a successor is elected.{#if inactivityDays > 0}{' '}Inactivity is the only thing that empties a held
+              seat early, and it is the warning in the bell rather than anything on this calendar.{/if}
             </p>
             {#if seatError}
               <p class="successor-error">{seatError}</p>
@@ -738,9 +757,18 @@
         {overview.document_count} document{overview.document_count !== 1 ? 's' : ''}
       </a>
       <span class="stat-sep">&middot;</span>
-      <a class="stat-link" href="/patches/{slug}/governance/proposals" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/proposals`); }}>
-        {overview.open_proposals} open proposal{overview.open_proposals !== 1 ? 's' : ''}
-      </a>
+      <!-- A count this patch does not publish is not a zero. The server
+           withholds the proposal counts wherever the proposals list would
+           refuse the same viewer, so the stat says the deliberation is
+           closed instead of linking a number at a page that will not show
+           it. -->
+      {#if overview.proposals_withheld}
+        <span class="muted">Proposals are members-only</span>
+      {:else}
+        <a class="stat-link" href="/patches/{slug}/governance/proposals" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/proposals`); }}>
+          {overview.open_proposals} open proposal{overview.open_proposals !== 1 ? 's' : ''}
+        </a>
+      {/if}
       <span class="stat-sep">&middot;</span>
       <span class="muted">{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}</span>
     </section>

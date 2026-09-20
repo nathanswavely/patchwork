@@ -238,3 +238,16 @@ func nextTermEnd(db *database.DB, nodeID string) string {
 	}
 	return seats[0].termEnd // soonest first
 }
+
+// electionIfReadable is currentElection through the deliberation gate
+// (docs/adr/2026-09-18-the-default-should-match-the-assumption.md).
+//
+// An election is a proposal, so a patch that publishes no deliberation must
+// not publish the one contest it is running: the hub's "See the candidates"
+// link lands on the same refusal its proposal counts did.
+func electionIfReadable(db *database.DB, nodeID string, readable bool) *liveElection {
+	if !readable {
+		return nil
+	}
+	return currentElection(db, nodeID)
+}
