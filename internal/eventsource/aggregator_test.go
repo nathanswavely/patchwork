@@ -552,7 +552,9 @@ func TestAggregator_RoutedEventKeepsTheFeedURL(t *testing.T) {
 	if err := SyncAggregator(context.Background(), db, nil, aggID); err != nil {
 		t.Fatalf("re-sync: %v", err)
 	}
-	db.QueryRow(`SELECT event_url FROM events WHERE source_id = ?`, entryID).Scan(&got)
+	if err := db.QueryRow(`SELECT event_url FROM events WHERE source_id = ?`, entryID).Scan(&got); err != nil {
+		t.Fatalf("routed event after re-sync: %v", err)
+	}
 	if got != link {
 		t.Errorf("the next pass must fill a missing URL from the cache; got %q", got)
 	}
