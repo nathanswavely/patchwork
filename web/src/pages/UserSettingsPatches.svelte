@@ -24,7 +24,29 @@
   $effect(() => {
     loadPatches();
     loadClaims();
+    loadArchived();
   });
+
+  // Patches this person administers that nobody can open (docs/adr/034).
+  //
+  // Archiving is reversible and instance-admin-only to undo, so a patch
+  // archived by accident simply vanishes: every slug route refuses it, no
+  // list names it, and the membership that makes you responsible for it is
+  // filtered out of this page's own query. A printmaker archived a
+  // duplicate of her press, and learned a year later — from her personal
+  // export, not from the product — that it was still there and still
+  // carrying an election. Asked for by name, so no other client's idea of
+  // "my patches" gains a row it cannot open.
+  let archivedPatches = $state([]);
+
+  async function loadArchived() {
+    try {
+      const data = await api('me/nodes?status=archived');
+      archivedPatches = data.items || [];
+    } catch {
+      archivedPatches = [];
+    }
+  }
 
   async function loadClaims() {
     try {
@@ -328,7 +350,34 @@
       </section>
     {/if}
 
-    {#if patches.length === 0 && myClaims.length === 0}
+    {#if archivedPatches.length > 0}
+      <section class="patch-section">
+        <h3 class="section-heading">Archived</h3>
+        <p class="muted section-note">
+          You run these and nobody can open them. Restoring a patch is an
+          instance admin's to do.
+        </p>
+        {#each archivedPatches as m (m.node_slug)}
+          <div class="patch-row">
+            <div class="patch-info">
+              <!-- No link. Every slug route refuses an archived patch, so
+                   one here would be a door onto the refusal this section
+                   exists to explain. -->
+              <span class="patch-name plain">{m.node_name || m.node_slug}</span>
+              <span class="badge state-badge" title="Archived patches are hidden from everyone, including you.">archived</span>
+              <!-- The address, because the patch that lands here is very
+                   often a duplicate of one still running and the name is
+                   then the same on both rows. It is the only thing that
+                   tells them apart. -->
+              <span class="muted joined-date">/{m.node_slug}</span>
+              <span class="muted joined-date">joined {formatDate(m.joined_at)}</span>
+            </div>
+          </div>
+        {/each}
+      </section>
+    {/if}
+
+    {#if patches.length === 0 && myClaims.length === 0 && archivedPatches.length === 0}
     <p class="muted">You haven't joined any patches yet.</p>
     {:else if patches.length > 0}
     {#if cardEmpty && (adminPatches.length > 0 || memberPatches.length > 0)}
@@ -488,6 +537,13 @@
     gap: 0.5rem;
     min-width: 0;
     flex: 1;
+    /* The badges and dates beside the name never wrap, so on a phone they
+       took the whole line and squeezed the name itself to nothing: every
+       row on this page read as a row of chips belonging to no patch.
+       Wrapping keeps the name on the first line and drops the rest under
+       it. Found on a 375px viewport, where the archived section below is
+       three chips wide and could not be read at all. */
+    flex-wrap: wrap;
   }
 
   .patch-name {
@@ -502,6 +558,18 @@
 
   .patch-name:hover {
     color: var(--color-primary);
+  }
+
+  /* An archived patch's name is not a link, so it must not light up like
+     one under the cursor. */
+  .patch-name.plain:hover {
+    color: var(--color-text);
+  }
+
+  .section-note {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin: -0.25rem 0 0.6rem;
   }
 
   .joined-date {

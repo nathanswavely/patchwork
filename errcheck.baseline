@@ -307,6 +307,11 @@ internal/governance/repo.go:	tree.Encode(treeObj)
 internal/governance/repo.go:	tree.Files().ForEach(func(f *object.File) error {
 internal/governance/repo.go:	w.Close()
 internal/governance/repo.go:	w.Write([]byte(content))
+internal/handler/a_patch_you_cannot_reach_test.go:	defer db.Close()
+internal/handler/a_patch_you_cannot_reach_test.go:	defer db.Close()
+internal/handler/a_patch_you_cannot_reach_test.go:	defer db.Close()
+internal/handler/a_patch_you_cannot_reach_test.go:	defer db.Close()
+internal/handler/a_patch_you_cannot_reach_test.go:	defer db.Close()
 internal/handler/account_deletion.go:	defer rows.Close()
 internal/handler/account_deletion.go:	defer rows.Close()
 internal/handler/account_deletion.go:	defer rows.Close()
@@ -1193,6 +1198,8 @@ internal/handler/nodes.go:	defer rows.Close()
 internal/handler/nodes.go:	json.NewEncoder(w).Encode(map[string]interface{}{
 internal/handler/nodes.go:	json.NewEncoder(w).Encode(map[string]interface{}{
 internal/handler/nodes.go:	json.NewEncoder(w).Encode(map[string]interface{}{
+internal/handler/nodes.go:	json.NewEncoder(w).Encode(map[string]interface{}{
+internal/handler/nodes.go:	json.NewEncoder(w).Encode(map[string]string{"error": "node not found"})
 internal/handler/nodes.go:	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 internal/handler/nodes.go:	json.NewEncoder(w).Encode(merged)
 internal/handler/nodes.go:	json.NewEncoder(w).Encode(n)

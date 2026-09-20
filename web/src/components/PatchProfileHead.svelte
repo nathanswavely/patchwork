@@ -24,6 +24,7 @@
    * "Upcoming events" — the two are never labelled with each other's word).
    */
   import { api } from '../lib/api.js';
+  import { patchLoadError, archivedPatchName } from '../lib/patchError.js';
   import { navigate } from '../stores/router.svelte.js';
   import { isLoggedIn, isAdmin as isInstanceAdmin } from '../stores/auth.svelte.js';
   import PatchCover from './PatchCover.svelte';
@@ -47,11 +48,16 @@
   // below asks before preferring a seeded answer.
   let loaded = $state(null);
   let error = $state('');
+  let archivedName = $state('');
+  // Whether the load failed, held apart from the message: a plain
+  // not-found has no message, and an empty string is falsy, which left the
+  // page stuck on its skeleton.
+  let loadFailed = $state(false);
   let hasOpenClaim = $state(false);
 
   let node = $derived(loaded?.node ?? seed);
   // A seed is enough to draw, so only a head with neither is loading.
-  let loading = $derived(!node && !error);
+  let loading = $derived(!node && !loadFailed);
 
   let isUnclaimed = $derived(loaded ? loaded.isUnclaimed : !!seed?.is_unclaimed);
   // The tree carries the badge as a boolean; the payload as a status
@@ -98,6 +104,7 @@
 
   async function loadNode() {
     error = '';
+    loadFailed = false;
     try {
       const data = await api(`nodes/${slug}`);
       loaded = {
@@ -116,7 +123,9 @@
       // again (docs/adr/094 decision 9).
       onLoaded(loaded);
     } catch (e) {
-      error = e.message || 'Failed to load patch';
+      error = patchLoadError(e);
+      archivedName = archivedPatchName(e);
+      loadFailed = true;
       loaded = null;
     }
   }
@@ -139,10 +148,10 @@
     <div class="skel" style="height: 150px;"></div>
     <div class="skel" style="width: 300px; height: 14px; margin: 12px auto 0;"></div>
   </div>
-{:else if error}
+{:else if loadFailed}
   <div class="profile-error">
-    <h2>Patch not found</h2>
-    <p class="muted">{error}</p>
+    <h2>{archivedName ? `${archivedName} is archived` : 'Patch not found'}</h2>
+    {#if error}<p class="muted">{error}</p>{/if}
     <a href="/" class="btn btn-secondary" onclick={go('/')}>Back to Quilt</a>
   </div>
 {:else if node}

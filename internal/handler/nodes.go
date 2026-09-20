@@ -620,7 +620,7 @@ func GetNode(db *database.DB) http.HandlerFunc {
 			 FROM nodes WHERE slug = ? AND status IN ('active','unclaimed') AND removed_at IS NULL`, slug,
 		).Scan(&n.ID, &n.OwnerID, &n.Name, &n.Slug, &n.Description, &n.Latitude, &n.Longitude, &n.Address, &n.Timezone, &n.Website, &n.DID, &n.ImageURL, &n.ImageAlt, &linksJSON, &fpJSON, &gcJSON, &n.Visibility, &n.MembershipPolicy, &apJSON, &n.Status, &n.SubmissionSource, &n.AcceptEventSuggestions, &n.NoticePosting, &n.NoticeRepliesDefault, &n.PublicMemberList, &n.PublicGovernanceRecord, &n.MovedTo, &n.FoundedAt, &n.CreatedAt, &n.UpdatedAt)
 		if err != nil {
-			http.Error(w, `{"error":"node not found"}`, http.StatusNotFound)
+			writeNodeNotFound(db, w, viewer, slug)
 			return
 		}
 		scanNodeLinks(linksJSON, &n)
@@ -1495,4 +1495,41 @@ func changedFields(req map[string]interface{}, allowed map[string]bool) string {
 		return "{}"
 	}
 	return string(detail)
+}
+
+// writeNodeNotFound answers a slug this endpoint will not serve.
+//
+// Still a 404, and still one for almost everybody: docs/adr/034 makes the
+// refusal of an archived patch absolute on every slug route, and that does
+// not change. What changes is what the patch's own admin is told.
+//
+// A printmaker archived a duplicate of her press by accident. A year later
+// she found it in her personal export, still carrying an election, and every
+// door she tried said the patch did not exist. She was its admin, and the
+// only fact she needed was the one the product was withholding from the one
+// person it could not be withheld from for anybody's protection: it is here,
+// it is archived, and an instance admin is who brings it back.
+//
+// The extra field is only ever sent to an active admin of that patch or an
+// instance admin, so a stranger probing slugs learns exactly what they
+// learned before.
+func writeNodeNotFound(db *database.DB, w http.ResponseWriter, viewer *model.User, slug string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNotFound)
+
+	if viewer != nil {
+		var id, name string
+		err := db.QueryRow(
+			`SELECT id, name FROM nodes WHERE slug = ? AND status = 'archived' AND removed_at IS NULL`, slug,
+		).Scan(&id, &name)
+		if err == nil && (viewer.Role == "admin" || userHasNodeRole(db, viewer.ID, id, "admin")) {
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"error":    "patch archived",
+				"archived": true,
+				"name":     name,
+			})
+			return
+		}
+	}
+	json.NewEncoder(w).Encode(map[string]string{"error": "node not found"})
 }
