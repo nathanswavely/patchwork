@@ -1,7 +1,7 @@
 .PHONY: build run dev seed seed-force export import test test-e2e smoke-recreate gazetteer \
         release-notes-check sim sim-personas sim-advance sim-sweep sim-status sim-now sim-reset \
         copy-sync copy-stats copy-review copy-draft copy-pull copy-apply copy-check \
-        copy-test copy-report errcheck errcheck-baseline
+        copy-test copy-report script-test errcheck errcheck-baseline
 
 # Where `make build` writes the server binary. Override via the environment to
 # build every worktree to one stable path — on Windows the firewall keys its
@@ -145,6 +145,11 @@ copy-check:
 # block never writes back over a decision made in the UI since.
 copy-test:
 	node --test tools/copy-ledger/drafts.test.js tools/copy-ledger/errors.test.js
+
+# scripts/audit-signatures.sh is allowed to exit 0 on one kind of red, so the
+# branch that decides which kind is tested against a stubbed npm.
+script-test:
+	node --test scripts/audit-signatures.test.js
 
 copy-report:
 	node tools/copy-ledger/cli.js report
