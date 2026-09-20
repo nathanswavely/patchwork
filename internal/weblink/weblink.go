@@ -64,6 +64,17 @@ func PatchGovernance(slug string) string {
 	return Patch(slug) + "/governance"
 }
 
+// PatchGovernanceRules is where a patch's rules are read, not changed —
+// /patches/:slug/governance/rules.
+//
+// Anything telling somebody to go and look at a setting points here. The
+// hub summarises the rules in prose and does not list them, and the only
+// other page carrying the full set is the change form, which is not a
+// thing to send a reader to (F-117).
+func PatchGovernanceRules(slug string) string {
+	return PatchGovernance(slug) + "/rules"
+}
+
 // Proposal is a proposal's detail page — /patches/:slug/governance/:id.
 func Proposal(slug, proposalID string) string {
 	return Patch(slug) + "/governance/" + proposalID

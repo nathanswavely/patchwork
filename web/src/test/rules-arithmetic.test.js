@@ -60,9 +60,15 @@ describe('StructuredRulesEditor — the numbers, for this patch', () => {
     expect(src).toMatch(/No quorum: however few people vote, the result stands\./);
   });
 
+  // The hints moved to the vocabulary the editor shares with the read-only
+  // rules page (F-117), so both surfaces say one thing about consensus.
+  // The property is unchanged: the consequence is stated where somebody
+  // chooses, not after they have chosen.
   it('says what consensus does before somebody chooses it', () => {
-    expect(src).toMatch(/One reject defeats a proposal, however many approve it\./);
-    expect(src).toMatch(/Two thirds of the ballots cast must approve\./);
+    const vocab = source('lib/governanceRules.js');
+    expect(vocab).toMatch(/One reject defeats a proposal, however many approve it\./);
+    expect(vocab).toMatch(/Two thirds of the ballots cast must approve\./);
+    expect(src).toMatch(/\{#if decisionHint\}/);
   });
 
   it('puts each sentence beside the control it is about', () => {

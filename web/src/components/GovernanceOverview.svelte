@@ -501,6 +501,15 @@
           Propose a change to these rules
         </a>
       {/if}
+      <!-- A way in that does not begin by offering to change something.
+           This paragraph is a summary of four fields out of twenty, and
+           the only route to the rest was the change form, so an admin who
+           wanted to check one setting had to open a Submit button to do it
+           (F-117). Shown to everyone who can read this far, because
+           reading is all it does. -->
+      <a class="section-action" href="/patches/{slug}/governance/rules" onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/rules`); }}>
+        See all of this patch's rules
+      </a>
     </section>
 
     <!-- Leadership -->
