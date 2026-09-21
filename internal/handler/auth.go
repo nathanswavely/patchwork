@@ -248,11 +248,15 @@ func RequestMagicLink(db *database.DB, cfg *config.Config) http.HandlerFunc {
 				log.Printf("magic link: send to %s failed: %v", email, err)
 			}
 		} else {
-			// No SMTP — generate the link and print to the server log.
-			token, err := auth.GenerateMagicLinkLocal(db, email)
+			// No SMTP — generate the link and print it to the server log,
+			// with the code under it. Same reason the throttle notice is
+			// logged at all (#222): without SMTP the log *is* the delivery
+			// channel, so a client that signs in by code has nowhere else to
+			// read one.
+			token, code, err := auth.GenerateMagicLinkLocal(db, email)
 			if err == nil {
 				link := magicLinkURL(cfg.Instance.Domain, cfg.Server.Port, token)
-				log.Printf("\n\033[1;36m✉  Magic link for %s:\033[0m\n   \033[4m%s\033[0m\n", email, link)
+				log.Printf("\n\033[1;36m✉  Magic link for %s:\033[0m\n   \033[4m%s\033[0m\n   \033[1mcode: %s\033[0m\n", email, link, code)
 			} else {
 				log.Printf("magic link: generate for %s failed: %v", email, err)
 			}
@@ -325,6 +329,71 @@ func VerifyMagicLink(db *database.DB) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(user)
+	}
+}
+
+// VerifyMagicCode handles POST /api/v1/auth/magic-link/verify with
+// {email, code}. It is the same sign-in as the emailed link, for a client
+// that cannot receive that link in its own session — a native app, a CLI,
+// a second device — so the proof walks back as six typed digits instead of
+// a redirect. Nothing about it is specific to any one kind of client.
+//
+// Responses match the JSON branch of VerifyMagicLink: the user with a
+// session cookie set, or username_required plus a signup token for an
+// address with no account yet (docs/adr/013).
+func VerifyMagicCode(db *database.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Email string `json:"email"`
+			Code  string `json:"code"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeJSONError(w, http.StatusBadRequest, "invalid or expired code")
+			return
+		}
+
+		// The per-email limiter keeps this endpoint cheap; the row's own
+		// attempt counter is what actually bounds a guesser (five wrong
+		// codes spend the row, link included). A throttled caller gets the
+		// one generic refusal every other failure gets, so the endpoint has
+		// exactly one thing to say and cannot be read for anything else.
+		email, err := auth.NormalizeEmail(req.Email)
+		if err == nil {
+			if rerr := middleware.CheckMagicCodeRate(email); rerr != nil {
+				writeJSONError(w, http.StatusBadRequest, "invalid or expired code")
+				return
+			}
+		}
+
+		user, signupToken, err := auth.VerifyMagicCode(db, req.Email, req.Code)
+		if err != nil {
+			writeJSONError(w, http.StatusBadRequest, "invalid or expired code")
+			return
+		}
+
+		if user == nil {
+			// New address: no account yet. The client sends the person to
+			// username selection with this token.
+			writeJSONStatus(w, http.StatusOK, map[string]interface{}{
+				"status":       "username_required",
+				"signup_token": signupToken,
+			})
+			return
+		}
+
+		ip := clientIP(r)
+
+		sessionToken, err := auth.CreateSession(db, user.ID, ip, r.UserAgent())
+		if err != nil {
+			writeJSONError(w, http.StatusInternalServerError, "failed to create session")
+			return
+		}
+
+		auth.SetSessionCookie(w, sessionToken)
+		auth.LogAuditEvent(db, user.ID, "user.login", "user", user.ID, `{"method":"magic_code"}`, ip)
+
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(user)
 	}
 }
 

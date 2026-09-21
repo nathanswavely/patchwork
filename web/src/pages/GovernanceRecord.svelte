@@ -46,6 +46,7 @@
     direct: 'Direct change',
     election: 'Election',
     council: 'Council',
+    seat: 'Seat',
     adoption: 'Adopted elsewhere',
   };
 
@@ -116,6 +117,24 @@
         ? `Seated ${listOf(e.names)}.`
         : 'A meeting chose the council.';
     }
+    // Who came off the council and who went on (F-100). These are the
+    // events a founder came back for twice and could not find: a seat
+    // vacated for inactivity and an interim promotion are written to the
+    // audit log, which is instance-admin only, so the largest thing that
+    // can happen to a patch's governance reached no member-facing page.
+    if (e.kind === 'seat') {
+      if (e.outcome === 'vacated_inactivity') {
+        return 'Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.';
+      }
+      if (e.outcome === 'vacated') return 'Their seat was vacated.';
+      if (e.outcome === 'stepped_in') {
+        return 'Stepped in as an interim admin, under this patch’s succession policy.';
+      }
+      if (e.outcome === 'made_admin') {
+        return e.actor ? `Made an admin by ${e.actor}.` : 'Made an admin.';
+      }
+      return e.actor ? `Stopped being an admin. Recorded by ${e.actor}.` : 'Stopped being an admin.';
+    }
     if (e.kind === 'adoption') return 'A meeting adopted this text.';
     return '';
   }
@@ -145,7 +164,7 @@
           {#each entries as e}
             <li
               class="entry"
-              class:unsettled={e.outcome === 'unsettled' || e.outcome === 'failed' || e.outcome === 'lapsed'}
+              class:unsettled={e.outcome === 'unsettled' || e.outcome === 'failed' || e.outcome === 'lapsed' || e.outcome === 'vacated' || e.outcome === 'vacated_inactivity' || e.outcome === 'stood_down'}
             >
               <div class="entry-head">
                 <span class="kind">{KIND_LABEL[e.kind] || e.kind}</span>

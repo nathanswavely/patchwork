@@ -51,6 +51,7 @@ import (
 var openToAnyone = map[string]string{
 	"POST /api/v1/auth/invite":                                 "redeeming an invite link is how an account is made; the token in the body is the credential",
 	"POST /api/v1/auth/magic-link":                             "asking for a sign-in link; the caller has no session yet, by definition",
+	"POST /api/v1/auth/magic-link/verify":                      "finishing that same sign-in by typing the code out of the email; the code is the credential",
 	"POST /api/v1/auth/signup":                                 "completing signup; the signup token is the credential",
 	"POST /api/v1/auth/recovery":                               "redeeming a recovery code, which is the way back in when the passkey is gone",
 	"POST /api/v1/auth/webauthn/login/begin":                   "the passkey sign-in ceremony starts before there is a session",
@@ -569,6 +570,12 @@ func (f *routeFixture) seed(t *testing.T) {
 	f.exec(t, `INSERT INTO remote_follows (id, user_id, quilt_url, node_ap_id, node_slug, node_name)
 		VALUES (?, ?, 'https://other.example', 'https://other.example/ap/nodes/1', 'their-patch', 'Their Patch')`,
 		follow, owner)
+
+	// One listed native app, so DELETE /admin/native-apps/{id} finds a row
+	// and gets as far as asking who is calling
+	// (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md).
+	nativeApp := id("native-apps")
+	f.exec(t, `INSERT INTO native_apps (id, platform, identifier, label) VALUES (?, 'apple', 'ABCDE12345.org.example.app', 'Example')`, nativeApp)
 
 	neighbor := id("neighbor-quilts")
 	f.exec(t, `INSERT INTO neighbor_quilts (id, url, name) VALUES (?, 'https://neighbor.example', 'Neighbor')`, neighbor)

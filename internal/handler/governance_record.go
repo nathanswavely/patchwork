@@ -78,9 +78,15 @@ func GovernanceRecord(db *database.DB) http.HandlerFunc {
 			return
 		}
 
+		// Whether this reader is owed the names. A public record read from
+		// outside the room withholds them the way the roster does; inside,
+		// a hidden membership is still visible to the patch's own people.
+		namesWithheld := !viewerIsInPatchRoom(db, r, nodeID)
+
 		entries := []recordEntry{}
 		entries = append(entries, settledProposals(db, nodeID, slug)...)
 		entries = append(entries, recordedDecisions(db, nodeID)...)
+		entries = append(entries, councilChanges(db, nodeID, namesWithheld)...)
 
 		// Newest first. Sorted here rather than in SQL because the entries come
 		// from three queries with different date columns, and an attestation's
@@ -281,6 +287,109 @@ func seatedNames(db *database.DB, proposalID string) []string {
 		if rows.Scan(&name) == nil && name != "" {
 			out = append(out, name)
 		}
+	}
+	return out
+}
+
+// councilChanges is who came off the council, who went on, and when.
+//
+// The Record is headed as this patch's decisions and carried none of these.
+// A founder came back specifically for them, twice, and left without them
+// both times: "Nothing on this site tells me when Devon and Ana came off, or
+// why. The Record is headed 'Everything this patch has settled' and it does
+// not contain the single most important event in the co-op's year... That is
+// the one thing I came back to find out and I had to work it out from a
+// notice I wrote myself last October."
+//
+// She could not have found it anywhere else. A seat vacated for inactivity
+// and an interim promotion are written to the audit log, which is
+// instance-admin only, so the largest governance event a patch can have —
+// its council emptying — reached no member-facing surface at all.
+//
+// Drawn from the audit log rather than a new table, because the rows already
+// exist and are already the authority. What changes is who may read these
+// three actions about their own patch, which is the same set the rest of
+// this endpoint answers to.
+func councilChanges(db *database.DB, nodeID string, namesWithheld bool) []recordEntry {
+	out := []recordEntry{}
+	// node_id is in the metadata for the two the sweep writes and absent from
+	// the one a person writes, whose entity is the membership row; COALESCE
+	// covers both, and the LEFT JOIN keeps an entry readable after the
+	// membership itself is gone.
+	rows, err := db.Query(`
+		SELECT a.action, a.created_at, COALESCE(a.metadata, ''),
+		       COALESCE(`+displayNameExpr("su")+`, ''),
+		       COALESCE(`+displayNameExpr("au")+`, ''),
+		       COALESCE(sm.visible, 1)
+		FROM audit_log a
+		LEFT JOIN memberships m ON m.id = a.entity_id
+		LEFT JOIN users su ON su.id = COALESCE(json_extract(a.metadata, '$.target_user_id'), m.user_id)
+		LEFT JOIN users au ON au.id = a.user_id
+		LEFT JOIN memberships sm
+		       ON sm.user_id = COALESCE(json_extract(a.metadata, '$.target_user_id'), m.user_id)
+		      AND sm.node_id = ?
+		WHERE a.entity_type = 'membership'
+		  AND a.action IN ('membership.seat_vacated','membership.succession','membership.role_change')
+		  AND COALESCE(json_extract(a.metadata, '$.node_id'), m.node_id) = ?
+		ORDER BY a.created_at DESC`, nodeID, nodeID)
+	if err != nil {
+		return out
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var action, at, metaJSON, subject, actor string
+		var visible int
+		if rows.Scan(&action, &at, &metaJSON, &subject, &actor, &visible) != nil {
+			continue
+		}
+		var meta struct {
+			OldRole string `json:"old_role"`
+			NewRole string `json:"new_role"`
+			Reason  string `json:"reason"`
+		}
+		json.Unmarshal([]byte(metaJSON), &meta)
+
+		// A role change that never touched the council is not a council
+		// event: member to follower is a relationship, not a seat.
+		if action == "membership.role_change" && meta.OldRole != "admin" && meta.NewRole != "admin" {
+			continue
+		}
+
+		// The same rule the roster and the council run (docs/adr/006,
+		// docs/adr/095). Inside the room a hidden membership is still
+		// visible; outside it, the record says what happened without
+		// saying who it happened to.
+		if subject == "" {
+			subject = DeletedAccountName
+		} else if namesWithheld || visible == 0 {
+			subject = HiddenMemberName
+		}
+		if namesWithheld {
+			actor = ""
+		}
+
+		e := recordEntry{Kind: "seat", At: at, Title: subject}
+		switch {
+		case action == "membership.seat_vacated":
+			// The reason rides in the outcome rather than in Summary, which
+			// the page renders as a line of its own: a bare "inactivity"
+			// under a sentence that already says it reads as machine
+			// wreckage rather than a record.
+			e.Outcome = "vacated"
+			if meta.Reason == "inactivity" {
+				e.Outcome = "vacated_inactivity"
+			}
+		case action == "membership.succession":
+			e.Outcome = "stepped_in"
+		case meta.NewRole == "admin":
+			e.Outcome = "made_admin"
+			e.Actor = actor
+		default:
+			e.Outcome = "stood_down"
+			e.Actor = actor
+		}
+		out = append(out, e)
 	}
 	return out
 }
