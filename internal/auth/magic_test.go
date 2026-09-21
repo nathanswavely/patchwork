@@ -2,6 +2,7 @@ package auth
 
 import (
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"testing"
 	"time"
@@ -233,5 +234,258 @@ func TestVerifyMagicLinkExistingUser(t *testing.T) {
 	}
 	if user.Username != "existing" {
 		t.Errorf("expected username 'existing', got %q", user.Username)
+	}
+}
+
+// --- Sign-in code -------------------------------------------------------
+//
+// The code is the same sign-in as the link, for a client that cannot be
+// handed the link in its own session. These tests hold the two properties
+// that make six digits safe to accept: the row stops answering after five
+// wrong guesses (spending the link with it), and every refusal says one
+// thing.
+
+// insertCodedMagicLink stores a magic link with a known code, at a chosen
+// expiry, and returns the raw token and the raw code.
+func insertCodedMagicLink(t *testing.T, db *database.DB, email, code string, expiresIn time.Duration) string {
+	t.Helper()
+	rawToken, err := generateToken()
+	if err != nil {
+		t.Fatal(err)
+	}
+	hash := sha256.Sum256([]byte(rawToken))
+	tokenHash := hex.EncodeToString(hash[:])
+
+	_, err = db.Exec(
+		`INSERT INTO magic_links (id, email, token, code_hash, expires_at) VALUES (?, ?, ?, ?, ?)`,
+		NewUUIDv7(), email, tokenHash, hashMagicCode(code),
+		time.Now().Add(expiresIn).UTC().Format(time.RFC3339),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return rawToken
+}
+
+func TestVerifyMagicCodeSignsInExistingUser(t *testing.T) {
+	db := setupTestDB(t)
+	email := "coded@example.com"
+	userID := NewUUIDv7()
+	now := time.Now().UTC().Format(time.RFC3339)
+	if _, err := db.Exec(
+		`INSERT INTO users (id, email, username, display_name, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+		userID, email, "coded", "Coded Person", now, now,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	_, code, err := GenerateMagicLinkLocal(db, email)
+	if err != nil {
+		t.Fatalf("GenerateMagicLinkLocal: %v", err)
+	}
+	if len(code) != 6 {
+		t.Fatalf("code = %q, want six digits", code)
+	}
+
+	user, signupToken, err := VerifyMagicCode(db, email, code)
+	if err != nil {
+		t.Fatalf("VerifyMagicCode: %v", err)
+	}
+	if signupToken != "" {
+		t.Errorf("expected no signup token for an existing account")
+	}
+	if user == nil || user.ID != userID {
+		t.Fatalf("expected the existing account %s, got %+v", userID, user)
+	}
+
+	// One row, one use: the code just spent it, so it answers nothing else.
+	if _, _, err := VerifyMagicCode(db, email, code); err != ErrInvalidMagicCode {
+		t.Errorf("reusing a spent code: err = %v, want %v", err, ErrInvalidMagicCode)
+	}
+}
+
+func TestVerifyMagicCodeAcceptsSpacedCode(t *testing.T) {
+	db := setupTestDB(t)
+	email := "spaces@example.com"
+
+	_, code, err := GenerateMagicLinkLocal(db, email)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// The email groups the digits for reading; the person types what they
+	// see, spaces and all.
+	spaced := formatMagicCode(code)
+	if spaced == code {
+		t.Fatalf("formatMagicCode did not group %q", code)
+	}
+	if _, signupToken, err := VerifyMagicCode(db, email, " "+spaced+" "); err != nil {
+		t.Fatalf("VerifyMagicCode with a spaced code: %v", err)
+	} else if signupToken == "" {
+		t.Error("expected a signup token for an address with no account")
+	}
+}
+
+func TestVerifyMagicCodeUnknownAddressAsksForAUsername(t *testing.T) {
+	db := setupTestDB(t)
+	email := "stranger@example.com"
+
+	_, code, err := GenerateMagicLinkLocal(db, email)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user, signupToken, err := VerifyMagicCode(db, email, code)
+	if err != nil {
+		t.Fatalf("VerifyMagicCode: %v", err)
+	}
+	// docs/adr/013: an unknown address gets a signup token, never an
+	// account with a username derived from the email.
+	if user != nil {
+		t.Fatalf("expected no user, got %q", user.Username)
+	}
+	if signupToken == "" {
+		t.Fatal("expected a signup token")
+	}
+	certified, err := ValidateSignupToken(db, signupToken)
+	if err != nil {
+		t.Fatalf("ValidateSignupToken: %v", err)
+	}
+	if certified != email {
+		t.Errorf("signup token certifies %q, want %q", certified, email)
+	}
+	var count int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM users WHERE email = ?`, email).Scan(&count); err != nil {
+		t.Fatal(err)
+	}
+	if count != 0 {
+		t.Errorf("%d accounts created before a username was chosen", count)
+	}
+}
+
+// Five wrong codes spend the row, and the row is the link as well: both
+// credentials prove one thing, so a guessed-at request stops answering
+// altogether rather than leaving the emailed link live.
+func TestVerifyMagicCodeFiveWrongGuessesBurnTheLink(t *testing.T) {
+	db := setupTestDB(t)
+	email := "guessed@example.com"
+	rawToken := insertCodedMagicLink(t, db, email, "123456", 15*time.Minute)
+
+	for i := 0; i < 5; i++ {
+		if _, _, err := VerifyMagicCode(db, email, "000000"); err != ErrInvalidMagicCode {
+			t.Fatalf("guess %d: err = %v, want %v", i+1, err, ErrInvalidMagicCode)
+		}
+	}
+
+	var attempts, used int
+	if err := db.QueryRow(`SELECT attempts, used FROM magic_links WHERE email = ?`, email).Scan(&attempts, &used); err != nil {
+		t.Fatal(err)
+	}
+	if attempts != 5 {
+		t.Errorf("attempts = %d, want 5", attempts)
+	}
+	if used != 1 {
+		t.Errorf("used = %d, want the row spent after five wrong codes", used)
+	}
+
+	// The right code no longer works...
+	if _, _, err := VerifyMagicCode(db, email, "123456"); err != ErrInvalidMagicCode {
+		t.Errorf("after five guesses: err = %v, want %v", err, ErrInvalidMagicCode)
+	}
+	// ...and neither does the link that was mailed with it.
+	if _, _, err := VerifyMagicLink(db, rawToken); err == nil || err.Error() != "magic link already used" {
+		t.Errorf("link after five wrong codes: err = %v, want \"magic link already used\"", err)
+	}
+}
+
+func TestVerifyMagicCodeExpired(t *testing.T) {
+	db := setupTestDB(t)
+	email := "stale@example.com"
+	insertCodedMagicLink(t, db, email, "246813", -1*time.Hour)
+
+	if _, _, err := VerifyMagicCode(db, email, "246813"); err != ErrInvalidMagicCode {
+		t.Errorf("expired code: err = %v, want %v", err, ErrInvalidMagicCode)
+	}
+}
+
+// A row minted before the codes migration has no code_hash, so no string is
+// the code it was never sent. The link on that row still works.
+func TestVerifyMagicCodeRejectsPreMigrationRow(t *testing.T) {
+	db := setupTestDB(t)
+	email := "legacy@example.com"
+	rawToken := insertMagicLink(t, db, email, 15*time.Minute)
+
+	var codeHash sql.NullString
+	if err := db.QueryRow(`SELECT code_hash FROM magic_links WHERE email = ?`, email).Scan(&codeHash); err != nil {
+		t.Fatal(err)
+	}
+	if codeHash.Valid {
+		t.Fatalf("expected a NULL code_hash on a link minted without a code, got %q", codeHash.String)
+	}
+
+	for _, guess := range []string{"", "000000", "123456"} {
+		if _, _, err := VerifyMagicCode(db, email, guess); err != ErrInvalidMagicCode {
+			t.Errorf("guess %q against a codeless row: err = %v, want %v", guess, err, ErrInvalidMagicCode)
+		}
+	}
+	// Nothing was counted against it, and the link is untouched.
+	var attempts, used int
+	if err := db.QueryRow(`SELECT attempts, used FROM magic_links WHERE email = ?`, email).Scan(&attempts, &used); err != nil {
+		t.Fatal(err)
+	}
+	if attempts != 0 || used != 0 {
+		t.Errorf("codeless row changed: attempts = %d, used = %d, want 0 and 0", attempts, used)
+	}
+	if _, _, err := VerifyMagicLink(db, rawToken); err != nil {
+		t.Errorf("the link on a codeless row should still work: %v", err)
+	}
+}
+
+// One answer for every way this can fail, so the endpoint cannot be asked
+// whether an address has ever been used here.
+func TestVerifyMagicCodeFailuresAreIndistinguishable(t *testing.T) {
+	db := setupTestDB(t)
+	insertCodedMagicLink(t, db, "known@example.com", "135790", 15*time.Minute)
+	insertCodedMagicLink(t, db, "expired@example.com", "135790", -1*time.Hour)
+
+	cases := []struct {
+		name, email, code string
+	}{
+		{"wrong code for a real request", "known@example.com", "999999"},
+		{"address nobody ever asked about", "never-asked@example.com", "135790"},
+		{"expired row", "expired@example.com", "135790"},
+		{"malformed address", "not-an-address", "135790"},
+		{"empty code", "known@example.com", ""},
+		{"non-numeric code", "known@example.com", "abcdef"},
+	}
+	for _, tc := range cases {
+		_, _, err := VerifyMagicCode(db, tc.email, tc.code)
+		if err != ErrInvalidMagicCode {
+			t.Errorf("%s: err = %v, want the one generic %v", tc.name, err, ErrInvalidMagicCode)
+		}
+	}
+}
+
+// Uniform over the whole six-digit range, and zero-padded: "004271" is a
+// code and "4271" is a different string to read back.
+func TestGenerateMagicCodeShape(t *testing.T) {
+	seen := map[string]int{}
+	for i := 0; i < 500; i++ {
+		code, err := generateMagicCode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(code) != 6 {
+			t.Fatalf("code %q is not six characters", code)
+		}
+		for _, r := range code {
+			if r < '0' || r > '9' {
+				t.Fatalf("code %q is not all digits", code)
+			}
+		}
+		seen[code]++
+	}
+	if len(seen) < 450 {
+		t.Errorf("only %d distinct codes in 500 draws; the source is not random enough", len(seen))
 	}
 }

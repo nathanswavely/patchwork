@@ -3850,21 +3850,21 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 378,
+          "line": 447,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 772,
+          "line": 841,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 933,
+          "line": 1002,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -7043,14 +7043,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 274,
+          "line": 278,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 340,
+          "line": 409,
           "kind": "go-error-body",
           "raw": "token required",
           "quote": null
@@ -7075,7 +7075,7 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 382,
+          "line": 451,
           "kind": "go-error-body",
           "raw": "token and username are required",
           "quote": null
@@ -7118,14 +7118,14 @@
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 396,
+          "line": 465,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 677,
+          "line": 746,
           "kind": "go-error-body",
           "raw": "failed to create session",
           "quote": null
@@ -7150,7 +7150,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 422,
+          "line": 491,
           "kind": "go-error-body",
           "raw": "failed to begin registration",
           "quote": null
@@ -7168,14 +7168,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 441,
+          "line": 510,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 452,
+          "line": 521,
           "kind": "go-error-body",
           "raw": "invalid credential response",
           "quote": null
@@ -7193,7 +7193,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 518,
+          "line": 587,
           "kind": "go-error-body",
           "raw": "failed to begin step-up",
           "quote": null
@@ -7211,14 +7211,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 535,
+          "line": 604,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 663,
+          "line": 732,
           "kind": "go-error-body",
           "raw": "invalid assertion response",
           "quote": null
@@ -7236,14 +7236,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 548,
+          "line": 617,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 601,
+          "line": 670,
           "kind": "go-error-body",
           "raw": "no session",
           "quote": null
@@ -7268,14 +7268,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 553,
+          "line": 622,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 627,
+          "line": 696,
           "kind": "go-error-body",
           "raw": "failed to open confirmation window",
           "quote": null
@@ -7293,7 +7293,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 585,
+          "line": 654,
           "kind": "go-error-body",
           "raw": "a recovery code is required",
           "quote": null
@@ -7311,7 +7311,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 595,
+          "line": 664,
           "kind": "go-error-body",
           "raw": "too many attempts. Wait a couple of minutes",
           "quote": null
@@ -7337,7 +7337,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 616,
+          "line": 685,
           "kind": "go-error-body",
           "raw": "failed to check that code",
           "quote": null
@@ -7355,7 +7355,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 649,
+          "line": 718,
           "kind": "go-error-body",
           "raw": "failed to begin login",
           "quote": null
@@ -7373,7 +7373,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 792,
+          "line": 861,
           "kind": "go-error-body",
           "raw": "failed to update where you moved to",
           "quote": null
@@ -7391,7 +7391,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 801,
+          "line": 870,
           "kind": "go-error-body",
           "raw": "failed to update display name",
           "quote": null
@@ -7409,7 +7409,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 811,
+          "line": 880,
           "kind": "go-error-body",
           "raw": "failed to update bio",
           "quote": null
@@ -7427,7 +7427,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 822,
+          "line": 891,
           "kind": "go-error-body",
           "raw": "failed to update links",
           "quote": null
@@ -7445,7 +7445,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 830,
+          "line": 899,
           "kind": "go-error-body",
           "raw": "failed to update landing preference",
           "quote": null
@@ -7463,7 +7463,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 844,
+          "line": 913,
           "kind": "go-error-body",
           "raw": "failed to update setting",
           "quote": null
@@ -7481,7 +7481,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 889,
+          "line": 958,
           "kind": "go-error-body",
           "raw": "failed to list credentials",
           "quote": null
@@ -7499,14 +7499,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 925,
+          "line": 994,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 966,
+          "line": 1035,
           "kind": "go-error-body",
           "raw": "credential id required",
           "quote": null
@@ -7524,7 +7524,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 945,
+          "line": 1014,
           "kind": "go-error-body",
           "raw": "failed to rename credential",
           "quote": null
@@ -7542,14 +7542,14 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 949,
+          "line": 1018,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
         },
         {
           "file": "internal/handler/auth.go",
-          "line": 980,
+          "line": 1049,
           "kind": "go-error-body",
           "raw": "credential not found",
           "quote": null
@@ -7567,7 +7567,7 @@
       "occurrences": [
         {
           "file": "internal/handler/auth.go",
-          "line": 975,
+          "line": 1044,
           "kind": "go-error-body",
           "raw": "failed to delete credential",
           "quote": null
@@ -19581,21 +19581,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 543,
+          "line": 545,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 595,
+          "line": 599,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 658,
+          "line": 662,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -19613,21 +19613,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 544,
+          "line": 546,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 596,
+          "line": 600,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 659,
+          "line": 663,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -19645,7 +19645,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 761,
+          "line": 765,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -19663,7 +19663,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 762,
+          "line": 766,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -19803,7 +19803,7 @@
         },
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 49,
+          "line": 50,
           "kind": "js-string",
           "raw": "Adopted elsewhere",
           "quote": "'"
@@ -20249,6 +20249,13 @@
         {
           "file": "web/src/pages/AdminAggregators.svelte",
           "line": 508,
+          "kind": "markup",
+          "raw": "Loading…",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 119,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -27530,7 +27537,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 210,
+          "line": 265,
           "kind": "markup",
           "raw": "Recovery code",
           "quote": null
@@ -27555,7 +27562,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 228,
+          "line": 283,
           "kind": "attr:placeholder",
           "raw": "xxxx-xxxx-xxxx",
           "quote": "\""
@@ -29929,7 +29936,7 @@
       "occurrences": [
         {
           "file": "web/src/lib/adminPanel.js",
-          "line": 56,
+          "line": 61,
           "kind": "js-string",
           "raw": "Audit log",
           "quote": "'"
@@ -31745,7 +31752,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 93,
+          "line": 126,
           "kind": "js-string",
           "raw": "Passkey prompt was closed.",
           "quote": "'"
@@ -32259,7 +32266,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 129,
+          "line": 184,
           "kind": "markup",
           "raw": "Join {instanceName}",
           "quote": null
@@ -32950,6 +32957,13 @@
           "kind": "attr:aria-label",
           "raw": "Label",
           "quote": "\""
+        },
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 184,
+          "kind": "markup",
+          "raw": "Label",
+          "quote": null
         }
       ]
     },
@@ -34613,6 +34627,349 @@
           "kind": "markup",
           "raw": "View on {hostOf(l.url)} ↗",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "a7a677280b2a",
+      "text": "App listed",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 64,
+          "kind": "js-string",
+          "raw": "App listed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "45cb001bb766",
+      "text": "Could not list that app.",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 71,
+          "kind": "js-string",
+          "raw": "Could not list that app.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "5fb1ac8f44bf",
+      "text": "App removed",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 80,
+          "kind": "js-string",
+          "raw": "App removed",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7dcd38f10cd6",
+      "text": "Could not remove that app",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 83,
+          "kind": "js-string",
+          "raw": "Could not remove that app",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b76129ed289b",
+      "text": "Apps this quilt vouches for",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 102,
+          "kind": "markup",
+          "raw": "Apps this quilt vouches for",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dc73b718e137",
+      "text": "A native app can hold this quilt's passkeys only if approved by this quilt. Listing an app publishes its identifier at the address the app stores check.",
+      "words": 27,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 104,
+          "kind": "markup",
+          "raw": "A native app can hold this quilt's passkeys only if approved by this quilt. Listing an app publishes its identifier at the address the app stores check.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "A native app can hold this quilt's passkeys only if this quilt says so, here. Listing an app publishes its identifier at the address the app stores check. Nothing is listed unless you list it."
+    },
+    {
+      "id": "81da6764ad7c",
+      "text": "What gets published",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 108,
+          "kind": "markup",
+          "raw": "What gets published",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6566445a9552",
+      "text": "Each address answers \"not found\" until you list an app for that platform. Apple caches the file for up to a day, so a change can take that long to reach a phone.",
+      "words": 33,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 112,
+          "kind": "markup",
+          "raw": "Each address answers \"not found\" until you list an app for that\n      platform. Apple caches the file for up to a day, so a change can take\n      that long to reach a phone.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "3849b518d0cf",
+      "text": "No apps listed.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 122,
+          "kind": "markup",
+          "raw": "No apps listed.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d1e2a67cafc7",
+      "text": "This quilt vouches for nobody, and publishes neither file.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 123,
+          "kind": "markup",
+          "raw": "This quilt vouches for nobody, and publishes neither file.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e16d017dba74",
+      "text": "Listed {addedOn(app.created_at)}",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 141,
+          "kind": "markup",
+          "raw": "Listed {addedOn(app.created_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d48ab0b08bde",
+      "text": "List an app",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 150,
+          "kind": "markup",
+          "raw": "List an app",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c78ffe195710",
+      "text": "Platform",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 154,
+          "kind": "markup",
+          "raw": "Platform",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "f223faa96f22",
+      "text": "Apple",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 156,
+          "kind": "markup",
+          "raw": "Apple",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "6d612a86bee4",
+      "text": "Android",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 157,
+          "kind": "markup",
+          "raw": "Android",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "9b10587f84a2",
+      "text": "Identifier",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 162,
+          "kind": "markup",
+          "raw": "Identifier",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e120cf71c1c3",
+      "text": "Signing-certificate fingerprints",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 173,
+          "kind": "markup",
+          "raw": "Signing-certificate fingerprints",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "d27ba008bf19",
+      "text": "AA:BB:CC:… — one per line",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 177,
+          "kind": "attr:placeholder",
+          "raw": "AA:BB:CC:… — one per line",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "e70a0d7ed780",
+      "text": "What you call this app",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminApps.svelte",
+          "line": 189,
+          "kind": "attr:placeholder",
+          "raw": "What you call this app",
+          "quote": "\""
         }
       ]
     },
@@ -36467,7 +36824,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 219,
+          "line": 274,
           "kind": "attr:placeholder",
           "raw": "username",
           "quote": "\""
@@ -39925,7 +40282,7 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 188,
+          "line": 243,
           "kind": "markup",
           "raw": "Email",
           "quote": null
@@ -44828,7 +45185,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 75,
+          "line": 76,
           "kind": "js-string",
           "raw": "Carried by a vote.",
           "quote": "'"
@@ -44846,7 +45203,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 80,
+          "line": 81,
           "kind": "js-string",
           "raw": "Put to a vote. Nobody decided it either way; the proposal lapsed.",
           "quote": "'"
@@ -44864,7 +45221,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 82,
+          "line": 83,
           "kind": "js-string",
           "raw": "Put to a vote and did not carry.",
           "quote": "'"
@@ -44882,7 +45239,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 89,
+          "line": 90,
           "kind": "js-string",
           "raw": "Declined by the maintainer.",
           "quote": "'"
@@ -44900,7 +45257,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 91,
+          "line": 92,
           "kind": "js-string",
           "raw": "Applied without a vote.",
           "quote": "'"
@@ -44918,7 +45275,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 100,
+          "line": 101,
           "kind": "js-string",
           "raw": "Settled nothing. Nobody was elected.",
           "quote": "'"
@@ -44936,7 +45293,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 108,
+          "line": 109,
           "kind": "js-string",
           "raw": "The members seated a council.",
           "quote": "'"
@@ -44954,9 +45311,99 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 113,
+          "line": 114,
           "kind": "js-string",
           "raw": "A meeting chose the council.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "9f50f781a363",
+      "text": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
+      "words": 17,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The sentence a founder came back for twice. Says both halves of her question, when and why, and names the rule rather than a number, because the inactivity period is per patch.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 123,
+          "kind": "js-string",
+          "raw": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "30b9dae3ff4c",
+      "text": "Their seat was vacated.",
+      "words": 4,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The same event where the sweep recorded no reason. Says what is known and does not invent the rest.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 125,
+          "kind": "js-string",
+          "raw": "Their seat was vacated.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "73d7724bc77e",
+      "text": "Stepped in as an interim admin, under this patch’s succession policy.",
+      "words": 11,
+      "tier": "helper",
+      "status": "as-is",
+      "replacement": null,
+      "note": "An interim promotion. Names the policy because the reader is often finding out for the first time that their patch has one.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 127,
+          "kind": "js-string",
+          "raw": "Stepped in as an interim admin, under this patch’s succession policy.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "daf091a504fe",
+      "text": "Made an admin.",
+      "words": 3,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "A person made an admin by another person, where the record has lost who did it. The actor is named in the branch above where it is known.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 130,
+          "kind": "js-string",
+          "raw": "Made an admin.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fb4bb0ff71e6",
+      "text": "Stopped being an admin.",
+      "words": 4,
+      "tier": "label",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Somebody off the council by a decision rather than by the clock. Deliberately not \"removed\": the same act covers stepping down and being stood down, and the record should not assert which.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRecord.svelte",
+          "line": 132,
+          "kind": "js-string",
+          "raw": "Stopped being an admin.",
           "quote": "'"
         }
       ]
@@ -44972,7 +45419,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 115,
+          "line": 134,
           "kind": "js-string",
           "raw": "A meeting adopted this text.",
           "quote": "'"
@@ -44990,7 +45437,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 124,
+          "line": 143,
           "kind": "markup",
           "raw": "Record",
           "quote": null
@@ -45008,7 +45455,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 128,
+          "line": 147,
           "kind": "markup",
           "raw": "Every decision this patch has reached, and every one it failed to, newest first.",
           "quote": null
@@ -45026,7 +45473,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 137,
+          "line": 156,
           "kind": "markup",
           "raw": "Nothing settled yet. Proposals show up here once they close.",
           "quote": null
@@ -45879,14 +46326,14 @@
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 139,
+          "line": 194,
           "kind": "attr:placeholder",
           "raw": "you@example.com",
           "quote": "\""
         },
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 194,
+          "line": 249,
           "kind": "attr:placeholder",
           "raw": "you@example.com",
           "quote": "\""
@@ -46526,9 +46973,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 59,
+          "line": 66,
           "kind": "js-string",
           "raw": "Failed to send link",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "779cf3e0dac8",
+      "text": "That code did not work",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 92,
+          "kind": "js-string",
+          "raw": "That code did not work",
           "quote": "'"
         }
       ]
@@ -46544,7 +47009,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 78,
+          "line": 111,
           "kind": "js-string",
           "raw": "Recovery failed",
           "quote": "'"
@@ -46562,7 +47027,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 115,
+          "line": 148,
           "kind": "markup",
           "raw": "Check your email",
           "quote": null
@@ -46580,7 +47045,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 116,
+          "line": 149,
           "kind": "markup",
           "raw": "We sent a sign-in link to",
           "quote": null
@@ -46598,9 +47063,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 117,
+          "line": 150,
           "kind": "markup",
           "raw": "It should arrive within a minute or two. Click the link to continue.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "28a6b505a7dd",
+      "text": "Or enter the code from the email",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 153,
+          "kind": "markup",
+          "raw": "Or enter the code from the email",
           "quote": null
         }
       ]
@@ -46616,7 +47099,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 126,
+          "line": 181,
           "kind": "markup",
           "raw": "Create your account",
           "quote": null
@@ -46634,7 +47117,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 127,
+          "line": 182,
           "kind": "markup",
           "raw": "Set up your account to claim and manage your patch on {instanceName}.",
           "quote": null
@@ -46652,7 +47135,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 130,
+          "line": 185,
           "kind": "markup",
           "raw": "Enter your email and we'll send you a sign-in link. No password needed.",
           "quote": null
@@ -46670,7 +47153,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 134,
+          "line": 189,
           "kind": "markup",
           "raw": "Email address",
           "quote": null
@@ -46688,7 +47171,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 152,
+          "line": 207,
           "kind": "markup",
           "raw": "Already have an account?",
           "quote": null
@@ -46706,7 +47189,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 158,
+          "line": 213,
           "kind": "markup",
           "raw": "Welcome back",
           "quote": null
@@ -46724,7 +47207,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 159,
+          "line": 214,
           "kind": "markup",
           "raw": "Sign in to {instanceName}.",
           "quote": null
@@ -46742,7 +47225,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 163,
+          "line": 218,
           "kind": "markup",
           "raw": "Passkey",
           "quote": null
@@ -46767,7 +47250,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 166,
+          "line": 221,
           "kind": "markup",
           "raw": "This browser cannot use passkeys. Sign in with an email link below.",
           "quote": null
@@ -46785,7 +47268,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 169,
+          "line": 224,
           "kind": "markup",
           "raw": "The quickest way in. Your key stays on your device.",
           "quote": null
@@ -46803,7 +47286,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 189,
+          "line": 244,
           "kind": "markup",
           "raw": "On a device without your passkey? We'll send you a sign-in link.",
           "quote": null
@@ -46821,7 +47304,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 212,
+          "line": 267,
           "kind": "markup",
           "raw": "Enter your username and one of your saved recovery codes. Each\n            code works once.",
           "quote": null
@@ -46839,7 +47322,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
-          "line": 255,
+          "line": 310,
           "kind": "markup",
           "raw": "New here?",
           "quote": null
@@ -59328,78 +59811,6 @@
           "line": 121,
           "kind": "go-string",
           "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules. ",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "0de5aa3dfbe7",
-      "text": "{moreProposals} more",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Matches \"N more upcoming\" on the events glimpse directly above it. Bare \"more\" rather than \"more proposals\" because the section heading already said the noun and the row it follows is one.",
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchProfileGlimpses.svelte",
-          "line": 450,
-          "kind": "markup",
-          "raw": "{moreProposals} more",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "6a001b72e197",
-      "text": "{totalProposals === 1 ? 'proposal needs' : 'proposals need'} your vote",
-      "words": 11,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Was \"N open proposals\", counting every open proposal on the patch. The number now counts what this reader still owes, so the label says that, in the Governance hub's own words for the same count: two members read the old pair and went back to check their ballot had saved.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Dashboard.svelte",
-          "line": 146,
-          "kind": "markup",
-          "raw": "{totalProposals === 1 ? 'proposal needs' : 'proposals need'} your vote",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "c545cdb96e0f",
-      "text": "{proposalCounts[m.node_slug].count} to vote on",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Was \"N open\" on the patch card. Same correction as the attention line: the badge counts ballots this person owes here, not the patch's open business.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Dashboard.svelte",
-          "line": 222,
-          "kind": "markup",
-          "raw": "{proposalCounts[m.node_slug].count} to vote on",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "d3034e06df72",
-      "text": "Open proposals here that you have not voted on yet.",
-      "words": 10,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Tooltip. The badge is three words and the rule behind it is worth one sentence on hover.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/Dashboard.svelte",
-          "line": 222,
-          "kind": "attr:title",
-          "raw": "Open proposals here that you have not voted on yet.",
           "quote": "\""
         }
       ]
