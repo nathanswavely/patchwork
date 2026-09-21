@@ -818,6 +818,55 @@ ASCII bytes of the first segment rather than the decoded JSON, so you never
 have to reproduce our JSON formatting to check it. Both segments are
 unpadded base64url.
 
+## Native apps (optional)
+
+Most instances need nothing here. Skip this section unless somebody has
+built a phone app for your quilt.
+
+A passkey belongs to a domain, and a phone will hand one to a native app
+only if the domain says, in a file it publishes itself, that the app may
+have it. So an app that signs people in to your quilt has to be listed by
+your quilt, one identifier at a time, at Administration → Settings →
+**Apps** (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md).
+
+**Nothing is listed unless you list it.** Patchwork hardcodes no app
+identifier anywhere, and an instance that has listed nothing serves neither
+file below — both answer 404, which is what the platforms read as "this
+domain vouches for nobody". Nothing app-store-shaped appears on a quilt that
+did not ask for it.
+
+Listing an app takes a fresh passkey confirmation (docs/adr/017), the same
+step-up the export and Prove Admin take: publishing an identifier lets that
+app ask a phone for your domain's passkeys, which is a grant handed outward.
+Removing one does not, because taking trust back is the safe direction.
+
+**What gets published**, once you have listed an app of that platform:
+
+```
+https://<domain>/.well-known/apple-app-site-association
+https://<domain>/.well-known/assetlinks.json
+```
+
+The Apple file carries a `webcredentials` block and nothing else — listing an
+app for passkeys does not claim your URLs for it. The Android file carries
+one `delegate_permission/common.get_login_creds` statement per app.
+
+**Both must be reachable over plain HTTPS at the domain root, with no
+redirect.** Apple's fetcher does not follow one, and the path has no file
+extension, so the response must be `Content-Type: application/json` all the
+same. The shipped Caddyfile already does this: it reverse-proxies every path
+to Patchwork and rewrites nothing, so both files arrive as the app wrote them,
+over the certificate Caddy already holds. If you put anything else in front of
+Patchwork — another proxy, a CDN with a redirect rule, an apex-to-www redirect
+— check both URLs with `curl -i` from outside and confirm you get `200` and
+that content type rather than a `301`. Apple caches the file for up to a day,
+so expect a change to take that long to reach a phone.
+
+An Android app's sign-in does not arrive from your https origin: it arrives
+from `android:apk-key-hash:<base64url of the raw certificate hash>`, derived
+from the fingerprints you entered, which is why Patchwork loads those origins
+at startup and again after every add and remove — no restart needed.
+
 ## Updating
 
 Take a backup first. Database migrations run automatically at startup.

@@ -234,7 +234,7 @@ func TestVerifyMagicLinkMatchesExistingAccountRegardlessOfCase(t *testing.T) {
 func TestGenerateMagicLinkLocalStoresNormalizedEmail(t *testing.T) {
 	db := setupTestDB(t)
 
-	if _, err := GenerateMagicLinkLocal(db, "  Bob@Example.COM "); err != nil {
+	if _, _, err := GenerateMagicLinkLocal(db, "  Bob@Example.COM "); err != nil {
 		t.Fatalf("GenerateMagicLinkLocal: %v", err)
 	}
 

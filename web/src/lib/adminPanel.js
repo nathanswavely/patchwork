@@ -51,6 +51,11 @@ export const ADMIN_TABS = [
       { id: 'usage', label: 'Usage' },
       { id: 'archived', label: 'Archived patches' },
       { id: 'attestation', label: 'Prove admin' },
+      // The native apps this quilt vouches for
+      // (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md). Last,
+      // beside Prove admin, for the same two reasons: it is rare, and the
+      // act on it is step-up gated.
+      { id: 'apps', label: 'Apps' },
     ],
   },
   { id: 'audit', label: 'Audit log', href: '/admin/audit' },

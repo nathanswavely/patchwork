@@ -32,6 +32,13 @@
   let passKeyError = $state('');
   let passKeyLoading = $state(false);
 
+  // The code the same email carries beside the link. Typing it finishes the
+  // sign-in in this tab, which is what a person does when the mail opens on
+  // another device.
+  let signInCode = $state('');
+  let codeError = $state('');
+  let codeLoading = $state(false);
+
   // The global bar's Log In affordance (docs/adr/040) sends people here
   // with ?mode=signin so the sign-in panel opens directly, instead of
   // landing on the signup-primary panel and making them click through.
@@ -59,6 +66,32 @@
       emailError = e.message || 'Failed to send link';
     } finally {
       emailLoading = false;
+    }
+  }
+
+  async function handleCodeSubmit() {
+    codeError = '';
+    codeLoading = true;
+    try {
+      const res = await api('auth/magic-link/verify', {
+        method: 'POST',
+        body: { email, code: signInCode },
+      });
+      if (res?.status === 'username_required') {
+        // A first sign-in: the username is chosen, never derived
+        // (docs/adr/013), so the same completion page the link leads to.
+        navigate(
+          '/signup/complete?token=' + encodeURIComponent(res.signup_token) +
+            (redirectTo !== '/' ? '&redirect=' + encodeURIComponent(redirectTo) : '')
+        );
+        return;
+      }
+      await login();
+      navigate(redirectTo);
+    } catch (e) {
+      codeError = e.message || 'That code did not work';
+    } finally {
+      codeLoading = false;
     }
   }
 
@@ -115,7 +148,29 @@
         <h1>Check your email</h1>
         <p>We sent a sign-in link to <strong>{email}</strong>.</p>
         <p class="muted">It should arrive within a minute or two. Click the link to continue.</p>
-        <button class="btn-link" onclick={() => { emailSent = false; email = ''; }}>
+
+        <form class="code-form" onsubmit={(e) => { e.preventDefault(); handleCodeSubmit(); }}>
+          <label for="signin-code">Or enter the code from the email</label>
+          <input
+            id="signin-code"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            pattern="[0-9 ]*"
+            bind:value={signInCode}
+            placeholder="123 456"
+            required
+            disabled={codeLoading}
+          />
+          <button type="submit" class="btn btn-secondary submit-btn" disabled={codeLoading || !signInCode.trim()}>
+            {codeLoading ? 'Checking...' : 'Continue'}
+          </button>
+        </form>
+        {#if codeError}
+          <p class="error-text">{codeError}</p>
+        {/if}
+
+        <button class="btn-link" onclick={() => { emailSent = false; email = ''; signInCode = ''; codeError = ''; }}>
           Use a different email
         </button>
       </div>
@@ -304,6 +359,11 @@
     font-size: 0.92rem;
     line-height: 1.5;
     margin-bottom: 0.5rem;
+  }
+
+  .code-form {
+    margin: 1.25rem 0 1rem;
+    max-width: 260px;
   }
 
   .signin-link {
