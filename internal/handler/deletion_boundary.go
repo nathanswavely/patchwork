@@ -89,6 +89,7 @@ func deletionRules() map[string]deletionRule {
 		"aggregator_ignored_names":    {kept, "a curation decision, kept with its aggregator."},
 		"aggregator_offer_dismissals": {kept, "a curation decision about an event, not a fact about the person."},
 		"event_sources":               {kept, "a feed belongs to the patch it was attached to; added_by is provenance."},
+		"native_apps":                 {kept, "the quilt vouches for the app, not the admin who typed it in (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md). Purging it would quietly unpublish an identifier — and so break sign-in for everybody using that app — because one admin closed their account; added_by is provenance, and removing a listing is an admin's deliberate act."},
 		"governance_docs":             {kept, "a charter is the community's text; created_by is provenance and the document outlives everyone."},
 		"invite_links":                {kept, "instance-scoped and single-use (docs/adr/001); created_by is provenance. NOTE: this records what already happens rather than a decision anybody made — an unspent link outliving the admin who issued it may deserve a second look, and this boundary is where that argument belongs."},
 

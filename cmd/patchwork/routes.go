@@ -90,6 +90,20 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	// quilt federates.
 	t.handleFunc("GET /api/v1/instance/attestation-key", handler.AttestationKey(d.db, d.cfg))
 
+	// The platform association files for the native apps this quilt vouches
+	// for (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md). Here for
+	// the same reason the attestation key is: an app store's fetcher has no
+	// account and does not care whether this instance federates, so neither
+	// file may sit behind the federation gate.
+	//
+	// Both are exact patterns, so ServeMux matches them ahead of the SPA's
+	// "/" catch-all — the specific pattern wins, the way
+	// /.well-known/webfinger already does. Each answers 404 until an admin
+	// has listed an app of that platform: an instance that asked for none of
+	// this publishes none of it.
+	t.handleFunc("GET "+handler.AppleAssociationPath, handler.AppleAppSiteAssociation(d.db))
+	t.handleFunc("GET "+handler.AndroidAssociationPath, handler.AssetLinks(d.db))
+
 	// Suggesting a placement from an address. Authenticated and throttled;
 	// answers "no suggestion" rather than an error when there is no index or
 	// no match, because both are ordinary.
@@ -115,6 +129,11 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("POST /api/v1/auth/invite", rl(handler.RedeemInviteLink(d.db, d.cfg)))
 	t.handleFunc("GET /api/v1/auth/invite/{token}/validate", rl(handler.ValidateInviteLink(d.db)))
 	t.handleFunc("POST /api/v1/auth/magic-link", handler.RequestMagicLink(d.db, d.cfg))
+	// The code carried by the same email, for a client that cannot receive
+	// the link in its own session. Its own per-email limiter lives inside
+	// the handler, the way the request route's does, on top of this shared
+	// unauthed budget.
+	t.handleFunc("POST /api/v1/auth/magic-link/verify", rl(handler.VerifyMagicCode(d.db)))
 	t.handleFunc("GET /api/v1/auth/verify/{token}", handler.VerifyMagicLink(d.db))
 	// Alias for magic links mailed before the link builder was fixed: they
 	// point at /auth/verify/{token}, which the SPA has no route for and would
@@ -451,6 +470,16 @@ func buildRoutes(d serverDeps) (*http.ServeMux, []route) {
 	t.handleFunc("GET /api/v1/admin/overview", middleware.AdminRequired(d.db, handler.AdminOverview(d.db, d.cfg)))
 
 	// Quilt settings (docs/adr/014): community identity + danger zone.
+	// Native apps: the apps this domain vouches for
+	// (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md). Adding one is
+	// step-up gated, because publishing an identifier lets that app ask a
+	// phone for this domain's passkeys — the same class of act as setting an
+	// account's email address (docs/adr/072). Removing one is not: taking
+	// trust back is the safe direction.
+	t.handleFunc("GET /api/v1/admin/native-apps", middleware.AdminRequired(d.db, handler.AdminListNativeApps(d.db, d.cfg)))
+	t.handleFunc("POST /api/v1/admin/native-apps", middleware.AdminRequired(d.db, middleware.SudoRequired(d.db, handler.AdminAddNativeApp(d.db, d.wa))))
+	t.handleFunc("DELETE /api/v1/admin/native-apps/{id}", middleware.AdminRequired(d.db, handler.AdminDeleteNativeApp(d.db, d.wa)))
+
 	// Neighbor quilts: the instance's public adjacency list (docs/adr/024).
 	t.handleFunc("GET /api/v1/admin/neighbor-quilts", middleware.AdminRequired(d.db, handler.AdminListNeighborQuilts(d.db)))
 	t.handleFunc("POST /api/v1/admin/neighbor-quilts", middleware.AdminRequired(d.db, handler.AdminAddNeighborQuilt(d.db)))
