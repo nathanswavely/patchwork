@@ -40,9 +40,8 @@ describe('Admin apps page', () => {
   });
 
   it('says what listing an app does, in the words the decision uses', () => {
-    expect(src).toContain("A native app can hold this quilt's passkeys only if this quilt says so");
-    expect(src).toContain('Listing an app publishes its identifier at the address the app');
-    expect(src).toContain('Nothing is listed unless you list it.');
+    expect(src).toContain("A native app can hold this quilt's passkeys only if approved by this quilt.");
+    expect(src).toContain('Listing an app publishes its identifier at the address the app stores check.');
   });
 
   it('shows the two published addresses and says Apple caches for up to a day', () => {

@@ -20255,7 +20255,7 @@
         },
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 121,
+          "line": 119,
           "kind": "markup",
           "raw": "Loading…",
           "quote": null
@@ -32496,7 +32496,7 @@
         },
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 186,
+          "line": 184,
           "kind": "markup",
           "raw": "Label",
           "quote": null
@@ -34171,7 +34171,7 @@
       "text": "App listed",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34189,7 +34189,7 @@
       "text": "Could not list that app.",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34207,7 +34207,7 @@
       "text": "App removed",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34225,7 +34225,7 @@
       "text": "Could not remove that app",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34243,7 +34243,7 @@
       "text": "Apps this quilt vouches for",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34257,11 +34257,11 @@
       ]
     },
     {
-      "id": "e39266df1dc2",
-      "text": "A native app can hold this quilt's passkeys only if this quilt says so, here. Listing an app publishes its identifier at the address the app stores check. Nothing is listed unless you list it.",
-      "words": 35,
+      "id": "dc73b718e137",
+      "text": "A native app can hold this quilt's passkeys only if approved by this quilt. Listing an app publishes its identifier at the address the app stores check.",
+      "words": 27,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "human",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -34269,23 +34269,24 @@
           "file": "web/src/pages/AdminApps.svelte",
           "line": 104,
           "kind": "markup",
-          "raw": "A native app can hold this quilt's passkeys only if this quilt says so,\n    here. Listing an app publishes its identifier at the address the app\n    stores check. Nothing is listed unless you list it.",
+          "raw": "A native app can hold this quilt's passkeys only if approved by this quilt. Listing an app publishes its identifier at the address the app stores check.",
           "quote": null
         }
-      ]
+      ],
+      "previous_ai_text": "A native app can hold this quilt's passkeys only if this quilt says so, here. Listing an app publishes its identifier at the address the app stores check. Nothing is listed unless you list it."
     },
     {
       "id": "81da6764ad7c",
       "text": "What gets published",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 110,
+          "line": 108,
           "kind": "markup",
           "raw": "What gets published",
           "quote": null
@@ -34297,13 +34298,13 @@
       "text": "Each address answers \"not found\" until you list an app for that platform. Apple caches the file for up to a day, so a change can take that long to reach a phone.",
       "words": 33,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 114,
+          "line": 112,
           "kind": "markup",
           "raw": "Each address answers \"not found\" until you list an app for that\n      platform. Apple caches the file for up to a day, so a change can take\n      that long to reach a phone.",
           "quote": null
@@ -34315,13 +34316,13 @@
       "text": "No apps listed.",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 124,
+          "line": 122,
           "kind": "markup",
           "raw": "No apps listed.",
           "quote": null
@@ -34333,13 +34334,13 @@
       "text": "This quilt vouches for nobody, and publishes neither file.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 125,
+          "line": 123,
           "kind": "markup",
           "raw": "This quilt vouches for nobody, and publishes neither file.",
           "quote": null
@@ -34351,13 +34352,13 @@
       "text": "Listed {addedOn(app.created_at)}",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 143,
+          "line": 141,
           "kind": "markup",
           "raw": "Listed {addedOn(app.created_at)}",
           "quote": null
@@ -34369,13 +34370,13 @@
       "text": "List an app",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 152,
+          "line": 150,
           "kind": "markup",
           "raw": "List an app",
           "quote": null
@@ -34387,13 +34388,13 @@
       "text": "Platform",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 156,
+          "line": 154,
           "kind": "markup",
           "raw": "Platform",
           "quote": null
@@ -34405,13 +34406,13 @@
       "text": "Apple",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 158,
+          "line": 156,
           "kind": "markup",
           "raw": "Apple",
           "quote": null
@@ -34423,13 +34424,13 @@
       "text": "Android",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 159,
+          "line": 157,
           "kind": "markup",
           "raw": "Android",
           "quote": null
@@ -34441,13 +34442,13 @@
       "text": "Identifier",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 164,
+          "line": 162,
           "kind": "markup",
           "raw": "Identifier",
           "quote": null
@@ -34459,13 +34460,13 @@
       "text": "Signing-certificate fingerprints",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 175,
+          "line": 173,
           "kind": "markup",
           "raw": "Signing-certificate fingerprints",
           "quote": null
@@ -34477,13 +34478,13 @@
       "text": "AA:BB:CC:… — one per line",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 179,
+          "line": 177,
           "kind": "attr:placeholder",
           "raw": "AA:BB:CC:… — one per line",
           "quote": "\""
@@ -34495,13 +34496,13 @@
       "text": "What you call this app",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminApps.svelte",
-          "line": 191,
+          "line": 189,
           "kind": "attr:placeholder",
           "raw": "What you call this app",
           "quote": "\""
@@ -46322,7 +46323,7 @@
       "text": "That code did not work",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [
@@ -46412,7 +46413,7 @@
       "text": "Or enter the code from the email",
       "words": 7,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
       "note": null,
       "occurrences": [

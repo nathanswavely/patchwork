@@ -101,9 +101,7 @@
 <div class="admin-page">
   <h1>Apps this quilt vouches for</h1>
   <p class="page-desc">
-    A native app can hold this quilt's passkeys only if this quilt says so,
-    here. Listing an app publishes its identifier at the address the app
-    stores check. Nothing is listed unless you list it.
+    A native app can hold this quilt's passkeys only if approved by this quilt. Listing an app publishes its identifier at the address the app stores check.
   </p>
 
   <div class="urls">
