@@ -950,8 +950,10 @@ internal/handler/governance_electorate_test.go:	db.Exec(`UPDATE nodes SET founde
 internal/handler/governance_record.go:	defer arows.Close()
 internal/handler/governance_record.go:	defer rows.Close()
 internal/handler/governance_record.go:	defer rows.Close()
+internal/handler/governance_record.go:	defer rows.Close()
 internal/handler/governance_record.go:	json.NewEncoder(w).Encode(map[string]interface{}{
 internal/handler/governance_record.go:	json.NewEncoder(w).Encode(map[string]interface{}{"items": entries})
+internal/handler/governance_record.go:	json.Unmarshal([]byte(metaJSON), &meta)
 internal/handler/governance_record.go:	json.Unmarshal([]byte(termsJSON), &terms)
 internal/handler/governance_record.go:	nameRows.Close()
 internal/handler/governance_record.go:	rows.Close()
@@ -1457,6 +1459,13 @@ internal/handler/public_governance_record_test.go:	db.QueryRow("SELECT activity_
 internal/handler/public_governance_record_test.go:	db.QueryRow("SELECT public_governance_record FROM nodes WHERE id = ?", f.nodeID).Scan(&got)
 internal/handler/public_member_list_test.go:	db.QueryRow("SELECT public_member_list FROM nodes WHERE id = ?", f.nodeID).Scan(&got)
 internal/handler/quorum_denominator_test.go:	db.QueryRow(`SELECT COALESCE(state,'') FROM proposals WHERE id = ?`, proposalID).Scan(&state)
+internal/handler/record_of_who_came_off_test.go:	db.QueryRow(`SELECT id FROM memberships WHERE node_id = ? AND user_id = ?`, nodeID, userID).Scan(&id)
+internal/handler/record_of_who_came_off_test.go:	defer db.Close()
+internal/handler/record_of_who_came_off_test.go:	defer db.Close()
+internal/handler/record_of_who_came_off_test.go:	defer db.Close()
+internal/handler/record_of_who_came_off_test.go:	defer db.Close()
+internal/handler/record_of_who_came_off_test.go:	defer db.Close()
+internal/handler/record_of_who_came_off_test.go:	defer db.Close()
 internal/handler/recovery.go:	json.NewEncoder(w).Encode(map[string]interface{}{
 internal/handler/recovery.go:	json.NewEncoder(w).Encode(map[string]int{
 internal/handler/recovery.go:	json.NewEncoder(w).Encode(user)
