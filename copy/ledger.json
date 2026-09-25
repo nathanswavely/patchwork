@@ -4039,7 +4039,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 878,
+          "line": 902,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -4687,14 +4687,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 852,
-          "kind": "go-error-body",
-          "raw": "node not found",
-          "quote": null
-        },
-        {
-          "file": "internal/handler/nodes.go",
-          "line": 623,
+          "line": 876,
           "kind": "go-error-body",
           "raw": "node not found",
           "quote": null
@@ -5636,7 +5629,7 @@
         },
         {
           "file": "internal/handler/memberships.go",
-          "line": 858,
+          "line": 882,
           "kind": "go-error-body",
           "raw": "insufficient permissions",
           "quote": null
@@ -12976,7 +12969,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 772,
+          "line": 796,
           "kind": "go-error-body",
           "raw": "failed to list memberships",
           "quote": null
@@ -12994,7 +12987,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 869,
+          "line": 893,
           "kind": "go-error-body",
           "raw": "membership not found",
           "quote": null
@@ -13019,7 +13012,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 888,
+          "line": 912,
           "kind": "go-error-body",
           "raw": "can only approve pending members",
           "quote": null
@@ -13037,7 +13030,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 893,
+          "line": 917,
           "kind": "go-error-body",
           "raw": "failed to approve member",
           "quote": null
@@ -13055,7 +13048,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 916,
+          "line": 940,
           "kind": "go-error-body",
           "raw": "can only ban active members",
           "quote": null
@@ -13073,7 +13066,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 921,
+          "line": 945,
           "kind": "go-error-body",
           "raw": "cannot ban yourself",
           "quote": null
@@ -13091,7 +13084,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 929,
+          "line": 953,
           "kind": "go-error-body",
           "raw": "cannot ban the last admin",
           "quote": null
@@ -13109,7 +13102,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 935,
+          "line": 959,
           "kind": "go-error-body",
           "raw": "failed to ban member",
           "quote": null
@@ -13127,7 +13120,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 964,
+          "line": 988,
           "kind": "go-error-body",
           "raw": "failed to reject member",
           "quote": null
@@ -13145,7 +13138,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 972,
+          "line": 996,
           "kind": "go-error-body",
           "raw": "failed to reinstate member",
           "quote": null
@@ -13163,7 +13156,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 992,
+          "line": 1016,
           "kind": "go-error-body",
           "raw": "can only reject pending or reinstate banned members",
           "quote": null
@@ -13181,7 +13174,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 997,
+          "line": 1021,
           "kind": "go-error-body",
           "raw": "invalid status value",
           "quote": null
@@ -13199,7 +13192,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1006,
+          "line": 1030,
           "kind": "go-error-body",
           "raw": "invalid role value",
           "quote": null
@@ -13217,7 +13210,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1015,
+          "line": 1039,
           "kind": "go-error-body",
           "raw": "they have not accepted the invitation yet",
           "quote": null
@@ -13235,7 +13228,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1042,
+          "line": 1066,
           "kind": "go-error-body",
           "raw": "they follow this patch: invite them to join, or let them become a member themselves",
           "quote": null
@@ -13253,7 +13246,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1051,
+          "line": 1075,
           "kind": "go-error-body",
           "raw": "cannot demote the last admin",
           "quote": null
@@ -13271,7 +13264,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1083,
+          "line": 1107,
           "kind": "go-error-body",
           "raw": "this patch chooses its admins elsewhere: record that decision instead",
           "quote": null
@@ -13289,7 +13282,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1095,
+          "line": 1119,
           "kind": "go-error-body",
           "raw": "this patch ratifies admins by proposal: nominate them instead",
           "quote": null
@@ -13307,7 +13300,7 @@
       "occurrences": [
         {
           "file": "internal/handler/memberships.go",
-          "line": 1132,
+          "line": 1156,
           "kind": "go-error-body",
           "raw": "failed to update role",
           "quote": null
@@ -22734,7 +22727,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 286,
+          "line": 308,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -25131,63 +25124,6 @@
       ]
     },
     {
-      "id": "842680564705",
-      "text": "Failed to load patch",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 119,
-          "kind": "js-string",
-          "raw": "Failed to load patch",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/components/PatchShell.svelte",
-          "line": 93,
-          "kind": "js-string",
-          "raw": "Failed to load patch",
-          "quote": "'"
-        },
-        {
-          "file": "web/src/pages/EventForm.svelte",
-          "line": 176,
-          "kind": "js-string",
-          "raw": "Failed to load patch",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "980876b25157",
-      "text": "Patch not found",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 144,
-          "kind": "markup",
-          "raw": "Patch not found",
-          "quote": null
-        },
-        {
-          "file": "web/src/components/PatchShell.svelte",
-          "line": 250,
-          "kind": "markup",
-          "raw": "Patch not found",
-          "quote": null
-        }
-      ]
-    },
-    {
       "id": "5f9b19e0d003",
       "text": "Back to Quilt",
       "words": 3,
@@ -25198,7 +25134,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 146,
+          "line": 155,
           "kind": "markup",
           "raw": "Back to Quilt",
           "quote": null
@@ -25216,7 +25152,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 187,
+          "line": 196,
           "kind": "markup",
           "raw": "Settings",
           "quote": null
@@ -25241,7 +25177,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 218,
+          "line": 227,
           "kind": "markup",
           "raw": "No one runs this patch yet.",
           "quote": null
@@ -25259,7 +25195,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 219,
+          "line": 228,
           "kind": "markup",
           "raw": "The community added it",
           "quote": null
@@ -25277,7 +25213,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 221,
+          "line": 230,
           "kind": "markup",
           "raw": "Review claims",
           "quote": null
@@ -25295,7 +25231,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 223,
+          "line": 232,
           "kind": "markup",
           "raw": "Your claim is in progress",
           "quote": null
@@ -25313,7 +25249,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 225,
+          "line": 234,
           "kind": "markup",
           "raw": "If it's yours,",
           "quote": null
@@ -25331,7 +25267,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 225,
+          "line": 234,
           "kind": "markup",
           "raw": "claim it",
           "quote": null
@@ -25349,7 +25285,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 237,
+          "line": 246,
           "kind": "attr:title",
           "raw": "This patch changed the shared community standards every patch starts with. Read its version in Governance.",
           "quote": "\""
@@ -25367,7 +25303,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchProfileHead.svelte",
-          "line": 239,
+          "line": 248,
           "kind": "markup",
           "raw": "Amended lining",
           "quote": null
@@ -25392,7 +25328,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 194,
+          "line": 216,
           "kind": "js-string",
           "raw": "Membership request sent",
           "quote": "'"
@@ -25424,7 +25360,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 194,
+          "line": 216,
           "kind": "js-string",
           "raw": "You are now a member",
           "quote": "'"
@@ -25449,7 +25385,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 196,
+          "line": 218,
           "kind": "js-string",
           "raw": "Could not join",
           "quote": "'"
@@ -25510,7 +25446,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 168,
+          "line": 190,
           "kind": "js-string",
           "raw": "Request withdrawn",
           "quote": "'"
@@ -25607,7 +25543,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 169,
+          "line": 191,
           "kind": "js-string",
           "raw": "Unfollowed patch",
           "quote": "'"
@@ -25632,7 +25568,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 169,
+          "line": 191,
           "kind": "js-string",
           "raw": "Left patch",
           "quote": "'"
@@ -25815,7 +25751,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 133,
+          "line": 155,
           "kind": "js-string",
           "raw": "Become a member",
           "quote": "'"
@@ -25833,14 +25769,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 227,
+          "line": 245,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 228,
+          "line": 246,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -25858,7 +25794,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 235,
+          "line": 253,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -25876,7 +25812,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 253,
+          "line": 271,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -30257,6 +30193,42 @@
           "kind": "markup",
           "raw": "Quilt Settings",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "44373bb2df6c",
+      "text": "This patch is archived, so nobody can open it. An instance admin can restore it.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The one fact a printmaker needed and could not get: her duplicate press was still there, archived, and restoring it is an instance admin act (docs/adr/034). Shown only to somebody who administers that patch; everybody else still reads the bare heading.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/patchError.js",
+          "line": 23,
+          "kind": "js-string",
+          "raw": "This patch is archived, so nobody can open it. An instance admin can restore it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "cd326d0c17a0",
+      "text": "Could not load this patch. Try again in a moment.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The fallback when a patch fails to load for a reason that is not a 404. Replaces printing the server message under a heading that already said \"Patch not found\", which is how \"node not found\" reached a reader who had never seen the word.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/patchError.js",
+          "line": 26,
+          "kind": "js-string",
+          "raw": "Could not load this patch. Try again in a moment.",
+          "quote": "'"
         }
       ]
     },
@@ -39958,7 +39930,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 376,
+          "line": 425,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -39990,7 +39962,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 352,
+          "line": 401,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -41689,7 +41661,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 344,
+          "line": 393,
           "kind": "markup",
           "raw": "Managing",
           "quote": null
@@ -41739,7 +41711,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 368,
+          "line": 417,
           "kind": "markup",
           "raw": "Member of",
           "quote": null
@@ -41789,7 +41761,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 415,
+          "line": 464,
           "kind": "markup",
           "raw": "Following",
           "quote": null
@@ -41814,7 +41786,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 332,
+          "line": 381,
           "kind": "markup",
           "raw": "You haven't joined any patches yet.",
           "quote": null
@@ -42471,6 +42443,24 @@
           "line": 153,
           "kind": "js-string",
           "raw": "Failed to load event",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "842680564705",
+      "text": "Failed to load patch",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/EventForm.svelte",
+          "line": 176,
+          "kind": "js-string",
+          "raw": "Failed to load patch",
           "quote": "'"
         }
       ]
@@ -54906,7 +54896,7 @@
         },
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 393,
+          "line": 442,
           "kind": "markup",
           "raw": "Requested",
           "quote": null
@@ -55483,7 +55473,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 45,
+          "line": 67,
           "kind": "js-string",
           "raw": "Failed to load patches",
           "quote": "'"
@@ -55501,7 +55491,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 79,
+          "line": 101,
           "kind": "js-string",
           "raw": "Failed to load contact sharing",
           "quote": "'"
@@ -55519,7 +55509,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 108,
+          "line": 130,
           "kind": "js-string",
           "raw": "Failed to update contact sharing",
           "quote": "'"
@@ -55537,7 +55527,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 133,
+          "line": 155,
           "kind": "js-string",
           "raw": "Send request",
           "quote": "'"
@@ -55555,7 +55545,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 139,
+          "line": 161,
           "kind": "js-string",
           "raw": "No one runs this patch yet. User can follow, but not join.",
           "quote": "'"
@@ -55574,7 +55564,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 143,
+          "line": 165,
           "kind": "js-string",
           "raw": "This patch adds members by invitation. An admin has to invite you.",
           "quote": "'"
@@ -55592,7 +55582,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 172,
+          "line": 194,
           "kind": "js-string",
           "raw": "Failed to withdraw request",
           "quote": "'"
@@ -55610,7 +55600,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 172,
+          "line": 194,
           "kind": "js-string",
           "raw": "Failed to leave",
           "quote": "'"
@@ -55628,7 +55618,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 213,
+          "line": 235,
           "kind": "js-string",
           "raw": "Membership visible to the public",
           "quote": "'"
@@ -55646,7 +55636,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 213,
+          "line": 235,
           "kind": "js-string",
           "raw": "Membership hidden from the public",
           "quote": "'"
@@ -55664,7 +55654,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 215,
+          "line": 237,
           "kind": "js-string",
           "raw": "Failed to update visibility",
           "quote": "'"
@@ -55682,7 +55672,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 232,
+          "line": 254,
           "kind": "markup",
           "raw": "Reachable by {m.contact_items_shared}",
           "quote": null
@@ -55700,7 +55690,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 234,
+          "line": 256,
           "kind": "markup",
           "raw": "Not reachable",
           "quote": null
@@ -55718,7 +55708,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 243,
+          "line": 265,
           "kind": "markup",
           "raw": "What {m.node_name || m.node_slug} can reach you by. Its admins and\n        members see whatever you tick here, including anyone who joins later.",
           "quote": null
@@ -55736,7 +55726,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 292,
+          "line": 314,
           "kind": "markup",
           "raw": "Claiming",
           "quote": null
@@ -55754,7 +55744,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 306,
+          "line": 328,
           "kind": "attr:title",
           "raw": "Your claim cleared. Setup is where the patch becomes active and you become its admin. Until you submit it, the patch still reads as unclaimed to everyone else.",
           "quote": "\""
@@ -55772,7 +55762,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 307,
+          "line": 329,
           "kind": "markup",
           "raw": "ready to set up",
           "quote": null
@@ -55790,7 +55780,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 309,
+          "line": 331,
           "kind": "markup",
           "raw": "claim under review",
           "quote": null
@@ -55808,7 +55798,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 309,
+          "line": 331,
           "kind": "attr:title",
           "raw": "Nobody has answered this claim yet.",
           "quote": "\""
@@ -55826,7 +55816,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 313,
+          "line": 335,
           "kind": "markup",
           "raw": "expires {formatDate(c.setup_expires_at)}",
           "quote": null
@@ -55844,9 +55834,99 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 315,
+          "line": 337,
           "kind": "markup",
           "raw": "claimed {formatDate(c.created_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "bdb86505f806",
+      "text": "Archived",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Section heading, matching Claiming / Managing above it.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 355,
+          "kind": "markup",
+          "raw": "Archived",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "219326d65e2f",
+      "text": "You run these and nobody can open them. Restoring a patch is an instance admin's to do.",
+      "words": 17,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "What the section is for, in two facts: nobody can open these, and you are not the one who reverses it. Without the second half the obvious next move is to hunt for a button that does not exist.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 357,
+          "kind": "markup",
+          "raw": "You run these and nobody can open them. Restoring a patch is an\n          instance admin's to do.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "dd9e881230eb",
+      "text": "archived",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Row badge, matching the claim badges beside it.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 367,
+          "kind": "markup",
+          "raw": "archived",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "02232f0437cb",
+      "text": "Archived patches are hidden from everyone, including you.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Badge tooltip. \"Including you\" because the reader is its admin and would otherwise assume the refusal is somebody else's problem to notice.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 367,
+          "kind": "attr:title",
+          "raw": "Archived patches are hidden from everyone, including you.",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "910b4401494f",
+      "text": "joined {formatDate(m.joined_at)}",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Same date line every other row on this page carries.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/UserSettingsPatches.svelte",
+          "line": 373,
+          "kind": "markup",
+          "raw": "joined {formatDate(m.joined_at)}",
           "quote": null
         }
       ]
@@ -55862,7 +55942,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 336,
+          "line": 385,
           "kind": "markup",
           "raw": "Your contact card is empty. Add the ways you are willing to be reached\n        under",
           "quote": null
@@ -55880,7 +55960,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 338,
+          "line": 387,
           "kind": "markup",
           "raw": ",\n        then give them to patches one at a time here.",
           "quote": null
@@ -55898,7 +55978,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 400,
+          "line": 449,
           "kind": "markup",
           "raw": "awaiting approval",
           "quote": null
@@ -55916,7 +55996,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 401,
+          "line": 450,
           "kind": "markup",
           "raw": "asked {formatDate(m.joined_at)}",
           "quote": null
@@ -55934,7 +56014,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/UserSettingsPatches.svelte",
-          "line": 424,
+          "line": 473,
           "kind": "markup",
           "raw": "following",
           "quote": null
@@ -59204,6 +59284,31 @@
           "kind": "js-string",
           "raw": "Decisions require everyone (or nearly everyone) to agree.",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "980876b25157",
+      "text": "Patch not found",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchProfileHead.svelte",
+          "line": 144,
+          "kind": "markup",
+          "raw": "Patch not found",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/PatchShell.svelte",
+          "line": 250,
+          "kind": "markup",
+          "raw": "Patch not found",
+          "quote": null
         }
       ]
     }

@@ -70,7 +70,7 @@ describe('My Patches: the claim you owe an act on', () => {
   it('distinguishes a right to act from a wait on someone else', () => {
     const claiming = patchesSrc.slice(
       patchesSrc.indexOf('<h3 class="section-heading">Claiming</h3>'),
-      patchesSrc.indexOf('{#if patches.length === 0 && myClaims.length === 0}')
+      patchesSrc.indexOf('<h3 class="section-heading">Archived</h3>')
     );
     expect(claiming).toContain('ready to set up');
     expect(claiming).toContain('claim under review');
@@ -93,8 +93,14 @@ describe('My Patches: the claim you owe an act on', () => {
     expect(patchesSrc).toContain('expires {formatDate(c.setup_expires_at)}');
   });
 
+  // Every section this page can render has to count toward "you have
+  // nothing here", or the page tells somebody looking straight at a row
+  // that they have none. Archived patches joined the list (F-124) and the
+  // condition grew with them.
   it('does not tell a claimant with no memberships that they have nothing', () => {
-    expect(patchesSrc).toContain('{#if patches.length === 0 && myClaims.length === 0}');
+    expect(patchesSrc).toContain(
+      '{#if patches.length === 0 && myClaims.length === 0 && archivedPatches.length === 0}'
+    );
     expect(patchesSrc).not.toContain('{:else if patches.length === 0}');
   });
 });
