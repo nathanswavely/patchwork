@@ -9978,19 +9978,19 @@
       ]
     },
     {
-      "id": "3ffd8c59e54a",
-      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules.",
-      "words": 49,
+      "id": "4e9ee1f3568e",
+      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again from Governance, under Rules.",
+      "words": 40,
       "tier": "prose",
-      "status": "as-is",
+      "status": "ai-fine",
       "replacement": null,
-      "note": "The rollout notice. Two changes: it now names where the switch actually is (Follower Permissions, at the bottom of Propose a change to these rules) rather than pointing vaguely at Governance, and it hands off to the sentence below naming the three keys it did not touch. An admin read the old one and went hunting for the rest: \"The one thing the site chose to write to me about is the one of the four I care least about.\"",
+      "note": "Was \"you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules\", which sent an admin to a Submit button he would not press to read a setting. Governance -> Rules lists the follower permissions beside every other rule and changes nothing, so that is where the notice points.",
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 121,
+          "line": 127,
           "kind": "go-string",
-          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules. ",
+          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again from Governance, under Rules. ",
           "quote": "\""
         }
       ]
@@ -10006,7 +10006,7 @@
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 143,
+          "line": 149,
           "kind": "go-string",
           "raw": "Followers can no longer read members-only charters in %d of your patches",
           "quote": "\""
@@ -10024,7 +10024,7 @@
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 190,
+          "line": 196,
           "kind": "go-string",
           "raw": "Followers here can now see only what any visitor can.",
           "quote": "\""
@@ -10042,7 +10042,7 @@
       "occurrences": [
         {
           "file": "internal/handler/follower_charters_default.go",
-          "line": 192,
+          "line": 198,
           "kind": "go-string",
           "raw": "Followers here can still see ",
           "quote": "\""
@@ -19581,21 +19581,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 540,
+          "line": 545,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 594,
+          "line": 599,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 655,
+          "line": 662,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -19613,21 +19613,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 541,
+          "line": 546,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 595,
+          "line": 600,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 656,
+          "line": 663,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -19645,7 +19645,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 758,
+          "line": 765,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -19663,7 +19663,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 759,
+          "line": 766,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -21701,7 +21701,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 287,
+          "line": 311,
           "kind": "markup",
           "raw": "(optional)",
           "quote": null
@@ -23523,7 +23523,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 508,
+          "line": 517,
           "kind": "markup",
           "raw": "Leadership: {leadershipLabel(rules?.leadership_model)}",
           "quote": null
@@ -23541,7 +23541,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 526,
+          "line": 535,
           "kind": "markup",
           "raw": "This patch does not list its admins publicly.",
           "quote": null
@@ -23559,7 +23559,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 551,
+          "line": 560,
           "kind": "markup",
           "raw": "Member since {formatDate(admin.joined_at)}",
           "quote": null
@@ -23577,7 +23577,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 572,
+          "line": 581,
           "kind": "markup",
           "raw": "This council has no seats yet. Until a seat exists there is nothing to elect and nothing to nominate anyone into.",
           "quote": null
@@ -23595,7 +23595,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 574,
+          "line": 583,
           "kind": "markup",
           "raw": "{seats.length} seat{seats.length === 1 ? '' : 's'} on the council,\n              {vacantSeats.length === 0\n                ? 'all held'\n                : `${seats.length - vacantSeats.length} held and ${vacantSeats.length} vacant`}.",
           "quote": null
@@ -23613,7 +23613,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 592,
+          "line": 601,
           "kind": "markup",
           "raw": "Vacant",
           "quote": null
@@ -23631,7 +23631,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 592,
+          "line": 601,
           "kind": "markup",
           "raw": "Held",
           "quote": null
@@ -23649,7 +23649,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 608,
+          "line": 617,
           "kind": "attr:aria-label",
           "raw": "Term end",
           "quote": "\""
@@ -23667,7 +23667,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 659,
+          "line": 668,
           "kind": "markup",
           "raw": "Add a seat",
           "quote": null
@@ -23685,7 +23685,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 661,
+          "line": 670,
           "kind": "markup",
           "raw": "Adding a seat does not make anybody an admin. The community fills it.",
           "quote": null
@@ -23703,7 +23703,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 665,
+          "line": 674,
           "kind": "markup",
           "raw": "A seat's term end is this patch's election calendar. A vacant seat takes any future date; a held one can only be brought\n              forward, because pushing it back would extend a term nobody voted for. A term ending takes nobody's seat away: the\n              holder serves until a successor is elected.",
           "quote": null
@@ -23721,7 +23721,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 667,
+          "line": 676,
           "kind": "markup",
           "raw": "{' '}Inactivity is the only thing that empties a held\n              seat early, and it is the warning in the bell rather than anything on this calendar.",
           "quote": null
@@ -23739,7 +23739,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 685,
+          "line": 694,
           "kind": "markup",
           "raw": "This council's term ended {formatDay(nextTermEnd)}. It serves until a successor is elected.",
           "quote": null
@@ -23757,7 +23757,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 687,
+          "line": 696,
           "kind": "markup",
           "raw": "Next seat comes up {formatDay(nextTermEnd)}.",
           "quote": null
@@ -23775,7 +23775,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 698,
+          "line": 707,
           "kind": "markup",
           "raw": "A ballot is open for {election.seats} seat{election.seats === 1 ? '' : 's'}.",
           "quote": null
@@ -23793,7 +23793,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 710,
+          "line": 719,
           "kind": "markup",
           "raw": "Admins are chosen outside Patchwork. What the community decided is\n          recorded below.",
           "quote": null
@@ -23811,7 +23811,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 724,
+          "line": 733,
           "kind": "markup",
           "raw": "Successor:",
           "quote": null
@@ -23829,7 +23829,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 724,
+          "line": 733,
           "kind": "markup",
           "raw": ". If the current admin steps away, the patch passes to them.",
           "quote": null
@@ -23848,7 +23848,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 727,
+          "line": 736,
           "kind": "markup",
           "raw": "No successor named.",
           "quote": null
@@ -23866,7 +23866,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 733,
+          "line": 742,
           "kind": "markup",
           "raw": "Nobody",
           "quote": null
@@ -23884,7 +23884,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 747,
+          "line": 756,
           "kind": "markup",
           "raw": "Naming a successor is also what lets you leave a patch you run alone.",
           "quote": null
@@ -23902,14 +23902,14 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 759,
+          "line": 768,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
         },
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 772,
+          "line": 781,
           "kind": "markup",
           "raw": "&middot;",
           "quote": null
@@ -23997,7 +23997,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 766,
+          "line": 775,
           "kind": "markup",
           "raw": "Proposals are members-only",
           "quote": null
@@ -24015,7 +24015,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceOverview.svelte",
-          "line": 773,
+          "line": 782,
           "kind": "markup",
           "raw": "{overview.member_count} member{overview.member_count !== 1 ? 's' : ''}",
           "quote": null
@@ -24033,7 +24033,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GovernanceShell.svelte",
-          "line": 43,
+          "line": 49,
           "kind": "attr:title",
           "raw": "Governance",
           "quote": "\""
@@ -24948,7 +24948,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 378,
+          "line": 313,
           "kind": "markup",
           "raw": "Events",
           "quote": null
@@ -25890,7 +25890,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 228,
+          "line": 252,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -27666,7 +27666,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 253,
+          "line": 188,
           "kind": "markup",
           "raw": "Decision Method",
           "quote": null
@@ -27691,7 +27691,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 274,
+          "line": 209,
           "kind": "markup",
           "raw": "Default Voting Period",
           "quote": null
@@ -27716,7 +27716,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 283,
+          "line": 218,
           "kind": "markup",
           "raw": "Amendment Threshold",
           "quote": null
@@ -27741,7 +27741,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 294,
+          "line": 229,
           "kind": "markup",
           "raw": "Auto-Apply Amendments",
           "quote": null
@@ -27766,7 +27766,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 341,
+          "line": 276,
           "kind": "markup",
           "raw": "Succession Policy",
           "quote": null
@@ -27827,10 +27827,17 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 314,
+          "line": 249,
           "kind": "markup",
           "raw": "Where admins are chosen",
           "quote": null
+        },
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 177,
+          "kind": "js-string",
+          "raw": "Where admins are chosen",
+          "quote": "'"
         }
       ]
     },
@@ -27852,10 +27859,17 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 327,
+          "line": 262,
           "kind": "markup",
           "raw": "Where proposals are decided",
           "quote": null
+        },
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 132,
+          "kind": "js-string",
+          "raw": "Where proposals are decided",
+          "quote": "'"
         }
       ]
     },
@@ -27877,7 +27891,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 367,
+          "line": 302,
           "kind": "markup",
           "raw": "Membership Policy",
           "quote": null
@@ -27909,7 +27923,7 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 376,
+          "line": 311,
           "kind": "markup",
           "raw": "Follower Permissions",
           "quote": null
@@ -27940,8 +27954,8 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 5,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 17,
           "kind": "js-string",
           "raw": "Admin decides",
           "quote": "'"
@@ -27965,15 +27979,15 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 6,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 18,
           "kind": "js-string",
           "raw": "Majority vote",
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 14,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 26,
           "kind": "js-string",
           "raw": "Majority vote",
           "quote": "'"
@@ -27997,15 +28011,15 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 7,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 19,
           "kind": "js-string",
           "raw": "Supermajority (2/3)",
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 15,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 27,
           "kind": "js-string",
           "raw": "Supermajority (2/3)",
           "quote": "'"
@@ -28029,15 +28043,15 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 8,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 20,
           "kind": "js-string",
           "raw": "Full consensus",
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 16,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 28,
           "kind": "js-string",
           "raw": "Full consensus",
           "quote": "'"
@@ -28062,14 +28076,14 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 316,
+          "line": 251,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 329,
+          "line": 264,
           "kind": "markup",
           "raw": "In Patchwork",
           "quote": null
@@ -28094,14 +28108,14 @@
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 317,
+          "line": 252,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
         },
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 330,
+          "line": 265,
           "kind": "markup",
           "raw": "Somewhere else, recorded here",
           "quote": null
@@ -28143,8 +28157,8 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 52,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 62,
           "kind": "js-string",
           "raw": "Instance admin intervenes",
           "quote": "'"
@@ -28168,8 +28182,8 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 54,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 64,
           "kind": "js-string",
           "raw": "Patch freezes",
           "quote": "'"
@@ -28193,8 +28207,8 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 78,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 87,
           "kind": "js-string",
           "raw": "Approval required",
           "quote": "'"
@@ -28225,8 +28239,8 @@
           "quote": "'"
         },
         {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 79,
+          "file": "web/src/lib/governanceRules.js",
+          "line": 88,
           "kind": "js-string",
           "raw": "Invite only",
           "quote": "'"
@@ -28313,186 +28327,6 @@
       ]
     },
     {
-      "id": "e88ecdd60ac7",
-      "text": "Longest-tenured members step in",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 46,
-          "kind": "js-string",
-          "raw": "Longest-tenured members step in",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "4474cf7ca062",
-      "text": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
-      "words": 17,
-      "tier": "prose",
-      "status": "as-is",
-      "replacement": null,
-      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 47,
-          "kind": "js-string",
-          "raw": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "a920ba08e058",
-      "text": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
-      "words": 19,
-      "tier": "prose",
-      "status": "as-is",
-      "replacement": null,
-      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 49,
-          "kind": "js-string",
-          "raw": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "2abee9d8f799",
-      "text": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
-      "words": 28,
-      "tier": "prose",
-      "status": "as-is",
-      "replacement": null,
-      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 51,
-          "kind": "js-string",
-          "raw": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "967e43d94f6a",
-      "text": "An instance admin is notified and decides who runs the patch.",
-      "words": 11,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 53,
-          "kind": "js-string",
-          "raw": "An instance admin is notified and decides who runs the patch.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "b23f52d1964c",
-      "text": "Nobody is promoted; the patch keeps running with no admin.",
-      "words": 10,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 55,
-          "kind": "js-string",
-          "raw": "Nobody is promoted; the patch keeps running with no admin.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "79a56a104724",
-      "text": "An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.",
-      "words": 23,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 70,
-          "kind": "js-string",
-          "raw": "An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "dc4edd5c0ba5",
-      "text": "More approvals than rejections carries a proposal.",
-      "words": 7,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 71,
-          "kind": "js-string",
-          "raw": "More approvals than rejections carries a proposal.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "4c1020f4d4c1",
-      "text": "Two thirds of the ballots cast must approve.",
-      "words": 8,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 72,
-          "kind": "js-string",
-          "raw": "Two thirds of the ballots cast must approve.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "64402a8d72dc",
-      "text": "One reject defeats a proposal, however many approve it.",
-      "words": 9,
-      "tier": "helper",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
-      "occurrences": [
-        {
-          "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 73,
-          "kind": "js-string",
-          "raw": "One reject defeats a proposal, however many approve it.",
-          "quote": "'"
-        }
-      ]
-    },
-    {
       "id": "8d650b1deddf",
       "text": "No quorum: however few people vote, the result stands.",
       "words": 9,
@@ -28503,7 +28337,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 143,
+          "line": 78,
           "kind": "js-string",
           "raw": "No quorum: however few people vote, the result stands.",
           "quote": "'"
@@ -28521,7 +28355,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 146,
+          "line": 81,
           "kind": "js-string",
           "raw": "Nobody can vote here today, so no quorum can be met and a proposal would close with nothing decided.",
           "quote": "'"
@@ -28539,7 +28373,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 151,
+          "line": 86,
           "kind": "js-string",
           "raw": "One person can vote here today, so that single ballot is the whole quorum. An abstention counts toward it.",
           "quote": "'"
@@ -28557,7 +28391,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 157,
+          "line": 92,
           "kind": "js-string",
           "raw": "Everybody votes from the day they join.",
           "quote": "'"
@@ -28575,7 +28409,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 266,
+          "line": 201,
           "kind": "markup",
           "raw": "Quorum (%)",
           "quote": null
@@ -28593,7 +28427,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 304,
+          "line": 239,
           "kind": "markup",
           "raw": "People don't vote on proposals about themselves",
           "quote": null
@@ -28611,7 +28445,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 307,
+          "line": 242,
           "kind": "markup",
           "raw": "Someone nominated for admin sits their own vote out. They stay in the\n        electorate for everything else.",
           "quote": null
@@ -28629,7 +28463,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 320,
+          "line": 255,
           "kind": "markup",
           "raw": "Pick the second if your board is elected at a meeting, on paper, or in\n      another tool. Patchwork will stop conducting leadership changes and let\n      an admin record what was decided.",
           "quote": null
@@ -28647,7 +28481,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 333,
+          "line": 268,
           "kind": "markup",
           "raw": "Pick the second if your members decide at meetings. Proposals stay open\n      for discussion and lose the vote buttons, and an admin records the\n      adopted text on the charter afterwards. Rules changes stay a direct\n      change an admin applies.",
           "quote": null
@@ -28665,7 +28499,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 354,
+          "line": 289,
           "kind": "markup",
           "raw": "Minimum Voting Tenure",
           "quote": null
@@ -28683,7 +28517,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 379,
+          "line": 314,
           "kind": "markup",
           "raw": "Off: followers see this patch's public events only.",
           "quote": null
@@ -28701,7 +28535,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 380,
+          "line": 315,
           "kind": "markup",
           "raw": "Proposals",
           "quote": null
@@ -28726,7 +28560,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 381,
+          "line": 316,
           "kind": "markup",
           "raw": "Charters",
           "quote": null
@@ -28744,7 +28578,7 @@
       "occurrences": [
         {
           "file": "web/src/components/StructuredRulesEditor.svelte",
-          "line": 382,
+          "line": 317,
           "kind": "markup",
           "raw": "Members",
           "quote": null
@@ -30257,6 +30091,636 @@
           "kind": "markup",
           "raw": "Quilt Settings",
           "quote": null
+        }
+      ]
+    },
+    {
+      "id": "e88ecdd60ac7",
+      "text": "Longest-tenured members step in",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 56,
+          "kind": "js-string",
+          "raw": "Longest-tenured members step in",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4474cf7ca062",
+      "text": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
+      "words": 17,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 57,
+          "kind": "js-string",
+          "raw": "The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "a920ba08e058",
+      "text": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
+      "words": 19,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 59,
+          "kind": "js-string",
+          "raw": "Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "2abee9d8f799",
+      "text": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
+      "words": 28,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "Corrected, not reworded. docs/adr/102 made interim promotion require presence as well as tenure and promote nobody where nobody qualifies, and the old hint promised \"the three longest-standing members step in\" in the present tense. Two members read it against patches where nobody had.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 61,
+          "kind": "js-string",
+          "raw": "Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "967e43d94f6a",
+      "text": "An instance admin is notified and decides who runs the patch.",
+      "words": 11,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 63,
+          "kind": "js-string",
+          "raw": "An instance admin is notified and decides who runs the patch.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "b23f52d1964c",
+      "text": "Nobody is promoted; the patch keeps running with no admin.",
+      "words": 10,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Epoch 0 fixes (docs/adr/098, F-008/010/011/016/017/022/023/036). Left as drafted; decided in one pass, listed in notes/governance-sim/copy-decisions-pending.md for a later voice review.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 65,
+          "kind": "js-string",
+          "raw": "Nobody is promoted; the patch keeps running with no admin.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "79a56a104724",
+      "text": "An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.",
+      "words": 23,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 79,
+          "kind": "js-string",
+          "raw": "An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "dc4edd5c0ba5",
+      "text": "More approvals than rejections carries a proposal.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 80,
+          "kind": "js-string",
+          "raw": "More approvals than rejections carries a proposal.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4c1020f4d4c1",
+      "text": "Two thirds of the ballots cast must approve.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 81,
+          "kind": "js-string",
+          "raw": "Two thirds of the ballots cast must approve.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "64402a8d72dc",
+      "text": "One reject defeats a proposal, however many approve it.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "docs/adr/104: what a rule costs this patch today; read on the page in the simulation",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 82,
+          "kind": "js-string",
+          "raw": "One reject defeats a proposal, however many approve it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "1321f2e0311f",
+      "text": "One maintainer",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Leadership model, in the patch's own terms rather than the schema's \"maintainer\".",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 92,
+          "kind": "js-string",
+          "raw": "One maintainer",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "0194854878a9",
+      "text": "Admins nominate, members ratify",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Leadership model. Names the two acts, because \"meritocratic\" describes an ideal and not a mechanic.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 93,
+          "kind": "js-string",
+          "raw": "Admins nominate, members ratify",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7b75a8e5f51b",
+      "text": "Elected council",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Leadership model.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 94,
+          "kind": "js-string",
+          "raw": "Elected council",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "549ecaf55558",
+      "text": "Here, in Patchwork",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Venue (docs/adr/052). The reader is standing in Patchwork, so \"here\" is the shorter true word.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 98,
+          "kind": "js-string",
+          "raw": "Here, in Patchwork",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4f7d71ba3bf9",
+      "text": "Somewhere else, and recorded here",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Venue. \"And recorded here\" is the half that matters: elsewhere does not mean invisible.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 99,
+          "kind": "js-string",
+          "raw": "Somewhere else, and recorded here",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "2f7016c481c5",
+      "text": "How a proposal carries",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 137,
+          "kind": "js-string",
+          "raw": "How a proposal carries",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "9017add3b08b",
+      "text": "None. Any number of votes counts.",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "No quorum, said as a consequence rather than as the number 0.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 145,
+          "kind": "js-string",
+          "raw": "None. Any number of votes counts.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "28c079671c44",
+      "text": "How long a vote stays open",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 154,
+          "kind": "js-string",
+          "raw": "How long a vote stays open",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "41c23d44e581",
+      "text": "Before a new member may vote",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 159,
+          "kind": "js-string",
+          "raw": "Before a new member may vote",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "45a6c7e91a83",
+      "text": "Straight away",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "No tenure bar, same reason.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 160,
+          "kind": "js-string",
+          "raw": "Straight away",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "35ea4cc92e91",
+      "text": "Somebody a proposal is about",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 163,
+          "kind": "js-string",
+          "raw": "Somebody a proposal is about",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7f6d0fa581ba",
+      "text": "Does not vote on it",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "subject_recusal on (docs/adr/051).",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 164,
+          "kind": "js-string",
+          "raw": "Does not vote on it",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "00b7649f8daa",
+      "text": "Votes like anyone else",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "subject_recusal off.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 164,
+          "kind": "js-string",
+          "raw": "Votes like anyone else",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "e8500b250d92",
+      "text": "To amend a charter",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 167,
+          "kind": "js-string",
+          "raw": "To amend a charter",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "fda5a3bfc038",
+      "text": "An amendment that carries",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 171,
+          "kind": "js-string",
+          "raw": "An amendment that carries",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "9834f5b21166",
+      "text": "Takes effect at once",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "amendment_auto_apply on.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 172,
+          "kind": "js-string",
+          "raw": "Takes effect at once",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "585b72382ca9",
+      "text": "Waits for an admin to apply it",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "amendment_auto_apply off. Names who is waited on, because the wait is the surprising half.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 172,
+          "kind": "js-string",
+          "raw": "Waits for an admin to apply it",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "de7fda379cc8",
+      "text": "How admins are made",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 182,
+          "kind": "js-string",
+          "raw": "How admins are made",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "d77d4d19842e",
+      "text": "How long a term runs",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 186,
+          "kind": "js-string",
+          "raw": "How long a term runs",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "8bfd04977aa6",
+      "text": "How long an election takes nominations",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 189,
+          "kind": "js-string",
+          "raw": "How long an election takes nominations",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "2611390e3be5",
+      "text": "How many admins at once",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 192,
+          "kind": "js-string",
+          "raw": "How many admins at once",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "36c3682f504f",
+      "text": "An admin who stops taking part",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 203,
+          "kind": "js-string",
+          "raw": "An admin who stops taking part",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c3235e08d92b",
+      "text": "If the last admin seat empties",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 208,
+          "kind": "js-string",
+          "raw": "If the last admin seat empties",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "7e8ce467d02b",
+      "text": "What a follower can see",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "A label on the read-only Rules page (F-117), naming one setting in the words somebody would ask about it in. The option values beside these come from the shared vocabulary the change form also reads, so the two surfaces cannot call one setting two things.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 225,
+          "kind": "js-string",
+          "raw": "What a follower can see",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "001d197940f4",
+      "text": "Nothing beyond the patch page",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Every follower permission off. \"Nothing\" alone would read as an error; naming what remains says it is a setting.",
+      "occurrences": [
+        {
+          "file": "web/src/lib/governanceRules.js",
+          "line": 226,
+          "kind": "js-string",
+          "raw": "Nothing beyond the patch page",
+          "quote": "'"
         }
       ]
     },
@@ -40176,7 +40640,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 185,
+          "line": 209,
           "kind": "js-string",
           "raw": "Title is required",
           "quote": "'"
@@ -40201,7 +40665,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 201,
+          "line": 225,
           "kind": "js-string",
           "raw": "Change applied",
           "quote": "'"
@@ -40226,7 +40690,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 201,
+          "line": 225,
           "kind": "js-string",
           "raw": "Proposal created",
           "quote": "'"
@@ -40258,7 +40722,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 204,
+          "line": 228,
           "kind": "js-string",
           "raw": "Failed to create proposal",
           "quote": "'"
@@ -40308,7 +40772,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 218,
+          "line": 242,
           "kind": "markup",
           "raw": "Become a member to take part in how this patch governs itself.",
           "quote": null
@@ -40405,7 +40869,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 272,
+          "line": 296,
           "kind": "markup",
           "raw": "Your changes",
           "quote": null
@@ -40430,7 +40894,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 282,
+          "line": 306,
           "kind": "markup",
           "raw": "Summary of changes",
           "quote": null
@@ -40473,7 +40937,7 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 288,
+          "line": 312,
           "kind": "attr:placeholder",
           "raw": "Help others understand why this change matters.",
           "quote": "\""
@@ -44865,7 +45329,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 124,
+          "line": 123,
           "kind": "js-string",
           "raw": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
           "quote": "'"
@@ -44901,7 +45365,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 128,
+          "line": 127,
           "kind": "js-string",
           "raw": "Stepped in as an interim admin, under this patch’s succession policy.",
           "quote": "'"
@@ -44919,7 +45383,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 131,
+          "line": 130,
           "kind": "js-string",
           "raw": "Made an admin.",
           "quote": "'"
@@ -44937,7 +45401,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 133,
+          "line": 132,
           "kind": "js-string",
           "raw": "Stopped being an admin.",
           "quote": "'"
@@ -44955,7 +45419,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 135,
+          "line": 134,
           "kind": "js-string",
           "raw": "A meeting adopted this text.",
           "quote": "'"
@@ -44973,7 +45437,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 144,
+          "line": 143,
           "kind": "markup",
           "raw": "Record",
           "quote": null
@@ -44991,7 +45455,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 148,
+          "line": 147,
           "kind": "markup",
           "raw": "Every decision this patch has reached, and every one it failed to, newest first.",
           "quote": null
@@ -45009,9 +45473,117 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 157,
+          "line": 156,
           "kind": "markup",
           "raw": "Nothing settled yet. Proposals show up here once they close.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b9a808a79356",
+      "text": "Could not load these rules",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Load failure on the rules page.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRules.svelte",
+          "line": 57,
+          "kind": "js-string",
+          "raw": "Could not load these rules",
+          "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "4228aeb07c41",
+      "text": "Rules",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Page and section heading.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRules.svelte",
+          "line": 80,
+          "kind": "markup",
+          "raw": "Rules",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "060fdc534e5a",
+      "text": "What this patch has agreed, as it stands today. Nothing on this page changes anything.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The reason this page exists, in the sentence somebody needed before they would click. \"I did not want to propose anything, I wanted to look.\"",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRules.svelte",
+          "line": 82,
+          "kind": "markup",
+          "raw": "What this patch has agreed, as it stands today. Nothing on this\n          page changes anything.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "2b2f800ea761",
+      "text": "This patch has set no governance rules.",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Empty state, for a patch carrying no governance config at all.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRules.svelte",
+          "line": 92,
+          "kind": "markup",
+          "raw": "This patch has set no governance rules.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0406b7d53994",
+      "text": "Your change takes effect when you save it.",
+      "words": 8,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "What the button will do, before it is pressed, where the reader is an admin on an admin-decided or elsewhere patch.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRules.svelte",
+          "line": 116,
+          "kind": "markup",
+          "raw": "Your change takes effect when you save it.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b9800d312406",
+      "text": "Your change goes to the members as a proposal and is decided by a vote.",
+      "words": 15,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The same for everybody else. The review screen states the vote length too; this is the shorter form, one screen earlier.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/GovernanceRules.svelte",
+          "line": 118,
+          "kind": "markup",
+          "raw": "Your change goes to the members as a proposal and is decided by a vote.",
           "quote": null
         }
       ]
@@ -52531,14 +53103,14 @@
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 196,
+          "line": 220,
           "kind": "js-string",
           "raw": "Governance Rules",
           "quote": "'"
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 234,
+          "line": 258,
           "kind": "markup",
           "raw": "Governance Rules",
           "quote": null
@@ -53659,6 +54231,24 @@
       ]
     },
     {
+      "id": "58eb9b65e94e",
+      "text": "Saving changes these rules now. Nobody votes on it.",
+      "words": 9,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "On the review screen a co-op admin backed out of because it \"never says whether submitting changes the setting or starts a vote\". This is the direct-change half; the vote half carries the patch's own duration and so is assembled around a number.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/RulesProposalEditor.svelte",
+          "line": 71,
+          "kind": "js-string",
+          "raw": "Saving changes these rules now. Nobody votes on it.",
+          "quote": "'"
+        }
+      ]
+    },
+    {
       "id": "b05a2fec9b1d",
       "text": "Change rules",
       "words": 2,
@@ -53669,7 +54259,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 71,
+          "line": 95,
           "kind": "js-string",
           "raw": "Change rules",
           "quote": "'"
@@ -53687,7 +54277,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 71,
+          "line": 95,
           "kind": "js-string",
           "raw": "Propose rules change",
           "quote": "'"
@@ -53705,7 +54295,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 127,
+          "line": 151,
           "kind": "js-string",
           "raw": "Failed to load rules",
           "quote": "'"
@@ -53723,14 +54313,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 156,
+          "line": 180,
           "kind": "js-string",
           "raw": "Update governance rules",
           "quote": "'"
         },
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 174,
+          "line": 198,
           "kind": "js-string",
           "raw": "Update governance rules",
           "quote": "'"
@@ -53748,7 +54338,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 217,
+          "line": 241,
           "kind": "markup",
           "raw": "Only members can propose a change to these rules.",
           "quote": null
@@ -53766,7 +54356,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 239,
+          "line": 263,
           "kind": "markup",
           "raw": "Restored unsaved changes from {draftTimestamp ? new Date(draftTimestamp).toLocaleTimeString() : 'earlier'}",
           "quote": null
@@ -53784,7 +54374,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 240,
+          "line": 264,
           "kind": "markup",
           "raw": "Discard",
           "quote": null
@@ -53802,7 +54392,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/RulesProposalEditor.svelte",
-          "line": 264,
+          "line": 288,
           "kind": "markup",
           "raw": "Changes",
           "quote": null
@@ -59204,6 +59794,24 @@
           "kind": "js-string",
           "raw": "Decisions require everyone (or nearly everyone) to agree.",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "3ffd8c59e54a",
+      "text": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules.",
+      "words": 49,
+      "tier": "prose",
+      "status": "as-is",
+      "replacement": null,
+      "note": "The rollout notice. Two changes: it now names where the switch actually is (Follower Permissions, at the bottom of Propose a change to these rules) rather than pointing vaguely at Governance, and it hands off to the sentence below naming the three keys it did not touch. An admin read the old one and went hunting for the rest: \"The one thing the site chose to write to me about is the one of the four I care least about.\"",
+      "occurrences": [
+        {
+          "file": "internal/handler/follower_charters_default.go",
+          "line": 121,
+          "kind": "go-string",
+          "raw": "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules. ",
+          "quote": "\""
         }
       ]
     }

@@ -25,10 +25,16 @@ function source(relPath) {
 
 const page = source('pages/Governance.svelte');
 
-/** The values a patch can actually be set to, read from the editor that sets them. */
+/**
+ * The values a patch can actually be set to.
+ *
+ * Read from the shared vocabulary the editor and the read-only rules page
+ * both import (F-117), which is where these moved to when reading a
+ * patch's rules stopped meaning opening the form that changes them.
+ */
 function decisionMethods() {
-  const block = source('components/StructuredRulesEditor.svelte')
-    .match(/const DECISION_OPTIONS = \[([\s\S]*?)\];/);
+  const block = source('lib/governanceRules.js')
+    .match(/export const DECISION_OPTIONS = \[([\s\S]*?)\];/);
   expect(block, 'DECISION_OPTIONS moved or was renamed — repoint this test').not.toBeNull();
   return [...block[1].matchAll(/value: '([^']+)'/g)].map((m) => m[1]);
 }

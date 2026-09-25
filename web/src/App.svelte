@@ -85,6 +85,7 @@
   import ClaimVerifyEmail from './pages/ClaimVerifyEmail.svelte';
   import AmendmentEditor from './pages/AmendmentEditor.svelte';
   import RulesProposalEditor from './pages/RulesProposalEditor.svelte';
+  import GovernanceRules from './pages/GovernanceRules.svelte';
   import Notifications from './pages/Notifications.svelte';
   import Activity from './pages/Activity.svelte';
   import NotificationPreferences from './pages/NotificationPreferences.svelte';
@@ -155,6 +156,10 @@
   // settings is administration; there is exactly one URL per screen).
   addRoute('/patches/:slug/governance/new', 'governanceProposalNew');
   addRoute('/patches/:slug/governance/rules/propose', 'governanceRulesPropose');
+  // Reading the rules, which until now had no URL of its own: the only
+  // way in was the change form (F-117). Registered after /propose so the
+  // more specific path still wins.
+  addRoute('/patches/:slug/governance/rules', 'governanceRules');
   addRoute('/patches/:slug/governance/docs/new', 'governanceDocNew');
   addRoute('/patches/:slug/governance/docs/:id/propose', 'governanceDocPropose');
   addRoute('/patches/:slug/governance/docs/:id/history', 'governanceDocHistory');
@@ -295,7 +300,7 @@
     'claimPatch',
     'governanceHub', 'governanceProposals', 'governanceProposalNew', 'governanceProposal',
     'governanceRecord',
-    'governanceDocs', 'governanceDocNew', 'governanceDocDetail', 'governanceDocHistory', 'governanceDocPropose', 'governanceRulesPropose',
+    'governanceDocs', 'governanceDocNew', 'governanceDocDetail', 'governanceDocHistory', 'governanceDocPropose', 'governanceRulesPropose', 'governanceRules',
     'patchMembers', 'patchEvents',
     'patchNoticeboard', 'patchNoticeNew', 'patchNotice',
     'patchSettings', 'patchSettingsInfo', 'patchSettingsAppearance', 'patchSettingsMembers', 'patchSettingsSources', 'patchSettingsNotifications', 'patchSettingsNoticeboard', 'patchSettingsVerification', 'patchSettingsDanger',
@@ -605,6 +610,8 @@
           <AmendmentEditor />
         {:else if routeName === 'governanceRulesPropose'}
           <RulesProposalEditor />
+        {:else if routeName === 'governanceRules'}
+          <GovernanceRules />
         {:else if routeName === 'governanceProposals'}
           <ProposalList />
         {:else if routeName === 'governanceProposalNew'}

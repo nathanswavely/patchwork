@@ -1,83 +1,18 @@
 <script>
   let { currentRules = null, electorate = null, onSave = () => {} } = $props();
 
-  const DECISION_OPTIONS = [
-    { value: 'admin', label: 'Admin decides' },
-    { value: 'majority', label: 'Majority vote' },
-    { value: 'supermajority', label: 'Supermajority (2/3)' },
-    { value: 'consensus', label: 'Full consensus' },
-  ];
-
-  // Amendment thresholds are always votes — "admin decides" is a decision
-  // method, not a threshold (under it, amendments never reach a vote).
-  const THRESHOLD_OPTIONS = [
-    { value: 'majority', label: 'Majority vote' },
-    { value: 'supermajority', label: 'Supermajority (2/3)' },
-    { value: 'consensus', label: 'Full consensus' },
-  ];
-
-  const VOTING_PERIOD_OPTIONS = [
-    { value: 24, label: '24 hours' },
-    { value: 48, label: '48 hours' },
-    { value: 72, label: '72 hours (3 days)' },
-    { value: 168, label: '1 week' },
-    { value: 336, label: '2 weeks' },
-  ];
-
-  // What happens when inactivity empties the last admin seat
-  // (internal/notifications/inactivity.go). The Collaborative and Formal
-  // templates store 'nomination' and 'election' here; the select used to
-  // know neither, so it rendered with nothing chosen and a save would have
-  // quietly rewritten the patch's policy. The sweep runs the longest-tenure
-  // rule for both today, and each hint says so rather than promising a
-  // mechanic the patch does not run.
-  //
-  // "The three longest-standing members step in" was wrong twice over after
-  // docs/adr/102. Interim promotion needs *presence* as well as tenure —
-  // promoteLongestTenured filters on a governance or activity act inside
-  // twice the inactivity window, which is what stops the succession churn
-  // recurring — and where nobody clears that bar it promotes nobody. Two
-  // people read the old sentence in the present tense against patches where
-  // nobody had stepped in: "Six elections have come and gone and the press
-  // has had no admins throughout. Either 'step in' means something other
-  // than what it says, or it did not happen." It did not happen, and the
-  // sentence should have allowed for that.
-  const SUCCESSION_OPTIONS = [
-    { value: 'longest_tenure', label: 'Longest-tenured members step in',
-      hint: 'The longest-standing members who have taken part recently become interim admins. If nobody has, nobody steps in.' },
-    { value: 'nomination', label: 'Nomination',
-      hint: 'Admins name their successors. If none are left to, the longest-standing members who have taken part recently step in.' },
-    { value: 'election', label: 'Election',
-      hint: 'Members elect the next admins. Until then the longest-standing members who have taken part recently step in, and if nobody has the seats stay empty until the election.' },
-    { value: 'instance_admin', label: 'Instance admin intervenes',
-      hint: 'An instance admin is notified and decides who runs the patch.' },
-    { value: 'freeze', label: 'Patch freezes',
-      hint: 'Nobody is promoted; the patch keeps running with no admin.' },
-  ];
-
-  const TENURE_OPTIONS = [
-    { value: 0, label: 'Immediate' },
-    { value: 7, label: '7 days' },
-    { value: 30, label: '30 days' },
-    { value: 90, label: '90 days' },
-  ];
-
-  // What each rule does, in one sentence, beside the control that sets it.
-  // The method is the one knob whose consequence a founder cannot work out
-  // from its label: "Full consensus" reads as agreement and means any single
-  // member can defeat anything.
-  const DECISION_HINTS = {
-    admin: 'An admin decides every proposal. An admin can still put one to an advisory vote first, and the result comes back to them.',
-    majority: 'More approvals than rejections carries a proposal.',
-    supermajority: 'Two thirds of the ballots cast must approve.',
-    consensus: 'One reject defeats a proposal, however many approve it.',
-  };
-
-  const MEMBERSHIP_OPTIONS = [
-    { value: 'open', label: 'Open' },
-    { value: 'approval_required', label: 'Approval required' },
-    { value: 'invite_only', label: 'Invite only' },
-  ];
+  // The option wording is shared with the read-only rules page
+  // (web/src/lib/governanceRules.js). Two surfaces naming one setting two
+  // ways is the drift that module exists to prevent (F-117).
+  import {
+    DECISION_OPTIONS,
+    THRESHOLD_OPTIONS,
+    VOTING_PERIOD_OPTIONS,
+    SUCCESSION_OPTIONS,
+    TENURE_OPTIONS,
+    DECISION_HINTS,
+    MEMBERSHIP_OPTIONS,
+  } from '../lib/governanceRules.js';
 
   // Editable state derived from currentRules
   let decisionMethod = $state('majority');

@@ -144,11 +144,21 @@ describe('F-017 — dashboard counts are counts, and the attention list is the p
 
 describe('F-022 — the rules editor knows every succession policy a template ships', () => {
   const src = source('components/StructuredRulesEditor.svelte');
+  // The options moved to a module the read-only rules page shares with the
+  // editor, so one setting cannot end up with two names (F-117). The
+  // property this holds is unchanged: every policy a template can store has
+  // an option here, and each says in plain words what actually happens.
+  const vocab = source('lib/governanceRules.js');
 
   it('has options for election and nomination, each with a plain hint', () => {
-    expect(src).toMatch(/value: 'election', label: 'Election',\s*\n\s*hint: '[^']+'/);
-    expect(src).toMatch(/value: 'nomination', label: 'Nomination',\s*\n\s*hint: '[^']+'/);
+    expect(vocab).toMatch(/value: 'election', label: 'Election',\s*\n\s*hint: '[^']+'/);
+    expect(vocab).toMatch(/value: 'nomination', label: 'Nomination',\s*\n\s*hint: '[^']+'/);
     expect(src).toMatch(/<p class="venue-hint muted">\{successionHint\}<\/p>/);
+  });
+
+  it('reads them from the shared module rather than keeping a second copy', () => {
+    expect(src).toMatch(/from '\.\.\/lib\/governanceRules\.js'/);
+    expect(src).not.toMatch(/const SUCCESSION_OPTIONS = \[/);
   });
 
   it('round-trips a stored value it has no option for rather than resetting it', () => {
