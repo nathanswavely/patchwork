@@ -46,11 +46,18 @@ describe('ProposalDetail — the tally of a lapsed vote is still shown', () => {
 describe('ProposalList — the row says what happened, not what the column holds', () => {
   const src = source('pages/ProposalList.svelte');
 
-  it('names a lapsed row "lapsed" in both the meta line and the badge', () => {
+  // The row reads the state rather than the column, and then says it in
+  // words. CONTEXT.md's rule is that a lapse reads "not decided" on every
+  // surface; this one printed the state name (F-107). The state is still
+  // what decides the badge colour and the filter, which is why the two are
+  // now two functions.
+  it('names a lapsed row "not decided" in both the meta line and the badge', () => {
     expect(src).toMatch(/function rowStatus\(p\)/);
+    expect(src).toMatch(/function rowLabel\(p\)/);
     expect(src).toMatch(/if \(p\.state === 'lapsed'\) return 'lapsed'/);
-    expect(src).toMatch(/<span class="muted">\{rowStatus\(proposal\)\}<\/span>/);
-    expect(src).toMatch(/<span class="badge \{statusClass\(rowStatus\(proposal\)\)\}">\{rowStatus\(proposal\)\}<\/span>/);
+    expect(src).toMatch(/if \(st === 'lapsed'\) return 'not decided'/);
+    expect(src).toMatch(/<span class="muted">\{rowLabel\(proposal\)\}<\/span>/);
+    expect(src).toMatch(/<span class="badge \{statusClass\(rowStatus\(proposal\)\)\}">\{rowLabel\(proposal\)\}<\/span>/);
   });
 
   it('keeps the direct-change row green and mutes the lapsed one', () => {
@@ -65,8 +72,10 @@ describe('PatchProfileGlimpses — the front page never prints REJECTED over an 
 
   it('reads the state before the status, the way the proposals list does', () => {
     expect(src).toMatch(/function outcomeWord\(p\)/);
-    expect(src).toMatch(/if \(p\.state === 'lapsed'\) return 'lapsed'/);
-    expect(src).toMatch(/if \(p\.state === 'unsettled'\) return 'unsettled'/);
+    // And says it in words a reader can place, not the state's own name
+    // (F-107).
+    expect(src).toMatch(/if \(p\.state === 'lapsed'\) return 'not decided'/);
+    expect(src).toMatch(/if \(p\.state === 'unsettled'\) return 'nobody elected'/);
   });
 
   it('prints that word in the pill rather than the raw column', () => {

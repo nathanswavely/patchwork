@@ -224,15 +224,15 @@ func TestPromoteOnElected_RefusedWithTheWayIn(t *testing.T) {
 		t.Errorf("expected the refusal to point at the nomination, got %s", body)
 	}
 
-	// Council full: the answer is the date of the next contest, derived from
-	// the seats rather than stored anywhere.
+	// Council full: the answer is the date of the next election, derived
+	// from the seats rather than stored anywhere.
 	db.Exec(`UPDATE seats SET holder_id = ? WHERE id = ?`, admin.ID, seat)
 	code, body = promoteVia(t, db, "dropdown", member.ID, adminToken)
 	if code != http.StatusConflict {
 		t.Fatalf("promotion with a full council: expected 409, got %d: %s", code, body)
 	}
-	if !strings.Contains(body, "next contest") {
-		t.Errorf("expected the refusal to name the next contest, got %s", body)
+	if !strings.Contains(body, "next election") {
+		t.Errorf("expected the refusal to name the next election, got %s", body)
 	}
 
 	if got := roleOf(t, db, member.ID, nodeID); got != "member" {

@@ -194,7 +194,13 @@
 {#if phase}
   <section class="election">
     <h3>
-      {#if phase === 'nominating'}Nominations{:else if phase === 'voting'}The ballot{:else}Result{/if}
+      <!-- Phase names, and only phase names. "The ballot" read as a
+           fourth name for the election itself, beside the hub's "contest",
+           the proposal's "Council election" and the bell's "nominations"
+           and "voting": "Four words for one event. It took me a few
+           minutes of clicking between the pages to be sure they were all
+           the same election." The bell's two words are these two (F-107). -->
+      {#if phase === 'nominating'}Nominations{:else if phase === 'voting'}Voting{:else}Result{/if}
       <span class="seats">{seats} seat{seats === 1 ? '' : 's'}</span>
     </h3>
 

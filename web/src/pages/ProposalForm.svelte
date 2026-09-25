@@ -265,9 +265,9 @@
           {#if isElected && !canNominate}
             <p class="nominee-hint muted">
               {#if !isPatchAdmin}
-                Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at a contest any member may stand in.
+                Admins here hold seats on the council. A vacant seat is filled by nomination, which an admin raises; otherwise a seat comes up at an election any member may stand in.
               {:else if nextContestOpens}
-                Every seat on the council is held, so there is nobody to nominate. The next contest opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.
+                Every seat on the council is held, so there is nobody to nominate. The next election opens {formatDay(nextContestOpens)}. You can add a seat on the Governance page.
               {:else}
                 Every seat on the council is held, so there is nobody to nominate. You can add a seat on the Governance page.
               {/if}

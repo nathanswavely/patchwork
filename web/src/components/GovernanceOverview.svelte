@@ -103,8 +103,8 @@
   function seatLine(seat) {
     if (seat.fill === 'contest_open') {
       return seat.vacant
-        ? 'In the contest running now. Whoever the members approve takes it.'
-        : `Held until ${formatDay(seat.term_ends_at)}, and in the contest running now.`;
+        ? 'In the election running now. Whoever the members approve takes it.'
+        : `Held until ${formatDay(seat.term_ends_at)}, and in the election running now.`;
     }
     if (seat.fill === 'nomination') {
       const how = 'Filled by nomination: an admin puts a member forward and the members ratify it. That can happen today.';
@@ -177,8 +177,8 @@
       return 'Every seat is held and no election is scheduled. Nothing changes on this council until a seat is added or a term end is set.';
     }
     return contestDue
-      ? 'Every seat is held and the next contest is due now. It opens shortly, and any member may stand.'
-      : `Every seat is held. There is nothing to do until ${formatDay(nextContestOpens)}, when the next contest opens and any member may stand.`;
+      ? 'Every seat is held and the next election is due now. It opens shortly, and any member may stand.'
+      : `Every seat is held. There is nothing to do until ${formatDay(nextContestOpens)}, when the next election opens and any member may stand.`;
   });
 
   // A patch with nobody in the admin role, which inactivity can reach without
@@ -598,7 +598,7 @@
                         href="/patches/{slug}/governance/{seat.contest_id}"
                         onclick={(e) => { e.preventDefault(); navigate(`/patches/${slug}/governance/${seat.contest_id}`); }}
                       >
-                        See the contest
+                        See the election
                       </a>
                     {/if}
                   </div>

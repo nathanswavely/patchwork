@@ -230,8 +230,13 @@
   // not voted on. The pill is the link's accessible name too, so the word is
   // the whole fix on both counts.
   function outcomeWord(p) {
-    if (p.state === 'lapsed') return 'lapsed';
-    if (p.state === 'unsettled') return 'unsettled';
+    // The words a reader can place, not the state names. CONTEXT.md's rule
+    // for a lapse is that every surface says "not decided"; this one said
+    // "lapsed". Its election-shaped sibling said "unsettled", which reads
+    // as easily as "still running" as it does as "ended undecided" — the
+    // reading a founder actually took (F-107).
+    if (p.state === 'lapsed') return 'not decided';
+    if (p.state === 'unsettled') return 'nobody elected';
     return p.status;
   }
 </script>
