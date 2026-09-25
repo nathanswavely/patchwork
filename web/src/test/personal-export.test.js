@@ -15,8 +15,11 @@ function source(relPath) {
 describe('Account settings: downloading your own record', () => {
   const src = source('pages/AccountSettings.svelte');
 
+  // "Download my data" was true of both this and the quilt copy below it,
+  // so it told a reader nothing about which one she wanted. The heading
+  // names whose data it is; the button keeps the familiar words (F-103).
   it('offers the control under its own heading', () => {
-    expect(src).toContain('<h2>Download my data</h2>');
+    expect(src).toContain('<h2>Your own data</h2>');
     expect(src).toMatch(/onclick=\{downloadMyData\}/);
   });
 

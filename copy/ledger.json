@@ -25765,7 +25765,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 738,
+          "line": 759,
           "kind": "markup",
           "raw": "Decline",
           "quote": null
@@ -30493,7 +30493,7 @@
         },
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 747,
+          "line": 768,
           "kind": "markup",
           "raw": "Danger Zone",
           "quote": null
@@ -33155,19 +33155,19 @@
       ]
     },
     {
-      "id": "edbfbe26317e",
-      "text": "Download my data",
+      "id": "d2dc8ef5c0aa",
+      "text": "Your own data",
       "words": 3,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "note": "Was \"Download my data\", which is what both of these sections do and so told a reader nothing about which one she wanted: \"if I had taken the obvious-sounding one I would have walked away thinking I had the press records and I would have had a file with one person in it.\" The heading now says whose data it is, and the one below says whose it is.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 667,
+          "line": 674,
           "kind": "markup",
-          "raw": "Download my data",
+          "raw": "Your own data",
           "quote": null
         }
       ]
@@ -33183,7 +33183,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 669,
+          "line": 676,
           "kind": "markup",
           "raw": "One file with everything this quilt holds about you: your profile and\n        contact card, every membership including the ones you keep hidden, the\n        proposals, votes, comments, notices and events you wrote, and your\n        settings. Nothing anyone else wrote, and no sign-in secrets — so it is\n        safe to keep, and it will not let anyone into your account.",
           "quote": null
@@ -33191,19 +33191,37 @@
       ]
     },
     {
-      "id": "96cda3453025",
-      "text": "Member seamrip",
-      "words": 2,
-      "tier": "label",
+      "id": "34c2ea9a3065",
+      "text": "This is about you and nobody else. For your community's own records, take a copy of the quilt below.",
+      "words": 19,
+      "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "note": "Closes the trap from this side. A reader who takes the personal export has to be told the community one exists, or the wrong choice is silent and she finds out by opening the file.",
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
           "line": 683,
           "kind": "markup",
-          "raw": "Member seamrip",
+          "raw": "This is about you and nobody else. For your community's own\n        records, take a copy of the quilt below.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "89bdbde25600",
+      "text": "A copy of this quilt (seamrip)",
+      "words": 6,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Was \"Member seamrip\", sitting directly above Danger Zone: \"I sat there for a good half-minute working out whether Member seamrip meant rip out this member, as in remove me. That paragraph is doing all the work; the label is doing none.\" Plain words first, with the product's own word beside them so somebody told to take a seamrip still finds it.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 700,
+          "kind": "markup",
+          "raw": "A copy of this quilt (seamrip)",
           "quote": null
         }
       ]
@@ -33219,9 +33237,27 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 685,
+          "line": 702,
           "kind": "markup",
           "raw": "A copy of this quilt as you can see it, in the format a new Patchwork\n        reads. It is here so a community can start again elsewhere without\n        waiting for an admin. It holds every public patch on this quilt and\n        the private ones you belong to, with their events, charters, member\n        lists, and proposals with their votes and discussion — the same things\n        those patches' pages show you. It does not hold email addresses,\n        contact cards, or noticeboards. Other people travel as a name and a\n        picture, so the new quilt invites everyone back and each person sets\n        their own visibility there.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "c7d8e7bf85ea",
+      "text": "Nothing here removes you or changes this quilt. Any Patchwork can read the file, so it goes to whoever sets the new one up.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The two things she could not tell from the label: it removes nothing, and the file is only useful once it reaches whoever stands the new quilt up. The archive README now opens with the same two facts.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 713,
+          "kind": "markup",
+          "raw": "Nothing here removes you or changes this quilt. Any Patchwork can\n        read the file, so it goes to whoever sets the new one up.",
           "quote": null
         }
       ]
@@ -33237,7 +33273,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 704,
+          "line": 725,
           "kind": "markup",
           "raw": "Steward listing",
           "quote": null
@@ -33255,7 +33291,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 707,
+          "line": 728,
           "kind": "markup",
           "raw": "You're named on this quilt's",
           "quote": null
@@ -33273,7 +33309,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 708,
+          "line": 729,
           "kind": "markup",
           "raw": "as one of its stewards. That listing belongs to you, and you can\n            unlist yourself any time.",
           "quote": null
@@ -33291,7 +33327,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 713,
+          "line": 734,
           "kind": "markup",
           "raw": "An instance admin wants to name you on this quilt's",
           "quote": null
@@ -33309,7 +33345,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 715,
+          "line": 736,
           "kind": "markup",
           "raw": "as a steward. Nothing appears until you accept, and you can\n            take it back later.",
           "quote": null
@@ -33327,7 +33363,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 720,
+          "line": 741,
           "kind": "markup",
           "raw": "What you look after (in your own words)",
           "quote": null
@@ -33345,7 +33381,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 722,
+          "line": 743,
           "kind": "attr:placeholder",
           "raw": "keeps the lights on and pays the bill",
           "quote": "\""
@@ -33363,7 +33399,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 749,
+          "line": 770,
           "kind": "markup",
           "raw": "Delete your account",
           "quote": null
@@ -33381,7 +33417,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 752,
+          "line": 773,
           "kind": "markup",
           "raw": "This happens immediately and cannot be undone.",
           "quote": null
@@ -33399,7 +33435,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 755,
+          "line": 776,
           "kind": "markup",
           "raw": "Erased:",
           "quote": null
@@ -33417,7 +33453,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 755,
+          "line": 776,
           "kind": "markup",
           "raw": "your email address, display name, bio, links,\n          avatar and contact card. Your passkeys, recovery codes and sessions.\n          Your personal calendar link and notification settings. Every patch\n          membership you hold, the quilts you have connected or followed, and\n          any claim still awaiting review.",
           "quote": null
@@ -33435,7 +33471,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 762,
+          "line": 783,
           "kind": "markup",
           "raw": "Kept:",
           "quote": null
@@ -33453,7 +33489,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 762,
+          "line": 783,
           "kind": "markup",
           "raw": "what you took part in. Proposals, votes,\n          comments, notices, events and recorded decisions stay so the\n          community's record stays whole. They will read as",
           "quote": null
@@ -33471,7 +33507,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 765,
+          "line": 786,
           "kind": "markup",
           "raw": "&ldquo;Deleted account&rdquo;",
           "quote": null
@@ -33489,7 +33525,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 765,
+          "line": 786,
           "kind": "markup",
           "raw": "with no name and no\n          link. Your profile page stops existing, and your username stays\n          retired so nobody else can take it.",
           "quote": null
@@ -33507,7 +33543,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 770,
+          "line": 791,
           "kind": "markup",
           "raw": "Copies that already federated to other servers, or that went out in an\n          export taken before today, are outside this site's reach.",
           "quote": null
@@ -33525,7 +33561,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 777,
+          "line": 798,
           "kind": "markup",
           "raw": "You are the only admin of\n              {blockingPatches.length === 1 ? 'this patch' : 'these patches'}.\n              Hand {blockingPatches.length === 1 ? 'it' : 'them'} over first,\n              then come back. You can name a successor, promote another admin, or hold an election.",
           "quote": null
@@ -33543,7 +33579,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 793,
+          "line": 814,
           "kind": "markup",
           "raw": "Type your username to confirm:",
           "quote": null
@@ -33561,7 +33597,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AccountSettings.svelte",
-          "line": 812,
+          "line": 833,
           "kind": "markup",
           "raw": "Really delete your account? You will be signed out.",
           "quote": null
@@ -59204,6 +59240,42 @@
           "kind": "js-string",
           "raw": "Decisions require everyone (or nearly everyone) to agree.",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "edbfbe26317e",
+      "text": "Download my data",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 667,
+          "kind": "markup",
+          "raw": "Download my data",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "96cda3453025",
+      "text": "Member seamrip",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Approved as drafted by Nathan on 2026-09-07, decided in chat rather than the review UI.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AccountSettings.svelte",
+          "line": 683,
+          "kind": "markup",
+          "raw": "Member seamrip",
+          "quote": null
         }
       ]
     }
