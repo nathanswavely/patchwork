@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
-	"github.com/patchwork-toolkit/patchwork/internal/middleware"
 )
 
 // Rendering a deleted person (docs/adr/086).
@@ -42,9 +41,9 @@ func accountDeleted(db *database.DB, userID string) bool {
 // substituting the neutral label for a tombstone.
 //
 // The ELSE branch is the expression these queries already carried
-// (`COALESCE(display_name, username, '')`), kept identical so this changes
+// (`COALESCE(display_name, username, ”)`), kept identical so this changes
 // nothing for a live account. A LEFT JOIN that matched nothing falls to the
-// ELSE and still yields '', because `NULL IS NOT NULL` is false.
+// ELSE and still yields ”, because `NULL IS NOT NULL` is false.
 func displayNameExpr(alias string) string {
 	return "CASE WHEN " + alias + ".deleted_at IS NOT NULL THEN '" + DeletedAccountName + "'" +
 		" ELSE COALESCE(" + alias + ".display_name, " + alias + ".username, '') END"
@@ -87,7 +86,10 @@ const HiddenMemberName = "Hidden member"
 // that hands over a whole repository draws the line here rather than at the
 // charters permission.
 func viewerIsInPatchRoom(db *database.DB, r *http.Request, nodeID string) bool {
-	user := middleware.UserFromContext(r.Context())
+	// viewerOf, not UserFromContext: a reader previewing their own patch as
+	// a visitor is outside the room for as long as they are looking
+	// (see view_as_visitor.go).
+	user := viewerOf(r)
 	if user == nil {
 		return false
 	}

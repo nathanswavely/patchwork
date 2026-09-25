@@ -346,6 +346,33 @@
   // ?name=, and dropping it makes them retype what they just typed). The
   // rest of the round-trip already worked: Login honors ?redirect= and
   // persists it across the magic-link hop; only this href threw it away.
+  // Seeing a patch as a stranger sees it (F-126).
+  //
+  // A board member wanted to check what she would be forwarding and the
+  // product's only answer was to sign out: "signing out is how I lost my
+  // account this afternoon." The mode lives in the URL rather than in a
+  // store, which buys two things. A reload keeps the preview, so it is a
+  // page you can sit on and read. And any ordinary navigation drops the
+  // parameter, so the mode cannot be left on — a person who wandered off
+  // still previewing would decide they had lost their access.
+  // The banner's own state. api.js reads the same parameter straight off
+  // the URL on every call rather than being told by an effect here, which
+  // ran after the components under it had already fetched.
+  let previewingAsVisitor = $derived(getQuery().get('as') === 'visitor');
+
+  // The way out is the same page without the parameter, as a real page
+  // load rather than a client-side navigation.
+  //
+  // Entering and leaving a preview is a mode switch, not a move between
+  // pages: the components that fetch a patch key their effects on its
+  // slug, which does not change, so a soft navigation left every one of
+  // them holding the answers it already had. Leaving the preview looked
+  // like it had done nothing. A reload is the honest mechanism here and
+  // costs a rare click a fraction of a second.
+  function leavePreview() {
+    window.location.assign(getPath());
+  }
+
   let loginHref = $derived.by(() => {
     const qs = getQuery().toString();
     const target = getPath() + (qs ? `?${qs}` : '');
@@ -764,6 +791,16 @@
   </SocialShell>
 {/if}
 
+{#if previewingAsVisitor}
+  <!-- Always on screen while the mode is on. A preview you cannot tell
+       you are in is worse than no preview: every surface is quietly
+       answering a different question. -->
+  <div class="visitor-banner" role="status">
+    <span>You are seeing this patch as a visitor sees it. Nothing you do here changes anything.</span>
+    <button class="btn btn-sm" onclick={leavePreview}>Leave preview</button>
+  </div>
+{/if}
+
 <Toast />
 
 <!-- Mounted once, for every surface (docs/adr/099). Registering it here is
@@ -773,6 +810,25 @@
 <StepUpPrompt />
 
 <style>
+  .visitor-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 18%);
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
   .takeover-gate {
     display: flex;
     align-items: center;
