@@ -687,6 +687,26 @@ button:disabled {
     justify-content: center;
   }
 
+  /* The top of a workspace page on a phone (the admin panel, a patch's
+     workspace). Three insets stacked there, each reasonable alone: the
+     content area's 1.5rem, every page header's own 1.5rem, and a 2em
+     display-font h1, so the first control landed a third of the way down
+     the screen. The shells' up links take the first line; the heading
+     follows it closely. The patch workspace tightens further in PatchShell,
+     where the up link shares the cluster's row. */
+  .workspace-body.work-content {
+    padding-top: 0.75rem;
+  }
+
+  .workspace-body h1 {
+    font-size: 1.6rem;
+  }
+
+  .workspace-body.work-content .page-header {
+    padding-top: 0.25rem;
+    padding-bottom: 0.75rem;
+  }
+
   /* Tighter gutters buy back width the scroll would otherwise cost. */
   .data-table th,
   .data-table td {

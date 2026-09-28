@@ -61,6 +61,7 @@
   import AdminTags from './pages/AdminTags.svelte';
   import AdminTagSuggestions from './pages/AdminTagSuggestions.svelte';
   import { adminTabLanding, legacyAdminPath } from './lib/adminPanel.js';
+  import { workspaceUpLink } from './lib/patchWorkspace.js';
   import { isNarrow } from './stores/viewport.svelte.js';
   import AdminUsers from './pages/AdminUsers.svelte';
   import AdminAuditLog from './pages/AdminAuditLog.svelte';
@@ -601,7 +602,7 @@
       </div>
     </main>
   {:else}
-    <PatchShell slug={routeParams.slug} activeTab={patchTab}>
+    <PatchShell slug={routeParams.slug} activeTab={patchTab} up={workspaceUpLink(routeName, routeParams.slug)}>
       {#snippet children()}
         {#if routeName === 'governanceHub'}
           <GovernanceHub />

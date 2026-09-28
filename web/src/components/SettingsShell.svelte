@@ -9,6 +9,7 @@
    * the scrolling row of sections it has always had there. `parent` is
    * where the index itself goes back to.
    */
+  import { getContext } from 'svelte';
   import { navigate, getPath } from '../stores/router.svelte.js';
   import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
@@ -24,6 +25,21 @@
   let atIndex = $derived(
     !!indexHref && (currentPath === indexHref || currentPath === indexHref + '/')
   );
+
+  let back = $derived(
+    indexHref ? (atIndex ? parent : { href: indexHref, label: title }) : null
+  );
+
+  // Inside a patch workspace the back link belongs on the workspace's own
+  // row, beside the relationship cluster (PatchShell). Where there is no such
+  // row (the admin panel) the shell draws it itself.
+  const workspaceUp = getContext('workspaceUp');
+
+  $effect(() => {
+    if (!workspaceUp) return;
+    workspaceUp.set(back);
+    return () => workspaceUp.set(null);
+  });
 
   function isActive(href) {
     if (currentPath === href) return true;
@@ -41,8 +57,7 @@
 </script>
 
 <div class="settings-shell" class:drill={!!indexHref} class:at-index={atIndex}>
-  {#if indexHref}
-    {@const back = atIndex ? parent : { href: indexHref, label: title }}
+  {#if indexHref && !workspaceUp}
     {#if back}
       <a href={back.href} class="settings-back" onclick={(e) => handleClick(e, back.href)}>
         <CaretLeft size={14} weight="bold" />

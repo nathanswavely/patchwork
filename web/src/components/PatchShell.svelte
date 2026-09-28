@@ -25,9 +25,11 @@
   import Skeleton from './Skeleton.svelte';
   import PatchRelationship from './PatchRelationship.svelte';
   import { getPendingMembershipSlugs, getInvitedMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
-  import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard } from 'phosphor-svelte';
+  import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard, CaretLeft } from 'phosphor-svelte';
 
-  let { slug = '', activeTab = 'governance', children } = $props();
+  // up: where this route's "up" goes when it has no section list on screen
+  // (lib/patchWorkspace.js workspaceUpLink), or null.
+  let { slug = '', activeTab = 'governance', up = null, children } = $props();
 
   // --- Patch data (fetched once, shared via context) ---
   let node = $state(null);
@@ -68,6 +70,24 @@
 
   setContext('patch', {
     get value() { return patchContext; }
+  });
+
+  // The link up a level, drawn on a phone at the left of the row that holds
+  // the relationship cluster, so the two share a line instead of stacking.
+  // A shell inside the workspace that has its own (Patch Settings, drilling
+  // down) hands it here rather than drawing it inside the page. Failing
+  // that, a page's breadcrumb that names a linked parent (a charter's
+  // history names the charter) is nearer than the route's section list.
+  let registeredUp = $state(null);
+  setContext('workspaceUp', {
+    set: (link) => { registeredUp = link; },
+  });
+
+  let upLink = $derived.by(() => {
+    if (registeredUp) return registeredUp;
+    const linked = breadcrumbExtra.filter((seg) => seg.href);
+    if (linked.length > 0) return linked[linked.length - 1];
+    return up;
   });
 
   // Fetch node data when slug changes
@@ -264,6 +284,12 @@
   {:else if node}
     <!-- Workspace nav: tabs + relationship cluster, directly under the bar -->
     <div class="workspace-nav">
+      {#if upLink}
+        <a href={upLink.href} class="workspace-up" onclick={(e) => handleTabClick(e, upLink.href)}>
+          <CaretLeft size={14} weight="bold" />
+          <span class="workspace-up-label">{upLink.label}</span>
+        </a>
+      {/if}
       <nav
         class="workspace-tabs"
         class:single={tabs.length < 2}
@@ -432,12 +458,46 @@
      the screen (toasts, the vote bar) already clears. The row the tabs
      leave keeps only the relationship cluster, and stops being sticky:
      a Join button does not need to follow you down the page. */
+  /* The up link exists only on a narrow screen, where the tabs have left
+     this row to the relationship cluster. */
+  .workspace-up {
+    display: none;
+  }
+
   @media (max-width: 768px) {
     .workspace-nav {
       position: static;
       justify-content: flex-end;
       background: none;
       border-bottom: none;
+      min-height: 52px;
+    }
+
+    .workspace-up {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      min-height: 44px;
+      min-width: 0;
+      margin-right: auto;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      text-decoration: none;
+    }
+
+    .workspace-up:hover {
+      color: var(--color-text);
+      text-decoration: none;
+    }
+
+    .workspace-up-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .workspace-body.work-content {
+      padding-top: 0.25rem;
     }
 
     .workspace-tabs {

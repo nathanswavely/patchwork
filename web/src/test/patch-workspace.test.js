@@ -154,3 +154,35 @@ describe('the workspace tabs are a bottom bar on a narrow screen', () => {
     expect(source('components/StickyVoteBar.svelte')).toContain('bottom: var(--pw-nav-h);');
   });
 });
+
+describe('the way up from a workspace page with no section list on screen', () => {
+  it('goes to the section list a detail page belongs to', async () => {
+    const { workspaceUpLink } = await import('../lib/patchWorkspace.js');
+    expect(workspaceUpLink('governanceProposal', 'p')).toEqual({ href: '/patches/p/governance/proposals', label: 'Proposals' });
+    expect(workspaceUpLink('governanceProposalNew', 'p').href).toBe('/patches/p/governance/proposals');
+    expect(workspaceUpLink('governanceDocDetail', 'p')).toEqual({ href: '/patches/p/governance/docs', label: 'Documents' });
+    expect(workspaceUpLink('governanceRulesPropose', 'p').href).toBe('/patches/p/governance/docs');
+    expect(workspaceUpLink('patchNotice', 'p')).toEqual({ href: '/patches/p/noticeboard', label: 'Noticeboard' });
+  });
+
+  it('is nothing on a section page, whose own list is the way around', async () => {
+    const { workspaceUpLink } = await import('../lib/patchWorkspace.js');
+    for (const r of ['governanceHub', 'governanceProposals', 'governanceDocs', 'governanceRecord', 'patchMembers', 'patchEvents', 'patchNoticeboard', 'patchSettingsInfo']) {
+      expect(workspaceUpLink(r, 'p')).toBeNull();
+    }
+  });
+
+  it('shares the relationship cluster\'s row, preferring a shell\'s own link, then a linked breadcrumb', () => {
+    const shell = source('components/PatchShell.svelte');
+    expect(shell).toContain("setContext('workspaceUp'");
+    expect(shell.indexOf('if (registeredUp) return registeredUp;')).toBeLessThan(shell.indexOf('breadcrumbExtra.filter((seg) => seg.href)'));
+    expect(shell.indexOf('class="workspace-up"')).toBeLessThan(shell.indexOf('class="workspace-cluster"'));
+    expect(source('App.svelte')).toContain('up={workspaceUpLink(routeName, routeParams.slug)}');
+  });
+
+  it('Patch Settings hands its back link to that row instead of drawing it in the page', () => {
+    const settings = source('components/SettingsShell.svelte');
+    expect(settings).toContain("getContext('workspaceUp')");
+    expect(settings).toContain('{#if indexHref && !workspaceUp}');
+  });
+});

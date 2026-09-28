@@ -19581,21 +19581,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 544,
+          "line": 545,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 598,
+          "line": 599,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 659,
+          "line": 660,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -19613,21 +19613,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 545,
+          "line": 546,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 599,
+          "line": 600,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 660,
+          "line": 661,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -19645,7 +19645,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 762,
+          "line": 763,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -19663,7 +19663,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 763,
+          "line": 764,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -25173,7 +25173,7 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 99,
+          "line": 119,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -25205,7 +25205,7 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 256,
+          "line": 276,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -25858,14 +25858,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 233,
+          "line": 253,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 234,
+          "line": 254,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -25883,7 +25883,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 241,
+          "line": 261,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -25901,7 +25901,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 259,
+          "line": 279,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -30440,14 +30440,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 146,
+          "line": 179,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 155,
+          "line": 188,
           "kind": "js-string",
           "raw": "Patch Info",
           "quote": "'"
@@ -30465,14 +30465,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 148,
+          "line": 181,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 158,
+          "line": 191,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
@@ -30504,14 +30504,14 @@
       "occurrences": [
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 150,
+          "line": 183,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
         },
         {
           "file": "web/src/lib/patchWorkspace.js",
-          "line": 161,
+          "line": 194,
           "kind": "js-string",
           "raw": "Danger Zone",
           "quote": "'"
@@ -35529,6 +35529,7 @@
       "tier": "label",
       "status": "unreviewed",
       "replacement": null,
+      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
