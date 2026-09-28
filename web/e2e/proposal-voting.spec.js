@@ -49,17 +49,18 @@ test.describe('Proposal voting', () => {
     await expect(page.getByText('Voting is open')).toBeVisible();
 
     // The seeded tally is rng-derived — read it, then assert our vote adds one.
-    const tallyText = await page.getByText(/^\d+✓$/).first().textContent();
-    const before = parseInt(tallyText, 10);
+    // Read from the vote section: the sticky bar only appears once the
+    // section has scrolled out of view.
+    const tally = page.locator('.vote-section .approve-count');
+    const before = parseInt(await tally.textContent(), 10);
 
-    // Both the inline vote section and the sticky bar offer Approve.
-    await page.getByRole('button', { name: 'Approve', exact: true }).first().click();
-    await expect(page.getByText(`${before + 1}✓`)).toBeVisible();
+    await page.locator('.vote-section').getByRole('button', { name: 'Approve', exact: true }).click();
+    await expect(tally).toHaveText(`${before + 1} approve`);
 
     // Survives a cold load.
     await page.reload();
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText(`${before + 1}✓`)).toBeVisible();
+    await expect(page.locator('.vote-section .approve-count')).toHaveText(`${before + 1} approve`);
     await expect(page.getByText('Create youth mentorship program')).toBeVisible();
   });
 });

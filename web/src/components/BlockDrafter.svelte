@@ -101,10 +101,13 @@
   function nearestAnchor(e) {
     const svg = e.currentTarget;
     const rect = svg.getBoundingClientRect();
-    if (!rect.width) return null;
-    const scale = CANVAS / rect.width;
-    const x = (e.clientX - rect.left) * scale;
-    const y = (e.clientY - rect.top) * scale;
+    // Measured from the content box: the canvas wears a border, and the
+    // anchors are laid out inside it.
+    const width = svg.clientWidth || rect.width;
+    if (!width) return null;
+    const scale = CANVAS / width;
+    const x = (e.clientX - rect.left - svg.clientLeft) * scale;
+    const y = (e.clientY - rect.top - svg.clientTop) * scale;
     const reach = SNAP_PX * scale;
     let best = null;
     let bestDist = Infinity;
