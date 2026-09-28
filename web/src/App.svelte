@@ -61,6 +61,8 @@
   import AdminTags from './pages/AdminTags.svelte';
   import AdminTagSuggestions from './pages/AdminTagSuggestions.svelte';
   import { adminTabLanding, legacyAdminPath } from './lib/adminPanel.js';
+  import { workspaceUpLink } from './lib/patchWorkspace.js';
+  import { isNarrow } from './stores/viewport.svelte.js';
   import AdminUsers from './pages/AdminUsers.svelte';
   import AdminAuditLog from './pages/AdminAuditLog.svelte';
   import AdminSubmissions from './pages/AdminSubmissions.svelte';
@@ -413,9 +415,12 @@
     redirectProposalDetail: (p) => `/patches/${p.slug}/governance/${p.id}`,
     redirectGovernanceSetup: (p) => `/patches/${p.slug}/governance`,
     redirectPatchScopedEvent: (p) => `/events/${p.id}`,
-    // A tab with sections has no page of its own (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md).
-    adminReviewIndex: () => adminTabLanding('review'),
-    adminSettingsIndex: () => adminTabLanding('settings'),
+    // A tab with sections has no page of its own on a wide screen
+    // (docs/adr/2026-09-17-an-admin-tab-answers-one-question.md). On a
+    // narrow one its bare URL is the list of its sections, which the
+    // drill-down navigates through, so it stays put.
+    adminReviewIndex: () => (isNarrow() ? null : adminTabLanding('review')),
+    adminSettingsIndex: () => (isNarrow() ? null : adminTabLanding('settings')),
     // The flat admin scheme, one level up from where each page now lives.
     // Null for a path that never existed: that is a not-found, not a bounce.
     redirectAdminLegacy: (p) => legacyAdminPath(p.rest),
@@ -603,7 +608,7 @@
       </div>
     </main>
   {:else}
-    <PatchShell slug={routeParams.slug} activeTab={patchTab}>
+    <PatchShell slug={routeParams.slug} activeTab={patchTab} up={workspaceUpLink(routeName, routeParams.slug)}>
       {#snippet children()}
         {#if routeName === 'governanceHub'}
           <GovernanceHub />

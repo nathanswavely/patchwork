@@ -405,4 +405,25 @@
       flex-wrap: wrap;
     }
   }
+
+  /* A phone: one row that scrolls sideways, rather than wrapping and
+     leaving "All" alone on a second line. */
+  @media (max-width: 640px) {
+    .status-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .status-filters .chip {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .status-filters .chip {
+      min-height: 36px;
+    }
+  }
 </style>

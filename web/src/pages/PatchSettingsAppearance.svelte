@@ -8,6 +8,7 @@
   import { MOTIFS, MOTIF_KEYS, motifKeyForPatch } from '../lib/patchIcons.js';
   import BundlePicker from '../components/BundlePicker.svelte';
   import BlockDrafter from '../components/BlockDrafter.svelte';
+  import { isNarrow } from '../stores/viewport.svelte.js';
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -119,6 +120,23 @@
     void draftPalette;
     void draft.rotation;
     drawBlock(previewEl, PREVIEW_SIZE, block, draftPalette, draft.rotation);
+  });
+
+  // On a phone the preview and its Save sit two screens above the fabric
+  // wall and blocks being picked from. Once there is something to save, a
+  // small copy of the preview and the same Save ride along at the foot of
+  // the screen, so each pick can be seen and kept where it was made.
+  const MINI_SIZE = 44;
+  let miniEl = $state(null);
+  let showSaveBar = $derived(isNarrow() && dirty);
+
+  $effect(() => {
+    if (!miniEl) return;
+    const block = draft.mode === 'draft' ? draft.draftBlock : draft.block;
+    void JSON.stringify(block);
+    void draftPalette;
+    void draft.rotation;
+    drawBlock(miniEl, MINI_SIZE, block, draftPalette, draft.rotation);
   });
 
   let thumbEls = $state({});
@@ -335,6 +353,23 @@
       {/each}
     </div>
   </div>
+
+  {#if showSaveBar}
+    <div class="save-bar">
+      <svg
+        bind:this={miniEl}
+        class="save-bar-tile"
+        viewBox="0 0 {MINI_SIZE} {MINI_SIZE}"
+        width={MINI_SIZE}
+        height={MINI_SIZE}
+        role="img"
+        aria-label="Tile preview"
+      ></svg>
+      <button class="btn btn-primary" onclick={save} disabled={saving || !dirty}>
+        {saving ? 'Saving...' : 'Save appearance'}
+      </button>
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -561,5 +596,29 @@
     .preview-row {
       flex-direction: column;
     }
+  }
+
+  .save-bar {
+    position: sticky;
+    bottom: calc(var(--pw-nav-h) + 0.5rem);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.6rem;
+    background: var(--color-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 16px var(--color-shadow);
+  }
+
+  .save-bar-tile {
+    display: block;
+    border-radius: 3px;
+    border: 1px solid var(--color-border);
   }
 </style>

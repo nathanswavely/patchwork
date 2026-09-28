@@ -125,4 +125,13 @@
     background: var(--color-overlay);
     color: var(--color-text);
   }
+
+  @media (pointer: coarse) {
+    .modal-close {
+      top: 6px;
+      right: 6px;
+      width: 44px;
+      height: 44px;
+    }
+  }
 </style>

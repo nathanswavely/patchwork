@@ -5,6 +5,7 @@
   import ErrorState from '../components/ErrorState.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { navigate } from '../stores/router.svelte.js';
 
   let reports = $state([]);
   let loading = $state(true);
@@ -14,6 +15,9 @@
   let resolvingId = $state(null);
   let resolutionNote = $state('');
   let selectedAction = $state('dismiss');
+
+  // What a report is about, in the UI's words rather than the table's.
+  const ENTITY_LABELS = { node: 'patch', event: 'event', user: 'person' };
 
   const tabs = [
     { key: 'pending', label: 'Pending' },
@@ -61,6 +65,24 @@
     resolvingId = null;
   }
 
+  // Dismissing is the queue's most common answer, so it is a button of its
+  // own rather than the default of a select behind Resolve: two taps on the
+  // card instead of three, and no form to open. It confirms first, and the
+  // other outcomes keep the form.
+  async function dismissReport(reportId) {
+    try {
+      await api(`admin/reports/${reportId}`, {
+        method: 'PATCH',
+        body: { status: 'dismissed', resolution_note: '', action: 'dismiss' },
+      });
+      showToast('Report resolved', 'success');
+      if (resolvingId === reportId) resolvingId = null;
+      loadReports();
+    } catch (e) {
+      showToast(e.message, 'error');
+    }
+  }
+
   async function submitResolve() {
     if (!resolvingId) return;
     try {
@@ -91,7 +113,7 @@
 
 <div class="page-fade">
   <div class="page-header">
-    <h1>Reports Queue</h1>
+    <h1>Reports</h1>
   </div>
 
   <div class="tabs">
@@ -117,14 +139,18 @@
       {#each reports as report (report.id)}
         <div class="card report-card">
           <div class="report-header">
-            <span class="badge">{report.entity_type}</span>
+            <span class="badge">{ENTITY_LABELS[report.entity_type] || report.entity_type}</span>
             <span class="report-date muted">{formatDate(report.created_at)}</span>
           </div>
           <div class="report-body">
             <div class="report-meta">
               <span>Reported by <strong>{report.reporter_name || 'Unknown'}</strong></span>
               {#if report.target_name}
-                <span class="muted"> &middot; Target: <strong>{report.target_name}</strong></span>
+                <span class="muted"> &middot; Target: {#if report.target_link}<a
+                    href={report.target_link}
+                    class="target-link"
+                    onclick={(e) => { e.preventDefault(); navigate(report.target_link); }}
+                  ><strong>{report.target_name}</strong></a>{:else}<strong>{report.target_name}</strong>{/if}</span>
               {/if}
             </div>
             <p class="report-reason">{report.reason}</p>
@@ -141,15 +167,15 @@
                   <select bind:value={selectedAction}>
                     <option value="dismiss">Dismiss</option>
                     <option value="warn">Warn</option>
-                    <option value="remove_content">Remove Content</option>
+                    <option value="remove_content">Remove content</option>
                     {#if report.entity_type === 'node'}
-                      <option value="reset_appearance">Reset Appearance</option>
+                      <option value="reset_appearance">Reset appearance</option>
                     {/if}
-                    <option value="suspend_user">Suspend User</option>
+                    <option value="suspend_user">Suspend user</option>
                   </select>
                 </label>
                 <label class="form-label">
-                  Resolution Note
+                  Resolution note
                   <textarea bind:value={resolutionNote} rows="2" placeholder="Optional note..."></textarea>
                 </label>
                 {#if selectedAction === 'suspend_user'}
@@ -176,6 +202,11 @@
               </div>
             {:else}
               <div class="report-actions">
+                <ConfirmAction
+                  label="Dismiss"
+                  confirmLabel="Dismiss"
+                  onConfirm={() => dismissReport(report.id)}
+                />
                 <button class="btn btn-secondary" onclick={() => openResolve(report.id)}>Resolve</button>
               </div>
             {/if}
@@ -192,7 +223,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadReports(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadReports(true)}>Load more</button>
       </div>
     {/if}
   {/if}
@@ -267,9 +298,16 @@
   }
 
   .report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin-top: 0.75rem;
     padding-top: 0.75rem;
     border-top: 1px solid var(--color-border);
+  }
+
+  .target-link {
+    color: inherit;
   }
 
   .resolve-form {
@@ -307,5 +345,23 @@
     padding-top: 0.5rem;
     border-top: 1px solid var(--color-border);
     font-size: 0.85rem;
+  }
+
+  /* A strip wider than a phone scrolls instead of running past the edge,
+     where the body's overflow clip cut "Dismissed" in half. */
+  .tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (pointer: coarse) {
+    .tab-btn {
+      min-height: 44px;
+    }
   }
 </style>

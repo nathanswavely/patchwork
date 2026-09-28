@@ -54,6 +54,7 @@ describe('notification and feed link targets', () => {
     { built: 'PatchMembers', path: '/patches/gallery-row/members', route: 'patchMembers' },
     { built: 'PatchSetup', path: '/patches/gallery-row/setup', route: 'patchSetup' },
     { built: 'Event', path: '/events/019f-abc', route: 'eventDetail' },
+    { built: 'User', path: '/users/sophia-chen', route: 'userProfile' },
     { built: 'Proposal', path: '/patches/gallery-row/governance/019f-pr', route: 'governanceProposal' },
     { built: 'GovernanceDoc', path: '/patches/gallery-row/governance/docs/019f-doc', route: 'governanceDocDetail' },
     { built: 'PatchNoticeboard', path: '/patches/gallery-row/noticeboard', route: 'patchNoticeboard' },

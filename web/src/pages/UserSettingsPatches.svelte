@@ -600,4 +600,35 @@
     gap: 0.4rem;
   }
 
+  /* A phone: the patch's name on its own line, the controls on the next.
+     Side by side, the controls never shrank, so the name went to nothing
+     and a Leave button acted on a row nobody could identify. The joined
+     date is the first thing to give up its room. */
+  @media (max-width: 640px) {
+    .patch-row {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .patch-info {
+      flex: 1 1 100%;
+    }
+
+    .joined-date {
+      display: none;
+    }
+
+    .patch-actions {
+      flex: 1 1 100%;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* The one act that ends the relationship sits apart from the two
+       that tune it. */
+    .patch-actions > :global(.btn-warning),
+    .patch-actions > :global(.confirm-group) {
+      margin-left: auto;
+    }
+  }
 </style>
