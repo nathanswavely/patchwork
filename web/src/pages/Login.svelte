@@ -32,9 +32,9 @@
   let passKeyError = $state('');
   let passKeyLoading = $state(false);
 
-  // The code the same email carries beside the link. Typing it finishes the
-  // sign-in in this tab, which is what a person does when the mail opens on
-  // another device.
+  // The code the link's page shows when it opens somewhere other than this
+  // browser (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md).
+  // Typing it here finishes the sign-in in the tab that asked.
   let signInCode = $state('');
   let codeError = $state('');
   let codeLoading = $state(false);
@@ -150,7 +150,7 @@
         <p class="muted">It should arrive within a minute or two. Open the link to continue.</p>
 
         <form class="code-form" onsubmit={(e) => { e.preventDefault(); handleCodeSubmit(); }}>
-          <label for="signin-code">Or enter the code from the email</label>
+          <label for="signin-code">Opened the link on another device? Enter the code it shows</label>
           <input
             id="signin-code"
             type="text"
