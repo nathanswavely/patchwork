@@ -19693,9 +19693,9 @@
       "text": "Administration",
       "words": 1,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Left as drafted by Nathan, 2026-09-28 (asked to mark as-is before PR #363).",
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
@@ -20628,7 +20628,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 163,
+          "line": 166,
           "kind": "js-string",
           "raw": "Changing the grid clears your seams (colors of surviving cells stay). Continue?",
           "quote": "'"
@@ -20646,7 +20646,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 218,
+          "line": 221,
           "kind": "markup",
           "raw": "Grid",
           "quote": null
@@ -20664,7 +20664,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 236,
+          "line": 239,
           "kind": "markup",
           "raw": "{draft.seams.length} of {SEAM_BUDGET} seams",
           "quote": null
@@ -20682,7 +20682,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 242,
+          "line": 245,
           "kind": "markup",
           "raw": "Click two anchors to sew a seam. Seams split every piece they cross.",
           "quote": null
@@ -20701,7 +20701,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 244,
+          "line": 247,
           "kind": "markup",
           "raw": "Tap a piece to color it with fabric {selectedSlot + 1}.",
           "quote": null
@@ -20719,7 +20719,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 246,
+          "line": 249,
           "kind": "markup",
           "raw": "Tap a seam to unpick it. Pieces keep their fabric where they survive.",
           "quote": null
@@ -20737,7 +20737,7 @@
       "occurrences": [
         {
           "file": "web/src/components/BlockDrafter.svelte",
-          "line": 261,
+          "line": 264,
           "kind": "attr:aria-label",
           "raw": "Block drafting canvas",
           "quote": "\""
@@ -35616,9 +35616,9 @@
       "text": "verified domain: {claim.verification_domain}",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Left as drafted by Nathan, 2026-09-28 (asked to mark as-is before PR #363).",
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
