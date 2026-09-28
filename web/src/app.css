@@ -639,12 +639,18 @@ button:disabled {
     display: none !important;
   }
 
+  /* clip, not hidden: overflow-x: hidden makes body a scroll container
+     that never scrolls, and every position: sticky below it then sticks to
+     that instead of the viewport, which is to say never. hidden stays as
+     the fallback for a browser without clip. */
   html {
     overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
     overflow-x: hidden;
+    overflow-x: clip;
   }
 
   input[type="text"],

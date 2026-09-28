@@ -108,8 +108,17 @@
     // Everything below works off the local handle, never the `map` rune:
     // reading that back inside the effect that wrote it makes the effect
     // depend on itself, and the second pass hits an initialized container.
-    const instance = L.map(mapContainer, { fadeAnimation: false, maxZoom: BASEMAP_MAX_ZOOM })
-      .setView(start, 13);
+    // On a touch screen one finger scrolls the page and two move the map.
+    // With Leaflet's own one-finger drag, a 320px map in the middle of a
+    // long form caught every swipe that started on it and the page stopped
+    // scrolling there. Pinching still pans and zooms together, a tap still
+    // places the marker, and the marker still drags.
+    const coarse = window.matchMedia?.('(pointer: coarse)').matches;
+    const instance = L.map(mapContainer, {
+      fadeAnimation: false,
+      maxZoom: BASEMAP_MAX_ZOOM,
+      dragging: !coarse,
+    }).setView(start, 13);
     map = instance;
 
     // The picker stays light in either app theme: placement is easier to
@@ -221,6 +230,14 @@
   .picker-map :global(.leaflet-container) {
     font-family: var(--font);
     background: var(--color-bg);
+  }
+
+  @media (pointer: coarse) {
+    .picker-map :global(.leaflet-control-zoom a) {
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+    }
   }
 
   .picker-map :global(.place-marker) {

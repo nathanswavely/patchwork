@@ -104,3 +104,45 @@ describe('admin tables have a phone form', () => {
     expect(src).not.toContain('entity_id?.substring(0, 8)');
   });
 });
+
+describe('pickers a finger can use', () => {
+  it('the drafter snaps a tap to the nearest anchor instead of asking for a hit on the dot', () => {
+    const src = source('components/BlockDrafter.svelte');
+    expect(src).toContain('const SNAP_PX = 24;');
+    expect(src).toContain('onclick={canvasClick}');
+    // The dots are drawn, not clicked.
+    expect(src).not.toContain('onclick={() => clickAnchor(a)}');
+    expect(src).toMatch(/\.anchor \{[^}]*pointer-events: none;/);
+  });
+
+  it('the drafter says what to do above the canvas, not below the wall', () => {
+    const src = source('components/BlockDrafter.svelte');
+    expect(src.indexOf('class="muted drafter-hint"')).toBeLessThan(src.indexOf('<div class="drafter-body">'));
+  });
+
+  it('the fabric wall and slots are finger-sized, and remove sits apart from add', () => {
+    const src = source('components/BundlePicker.svelte');
+    const coarse = src.slice(src.indexOf('@media (pointer: coarse)'));
+    expect(coarse).toContain('minmax(36px, 1fr)');
+    expect(coarse).toContain('width: 40px');
+    expect(coarse).toMatch(/\.slot-remove \{\s*margin-left: auto;/);
+    expect(src).toContain('{swatchName(bundle[selectedSlot])}');
+  });
+
+  it('the map picker leaves one finger to the page on a touch screen', () => {
+    expect(source('components/MapLocationPicker.svelte')).toContain('dragging: !coarse');
+  });
+
+  it('Save follows the picking on a phone, in Appearance and the quilt icon', () => {
+    expect(source('pages/PatchSettingsAppearance.svelte')).toContain('let showSaveBar = $derived(isNarrow() && dirty);');
+    expect(source('pages/AdminQuiltSettings.svelte')).toContain('{#if isNarrow() && iconDirty}');
+  });
+});
+
+describe('sticky works on a phone', () => {
+  it('clips sideways overflow without making body a scroll container', () => {
+    const css = source('app.css');
+    expect(css).toMatch(/body \{\s*overflow-x: hidden;\s*overflow-x: clip;/);
+    expect(css).toMatch(/html \{\s*overflow-x: hidden;\s*overflow-x: clip;/);
+  });
+});
