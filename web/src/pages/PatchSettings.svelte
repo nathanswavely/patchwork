@@ -100,7 +100,10 @@
 {#if !canViewSettings}
   <p class="muted">You do not have permission to view settings.</p>
 {:else}
-  {#if asInstanceAdmin}
+  <!-- On a phone, said once where Patch Settings opens rather than above
+       every section; the drill-down passes through the list to get there.
+       A wide screen has no list page, so it stays on every section. -->
+  {#if asInstanceAdmin && (!isNarrow() || currentPath === indexHref || currentPath === `${indexHref}/`)}
     <p class="instance-admin-note">
       You are here as an admin of this quilt, not as an admin of this patch.
       Changes you save are this patch's.

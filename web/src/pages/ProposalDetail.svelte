@@ -337,6 +337,7 @@
               openedAt={proposal.created_at}
               userVote={proposal.my_vote}
               votingEndsAt={proposal.voting_ends_at}
+              showTimeLeft={false}
               state={effectiveState}
               voters={proposal.voters || []}
               {canVote}

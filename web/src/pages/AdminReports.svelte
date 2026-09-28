@@ -16,6 +16,9 @@
   let resolutionNote = $state('');
   let selectedAction = $state('dismiss');
 
+  // What a report is about, in the UI's words rather than the table's.
+  const ENTITY_LABELS = { node: 'patch', event: 'event', user: 'person' };
+
   const tabs = [
     { key: 'pending', label: 'Pending' },
     { key: 'reviewed', label: 'Reviewed' },
@@ -110,7 +113,7 @@
 
 <div class="page-fade">
   <div class="page-header">
-    <h1>Reports Queue</h1>
+    <h1>Reports</h1>
   </div>
 
   <div class="tabs">
@@ -136,7 +139,7 @@
       {#each reports as report (report.id)}
         <div class="card report-card">
           <div class="report-header">
-            <span class="badge">{report.entity_type}</span>
+            <span class="badge">{ENTITY_LABELS[report.entity_type] || report.entity_type}</span>
             <span class="report-date muted">{formatDate(report.created_at)}</span>
           </div>
           <div class="report-body">
@@ -164,15 +167,15 @@
                   <select bind:value={selectedAction}>
                     <option value="dismiss">Dismiss</option>
                     <option value="warn">Warn</option>
-                    <option value="remove_content">Remove Content</option>
+                    <option value="remove_content">Remove content</option>
                     {#if report.entity_type === 'node'}
-                      <option value="reset_appearance">Reset Appearance</option>
+                      <option value="reset_appearance">Reset appearance</option>
                     {/if}
-                    <option value="suspend_user">Suspend User</option>
+                    <option value="suspend_user">Suspend user</option>
                   </select>
                 </label>
                 <label class="form-label">
-                  Resolution Note
+                  Resolution note
                   <textarea bind:value={resolutionNote} rows="2" placeholder="Optional note..."></textarea>
                 </label>
                 {#if selectedAction === 'suspend_user'}
@@ -220,7 +223,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadReports(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadReports(true)}>Load more</button>
       </div>
     {/if}
   {/if}

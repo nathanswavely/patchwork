@@ -1,4 +1,5 @@
 <script>
+  import { isNarrow } from '../stores/viewport.svelte.js';
   /**
    * Usage: daily page views and visitors, counted on the server
    * (docs/adr/2026-09-18-counting-visitors-without-watching-anyone.md).
@@ -14,6 +15,8 @@
   import Skeleton from '../components/Skeleton.svelte';
   import ErrorState from '../components/ErrorState.svelte';
 
+
+  let narrow = $derived(isNarrow());
   let loading = $state(true);
   let error = $state('');
   let data = $state(null);
@@ -88,13 +91,18 @@
       <div class="switch-row">
         <div>
           <h2>{data.enabled ? 'Counting is on' : 'Counting is off'}</h2>
-          <p class="muted">
-            {#if data.enabled}
-              Each page load adds one to that kind of page for today. A browser is counted once a day, from a hash of its address and type under a secret the server draws at random, keeps in memory, and replaces at midnight. Totals are kept for {data.retention_months} months. The privacy policy states all of this.
-            {:else}
-              Nothing is being counted. Turning this on counts page loads per kind of page per day and distinct browsers per day, on the server, and the privacy policy changes to say so. It never counts API calls, assets, or anyone a browser announces as software.
-            {/if}
-          </p>
+          <!-- The mechanics fold on a phone, where they stood between the
+               heading and its switch. Open, and unlabelled, on a wide screen. -->
+          <details class="counted-fold" open={!narrow}>
+            <summary>What is counted</summary>
+            <p class="muted">
+              {#if data.enabled}
+                Each page load adds one to that kind of page for today. A browser is counted once a day, from a hash of its address and type under a secret the server draws at random, keeps in memory, and replaces at midnight. Totals are kept for {data.retention_months} months. The privacy policy states all of this.
+              {:else}
+                Nothing is being counted. Turning this on counts page loads per kind of page per day and distinct browsers per day, on the server, and the privacy policy changes to say so. It never counts API calls, assets, or anyone a browser announces as software.
+              {/if}
+            </p>
+          </details>
         </div>
         <button
           class="btn"
@@ -417,6 +425,21 @@
   @media (pointer: coarse) {
     .range-tab {
       min-height: 40px;
+    }
+  }
+
+  .counted-fold > summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  @media (min-width: 641px) {
+    .counted-fold > summary {
+      display: none;
     }
   }
 </style>

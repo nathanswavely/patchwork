@@ -117,7 +117,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadSubmissions(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadSubmissions(true)}>Load more</button>
       </div>
     {/if}
   {/if}

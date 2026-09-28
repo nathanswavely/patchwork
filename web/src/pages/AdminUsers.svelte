@@ -337,6 +337,37 @@
   }
 </script>
 
+{#snippet inviteSection()}
+  <section class="invite-section card">
+    <h2>Invite links</h2>
+    <p class="muted">
+      Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
+    </p>
+    <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
+      <label>
+        Max uses
+        <input type="number" min="1" max="100" bind:value={inviteMaxUses} />
+      </label>
+      <label>
+        Expires in (hours, 0 = never)
+        <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
+      </label>
+      <button type="submit" class="btn btn-primary" disabled={generatingInvite}>
+        {generatingInvite ? 'Generating...' : 'Generate invite link'}
+      </button>
+    </form>
+    {#if inviteUrl}
+      <div class="invite-result">
+        <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
+        <button class="btn btn-secondary" onclick={copyInviteUrl}>Copy</button>
+      </div>
+      <p class="muted invite-note">
+        This link is shown once, so copy it now. Anyone with it can create an account.
+      </p>
+    {/if}
+  </section>
+{/snippet}
+
 {#snippet emailControl(u)}
   {#if editingEmailFor === u.id}
     <form
@@ -371,12 +402,12 @@
     value={pendingRoles[u.id] ?? u.role}
     onchange={(e) => handleRoleSelect(u, e.target.value)}
   >
-    <option value="member">member</option>
-    <option value="admin">admin</option>
+    <option value="member">Member</option>
+    <option value="admin">Admin</option>
   </select>
   {#if pendingRoles[u.id]}
     <ConfirmAction
-      label="Change Role"
+      label="Change role"
       confirmLabel="Yes, change role"
       variant="warning"
       onConfirm={() => setRole(u)}
@@ -469,7 +500,7 @@
 
 <div class="page-fade">
   <div class="page-header">
-    <h1>User Management</h1>
+    <h1>Users</h1>
   </div>
 
   <PasskeyNotice show={!hasPasskey} action="promote someone to instance admin or set their email address" />
@@ -528,34 +559,7 @@
   {/if}
 
   {#if !narrow}
-    <section class="invite-section card">
-      <h2>Invite Links</h2>
-      <p class="muted">
-        Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
-      </p>
-      <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
-        <label>
-          Max uses
-          <input type="number" min="1" max="100" bind:value={inviteMaxUses} />
-        </label>
-        <label>
-          Expires in (hours, 0 = never)
-          <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
-        </label>
-        <button type="submit" class="btn btn-primary" disabled={generatingInvite}>
-          {generatingInvite ? 'Generating...' : 'Generate Invite Link'}
-        </button>
-      </form>
-      {#if inviteUrl}
-        <div class="invite-result">
-          <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
-          <button class="btn btn-secondary" onclick={copyInviteUrl}>Copy</button>
-        </div>
-        <p class="muted invite-note">
-          This link is shown once, so copy it now. Anyone with it can create an account.
-        </p>
-      {/if}
-    </section>
+    {@render inviteSection()}
   {/if}
 
   <div class="search-bar">
@@ -643,7 +647,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load more</button>
       </div>
     {/if}
   {:else}
@@ -688,7 +692,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load more</button>
       </div>
     {/if}
   {/if}
@@ -696,34 +700,7 @@
   <!-- On a phone the person being looked for comes first; making an invite
        link is the rarer errand, so it waits below the list. -->
   {#if narrow}
-    <section class="invite-section card">
-      <h2>Invite Links</h2>
-      <p class="muted">
-        Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
-      </p>
-      <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
-        <label>
-          Max uses
-          <input type="number" min="1" max="100" bind:value={inviteMaxUses} />
-        </label>
-        <label>
-          Expires in (hours, 0 = never)
-          <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
-        </label>
-        <button type="submit" class="btn btn-primary" disabled={generatingInvite}>
-          {generatingInvite ? 'Generating...' : 'Generate Invite Link'}
-        </button>
-      </form>
-      {#if inviteUrl}
-        <div class="invite-result">
-          <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
-          <button class="btn btn-secondary" onclick={copyInviteUrl}>Copy</button>
-        </div>
-        <p class="muted invite-note">
-          This link is shown once, so copy it now. Anyone with it can create an account.
-        </p>
-      {/if}
-    </section>
+    {@render inviteSection()}
   {/if}
 </div>
 

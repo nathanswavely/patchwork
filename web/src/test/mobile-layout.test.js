@@ -91,10 +91,13 @@ describe('admin tables have a phone form', () => {
 
   it('Users puts the search and list before the invite form on a phone', () => {
     const src = source('pages/AdminUsers.svelte');
-    const list = src.indexOf('<ul class="user-list">');
-    const lateInvite = src.lastIndexOf('<section class="invite-section card">');
-    expect(src.indexOf('{#if !narrow}')).toBeLessThan(src.indexOf('<div class="search-bar">'));
-    expect(lateInvite).toBeGreaterThan(list);
+    // One invite section, rendered above the search on a wide screen and
+    // below the list on a phone.
+    expect(src.split('<section class="invite-section card">').length - 1).toBe(1);
+    const renders = [...src.matchAll(/\{@render inviteSection\(\)\}/g)].map((m) => m.index);
+    expect(renders.length).toBe(2);
+    expect(renders[0]).toBeLessThan(src.indexOf('<div class="search-bar">'));
+    expect(renders[1]).toBeGreaterThan(src.indexOf('<ul class="user-list">'));
   });
 
   it('the audit log reads as a list on a phone and names a target by the tail of its id', () => {
@@ -171,5 +174,50 @@ describe('review cards put the decision within reach', () => {
 
   it('Event submissions: the event is a link', () => {
     expect(source('pages/AdminEventSubmissions.svelte')).toContain('href="/events/{sub.id}"');
+  });
+});
+
+describe('copy pass A and C (2026-09-28)', () => {
+  it('leaves no em dash in the strings it named', () => {
+    const files = [
+      'components/StepUpPrompt.svelte', 'lib/webauthn.js', 'pages/AccountSettings.svelte',
+      'pages/AdminAggregators.svelte', 'pages/AdminApps.svelte', 'pages/Discover.svelte',
+      'pages/PatchSettingsSources.svelte', 'pages/SocialHome.svelte', 'components/VoteSection.svelte',
+      'components/StickyVoteBar.svelte', 'components/TemplatePreviewDrawer.svelte',
+    ];
+    for (const f of files) {
+      // Comments may keep theirs; rendered strings may not.
+      const code = source(f).replace(/<!--[\s\S]*?-->/g, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+      expect(code, f).not.toMatch(/—|\u2014|&mdash;/);
+    }
+  });
+
+  it('says tap, open or pick where it said click', () => {
+    expect(source('components/BlockDrafter.svelte')).toContain('Tap a piece to color it');
+    expect(source('components/MapLocationPicker.svelte')).toContain('or tap elsewhere');
+    expect(source('pages/Login.svelte')).toContain('Open the link to continue.');
+  });
+
+  it("names what a report is about in the UI's words", () => {
+    expect(source('pages/AdminReports.svelte')).toContain("const ENTITY_LABELS = { node: 'patch', event: 'event', user: 'person' };");
+  });
+
+  it("shows the rules editor's explanations only for the choice made", () => {
+    const src = source('components/StructuredRulesEditor.svelte');
+    expect(src).toContain('{#if subjectRecusal}');
+    expect(src).toContain("{#if leadershipVenue === 'elsewhere'}");
+    expect(src).toContain("{#if proposalVenue === 'elsewhere'}");
+  });
+
+  it('folds rare sections and long explanations on a phone only', () => {
+    const account = source('pages/AccountSettings.svelte');
+    expect(account.split('<details class="pw-fold" open={!narrow}>').length - 1).toBe(4);
+    expect(source('pages/PatchSettingsSources.svelte')).toContain('<details class="intro-fold" open={!narrow}>');
+    expect(source('pages/PatchForm.svelte')).toContain('<details class="appearance-fold" open={!narrow}>');
+    expect(source('pages/AdminUsage.svelte')).toContain('<details class="counted-fold" open={!narrow}>');
+  });
+
+  it('states the time left once on a proposal', () => {
+    expect(source('pages/ProposalDetail.svelte')).toContain('showTimeLeft={false}');
   });
 });

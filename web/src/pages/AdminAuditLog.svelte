@@ -110,7 +110,7 @@
 
 <div class="page-fade">
   <div class="page-header">
-    <h1>Audit Log</h1>
+    <h1>Audit log</h1>
   </div>
 
   <div class="filters">
@@ -178,7 +178,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadEntries(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadEntries(true)}>Load more</button>
       </div>
     {/if}
   {:else}
@@ -209,7 +209,7 @@
 
     {#if nextCursor}
       <div style="text-align: center; padding: 1rem 0;">
-        <button class="btn btn-secondary" onclick={() => loadEntries(true)}>Load More</button>
+        <button class="btn btn-secondary" onclick={() => loadEntries(true)}>Load more</button>
       </div>
     {/if}
   {/if}

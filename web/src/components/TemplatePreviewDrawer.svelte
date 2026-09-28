@@ -49,7 +49,7 @@
       explanations.push({
         label: 'Quorum',
         value: q + '%',
-        explain: q === 0 ? 'No minimum participation \u2014 any number of votes counts.' : `At least ${q}% of members must vote for a decision to count.`,
+        explain: q === 0 ? 'No minimum participation. Any number of votes counts.' : `At least ${q}% of members must vote for a decision to count.`,
       });
     }
 

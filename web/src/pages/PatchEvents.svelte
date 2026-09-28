@@ -205,7 +205,7 @@
 <div class="events-page">
   <div class="events-header">
     <span class="muted">
-      {events.length} events
+      {events.length} {events.length === 1 ? 'event' : 'events'}
       {#if isUnclaimed}
         <span class="badge">Community-submitted</span>
       {/if}

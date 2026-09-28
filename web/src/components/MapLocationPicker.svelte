@@ -187,7 +187,7 @@
        name instead. -->
   <p class="picker-hint">
     {#if provisional}
-      This is a guess, not a placement. Drag the marker or click elsewhere to
+      This is a guess, not a placement. Drag the marker or tap elsewhere to
       correct it, and nothing goes on the map until you confirm.
     {:else}
       Click the map to drop the marker, then drag it to adjust. Place it as

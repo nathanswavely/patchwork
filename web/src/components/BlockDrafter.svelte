@@ -241,9 +241,9 @@
     {#if tool === 'sew'}
       Click two anchors to sew a seam. Seams split every piece they cross.
     {:else if tool === 'color'}
-      Click a piece to color it with fabric {selectedSlot + 1}.
+      Tap a piece to color it with fabric {selectedSlot + 1}.
     {:else}
-      Click a seam to unpick it. Pieces keep their fabric where they survive.
+      Tap a seam to unpick it. Pieces keep their fabric where they survive.
     {/if}
   </p>
 
@@ -317,7 +317,7 @@
       <BundlePicker
         bind:bundle
         bind:selectedSlot
-        hint="Fabric {selectedSlot + 1} colors pieces you click. Pick its fabric from the wall:"
+        hint="Fabric {selectedSlot + 1} colors the pieces you pick. Pick its fabric from the wall:"
       />
     </div>
   </div>

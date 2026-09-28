@@ -174,7 +174,7 @@
         <textarea
           bind:value={fingerprints}
           rows="4"
-          placeholder="AA:BB:CC:… — one per line"
+          placeholder="AA:BB:CC:…, one per line"
           disabled={busy}
         ></textarea>
       </label>

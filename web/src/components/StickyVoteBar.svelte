@@ -62,7 +62,7 @@
       <span class="count approve-count">{approveCount}&#10003;</span>
       <span class="count reject-count">{rejectCount}&#10007;</span>
       {#if abstainCount > 0}
-        <span class="count abstain-count">{abstainCount}&mdash;</span>
+        <span class="count abstain-count">{abstainCount} abstain</span>
       {/if}
       {#if timeLeft}
         <span class="time-left">{timeLeft}</span>

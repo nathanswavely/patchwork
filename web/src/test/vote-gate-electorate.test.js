@@ -111,7 +111,7 @@ describe('VoteSection — the terms it shows', () => {
   });
 
   it('states the tenure requirement, which appears nowhere else in the UI', () => {
-    expect(src).toMatch(/voting requires \$\{tenureDays\} days' membership/);
+    expect(src).toMatch(/voting requires \$\{tenureDays\} days' membership/i);
   });
 });
 
