@@ -119,3 +119,38 @@ describe('#6: shells are wired to the helpers', () => {
     expect(src).toMatch(/isUnclaimed[\s\S]*?\/patches\/\{slug\}\/events/);
   });
 });
+
+describe('Patch Settings drills down on a narrow screen', () => {
+  const page = source('pages/PatchSettings.svelte');
+
+  it('opts into the drill-down with its bare path as the list', () => {
+    expect(page).toContain('<SettingsShell title="Patch Settings" {sections} {indexHref}>');
+    expect(page).toContain('indexHref = $derived(sourcesOnly ? null : `/patches/${slug}/settings`)');
+  });
+
+  it('leaves the bare path alone on a narrow screen and redirects it on a wide one', () => {
+    expect(page).toContain('if (indexHref && isNarrow()) return;');
+  });
+});
+
+describe('the workspace tabs are a bottom bar on a narrow screen', () => {
+  const shell = source('components/PatchShell.svelte');
+
+  it('never has more than five tabs to fit, for any viewer', () => {
+    const most = workspaceTabs({ isAdmin: true, membershipRole: 'admin' });
+    expect(ids(most)).toEqual(['governance', 'members', 'events', 'noticeboard', 'settings']);
+  });
+
+  it('pins the tabs to the foot at the quilt rail\'s breakpoint and height', () => {
+    expect(shell).toMatch(/@media \(max-width: 768px\) \{[\s\S]*\.workspace-tabs \{\s*position: fixed;[\s\S]*height: var\(--pw-nav-h\);/);
+  });
+
+  it('draws no bar for a single tab, and clears the bar only when there is one', () => {
+    expect(shell).toContain('class:single={tabs.length < 2}');
+    expect(shell).toContain('class:over-tab-bar={tabs.length >= 2}');
+  });
+
+  it('lifts the sticky vote bar above whichever tab bar is at the foot', () => {
+    expect(source('components/StickyVoteBar.svelte')).toContain('bottom: var(--pw-nav-h);');
+  });
+});

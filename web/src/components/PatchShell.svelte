@@ -6,6 +6,12 @@
    * chrome. Role decides what shows: admins get Settings, followers get
    * permission-gated tabs, non-members get Join/Follow in the right
    * cluster.
+   *
+   * On a narrow screen the tabs are a bottom bar, where the quilt's own
+   * rail sits at that width, so a phone's navigation is at the foot of the
+   * screen everywhere. workspaceTabs never returns more than five, which is
+   * what makes a bar of fixed slots possible. A single tab is no choice at
+   * all and gets no bar. The relationship cluster stays at the top.
    */
   import { setContext } from 'svelte';
   import { api } from '../lib/api.js';
@@ -260,6 +266,7 @@
     <div class="workspace-nav">
       <nav
         class="workspace-tabs"
+        class:single={tabs.length < 2}
         class:more-left={moreLeft}
         class:more-right={moreRight}
         bind:this={tabStrip}
@@ -274,7 +281,7 @@
             onclick={(e) => handleTabClick(e, tab.href)}
           >
             <span class="tab-icon"><Icon size={16} weight="duotone" /></span>
-            {tab.label}
+            <span class="tab-label">{tab.label}</span>
           </a>
         {/each}
       </nav>
@@ -300,7 +307,7 @@
     </div>
 
     <!-- Tab content -->
-    <div class="workspace-body work-content">
+    <div class="workspace-body work-content" class:over-tab-bar={tabs.length >= 2}>
       {@render children()}
     </div>
   {/if}
@@ -417,6 +424,83 @@
 
   .workspace-tab.active .tab-icon {
     color: var(--color-accent);
+  }
+
+  /* --- Narrow screen: the tabs become a bottom bar ---
+     The same footprint and glass as SocialShell's mobile rail. Its height
+     is app.css's --pw-nav-h, which everything else ending at the foot of
+     the screen (toasts, the vote bar) already clears. The row the tabs
+     leave keeps only the relationship cluster, and stops being sticky:
+     a Join button does not need to follow you down the page. */
+  @media (max-width: 768px) {
+    .workspace-nav {
+      position: static;
+      justify-content: flex-end;
+      background: none;
+      border-bottom: none;
+    }
+
+    .workspace-tabs {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 55;
+      height: var(--pw-nav-h);
+      box-sizing: border-box;
+      padding: 4px 4px env(safe-area-inset-bottom, 0px);
+      gap: 0;
+      overflow: visible;
+      background: var(--color-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .workspace-tabs.more-left,
+    .workspace-tabs.more-right,
+    .workspace-tabs.more-left.more-right {
+      mask-image: none;
+    }
+
+    .workspace-tabs.single {
+      display: none;
+    }
+
+    .workspace-tab {
+      flex: 1 1 0;
+      min-width: 0;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      padding: 2px 4px;
+      font-size: 0.68rem;
+      border-bottom: none;
+      border-radius: var(--radius);
+    }
+
+    .workspace-tab .tab-icon :global(svg) {
+      width: 22px;
+      height: 22px;
+    }
+
+    .tab-label {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .workspace-tab.active {
+      color: var(--color-primary);
+    }
+
+    .workspace-tab.active .tab-icon {
+      color: var(--color-primary);
+    }
+
+    .workspace-body.over-tab-bar {
+      padding-bottom: calc(var(--pw-nav-h) + 2rem);
+    }
   }
 
   /* --- Relationship cluster, right end --- */

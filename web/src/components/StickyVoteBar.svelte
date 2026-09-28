@@ -74,7 +74,9 @@
 <style>
   .sticky-vote-bar {
     position: fixed;
-    bottom: 0;
+    /* Above the mobile tab bar, the patch workspace's or the quilt's.
+       --pw-nav-h is 0px where there is none. */
+    bottom: var(--pw-nav-h);
     left: 0;
     right: 0;
     background: var(--color-surface);

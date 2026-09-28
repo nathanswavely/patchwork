@@ -1,13 +1,29 @@
 <script>
+  /**
+   * A workspace's sidebar of sections beside the section's page.
+   *
+   * On a narrow screen a shell given `indexHref` drills down rather than
+   * stacking: its index URL is the list of sections, full width, and a
+   * section's page drops the list for one back link to it. One level of
+   * navigation is on screen at a time. A shell without `indexHref` keeps
+   * the scrolling row of sections it has always had there. `parent` is
+   * where the index itself goes back to.
+   */
   import { navigate, getPath } from '../stores/router.svelte.js';
+  import { CaretLeft, CaretRight } from 'phosphor-svelte';
 
   let {
     title = 'Settings',
     sections = [],
+    indexHref = null,
+    parent = null,
     children,
   } = $props();
 
   let currentPath = $derived(getPath());
+  let atIndex = $derived(
+    !!indexHref && (currentPath === indexHref || currentPath === indexHref + '/')
+  );
 
   function isActive(href) {
     if (currentPath === href) return true;
@@ -24,7 +40,16 @@
   }
 </script>
 
-<div class="settings-shell">
+<div class="settings-shell" class:drill={!!indexHref} class:at-index={atIndex}>
+  {#if indexHref}
+    {@const back = atIndex ? parent : { href: indexHref, label: title }}
+    {#if back}
+      <a href={back.href} class="settings-back" onclick={(e) => handleClick(e, back.href)}>
+        <CaretLeft size={14} weight="bold" />
+        {back.label}
+      </a>
+    {/if}
+  {/if}
   <nav class="settings-sidebar">
     <h2 class="settings-title">{title}</h2>
     <ul class="settings-nav">
@@ -40,14 +65,19 @@
             {#if section.count > 0}
               <span class="settings-nav-count">{section.count}</span>
             {/if}
+            {#if indexHref}
+              <span class="settings-nav-caret"><CaretRight size={14} weight="bold" /></span>
+            {/if}
           </a>
         </li>
       {/each}
     </ul>
   </nav>
-  <div class="settings-content">
-    {@render children()}
-  </div>
+  {#if !atIndex}
+    <div class="settings-content">
+      {@render children()}
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -160,5 +190,79 @@
     .settings-nav-link {
       white-space: nowrap;
     }
+
+    /* Drill-down. A section's page shows the back link and no list. */
+    .drill .settings-back {
+      display: inline-flex;
+    }
+
+    .drill:not(.at-index) .settings-sidebar {
+      display: none;
+    }
+
+    /* The index is the list, as a page of its own. */
+    .drill.at-index .settings-sidebar {
+      padding-top: 0;
+      border-bottom: none;
+    }
+
+    .drill.at-index .settings-title {
+      font-size: 1.6rem;
+      text-transform: none;
+      letter-spacing: normal;
+      color: var(--color-text);
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+
+    .drill .settings-nav {
+      flex-direction: column;
+      overflow-x: visible;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .drill .settings-nav-link {
+      min-height: 52px;
+      padding: 0.75rem 0.25rem;
+      font-size: 1rem;
+      color: var(--color-text);
+      border-radius: 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .drill .settings-nav-link.active {
+      background: none;
+      font-weight: 400;
+    }
+
+    .drill .settings-nav-count {
+      margin-left: auto;
+    }
+
+    .drill .settings-nav-caret {
+      display: flex;
+    }
+  }
+
+  /* Only a drill-down shell on a narrow screen has these. */
+  .settings-back {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .settings-back:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .settings-nav-caret {
+    display: none;
+    color: var(--color-text-muted);
   }
 </style>

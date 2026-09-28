@@ -19581,21 +19581,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 540,
+          "line": 544,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 594,
+          "line": 598,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 655,
+          "line": 659,
           "kind": "markup",
           "raw": "Sign in required",
           "quote": null
@@ -19613,21 +19613,21 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 541,
+          "line": 545,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 595,
+          "line": 599,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
         },
         {
           "file": "web/src/App.svelte",
-          "line": 656,
+          "line": 660,
           "kind": "markup",
           "raw": "You need to be logged in to view this page.",
           "quote": null
@@ -19645,7 +19645,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 758,
+          "line": 762,
           "kind": "markup",
           "raw": "Page not found",
           "quote": null
@@ -19663,7 +19663,7 @@
       "occurrences": [
         {
           "file": "web/src/App.svelte",
-          "line": 759,
+          "line": 763,
           "kind": "markup",
           "raw": "The page you're looking for doesn't exist.",
           "quote": null
@@ -19681,10 +19681,35 @@
       "occurrences": [
         {
           "file": "web/src/components/AdminShell.svelte",
-          "line": 88,
+          "line": 100,
           "kind": "attr:placeholder",
           "raw": "Search administration…",
           "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "4b42c6690ebe",
+      "text": "Administration",
+      "words": 1,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/AdminShell.svelte",
+          "line": 127,
+          "kind": "attr:aria-label",
+          "raw": "Administration",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/AdminShell.svelte",
+          "line": 143,
+          "kind": "markup",
+          "raw": "Administration",
+          "quote": null
         }
       ]
     },
@@ -25148,7 +25173,7 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 93,
+          "line": 99,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -25180,7 +25205,7 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 250,
+          "line": 256,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -25833,14 +25858,14 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 227,
+          "line": 233,
           "kind": "attr:title",
           "raw": "View the public profile",
           "quote": "\""
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 228,
+          "line": 234,
           "kind": "attr:aria-label",
           "raw": "View the public profile",
           "quote": "\""
@@ -25858,7 +25883,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 235,
+          "line": 241,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -25876,7 +25901,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 253,
+          "line": 259,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -30454,7 +30479,7 @@
         },
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 50,
+          "line": 51,
           "kind": "js-string",
           "raw": "Event Sources",
           "quote": "'"
@@ -44865,7 +44890,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 124,
+          "line": 123,
           "kind": "js-string",
           "raw": "Their seat was vacated: they had taken no part in governance here for the patch’s inactivity period.",
           "quote": "'"
@@ -44901,7 +44926,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 128,
+          "line": 127,
           "kind": "js-string",
           "raw": "Stepped in as an interim admin, under this patch’s succession policy.",
           "quote": "'"
@@ -44919,7 +44944,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 131,
+          "line": 130,
           "kind": "js-string",
           "raw": "Made an admin.",
           "quote": "'"
@@ -44937,7 +44962,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 133,
+          "line": 132,
           "kind": "js-string",
           "raw": "Stopped being an admin.",
           "quote": "'"
@@ -44955,7 +44980,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 135,
+          "line": 134,
           "kind": "js-string",
           "raw": "A meeting adopted this text.",
           "quote": "'"
@@ -44973,7 +44998,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 144,
+          "line": 143,
           "kind": "markup",
           "raw": "Record",
           "quote": null
@@ -44991,7 +45016,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 148,
+          "line": 147,
           "kind": "markup",
           "raw": "Every decision this patch has reached, and every one it failed to, newest first.",
           "quote": null
@@ -45009,7 +45034,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/GovernanceRecord.svelte",
-          "line": 157,
+          "line": 156,
           "kind": "markup",
           "raw": "Nothing settled yet. Proposals show up here once they close.",
           "quote": null
@@ -49102,7 +49127,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 93,
+          "line": 101,
           "kind": "markup",
           "raw": "You do not have permission to view settings.",
           "quote": null
@@ -49120,7 +49145,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 97,
+          "line": 105,
           "kind": "markup",
           "raw": "You are here as an admin of this quilt, not as an admin of this patch.\n      Changes you save are this patch's.",
           "quote": null
@@ -49138,7 +49163,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettings.svelte",
-          "line": 101,
+          "line": 109,
           "kind": "attr:title",
           "raw": "Patch Settings",
           "quote": "\""
