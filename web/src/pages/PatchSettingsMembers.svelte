@@ -705,4 +705,30 @@
     margin-left: 0.25rem;
   }
 
+  /* A phone: the name gets its own line and the controls the one below.
+     Side by side, the controls never shrink, so a Save or a Remove
+     confirm appearing squeezed the name to nothing and the role select
+     slid over it. */
+  @media (max-width: 640px) {
+    .member-row,
+    .member-row-main {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .member-info {
+      flex: 1 1 100%;
+    }
+
+    .member-actions {
+      flex: 1 1 100%;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .role-select {
+      width: auto;
+      flex: 1 1 8rem;
+    }
+  }
 </style>

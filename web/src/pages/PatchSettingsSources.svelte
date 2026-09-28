@@ -808,4 +808,26 @@
     flex-shrink: 0;
     flex-wrap: wrap;
   }
+
+  /* A phone: the address gets the full width, the tier and the button share
+     the line below. In one row the select (full width on phones, app.css)
+     took the space and left the URL field 26px wide. */
+  @media (max-width: 640px) {
+    .add-form {
+      flex-wrap: wrap;
+    }
+
+    .add-form input {
+      flex: 1 1 100%;
+    }
+
+    .add-form select {
+      width: auto;
+      flex: 1 1 auto;
+    }
+
+    .add-form .btn {
+      white-space: nowrap;
+    }
+  }
 </style>

@@ -686,4 +686,17 @@
     gap: 0.5rem;
     flex-wrap: wrap;
   }
+
+  /* When the name and its actions do not fit on one line (a phone, or a
+     Revoke confirm opening), the actions wrap under the name instead of
+     squeezing it. */
+  .cred-list li {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .cred-info {
+    flex: 1 1 12rem;
+    min-width: 0;
+  }
 </style>

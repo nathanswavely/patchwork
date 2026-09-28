@@ -413,4 +413,10 @@
     margin: 0;
     font-variant-numeric: tabular-nums;
   }
+
+  @media (pointer: coarse) {
+    .range-tab {
+      min-height: 40px;
+    }
+  }
 </style>

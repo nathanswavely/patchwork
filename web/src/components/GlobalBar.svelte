@@ -676,4 +676,22 @@
   .notif-view-all:hover {
     background: var(--color-overlay);
   }
+
+  /* A finger: the bar's buttons and every menu row are at least a
+     thumb's height. */
+  @media (pointer: coarse) {
+    .bar-new-btn {
+      min-width: 40px;
+      min-height: 40px;
+      justify-content: center;
+    }
+
+    .new-dropdown a,
+    .user-dropdown a,
+    .user-dropdown button {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
 </style>

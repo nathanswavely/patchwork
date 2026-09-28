@@ -308,4 +308,22 @@
     border-top: 1px solid var(--color-border);
     font-size: 0.85rem;
   }
+
+  /* A strip wider than a phone scrolls instead of running past the edge,
+     where the body's overflow clip cut "Dismissed" in half. */
+  .tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (pointer: coarse) {
+    .tab-btn {
+      min-height: 44px;
+    }
+  }
 </style>
