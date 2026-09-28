@@ -22514,7 +22514,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 141,
+          "line": 144,
           "kind": "attr:aria-label",
           "raw": "Create new",
           "quote": "\""
@@ -22532,7 +22532,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 146,
+          "line": 149,
           "kind": "markup",
           "raw": "New",
           "quote": null
@@ -22557,7 +22557,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 177,
+          "line": 180,
           "kind": "markup",
           "raw": "Instance admin",
           "quote": null
@@ -22575,7 +22575,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 189,
+          "line": 192,
           "kind": "markup",
           "raw": "Log Out",
           "quote": null
@@ -22593,7 +22593,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 207,
+          "line": 210,
           "kind": "attr:aria-label",
           "raw": "Display",
           "quote": "\""
@@ -22611,7 +22611,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 226,
+          "line": 229,
           "kind": "attr:title",
           "raw": "Notifications",
           "quote": "\""
@@ -22657,7 +22657,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 230,
+          "line": 233,
           "kind": "markup",
           "raw": "Mark all read",
           "quote": null
@@ -22682,7 +22682,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 235,
+          "line": 238,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -22777,7 +22777,7 @@
       "occurrences": [
         {
           "file": "web/src/components/GlobalBar.svelte",
-          "line": 237,
+          "line": 240,
           "kind": "markup",
           "raw": "You're all caught up",
           "quote": null
@@ -24877,6 +24877,95 @@
       ]
     },
     {
+      "id": "09576b9b92f4",
+      "text": "View the public profile",
+      "words": 4,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchBarMenu.svelte",
+          "line": 135,
+          "kind": "markup",
+          "raw": "View the public profile",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/PatchShell.svelte",
+          "line": 273,
+          "kind": "attr:title",
+          "raw": "View the public profile",
+          "quote": "\""
+        },
+        {
+          "file": "web/src/components/PatchShell.svelte",
+          "line": 274,
+          "kind": "attr:aria-label",
+          "raw": "View the public profile",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "cc0e38da9c41",
+      "text": "Subscribe",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchBarMenu.svelte",
+          "line": 146,
+          "kind": "markup",
+          "raw": "Subscribe",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/PatchBarMenu.svelte",
+          "line": 173,
+          "kind": "markup",
+          "raw": "Subscribe",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/PatchOverflow.svelte",
+          "line": 97,
+          "kind": "markup",
+          "raw": "Subscribe",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b6ce788d9786",
+      "text": "Report",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/components/PatchBarMenu.svelte",
+          "line": 152,
+          "kind": "markup",
+          "raw": "Report",
+          "quote": null
+        },
+        {
+          "file": "web/src/components/ReportButton.svelte",
+          "line": 74,
+          "kind": "markup",
+          "raw": "Report",
+          "quote": null
+        }
+      ]
+    },
+    {
       "id": "f8d46c2570e7",
       "text": "More actions",
       "words": 2,
@@ -24898,24 +24987,6 @@
           "kind": "attr:title",
           "raw": "More actions",
           "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "cc0e38da9c41",
-      "text": "Subscribe",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchOverflow.svelte",
-          "line": 97,
-          "kind": "markup",
-          "raw": "Subscribe",
-          "quote": null
         }
       ]
     },
@@ -25173,7 +25244,7 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 119,
+          "line": 120,
           "kind": "js-string",
           "raw": "Failed to load patch",
           "quote": "'"
@@ -25205,7 +25276,7 @@
         },
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 276,
+          "line": 296,
           "kind": "markup",
           "raw": "Patch not found",
           "quote": null
@@ -25848,31 +25919,6 @@
       ]
     },
     {
-      "id": "09576b9b92f4",
-      "text": "View the public profile",
-      "words": 4,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/components/PatchShell.svelte",
-          "line": 253,
-          "kind": "attr:title",
-          "raw": "View the public profile",
-          "quote": "\""
-        },
-        {
-          "file": "web/src/components/PatchShell.svelte",
-          "line": 254,
-          "kind": "attr:aria-label",
-          "raw": "View the public profile",
-          "quote": "\""
-        }
-      ]
-    },
-    {
       "id": "e3957af692b0",
       "text": "Search this patch…",
       "words": 3,
@@ -25883,7 +25929,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 261,
+          "line": 281,
           "kind": "attr:placeholder",
           "raw": "Search this patch…",
           "quote": "\""
@@ -25901,7 +25947,7 @@
       "occurrences": [
         {
           "file": "web/src/components/PatchShell.svelte",
-          "line": 279,
+          "line": 299,
           "kind": "markup",
           "raw": "Retry",
           "quote": null
@@ -26792,24 +26838,6 @@
           "kind": "js-string",
           "raw": "Could not submit report",
           "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "b6ce788d9786",
-      "text": "Report",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/components/ReportButton.svelte",
-          "line": 74,
-          "kind": "markup",
-          "raw": "Report",
-          "quote": null
         }
       ]
     },
@@ -52633,7 +52661,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 50,
+          "line": 66,
           "kind": "js-string",
           "raw": "Governance Rules",
           "quote": "'"
@@ -52665,7 +52693,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 131,
+          "line": 147,
           "kind": "js-string",
           "raw": "Failed to load proposal",
           "quote": "'"
@@ -52683,7 +52711,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 236,
+          "line": 252,
           "kind": "markup",
           "raw": "Opened by this patch&rsquo;s election calendar",
           "quote": null
@@ -52701,7 +52729,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 265,
+          "line": 281,
           "kind": "markup",
           "raw": "Why this change",
           "quote": null
@@ -52719,7 +52747,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 280,
+          "line": 296,
           "kind": "markup",
           "raw": "This document was adopted at a meeting{proposal.ground_moved_at ? ` on ${formatDay(proposal.ground_moved_at)}` : ''},\n              after this was drafted. The changes below compare against the older text.",
           "quote": null
@@ -52737,7 +52765,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 290,
+          "line": 306,
           "kind": "markup",
           "raw": "This {isDirectChange ? 'change' : 'proposal'} modifies",
           "quote": null
@@ -52755,7 +52783,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 301,
+          "line": 317,
           "kind": "markup",
           "raw": "This proposal modifies a members-only document. The text of the\n                change is visible to members.",
           "quote": null
@@ -52773,7 +52801,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/ProposalDetail.svelte",
-          "line": 326,
+          "line": 342,
           "kind": "markup",
           "raw": "You're the only eligible voter, so your vote decides this immediately.",
           "quote": null

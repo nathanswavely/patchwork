@@ -221,3 +221,29 @@ describe('copy pass A and C (2026-09-28)', () => {
     expect(source('pages/ProposalDetail.svelte')).toContain('showTimeLeft={false}');
   });
 });
+
+describe('buttons that stopped folding their own labels', () => {
+  it('the proposal vote bar shows only once the vote section has scrolled away', () => {
+    const src = source('pages/ProposalDetail.svelte');
+    expect(src).toContain('visible={!voteSectionInView}');
+    expect(src).toContain('<section class="proposal-section" bind:this={voteSectionEl}>');
+  });
+
+  it('the vote bar stacks its tally over three equal buttons on a phone', () => {
+    const src = source('components/StickyVoteBar.svelte');
+    expect(src).toMatch(/\.sticky-vote-bar \{\s*flex-direction: column-reverse;/);
+    expect(src).toMatch(/\.vote-btn \{\s*flex: 1;\s*min-height: 44px;/);
+  });
+
+  it('the patch events header keeps its buttons on one line each', () => {
+    expect(source('pages/PatchEvents.svelte')).toMatch(/\.header-buttons \.btn \{\s*white-space: nowrap;/);
+  });
+
+  it('proposal filters scroll as one row on a phone', () => {
+    expect(source('pages/ProposalList.svelte')).toMatch(/\.status-filters \{\s*flex-wrap: nowrap;\s*overflow-x: auto;/);
+  });
+
+  it('every charter card puts Propose change first on a phone', () => {
+    expect(source('pages/GovernanceList.svelte')).toMatch(/\.doc-actions > \.btn\[href\$='\/propose'\] \{\s*order: -1;/);
+  });
+});

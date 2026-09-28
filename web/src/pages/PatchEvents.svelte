@@ -630,4 +630,38 @@
     font-size: 0.78rem;
     color: var(--color-text-muted);
   }
+
+  /* The count and its Subscribe stay on one line; the buttons keep their
+     labels on one line and take the next row when the two don't fit,
+     instead of each folding its own label in half. */
+  .events-header {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .events-header > .muted {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .events-header .subscribe-toggle {
+    margin-left: 0;
+  }
+
+  .header-buttons {
+    margin-left: auto;
+  }
+
+  .header-buttons .btn {
+    white-space: nowrap;
+  }
+
+  @media (pointer: coarse) {
+    .subscribe-toggle {
+      padding-block: 0.6rem;
+      margin-block: -0.6rem;
+    }
+  }
 </style>

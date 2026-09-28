@@ -153,14 +153,30 @@
     font-size: 0.78rem;
   }
 
+  /* A phone: the tally on a line of its own above three buttons that
+     share the width at a finger's height. Side by side, the tally ran
+     past the right edge and the buttons were 31px. */
   @media (max-width: 640px) {
     .sticky-vote-bar {
-      padding: 0.5rem 1rem;
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 0.4rem;
+      padding: 0.5rem var(--pw-gutter);
+    }
+
+    .vote-buttons {
+      gap: 0.4rem;
     }
 
     .vote-btn {
-      padding: 0.4rem 0.75rem;
-      font-size: 0.78rem;
+      flex: 1;
+      min-height: 44px;
+      padding: 0 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .vote-summary {
+      justify-content: center;
     }
   }
 </style>

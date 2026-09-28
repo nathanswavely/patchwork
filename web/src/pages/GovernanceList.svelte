@@ -331,4 +331,23 @@
       gap: 1rem;
     }
   }
+
+  /* A phone: every card's actions in the same order. The main act first
+     and full width, the rest on the line below. They used to wrap
+     differently card to card, with an underlined link between buttons. */
+  @media (max-width: 640px) {
+    .doc-actions {
+      flex: 1 1 100%;
+    }
+
+    .doc-actions > .btn[href$='/propose'] {
+      order: -1;
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+
+    .history-link {
+      margin-left: auto;
+    }
+  }
 </style>
