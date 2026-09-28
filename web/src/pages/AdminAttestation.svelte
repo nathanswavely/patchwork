@@ -238,4 +238,19 @@
     color: var(--color-error);
     font-size: 0.85rem;
   }
+
+  /* A phone: the field comes first and the explanation follows it. Read
+     first, two paragraphs put the one input below the fold of a page that
+     exists to take it. */
+  @media (max-width: 640px) {
+    .admin-page {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-page > .page-desc {
+      order: 1;
+      margin-top: 1rem;
+    }
+  }
 </style>

@@ -4,6 +4,9 @@
   import { formatEventTime, reinterpretUTCAsLocal } from '../lib/datetime.js';
   import { showToast } from '../stores/toast.svelte.js';
   import ConfirmAction from '../components/ConfirmAction.svelte';
+  import { isNarrow } from '../stores/viewport.svelte.js';
+
+  let narrow = $derived(isNarrow());
 
   const patch = getContext('patch');
   let slug = $derived(patch.value.slug);
@@ -150,8 +153,8 @@
       sources = sources.map((s) => (s.id === id ? updated : s));
       showToast(
         value
-          ? "Saved — sync now to rewrite this source's times"
-          : 'Saved — this feed will be taken at its word again',
+          ? "Saved. Sync now to rewrite this source's times"
+          : 'Saved. This feed will be taken at its word again',
         'success',
       );
     } catch (e) {
@@ -323,13 +326,18 @@
 
 <div class="page-fade">
   <h2>Event Sources</h2>
-  <p class="muted subtitle">
-    Calendar feeds this patch pulls events from. Paste an ICS address (a
-    Google Calendar's secret address, the calendar feed from your website),
-    an events page from Squarespace, Humanitix, and similar sites, or an
-    atproto handle whose calendar you want to follow.
-    Imported events publish directly and stay in step with the feed.
-  </p>
+  <!-- On a phone this 52-word explanation sat above the only control on
+       the page, so it folds there. Open, and unlabelled, on a wide screen. -->
+  <details class="intro-fold" open={!narrow}>
+    <summary>What works?</summary>
+    <p class="muted subtitle">
+      Calendar feeds this patch pulls events from. Paste an ICS address (a
+      Google Calendar's secret address, the calendar feed from your website),
+      an events page from Squarespace, Humanitix, and similar sites, or an
+      atproto handle whose calendar you want to follow.
+      Imported events publish directly and stay in step with the feed.
+    </p>
+  </details>
 
   {#if loading}
     <p class="muted" style="padding: 2rem 0;">Loading...</p>
@@ -477,7 +485,7 @@
     <h2 class="section-head">Programs credited to you</h2>
     <p class="muted subtitle">
       Recurring listings someone recognized as yours. They stay on the
-      venue's calendar — these are offers to put your name on them too, and
+      venue's calendar. These are offers to put your name on them too, and
       the venue confirms each one.
     </p>
     <ul class="program-list">
@@ -495,7 +503,7 @@
         {#if mine.length === 0}
           <li class="offer-empty muted">
             {p.routed
-              ? 'Nothing waiting — every listing is either linked or dismissed.'
+              ? 'Nothing waiting. Every listing is either linked or dismissed.'
               : `Nothing yet: “${p.display_name}” has not been mapped to a patch, so these listings are not events on this quilt.`}
           </li>
         {:else}
@@ -807,5 +815,42 @@
     gap: 0.4rem;
     flex-shrink: 0;
     flex-wrap: wrap;
+  }
+
+  /* A phone: the address gets the full width, the tier and the button share
+     the line below. In one row the select (full width on phones, app.css)
+     took the space and left the URL field 26px wide. */
+  @media (max-width: 640px) {
+    .add-form {
+      flex-wrap: wrap;
+    }
+
+    .add-form input {
+      flex: 1 1 100%;
+    }
+
+    .add-form select {
+      width: auto;
+      flex: 1 1 auto;
+    }
+
+    .add-form .btn {
+      white-space: nowrap;
+    }
+  }
+
+  .intro-fold > summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  @media (min-width: 641px) {
+    .intro-fold > summary {
+      display: none;
+    }
   }
 </style>

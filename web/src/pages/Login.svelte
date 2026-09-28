@@ -147,7 +147,7 @@
       <div class="sent-state">
         <h1>Check your email</h1>
         <p>We sent a sign-in link to <strong>{email}</strong>.</p>
-        <p class="muted">It should arrive within a minute or two. Click the link to continue.</p>
+        <p class="muted">It should arrive within a minute or two. Open the link to continue.</p>
 
         <form class="code-form" onsubmit={(e) => { e.preventDefault(); handleCodeSubmit(); }}>
           <label for="signin-code">Or enter the code from the email</label>

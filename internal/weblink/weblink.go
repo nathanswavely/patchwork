@@ -19,6 +19,13 @@ func Patch(slug string) string {
 	return "/patches/" + slug
 }
 
+// User is a person's public profile — SPA route /users/:username. Build it
+// only from a live username: a tombstone's is blank (docs/adr/086), and a
+// link to "/users/" would land on nothing.
+func User(username string) string {
+	return "/users/" + username
+}
+
 // PatchEvents is a patch's workspace events tab — /patches/:slug/events.
 func PatchEvents(slug string) string {
 	return Patch(slug) + "/events"

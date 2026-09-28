@@ -233,4 +233,14 @@
     font: inherit;
   }
   .resolve-actions { display: flex; gap: 0.5rem; }
+
+  /* A narrow row wraps its control under the text when the two do not fit
+     side by side: a switch stays beside its label, a segmented control
+     drops below it instead of wrapping its own labels. */
+  .setting-row { flex-wrap: wrap; }
+  .setting-info { flex: 1 1 14rem; min-width: 0; }
+
+  @media (pointer: coarse) {
+    .tab-btn { min-height: 36px; padding: 0 0.8rem; }
+  }
 </style>

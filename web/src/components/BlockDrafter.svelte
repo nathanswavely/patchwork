@@ -90,6 +90,55 @@
     pendingAnchor = null;
   }
 
+  // Sewing takes the anchor nearest the pointer rather than asking for a
+  // hit on a 7px dot. At 10×10 the anchors sit 18px apart on a phone, and a
+  // fingertip is wider than that; the canvas takes the tap and finds the
+  // anchor it meant. The reach is in screen pixels, so it is the same for a
+  // finger at any grid, and a tap nowhere near an anchor still does nothing.
+  const SNAP_PX = 24;
+  let hoverAnchor = $state(null);
+
+  function nearestAnchor(e) {
+    const svg = e.currentTarget;
+    const rect = svg.getBoundingClientRect();
+    // Measured from the content box: the canvas wears a border, and the
+    // anchors are laid out inside it.
+    const width = svg.clientWidth || rect.width;
+    if (!width) return null;
+    const scale = CANVAS / width;
+    const x = (e.clientX - rect.left - svg.clientLeft) * scale;
+    const y = (e.clientY - rect.top - svg.clientTop) * scale;
+    const reach = SNAP_PX * scale;
+    let best = null;
+    let bestDist = Infinity;
+    for (const a of anchors) {
+      const d = Math.hypot(a[0] * unit - x, a[1] * unit - y);
+      if (d < bestDist) {
+        best = a;
+        bestDist = d;
+      }
+    }
+    return bestDist <= reach ? best : null;
+  }
+
+  function canvasClick(e) {
+    if (tool !== 'sew') return;
+    const a = nearestAnchor(e);
+    if (a) clickAnchor(a);
+  }
+
+  function canvasMove(e) {
+    if (tool !== 'sew' || e.pointerType !== 'mouse') {
+      hoverAnchor = null;
+      return;
+    }
+    hoverAnchor = nearestAnchor(e);
+  }
+
+  function isAnchor(a, b) {
+    return !!b && a[0] === b[0] && a[1] === b[1];
+  }
+
   function clickPiece(r, c, i) {
     if (tool !== 'color') return;
     const key = `${r},${c}`;
@@ -191,7 +240,21 @@
     </span>
   </div>
 
+  <p class="muted drafter-hint">
+    {#if tool === 'sew'}
+      Click two anchors to sew a seam. Seams split every piece they cross.
+    {:else if tool === 'color'}
+      Tap a piece to color it with fabric {selectedSlot + 1}.
+    {:else}
+      Tap a seam to unpick it. Pieces keep their fabric where they survive.
+    {/if}
+  </p>
+
   <div class="drafter-body">
+    <!-- The canvas takes a pointer and snaps it to an anchor. Drafting has
+         never had a keyboard path (the anchors it replaces were tabindex -1
+         with an empty key handler); that is its own piece of work. -->
+    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
     <svg
       class="drafter-canvas"
       viewBox="0 0 {CANVAS} {CANVAS}"
@@ -199,6 +262,10 @@
       height={CANVAS}
       role="img"
       aria-label="Block drafting canvas"
+      class:sewing={tool === 'sew'}
+      onclick={canvasClick}
+      onpointermove={canvasMove}
+      onpointerleave={() => { hoverAnchor = null; }}
     >
       {@render pieces(true)}
 
@@ -228,16 +295,15 @@
       <!-- Anchors (sew mode) -->
       {#if tool === 'sew'}
         {#each anchors as a (a[0] + ':' + a[1])}
+          <!-- Drawn only: the canvas takes the tap and snaps it to the
+               nearest anchor (canvasClick). -->
           <circle
             cx={a[0] * unit}
             cy={a[1] * unit}
-            r={pendingAnchor && pendingAnchor[0] === a[0] && pendingAnchor[1] === a[1] ? 6 : 3.5}
+            r={isAnchor(a, pendingAnchor) ? 6 : 3.5}
             class="anchor"
-            class:pending={pendingAnchor && pendingAnchor[0] === a[0] && pendingAnchor[1] === a[1]}
-            role="button"
-            tabindex="-1"
-            onclick={() => clickAnchor(a)}
-            onkeydown={() => {}}
+            class:pending={isAnchor(a, pendingAnchor)}
+            class:hover={isAnchor(a, hoverAnchor)}
           />
         {/each}
       {/if}
@@ -254,20 +320,11 @@
       <BundlePicker
         bind:bundle
         bind:selectedSlot
-        hint="Fabric {selectedSlot + 1} colors pieces you click. Pick its fabric from the wall:"
+        hint="Fabric {selectedSlot + 1} colors the pieces you pick. Pick its fabric from the wall:"
       />
     </div>
   </div>
 
-  <p class="muted drafter-hint">
-    {#if tool === 'sew'}
-      Click two anchors to sew a seam. Seams split every piece they cross.
-    {:else if tool === 'color'}
-      Click a piece to color it with fabric {selectedSlot + 1}.
-    {:else}
-      Click a seam to unpick it. Pieces keep their fabric where they survive.
-    {/if}
-  </p>
 </div>
 
 <style>
@@ -359,14 +416,18 @@
     stroke-width: 2.5;
   }
 
+  .drafter-canvas.sewing {
+    cursor: pointer;
+  }
+
   .anchor {
     fill: var(--color-surface);
     stroke: var(--color-fabric-mark);
     stroke-width: 1.25;
-    cursor: pointer;
+    pointer-events: none;
   }
 
-  .anchor:hover {
+  .anchor.hover {
     fill: var(--color-primary);
   }
 
@@ -398,7 +459,28 @@
 
   .drafter-hint {
     font-size: 0.78rem;
-    margin-top: 0.6rem;
+    margin: 0 0 0.5rem;
+  }
+
+  /* A finger: dots big enough to see where they are, a wider seam to
+     unpick, and a toolbar at a finger's height. */
+  @media (pointer: coarse) {
+    .anchor {
+      r: 4.5;
+    }
+
+    .anchor.pending {
+      r: 7;
+    }
+
+    .seam-hit {
+      stroke-width: 20;
+    }
+
+    .grid-select select {
+      min-height: 40px;
+      padding: 0 0.5rem;
+    }
   }
 
   @media (max-width: 720px) {

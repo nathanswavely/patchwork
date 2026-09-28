@@ -106,8 +106,8 @@ describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the flat sch
     const app = source('App.svelte');
     expect(app).toContain("addRoute('/admin/*', 'redirectAdminLegacy')");
     expect(app).toContain('redirectAdminLegacy: (p) => legacyAdminPath(p.rest)');
-    expect(app).toContain("adminReviewIndex: () => adminTabLanding('review')");
-    expect(app).toContain("adminSettingsIndex: () => adminTabLanding('settings')");
+    expect(app).toContain("adminReviewIndex: () => (isNarrow() ? null : adminTabLanding('review'))");
+    expect(app).toContain("adminSettingsIndex: () => (isNarrow() ? null : adminTabLanding('settings'))");
   });
 });
 
@@ -122,7 +122,7 @@ describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: the shell', 
   it('wraps a tab with sections in the same SettingsShell a patch workspace uses', () => {
     expect(shell).toContain("import SettingsShell from './SettingsShell.svelte'");
     expect(shell).toContain('{#if activeTab?.sections}');
-    expect(shell).toContain('<SettingsShell title={activeTab.label} sections={sidebarSections}>');
+    expect(shell).toMatch(/<SettingsShell\s+title=\{activeTab\.label\}\s+sections=\{sidebarSections\}/);
   });
 
   it('counts the Review badge and the sidebar from the Overview endpoint, so they never disagree', () => {
@@ -208,5 +208,42 @@ describe('docs/adr/2026-09-17-an-admin-tab-answers-one-question.md: inbound link
     for (const t of adminTabs()) {
       for (const s of t.sections || []) expect(providers).toContain(`href: '${s.href}'`);
     }
+  });
+});
+
+describe('the narrow screen drills down, one level on screen at a time', () => {
+  const shell = source('components/AdminShell.svelte');
+  const settingsShell = source('components/SettingsShell.svelte');
+  const viewport = source('stores/viewport.svelte.js');
+
+  it('agrees with SettingsShell on what narrow means', () => {
+    expect(viewport).toContain("NARROW_QUERY = '(max-width: 640px)'");
+    expect(settingsShell).toContain('@media (max-width: 640px)');
+    expect(shell).toContain('@media (max-width: 640px)');
+  });
+
+  it('drops the tab row and lists the tabs at the root instead, Review counted', () => {
+    expect(shell).toMatch(/@media \(max-width: 640px\) \{\s*\.workspace-nav \{\s*display: none;/);
+    expect(shell).toContain("{#if activeId === 'overview'}");
+    expect(shell).toContain("menuTabs = $derived(tabs.filter((t) => t.id !== 'overview'))");
+    expect(shell).toMatch(/admin-menu[\s\S]*\{#if tab\.id === 'review' && reviewTotal > 0\}/);
+  });
+
+  it('gives a tab without sections one back link to the root', () => {
+    expect(shell).toContain('{:else if !activeTab?.sections}');
+    expect(shell).toContain("handleNav(e, '/admin')");
+  });
+
+  it("makes a sectioned tab's bare URL its list, going back to the root", () => {
+    expect(shell).toContain('indexHref={activeTab.href}');
+    expect(shell).toContain("parent={{ href: '/admin', label: 'Administration' }}");
+    expect(settingsShell).toContain('class:at-index={atIndex}');
+    expect(settingsShell).toContain('{#if !atIndex}');
+    expect(settingsShell).toContain('.drill:not(.at-index) .settings-sidebar');
+  });
+
+  it('keeps the old scrolling row for a shell that does not opt in', () => {
+    expect(settingsShell).toContain('indexHref = null');
+    expect(settingsShell).toContain('{#if indexHref}');
   });
 });
