@@ -107,6 +107,14 @@ func RemotePatch(host, slug string) string {
 	return "/quilts/" + host + Patch(slug)
 }
 
+// SignInLink is the page a sign-in email's link opens: /login/link/:token.
+// Opening it spends nothing; the page decides, by POST, whether this browser
+// is the one that asked
+// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md).
+func SignInLink(token string) string {
+	return "/login/link/" + token
+}
+
 // Absolute turns an in-app path into a full URL on this instance, for the
 // surfaces that leave the app: notification emails and public feeds.
 func Absolute(domain, path string) string {

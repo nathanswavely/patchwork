@@ -119,7 +119,7 @@ admin.** Do this immediately after first boot, before sharing the URL:
 2. If SMTP is configured, click the link in your email. Otherwise grab the
    link from the log:
    ```bash
-   docker compose logs patchwork | grep "auth/verify"
+   docker compose logs patchwork | grep "login/link"
    ```
 3. You're in, as admin. Go to Settings → Security and **enroll a passkey**
    so you can sign in without magic links from now on.
@@ -1185,7 +1185,7 @@ DNS points at this server, and ports 80+443 are open. `docker compose logs
 caddy` shows the ACME conversation.
 
 **Magic link never arrives.** Without SMTP it's sitting in the app log:
-`docker compose logs patchwork | grep auth/verify`. With SMTP, check the log
+`docker compose logs patchwork | grep login/link`. With SMTP, check the log
 for `send magic link email` errors. Both submission ports work: 465 uses
 implicit TLS, 587 uses STARTTLS — if your provider documents both, either is
 fine, but make sure `smtp.port` matches the one you actually opened in your

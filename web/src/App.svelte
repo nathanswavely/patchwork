@@ -92,6 +92,7 @@
   import Login from './pages/Login.svelte';
   import InviteLanding from './pages/InviteLanding.svelte';
   import SignupComplete from './pages/SignupComplete.svelte';
+  import SignInLink from './pages/SignInLink.svelte';
   import Welcome from './pages/Welcome.svelte';
   import Discover from './pages/Discover.svelte';
   import Toast from './components/Toast.svelte';
@@ -199,6 +200,9 @@
   addRoute('/login', 'login');
   addRoute('/invite/:token', 'invite');
   addRoute('/signup/complete', 'signupComplete');
+  // The page a sign-in email's link opens. Public: the token is the proof,
+  // and the click may happen in a browser with no session.
+  addRoute('/login/link/:token', 'signInLink');
   addRoute('/welcome', 'welcome');
   // Discovery mode (docs/adr/075): standing, public, re-enterable. Welcome's
   // steps 2 and 3 used to live behind /welcome's auth gate and were spent
@@ -308,7 +312,7 @@
   let isAdminRoute = $derived(adminRoutes.has(routeName));
 
   // Standalone routes — no shell wrapper
-  const standaloneRoutes = new Set(['welcome', 'login', 'invite', 'signupComplete']);
+  const standaloneRoutes = new Set(['welcome', 'login', 'invite', 'signupComplete', 'signInLink']);
   let isStandaloneRoute = $derived(standaloneRoutes.has(routeName));
 
   // Social shell wraps everything except standalone pages (admin included —
@@ -504,7 +508,7 @@
       // 'discover' is exempt for the same reason 'patchNew' is: it is a
       // place a new person can deliberately go, and yanking them back to
       // orientation from the surface orientation hands off to is a loop.
-      if (!['welcome', 'discover', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew'].includes(routeName)
+      if (!['welcome', 'discover', 'login', 'invite', 'signupComplete', 'claimPatch', 'patchSetup', 'patchNew', 'signInLink'].includes(routeName)
           && !isOnboardingDismissed(getUser()?.id)) {
         navigate('/welcome');
       }
@@ -528,6 +532,8 @@
         <InviteLanding />
       {:else if routeName === 'signupComplete'}
         <SignupComplete />
+      {:else if routeName === 'signInLink'}
+        <SignInLink />
       {/if}
     {/snippet}
   </ThresholdShell>

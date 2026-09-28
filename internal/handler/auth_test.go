@@ -13,19 +13,19 @@ func TestMagicLinkURL(t *testing.T) {
 			name:   "real domain uses https and ignores port",
 			domain: "patchwork.example.com",
 			port:   "8080",
-			want:   "https://patchwork.example.com/api/v1/auth/verify/tok123",
+			want:   "https://patchwork.example.com/login/link/tok123",
 		},
 		{
 			name:   "no domain falls back to localhost with configured port",
 			domain: "",
 			port:   "3000",
-			want:   "http://localhost:3000/api/v1/auth/verify/tok123",
+			want:   "http://localhost:3000/login/link/tok123",
 		},
 		{
 			name:   "no domain and no port defaults to 8080",
 			domain: "",
 			port:   "",
-			want:   "http://localhost:8080/api/v1/auth/verify/tok123",
+			want:   "http://localhost:8080/login/link/tok123",
 		},
 	}
 

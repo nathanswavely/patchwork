@@ -83,24 +83,25 @@ func normalizeMagicCode(raw string) string {
 // caller owns URL shape so the emailed link and the one printed to the log
 // (no-SMTP dev) can never drift apart again.
 //
-// The email carries a sign-in code beside the link. Both are minted onto one
-// row and prove the same thing — control of this mailbox — so a client that
-// cannot be handed the emailed URL in its own session finishes by typing six
-// digits instead.
-func GenerateMagicLink(db *database.DB, email string, smtpCfg config.SMTP, linkFor func(token string) string) error {
+// The row also carries a sign-in code, but the email does not: the page the
+// link opens shows it when that page is not the browser that asked
+// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md), so the email
+// has one thing to press. requesterHash is the asking browser's nonce as
+// RequesterHash stores it, or "" for a client that sent none.
+func GenerateMagicLink(db *database.DB, email, requesterHash string, smtpCfg config.SMTP, linkFor func(token string) string) error {
 	email, err := NormalizeEmail(email)
 	if err != nil {
 		return err
 	}
 
-	rawToken, code, err := insertMagicLinkRow(db, email)
+	rawToken, _, err := insertMagicLinkRow(db, email, requesterHash)
 	if err != nil {
 		return err
 	}
 
 	// Send the email.
 	link := linkFor(rawToken)
-	body := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: Sign in to Patchwork\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nClick to sign in:\n\n%s\n\nOr, if you asked for this from an app or another device, enter this code there:\n\n%s\n\nThe link and the code both expire in 15 minutes.\n", smtpCfg.From, email, link, formatMagicCode(code))
+	body := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: Sign in to Patchwork\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nSign in to Patchwork:\n\n%s\n\nThe link expires in 15 minutes.\n", smtpCfg.From, email, link)
 
 	if err := mail.Send(smtpCfg, []string{email}, []byte(body)); err != nil {
 		return fmt.Errorf("send magic link email: %w", err)
@@ -113,19 +114,21 @@ func GenerateMagicLink(db *database.DB, email string, smtpCfg config.SMTP, linkF
 // raw token and the sign-in code instead of emailing them. Used when SMTP is
 // not configured (local dev), where the server log is the delivery channel
 // and so has to carry both.
-func GenerateMagicLinkLocal(db *database.DB, email string) (string, string, error) {
+func GenerateMagicLinkLocal(db *database.DB, email, requesterHash string) (string, string, error) {
 	email, err := NormalizeEmail(email)
 	if err != nil {
 		return "", "", err
 	}
-	return insertMagicLinkRow(db, email)
+	return insertMagicLinkRow(db, email, requesterHash)
 }
 
 // insertMagicLinkRow mints one magic link — token and code together, hashed
 // — and returns both raws. One row, one expiry, one `used` flag: the two
 // credentials are two ways to answer the same request, so spending either
-// spends the row.
-func insertMagicLinkRow(db *database.DB, email string) (rawToken, code string, err error) {
+// spends the row. The code is also stored as itself so the link's page can
+// show it again; migration 20260928T171755 says why its hash never
+// protected it.
+func insertMagicLinkRow(db *database.DB, email, requesterHash string) (rawToken, code string, err error) {
 	rawToken, err = generateToken()
 	if err != nil {
 		return "", "", err
@@ -143,8 +146,8 @@ func insertMagicLinkRow(db *database.DB, email string) (rawToken, code string, e
 	expiresAt := clock.Format(time.Now().Add(magicLinkExpiry))
 
 	_, err = db.Exec(
-		`INSERT INTO magic_links (id, email, token, code_hash, expires_at) VALUES (?, ?, ?, ?, ?)`,
-		id, email, tokenHash, hashMagicCode(code), expiresAt,
+		`INSERT INTO magic_links (id, email, token, code_hash, code, requester_hash, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		id, email, tokenHash, hashMagicCode(code), code, sql.NullString{String: requesterHash, Valid: requesterHash != ""}, expiresAt,
 	)
 	if err != nil {
 		return "", "", fmt.Errorf("insert magic link: %w", err)
@@ -153,7 +156,95 @@ func insertMagicLinkRow(db *database.DB, email string) (rawToken, code string, e
 	return rawToken, code, nil
 }
 
-// VerifyMagicLink validates a raw magic link token and marks it used.
+// ErrInvalidMagicLink is the one answer the link's page gets for a token that
+// is unknown, spent or expired. The page has one sentence for all three.
+var ErrInvalidMagicLink = fmt.Errorf("invalid or expired link")
+
+// NewRequesterNonce mints the value the asking browser holds in its cookie.
+func NewRequesterNonce() (string, error) {
+	return generateToken()
+}
+
+// RequesterHash is a nonce's stored form on the row. "" maps to "", so a
+// request with no cookie leaves the row unbound rather than bound to the
+// hash of the empty string.
+func RequesterHash(nonce string) string {
+	if nonce == "" {
+		return ""
+	}
+	sum := sha256.Sum256([]byte(nonce))
+	return hex.EncodeToString(sum[:])
+}
+
+// LinkOpening is what opening a sign-in link produced: either the row was
+// spent (Redeemed, with User or SignupToken saying who), or nothing was spent
+// and the page shows the code.
+type LinkOpening struct {
+	Redeemed    bool
+	User        *model.User
+	SignupToken string
+
+	// Email and Code are set when the link was opened somewhere other than
+	// the browser that asked. Code is "" on a row minted before codes were
+	// stored, whose page can only offer to sign in here.
+	Email string
+	Code  string
+}
+
+// OpenMagicLink is what the link's page calls
+// (docs/adr/2026-09-28-a-link-knows-where-it-was-asked-for.md). A browser
+// holding the nonce the row was bound to is signed in. Any other caller, and
+// every caller of an unbound row, is shown the code and spends nothing,
+// unless it pressed "Sign in on this device" (here), which spends the row and
+// so kills the code. Opening a link never approves some other device: the
+// code has to be carried there by hand.
+func OpenMagicLink(db *database.DB, rawToken, nonce string, here bool) (*LinkOpening, error) {
+	hash := sha256.Sum256([]byte(rawToken))
+	tokenHash := hex.EncodeToString(hash[:])
+
+	var email, expiresAt string
+	var used int
+	var requesterHash, code sql.NullString
+	err := db.QueryRow(
+		`SELECT email, expires_at, used, requester_hash, code FROM magic_links WHERE token = ?`,
+		tokenHash,
+	).Scan(&email, &expiresAt, &used, &requesterHash, &code)
+	if err == sql.ErrNoRows {
+		return nil, ErrInvalidMagicLink
+	}
+	if err != nil {
+		return nil, fmt.Errorf("query magic link: %w", err)
+	}
+	if used != 0 {
+		return nil, ErrInvalidMagicLink
+	}
+	if exp, perr := clock.Parse(expiresAt); perr == nil && time.Now().After(exp) {
+		return nil, ErrInvalidMagicLink
+	}
+
+	bound := requesterHash.String != "" && nonce != "" &&
+		subtle.ConstantTimeCompare([]byte(requesterHash.String), []byte(RequesterHash(nonce))) == 1
+
+	if !bound && !here {
+		if normalized, nerr := NormalizeEmail(email); nerr == nil {
+			email = normalized
+		}
+		return &LinkOpening{Email: email, Code: code.String}, nil
+	}
+
+	// VerifyMagicLink re-reads the row inside its own transaction, so a code
+	// redeemed between the read above and this call still wins and this
+	// open answers as a spent link.
+	user, signupToken, err := VerifyMagicLink(db, rawToken)
+	if err != nil {
+		return nil, ErrInvalidMagicLink
+	}
+	return &LinkOpening{Redeemed: true, User: user, SignupToken: signupToken}, nil
+}
+
+// VerifyMagicLink validates a raw magic link token and marks it used. It
+// signs in whoever calls it; the link's page reaches it only through
+// OpenMagicLink, which decides whether this caller may.
 // For an email with an existing account it returns that user. For an
 // unknown email it creates NO user — usernames are chosen, never derived
 // (docs/adr/013) — and instead returns a raw signup token the caller

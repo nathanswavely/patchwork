@@ -26,6 +26,7 @@ func TestPaths(t *testing.T) {
 		{"notice", Notice("gallery-row", "n-1"), "/patches/gallery-row/noticeboard/n-1"},
 		{"noticeboard reports", PatchNoticeboardReports("gallery-row"), "/patches/gallery-row/settings/noticeboard"},
 		{"remote patch", RemotePatch("other.example", "their-patch"), "/quilts/other.example/patches/their-patch"},
+		{"sign-in link", SignInLink("tok123"), "/login/link/tok123"},
 		{"absolute", Absolute("arts.example", "/events/ev-1"), "https://arts.example/events/ev-1"},
 	}
 	for _, c := range cases {
