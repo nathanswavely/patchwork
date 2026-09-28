@@ -4172,7 +4172,7 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 261,
+          "line": 276,
           "kind": "go-error-body",
           "raw": "invalid request body",
           "quote": null
@@ -13626,7 +13626,7 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 146,
+          "line": 150,
           "kind": "go-error-body",
           "raw": "failed to list reports",
           "quote": null
@@ -13651,7 +13651,7 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 271,
+          "line": 286,
           "kind": "go-error-body",
           "raw": "report not found",
           "quote": null
@@ -13712,7 +13712,7 @@
         },
         {
           "file": "internal/handler/reports.go",
-          "line": 319,
+          "line": 334,
           "kind": "go-error-body",
           "raw": "failed to update report",
           "quote": null
@@ -21114,7 +21114,7 @@
         },
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 174,
+          "line": 197,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -21256,7 +21256,7 @@
         },
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 142,
+          "line": 165,
           "kind": "markup",
           "raw": "Dismiss",
           "quote": null
@@ -22289,7 +22289,7 @@
         },
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 172,
+          "line": 195,
           "kind": "markup",
           "raw": "Confirm",
           "quote": null
@@ -35005,7 +35005,7 @@
         },
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 140,
+          "line": 163,
           "kind": "markup",
           "raw": "Action",
           "quote": null
@@ -35386,7 +35386,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 37,
+          "line": 39,
           "kind": "js-string",
           "raw": "Claim approved. The claimant can now complete setup.",
           "quote": "'"
@@ -35404,7 +35404,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 37,
+          "line": 39,
           "kind": "js-string",
           "raw": "Claim rejected",
           "quote": "'"
@@ -35422,7 +35422,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 47,
+          "line": 49,
           "kind": "markup",
           "raw": "Patch Claims",
           "quote": null
@@ -35440,7 +35440,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 48,
+          "line": 50,
           "kind": "markup",
           "raw": "Users requesting ownership of unclaimed patches.",
           "quote": null
@@ -35458,7 +35458,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 53,
+          "line": 55,
           "kind": "markup",
           "raw": "No open claims.",
           "quote": null
@@ -35483,7 +35483,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 56,
+          "line": 58,
           "kind": "markup",
           "raw": "Awaiting review",
           "quote": null
@@ -35498,55 +35498,61 @@
       ]
     },
     {
-      "id": "c53783efbfc3",
-      "text": "Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}",
-      "words": 7,
-      "tier": "helper",
+      "id": "7742db570133",
+      "text": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
+      "words": 5,
+      "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 65,
+          "line": 76,
           "kind": "markup",
-          "raw": "Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}",
+          "raw": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 119,
+          "kind": "markup",
+          "raw": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
           "quote": null
         }
       ]
     },
     {
-      "id": "eb959af9ff5a",
-      "text": "&middot; verified domain: {claim.verification_domain}",
-      "words": 4,
+      "id": "572b48b6d93f",
+      "text": "verified domain: {claim.verification_domain}",
+      "words": 3,
       "tier": "label",
       "status": "unreviewed",
       "replacement": null,
-      "note": null,
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 67,
+          "line": 78,
           "kind": "markup",
-          "raw": "&middot; verified domain: {claim.verification_domain}",
+          "raw": "verified domain: {claim.verification_domain}",
           "quote": null
         }
       ]
     },
     {
-      "id": "5e5082a21fe8",
-      "text": "&middot; email: {claim.email}",
-      "words": 3,
+      "id": "8462bfdc8e45",
+      "text": "email: {claim.email}",
+      "words": 2,
       "tier": "label",
       "status": "ai-fine",
       "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "note": "Carried from the identical text in AdminClaims.svelte before the claim meta line was split into one span per fact (mobile audit, 2026-09-28); only the leading · separator moved into its own element.",
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 70,
+          "line": 81,
           "kind": "markup",
-          "raw": "&middot; email: {claim.email}",
+          "raw": "email: {claim.email}",
           "quote": null
         }
       ]
@@ -35562,7 +35568,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 86,
+          "line": 104,
           "kind": "markup",
           "raw": "Approved, awaiting setup",
           "quote": null
@@ -35580,27 +35586,9 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 88,
+          "line": 106,
           "kind": "markup",
           "raw": "Cleared to claim. Each patch stays unclaimed until its claimant\n        submits setup, which is where it becomes active and they become\n        admin. An approval that runs out simply makes the patch claimable\n        again.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "7742db570133",
-      "text": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
-      "words": 5,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Awaiting-setup surfaces (docs/adr/039). Left as drafted on review.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminClaims.svelte",
-          "line": 101,
-          "kind": "markup",
-          "raw": "Claimed by {claim.claimant_display_name || claim.claimant_username}",
           "quote": null
         }
       ]
@@ -35616,7 +35604,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminClaims.svelte",
-          "line": 103,
+          "line": 121,
           "kind": "markup",
           "raw": "{' · '}approval expires {formatDate(claim.setup_expires_at)}",
           "quote": null
@@ -36026,7 +36014,7 @@
         },
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 93,
+          "line": 105,
           "kind": "markup",
           "raw": "No pending submissions.",
           "quote": null
@@ -36044,7 +36032,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminEventSubmissions.svelte",
-          "line": 72,
+          "line": 78,
           "kind": "markup",
           "raw": "{formatDate(sub.starts_at, sub.timezone)} &middot; {formatTime(sub.starts_at, sub.timezone)}",
           "quote": null
@@ -36069,14 +36057,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminEventSubmissions.svelte",
-          "line": 87,
+          "line": 93,
           "kind": "markup",
           "raw": "Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 120,
+          "line": 141,
           "kind": "markup",
           "raw": "Submitted by {sub.submitter_display_name || sub.submitter_username || 'unknown'}",
           "quote": null
@@ -36094,7 +36082,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminEventSubmissions.svelte",
-          "line": 93,
+          "line": 99,
           "kind": "attr:placeholder",
           "raw": "Note to the submitter (optional)",
           "quote": "\""
@@ -38061,7 +38049,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 82,
+          "line": 75,
+          "kind": "js-string",
+          "raw": "Report resolved",
+          "quote": "'"
+        },
+        {
+          "file": "web/src/pages/AdminReports.svelte",
+          "line": 101,
           "kind": "js-string",
           "raw": "Report resolved",
           "quote": "'"
@@ -38079,7 +38074,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 94,
+          "line": 113,
           "kind": "markup",
           "raw": "Reports Queue",
           "quote": null
@@ -38097,7 +38092,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 114,
+          "line": 133,
           "kind": "markup",
           "raw": "No {activeTab} reports.",
           "quote": null
@@ -38115,7 +38110,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 125,
+          "line": 144,
           "kind": "markup",
           "raw": "Reported by",
           "quote": null
@@ -38133,7 +38128,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 127,
+          "line": 146,
           "kind": "markup",
           "raw": "&middot; Target:",
           "quote": null
@@ -38151,7 +38146,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 143,
+          "line": 166,
           "kind": "markup",
           "raw": "Warn",
           "quote": null
@@ -38169,7 +38164,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 144,
+          "line": 167,
           "kind": "markup",
           "raw": "Remove Content",
           "quote": null
@@ -38187,7 +38182,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 146,
+          "line": 169,
           "kind": "markup",
           "raw": "Reset Appearance",
           "quote": null
@@ -38205,7 +38200,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 148,
+          "line": 171,
           "kind": "markup",
           "raw": "Suspend User",
           "quote": null
@@ -38223,7 +38218,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 152,
+          "line": 175,
           "kind": "markup",
           "raw": "Resolution Note",
           "quote": null
@@ -38241,7 +38236,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 153,
+          "line": 176,
           "kind": "attr:placeholder",
           "raw": "Optional note...",
           "quote": "\""
@@ -38259,7 +38254,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 156,
+          "line": 179,
           "kind": "markup",
           "raw": "This will suspend the reported user's account.",
           "quote": null
@@ -38277,7 +38272,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 159,
+          "line": 182,
           "kind": "markup",
           "raw": "This clears the patch's chosen tile, so the quilt decides its look again.\n                    The patch itself is untouched.",
           "quote": null
@@ -38295,7 +38290,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminReports.svelte",
-          "line": 186,
+          "line": 214,
           "kind": "markup",
           "raw": "Resolution: {report.resolution_note}",
           "quote": null
@@ -38313,7 +38308,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 77,
+          "line": 89,
           "kind": "js-string",
           "raw": "Submission approved",
           "quote": "'"
@@ -38331,7 +38326,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 77,
+          "line": 89,
           "kind": "js-string",
           "raw": "Submission rejected",
           "quote": "'"
@@ -38349,7 +38344,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 87,
+          "line": 99,
           "kind": "markup",
           "raw": "Patch Submissions",
           "quote": null
@@ -38367,7 +38362,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 88,
+          "line": 100,
           "kind": "markup",
           "raw": "Patches people have suggested.",
           "quote": null
@@ -38385,7 +38380,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 111,
+          "line": 123,
           "kind": "markup",
           "raw": "{sub.feed_upcoming_count} {sub.feed_upcoming_count === 1 ? 'upcoming event' : 'upcoming events'} found when it was suggested",
           "quote": null
@@ -38403,7 +38398,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 115,
+          "line": 127,
           "kind": "markup",
           "raw": "Tags",
           "quote": null
@@ -38449,7 +38444,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 117,
+          "line": 138,
           "kind": "markup",
           "raw": "The submitter's picks.",
           "quote": null
@@ -38467,7 +38462,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 123,
+          "line": 144,
           "kind": "markup",
           "raw": "Verified domain for claims",
           "quote": null
@@ -38485,7 +38480,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 127,
+          "line": 148,
           "kind": "attr:placeholder",
           "raw": "none (admin review only)",
           "quote": "\""
@@ -38503,7 +38498,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 130,
+          "line": 151,
           "kind": "markup",
           "raw": "Owners prove control of this domain to claim the patch. Leave empty if you can't vouch for it.",
           "quote": null
@@ -38521,7 +38516,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 135,
+          "line": 156,
           "kind": "markup",
           "raw": "Let {submitterName(sub)} add events here without review until it is claimed",
           "quote": null
@@ -38539,7 +38534,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 137,
+          "line": 158,
           "kind": "markup",
           "raw": "A per-patch trusted-contributor grant. Revocable from Users.",
           "quote": null
@@ -38557,7 +38552,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 141,
+          "line": 162,
           "kind": "markup",
           "raw": "Attach the events feed",
           "quote": null
@@ -38575,7 +38570,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 146,
+          "line": 169,
           "kind": "markup",
           "raw": "Note to the suggester (optional)",
           "quote": null
@@ -38593,7 +38588,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminSubmissions.svelte",
-          "line": 153,
+          "line": 176,
           "kind": "markup",
           "raw": "Sent with a rejection. Approvals don't carry it.",
           "quote": null
@@ -59327,6 +59322,42 @@
           "kind": "js-string",
           "raw": "Decisions require everyone (or nearly everyone) to agree.",
           "quote": "'"
+        }
+      ]
+    },
+    {
+      "id": "c53783efbfc3",
+      "text": "Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}",
+      "words": 7,
+      "tier": "helper",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 65,
+          "kind": "markup",
+          "raw": "Claimed by {claim.claimant_display_name || claim.claimant_username} &middot; {formatDate(claim.created_at)}",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "5e5082a21fe8",
+      "text": "&middot; email: {claim.email}",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminClaims.svelte",
+          "line": 70,
+          "kind": "markup",
+          "raw": "&middot; email: {claim.email}",
+          "quote": null
         }
       ]
     }

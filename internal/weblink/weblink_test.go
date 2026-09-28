@@ -20,6 +20,7 @@ func TestPaths(t *testing.T) {
 		{"pending members", PatchMembersPending("gallery-row"), "/patches/gallery-row/members?status=pending"},
 		{"patch setup", PatchSetup("gallery-row"), "/patches/gallery-row/setup"},
 		{"event", Event("ev-1"), "/events/ev-1"},
+		{"user", User("sophia-chen"), "/users/sophia-chen"},
 		{"proposal", Proposal("gallery-row", "pr-1"), "/patches/gallery-row/governance/pr-1"},
 		{"governance doc", GovernanceDoc("gallery-row", "doc-1"), "/patches/gallery-row/governance/docs/doc-1"},
 		{"noticeboard", PatchNoticeboard("gallery-row"), "/patches/gallery-row/noticeboard"},

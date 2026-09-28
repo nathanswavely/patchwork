@@ -5,6 +5,7 @@
   import ErrorState from '../components/ErrorState.svelte';
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { navigate } from '../stores/router.svelte.js';
 
   let reports = $state([]);
   let loading = $state(true);
@@ -59,6 +60,24 @@
 
   function cancelResolve() {
     resolvingId = null;
+  }
+
+  // Dismissing is the queue's most common answer, so it is a button of its
+  // own rather than the default of a select behind Resolve: two taps on the
+  // card instead of three, and no form to open. It confirms first, and the
+  // other outcomes keep the form.
+  async function dismissReport(reportId) {
+    try {
+      await api(`admin/reports/${reportId}`, {
+        method: 'PATCH',
+        body: { status: 'dismissed', resolution_note: '', action: 'dismiss' },
+      });
+      showToast('Report resolved', 'success');
+      if (resolvingId === reportId) resolvingId = null;
+      loadReports();
+    } catch (e) {
+      showToast(e.message, 'error');
+    }
   }
 
   async function submitResolve() {
@@ -124,7 +143,11 @@
             <div class="report-meta">
               <span>Reported by <strong>{report.reporter_name || 'Unknown'}</strong></span>
               {#if report.target_name}
-                <span class="muted"> &middot; Target: <strong>{report.target_name}</strong></span>
+                <span class="muted"> &middot; Target: {#if report.target_link}<a
+                    href={report.target_link}
+                    class="target-link"
+                    onclick={(e) => { e.preventDefault(); navigate(report.target_link); }}
+                  ><strong>{report.target_name}</strong></a>{:else}<strong>{report.target_name}</strong>{/if}</span>
               {/if}
             </div>
             <p class="report-reason">{report.reason}</p>
@@ -176,6 +199,11 @@
               </div>
             {:else}
               <div class="report-actions">
+                <ConfirmAction
+                  label="Dismiss"
+                  confirmLabel="Dismiss"
+                  onConfirm={() => dismissReport(report.id)}
+                />
                 <button class="btn btn-secondary" onclick={() => openResolve(report.id)}>Resolve</button>
               </div>
             {/if}
@@ -267,9 +295,16 @@
   }
 
   .report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin-top: 0.75rem;
     padding-top: 0.75rem;
     border-top: 1px solid var(--color-border);
+  }
+
+  .target-link {
+    color: inherit;
   }
 
   .resolve-form {

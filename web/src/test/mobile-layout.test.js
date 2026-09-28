@@ -146,3 +146,30 @@ describe('sticky works on a phone', () => {
     expect(css).toMatch(/html \{\s*overflow-x: hidden;\s*overflow-x: clip;/);
   });
 });
+
+describe('review cards put the decision within reach', () => {
+  it('Submissions: Reject opens the note first, and a phone sees Approve before the options', () => {
+    const src = source('pages/AdminSubmissions.svelte');
+    expect(src).toContain("onclick={() => { decliningId = sub.id; }}>Reject</button>");
+    expect(src).toContain('{#if decliningId === sub.id}');
+    expect(src).toMatch(/\.submission-card > \.sub-actions,\s*\.submission-card > \.decline-form \{\s*order: 1;/);
+    expect(src).toContain('{#if narrow && !editingTags[sub.id]}');
+  });
+
+  it('Reports: Dismiss is its own button and the target is a link', () => {
+    const src = source('pages/AdminReports.svelte');
+    expect(src).toMatch(/<ConfirmAction\s+label="Dismiss"/);
+    expect(src).toContain('href={report.target_link}');
+  });
+
+  it('Claims: Reject asks first and the patch is a link', () => {
+    const src = source('pages/AdminClaims.svelte');
+    expect(src).toMatch(/<ConfirmAction\s+label="Reject"/);
+    expect(src).not.toContain("onclick={() => handleAction(claim.id, 'reject')}");
+    expect(src).toContain('href="/patches/{claim.node_slug}"');
+  });
+
+  it('Event submissions: the event is a link', () => {
+    expect(source('pages/AdminEventSubmissions.svelte')).toContain('href="/events/{sub.id}"');
+  });
+});

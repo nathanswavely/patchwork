@@ -295,3 +295,63 @@ func TestSuspensionRevokesSessions(t *testing.T) {
 		t.Fatal("expected revoked session token to stop validating")
 	}
 }
+
+// The admin queue links each target so a decision can start from looking at
+// it (a phone admin had only its name in bold), and a deleted account's
+// target neither links nor names its retired handle (docs/adr/086).
+func TestListReportsLinksTheTarget(t *testing.T) {
+	db := setupTestDB(t)
+	reporter, _ := createTestUser(t, db, "reporter-link", "member")
+	target, _ := createTestUser(t, db, "target-link", "member")
+	gone, _ := createTestUser(t, db, "gone-link", "member")
+	_, adminToken := createTestUser(t, db, "admin-link", "admin")
+	nodeID := createTestNode(t, db, reporter.ID, "Link Node", "link-node", "open")
+
+	insert := func(entityType, entityID string) {
+		t.Helper()
+		if _, err := db.Exec(
+			`INSERT INTO content_reports (id, reporter_id, entity_type, entity_id, reason, details) VALUES (?, ?, ?, ?, 'spam', '')`,
+			auth.NewUUIDv7(), reporter.ID, entityType, entityID,
+		); err != nil {
+			t.Fatal(err)
+		}
+	}
+	insert("node", nodeID)
+	insert("user", target.ID)
+	insert("user", gone.ID)
+	if _, err := db.Exec(`UPDATE users SET deleted_at = '2026-09-28T00:00:00Z' WHERE id = ?`, gone.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	r := authedRequest("GET", "/api/v1/admin/reports?status=pending", nil, adminToken)
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /api/v1/admin/reports", middleware.AdminRequired(db, handler.ListReports(db)))
+	w := httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	links := map[string]string{}
+	names := map[string]string{}
+	for _, it := range decodeJSON(t, w)["items"].([]interface{}) {
+		item := it.(map[string]interface{})
+		id := item["entity_id"].(string)
+		link, _ := item["target_link"].(string)
+		links[id] = link
+		names[id], _ = item["target_name"].(string)
+	}
+
+	if links[nodeID] != "/patches/link-node" {
+		t.Errorf("node target_link = %q, want /patches/link-node", links[nodeID])
+	}
+	if links[target.ID] != "/users/target-link" {
+		t.Errorf("user target_link = %q, want /users/target-link", links[target.ID])
+	}
+	if links[gone.ID] != "" {
+		t.Errorf("deleted account target_link = %q, want none", links[gone.ID])
+	}
+	if names[gone.ID] == "gone-link" {
+		t.Error("deleted account's target_name leaked its retired username")
+	}
+}
