@@ -160,8 +160,12 @@ func ListReports(db *database.DB) http.HandlerFunc {
 			}
 
 			// Look up reporter name.
+			// A reporter who cannot be read leaves the name empty, as it
+			// always has; the report itself still lists.
 			var reporterName string
-			db.QueryRow("SELECT "+displayNameExpr("u")+" FROM users u WHERE u.id = ?", rpt.ReporterID).Scan(&reporterName)
+			if db.QueryRow("SELECT "+displayNameExpr("u")+" FROM users u WHERE u.id = ?", rpt.ReporterID).Scan(&reporterName) != nil {
+				reporterName = ""
+			}
 			rpt.ReporterName = reporterName
 
 			// Look up target preview name.
@@ -179,8 +183,7 @@ func ListReports(db *database.DB) http.HandlerFunc {
 				// A tombstone keeps its row, so it is found; its name is the
 				// neutral label and its username blank, which leaves no link.
 				var username string
-				db.QueryRow("SELECT "+displayNameExpr("u")+", "+usernameExpr("u")+" FROM users u WHERE u.id = ?", rpt.EntityID).Scan(&rpt.TargetName, &username)
-				if username != "" {
+				if db.QueryRow("SELECT "+displayNameExpr("u")+", "+usernameExpr("u")+" FROM users u WHERE u.id = ?", rpt.EntityID).Scan(&rpt.TargetName, &username) == nil && username != "" {
 					rpt.TargetLink = weblink.User(username)
 				}
 			case "notice":
