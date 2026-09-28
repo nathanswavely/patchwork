@@ -27,7 +27,10 @@
   // shelfBell: the discovery shell shows notifications on its mobile bottom
   // shelf, so the bar's bell hides under 768px there. Workspace/admin shells
   // have no shelf and keep the bar bell on every size.
-  let { glass = false, bordered = false, shelfBell = false, leading, search } = $props();
+  // patchContext: a patch workspace on a phone puts creating an event in the
+  // patch's own sheet (PatchBarMenu), scoped to that patch, and gives the
+  // bar's width to the patch name; the global "+" steps aside there.
+  let { glass = false, bordered = false, shelfBell = false, patchContext = false, leading, search } = $props();
 
   let userMenuOpen = $state(false);
   let newMenuOpen = $state(false);
@@ -122,7 +125,7 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<header class="top-bar" class:quilt-mode={glass} class:bordered>
+<header class="top-bar" class:quilt-mode={glass} class:bordered class:patch-context={patchContext}>
   {#if leading}
     {@render leading()}
   {/if}
@@ -692,6 +695,12 @@
       display: flex;
       align-items: center;
       min-height: 44px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .top-bar.patch-context .new-menu-container {
+      display: none;
     }
   }
 </style>

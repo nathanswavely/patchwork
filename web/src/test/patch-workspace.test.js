@@ -172,11 +172,12 @@ describe('the way up from a workspace page with no section list on screen', () =
     }
   });
 
-  it('shares the relationship cluster\'s row, preferring a shell\'s own link, then a linked breadcrumb', () => {
+  it("opens the phone's patch bar, preferring a shell's own link, then a linked breadcrumb", () => {
     const shell = source('components/PatchShell.svelte');
     expect(shell).toContain("setContext('workspaceUp'");
     expect(shell.indexOf('if (registeredUp) return registeredUp;')).toBeLessThan(shell.indexOf('breadcrumbExtra.filter((seg) => seg.href)'));
-    expect(shell.indexOf('class="workspace-up"')).toBeLessThan(shell.indexOf('class="workspace-cluster"'));
+    expect(shell).toMatch(/<PatchBarMenu[\s\S]*\{upLink\}/);
+    expect(source('components/PatchBarMenu.svelte')).toContain("let back = $derived(upLink || { href: '/', label: getInstanceName() });");
     expect(source('App.svelte')).toContain('up={workspaceUpLink(routeName, routeParams.slug)}');
   });
 
@@ -184,5 +185,32 @@ describe('the way up from a workspace page with no section list on screen', () =
     const settings = source('components/SettingsShell.svelte');
     expect(settings).toContain("getContext('workspaceUp')");
     expect(settings).toContain('{#if indexHref && !workspaceUp}');
+  });
+});
+
+describe('on a phone the patch name is the menu', () => {
+  const shell = source('components/PatchShell.svelte');
+  const bar = source('components/PatchBarMenu.svelte');
+  const rel = source('components/PatchRelationship.svelte');
+
+  it('puts the patch bar in the global bar and drops the crumb and cluster row below 768px', () => {
+    expect(shell).toContain('<GlobalBar patchContext>');
+    expect(shell).toMatch(/\.crumb-group,\s*\.workspace-cluster \{\s*display: none;/);
+    expect(source('components/GlobalBar.svelte')).toMatch(/\.top-bar\.patch-context \.new-menu-container \{\s*display: none;/);
+  });
+
+  it("keeps a visitor's next rung in the sheet, not in the bar or a strip", () => {
+    expect(bar.slice(0, bar.indexOf('{#if sheetOpen}'))).not.toContain('<PatchRelationship');
+    expect(shell).not.toContain('visitor-rung');
+    expect(rel).not.toContain("mode === 'primary'");
+  });
+
+  it('puts standing, the public profile, posting, subscribing and reporting in the sheet', () => {
+    const sheet = bar.slice(bar.indexOf('<div class="patch-sheet"'));
+    expect(sheet).toMatch(/<PatchRelationship[\s\S]*size="sm"/);
+    expect(sheet).toContain('View the public profile');
+    expect(sheet).toContain("{postingRight === 'direct' ? 'New event' : 'Suggest an event'}");
+    expect(sheet).toContain('Subscribe');
+    expect(sheet).toContain('Report');
   });
 });

@@ -24,8 +24,9 @@
   import WorkspaceSearch from './WorkspaceSearch.svelte';
   import Skeleton from './Skeleton.svelte';
   import PatchRelationship from './PatchRelationship.svelte';
+  import PatchBarMenu from './PatchBarMenu.svelte';
   import { getPendingMembershipSlugs, getInvitedMembershipSlugs, loadMemberships } from '../stores/memberships.svelte.js';
-  import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard, CaretLeft } from 'phosphor-svelte';
+  import { Scales, UsersThree, CalendarBlank, GearSix, Eye, Chalkboard } from 'phosphor-svelte';
 
   // up: where this route's "up" goes when it has no section list on screen
   // (lib/patchWorkspace.js workspaceUpLink), or null.
@@ -72,8 +73,8 @@
     get value() { return patchContext; }
   });
 
-  // The link up a level, drawn on a phone at the left of the row that holds
-  // the relationship cluster, so the two share a line instead of stacking.
+  // The link up a level: on a phone, the ‹ that opens the patch bar
+  // (PatchBarMenu). With none, that ‹ goes back to the quilt.
   // A shell inside the workspace that has its own (Patch Settings, drilling
   // down) hands it here rather than drawing it inside the page. Failing
   // that, a page's breadcrumb that names a linked parent (a charter's
@@ -242,8 +243,27 @@
 </script>
 
 <div class="workspace">
-  <GlobalBar>
+  <GlobalBar patchContext>
     {#snippet leading()}
+      <!-- A phone: the patch's name is the menu (PatchBarMenu), with the way
+           up before it and a visitor's next rung after it. Wide: the crumb
+           and the public-profile eye, with the cluster on the row below. -->
+      <div class="patch-bar-slot">
+        <PatchBarMenu
+          {slug}
+          {node}
+          {isAdmin}
+          {isUnclaimed}
+          {isBanned}
+          {viewerTrusted}
+          {membershipRole}
+          {requestPending}
+          {invited}
+          {liningStatus}
+          {upLink}
+          onChanged={reloadStanding}
+        />
+      </div>
       <div class="crumb-group">
         <ContextCrumb label={node?.name || slug} href={`${basePath}/governance`} />
         <a
@@ -284,12 +304,6 @@
   {:else if node}
     <!-- Workspace nav: tabs + relationship cluster, directly under the bar -->
     <div class="workspace-nav">
-      {#if upLink}
-        <a href={upLink.href} class="workspace-up" onclick={(e) => handleTabClick(e, upLink.href)}>
-          <CaretLeft size={14} weight="bold" />
-          <span class="workspace-up-label">{upLink.label}</span>
-        </a>
-      {/if}
       <nav
         class="workspace-tabs"
         class:single={tabs.length < 2}
@@ -458,10 +472,11 @@
      the screen (toasts, the vote bar) already clears. The row the tabs
      leave keeps only the relationship cluster, and stops being sticky:
      a Join button does not need to follow you down the page. */
-  /* The up link exists only on a narrow screen, where the tabs have left
-     this row to the relationship cluster. */
-  .workspace-up {
+  /* The phone's patch bar (PatchBarMenu); a wide screen has the crumb. */
+  .patch-bar-slot {
     display: none;
+    flex: 1;
+    min-width: 0;
   }
 
   @media (max-width: 768px) {
@@ -470,30 +485,6 @@
       justify-content: flex-end;
       background: none;
       border-bottom: none;
-      min-height: 52px;
-    }
-
-    .workspace-up {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      min-height: 44px;
-      min-width: 0;
-      margin-right: auto;
-      font-size: 0.9rem;
-      color: var(--color-text-muted);
-      text-decoration: none;
-    }
-
-    .workspace-up:hover {
-      color: var(--color-text);
-      text-decoration: none;
-    }
-
-    .workspace-up-label {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .workspace-body.work-content {
@@ -600,5 +591,21 @@
     color: var(--color-text);
     background: var(--color-overlay);
     text-decoration: none;
+  }
+
+  /* Last in the file on purpose: the crumb and the cluster's own rules
+     above would otherwise win at equal specificity. The bar carries the
+     patch on a phone (PatchBarMenu): the way up, the name as the menu,
+     and a visitor's next rung. The row under it keeps only the tabs,
+     which are fixed to the foot. */
+  @media (max-width: 768px) {
+    .crumb-group,
+    .workspace-cluster {
+      display: none;
+    }
+
+    .patch-bar-slot {
+      display: flex;
+    }
   }
 </style>
