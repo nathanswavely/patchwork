@@ -46503,9 +46503,9 @@
       "text": "Opened the link on another device? Enter the code it shows",
       "words": 11,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Code field label on Check your email (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/Login.svelte",
@@ -54586,9 +54586,9 @@
       "text": "This link has expired or has already been used.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54604,9 +54604,9 @@
       "text": "Signing in...",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54622,9 +54622,9 @@
       "text": "Your sign-in code",
       "words": 3,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54640,9 +54640,9 @@
       "text": "Enter this code where you asked to sign in",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54658,9 +54658,9 @@
       "text": "It works once and expires 15 minutes after you asked. Do not share it with anyone.",
       "words": 16,
       "tier": "prose",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54676,9 +54676,9 @@
       "text": "Sign in",
       "words": 2,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54694,9 +54694,9 @@
       "text": "This link was sent before sign-in codes were shown here.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54712,9 +54712,9 @@
       "text": "The code stops working if you sign in here.",
       "words": 9,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54730,9 +54730,9 @@
       "text": "This link no longer works",
       "words": 5,
       "tier": "label",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
@@ -54748,9 +54748,9 @@
       "text": "This sign-in link has expired or has already been used.",
       "words": 10,
       "tier": "helper",
-      "status": "unreviewed",
+      "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Sign-in link page (docs/adr/2026-09-28); Nathan approved as drafted",
       "occurrences": [
         {
           "file": "web/src/pages/SignInLink.svelte",
