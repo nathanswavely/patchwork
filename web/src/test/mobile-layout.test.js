@@ -76,3 +76,31 @@ describe('a finger gets a finger-sized target', () => {
     expect(css).toMatch(/\.btn-link \{\s*padding-block: 0\.6rem;\s*margin-block: -0\.6rem;/);
   });
 });
+
+describe('admin tables have a phone form', () => {
+  it('Users writes each control once and renders it in the table and the phone list', () => {
+    const src = source('pages/AdminUsers.svelte');
+    for (const name of ['emailControl', 'roleControl', 'trustControl', 'statusBadge', 'accountControl']) {
+      expect(src).toContain(`{#snippet ${name}(u)}`);
+      // Once in a table cell, once in the phone detail.
+      expect(src.split(`{@render ${name}(u)}`).length - 1).toBe(2);
+    }
+    expect(src).toContain('{:else if narrow}');
+    expect(src).toContain('<ul class="user-list">');
+  });
+
+  it('Users puts the search and list before the invite form on a phone', () => {
+    const src = source('pages/AdminUsers.svelte');
+    const list = src.indexOf('<ul class="user-list">');
+    const lateInvite = src.lastIndexOf('<section class="invite-section card">');
+    expect(src.indexOf('{#if !narrow}')).toBeLessThan(src.indexOf('<div class="search-bar">'));
+    expect(lateInvite).toBeGreaterThan(list);
+  });
+
+  it('the audit log reads as a list on a phone and names a target by the tail of its id', () => {
+    const src = source('pages/AdminAuditLog.svelte');
+    expect(src).toContain('<ul class="entry-list">');
+    expect(src).toContain('entry.entity_id.slice(-8)');
+    expect(src).not.toContain('entity_id?.substring(0, 8)');
+  });
+});

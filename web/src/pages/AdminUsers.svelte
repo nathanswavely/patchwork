@@ -9,6 +9,17 @@
   import ConfirmAction from '../components/ConfirmAction.svelte';
   import TrustScopePicker from '../components/TrustScopePicker.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { isNarrow } from '../stores/viewport.svelte.js';
+  import { CaretDown, CaretUp } from 'phosphor-svelte';
+
+  let narrow = $derived(isNarrow());
+
+  // On a phone, the one person whose controls are open.
+  let openUser = $state('');
+
+  function toggleUser(id) {
+    openUser = openUser === id ? '' : id;
+  }
 
   let pendingRoles = $state({});
 
@@ -326,6 +337,136 @@
   }
 </script>
 
+{#snippet emailControl(u)}
+  {#if editingEmailFor === u.id}
+    <form
+      class="email-edit"
+      onsubmit={(e) => { e.preventDefault(); saveEmail(u); }}
+    >
+      <!-- svelte-ignore a11y_autofocus -->
+      <input
+        type="email"
+        autofocus
+        bind:value={emailDraft}
+        placeholder="name@example.com"
+        onkeydown={(e) => { if (e.key === 'Escape') cancelEmailEdit(); }}
+      />
+      <button type="submit" class="btn btn-primary btn-sm" disabled={savingEmail || !emailDraft.trim()}>
+        {savingEmail ? 'Saving...' : 'Save'}
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick={cancelEmailEdit}>
+        Cancel
+      </button>
+    </form>
+  {:else}
+    <span class="email-address" class:muted={!u.email}>{u.email || '--'}</span>
+    <button class="btn btn-secondary btn-sm" onclick={() => startEmailEdit(u)}>
+      {u.email ? 'Change' : 'Set'}
+    </button>
+  {/if}
+{/snippet}
+
+{#snippet roleControl(u)}
+  <select
+    value={pendingRoles[u.id] ?? u.role}
+    onchange={(e) => handleRoleSelect(u, e.target.value)}
+  >
+    <option value="member">member</option>
+    <option value="admin">admin</option>
+  </select>
+  {#if pendingRoles[u.id]}
+    <ConfirmAction
+      label="Change Role"
+      confirmLabel="Yes, change role"
+      variant="warning"
+      onConfirm={() => setRole(u)}
+    />
+  {/if}
+{/snippet}
+
+{#snippet trustControl(u)}
+  {#if u.trusted_contributor}
+    <span class="badge badge-trusted">Trusted</span>
+    <ConfirmAction
+      label="Revoke"
+      confirmLabel="Yes, revoke"
+      variant="warning"
+      onConfirm={() => toggleTrusted(u)}
+    />
+  {:else}
+    <ConfirmAction
+      label="Grant"
+      confirmLabel="Yes, grant"
+      variant="warning"
+      onConfirm={() => toggleTrusted(u)}
+    />
+  {/if}
+  {#if (u.trusted_nodes || []).length > 0}
+    <div class="patch-grants">
+      {#each u.trusted_nodes as node (node.id)}
+        <span class="patch-grant">
+          Trusted on {node.name}
+          <button
+            type="button"
+            class="grant-remove"
+            title="Revoke"
+            aria-label="Revoke trust on {node.name}"
+            onclick={() => revokeTrustedPatch(u, node)}
+          >×</button>
+        </span>
+      {/each}
+    </div>
+  {/if}
+  {#if addingTrustFor === u.id}
+    <div class="patch-grant-add">
+      <TrustScopePicker
+        bind:selected={addTrustSelected}
+        allowAll={false}
+        disabled={savingTrustPatches}
+        label="Patches"
+      />
+      <div class="grant-add-actions">
+        <button
+          class="btn btn-primary btn-sm"
+          disabled={savingTrustPatches || addTrustSelected.length === 0}
+          onclick={() => saveTrustPatches(u)}
+        >{savingTrustPatches ? 'Saving...' : 'Grant'}</button>
+        <button class="btn btn-secondary btn-sm" onclick={cancelTrustPatches}>Cancel</button>
+      </div>
+    </div>
+  {:else}
+    <button class="btn btn-secondary btn-sm grant-add-btn" onclick={() => startTrustPatches(u)}>
+      Add a patch
+    </button>
+  {/if}
+{/snippet}
+
+{#snippet statusBadge(u)}
+  {#if u.suspended_at}
+    <span class="badge badge-suspended">Suspended</span>
+  {:else}
+    <span class="badge badge-active">Active</span>
+  {/if}
+{/snippet}
+
+{#snippet accountControl(u)}
+  {#if u.suspended_at}
+    <ConfirmAction
+      label="Unsuspend"
+      confirmLabel="Yes, unsuspend"
+      variant="warning"
+      onConfirm={() => toggleSuspension(u)}
+    />
+  {:else}
+    <ConfirmAction
+      label="Suspend"
+      confirmLabel="Yes, suspend"
+      variant="danger"
+      onConfirm={() => toggleSuspension(u)}
+    />
+  {/if}
+{/snippet}
+
 <div class="page-fade">
   <div class="page-header">
     <h1>User Management</h1>
@@ -386,34 +527,36 @@
     </section>
   {/if}
 
-  <section class="invite-section card">
-    <h2>Invite Links</h2>
-    <p class="muted">
-      Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
-    </p>
-    <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
-      <label>
-        Max uses
-        <input type="number" min="1" max="100" bind:value={inviteMaxUses} />
-      </label>
-      <label>
-        Expires in (hours, 0 = never)
-        <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
-      </label>
-      <button type="submit" class="btn btn-primary" disabled={generatingInvite}>
-        {generatingInvite ? 'Generating...' : 'Generate Invite Link'}
-      </button>
-    </form>
-    {#if inviteUrl}
-      <div class="invite-result">
-        <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
-        <button class="btn btn-secondary" onclick={copyInviteUrl}>Copy</button>
-      </div>
-      <p class="muted invite-note">
-        This link is shown once, so copy it now. Anyone with it can create an account.
+  {#if !narrow}
+    <section class="invite-section card">
+      <h2>Invite Links</h2>
+      <p class="muted">
+        Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
       </p>
-    {/if}
-  </section>
+      <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
+        <label>
+          Max uses
+          <input type="number" min="1" max="100" bind:value={inviteMaxUses} />
+        </label>
+        <label>
+          Expires in (hours, 0 = never)
+          <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
+        </label>
+        <button type="submit" class="btn btn-primary" disabled={generatingInvite}>
+          {generatingInvite ? 'Generating...' : 'Generate Invite Link'}
+        </button>
+      </form>
+      {#if inviteUrl}
+        <div class="invite-result">
+          <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
+          <button class="btn btn-secondary" onclick={copyInviteUrl}>Copy</button>
+        </div>
+        <p class="muted invite-note">
+          This link is shown once, so copy it now. Anyone with it can create an account.
+        </p>
+      {/if}
+    </section>
+  {/if}
 
   <div class="search-bar">
     <input
@@ -430,6 +573,79 @@
     <ErrorState message={error} retry={() => loadUsers()} />
   {:else if users.length === 0}
     <p class="muted" style="text-align: center; padding: 2rem 0;">No users found.</p>
+  {:else if narrow}
+    <!-- A phone: one row per person, opening onto the same controls the
+         table spreads across eight columns. The table put every one of
+         them off the right edge of the screen. -->
+    <ul class="user-list">
+      {#each users as u (u.id)}
+        <li class="user-item" class:suspended={u.suspended_at}>
+          <button
+            type="button"
+            class="user-row"
+            aria-expanded={openUser === u.id}
+            onclick={() => toggleUser(u.id)}
+          >
+            <span class="user-row-text">
+              <span class="user-row-name">{u.display_name || u.username}</span>
+              <span class="muted user-row-handle">@{u.username}</span>
+            </span>
+            <span class="user-row-chips">
+              {#if u.role === 'admin'}
+                <span class="badge">{u.role}</span>
+              {/if}
+              {#if u.trusted_contributor || (u.trusted_nodes || []).length > 0}
+                <span class="badge badge-trusted">Trusted</span>
+              {/if}
+              {#if u.suspended_at}
+                <span class="badge badge-suspended">Suspended</span>
+              {/if}
+            </span>
+            <span class="user-row-caret">
+              {#if openUser === u.id}<CaretUp size={14} weight="bold" />{:else}<CaretDown size={14} weight="bold" />{/if}
+            </span>
+          </button>
+          {#if openUser === u.id}
+            <div class="user-detail">
+              <section>
+                <h3>Username</h3>
+                <a
+                  href="/users/{u.username}"
+                  class="user-link"
+                  onclick={(e) => { e.preventDefault(); navigate(`/users/${u.username}`); }}
+                >{u.username}</a>
+              </section>
+              <section>
+                <h3>Email</h3>
+                <div class="detail-controls">{@render emailControl(u)}</div>
+              </section>
+              <section>
+                <h3>Role</h3>
+                <div class="detail-controls">{@render roleControl(u)}</div>
+              </section>
+              <section>
+                <h3>Trusted Contributor</h3>
+                <div class="detail-controls">{@render trustControl(u)}</div>
+              </section>
+              <section>
+                <h3>Status</h3>
+                <div class="detail-controls">
+                  {@render statusBadge(u)}
+                  <span class="muted">{formatDate(u.created_at)}</span>
+                </div>
+                <div class="detail-controls">{@render accountControl(u)}</div>
+              </section>
+            </div>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+
+    {#if nextCursor}
+      <div style="text-align: center; padding: 1rem 0;">
+        <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load More</button>
+      </div>
+    {/if}
   {:else}
     <div class="table-wrapper">
       <table class="data-table">
@@ -458,132 +674,12 @@
                 </a>
               </td>
               <td>{u.display_name || '--'}</td>
-              <td>
-                {#if editingEmailFor === u.id}
-                  <form
-                    class="email-edit"
-                    onsubmit={(e) => { e.preventDefault(); saveEmail(u); }}
-                  >
-                    <!-- svelte-ignore a11y_autofocus -->
-                    <input
-                      type="email"
-                      autofocus
-                      bind:value={emailDraft}
-                      placeholder="name@example.com"
-                      onkeydown={(e) => { if (e.key === 'Escape') cancelEmailEdit(); }}
-                    />
-                    <button type="submit" class="btn btn-primary btn-sm" disabled={savingEmail || !emailDraft.trim()}>
-                      {savingEmail ? 'Saving...' : 'Save'}
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick={cancelEmailEdit}>
-                      Cancel
-                    </button>
-                  </form>
-                {:else}
-                  <span class="email-address" class:muted={!u.email}>{u.email || '--'}</span>
-                  <button class="btn btn-secondary btn-sm" onclick={() => startEmailEdit(u)}>
-                    {u.email ? 'Change' : 'Set'}
-                  </button>
-                {/if}
-              </td>
-              <td>
-                <select
-                  value={pendingRoles[u.id] ?? u.role}
-                  onchange={(e) => handleRoleSelect(u, e.target.value)}
-                >
-                  <option value="member">member</option>
-                  <option value="admin">admin</option>
-                </select>
-                {#if pendingRoles[u.id]}
-                  <ConfirmAction
-                    label="Change Role"
-                    confirmLabel="Yes, change role"
-                    variant="warning"
-                    onConfirm={() => setRole(u)}
-                  />
-                {/if}
-              </td>
-              <td>
-                {#if u.trusted_contributor}
-                  <span class="badge badge-trusted">Trusted</span>
-                  <ConfirmAction
-                    label="Revoke"
-                    confirmLabel="Yes, revoke"
-                    variant="warning"
-                    onConfirm={() => toggleTrusted(u)}
-                  />
-                {:else}
-                  <ConfirmAction
-                    label="Grant"
-                    confirmLabel="Yes, grant"
-                    variant="warning"
-                    onConfirm={() => toggleTrusted(u)}
-                  />
-                {/if}
-                {#if (u.trusted_nodes || []).length > 0}
-                  <div class="patch-grants">
-                    {#each u.trusted_nodes as node (node.id)}
-                      <span class="patch-grant">
-                        Trusted on {node.name}
-                        <button
-                          type="button"
-                          class="grant-remove"
-                          title="Revoke"
-                          aria-label="Revoke trust on {node.name}"
-                          onclick={() => revokeTrustedPatch(u, node)}
-                        >×</button>
-                      </span>
-                    {/each}
-                  </div>
-                {/if}
-                {#if addingTrustFor === u.id}
-                  <div class="patch-grant-add">
-                    <TrustScopePicker
-                      bind:selected={addTrustSelected}
-                      allowAll={false}
-                      disabled={savingTrustPatches}
-                      label="Patches"
-                    />
-                    <div class="grant-add-actions">
-                      <button
-                        class="btn btn-primary btn-sm"
-                        disabled={savingTrustPatches || addTrustSelected.length === 0}
-                        onclick={() => saveTrustPatches(u)}
-                      >{savingTrustPatches ? 'Saving...' : 'Grant'}</button>
-                      <button class="btn btn-secondary btn-sm" onclick={cancelTrustPatches}>Cancel</button>
-                    </div>
-                  </div>
-                {:else}
-                  <button class="btn btn-secondary btn-sm grant-add-btn" onclick={() => startTrustPatches(u)}>
-                    Add a patch
-                  </button>
-                {/if}
-              </td>
+              <td>{@render emailControl(u)}</td>
+              <td>{@render roleControl(u)}</td>
+              <td>{@render trustControl(u)}</td>
               <td class="muted">{formatDate(u.created_at)}</td>
-              <td>
-                {#if u.suspended_at}
-                  <span class="badge badge-suspended">Suspended</span>
-                {:else}
-                  <span class="badge badge-active">Active</span>
-                {/if}
-              </td>
-              <td>
-                {#if u.suspended_at}
-                  <ConfirmAction
-                    label="Unsuspend"
-                    confirmLabel="Yes, unsuspend"
-                    variant="warning"
-                    onConfirm={() => toggleSuspension(u)}
-                  />
-                {:else}
-                  <ConfirmAction
-                    label="Suspend"
-                    confirmLabel="Yes, suspend"
-                    variant="danger"
-                    onConfirm={() => toggleSuspension(u)}
-                  />
-                {/if}
-              </td>
+              <td>{@render statusBadge(u)}</td>
+              <td>{@render accountControl(u)}</td>
             </tr>
           {/each}
         </tbody>
@@ -595,6 +691,39 @@
         <button class="btn btn-secondary" onclick={() => loadUsers(true)}>Load More</button>
       </div>
     {/if}
+  {/if}
+
+  <!-- On a phone the person being looked for comes first; making an invite
+       link is the rarer errand, so it waits below the list. -->
+  {#if narrow}
+    <section class="invite-section card">
+      <h2>Invite Links</h2>
+      <p class="muted">
+        Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.
+      </p>
+      <form class="invite-form" onsubmit={(e) => { e.preventDefault(); generateInvite(); }}>
+        <label>
+          Max uses
+          <input type="number" min="1" max="100" bind:value={inviteMaxUses} />
+        </label>
+        <label>
+          Expires in (hours, 0 = never)
+          <input type="number" min="0" max="8760" bind:value={inviteExpiresHrs} />
+        </label>
+        <button type="submit" class="btn btn-primary" disabled={generatingInvite}>
+          {generatingInvite ? 'Generating...' : 'Generate Invite Link'}
+        </button>
+      </form>
+      {#if inviteUrl}
+        <div class="invite-result">
+          <input type="text" readonly value={inviteUrl} onfocus={(e) => e.target.select()} />
+          <button class="btn btn-secondary" onclick={copyInviteUrl}>Copy</button>
+        </div>
+        <p class="muted invite-note">
+          This link is shown once, so copy it now. Anyone with it can create an account.
+        </p>
+      {/if}
+    </section>
   {/if}
 </div>
 
@@ -829,5 +958,141 @@
   .user-link:hover {
     color: var(--color-primary);
     text-decoration: underline;
+  }
+
+  /* ---- The phone list: a row per person, opening onto their controls ---- */
+  .user-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .user-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .user-item.suspended .user-row-text {
+    opacity: 0.7;
+  }
+
+  .user-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    min-height: 56px;
+    padding: 0.6rem 0.25rem;
+    border: none;
+    background: none;
+    color: var(--color-text);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .user-row-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-row-name {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .user-row-handle {
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .user-row-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    max-width: 50%;
+  }
+
+  .user-row-chips .badge-trusted {
+    margin-right: 0;
+  }
+
+  .user-row-caret {
+    display: flex;
+    color: var(--color-text-muted);
+  }
+
+  .user-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.25rem 0.25rem 1.25rem;
+  }
+
+  .user-detail h3 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    margin: 0 0 0.4rem;
+  }
+
+  .detail-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .detail-controls + .detail-controls {
+    margin-top: 0.5rem;
+  }
+
+  .user-detail .email-edit {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .user-detail .email-edit input {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+
+  .user-detail select {
+    width: auto;
+  }
+
+  .user-detail .patch-grants {
+    flex-basis: 100%;
+  }
+
+  .user-detail .patch-grant-add {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+
+  .user-detail .grant-add-btn {
+    margin-top: 0;
+  }
+
+  @media (pointer: coarse) {
+    .patch-grant {
+      padding: 0.3rem 0.3rem 0.3rem 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .grant-remove {
+      min-width: 32px;
+      min-height: 32px;
+      margin: -0.3rem 0;
+    }
   }
 </style>

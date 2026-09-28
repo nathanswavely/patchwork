@@ -21121,14 +21121,14 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 479,
+          "line": 358,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 553,
+          "line": 434,
           "kind": "markup",
           "raw": "Cancel",
           "quote": null
@@ -26885,7 +26885,7 @@
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 144,
+          "line": 193,
           "kind": "markup",
           "raw": "Details",
           "quote": null
@@ -32347,7 +32347,14 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 438,
+          "line": 611,
+          "kind": "markup",
+          "raw": "Username",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 654,
           "kind": "markup",
           "raw": "Username",
           "quote": null
@@ -32411,7 +32418,7 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 439,
+          "line": 655,
           "kind": "markup",
           "raw": "Display Name",
           "quote": null
@@ -33100,7 +33107,14 @@
         },
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 410,
+          "line": 552,
+          "kind": "markup",
+          "raw": "Copy",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 720,
           "kind": "markup",
           "raw": "Copy",
           "quote": null
@@ -34941,7 +34955,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 17,
+          "line": 20,
           "kind": "js-string",
           "raw": "The \"From\" date must be before the \"To\" date.",
           "quote": "'"
@@ -34959,7 +34973,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 88,
+          "line": 113,
           "kind": "markup",
           "raw": "Audit Log",
           "quote": null
@@ -34977,14 +34991,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 94,
+          "line": 119,
           "kind": "markup",
           "raw": "Action",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 142,
+          "line": 191,
           "kind": "markup",
           "raw": "Action",
           "quote": null
@@ -35016,7 +35030,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 96,
+          "line": 121,
           "kind": "markup",
           "raw": "All",
           "quote": null
@@ -35034,7 +35048,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 97,
+          "line": 122,
           "kind": "markup",
           "raw": "node.create",
           "quote": null
@@ -35052,7 +35066,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 98,
+          "line": 123,
           "kind": "markup",
           "raw": "node.update",
           "quote": null
@@ -35070,7 +35084,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 99,
+          "line": 124,
           "kind": "markup",
           "raw": "node.delete",
           "quote": null
@@ -35088,7 +35102,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 100,
+          "line": 125,
           "kind": "markup",
           "raw": "event.create",
           "quote": null
@@ -35106,7 +35120,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 101,
+          "line": 126,
           "kind": "markup",
           "raw": "event.update",
           "quote": null
@@ -35124,7 +35138,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 102,
+          "line": 127,
           "kind": "markup",
           "raw": "event.delete",
           "quote": null
@@ -35142,7 +35156,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 103,
+          "line": 128,
           "kind": "markup",
           "raw": "report.create",
           "quote": null
@@ -35160,7 +35174,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 104,
+          "line": 129,
           "kind": "markup",
           "raw": "report.resolve",
           "quote": null
@@ -35178,7 +35192,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 105,
+          "line": 130,
           "kind": "markup",
           "raw": "admin.user_update",
           "quote": null
@@ -35196,7 +35210,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 106,
+          "line": 131,
           "kind": "markup",
           "raw": "admin.user_email_set",
           "quote": null
@@ -35214,7 +35228,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 107,
+          "line": 132,
           "kind": "markup",
           "raw": "membership.join",
           "quote": null
@@ -35232,7 +35246,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 108,
+          "line": 133,
           "kind": "markup",
           "raw": "auth.login",
           "quote": null
@@ -35250,14 +35264,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 112,
+          "line": 137,
           "kind": "markup",
           "raw": "User",
           "quote": null
         },
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 141,
+          "line": 190,
           "kind": "markup",
           "raw": "User",
           "quote": null
@@ -35275,7 +35289,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 113,
+          "line": 138,
           "kind": "attr:placeholder",
           "raw": "Search by user ID...",
           "quote": "\""
@@ -35293,7 +35307,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 116,
+          "line": 141,
           "kind": "markup",
           "raw": "From",
           "quote": null
@@ -35318,7 +35332,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 134,
+          "line": 159,
           "kind": "markup",
           "raw": "No audit entries found.",
           "quote": null
@@ -35336,7 +35350,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 140,
+          "line": 189,
           "kind": "markup",
           "raw": "Time",
           "quote": null
@@ -35354,7 +35368,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminAuditLog.svelte",
-          "line": 143,
+          "line": 192,
           "kind": "markup",
           "raw": "Target",
           "quote": null
@@ -39432,7 +39446,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 78,
+          "line": 89,
           "kind": "js-string",
           "raw": "Pick at least one patch, or every unclaimed patch.",
           "quote": "'"
@@ -39450,7 +39464,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 86,
+          "line": 97,
           "kind": "js-string",
           "raw": "Trust granted",
           "quote": "'"
@@ -39468,7 +39482,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 103,
+          "line": 114,
           "kind": "js-string",
           "raw": "Trust request declined",
           "quote": "'"
@@ -39486,7 +39500,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 151,
+          "line": 162,
           "kind": "js-string",
           "raw": "User unsuspended",
           "quote": "'"
@@ -39504,7 +39518,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 151,
+          "line": 162,
           "kind": "js-string",
           "raw": "User suspended",
           "quote": "'"
@@ -39522,7 +39536,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 167,
+          "line": 178,
           "kind": "js-string",
           "raw": "Trusted contributor revoked",
           "quote": "'"
@@ -39540,7 +39554,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 167,
+          "line": 178,
           "kind": "js-string",
           "raw": "Marked as trusted contributor",
           "quote": "'"
@@ -39558,7 +39572,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 195,
+          "line": 206,
           "kind": "js-string",
           "raw": "Pick at least one patch.",
           "quote": "'"
@@ -39576,7 +39590,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 322,
+          "line": 333,
           "kind": "js-string",
           "raw": "Invite link copied",
           "quote": "'"
@@ -39594,349 +39608,10 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 324,
+          "line": 335,
           "kind": "js-string",
           "raw": "Could not copy. Select the link and copy it manually.",
           "quote": "'"
-        }
-      ]
-    },
-    {
-      "id": "fe45f3a1addc",
-      "text": "User Management",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 331,
-          "kind": "markup",
-          "raw": "User Management",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b57d05e78e23",
-      "text": "Trust requests",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 338,
-          "kind": "markup",
-          "raw": "Trust requests",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "92b3b63dce23",
-      "text": "People asking to add events on unclaimed patches without review. Grant the scope you judge right, wider or narrower than the one asked for.",
-      "words": 24,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 340,
-          "kind": "markup",
-          "raw": "People asking to add events on unclaimed patches without review. Grant\n        the scope you judge right, wider or narrower than the one asked for.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "7e251c560d15",
-      "text": "Note to the requester (optional)",
-      "words": 5,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 364,
-          "kind": "markup",
-          "raw": "Note to the requester (optional)",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "b97664e850a7",
-      "text": "Sent with a decline",
-      "words": 4,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 368,
-          "kind": "attr:placeholder",
-          "raw": "Sent with a decline",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "84021fa0cb98",
-      "text": "Invite Links",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 390,
-          "kind": "markup",
-          "raw": "Invite Links",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "44478689e560",
-      "text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
-      "words": 22,
-      "tier": "prose",
-      "status": "human",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 392,
-          "kind": "markup",
-          "raw": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
-          "quote": null
-        }
-      ],
-      "previous_ai_text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth. No email required."
-    },
-    {
-      "id": "4d761fbe8572",
-      "text": "Max uses",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 396,
-          "kind": "markup",
-          "raw": "Max uses",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "df5e49ecaff6",
-      "text": "Expires in (hours, 0 = never)",
-      "words": 6,
-      "tier": "helper",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 400,
-          "kind": "markup",
-          "raw": "Expires in (hours, 0 = never)",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ed9d14504092",
-      "text": "This link is shown once, so copy it now. Anyone with it can create an account.",
-      "words": 16,
-      "tier": "prose",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 413,
-          "kind": "markup",
-          "raw": "This link is shown once, so copy it now. Anyone with it can create an account.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "24199f9a18fb",
-      "text": "Search by name or email...",
-      "words": 5,
-      "tier": "label",
-      "status": "unreviewed",
-      "replacement": null,
-      "note": null,
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 421,
-          "kind": "attr:placeholder",
-          "raw": "Search by name or email...",
-          "quote": "\""
-        }
-      ]
-    },
-    {
-      "id": "ce0171e51b07",
-      "text": "No users found.",
-      "words": 3,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 432,
-          "kind": "markup",
-          "raw": "No users found.",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "969ccbd3cf63",
-      "text": "Email",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 440,
-          "kind": "markup",
-          "raw": "Email",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/InviteLanding.svelte",
-          "line": 284,
-          "kind": "markup",
-          "raw": "Email",
-          "quote": null
-        },
-        {
-          "file": "web/src/pages/Login.svelte",
-          "line": 243,
-          "kind": "markup",
-          "raw": "Email",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "14736a2eb9f4",
-      "text": "Role",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 441,
-          "kind": "markup",
-          "raw": "Role",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "722432db5fd9",
-      "text": "Trusted Contributor",
-      "words": 2,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 442,
-          "kind": "markup",
-          "raw": "Trusted Contributor",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "69318b0c6a92",
-      "text": "Joined",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 443,
-          "kind": "markup",
-          "raw": "Joined",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "920e413c7d41",
-      "text": "Status",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 444,
-          "kind": "markup",
-          "raw": "Status",
-          "quote": null
-        }
-      ]
-    },
-    {
-      "id": "ff8059dc6752",
-      "text": "Actions",
-      "words": 1,
-      "tier": "label",
-      "status": "ai-fine",
-      "replacement": null,
-      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
-      "occurrences": [
-        {
-          "file": "web/src/pages/AdminUsers.svelte",
-          "line": 445,
-          "kind": "markup",
-          "raw": "Actions",
-          "quote": null
         }
       ]
     },
@@ -39951,7 +39626,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 472,
+          "line": 351,
           "kind": "attr:placeholder",
           "raw": "name@example.com",
           "quote": "\""
@@ -39969,7 +39644,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 494,
+          "line": 374,
           "kind": "markup",
           "raw": "member",
           "quote": null
@@ -40001,7 +39676,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 495,
+          "line": 375,
           "kind": "markup",
           "raw": "admin",
           "quote": null
@@ -40033,7 +39708,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 508,
+          "line": 389,
+          "kind": "markup",
+          "raw": "Trusted",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 598,
           "kind": "markup",
           "raw": "Trusted",
           "quote": null
@@ -40051,7 +39733,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 527,
+          "line": 408,
           "kind": "markup",
           "raw": "Trusted on {node.name}",
           "quote": null
@@ -40069,7 +39751,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 531,
+          "line": 412,
           "kind": "attr:title",
           "raw": "Revoke",
           "quote": "\""
@@ -40087,7 +39769,14 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 565,
+          "line": 446,
+          "kind": "markup",
+          "raw": "Suspended",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 601,
           "kind": "markup",
           "raw": "Suspended",
           "quote": null
@@ -40105,9 +39794,411 @@
       "occurrences": [
         {
           "file": "web/src/pages/AdminUsers.svelte",
-          "line": 567,
+          "line": 448,
           "kind": "markup",
           "raw": "Active",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "fe45f3a1addc",
+      "text": "User Management",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 472,
+          "kind": "markup",
+          "raw": "User Management",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b57d05e78e23",
+      "text": "Trust requests",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 479,
+          "kind": "markup",
+          "raw": "Trust requests",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "92b3b63dce23",
+      "text": "People asking to add events on unclaimed patches without review. Grant the scope you judge right, wider or narrower than the one asked for.",
+      "words": 24,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 481,
+          "kind": "markup",
+          "raw": "People asking to add events on unclaimed patches without review. Grant\n        the scope you judge right, wider or narrower than the one asked for.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "7e251c560d15",
+      "text": "Note to the requester (optional)",
+      "words": 5,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 505,
+          "kind": "markup",
+          "raw": "Note to the requester (optional)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b97664e850a7",
+      "text": "Sent with a decline",
+      "words": 4,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Drafted with AI for the scoped-trust work (docs/adr/2026-09-18-trust-has-a-scope-and-a-suggestion-carries-its-calendar); reviewed and kept as-is.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 509,
+          "kind": "attr:placeholder",
+          "raw": "Sent with a decline",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "84021fa0cb98",
+      "text": "Invite Links",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 532,
+          "kind": "markup",
+          "raw": "Invite Links",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 700,
+          "kind": "markup",
+          "raw": "Invite Links",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "44478689e560",
+      "text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
+      "words": 22,
+      "tier": "prose",
+      "status": "human",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 534,
+          "kind": "markup",
+          "raw": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 702,
+          "kind": "markup",
+          "raw": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth.",
+          "quote": null
+        }
+      ],
+      "previous_ai_text": "Generate a link to invite someone to this Patchwork. Share it wherever your community talks: a message, a flyer, word of mouth. No email required."
+    },
+    {
+      "id": "4d761fbe8572",
+      "text": "Max uses",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 538,
+          "kind": "markup",
+          "raw": "Max uses",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 706,
+          "kind": "markup",
+          "raw": "Max uses",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "df5e49ecaff6",
+      "text": "Expires in (hours, 0 = never)",
+      "words": 6,
+      "tier": "helper",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 542,
+          "kind": "markup",
+          "raw": "Expires in (hours, 0 = never)",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 710,
+          "kind": "markup",
+          "raw": "Expires in (hours, 0 = never)",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ed9d14504092",
+      "text": "This link is shown once, so copy it now. Anyone with it can create an account.",
+      "words": 16,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 555,
+          "kind": "markup",
+          "raw": "This link is shown once, so copy it now. Anyone with it can create an account.",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 723,
+          "kind": "markup",
+          "raw": "This link is shown once, so copy it now. Anyone with it can create an account.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "24199f9a18fb",
+      "text": "Search by name or email...",
+      "words": 5,
+      "tier": "label",
+      "status": "unreviewed",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 564,
+          "kind": "attr:placeholder",
+          "raw": "Search by name or email...",
+          "quote": "\""
+        }
+      ]
+    },
+    {
+      "id": "ce0171e51b07",
+      "text": "No users found.",
+      "words": 3,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 575,
+          "kind": "markup",
+          "raw": "No users found.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "969ccbd3cf63",
+      "text": "Email",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 619,
+          "kind": "markup",
+          "raw": "Email",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 656,
+          "kind": "markup",
+          "raw": "Email",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/InviteLanding.svelte",
+          "line": 284,
+          "kind": "markup",
+          "raw": "Email",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/Login.svelte",
+          "line": 243,
+          "kind": "markup",
+          "raw": "Email",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "14736a2eb9f4",
+      "text": "Role",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 623,
+          "kind": "markup",
+          "raw": "Role",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 657,
+          "kind": "markup",
+          "raw": "Role",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "722432db5fd9",
+      "text": "Trusted Contributor",
+      "words": 2,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 627,
+          "kind": "markup",
+          "raw": "Trusted Contributor",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 658,
+          "kind": "markup",
+          "raw": "Trusted Contributor",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "920e413c7d41",
+      "text": "Status",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 631,
+          "kind": "markup",
+          "raw": "Status",
+          "quote": null
+        },
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 660,
+          "kind": "markup",
+          "raw": "Status",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "69318b0c6a92",
+      "text": "Joined",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 659,
+          "kind": "markup",
+          "raw": "Joined",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "ff8059dc6752",
+      "text": "Actions",
+      "words": 1,
+      "tier": "label",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "Short labels and Markdown headings: mechanical, not voice-bearing.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/AdminUsers.svelte",
+          "line": 661,
+          "kind": "markup",
+          "raw": "Actions",
           "quote": null
         }
       ]
