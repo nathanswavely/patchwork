@@ -22417,7 +22417,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 125,
+          "line": 128,
           "kind": "js-string",
           "raw": "Members only",
           "quote": "'"
@@ -22745,7 +22745,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 343,
+          "line": 346,
           "kind": "markup",
           "raw": "Loading...",
           "quote": null
@@ -23252,14 +23252,14 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 140,
+          "line": 143,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 161,
+          "line": 164,
           "kind": "js-string",
           "raw": "Failed to save",
           "quote": "'"
@@ -30600,7 +30600,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 328,
+          "line": 331,
           "kind": "markup",
           "raw": "Event Sources",
           "quote": null
@@ -33822,7 +33822,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 292,
+          "line": 295,
           "kind": "js-string",
           "raw": "Failed to record that",
           "quote": "'"
@@ -33927,7 +33927,7 @@
         },
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 187,
+          "line": 190,
           "kind": "js-string",
           "raw": "Sync failed",
           "quote": "'"
@@ -51736,7 +51736,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 138,
+          "line": 141,
           "kind": "js-string",
           "raw": "Saved. Events already imported keep the tier they have.",
           "quote": "'"
@@ -51754,7 +51754,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 156,
+          "line": 159,
           "kind": "js-string",
           "raw": "Saved. Sync now to rewrite this source's times",
           "quote": "\""
@@ -51772,7 +51772,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 157,
+          "line": 160,
           "kind": "js-string",
           "raw": "Saved. This feed will be taken at its word again",
           "quote": "'"
@@ -51790,7 +51790,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 171,
+          "line": 174,
           "kind": "js-string",
           "raw": "Event source removed",
           "quote": "'"
@@ -51808,7 +51808,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 174,
+          "line": 177,
           "kind": "js-string",
           "raw": "Failed to remove event source",
           "quote": "'"
@@ -51826,7 +51826,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 228,
+          "line": 231,
           "kind": "js-string",
           "raw": "Failed to propose that link",
           "quote": "'"
@@ -51844,7 +51844,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 243,
+          "line": 246,
           "kind": "js-string",
           "raw": "Failed to dismiss that",
           "quote": "'"
@@ -51862,7 +51862,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 252,
+          "line": 255,
           "kind": "js-string",
           "raw": "Stopped. Events you already joined stay yours.",
           "quote": "'"
@@ -51880,7 +51880,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 255,
+          "line": 258,
           "kind": "js-string",
           "raw": "Failed to stop that",
           "quote": "'"
@@ -51898,7 +51898,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 269,
+          "line": 272,
           "kind": "js-string",
           "raw": "Failed to map name",
           "quote": "'"
@@ -51916,7 +51916,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 278,
+          "line": 281,
           "kind": "js-string",
           "raw": "Stopped. Its events are yours to edit now.",
           "quote": "'"
@@ -51934,7 +51934,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 281,
+          "line": 284,
           "kind": "js-string",
           "raw": "Failed to unmap",
           "quote": "'"
@@ -51952,7 +51952,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 289,
+          "line": 292,
           "kind": "js-string",
           "raw": "Kept yours",
           "quote": "'"
@@ -51970,7 +51970,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 289,
+          "line": 292,
           "kind": "js-string",
           "raw": "Added as a separate event",
           "quote": "'"
@@ -51988,7 +51988,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 332,
+          "line": 335,
           "kind": "markup",
           "raw": "What works?",
           "quote": null
@@ -52006,7 +52006,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 334,
+          "line": 337,
           "kind": "markup",
           "raw": "Calendar feeds this patch pulls events from. Paste an ICS address (a\n      Google Calendar's secret address, the calendar feed from your website),\n      an events page from Squarespace, Humanitix, and similar sites, or an\n      atproto handle whose calendar you want to follow.\n      Imported events publish directly and stay in step with the feed.",
           "quote": null
@@ -52024,7 +52024,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 354,
+          "line": 357,
           "kind": "markup",
           "raw": "First sync in progress…",
           "quote": null
@@ -52042,7 +52042,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 356,
+          "line": 359,
           "kind": "markup",
           "raw": "Sync failed{source.last_error ? `: ${source.last_error}` : ''}",
           "quote": null
@@ -52060,7 +52060,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 360,
+          "line": 363,
           "kind": "markup",
           "raw": "· synced {relTime(source.last_success_at)}",
           "quote": null
@@ -52078,7 +52078,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 366,
+          "line": 369,
           "kind": "markup",
           "raw": "Who can see these events",
           "quote": null
@@ -52093,19 +52093,19 @@
       ]
     },
     {
-      "id": "b470cdbcb6dd",
-      "text": "The tier new events from this feed are created at. Events already imported keep the tier they have. Anything but Public also stops these events federating to other quilts.",
-      "words": 29,
+      "id": "f4df181f92b6",
+      "text": "Applies to events imported from now on. Anything but Public also stops them federating to other quilts.",
+      "words": 17,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": null,
+      "note": "Event source hints, trimmed from the 29- and 38-word drafts at Nathan's request (2026-09-29). AI wording; keeps the symptom test without naming a timezone (docs/adr/073).",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 378,
+          "line": 381,
           "kind": "markup",
-          "raw": "The tier new events from this feed are created at. Events\n                already imported keep the tier they have. Anything but Public\n                also stops these events federating to other quilts.",
+          "raw": "Applies to events imported from now on. Anything but Public\n                also stops them federating to other quilts.",
           "quote": null
         }
       ]
@@ -52121,7 +52121,7 @@
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 391,
+          "line": 393,
           "kind": "markup",
           "raw": "This calendar publishes local times as UTC",
           "quote": null
@@ -52129,19 +52129,19 @@
       ]
     },
     {
-      "id": "0a6200a194a4",
-      "text": "Tick this only if the feed's times run hours earlier than the times on the venue's own page. Patchwork then reads each time as the venue's clock instead of Greenwich's, and the next sync rewrites this source's events.",
-      "words": 38,
+      "id": "6609efc6b32f",
+      "text": "Only if this feed's times run hours earlier than the venue's own page. The next sync rewrites its events.",
+      "words": 19,
       "tier": "prose",
       "status": "ai-fine",
       "replacement": null,
-      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "note": "Event source hints, trimmed from the 29- and 38-word drafts at Nathan's request (2026-09-29). AI wording; keeps the symptom test without naming a timezone (docs/adr/073).",
       "occurrences": [
         {
           "file": "web/src/pages/PatchSettingsSources.svelte",
-          "line": 394,
+          "line": 396,
           "kind": "markup",
-          "raw": "Tick this only if the feed's times run hours earlier than the times\n                on the venue's own page. Patchwork then reads each time as the\n                venue's clock instead of Greenwich's, and the next sync rewrites\n                this source's events.",
+          "raw": "Only if this feed's times run hours earlier than the venue's own\n                page. The next sync rewrites its events.",
           "quote": null
         }
       ]
@@ -60189,6 +60189,42 @@
           "line": 153,
           "kind": "markup",
           "raw": "Or enter the code from the email",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "b470cdbcb6dd",
+      "text": "The tier new events from this feed are created at. Events already imported keep the tier they have. Anything but Public also stops these events federating to other quilts.",
+      "words": 29,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": null,
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 381,
+          "kind": "markup",
+          "raw": "The tier new events from this feed are created at. Events\n                already imported keep the tier they have. Anything but Public\n                also stops these events federating to other quilts.",
+          "quote": null
+        }
+      ]
+    },
+    {
+      "id": "0a6200a194a4",
+      "text": "Tick this only if the feed's times run hours earlier than the times on the venue's own page. Patchwork then reads each time as the venue's clock instead of Greenwich's, and the next sync rewrites this source's events.",
+      "words": 38,
+      "tier": "prose",
+      "status": "ai-fine",
+      "replacement": null,
+      "note": "The feed-correction switch and its hint (docs/adr/073). AI-drafted with the change and marked fine as-is rather than rewritten; the wording is open to a pass, and the hint especially — it has to tell an admin how to recognise the defect without naming a timezone.",
+      "occurrences": [
+        {
+          "file": "web/src/pages/PatchSettingsSources.svelte",
+          "line": 397,
+          "kind": "markup",
+          "raw": "Tick this only if the feed's times run hours earlier than the times\n                on the venue's own page. Patchwork then reads each time as the\n                venue's clock instead of Greenwich's, and the next sync rewrites\n                this source's events.",
           "quote": null
         }
       ]
