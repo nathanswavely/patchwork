@@ -45,12 +45,12 @@ func tribeServer(t *testing.T, ics string) *httptest.Server {
 		switch {
 		case q.Get("ical") == "1" && q.Get("eventDisplay") == "list" && strings.HasSuffix(r.URL.Path, "/events/"):
 			w.Header().Set("Content-Type", "text/calendar")
-			w.Write([]byte(strings.ReplaceAll(ics, "\n", "\r\n")))
+			_, _ = w.Write([]byte(strings.ReplaceAll(ics, "\n", "\r\n")))
 		case q.Get("ical") == "1":
 			w.Header().Set("Content-Type", "text/html")
 		default:
 			w.Header().Set("Content-Type", "text/html")
-			w.Write([]byte(`<!doctype html><html><head>
+			_, _ = w.Write([]byte(`<!doctype html><html><head>
 <link rel="stylesheet" href="/app/plugins/the-events-calendar/build/css/tribe-events-views.css">
 </head><body>a month of shows</body></html>`))
 		}
@@ -86,7 +86,9 @@ func TestSync_EventsCalendarExportLinkReadsTheListExport(t *testing.T) {
 				}
 			}
 			var typ, stored string
-			db.QueryRow(`SELECT type, url FROM event_sources WHERE id = ?`, sourceID).Scan(&typ, &stored)
+			if err := db.QueryRow(`SELECT type, url FROM event_sources WHERE id = ?`, sourceID).Scan(&typ, &stored); err != nil {
+				t.Fatalf("read source: %v", err)
+			}
 			if typ != "tribe" {
 				t.Errorf("detected type not persisted: %q", typ)
 			}
@@ -107,7 +109,7 @@ func TestSync_PlainPageIsNotProbedAsEventsCalendar(t *testing.T) {
 			probed = true
 		}
 		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte("<!doctype html><html><body>just a homepage</body></html>"))
+		_, _ = w.Write([]byte("<!doctype html><html><body>just a homepage</body></html>"))
 	}))
 	t.Cleanup(srv.Close)
 	prev := safehttp.SetAllowPrivateAddresses(true)
