@@ -8,6 +8,7 @@ package eventsource
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"sort"
 	"strconv"
@@ -68,8 +69,18 @@ func Key(uid, occurrence string) string { return uid + "\x00" + occurrence }
 // absent — the reconciler treats absence as removal. PRIVATE and
 // CONFIDENTIAL items never leave the parser.
 func ParseICS(data []byte, now time.Time, zone *time.Location) ([]Item, error) {
+	// These two reasons are what an admin sees under the source, so they
+	// say what came back rather than what the decoder tripped on: "parse
+	// ics: EOF" was an export link that answered with nothing.
+	trimmed := bytes.TrimSpace(data)
+	if len(trimmed) == 0 {
+		return nil, errors.New("the address returned an empty page, not a calendar")
+	}
 	cal, err := ical.NewDecoder(bytes.NewReader(data)).Decode()
 	if err != nil {
+		if trimmed[0] == '<' {
+			return nil, errors.New("the address returned a web page, not a calendar")
+		}
 		return nil, fmt.Errorf("parse ics: %w", err)
 	}
 

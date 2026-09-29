@@ -151,8 +151,9 @@ func loadItems(ctx context.Context, db *database.DB, src *Source) ([]Item, *fetc
 }
 
 // loadItemsFor fetches and parses according to src.Type. An 'ics' source
-// whose document doesn't parse gets one shot at being read as schema.org
-// markup and then as a Squarespace events page — "paste the calendar's
+// whose document doesn't parse gets one shot at being read as The Events
+// Calendar's list export, as schema.org markup, and then as a Squarespace
+// events page — "paste the calendar's
 // address" shouldn't require knowing which kind of address it is. A
 // successful detection is written to src.Type; persisting it belongs to
 // the caller, because sources and aggregators keep it in different
@@ -205,6 +206,22 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 		return items, &fetchResult{}, nil
 	}
 
+	if src.Type == "tribe" {
+		listURL, err := tribeListURL(src.URL)
+		if err != nil {
+			return nil, nil, err
+		}
+		result, err := fetchFeed(ctx, listURL, src.Etag.String, src.LastModified.String)
+		if err != nil || result.NotModified {
+			return nil, result, err
+		}
+		items, err := ParseICS(result.Body, now, src.Zone)
+		if err != nil {
+			return nil, nil, err
+		}
+		return items, result, nil
+	}
+
 	if src.Type == "jsonld" {
 		result, err := fetchFeed(ctx, src.URL, src.Etag.String, src.LastModified.String)
 		if err != nil || result.NotModified {
@@ -224,6 +241,20 @@ func loadItemsFor(ctx context.Context, src *Source) ([]Item, *fetchResult, error
 	items, icsErr := ParseICS(result.Body, now, src.Zone)
 	if icsErr == nil {
 		return items, result, nil
+	}
+
+	// Not ICS, but The Events Calendar's: its list export is the whole
+	// calendar, which beats any markup on one page of it, so it goes
+	// before the JSON-LD probe.
+	if looksLikeTribe(src.URL, result.Body) {
+		if listURL, err := tribeListURL(src.URL); err == nil {
+			if tResult, err := fetchFeed(ctx, listURL, "", ""); err == nil && !tResult.NotModified {
+				if tItems, err := ParseICS(tResult.Body, now, src.Zone); err == nil {
+					src.Type = "tribe"
+					return tItems, tResult, nil
+				}
+			}
+		}
 	}
 
 	// Not ICS. The page is already in hand, so the JSON-LD probe is
