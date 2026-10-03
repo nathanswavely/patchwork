@@ -8,6 +8,7 @@ import (
 
 	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
+	"github.com/patchwork-toolkit/patchwork/internal/weblink"
 )
 
 // When Patchwork changes a patch rather than a person changing it, the
@@ -177,10 +178,22 @@ func TestFollowerChartersClosed_SaysWhatFollowersCanStillSee(t *testing.T) {
 			t.Errorf("the notice does not mention %q, so the reader still learns one tin and not the shelf: %q", want, body)
 		}
 	}
-	// And it points at where the switch actually is, which is not the
-	// Governance page the link lands on.
-	if !strings.Contains(body, "Follower Permissions") {
-		t.Errorf("the notice does not name the control: %q", body)
+	// And it points at where the switch actually is.
+	//
+	// It used to say "in Governance" and link to the hub, where the switch
+	// is not; then it named the change form, and an admin who followed it
+	// found a Submit button he would not press to read a setting. Both are
+	// answered by Rules being a page: the permissions are listed there, and
+	// the link goes there (F-117).
+	if !strings.Contains(body, "under Rules") {
+		t.Errorf("the notice does not say where to go: %q", body)
+	}
+
+	var link string
+	const linkQ = `SELECT COALESCE(link,'') FROM notifications WHERE user_id = ? AND title LIKE 'Followers can no longer read%' ORDER BY created_at DESC LIMIT 1`
+	db.QueryRow(linkQ, admin.ID).Scan(&link)
+	if want := weblink.PatchGovernanceRules("whole-shelf"); link != want {
+		t.Errorf("the notice links to %q, not to the page that lists the switch (%q)", link, want)
 	}
 }
 

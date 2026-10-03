@@ -48,6 +48,30 @@
     (currentRules?.decision_method === 'admin' || currentRules?.proposal_venue === 'elsewhere')
   );
 
+  // What pressing the button will actually do, in a sentence, before it is
+  // pressed.
+  //
+  // The review screen showed a diff, a title field and a Submit button and
+  // never said whether submitting changed the setting or started a
+  // fortnight-long vote. A co-op's only admin ticked one box to find out
+  // what would happen, read "Proposed Rule Changes ... (17 fields
+  // unchanged)" and a Submit button, could not tell which it was, and
+  // backed out (F-117). The duration is the patch's own, because "a vote"
+  // and "a vote that runs for two weeks" are different things to agree to.
+  let voteLength = $derived.by(() => {
+    const hours = currentRules?.default_vote_duration_hours ?? 0;
+    if (!hours) return '';
+    const days = Math.round(hours / 24);
+    if (days >= 1) return days === 1 ? ' for a day' : ` for ${days} days`;
+    return ` for ${hours} hours`;
+  });
+
+  let submitConsequence = $derived(
+    directChange
+      ? 'Saving changes these rules now. Nobody votes on it.'
+      : `This goes to the members as a proposal and opens a vote${voteLength}. These rules do not change unless it carries.`
+  );
+
   // Step: 'editing' or 'reviewing'
   let step = $state('editing');
   let title = $state('');
@@ -288,6 +312,8 @@
               <textarea id="rules-desc" bind:value={description} rows="4" disabled={submitting} placeholder="Help others understand why this change matters."></textarea>
             </div>
 
+            <p class="submit-consequence muted">{submitConsequence}</p>
+
             <div class="review-actions">
               <button class="btn btn-primary" onclick={handleSubmit} disabled={submitting || !title.trim()}>
                 {#if directChange}
@@ -404,6 +430,12 @@
   .field label {
     font-size: 0.85rem;
     font-weight: 500;
+  }
+
+  .submit-consequence {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin: 0 0 0.75rem;
   }
 
   .review-actions {

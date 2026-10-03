@@ -118,9 +118,15 @@ func CloseFollowerChartersDefault(db *database.DB) (int, error) {
 			// reviews as three fragments instead of the sentence somebody
 			// reads.
 			Title: fmt.Sprintf("Followers can no longer read %s's members-only charters", p.name),
-			Body: "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again under Follower Permissions, at the bottom of Propose a change to these rules. " +
+			// "You can grant it again in Governance" sent an admin to the
+			// hub, where the switch is not; naming the change form instead
+			// sent him to a review screen he backed out of rather than
+			// press Submit. Governance -> Rules now lists what a follower
+			// can see, beside every other rule, and says what changing one
+			// will do before anybody presses anything (F-117).
+			Body: "This patch was sharing its unpublished charters with followers, from a default Patchwork shipped rather than a choice this patch made. That default is now off. Published charters are unaffected, and you can grant it again from Governance, under Rules. " +
 				stillOpenToFollowers(rules, p.fp),
-			Link: weblink.PatchGovernance(p.slug),
+			Link: weblink.PatchGovernanceRules(p.slug),
 		})
 	}
 
