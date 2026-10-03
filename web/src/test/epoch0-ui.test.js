@@ -128,12 +128,18 @@ describe('F-017 — dashboard counts are counts, and the attention list is the p
     expect(src).not.toMatch(/if \(items\.length > 0\) pending\[m\.node_slug\] = items\.length/);
   });
 
-  it('asks for a real page of proposals and says 20+ when more follow', () => {
+  // F-017's rule was that a count must never be the length of a page. The
+  // proposals half no longer comes from the page at all: the server states
+  // how many await this reader (F-108), which is both the honest number and
+  // a smaller one, so the "20+" hedge it used to need is gone and cannot
+  // come back as a page size wearing a plus sign.
+  it('takes the proposal count from the server, not from the page', () => {
     expect(src).toMatch(/const PAGE = 20;/);
     expect(src).toMatch(/proposals\?status=open&limit=\$\{PAGE\}/);
-    expect(src).toMatch(/\{ count: items\.length, more: !!data\.next_cursor \}/);
-    expect(src).toMatch(/function countLabel\(count, more\)/);
-    expect(src).toMatch(/countLabel\(totalProposals, proposalsMore\)/);
+    expect(src).toMatch(/data\.awaiting_your_vote \?\? 0/);
+    expect(src).toMatch(/proposals\[m\.node_slug\] = \{ count \}/);
+    expect(src).not.toMatch(/\{ count: items\.length/);
+    expect(src).not.toMatch(/proposalsMore/);
   });
 
   it('scopes upcoming events to the person\'s own patches', () => {
@@ -144,11 +150,21 @@ describe('F-017 — dashboard counts are counts, and the attention list is the p
 
 describe('F-022 — the rules editor knows every succession policy a template ships', () => {
   const src = source('components/StructuredRulesEditor.svelte');
+  // The options moved to a module the read-only rules page shares with the
+  // editor, so one setting cannot end up with two names (F-117). The
+  // property this holds is unchanged: every policy a template can store has
+  // an option here, and each says in plain words what actually happens.
+  const vocab = source('lib/governanceRules.js');
 
   it('has options for election and nomination, each with a plain hint', () => {
-    expect(src).toMatch(/value: 'election', label: 'Election',\s*\n\s*hint: '[^']+'/);
-    expect(src).toMatch(/value: 'nomination', label: 'Nomination',\s*\n\s*hint: '[^']+'/);
+    expect(vocab).toMatch(/value: 'election', label: 'Election',\s*\n\s*hint: '[^']+'/);
+    expect(vocab).toMatch(/value: 'nomination', label: 'Nomination',\s*\n\s*hint: '[^']+'/);
     expect(src).toMatch(/<p class="venue-hint muted">\{successionHint\}<\/p>/);
+  });
+
+  it('reads them from the shared module rather than keeping a second copy', () => {
+    expect(src).toMatch(/from '\.\.\/lib\/governanceRules\.js'/);
+    expect(src).not.toMatch(/const SUCCESSION_OPTIONS = \[/);
   });
 
   it('round-trips a stored value it has no option for rather than resetting it', () => {
