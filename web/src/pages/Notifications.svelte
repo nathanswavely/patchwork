@@ -315,4 +315,19 @@
     text-align: center;
     padding: 1rem 0;
   }
+
+  /* A narrow screen puts the actions under the heading rather than
+     wrapping each button's label onto two lines beside it. */
+  .notif-page-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+  }
+
+  .header-actions :global(.btn) {
+    white-space: nowrap;
+  }
 </style>

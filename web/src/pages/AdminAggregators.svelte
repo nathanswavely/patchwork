@@ -434,7 +434,7 @@
               </span>
               {#if !row.program.routed}
                 <span class="muted samples">
-                  {`Waiting on “${row.program.display_name}” to be mapped — until it is, there are no events to offer.`}
+                  {`Waiting on “${row.program.display_name}” to be mapped. Until it is, there are no events to offer.`}
                 </span>
               {:else if row.program.offer_count > 0}
                 <span class="muted samples">
@@ -509,7 +509,7 @@
       {:else}
         <p class="muted modal-note">
           Mapping this name decides whose calendar these land on. If one is
-          run by somebody else, credit it to them — the events stay here
+          run by somebody else, credit it to them. The events stay here
           either way.
         </p>
         <ul class="listing-list">

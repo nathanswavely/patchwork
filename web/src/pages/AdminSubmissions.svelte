@@ -5,6 +5,18 @@
   import Skeleton from '../components/Skeleton.svelte';
   import TagPicker from '../components/TagPicker.svelte';
   import { formatDay as formatDate } from '../lib/datetime.js';
+  import { isNarrow } from '../stores/viewport.svelte.js';
+
+  let narrow = $derived(isNarrow());
+
+  // Rejecting takes two steps everywhere: the first opens the note to the
+  // suggester beside a second Reject, the way event submissions work. One
+  // tap on Reject used to refuse the patch outright.
+  let decliningId = $state('');
+
+  // On a phone the tag picker (every tag on the quilt, as chips) stays
+  // folded to the chosen tags until the reviewer asks to change them.
+  let editingTags = $state({});
 
   let submissions = $state([]);
   let loading = $state(true);
@@ -113,7 +125,16 @@
           {/if}
           <div class="sub-tags">
             <span class="field-label">Tags</span>
-            <TagPicker bind:selected={tagInputs[sub.id]} />
+            {#if narrow && !editingTags[sub.id]}
+              <div class="tag-summary">
+                {#each tagInputs[sub.id] || [] as name (name)}
+                  <span class="badge">{name}</span>
+                {/each}
+                <button class="btn btn-secondary btn-sm" onclick={() => { editingTags[sub.id] = true; }}>Edit</button>
+              </div>
+            {:else}
+              <TagPicker bind:selected={tagInputs[sub.id]} />
+            {/if}
             <span class="muted">The submitter's picks.</span>
           </div>
           <div class="sub-meta muted">
@@ -142,20 +163,29 @@
               </label>
             {/if}
           </div>
-          <div class="sub-note">
-            <label for="note-{sub.id}">Note to the suggester (optional)</label>
-            <textarea
-              id="note-{sub.id}"
-              rows="2"
-              placeholder="Why this one isn't joining the quilt"
-              bind:value={noteInputs[sub.id]}
-            ></textarea>
-            <span class="muted">Sent with a rejection. Approvals don't carry it.</span>
-          </div>
-          <div class="sub-actions">
-            <button class="btn btn-primary btn-sm" onclick={() => handleAction(sub, 'approve')}>Approve</button>
-            <button class="btn btn-danger btn-sm" onclick={() => handleAction(sub, 'reject')}>Reject</button>
-          </div>
+          {#if decliningId === sub.id}
+            <div class="decline-form">
+              <div class="sub-note">
+                <label for="note-{sub.id}">Note to the suggester (optional)</label>
+                <textarea
+                  id="note-{sub.id}"
+                  rows="2"
+                  placeholder="Why this one isn't joining the quilt"
+                  bind:value={noteInputs[sub.id]}
+                ></textarea>
+                <span class="muted">Sent with a rejection. Approvals don't carry it.</span>
+              </div>
+              <div class="sub-actions">
+                <button class="btn btn-danger btn-sm" onclick={() => handleAction(sub, 'reject')}>Reject</button>
+                <button class="btn btn-secondary btn-sm" onclick={() => { decliningId = ''; }}>Cancel</button>
+              </div>
+            </div>
+          {:else}
+            <div class="sub-actions">
+              <button class="btn btn-primary btn-sm" onclick={() => handleAction(sub, 'approve')}>Approve</button>
+              <button class="btn btn-danger btn-sm" onclick={() => { decliningId = sub.id; }}>Reject</button>
+            </div>
+          {/if}
         </div>
       {/each}
     </div>
@@ -301,4 +331,41 @@
     gap: 0.5rem;
   }
 
+  .sub-actions {
+    flex-wrap: wrap;
+  }
+
+  .decline-form .sub-note textarea {
+    max-width: none;
+  }
+
+  .tag-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  /* A phone: the decision comes right after what is being decided. Each
+     option below it already holds a complete answer (trust and the feed
+     default on, the domain pre-filled), so Approve alone is a whole
+     decision; adjusting is further down for the cards that need it. */
+  @media (max-width: 640px) {
+    .submission-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .submission-card > .sub-actions,
+    .submission-card > .decline-form {
+      order: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .submission-card > .sub-tags,
+    .submission-card > .sub-domain,
+    .submission-card > .sub-grants {
+      order: 2;
+    }
+  }
 </style>

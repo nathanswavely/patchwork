@@ -180,4 +180,10 @@
     gap: 0.4rem;
   }
 
+  @media (pointer: coarse) {
+    .edit-btn {
+      min-height: 40px;
+      padding: 0 0.75rem;
+    }
+  }
 </style>

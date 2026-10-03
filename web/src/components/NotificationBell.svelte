@@ -64,4 +64,11 @@
     border-radius: 8px;
     padding: 0 3px;
   }
+
+  @media (pointer: coarse) {
+    .bell-btn {
+      min-width: 40px;
+      min-height: 40px;
+    }
+  }
 </style>

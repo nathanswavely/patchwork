@@ -30,7 +30,7 @@ describe('VoteSection — the tenure line', () => {
   });
 
   it('names the day when one is given', () => {
-    expect(src).toMatch(/you can vote here from \$\{eligibleDate\}/);
+    expect(src).toMatch(/you can vote here from \$\{eligibleDate\}/i);
   });
 
   it('recites the rule only at someone the gate is actually refusing', () => {

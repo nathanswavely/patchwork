@@ -45,4 +45,15 @@
     background: var(--color-primary);
     color: var(--color-btn-on-primary);
   }
+
+  .seg button {
+    white-space: nowrap;
+  }
+
+  @media (pointer: coarse) {
+    .seg button {
+      min-height: 40px;
+      padding: 0 0.9rem;
+    }
+  }
 </style>

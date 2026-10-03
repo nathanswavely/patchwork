@@ -62,7 +62,7 @@
       <span class="count approve-count">{approveCount}&#10003;</span>
       <span class="count reject-count">{rejectCount}&#10007;</span>
       {#if abstainCount > 0}
-        <span class="count abstain-count">{abstainCount}&mdash;</span>
+        <span class="count abstain-count">{abstainCount} abstain</span>
       {/if}
       {#if timeLeft}
         <span class="time-left">{timeLeft}</span>
@@ -74,7 +74,9 @@
 <style>
   .sticky-vote-bar {
     position: fixed;
-    bottom: 0;
+    /* Above the mobile tab bar, the patch workspace's or the quilt's.
+       --pw-nav-h is 0px where there is none. */
+    bottom: var(--pw-nav-h);
     left: 0;
     right: 0;
     background: var(--color-surface);
@@ -151,14 +153,30 @@
     font-size: 0.78rem;
   }
 
+  /* A phone: the tally on a line of its own above three buttons that
+     share the width at a finger's height. Side by side, the tally ran
+     past the right edge and the buttons were 31px. */
   @media (max-width: 640px) {
     .sticky-vote-bar {
-      padding: 0.5rem 1rem;
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 0.4rem;
+      padding: 0.5rem var(--pw-gutter);
+    }
+
+    .vote-buttons {
+      gap: 0.4rem;
     }
 
     .vote-btn {
-      padding: 0.4rem 0.75rem;
-      font-size: 0.78rem;
+      flex: 1;
+      min-height: 44px;
+      padding: 0 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .vote-summary {
+      justify-content: center;
     }
   }
 </style>

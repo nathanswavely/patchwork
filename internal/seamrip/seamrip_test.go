@@ -556,6 +556,7 @@ func TestEveryTableHasABoundaryDecision(t *testing.T) {
 		"label_cost_items":            "same",
 		"label_stewards":              "same",
 		"magic_links":                 "short-lived auth tokens",
+		"native_apps":                 "a fork answers at a different domain, so it publishes different association files; the apps it vouches for are its own to list (docs/adr/2026-09-20-an-instance-vouches-for-an-app.md)",
 		"neighbor_quilts":             "the fork curates its own neighbors",
 		"node_trusted_contributors":   "a per-patch trusted-contributor grant is one instance's judgement about a person, the same reason users.trusted_contributor stays behind (docs/adr/026); the fork's steward grants it again",
 		"trust_requests":              "an ask of this instance's admin, answered by them or not at all — a fork inherits no queue of other people's asks",

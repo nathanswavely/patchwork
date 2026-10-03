@@ -21,6 +21,9 @@
     openedAt = null,
     userVote = null,
     votingEndsAt = null,
+    // Off where a status banner above already says how long is left, so
+    // the time is stated once rather than twice on the same screen.
+    showTimeLeft = true,
     state: propState = 'voting',
     voters = [],
     canVote = false,
@@ -92,15 +95,15 @@
 
   let thresholdExplain = $derived.by(() => {
     const explanations = {
-      majority: 'Majority \u2014 more than half of votes must approve',
-      supermajority: 'Supermajority \u2014 at least 2 out of 3 votes must approve',
+      majority: 'Majority: more than half of votes must approve',
+      supermajority: 'Supermajority: at least 2 out of 3 votes must approve',
       // Not "no reject votes allowed", which is a house rule printed
       // directly above a button labelled Reject: "if one reject kills it,
       // why is Reject a button I can press?" One reject is exactly how a
       // member blocks a consensus proposal, and the sentence now says the
       // button's job rather than forbidding it (F-129).
-      consensus: 'Consensus \u2014 one reject blocks it',
-      admin: 'Advisory \u2014 the maintainer decides, with this tally in front of them',
+      consensus: 'Consensus: one reject blocks it',
+      admin: 'Advisory: the maintainer decides, with this tally in front of them',
     };
     if (advisory) return explanations.admin;
     return explanations[threshold] || threshold;
@@ -128,10 +131,10 @@
     // A member who may already vote does not need the rule recited at them,
     // and a patch too young to run the rule must not print it at all.
     if (eligibleDate) {
-      return `${head} — you can vote here from ${eligibleDate}`;
+      return `${head}. You can vote here from ${eligibleDate}`;
     }
     if (tenureDays > 0 && !canVote) {
-      return `${head} — voting requires ${tenureDays} days' membership`;
+      return `${head}. Voting requires ${tenureDays} days' membership`;
     }
     return head;
   });
@@ -184,7 +187,7 @@
   </div>
 
   <!-- Time remaining -->
-  {#if timeLeft && (propState === 'voting' || propState === 'open')}
+  {#if showTimeLeft && timeLeft && (propState === 'voting' || propState === 'open')}
     <div class="time-remaining muted">{timeLeft}</div>
   {/if}
 

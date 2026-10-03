@@ -300,4 +300,24 @@
   .error-hint {
     color: var(--color-danger, #b00);
   }
+
+  /* A finger: chips are tall enough to hit and far enough apart to miss
+     the neighbour, and a selected chip's remove control runs its full
+     height instead of being a 12px glyph. */
+  @media (pointer: coarse) {
+    .chips {
+      gap: 0.5rem;
+    }
+
+    .chip {
+      min-height: 36px;
+      padding: 0.35rem 0.75rem;
+    }
+
+    .chip-btn {
+      align-self: stretch;
+      padding: 0 0.6rem;
+      margin: -0.35rem -0.75rem -0.35rem 0;
+    }
+  }
 </style>

@@ -2,15 +2,20 @@ package handler_test
 
 import (
 	"bytes"
+	"database/sql"
+	"encoding/json"
 	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/patchwork-toolkit/patchwork/internal/config"
+	"github.com/patchwork-toolkit/patchwork/internal/database"
 	"github.com/patchwork-toolkit/patchwork/internal/handler"
 )
 
@@ -198,5 +203,196 @@ func TestRequestMagicLinkThrottleIsLogged(t *testing.T) {
 	}
 	if got := strings.Count(logged, "Magic link for"); got != issuedBefore {
 		t.Errorf("a throttled request printed a link: %d before, %d after", issuedBefore, got)
+	}
+}
+
+// --- The sign-in code ---------------------------------------------------
+
+// requestCode asks for a magic link with no SMTP configured and reads the
+// code back out of the server log, which is exactly the channel an operator
+// without SMTP has (#222).
+func requestCode(t *testing.T, db *database.DB, email string) string {
+	t.Helper()
+	var logBuf bytes.Buffer
+	log.SetOutput(&logBuf)
+	defer log.SetOutput(os.Stderr)
+
+	cfg := &config.Config{}
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/magic-link",
+		strings.NewReader(`{"email":`+strconv.Quote(email)+`}`))
+	req.RemoteAddr = "198.51.100.9:5555"
+	w := httptest.NewRecorder()
+	handler.RequestMagicLink(db, cfg)(w, req)
+	if w.Code != http.StatusOK {
+		t.Fatalf("magic link request: status = %d, want 200", w.Code)
+	}
+
+	m := regexp.MustCompile(`code: ([0-9]{6})`).FindStringSubmatch(logBuf.String())
+	if m == nil {
+		t.Fatalf("no sign-in code in the log; without SMTP the log is the delivery channel:\n%s", logBuf.String())
+	}
+	return m[1]
+}
+
+func postCode(t *testing.T, db *database.DB, body string) *httptest.ResponseRecorder {
+	t.Helper()
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/magic-link/verify", strings.NewReader(body))
+	w := httptest.NewRecorder()
+	handler.VerifyMagicCode(db)(w, req)
+	return w
+}
+
+// The log must carry the link and the code, since without SMTP nothing else
+// does — a client that signs in by code would otherwise have nowhere to read
+// one on a dev or SMTP-less instance.
+func TestRequestMagicLinkLogsCodeUnderTheLink(t *testing.T) {
+	db := setupTestDB(t)
+	code := requestCode(t, db, "logged-code@example.com")
+
+	var stored sql.NullString
+	if err := db.QueryRow(`SELECT code_hash FROM magic_links WHERE email = ?`, "logged-code@example.com").Scan(&stored); err != nil {
+		t.Fatal(err)
+	}
+	if !stored.Valid || stored.String == "" {
+		t.Error("no code_hash stored beside the link")
+	}
+	if len(code) != 6 {
+		t.Errorf("logged code = %q, want six digits", code)
+	}
+}
+
+func TestVerifyMagicCodeSignsInAndSetsTheSessionCookie(t *testing.T) {
+	db := setupTestDB(t)
+	email := "code-signin@example.com"
+	user, _ := createTestUser(t, db, "code-signin", "member")
+	if _, err := db.Exec(`UPDATE users SET email = ? WHERE id = ?`, email, user.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	code := requestCode(t, db, email)
+	w := postCode(t, db, `{"email":"`+email+`","code":"`+code+`"}`)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body %s", w.Code, w.Body.String())
+	}
+	var got map[string]interface{}
+	if err := json.Unmarshal(w.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode body: %v (%s)", err, w.Body.String())
+	}
+	if got["id"] != user.ID {
+		t.Errorf("signed in as %v, want %s", got["id"], user.ID)
+	}
+
+	var sessionSet bool
+	for _, c := range w.Result().Cookies() {
+		if c.Name == "patchwork_session" && c.Value != "" {
+			sessionSet = true
+		}
+	}
+	if !sessionSet {
+		t.Error("no patchwork_session cookie on the response")
+	}
+
+	// Audited as its own method, so the log says how somebody got in.
+	var n int
+	if err := db.QueryRow(
+		`SELECT COUNT(*) FROM audit_log WHERE user_id = ? AND action = 'user.login' AND metadata LIKE '%magic_code%'`,
+		user.ID,
+	).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 1 {
+		t.Errorf("magic_code login audit rows = %d, want 1", n)
+	}
+}
+
+// Spaces are a reading aid the email adds; the endpoint takes the code
+// either way.
+func TestVerifyMagicCodeAcceptsSpaces(t *testing.T) {
+	db := setupTestDB(t)
+	email := "code-spaces@example.com"
+	code := requestCode(t, db, email)
+
+	w := postCode(t, db, `{"email":"`+email+`","code":"`+code[:3]+` `+code[3:]+`"}`)
+	if w.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body %s", w.Code, w.Body.String())
+	}
+}
+
+// An address with no account gets a signup token, exactly as the link's JSON
+// branch does (docs/adr/013).
+func TestVerifyMagicCodeUnknownAddressNeedsAUsername(t *testing.T) {
+	db := setupTestDB(t)
+	email := "code-newcomer@example.com"
+	code := requestCode(t, db, email)
+
+	w := postCode(t, db, `{"email":"`+email+`","code":"`+code+`"}`)
+	if w.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body %s", w.Code, w.Body.String())
+	}
+	var got struct {
+		Status      string `json:"status"`
+		SignupToken string `json:"signup_token"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &got); err != nil {
+		t.Fatal(err)
+	}
+	if got.Status != "username_required" {
+		t.Errorf("status = %q, want username_required", got.Status)
+	}
+	if got.SignupToken == "" {
+		t.Error("no signup token for an address with no account")
+	}
+}
+
+// Every refusal is the same 400 with the same words, so the endpoint cannot
+// be read for whether an address has ever been used here.
+func TestVerifyMagicCodeRefusalsAreOneGenericError(t *testing.T) {
+	db := setupTestDB(t)
+	email := "code-generic@example.com"
+	requestCode(t, db, email)
+
+	for _, body := range []string{
+		`{"email":"` + email + `","code":"000000"}`,
+		`{"email":"nobody-asked@example.com","code":"000000"}`,
+		`{"email":"not-an-address","code":"000000"}`,
+		`{"email":"` + email + `","code":""}`,
+		`not json`,
+	} {
+		w := postCode(t, db, body)
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("body %s: status = %d, want 400", body, w.Code)
+		}
+		if got := strings.TrimSpace(w.Body.String()); got != `{"error":"invalid or expired code"}` {
+			t.Errorf("body %s: response = %s, want the one generic error", body, got)
+		}
+	}
+}
+
+// Five wrong codes spend the row, and the row is the emailed link too.
+func TestVerifyMagicCodeFiveWrongCodesBurnTheLink(t *testing.T) {
+	db := setupTestDB(t)
+	email := "code-burned@example.com"
+	code := requestCode(t, db, email)
+
+	wrong := "000000"
+	if code == wrong {
+		wrong = "111111"
+	}
+	for i := 0; i < 5; i++ {
+		if w := postCode(t, db, `{"email":"`+email+`","code":"`+wrong+`"}`); w.Code != http.StatusBadRequest {
+			t.Fatalf("guess %d: status = %d, want 400", i+1, w.Code)
+		}
+	}
+
+	if w := postCode(t, db, `{"email":"`+email+`","code":"`+code+`"}`); w.Code != http.StatusBadRequest {
+		t.Errorf("the right code after five wrong ones: status = %d, want 400", w.Code)
+	}
+	var used int
+	if err := db.QueryRow(`SELECT used FROM magic_links WHERE email = ?`, email).Scan(&used); err != nil {
+		t.Fatal(err)
+	}
+	if used != 1 {
+		t.Errorf("used = %d, want the emailed link spent along with the code", used)
 	}
 }
