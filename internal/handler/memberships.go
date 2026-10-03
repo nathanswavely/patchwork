@@ -438,7 +438,10 @@ func ListMembers(db *database.DB) http.HandlerFunc {
 			statusFilter = "active"
 		}
 
-		user := middleware.UserFromContext(r.Context())
+		// viewerOf: this whole handler is a read, and an admin previewing
+		// their patch as a visitor gets the roster a visitor gets
+		// (see view_as_visitor.go).
+		user := viewerOf(r)
 
 		// The patch's own admins hold every management verb here, and the
 		// one surface that is theirs alone: who has been invited and has not

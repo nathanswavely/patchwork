@@ -10,11 +10,16 @@
    *   the one door that names a container rather than a room. Redundant by
    *   construction (a glimpse renders whenever its viewer may enter it), so
    *   it is a fallback, not the way in.
+   * - View as a visitor — the patch's own admins, checking what they are
+   *   publishing. The only way to answer that used to be to sign out
+   *   (F-126), and one board member did: "signing out is how I lost my
+   *   account this afternoon."
    * - Report — signed-in visitors who don't run the patch.
    */
   import { DotsThree } from 'phosphor-svelte';
-  import { navigate } from '../stores/router.svelte.js';
+  import { navigate, getQuery } from '../stores/router.svelte.js';
   import { isLoggedIn } from '../stores/auth.svelte.js';
+  import { signedInForPatchView } from '../lib/preview.js';
   import Modal from './Modal.svelte';
   import ReportButton from './ReportButton.svelte';
   import SubscribeFeeds from './SubscribeFeeds.svelte';
@@ -27,6 +32,10 @@
     hasStanding = false,
   } = $props();
 
+  // Already previewing: the banner's own control is the way back, and a
+  // menu item offering to start again would be a dead end.
+  let previewing = $derived(getQuery().get('as') === 'visitor');
+
   let menuOpen = $state(false);
   let subscribeOpen = $state(false);
   let reportOpen = $state(false);
@@ -38,7 +47,15 @@
   let workspaceHref = $derived(`/patches/${slug}/${isUnclaimed ? 'events' : 'governance'}`);
   let canEnterWorkspace = $derived(hasStanding || isAdmin);
 
-  let canReport = $derived(isLoggedIn() && !isAdmin && !!node?.id);
+  // Reporting is a signed-in act, so it is not on the menu a visitor
+  // sees, so it is not on the menu a preview shows (F-126).
+  let canReport = $derived(signedInForPatchView(isLoggedIn()) && !isAdmin && !!node?.id);
+
+  // Offered to the people who set what this patch publishes. A member can
+  // already see roughly what a visitor sees by having no admin surfaces;
+  // an admin cannot, and is the one being asked to decide.
+  let canPreview = $derived(isAdmin && !previewing);
+  let previewHref = $derived(`/patches/${slug}?as=visitor`);
 
   function handleWindowClick(e) {
     if (menuOpen && !e.target.closest('.overflow-container')) menuOpen = false;
@@ -48,7 +65,7 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-{#if feedAvailable || canEnterWorkspace || canReport}
+{#if feedAvailable || canEnterWorkspace || canReport || canPreview}
   <div class="overflow-container">
     <button
       class="overflow-trigger"
@@ -72,6 +89,17 @@
             href={workspaceHref}
             onclick={(e) => { e.preventDefault(); menuOpen = false; navigate(workspaceHref); }}
           >Workspace view</a>
+        {/if}
+        {#if canPreview}
+          <!-- A real page load, not navigate(): the components that fetch
+               this patch key their effects on its slug, which does not
+               change when only the query does, so a soft navigation would
+               leave half the page holding an admin's answers under a
+               visitor's banner. Letting the browser follow the href also
+               makes middle-click and open-in-new-tab do the obvious
+               thing, which for "show me the visitor view" is worth
+               having. -->
+          <a role="menuitem" href={previewHref}>View as a visitor</a>
         {/if}
         {#if canReport}
           <button role="menuitem" onclick={() => { menuOpen = false; reportOpen = true; }}>Report</button>
