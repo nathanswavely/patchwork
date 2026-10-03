@@ -650,8 +650,22 @@ members-only charters and events from patches they are not in, every
 patch's noticeboard, contact cards, calendar feed URLs for patches they do
 not administer, claims, reports, and the audit log.
 
-To import into a fresh Patchwork database:
-  go run ./cmd/import -db ./new-patchwork.db -in ./export/
+WHAT TO DO WITH THIS FILE
+
+Any Patchwork can read it. Give it to whoever sets up the new quilt and
+they can load your community into it: the patches, the people's names,
+who was in what, and everything those patches had decided. You do not
+need to do anything technical with it yourself, and it is no use to
+anyone as a way into this quilt or into your account.
+
+Keep it somewhere you will still have it later. It is a photograph of
+the day it was taken and it does not update itself.
+
+FOR WHOEVER SETS UP THE NEW QUILT
+
+Unzip it anywhere. -in is the folder you unzipped it into, whatever it is
+called; the JSON files sit directly inside it. From a Patchwork checkout:
+  go run ./cmd/import -db ./new-patchwork.db -in ./that-folder/
 
 Import rewrites every ID and writes the old-to-new mapping to id_map.json.
 `
